@@ -5,35 +5,36 @@
   public abstract class Subject
   {
     private const int MaxSnapshotsDefault = 5;
-    private readonly Queue<Snapshot> snapshots;
 
     protected Subject(string name)
     {
-      this.snapshots = new Queue<Snapshot>();
+      this.Snapshots = new Queue<Snapshot>();
       this.Configuration = new Dictionary<string, string>();
       this.MaxSnapshots = MaxSnapshotsDefault;
       this.Name = name;
     }
 
+    public string Type => this.GetType().Name;
+
     public string Name { get; }
 
     public string Description { get; set; }
 
-    public Category Category { get; set; }
-
-    public Status CurrentStatus { get; protected set; }
-
-    public IEnumerable<Snapshot> Snapshots => this.snapshots;
+    public string Category { get; set; }
 
     public IDictionary<string, string> Configuration { get; }
 
+    public Status CurrentStatus { get; protected set; }
+
     public int MaxSnapshots { get; set; }
 
-    public void QueryStatus(bool snapshot = false, params string[] args)
+    public Queue<Snapshot> Snapshots { get; }
+
+    public void QueryStatus(params string[] args)
     {
       this.ExecuteQuery(args);
 
-      if (snapshot && this.CurrentStatus != null)
+      if (this.CurrentStatus != null && this.ShouldTakeSnapshot(this.CurrentStatus))
       {
         this.AddSnapshot(this.CurrentStatus);
       }
@@ -41,14 +42,19 @@
 
     public void AddSnapshot(Status status)
     {
-      while (this.snapshots.Count >= this.MaxSnapshots)
+      while (this.Snapshots.Count >= this.MaxSnapshots)
       {
-        this.snapshots.Dequeue();
+        this.Snapshots.Dequeue();
       }
 
-      this.snapshots.Enqueue(new Snapshot(status));
+      this.Snapshots.Enqueue(new Snapshot(status));
     }
 
     protected abstract void ExecuteQuery(params string[] args);
+
+    protected virtual bool ShouldTakeSnapshot(Status status)
+    {
+      return false;
+    }
   }
 }

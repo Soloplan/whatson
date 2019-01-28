@@ -13,4 +13,8 @@
   </PropertyGroup>
 
   <Import Project="..\..\config\Soloplan.WhatsON.targets" />
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+  </ItemGroup>
 </Project>

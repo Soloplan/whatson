@@ -5,6 +5,11 @@
 
   public class Status
   {
+    public Status()
+      : this(ObservationState.Unknown)
+    {
+    }
+
     public Status(ObservationState state)
     {
       this.Properties = new Dictionary<string, string>();

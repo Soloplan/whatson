@@ -4,12 +4,13 @@
   using System.Net.NetworkInformation;
   using System.Text;
 
+  [SubjectType("Server Health Check", Description = "Subjects of this type ping a specified server and return a state that depends on the ping reply.")]
   public class ServerHealthSubject : ServerSubject
   {
     public ServerHealthSubject(string name, string serverAdress)
       : base(name)
     {
-      this.Configuration[ServerAdress] = serverAdress;
+      this.Configuration[ServerAddress] = serverAdress;
     }
 
     protected override void ExecuteQuery(params string[] args)

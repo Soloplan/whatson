@@ -17,17 +17,16 @@
     {
       this.observedSubjects = new List<ObservationSubject>();
       this.schedulerThread = new Thread(this.Observe);
+      AppDomain.CurrentDomain.ProcessExit += (e, a) =>
+      {
+        this.Terminate();
+      };
     }
 
     public void Start()
     {
       this.running = true;
       this.schedulerThread.Start();
-    }
-
-    public void Terminate()
-    {
-      this.running = false;
     }
 
     public void Observe(Subject subject, int interval = DefaultPollInterval)
@@ -60,6 +59,11 @@
 
         Thread.Sleep(1000);
       }
+    }
+
+    private void Terminate()
+    {
+      this.running = false;
     }
 
     public class ObservationSubject
