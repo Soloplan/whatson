@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.329
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.whatsON", "Soloplan.whatsON\Soloplan.whatsON.csproj", "{C5EEC17B-E8A9-4CD2-BE0B-491E70D9F511}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Soloplan.WhatsON", "Soloplan.whatsON\Soloplan.WhatsON.csproj", "{C5EEC17B-E8A9-4CD2-BE0B-491E70D9F511}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.WhatsON.CLI", "Soloplan.whatsON.CLI\Soloplan.WhatsON.CLI.csproj", "{26E4594D-FB62-44AF-AE11-7800A2C0789B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{C5EEC17B-E8A9-4CD2-BE0B-491E70D9F511}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C5EEC17B-E8A9-4CD2-BE0B-491E70D9F511}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C5EEC17B-E8A9-4CD2-BE0B-491E70D9F511}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26E4594D-FB62-44AF-AE11-7800A2C0789B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26E4594D-FB62-44AF-AE11-7800A2C0789B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26E4594D-FB62-44AF-AE11-7800A2C0789B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26E4594D-FB62-44AF-AE11-7800A2C0789B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

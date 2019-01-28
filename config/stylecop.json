@@ -1,0 +1,29 @@
+﻿{
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+  "settings": {
+    "indentation": {
+      "indentationSize": 2,
+      "tabSize": 2,
+      "useTabs": false
+    },
+    "orderingRules": {
+      "blankLinesBetweenUsingGroups": "omit"
+    },
+    "namingRules": {
+      "allowedHungarianPrefixes": [
+        "cc",
+        "db",
+        "id",
+        "km",
+        "my",
+        "pe",
+        "ui",
+        "us",
+        "ux",
+        "x",
+        "y",
+        "z"
+      ]
+    }
+  }
+}
