@@ -8,9 +8,8 @@
   public class ServerHealthSubject : ServerSubject
   {
     public ServerHealthSubject(string name, string serverAdress)
-      : base(name)
+      : base(name, serverAdress)
     {
-      this.Configuration[ServerAddress] = serverAdress;
     }
 
     protected override void ExecuteQuery(params string[] args)
@@ -20,22 +19,33 @@
 
       // Create a buffer of 32 bytes of data to be transmitted.
       var buffer = Encoding.ASCII.GetBytes("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-      var reply = ping.Send(this.Adress, 120, buffer, options);
 
-      var state = ObservationState.Unknown;
-      if (reply?.Status == IPStatus.Success)
+      try
       {
-        state = ObservationState.Success;
+        var reply = ping.Send(this.Address, 120, buffer, options);
+
+        var state = ObservationState.Unknown;
+        if (reply?.Status == IPStatus.Success)
+        {
+          state = ObservationState.Success;
+        }
+        else if (reply != null)
+        {
+          state = ObservationState.Failed;
+        }
+
+        var newStatus = new Status(state) { Name = $"Pinging {this.Address}", Time = DateTime.Now };
+        Console.WriteLine(newStatus);
+
+        this.CurrentStatus = newStatus;
       }
-      else if (reply != null)
+      catch (PingException ex)
       {
-        state = ObservationState.Failed;
+        var newStatus = new Status(ObservationState.Failed) { Name = $"{this.Address}: {ex.Message}", Time = DateTime.Now, Detail = ex.InnerException?.Message };
+        Console.WriteLine(newStatus);
+
+        this.CurrentStatus = newStatus;
       }
-
-      var newStatus = new Status(state) { Name = $"Pinging {this.Adress}", Time = DateTime.Now };
-      Console.WriteLine(newStatus);
-
-      this.CurrentStatus = newStatus;
     }
   }
 }

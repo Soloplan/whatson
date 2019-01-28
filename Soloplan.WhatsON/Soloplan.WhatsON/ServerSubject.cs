@@ -12,7 +12,19 @@
     {
     }
 
-    protected string Adress => this.Configuration[ServerAddress];
+    protected ServerSubject(string name, string address)
+      : this(name)
+    {
+      this.Configuration[ServerAddress] = address;
+    }
+
+    protected ServerSubject(string name, string address, string port)
+      : this(name, address)
+    {
+      this.Configuration[ServerPort] = port;
+    }
+
+    protected string Address => this.Configuration[ServerAddress];
 
     protected int Port => int.TryParse(this.Configuration[ServerPort], out var port) ? port : 0;
   }
