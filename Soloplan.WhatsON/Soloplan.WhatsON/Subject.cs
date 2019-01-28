@@ -29,7 +29,15 @@
 
     public int MaxSnapshots { get; set; }
 
-    public abstract void QueryStatus(string[] args);
+    public void QueryStatus(bool snapshot = false, params string[] args)
+    {
+      this.ExecuteQuery(args);
+
+      if (snapshot && this.CurrentStatus != null)
+      {
+        this.AddSnapshot(this.CurrentStatus);
+      }
+    }
 
     public void AddSnapshot(Status status)
     {
@@ -40,5 +48,7 @@
 
       this.snapshots.Enqueue(new Snapshot(status));
     }
+
+    protected abstract void ExecuteQuery(params string[] args);
   }
 }

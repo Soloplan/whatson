@@ -12,5 +12,9 @@
     <OutputPath>..\bin\Release\</OutputPath>
   </PropertyGroup>
 
-  <Import Project="..\..\config\Soloplan.whatsON.targets" />
+  <Import Project="..\..\config\Soloplan.WhatsON.targets" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\Soloplan.WhatsON\Soloplan.WhatsON.csproj" />
+  </ItemGroup>
 </Project>

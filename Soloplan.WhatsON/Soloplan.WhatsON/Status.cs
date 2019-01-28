@@ -5,9 +5,10 @@
 
   public class Status
   {
-    public Status()
+    public Status(ObservationState state)
     {
       this.Properties = new Dictionary<string, string>();
+      this.State = state;
     }
 
     public string Name { get; set; }

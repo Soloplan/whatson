@@ -12,5 +12,5 @@
     <OutputPath>..\bin\Release\</OutputPath>
   </PropertyGroup>
 
-  <Import Project="..\..\config\Soloplan.whatsON.targets" />
+  <Import Project="..\..\config\Soloplan.WhatsON.targets" />
 </Project>
