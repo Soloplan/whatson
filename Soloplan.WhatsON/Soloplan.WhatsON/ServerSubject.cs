@@ -26,6 +26,17 @@
 
     protected string Address => this.Configuration[ServerAddress];
 
-    protected int Port => int.TryParse(this.Configuration[ServerPort], out var port) ? port : 0;
+    protected int Port
+    {
+      get
+      {
+        if (this.Configuration.TryGetValue(ServerPort, out var p))
+        {
+          return int.TryParse(p, out var port) ? port : 0;
+        }
+
+        return 0;
+      }
+    }
   }
 }

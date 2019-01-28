@@ -1,6 +1,7 @@
 ﻿namespace Soloplan.WhatsON
 {
   using System.Collections.Generic;
+  using System.Text;
 
   public abstract class Subject
   {
@@ -14,21 +15,19 @@
       this.Name = name;
     }
 
-    public string Type => this.GetType().Name;
-
-    public string Name { get; }
+    public string Name { get; set; }
 
     public string Description { get; set; }
 
     public string Category { get; set; }
 
-    public IDictionary<string, string> Configuration { get; }
+    public IDictionary<string, string> Configuration { get; set; }
 
-    public Status CurrentStatus { get; protected set; }
+    public Status CurrentStatus { get; set; }
 
     public int MaxSnapshots { get; set; }
 
-    public Queue<Snapshot> Snapshots { get; }
+    public Queue<Snapshot> Snapshots { get; set;  }
 
     public void QueryStatus(params string[] args)
     {
@@ -48,6 +47,25 @@
       }
 
       this.Snapshots.Enqueue(new Snapshot(status));
+    }
+
+    public override string ToString()
+    {
+      var sb = new StringBuilder(this.Name);
+      if (!string.IsNullOrWhiteSpace(this.Description))
+      {
+        sb.Append(" - ");
+        sb.Append(this.Description);
+      }
+
+      if (this.CurrentStatus != null)
+      {
+        sb.Append(" (");
+        sb.Append(this.CurrentStatus);
+        sb.Append(")");
+      }
+
+      return sb.ToString();
     }
 
     protected abstract void ExecuteQuery(params string[] args);

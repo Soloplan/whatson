@@ -4,10 +4,10 @@
   using System.Net.NetworkInformation;
   using System.Text;
 
-  [SubjectType("Server Health Check", Description = "Subjects of this type ping a specified server and return a state that depends on the ping reply.")]
-  public class ServerHealthSubject : ServerSubject
+  [SubjectType("Server Health Check", Description = "Ping a server and return the state depending on the reply.")]
+  public class ServerHealth : ServerSubject
   {
-    public ServerHealthSubject(string name, string serverAdress)
+    public ServerHealth(string name, string serverAdress)
       : base(name, serverAdress)
     {
     }
@@ -34,7 +34,7 @@
           state = ObservationState.Failed;
         }
 
-        var newStatus = new Status(state) { Name = $"Pinging {this.Address}", Time = DateTime.Now };
+        var newStatus = new Status(state) { Name = $"Pinging {this.Address} ({reply.RoundtripTime}ms)", Time = DateTime.Now };
         Console.WriteLine(newStatus);
 
         this.CurrentStatus = newStatus;

@@ -4,13 +4,13 @@
   using System.IO;
   using System.Net;
 
-  [SubjectType("Jenkins Build Job Status", Description = "Subjects of this type retrieve the current status of a Jenkins build job.")]
+  [SubjectType("Jenkins Build Job Status", Description = "Retrieve the current status of a Jenkins build job.")]
   [ConfigurationItem(JobName, typeof(string))]
-  public class JenkinsBuildJobSubject : ServerSubject
+  public class JenkinsBuildJob : ServerSubject
   {
     public const string JobName = "JobName";
 
-    public JenkinsBuildJobSubject(string serverAdress, string jobName, string serverPort = null, string name = null)
+    public JenkinsBuildJob(string serverAdress, string jobName, string serverPort = null, string name = null)
       : base(name ?? jobName, serverAdress, serverPort)
     {
       this.Configuration[JobName] = jobName;
@@ -21,7 +21,7 @@
     protected override void ExecuteQuery(params string[] args)
     {
       // TODO: check out the available .NET wrapper NuGets for the Jenkins WebAPI
-      // There are a lot of them, but none seems to be the standard way to go. 
+      // There are a lot of them, but none seems to be the standard way to go.
       // Maybe it's best to directly talk to the WebAPI because we possibly don't need a lot of functionality 
       WebRequest request = WebRequest.Create($"{this.Address}/job/{this.Job}/lastBuild/api/json?tree=result,timestamp,estimatedDuration");
 

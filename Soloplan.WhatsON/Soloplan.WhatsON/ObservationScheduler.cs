@@ -51,9 +51,10 @@
       {
         foreach (var subject in this.observedSubjects)
         {
-          if (subject.Subject.CurrentStatus == null || DateTime.Now - subject.Subject.CurrentStatus.Time > subject.Interval)
+          if (subject.LastPoll == null || DateTime.Now - subject.LastPoll > subject.Interval)
           {
             subject.Subject.QueryStatus();
+            subject.LastPoll = DateTime.Now;
           }
         }
 
@@ -77,6 +78,8 @@
       public Subject Subject { get; }
 
       public TimeSpan Interval { get; }
+
+      public DateTime LastPoll { get; set; }
     }
   }
 }

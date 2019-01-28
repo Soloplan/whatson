@@ -3,10 +3,10 @@
   using System;
   using System.Collections.Generic;
 
-  public class ServerHealthSubjectPlugin : SubjectPlugin
+  public class ServerHealthPlugin : SubjectPlugin
   {
-    public ServerHealthSubjectPlugin()
-      : base(typeof(ServerHealthSubject))
+    public ServerHealthPlugin()
+      : base(typeof(ServerHealth))
     {
     }
 
@@ -18,7 +18,7 @@
         return null;
       }
 
-      return new ServerHealthSubject(name, address);
+      return new ServerHealth(name, address);
     }
   }
 }

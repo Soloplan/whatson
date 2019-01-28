@@ -4,10 +4,10 @@ namespace Soloplan.WhatsON.Jenkins
   using System;
   using System.Collections.Generic;
 
-  public class JenkinsBuildJobSubjectPlugin : SubjectPlugin
+  public class JenkinsBuildJobPlugin : SubjectPlugin
   {
-    public JenkinsBuildJobSubjectPlugin()
-      : base(typeof(JenkinsBuildJobSubject))
+    public JenkinsBuildJobPlugin()
+      : base(typeof(JenkinsBuildJob))
     {
     }
 
@@ -19,7 +19,7 @@ namespace Soloplan.WhatsON.Jenkins
         return null;
       }
 
-      var jobName = configuration[JenkinsBuildJobSubject.JobName];
+      var jobName = configuration[JenkinsBuildJob.JobName];
       if (string.IsNullOrWhiteSpace(jobName))
       {
         return null;
@@ -31,7 +31,7 @@ namespace Soloplan.WhatsON.Jenkins
         port = p;
       }
 
-      return new JenkinsBuildJobSubject(address, jobName, serverPort: port, name: name);
+      return new JenkinsBuildJob(address, jobName, serverPort: port, name: name);
     }
   }
 }

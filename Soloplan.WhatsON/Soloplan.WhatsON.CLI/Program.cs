@@ -6,6 +6,7 @@ namespace Soloplan.WhatsON.CLI
   using System.Linq;
   using System.Reflection;
   using System.Threading;
+  using CommandLine;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Jenkins;
   using Soloplan.WhatsON.Serialization;
@@ -13,37 +14,93 @@ namespace Soloplan.WhatsON.CLI
 
   class Program
   {
+    private static List<ISubjectPlugin> plugins;
+
     static void Main(string[] args)
     {
-      // basic test for loading SubjectFactories from other assemblies
-      var factories = PluginFinder.FindAllSubjectPlugins("Soloplan.WhatsON.ServerHealth.dll", "Soloplan.WhatsON.Jenkins.dll").ToList();
-      foreach (var factory in factories)
+      var results = Parser.Default.ParseArguments<Options>(args);
+      if (results.Tag == ParserResultType.NotParsed || !(results is Parsed<Options> parsed))
       {
-        if (factory.SubjectType == null)
+        Console.ReadKey();
+        return;
+      }
+
+      var options = parsed.Value;
+
+      LoadPlugins();
+
+      switch (options.Command)
+      {
+#if DEBUG
+        case "dummy":
+          CreateDummyData();
+          break;
+#endif
+        case "ls":
+          ListConfiguredSubjects();
+          break;
+      }
+
+      Console.ReadKey();
+      System.Environment.Exit(0);
+    }
+
+    private static void ListConfiguredSubjects()
+    {
+      var config = SerializationHelper.LoadConfiguration();
+
+      Console.WriteLine("Configured observation subjects:");
+      Console.ForegroundColor = ConsoleColor.DarkGray;
+      foreach (var subject in config.Subjects)
+      {
+        Console.WriteLine($"  {subject}");
+      }
+
+      Console.BackgroundColor = ConsoleColor.White;
+    }
+
+    private static void LoadPlugins()
+    {
+      Console.WriteLine("Searching available plugins...");
+      Console.ForegroundColor = ConsoleColor.DarkGray;
+      // basic test for loading SubjectFactories from other assemblies
+      var found = PluginFinder.FindAllSubjectPlugins("Soloplan.WhatsON.ServerHealth.dll", "Soloplan.WhatsON.Jenkins.dll");
+      plugins = new List<ISubjectPlugin>();
+      foreach (var plugin in found)
+      {
+        if (plugin.SubjectType == null)
         {
           continue;
         }
 
-        var typeDesc = factory.SubjectTypeAttribute;
+        var typeDesc = plugin.SubjectTypeAttribute;
         if (typeDesc == null)
         {
           continue;
         }
 
-        Console.WriteLine($"Found subject factory: {typeDesc.Name} - {typeDesc.Description}");
+        Console.WriteLine($"  Found: {typeDesc.Name} - {typeDesc.Description}");
+        plugins.Add(plugin);
       }
 
-      var healthFactory = factories.FirstOrDefault(x => x is ServerHealthSubjectPlugin);
-      var jenkinsFactory = factories.FirstOrDefault(x => x is JenkinsBuildJobSubjectPlugin);
+      Console.WriteLine();
+      Console.ForegroundColor = ConsoleColor.Gray;
+    }
 
-      var subject = healthFactory?.CreateNew("Build", new Dictionary<string, string> { [ServerSubject.ServerAddress] = "build.soloplan.de", });
-      var subject2 = healthFactory?.CreateNew("Swarm", new Dictionary<string, string> { [ServerSubject.ServerAddress] = "swarm.soloplan.de", });
-      var subject3 = healthFactory?.CreateNew("Artifacts", new Dictionary<string, string> { [ServerSubject.ServerAddress] = "artifacts.soloplan.de", });
+    private static void CreateDummyData()
+    {
+      // create some dummy data for the configuration
+      var healthFactory = plugins.FirstOrDefault(x => x is ServerHealthPlugin);
+      var jenkinsFactory = plugins.FirstOrDefault(x => x is JenkinsBuildJobPlugin);
+
+      var subject = healthFactory?.CreateNew("Google", new Dictionary<string, string> { [ServerSubject.ServerAddress] = "google.com", });
+      var subject2 = healthFactory?.CreateNew("Soloplan", new Dictionary<string, string> { [ServerSubject.ServerAddress] = "soloplan.de", });
+      var subject3 = healthFactory?.CreateNew("GitHub", new Dictionary<string, string> { [ServerSubject.ServerAddress] = "github.com", });
 
       var jenkinsParameters = new Dictionary<string, string>
       {
         [ServerSubject.ServerAddress] = "https://jenkins.mono-project.com",
-        [JenkinsBuildJobSubject.JobName] = "test-mono-pipeline",
+        [JenkinsBuildJob.JobName] = "test-mono-pipeline",
       };
 
       // test jenkins api of publically available jenkins
@@ -54,9 +111,9 @@ namespace Soloplan.WhatsON.CLI
       if (subject != null)
       {
         scheduler.Observe(subject);
-        //scheduler.Observe(subject2);
-        //scheduler.Observe(subject3);
-        scheduler.Observe(subjectJenkins);
+        scheduler.Observe(subject2);
+        scheduler.Observe(subject3);
+        scheduler.Observe(subjectJenkins, 10);
       }
 
       scheduler.Start();
@@ -68,11 +125,7 @@ namespace Soloplan.WhatsON.CLI
       config.Subjects.Add(subject2);
       config.Subjects.Add(subject3);
       config.Subjects.Add(subjectJenkins);
-
       SerializationHelper.SaveConfiguration(config);
-
-      Thread.Sleep(20000);
-      Console.ReadKey();
     }
   }
 }
