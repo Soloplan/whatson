@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.329
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Soloplan.WhatsON", "Soloplan.whatsON\Soloplan.WhatsON.csproj", "{C5EEC17B-E8A9-4CD2-BE0B-491E70D9F511}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Soloplan.WhatsON", "Soloplan.WhatsON\Soloplan.WhatsON.csproj", "{C5EEC17B-E8A9-4CD2-BE0B-491E70D9F511}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.WhatsON.CLI", "Soloplan.whatsON.CLI\Soloplan.WhatsON.CLI.csproj", "{26E4594D-FB62-44AF-AE11-7800A2C0789B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.WhatsON.CLI", "Soloplan.WhatsON.CLI\Soloplan.WhatsON.CLI.csproj", "{26E4594D-FB62-44AF-AE11-7800A2C0789B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.WhatsON.ServerHealth", "Soloplan.WhatsON.ServerHealth\Soloplan.WhatsON.ServerHealth.csproj", "{1EFDF62C-568C-49BA-8D1D-3B0B05945271}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,12 +23,13 @@ Global
 		{26E4594D-FB62-44AF-AE11-7800A2C0789B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26E4594D-FB62-44AF-AE11-7800A2C0789B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26E4594D-FB62-44AF-AE11-7800A2C0789B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EFDF62C-568C-49BA-8D1D-3B0B05945271}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EFDF62C-568C-49BA-8D1D-3B0B05945271}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EFDF62C-568C-49BA-8D1D-3B0B05945271}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EFDF62C-568C-49BA-8D1D-3B0B05945271}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {12F1FD28-C3DA-4E79-B1AB-CBD4EE7F10C3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {12F1FD28-C3DA-4E79-B1AB-CBD4EE7F10C3}

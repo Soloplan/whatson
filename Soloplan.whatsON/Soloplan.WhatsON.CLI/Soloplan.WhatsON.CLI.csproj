@@ -44,7 +44,11 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Soloplan.whatsON\Soloplan.WhatsON.csproj">
+    <ProjectReference Include="..\Soloplan.WhatsON.ServerHealth\Soloplan.WhatsON.ServerHealth.csproj">
+      <Project>{1efdf62c-568c-49ba-8d1d-3b0b05945271}</Project>
+      <Name>Soloplan.WhatsON.ServerHealth</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Soloplan.WhatsON\Soloplan.WhatsON.csproj">
       <Project>{c5eec17b-e8a9-4cd2-be0b-491e70d9f511}</Project>
       <Name>Soloplan.WhatsON</Name>
     </ProjectReference>
