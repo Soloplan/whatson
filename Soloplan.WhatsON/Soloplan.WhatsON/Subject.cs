@@ -60,9 +60,8 @@
 
       if (this.CurrentStatus != null)
       {
-        sb.Append(" (");
+        sb.Append(": ");
         sb.Append(this.CurrentStatus);
-        sb.Append(")");
       }
 
       return sb.ToString();

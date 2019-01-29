@@ -4,6 +4,7 @@
   using System.Collections.Generic;
   using System.Linq;
   using System.Threading;
+  using System.Threading.Tasks;
 
   public class ObservationScheduler
   {
@@ -22,6 +23,8 @@
         this.Terminate();
       };
     }
+
+    public event EventHandler<Subject> StatusQueried;
 
     public void Start()
     {
@@ -49,14 +52,16 @@
     {
       while (this.running)
       {
-        foreach (var subject in this.observedSubjects)
+        Parallel.ForEach(this.observedSubjects, subject =>
         {
-          if (subject.LastPoll == null || DateTime.Now - subject.LastPoll > subject.Interval)
+          if (DateTime.Now - subject.LastPoll > subject.Interval)
           {
             subject.Subject.QueryStatus();
             subject.LastPoll = DateTime.Now;
+
+            this.StatusQueried?.Invoke(this, subject.Subject);
           }
-        }
+        });
 
         Thread.Sleep(1000);
       }

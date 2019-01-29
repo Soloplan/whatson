@@ -21,7 +21,10 @@
     protected ServerSubject(string name, string address, string port)
       : this(name, address)
     {
-      this.Configuration[ServerPort] = port;
+      if (!string.IsNullOrWhiteSpace(port))
+      {
+        this.Configuration[ServerPort] = port;
+      }
     }
 
     protected string Address => this.Configuration[ServerAddress];

@@ -2,9 +2,7 @@ namespace Soloplan.WhatsON.CLI
 {
   using System;
   using System.Collections.Generic;
-  using System.IO;
   using System.Linq;
-  using System.Reflection;
   using System.Threading;
   using CommandLine;
   using Soloplan.WhatsON.Composition;
@@ -12,11 +10,12 @@ namespace Soloplan.WhatsON.CLI
   using Soloplan.WhatsON.Serialization;
   using Soloplan.WhatsON.ServerHealth;
 
-  class Program
+  public class Program
   {
     private static List<ISubjectPlugin> plugins;
+    private static readonly object lockObj = new object();
 
-    static void Main(string[] args)
+    public static void Main(string[] args)
     {
       var results = Parser.Default.ParseArguments<Options>(args);
       if (results.Tag == ParserResultType.NotParsed || !(results is Parsed<Options> parsed))
@@ -39,13 +38,28 @@ namespace Soloplan.WhatsON.CLI
         case "ls":
           ListConfiguredSubjects();
           break;
+        case "observe":
+          ObserveConfiguredSubjects();
+          break;
       }
 
       Console.ReadKey();
       System.Environment.Exit(0);
     }
 
-    private static void ListConfiguredSubjects()
+    private static void ObserveConfiguredSubjects()
+    {
+      var config = ListConfiguredSubjects();
+      var scheduler = PrepareScheduler();
+      foreach (var subject in config.Subjects)
+      {
+        scheduler.Observe(subject);
+      }
+
+      scheduler.Start();
+    }
+
+    private static Configuration ListConfiguredSubjects()
     {
       var config = SerializationHelper.LoadConfiguration();
 
@@ -53,16 +67,19 @@ namespace Soloplan.WhatsON.CLI
       Console.ForegroundColor = ConsoleColor.DarkGray;
       foreach (var subject in config.Subjects)
       {
-        Console.WriteLine($"  {subject}");
+        Console.WriteLine($"  {subject.Name}");
       }
 
-      Console.BackgroundColor = ConsoleColor.White;
+      Console.ForegroundColor = ConsoleColor.Gray;
+      Console.WriteLine();
+      return config;
     }
 
     private static void LoadPlugins()
     {
       Console.WriteLine("Searching available plugins...");
       Console.ForegroundColor = ConsoleColor.DarkGray;
+
       // basic test for loading SubjectFactories from other assemblies
       var found = PluginFinder.FindAllSubjectPlugins("Soloplan.WhatsON.ServerHealth.dll", "Soloplan.WhatsON.Jenkins.dll");
       plugins = new List<ISubjectPlugin>();
@@ -106,8 +123,7 @@ namespace Soloplan.WhatsON.CLI
       // test jenkins api of publically available jenkins
       var subjectJenkins = jenkinsFactory?.CreateNew("Test Mono Pipeline", jenkinsParameters);
 
-      // initialize the scheduler a
-      var scheduler = new ObservationScheduler();
+      var scheduler = PrepareScheduler();
       if (subject != null)
       {
         scheduler.Observe(subject);
@@ -118,6 +134,7 @@ namespace Soloplan.WhatsON.CLI
 
       scheduler.Start();
 
+      // make sure to wait a bit so that we get the first status for each subject
       Thread.Sleep(10000);
 
       var config = new Configuration();
@@ -126,6 +143,45 @@ namespace Soloplan.WhatsON.CLI
       config.Subjects.Add(subject3);
       config.Subjects.Add(subjectJenkins);
       SerializationHelper.SaveConfiguration(config);
+    }
+
+    private static ObservationScheduler PrepareScheduler()
+    {
+      var scheduler = new ObservationScheduler();
+      scheduler.StatusQueried += (s, sub) =>
+      {
+        lock (lockObj)
+        {
+          if (sub.CurrentStatus != null)
+          {
+            Console.Write($"{sub.Name} [{sub.CurrentStatus.Time}]: {sub.CurrentStatus.Name} - ");
+            var stateColor = ConsoleColor.DarkMagenta;
+            switch (sub.CurrentStatus.State)
+            {
+              case ObservationState.Success:
+                stateColor = ConsoleColor.DarkGreen;
+                break;
+              case ObservationState.Unstable:
+                stateColor = ConsoleColor.DarkYellow;
+                break;
+              case ObservationState.Failed:
+                stateColor = ConsoleColor.DarkRed;
+                break;
+            }
+
+            Console.ForegroundColor = stateColor;
+            Console.Write($"{sub.CurrentStatus.State}\n");
+          }
+          else
+          {
+            Console.WriteLine(sub);
+          }
+
+          Console.ForegroundColor = ConsoleColor.Gray;
+        }
+      };
+
+      return scheduler;
     }
   }
 }

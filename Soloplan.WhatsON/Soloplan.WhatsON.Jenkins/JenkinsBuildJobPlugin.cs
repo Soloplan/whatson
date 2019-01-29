@@ -1,7 +1,5 @@
-﻿
-namespace Soloplan.WhatsON.Jenkins
+﻿namespace Soloplan.WhatsON.Jenkins
 {
-  using System;
   using System.Collections.Generic;
 
   public class JenkinsBuildJobPlugin : SubjectPlugin

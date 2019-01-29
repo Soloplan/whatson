@@ -9,7 +9,7 @@
 
     public static void Save<T>(T subject, string file)
     {
-      JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto, Formatting = Formatting.Indented };
+      var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto, NullValueHandling = NullValueHandling.Ignore,  Formatting = Formatting.Indented };
       var json = JsonConvert.SerializeObject(subject, settings);
       File.WriteAllText(file, json);
     }
