@@ -26,6 +26,10 @@
 
     public event EventHandler<Subject> StatusQueried;
 
+    public event EventHandler ObservationRunStarted;
+
+    public event EventHandler ObservationRunEnded;
+
     public void Start()
     {
       this.running = true;
@@ -52,16 +56,20 @@
     {
       while (this.running)
       {
-        Parallel.ForEach(this.observedSubjects, subject =>
+        var requiredPollSubjects = this.observedSubjects.Where(x => DateTime.Now - x.LastPoll > x.Interval).ToList();
+        if (requiredPollSubjects.Count > 0)
         {
-          if (DateTime.Now - subject.LastPoll > subject.Interval)
+          this.ObservationRunStarted?.Invoke(this, EventArgs.Empty);
+          Parallel.ForEach(requiredPollSubjects, subject =>
           {
             subject.Subject.QueryStatus();
             subject.LastPoll = DateTime.Now;
 
             this.StatusQueried?.Invoke(this, subject.Subject);
-          }
-        });
+          });
+
+          this.ObservationRunEnded?.Invoke(this, EventArgs.Empty);
+        }
 
         Thread.Sleep(1000);
       }

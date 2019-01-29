@@ -31,7 +31,7 @@
         }
         else if (reply != null)
         {
-          state = ObservationState.Failed;
+          state = ObservationState.Failure;
         }
 
         var newStatus = new Status(state) { Name = $"Pinging {this.Address} ({reply?.RoundtripTime}ms)", Time = DateTime.Now };
@@ -39,7 +39,7 @@
       }
       catch (PingException ex)
       {
-        var newStatus = new Status(ObservationState.Failed) { Name = $"{this.Address}: {ex.Message}", Time = DateTime.Now, Detail = ex.InnerException?.Message };
+        var newStatus = new Status(ObservationState.Failure) { Name = $"{this.Address}: {ex.Message}", Time = DateTime.Now, Detail = ex.InnerException?.Message };
         this.CurrentStatus = newStatus;
       }
     }

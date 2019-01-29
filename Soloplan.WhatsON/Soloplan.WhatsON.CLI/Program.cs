@@ -12,8 +12,8 @@ namespace Soloplan.WhatsON.CLI
 
   public class Program
   {
-    private static List<ISubjectPlugin> plugins;
     private static readonly object lockObj = new object();
+    private static List<ISubjectPlugin> plugins;
 
     public static void Main(string[] args)
     {
@@ -108,7 +108,7 @@ namespace Soloplan.WhatsON.CLI
     {
       // create some dummy data for the configuration
       var healthFactory = plugins.FirstOrDefault(x => x is ServerHealthPlugin);
-      var jenkinsFactory = plugins.FirstOrDefault(x => x is JenkinsBuildJobPlugin);
+      var jenkinsFactory = plugins.FirstOrDefault(x => x is JenkinsProjectPlugin);
 
       var subject = healthFactory?.CreateNew("Google", new Dictionary<string, string> { [ServerSubject.ServerAddress] = "google.com", });
       var subject2 = healthFactory?.CreateNew("Soloplan", new Dictionary<string, string> { [ServerSubject.ServerAddress] = "soloplan.de", });
@@ -117,7 +117,7 @@ namespace Soloplan.WhatsON.CLI
       var jenkinsParameters = new Dictionary<string, string>
       {
         [ServerSubject.ServerAddress] = "https://jenkins.mono-project.com",
-        [JenkinsBuildJob.JobName] = "test-mono-pipeline",
+        [JenkinsProject.ProjectName] = "test-mono-pipeline",
       };
 
       // test jenkins api of publically available jenkins
@@ -148,6 +148,11 @@ namespace Soloplan.WhatsON.CLI
     private static ObservationScheduler PrepareScheduler()
     {
       var scheduler = new ObservationScheduler();
+      scheduler.ObservationRunStarted += (s, e) =>
+      {
+        Console.WriteLine();
+      };
+
       scheduler.StatusQueried += (s, sub) =>
       {
         lock (lockObj)
@@ -164,8 +169,11 @@ namespace Soloplan.WhatsON.CLI
               case ObservationState.Unstable:
                 stateColor = ConsoleColor.DarkYellow;
                 break;
-              case ObservationState.Failed:
+              case ObservationState.Failure:
                 stateColor = ConsoleColor.DarkRed;
+                break;
+              case ObservationState.Running:
+                stateColor = ConsoleColor.DarkCyan;
                 break;
             }
 

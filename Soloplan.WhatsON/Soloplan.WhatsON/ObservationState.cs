@@ -4,7 +4,8 @@
   {
     Unknown = 0,
     Unstable = 1,
-    Failed = 2,
-    Success = 3
+    Failure = 2,
+    Success = 3,
+    Running = 4,
   }
 }

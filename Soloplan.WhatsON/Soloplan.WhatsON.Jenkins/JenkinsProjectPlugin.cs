@@ -2,10 +2,10 @@
 {
   using System.Collections.Generic;
 
-  public class JenkinsBuildJobPlugin : SubjectPlugin
+  public class JenkinsProjectPlugin : SubjectPlugin
   {
-    public JenkinsBuildJobPlugin()
-      : base(typeof(JenkinsBuildJob))
+    public JenkinsProjectPlugin()
+      : base(typeof(JenkinsProject))
     {
     }
 
@@ -17,7 +17,7 @@
         return null;
       }
 
-      var jobName = configuration[JenkinsBuildJob.JobName];
+      var jobName = configuration[JenkinsProject.ProjectName];
       if (string.IsNullOrWhiteSpace(jobName))
       {
         return null;
@@ -29,7 +29,7 @@
         port = p;
       }
 
-      return new JenkinsBuildJob(address, jobName, serverPort: port, name: name);
+      return new JenkinsProject(address, jobName, serverPort: port, name: name);
     }
   }
 }
