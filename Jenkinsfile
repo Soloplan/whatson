@@ -24,7 +24,7 @@ pipeline {
   post {
     success {
       stepArchiveArtifacts()
-      stepPublishArtifacts(bucket: "whatson-${env.JOB_NAME}")
+      stepPublishArtifacts(bucket: "whatson-${env.JOB_BASE_NAME}")
     }
   }
 }
