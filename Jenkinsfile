@@ -16,7 +16,7 @@ pipeline {
 
     stage('Build') {
       steps {
-        stepMSBuild(solution: 'src/Soloplan.WhatsON.sln')
+        stepMSBuild(project: 'src/Soloplan.WhatsON.sln')
       }
     }
   }
