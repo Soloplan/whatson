@@ -21,9 +21,6 @@
       foreach (var configAttribute in subjectConfigAttributes)
       {
         var configItem = subject.Configuration.FirstOrDefault(ci => ci.Key == configAttribute.Key);
-        var labelControl = new Label();
-        labelControl.Content = configAttribute.Key + ":";
-
         var builder = ConfigControlBuilderFactory.Instance.GetControlBuilder(configAttribute.Type);
         if (builder == null)
         {
@@ -32,8 +29,6 @@
         }
 
         var editor = builder.GetControl(configItem, configAttribute);
-
-        this.StackPanel.Children.Add(labelControl);
         this.StackPanel.Children.Add(editor);
       }
     }

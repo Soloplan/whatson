@@ -4,14 +4,59 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Config"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       mc:Ignorable="d" 
       d:DesignHeight="450"
-      Title="SubjectsPage" MinWidth="300">
+      Title="SubjectsPage" MinWidth="300"
+      TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+      Background="{DynamicResource MaterialDesignPaper}"
+      TextElement.FontWeight="Medium"
+      TextElement.FontSize="14"
+      FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
+  <Page.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </Page.Resources>
 
   <Grid Margin="0">
+    <materialDesign:PopupBox
+      Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}"
+      PlacementMode="TopAndAlignCentres"
+      ToolTip="Add new subject"
+      Panel.ZIndex="2" Margin="0,0,10,10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="56">
+      <materialDesign:PopupBox.ToggleCheckedContent>
+        <materialDesign:PackIcon
+          Kind="Add"
+          Width="24"
+          Height="24" />
+      </materialDesign:PopupBox.ToggleCheckedContent>
+      <StackPanel>
+        <Button
+          ToolTip="Rename subject">
+          <materialDesign:PackIcon
+            Kind="Edit"
+            Width="24"
+            Height="24" />
+        </Button>
+        <Button
+          ToolTip="Delete subject">
+          <materialDesign:PackIcon
+            Kind="RemoveCircle"
+            Width="24"
+            Height="24" />
+        </Button>
+      </StackPanel>
+    </materialDesign:PopupBox>
+    
     <DockPanel>
-      <ComboBox x:Name="uxSubjects" Height="23" DockPanel.Dock="Top" SelectionChanged="UxSubjectsSelectionChanged"/>
-      <Frame x:Name="uxSubjectFrame" Content="Frame" DockPanel.Dock="Bottom"/>
+      <materialDesign:ColorZone Mode="PrimaryLight" DockPanel.Dock="Top" Padding="8 4 8 4">
+        <ComboBox x:Name="uxSubjects" Height="28" SelectionChanged="UxSubjectsSelectionChanged" Cursor="Hand"/>
+      </materialDesign:ColorZone>
+
+      <Frame x:Name="uxSubjectFrame" Content="Frame" />
     </DockPanel>
   </Grid>
 </Page>

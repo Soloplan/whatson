@@ -69,6 +69,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Config\MainConfigPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Config\SubjectConfigPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -90,6 +94,9 @@
       <DependentUpon>ConfigWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Config\IConfigControlBuilder.cs" />
+    <Compile Include="Config\MainConfigPage.xaml.cs">
+      <DependentUpon>MainConfigPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Config\NumericConfigControlBuilder.cs" />
     <Compile Include="Config\SubjectConfigPage.xaml.cs">
       <DependentUpon>SubjectConfigPage.xaml</DependentUpon>

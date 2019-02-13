@@ -4,16 +4,26 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Config"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         x:Class="Soloplan.WhatsON.GUI.Config.ConfigWindow"
         mc:Ignorable="d"
-        Title="ConfigWindow" Height="450" Width="368.908" MinWidth="550">
+        Title="ConfigWindow" Height="450" Width="368.908" MinWidth="550"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.FontWeight="Medium"
+        TextElement.FontSize="14"
+        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
   <Grid>
     <DockPanel Margin="5">
-      <ListBox SelectionChanged="ListBoxSelectionChanged" Width="158" Padding="5">
-        <ListBoxItem Content="Subjects"/>
-      </ListBox>
-      <Frame x:Name="ConfigFrame" Content="Frame" NavigationUIVisibility="Hidden" DockPanel.Dock="Right" Margin="5,0,5,5">
-      </Frame>
+
+      <materialDesign:ColorZone Mode="Light">
+        <ListBox x:Name="ConfigTopicsListBox" SelectionChanged="ListBoxSelectionChanged" Width="158" Padding="5" Cursor="Hand">
+          <ListBoxItem Content="Main" Tag="{x:Static local:ConfigWindow.MainListItemTag}"/>
+          <ListBoxItem Content="Subjects" Tag="{x:Static local:ConfigWindow.SubjectsListItemTag}"/>
+        </ListBox>
+      </materialDesign:ColorZone>
+
+      <Frame x:Name="ConfigFrame" Content="Frame" NavigationUIVisibility="Hidden" DockPanel.Dock="Right" Margin="5,0,5,5"/>
 
     </DockPanel>
   </Grid>

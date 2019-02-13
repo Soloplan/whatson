@@ -4,12 +4,20 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Config"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       x:Class="Soloplan.WhatsON.GUI.Config.ServerHealthPage"
       mc:Ignorable="d" 
       d:DesignHeight="450"
-      Title="ServerHealthPage">
+      Title="ServerHealthPage"
+      TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+      Background="{DynamicResource MaterialDesignPaper}"
+      TextElement.FontWeight="Medium"
+      TextElement.FontSize="14"
+      FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
 
   <Grid x:Name="MainGrid">
-    <StackPanel x:Name="StackPanel" Margin="5" MinWidth="300"/>
+    <materialDesign:ColorZone Mode="Standard" CornerRadius="5" Margin="5">
+      <StackPanel x:Name="StackPanel" MinWidth="300"/>
+    </materialDesign:ColorZone>
   </Grid>
 </Page>

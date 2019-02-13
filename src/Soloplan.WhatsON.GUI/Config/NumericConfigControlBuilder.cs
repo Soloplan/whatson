@@ -10,18 +10,17 @@ namespace Soloplan.WhatsON.GUI.Config
   using System.Text.RegularExpressions;
   using System.Windows;
   using System.Windows.Controls;
+  using MaterialDesignThemes.Wpf;
 
-  public class NumericConfigControlBuilder : IConfigControlBuilder
+  public class NumericConfigControlBuilder : TextConfigControlBuilder
   {
-    public Control GetControl(KeyValuePair<string, string> configItem, ConfigurationItemAttribute configItemAttribute)
+    public override Control GetControl(KeyValuePair<string, string> configItem, ConfigurationItemAttribute configItemAttribute)
     {
-      var textBox = new TextBox();
-      textBox.Tag = configItemAttribute.Key;
-      textBox.PreviewTextInput += this.NumberValidationTextBox;
-      textBox.Text = configItem.Value;
-      textBox.Width = 150;
-      textBox.HorizontalAlignment = HorizontalAlignment.Left;
-      return textBox;
+      var numericTextBox = base.GetControl(configItem, configItemAttribute);
+      numericTextBox.PreviewTextInput += this.NumberValidationTextBox;
+      numericTextBox.Width = 150;
+      numericTextBox.HorizontalAlignment = HorizontalAlignment.Left;
+      return numericTextBox;
     }
 
     private void NumberValidationTextBox(object sender, System.Windows.Input.TextCompositionEventArgs e)
