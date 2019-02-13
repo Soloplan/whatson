@@ -5,9 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Soloplan.WhatsON.GUI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-    <Button Content="Open config" HorizontalAlignment="Left" Margin="27,10,0,0" VerticalAlignment="Top" Width="75" Click="OpenConfig"/>
-
+        Title="MainWindow" Height="450" Width="800"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.FontWeight="Medium"
+        TextElement.FontSize="14"
+        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
+  <Grid>
+    <Button Content="Open config" HorizontalAlignment="Left" Margin="27,10,0,0" VerticalAlignment="Top" Width="119" Click="OpenConfig"/>
   </Grid>
 </Window>
