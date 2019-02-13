@@ -7,6 +7,7 @@
 namespace Soloplan.WhatsON.GUI
 {
   using System.Windows;
+  using Soloplan.WhatsON.GUI.Config;
   using Soloplan.WhatsON.Serialization;
 
   /// <summary>
@@ -27,7 +28,8 @@ namespace Soloplan.WhatsON.GUI
 
     private void OpenConfig(object sender, RoutedEventArgs e)
     {
-      // TODO
+      var configWindow = new ConfigWindow(this.config);
+      configWindow.ShowDialog();
     }
   }
 }
