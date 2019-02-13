@@ -1,4 +1,4 @@
-﻿namespace Soloplan.WhatsON.Jenkins
+﻿namespace Soloplan.WhatsON.ServerBase
 {
   public static class SubjectExtensions
   {
@@ -10,11 +10,6 @@
     public static string GetPort(this ServerSubject project)
     {
       return project.Configuration[ServerSubject.ServerPort];
-    }
-
-    public static string GetProject(this JenkinsProject project)
-    {
-      return project.Configuration[JenkinsProject.ProjectName];
     }
   }
 }

@@ -1,4 +1,4 @@
-﻿namespace Soloplan.WhatsON
+﻿namespace Soloplan.WhatsON.ServerBase
 {
   [ConfigurationItem(ServerAddress, typeof(string))]
   [ConfigurationItem(ServerPort, typeof(int))]

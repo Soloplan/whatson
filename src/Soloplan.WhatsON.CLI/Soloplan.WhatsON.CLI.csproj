@@ -49,6 +49,10 @@
       <Project>{ed2ae201-2f23-44d3-a98a-cedb0f2c6003}</Project>
       <Name>Soloplan.WhatsON.Jenkins</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Soloplan.WhatsON.ServerBase\Soloplan.WhatsON.ServerBase.csproj">
+      <Project>{4FF2C930-A740-4323-B63F-0D7B773E4355}</Project>
+      <Name>Soloplan.WhatsON.ServerBase</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Soloplan.WhatsON.ServerHealth\Soloplan.WhatsON.ServerHealth.csproj">
       <Project>{1efdf62c-568c-49ba-8d1d-3b0b05945271}</Project>
       <Name>Soloplan.WhatsON.ServerHealth</Name>

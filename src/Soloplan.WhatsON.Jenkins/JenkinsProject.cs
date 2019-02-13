@@ -2,6 +2,7 @@
 {
   using System;
   using Soloplan.WhatsON.Jenkins.Model;
+  using Soloplan.WhatsON.ServerBase;
 
   [SubjectType("Jenkins Project Status", Description = "Retrieve the current status of a Jenkins project.")]
   [ConfigurationItem(ProjectName, typeof(string))]
@@ -16,6 +17,15 @@
     }
 
     protected string Project => this.GetProject();
+
+    /// <summary>
+    /// Gets the project.
+    /// </summary>
+    /// <returns>Project name.</returns>
+    public string GetProject()
+    {
+      return this.Configuration[JenkinsProject.ProjectName];
+    }
 
     protected override void ExecuteQuery(params string[] args)
     {

@@ -3,6 +3,7 @@
   using System;
   using System.Net.NetworkInformation;
   using System.Text;
+  using Soloplan.WhatsON.ServerBase;
 
   [SubjectType("Server Health Check", Description = "Ping a server and return the state depending on the reply.")]
   public class ServerHealth : ServerSubject

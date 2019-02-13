@@ -15,7 +15,6 @@
   <Import Project="..\..\config\Soloplan.WhatsON.targets" />
 
   <ItemGroup>
-    <ProjectReference Include="..\Soloplan.WhatsON.ServerBase\Soloplan.WhatsON.ServerBase.csproj" />
     <ProjectReference Include="..\Soloplan.WhatsON\Soloplan.WhatsON.csproj" />
   </ItemGroup>
 </Project>

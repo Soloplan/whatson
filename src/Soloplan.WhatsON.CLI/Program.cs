@@ -8,6 +8,7 @@ namespace Soloplan.WhatsON.CLI
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Jenkins;
   using Soloplan.WhatsON.Serialization;
+  using Soloplan.WhatsON.ServerBase;
   using Soloplan.WhatsON.ServerHealth;
 
   public class Program

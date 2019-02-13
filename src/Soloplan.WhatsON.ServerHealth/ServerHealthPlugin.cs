@@ -1,7 +1,7 @@
 ﻿namespace Soloplan.WhatsON.ServerHealth
 {
-  using System;
   using System.Collections.Generic;
+  using Soloplan.WhatsON.ServerBase;
 
   public class ServerHealthPlugin : SubjectPlugin
   {

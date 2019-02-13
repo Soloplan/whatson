@@ -1,6 +1,7 @@
 ﻿namespace Soloplan.WhatsON.Jenkins
 {
   using System.Collections.Generic;
+  using Soloplan.WhatsON.ServerBase;
 
   public class JenkinsProjectPlugin : SubjectPlugin
   {
