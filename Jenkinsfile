@@ -19,12 +19,21 @@ pipeline {
         stepMSBuild(project: 'src/Soloplan.WhatsON.sln')
       }
     }
+
+    stage('Publish') {
+      when {
+        branch 'master'
+      }
+      
+      steps {
+        stepPublishArtifacts(bucket: "whatson")
+      }
+    }
   }
 
   post {
     success {
       stepArchiveArtifacts()
-      stepPublishArtifacts(bucket: "whatson-${env.JOB_BASE_NAME}")
     }
   }
 }
