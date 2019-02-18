@@ -15,7 +15,7 @@
     protected ServerSubject(string name, string address)
       : this(name)
     {
-      this.Configuration[ServerAddress] = address;
+      this.GetConfigurationByKey(ServerAddress).Value = address;
     }
 
     protected ServerSubject(string name, string address, string port)
@@ -23,19 +23,20 @@
     {
       if (!string.IsNullOrWhiteSpace(port))
       {
-        this.Configuration[ServerPort] = port;
+        this.GetConfigurationByKey(ServerPort).Value = port;
       }
     }
 
-    protected string Address => this.Configuration[ServerAddress];
+    protected string Address => this.GetConfigurationByKey(ServerAddress).Value;
 
     protected int Port
     {
       get
       {
-        if (this.Configuration.TryGetValue(ServerPort, out var p))
+        var configItem = this.GetConfigurationByKey(ServerPort);
+        if (configItem != null)
         {
-          return int.TryParse(p, out var port) ? port : 0;
+          return int.TryParse(configItem.Value, out var port) ? port : 0;
         }
 
         return 0;

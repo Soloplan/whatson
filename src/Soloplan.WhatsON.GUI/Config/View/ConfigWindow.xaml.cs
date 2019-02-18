@@ -1,21 +1,29 @@
-﻿namespace Soloplan.WhatsON.GUI.Config
+﻿namespace Soloplan.WhatsON.GUI.Config.View
 {
   using System.Windows;
   using System.Windows.Controls;
+  using Soloplan.WhatsON.GUI.Config.ViewModel;
 
   /// <summary>
   /// Interaction logic for ConfigWindow.xaml
   /// </summary>
   public partial class ConfigWindow : Window
   {
-    private readonly Configuration config;
-
+    /// <summary>
+    /// The settings Main item tag.
+    /// </summary>
     public const string MainListItemTag = "Main";
+
+    /// <summary>
+    /// The settings Subjects item tag.
+    /// </summary>
     public const string SubjectsListItemTag = "Subjects";
+
+    private readonly ConfigViewModel configViewModel = new ConfigViewModel();
 
     public ConfigWindow(Configuration config)
     {
-      this.config = config;
+      this.configViewModel.Load(config);
       this.InitializeComponent();
       this.ConfigTopicsListBox.SelectedIndex = 0;
     }
@@ -39,7 +47,7 @@
           this.ConfigFrame.Content = new MainConfigPage();
           return;
         case SubjectsListItemTag:
-          this.ConfigFrame.Content = new SubjectsPage(this.config.Subjects);
+          this.ConfigFrame.Content = new SubjectsPage(this.configViewModel.Subjects);
           return;
       }
     }

@@ -11,10 +11,11 @@ namespace Soloplan.WhatsON.GUI.Config
   using System.Windows;
   using System.Windows.Controls;
   using MaterialDesignThemes.Wpf;
+  using Soloplan.WhatsON.GUI.Config.ViewModel;
 
   public class NumericConfigControlBuilder : TextConfigControlBuilder
   {
-    public override Control GetControl(KeyValuePair<string, string> configItem, ConfigurationItemAttribute configItemAttribute)
+    public override Control GetControl(ConfigurationItemViewModel configItem, ConfigurationItemAttribute configItemAttribute)
     {
       var numericTextBox = base.GetControl(configItem, configItemAttribute);
       numericTextBox.PreviewTextInput += this.NumberValidationTextBox;

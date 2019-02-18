@@ -1,6 +1,7 @@
 ﻿namespace Soloplan.WhatsON.Jenkins
 {
   using System;
+  using System.Linq;
   using Soloplan.WhatsON.Jenkins.Model;
   using Soloplan.WhatsON.ServerBase;
 
@@ -13,7 +14,7 @@
     public JenkinsProject(string serverAdress, string jobName, string serverPort = null, string name = null)
       : base(name ?? jobName, serverAdress, serverPort ?? GetDefaultPort(serverAdress))
     {
-      this.Configuration[ProjectName] = jobName;
+      this.GetConfigurationByKey(ProjectName).Value = jobName;
     }
 
     protected string Project => this.GetProject();
@@ -24,7 +25,7 @@
     /// <returns>Project name.</returns>
     public string GetProject()
     {
-      return this.Configuration[JenkinsProject.ProjectName];
+      return this.GetConfigurationByKey(JenkinsProject.ProjectName).Value;
     }
 
     protected override void ExecuteQuery(params string[] args)

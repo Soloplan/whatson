@@ -8,6 +8,7 @@ namespace Soloplan.WhatsON.GUI
 {
   using System.Windows;
   using Soloplan.WhatsON.GUI.Config;
+  using Soloplan.WhatsON.GUI.Config.View;
   using Soloplan.WhatsON.Serialization;
 
   /// <summary>

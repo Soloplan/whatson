@@ -1,6 +1,7 @@
 ﻿namespace Soloplan.WhatsON
 {
   using System.Collections.Generic;
+  using System.Linq;
   using System.Text;
 
   public abstract class Subject
@@ -10,7 +11,7 @@
     protected Subject(string name)
     {
       this.Snapshots = new Queue<Snapshot>();
-      this.Configuration = new Dictionary<string, string>();
+      this.Configuration = new List<ConfigurationItem>();
       this.MaxSnapshots = MaxSnapshotsDefault;
       this.Name = name;
     }
@@ -21,13 +22,31 @@
 
     public string Category { get; set; }
 
-    public IDictionary<string, string> Configuration { get; set; }
+    public IList<ConfigurationItem> Configuration { get; set; }
 
     public Status CurrentStatus { get; set; }
 
     public int MaxSnapshots { get; set; }
 
     public Queue<Snapshot> Snapshots { get; set;  }
+
+    /// <summary>
+    /// Gets the configuration by key.
+    /// </summary>
+    /// <param name="key">The key.</param>
+    /// <returns>The configuration item.</returns>
+    public ConfigurationItem GetConfigurationByKey(string key)
+    {
+      var configItem = this.Configuration.FirstOrDefault(x => x.Key == key);
+      if (configItem == null)
+      {
+        configItem = new ConfigurationItem(key);
+        this.Configuration.Add(configItem);
+        return configItem;
+      }
+
+      return this.Configuration.FirstOrDefault(x => x.Key == key);
+    }
 
     public void QueryStatus(params string[] args)
     {

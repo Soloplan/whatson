@@ -9,6 +9,6 @@
       this.Subjects = new List<Subject>();
     }
 
-    public List<Subject> Subjects { get; }
+    public IList<Subject> Subjects { get; }
   }
 }

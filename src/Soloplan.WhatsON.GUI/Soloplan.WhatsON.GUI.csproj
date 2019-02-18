@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\config\Soloplan.WhatsON.targets" />
-  <!--Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" /-->
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -65,7 +64,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Config\ConfigWindow.xaml">
+    <Page Include="Config\View\ConfigWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -73,11 +72,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Config\SubjectConfigPage.xaml">
+    <Page Include="Config\View\SubjectConfigPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Config\SubjectsConfigPage.xaml">
+    <Page Include="Config\View\SubjectsConfigPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -90,7 +89,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Config\ConfigControlBuilderFactory.cs" />
-    <Compile Include="Config\ConfigWindow.xaml.cs">
+    <Compile Include="Config\ViewModel\ConfigurationItemViewModel.cs" />
+    <Compile Include="Config\ViewModel\ConfigViewModel.cs" />
+    <Compile Include="Config\ViewModel\SubjectViewModel.cs" />
+    <Compile Include="Config\ViewModel\ViewModelBase.cs" />
+    <Compile Include="Config\View\ConfigWindow.xaml.cs">
       <DependentUpon>ConfigWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Config\IConfigControlBuilder.cs" />
@@ -98,10 +101,10 @@
       <DependentUpon>MainConfigPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Config\NumericConfigControlBuilder.cs" />
-    <Compile Include="Config\SubjectConfigPage.xaml.cs">
+    <Compile Include="Config\View\SubjectConfigPage.xaml.cs">
       <DependentUpon>SubjectConfigPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Config\SubjectsConfigPage.xaml.cs">
+    <Compile Include="Config\View\SubjectsConfigPage.xaml.cs">
       <DependentUpon>SubjectsConfigPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Config\TextConfigControlBuilder.cs" />
@@ -160,5 +163,7 @@
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\..\config\Soloplan.WhatsON.targets" />
 </Project>

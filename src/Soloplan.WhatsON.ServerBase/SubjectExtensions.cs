@@ -4,12 +4,12 @@
   {
     public static string GetAddress(this ServerSubject project)
     {
-      return project.Configuration[ServerSubject.ServerAddress];
+      return project.GetConfigurationByKey(ServerSubject.ServerAddress).Value;
     }
 
     public static string GetPort(this ServerSubject project)
     {
-      return project.Configuration[ServerSubject.ServerPort];
+      return project.GetConfigurationByKey(ServerSubject.ServerPort).Value;
     }
   }
 }
