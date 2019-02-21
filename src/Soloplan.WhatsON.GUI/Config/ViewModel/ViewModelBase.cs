@@ -7,22 +7,29 @@
 namespace Soloplan.WhatsON.GUI.Config.ViewModel
 {
   using System;
+  using System.ComponentModel;
+  using System.Runtime.CompilerServices;
+  using System.Windows.Input;
 
-  public abstract class ViewModelBase
+  public abstract class ViewModelBase : INotifyPropertyChanged
   {
+    /// <summary>
+    /// Occurs when property is changed.
+    /// </summary>
+    public event PropertyChangedEventHandler PropertyChanged;
+
     /// <summary>
     /// Gets or sets a value indicating whether the loaded flag is set.
     /// </summary>
-    protected bool IsLoaded { get; set; }
+    public bool IsLoaded { get; set; }
 
-    protected T CheckIsLoadedAndGetValue<T>(Func<T> getValue)
+    /// <summary>
+    /// Called when property is changed.
+    /// </summary>
+    /// <param name="propertyName">Name of the property.</param>
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
-      if (!this.IsLoaded)
-      {
-        throw new InvalidOperationException("The ConfigViewModel was not correctly initialized.");
-      }
-
-      return getValue();
+      this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
   }
 }

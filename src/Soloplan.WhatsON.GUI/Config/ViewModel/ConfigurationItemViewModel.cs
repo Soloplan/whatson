@@ -28,8 +28,12 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// </summary>
     public string Key
     {
-      get => this.CheckIsLoadedAndGetValue(() => this.key);
-      private set => this.key = value;
+      get => this.key;
+      private set
+      {
+        this.key = value;
+        this.OnPropertyChanged();
+      }
     }
 
     /// <summary>
@@ -37,8 +41,12 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// </summary>
     public string Value
     {
-      get => this.CheckIsLoadedAndGetValue(() => this.value);
-      set => this.value = value;
+      get => this.value;
+      set
+      {
+        this.value = value;
+        this.OnPropertyChanged();
+      }
     }
 
     /// <summary>
@@ -52,11 +60,17 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// <param name="configurationItemSource">The configuration item source.</param>
     public void Load(ConfigurationItem configurationItemSource)
     {
-      this.ConfigurationItem = configurationItemSource;
-      this.Key = configurationItemSource.Key;
-      this.Value = configurationItemSource.Value;
-
-      this.IsLoaded = true;
+      this.IsLoaded = false;
+      try
+      {
+        this.ConfigurationItem = configurationItemSource;
+        this.Key = configurationItemSource.Key;
+        this.Value = configurationItemSource.Value;
+      }
+      finally
+      {
+        this.IsLoaded = true;
+      }
     }
 
     /// <summary>
@@ -65,8 +79,31 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// <param name="itemKey">The key.</param>
     public void Load(string itemKey)
     {
-      this.Key = itemKey;
-      this.IsLoaded = true;
+      this.IsLoaded = false;
+      try
+      {
+        this.Key = itemKey;
+      }
+      finally
+      {
+        this.IsLoaded = true;
+      }
+    }
+
+    /// <summary>
+    /// Applies modifications to source.
+    /// </summary>
+    /// <param name="newItemCreated">if set to <c>true</c> a new item was created.</param>
+    public void ApplyToSource(out bool newItemCreated)
+    {
+      newItemCreated = false;
+      if (this.ConfigurationItem == null)
+      {
+        this.ConfigurationItem = new ConfigurationItem(this.key);
+        newItemCreated = true;
+      }
+
+      this.ConfigurationItem.Value = this.value;
     }
   }
 }

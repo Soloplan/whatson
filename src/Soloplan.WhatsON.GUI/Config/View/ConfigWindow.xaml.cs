@@ -19,11 +19,25 @@
     /// </summary>
     public const string SubjectsListItemTag = "Subjects";
 
-    private readonly ConfigViewModel configViewModel = new ConfigViewModel();
+    /// <summary>
+    /// The configuration view model.
+    /// </summary>
+    private readonly ConfigViewModel configurationViewModel = new ConfigViewModel();
 
-    public ConfigWindow(Configuration config)
+    /// <summary>
+    /// The configuration source.
+    /// </summary>
+    private readonly Configuration configurationSource;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConfigWindow"/> class.
+    /// </summary>
+    /// <param name="configuration">The configuration.</param>
+    public ConfigWindow(Configuration configuration)
     {
-      this.configViewModel.Load(config);
+      this.configurationSource = configuration;
+      this.configurationViewModel.Load(configuration);
+      this.DataContext = this.configurationViewModel;
       this.InitializeComponent();
       this.ConfigTopicsListBox.SelectedIndex = 0;
     }
@@ -47,9 +61,29 @@
           this.ConfigFrame.Content = new MainConfigPage();
           return;
         case SubjectsListItemTag:
-          this.ConfigFrame.Content = new SubjectsPage(this.configViewModel.Subjects);
+          this.ConfigFrame.Content = new SubjectsPage(this.configurationViewModel.Subjects);
           return;
       }
+    }
+
+    /// <summary>
+    /// Handles the Closing event of the Window control.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="System.ComponentModel.CancelEventArgs"/> instance containing the event data.</param>
+    private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+      this.configurationViewModel.ApplyToSource();
+    }
+
+    /// <summary>
+    /// Handles the ActionClick event of the SnackbarMessage control.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+    private void SnackbarMessageActionClick(object sender, RoutedEventArgs e)
+    {
+      this.configurationViewModel.Load(this.configurationSource);
     }
   }
 }

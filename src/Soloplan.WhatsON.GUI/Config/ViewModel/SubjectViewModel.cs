@@ -15,14 +15,9 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
   public class SubjectViewModel : ViewModelBase
   {
     /// <summary>
-    /// Gets the original subject item.
-    /// </summary>
-    private Subject subject;
-
-    /// <summary>
     /// The configuration.
     /// </summary>
-    private IList<ConfigurationItemViewModel> configurationItems;
+    private List<ConfigurationItemViewModel> configurationItems;
 
     /// <summary>
     /// The name of the subject.
@@ -30,18 +25,27 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     private string name;
 
     /// <summary>
+    /// Gets the subject source configuration.
+    /// </summary>
+    public Subject SourceSubject { get; private set; }
+
+    /// <summary>
     /// Gets or sets the name of the subject.
     /// </summary>
     public string Name
     {
-      get => this.CheckIsLoadedAndGetValue(() => this.name);
-      set => this.name = value;
+      get => this.name;
+      set
+      {
+        this.name = value;
+        this.OnPropertyChanged();
+      }
     }
 
     /// <summary>
     /// Gets the configuration.
     /// </summary>
-    public IList<ConfigurationItemViewModel> ConfigurationItems => this.CheckIsLoadedAndGetValue(() => this.configurationItems);
+    public List<ConfigurationItemViewModel> ConfigurationItems => this.configurationItems;
 
     /// <summary>
     /// Loads the subject view model from the source object.
@@ -49,17 +53,32 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// <param name="subjectSource">The subject source.</param>
     public void Load(Subject subjectSource)
     {
-      this.subject = subjectSource;
-      this.name = subjectSource.Name;
-      this.configurationItems = new List<ConfigurationItemViewModel>();
-      foreach (var configItem in subjectSource.Configuration)
+      this.IsLoaded = false;
+      try
       {
-        var configItemViewModel = new ConfigurationItemViewModel();
-        configItemViewModel.Load(configItem);
-        this.configurationItems.Add(configItemViewModel);
-      }
+        this.SourceSubject = subjectSource;
+        this.name = subjectSource.Name;
+        if (this.configurationItems == null)
+        {
+          this.configurationItems = new List<ConfigurationItemViewModel>();
+        }
 
-      this.IsLoaded = true;
+        var configurationItemsToNull = this.configurationItems.Where(cvm => this.SourceSubject.Configuration.All(c => c.Key != cvm.Key));
+        foreach (var configurationItemToNull in configurationItemsToNull)
+        {
+          configurationItemToNull.Value = null;
+        }
+
+        foreach (var configItem in subjectSource.Configuration)
+        {
+          var configItemViewModel = this.GetConfigurationItemViewModel(configItem.Key);
+          configItemViewModel.Load(configItem);
+        }
+      }
+      finally
+      {
+        this.IsLoaded = true;
+      }
     }
 
     /// <summary>
@@ -68,7 +87,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// <returns>The subject attributes.</returns>
     public IList<ConfigurationItemAttribute> GetSubjectConfigAttributes()
     {
-      return this.subject.GetType().GetCustomAttributes(typeof(ConfigurationItemAttribute), true).Cast<ConfigurationItemAttribute>().ToList();
+      return this.SourceSubject.GetType().GetCustomAttributes(typeof(ConfigurationItemAttribute), true).Cast<ConfigurationItemAttribute>().ToList();
     }
 
     /// <summary>
@@ -78,16 +97,74 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// <returns>The configuration view model.</returns>
     public ConfigurationItemViewModel GetConfigurationByKey(string key)
     {
-      var configItem = this.ConfigurationItems.FirstOrDefault(x => x.Key == key);
-      if (configItem == null)
+      var configItem = this.GetConfigurationItemViewModel(key);
+      configItem.Load(key);
+      return configItem;
+    }
+
+    /// <summary>
+    /// Marks the subject for deletion.
+    /// </summary>
+    public void Delete()
+    {
+      this.IsDeleted = true;
+    }
+
+    /// <summary>
+    /// The flag which indicated that the <see cref="Subject"/> will deleted on apply operation.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if this instance is deleted; otherwise, <c>false</c>.
+    /// </value>
+    public bool IsDeleted { get; private set; }
+
+    /// <summary>
+    /// Applies modifications to source.
+    /// </summary>
+    public void ApplyToSource(out bool newSubjectCreated)
+    {
+      newSubjectCreated = false;
+      if (this.SourceSubject == null)
       {
-        configItem = new ConfigurationItemViewModel();
-        configItem.Load(key);
-        this.ConfigurationItems.Add(configItem);
-        return configItem;
+        newSubjectCreated = true;
+        // TODO create a new subject of specific type
       }
 
-      return this.ConfigurationItems.FirstOrDefault(x => x.Key == key);
+      this.SourceSubject.Name = this.name;
+      foreach (var configurationItem in this.ConfigurationItems)
+      {
+        configurationItem.ApplyToSource(out bool newItemCreated);
+        if (newItemCreated)
+        {
+          this.SourceSubject.Configuration.Add(configurationItem.ConfigurationItem);
+        }
+      }
+    }
+
+    /// <summary>
+    /// Gets the configuration item view model by the given key.
+    /// In case it is not existing, a new item is created.
+    /// </summary>
+    /// <param name="key">The key.</param>
+    /// <returns>The found or created <see cref="ConfigurationItemViewModel"/>.</returns>
+    private ConfigurationItemViewModel GetConfigurationItemViewModel(string key)
+    {
+      var configItemViewModel = this.configurationItems.FirstOrDefault(x => x.Key == key);
+      if (configItemViewModel == null)
+      {
+        configItemViewModel = new ConfigurationItemViewModel();
+        configItemViewModel.PropertyChanged += (s, e) =>
+        {
+          if (configItemViewModel.IsLoaded)
+          {
+            this.OnPropertyChanged(nameof(this.ConfigurationItems));
+          }
+        };
+
+        this.configurationItems.Add(configItemViewModel);
+      }
+
+      return configItemViewModel;
     }
   }
 }
