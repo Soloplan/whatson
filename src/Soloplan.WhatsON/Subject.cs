@@ -1,5 +1,6 @@
 ﻿namespace Soloplan.WhatsON
 {
+  using System;
   using System.Collections.Generic;
   using System.Linq;
   using System.Text;
@@ -14,7 +15,10 @@
       this.Configuration = new List<ConfigurationItem>();
       this.MaxSnapshots = MaxSnapshotsDefault;
       this.Name = name;
+      this.Identifier = Guid.NewGuid(); // TODO probably should be persisted and not new every time
     }
+
+    public Guid Identifier { get; }
 
     public string Name { get; set; }
 

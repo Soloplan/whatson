@@ -4,7 +4,7 @@
   using Soloplan.WhatsON.GUI.Config.ViewModel;
 
   /// <summary>
-  /// Interaction logic for ServerHealthPage.xaml
+  /// Interaction logic for SubjectConfigPage.xaml
   /// </summary>
   public partial class SubjectConfigPage : Page
   {
@@ -25,6 +25,12 @@
     /// <param name="subject">The subject view model.</param>
     private void CreateConfigurationControls(SubjectViewModel subject)
     {
+      if (subject == null)
+      {
+        this.StackPanel.Children.Clear();
+        return;
+      }
+
       var subjectConfigAttributes = subject.GetSubjectConfigAttributes();
       foreach (var configAttribute in subjectConfigAttributes)
       {

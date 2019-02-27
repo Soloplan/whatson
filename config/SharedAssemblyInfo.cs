@@ -1,3 +1,9 @@
+//-----------------------------------------------------------------------
+// <copyright file="SharedAssemblyInfo.cs" company="Soloplan GmbH">
+//     Copyright (c) Soloplan GmbH. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -6,7 +12,7 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Soloplan GmbH")]
-[assembly: AssemblyCopyright("Copyright ©  2019")]
+[assembly: AssemblyCopyright("Copyright © Soloplan GmbH 2019")]
 [assembly: AssemblyProduct("whatsON")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

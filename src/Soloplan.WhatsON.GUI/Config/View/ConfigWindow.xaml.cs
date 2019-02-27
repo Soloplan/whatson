@@ -1,4 +1,10 @@
-﻿namespace Soloplan.WhatsON.GUI.Config.View
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ConfigWindow.xaml.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Soloplan.WhatsON.GUI.Config.View
 {
   using System.Windows;
   using System.Windows.Controls;
@@ -30,6 +36,16 @@
     private readonly Configuration configurationSource;
 
     /// <summary>
+    /// The subject page.
+    /// </summary>
+    private Page subjectPage;
+
+    /// <summary>
+    /// The main page.
+    /// </summary>
+    private Page mainPage;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="ConfigWindow"/> class.
     /// </summary>
     /// <param name="configuration">The configuration.</param>
@@ -58,10 +74,12 @@
       switch (selectedItemTag)
       {
         case MainListItemTag:
-          this.ConfigFrame.Content = new MainConfigPage();
+          this.mainPage = this.mainPage ?? new MainConfigPage();
+          this.ConfigFrame.Content = this.mainPage;
           return;
         case SubjectsListItemTag:
-          this.ConfigFrame.Content = new SubjectsPage(this.configurationViewModel.Subjects);
+          this.subjectPage = this.subjectPage ?? new SubjectsPage(this.configurationViewModel.Subjects);
+          this.ConfigFrame.Content = this.subjectPage;
           return;
       }
     }

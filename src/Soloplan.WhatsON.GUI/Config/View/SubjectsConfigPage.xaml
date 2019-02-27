@@ -21,7 +21,8 @@
     </ResourceDictionary>
   </Page.Resources>
 
-  <Grid Margin="0">
+  <materialDesign:DialogHost Identifier="SubjectsConfigPageHost">
+    <Grid Margin="0">
     <materialDesign:PopupBox
       Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}"
       PlacementMode="TopAndAlignCentres"
@@ -29,20 +30,23 @@
       Panel.ZIndex="2" Margin="0,0,10,10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="56">
       <materialDesign:PopupBox.ToggleCheckedContent>
         <materialDesign:PackIcon
-          Kind="Add"
-          Width="24"
-          Height="24" />
+            Kind="Add"
+            Width="24"
+            Height="24" 
+          />
       </materialDesign:PopupBox.ToggleCheckedContent>
       <StackPanel>
-        <Button
-          ToolTip="Rename subject">
-          <materialDesign:PackIcon
+          <Button
+          ToolTip="Rename subject"
+          Click="RenameSubjectClick">
+            <materialDesign:PackIcon
             Kind="Edit"
             Width="24"
             Height="24" />
         </Button>
         <Button
-          ToolTip="Delete subject">
+          ToolTip="Delete subject"
+          Click="DeleteSubjectClick">
           <materialDesign:PackIcon
             Kind="RemoveCircle"
             Width="24"
@@ -50,14 +54,15 @@
         </Button>
       </StackPanel>
     </materialDesign:PopupBox>
-    
+
     <DockPanel>
       <materialDesign:ColorZone Mode="Light" DockPanel.Dock="Top" Padding="8 4 8 4">
         <ComboBox x:Name="uxSubjects" Height="28" SelectionChanged="UxSubjectsSelectionChanged" Cursor="Hand" 
-                  ItemsSource="{Binding}" DisplayMemberPath="Name" IsSynchronizedWithCurrentItem="true"/>
+                  ItemsSource="{Binding Subjects}" DisplayMemberPath="Name" IsSynchronizedWithCurrentItem="true"/>
       </materialDesign:ColorZone>
 
       <Frame x:Name="uxSubjectFrame" Content="Frame" />
     </DockPanel>
   </Grid>
+  </materialDesign:DialogHost>
 </Page>

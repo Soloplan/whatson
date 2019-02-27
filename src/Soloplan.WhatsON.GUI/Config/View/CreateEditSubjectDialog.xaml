@@ -1,0 +1,37 @@
+﻿<UserControl x:Class="Soloplan.WhatsON.GUI.Config.View.CreateEditSubjectDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:whatsOn="clr-namespace:Soloplan.WhatsON;assembly=Soloplan.WhatsON"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+  <StackPanel Margin="8" MinWidth="300">
+    <ComboBox x:Name="uxPluginType" Height="28" Cursor="Hand" ItemsSource="{Binding Path=SubjectPlugins, Source={x:Static whatsOn:PluginsManager.Instance}}" DisplayMemberPath="SubjectTypeAttribute.Name"  Margin="0 8 0 10"/>
+    <TextBox x:Name="uxEditSubjectName" materialDesign:HintAssist.Hint="Subject name" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="0 8 0 0" HorizontalAlignment="Stretch" Text="{Binding Path=CurrentSubject.Name, UpdateSourceTrigger=Explicit}"/>
+
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
+      <Button IsDefault="True"
+              Margin="0 8 8 0"
+              Command="materialDesign:DialogHost.CloseDialogCommand"
+              Click="OkButtonClick">
+        <Button.CommandParameter>
+          <system:Boolean>True</system:Boolean>
+        </Button.CommandParameter>
+        Ok
+      </Button>
+      <Button IsCancel="True"
+              Margin="0 8 8 0"
+              Command="materialDesign:DialogHost.CloseDialogCommand"
+              Click="CancelButtonClick"
+              Width="80">
+        <Button.CommandParameter>
+          <system:Boolean>False</system:Boolean>
+        </Button.CommandParameter>
+        Cancel
+      </Button>
+    </StackPanel>
+  </StackPanel>
+</UserControl>

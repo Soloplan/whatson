@@ -5,7 +5,6 @@ namespace Soloplan.WhatsON.CLI
   using System.Linq;
   using System.Threading;
   using CommandLine;
-  using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Jenkins;
   using Soloplan.WhatsON.Serialization;
   using Soloplan.WhatsON.ServerBase;
@@ -14,7 +13,6 @@ namespace Soloplan.WhatsON.CLI
   public class Program
   {
     private static readonly object lockObj = new object();
-    private static List<ISubjectPlugin> plugins;
 
     public static void Main(string[] args)
     {
@@ -26,8 +24,6 @@ namespace Soloplan.WhatsON.CLI
       }
 
       var options = parsed.Value;
-
-      LoadPlugins();
 
       switch (options.Command)
       {
@@ -76,38 +72,10 @@ namespace Soloplan.WhatsON.CLI
       return config;
     }
 
-    private static void LoadPlugins()
-    {
-      Console.WriteLine("Searching available plugins...");
-      Console.ForegroundColor = ConsoleColor.DarkGray;
-
-      // basic test for loading SubjectFactories from other assemblies
-      var found = PluginFinder.FindAllSubjectPlugins("Soloplan.WhatsON.ServerHealth.dll", "Soloplan.WhatsON.Jenkins.dll");
-      plugins = new List<ISubjectPlugin>();
-      foreach (var plugin in found)
-      {
-        if (plugin.SubjectType == null)
-        {
-          continue;
-        }
-
-        var typeDesc = plugin.SubjectTypeAttribute;
-        if (typeDesc == null)
-        {
-          continue;
-        }
-
-        Console.WriteLine($"  Found: {typeDesc.Name} - {typeDesc.Description}");
-        plugins.Add(plugin);
-      }
-
-      Console.WriteLine();
-      Console.ForegroundColor = ConsoleColor.Gray;
-    }
-
     private static void CreateDummyData()
     {
       // create some dummy data for the configuration
+      var plugins = PluginsManager.Instance.SubjectPlugins;
       var healthFactory = plugins.FirstOrDefault(x => x is ServerHealthPlugin);
       var jenkinsFactory = plugins.FirstOrDefault(x => x is JenkinsProjectPlugin);
 

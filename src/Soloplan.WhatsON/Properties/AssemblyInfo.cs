@@ -1,3 +1,9 @@
+//-----------------------------------------------------------------------
+// <copyright file="AssemblyInfo.cs" company="Soloplan GmbH">
+//     Copyright (c) Soloplan GmbH. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
 using System.Reflection;
 
 // General Information about an assembly is controlled through the following

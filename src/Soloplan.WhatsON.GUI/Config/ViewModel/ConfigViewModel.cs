@@ -8,6 +8,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
   using System.Collections.Generic;
   using System.Linq;
   using System.Runtime.CompilerServices;
+  using Soloplan.WhatsON.GUI.Config.View;
 
   /// <summary>
   /// The view model for see <see cref="Configuration"/>.
@@ -15,14 +16,9 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
   public class ConfigViewModel : ViewModelBase
   {
     /// <summary>
-    /// The subjects list.
-    /// </summary>
-    private IList<SubjectViewModel> subjects;
-
-    /// <summary>
     /// Gets the subjects list.
     /// </summary>
-    public IList<SubjectViewModel> Subjects => this.subjects;
+    public SubjectViewModelCollection Subjects { get; private set; }
 
     /// <summary>
     /// Gets the original configuration.
@@ -48,41 +44,27 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       try
       {
         this.Configuration = configurationSource;
-        if (this.subjects == null)
+        if (this.Subjects == null)
         {
-          this.subjects = new List<SubjectViewModel>();
-        }
-
-        var subjectsToRemove = this.subjects.Where(svm => this.Configuration.Subjects.All(s => s.Name != svm.Name));
-        foreach (var subjectToRemove in subjectsToRemove)
-        {
-          this.subjects.Remove(subjectToRemove);
-        }
-
-        foreach (var subject in configurationSource.Subjects)
-        {
-          var subjectViewModel = this.subjects.FirstOrDefault(x => x.Name == subject.Name);
-          if (subjectViewModel == null)
-          {
-            subjectViewModel = new SubjectViewModel();
-            this.subjects.Add(subjectViewModel);
-            subjectViewModel.PropertyChanged += (s, e) =>
-            {
-              if (subjectViewModel.IsLoaded)
-              {
-                this.OnPropertyChanged(nameof(this.Subjects));
-              }
-            };
-          }
-
-          subjectViewModel.Load(subject);
+          this.Subjects = new SubjectViewModelCollection();
         }
 
         this.ConfigurationIsModified = false;
+
+        this.Subjects.CollectionChanged -= this.SubjectsCollectionChanged;
+        this.Subjects.CollectionItemPropertyChanged -= this.SubjectsCollectionItemPropertyChanged;
+
+        this.Subjects.Load(configurationSource);
+
       }
       finally
       {
         this.IsLoaded = true;
+        if (this.Subjects != null)
+        {
+          this.Subjects.CollectionChanged += this.SubjectsCollectionChanged;
+          this.Subjects.CollectionItemPropertyChanged += this.SubjectsCollectionItemPropertyChanged;
+        }
       }
 
       if (configurationIsModifiedOldValue)
@@ -96,14 +78,22 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// </summary>
     public void ApplyToSource()
     {
-      foreach (var subject in this.subjects)
+      IList<Subject> subjectsToRemove = new List<Subject>();
+      foreach (var sourceSubject in this.Configuration.Subjects)
       {
-        if (subject.IsDeleted)
+        if (this.Subjects.All(s => s.SourceSubject != sourceSubject))
         {
-          this.Configuration.Subjects.Remove(subject.SourceSubject);
-          continue;
+          subjectsToRemove.Add(sourceSubject);
         }
+      }
 
+      foreach (var subjectToRemove in subjectsToRemove)
+      {
+        this.Configuration.Subjects.Remove(subjectToRemove);
+      }
+
+      foreach (var subject in this.Subjects)
+      {
         subject.ApplyToSource(out bool newSubjectCreated);
         if (newSubjectCreated)
         {
@@ -125,6 +115,27 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       }
 
       base.OnPropertyChanged(propertyName);
+    }
+
+    /// <summary>
+    /// Handles the CollectionItemPropertyChanged event of the Subjects object.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="System.ComponentModel.PropertyChangedEventArgs"/> instance containing the event data.</param>
+    private void SubjectsCollectionItemPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+      this.OnPropertyChanged(nameof(this.Subjects));
+    }
+
+    /// <summary>
+    /// Handles the changes of <see cref="Subjects"/> collection.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.Collections.Specialized.NotifyCollectionChangedEventArgs"/> instance containing the event data.</param>
+    private void SubjectsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+      this.ConfigurationIsModified = true;
+      this.OnPropertyChanged(nameof(this.ConfigurationIsModified));
     }
   }
 }

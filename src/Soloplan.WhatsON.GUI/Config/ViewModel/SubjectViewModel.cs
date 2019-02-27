@@ -1,11 +1,12 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SubjectsViewModel.cs" company="Soloplan GmbH">
+// <copyright file="SubjectViewModel.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.GUI.Config.ViewModel
 {
+  using System;
   using System.Collections.Generic;
   using System.Linq;
 
@@ -15,19 +16,56 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
   public class SubjectViewModel : ViewModelBase
   {
     /// <summary>
-    /// The configuration.
-    /// </summary>
-    private List<ConfigurationItemViewModel> configurationItems;
-
-    /// <summary>
     /// The name of the subject.
     /// </summary>
     private string name;
 
     /// <summary>
+    /// The source subject.
+    /// </summary>
+    private Subject sourceSubject;
+
+    /// <summary>
+    /// The source subject Plugin.
+    /// </summary>
+    private ISubjectPlugin sourceSubjectPlugin;
+
+    /// <summary>
     /// Gets the subject source configuration.
     /// </summary>
-    public Subject SourceSubject { get; private set; }
+    public Subject SourceSubject
+    {
+      get => this.sourceSubject;
+      private set
+      {
+        this.sourceSubject = value;
+        this.OnPropertyChanged();
+        this.OnPropertyChanged(nameof(this.SourceSubjectPlugin));
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets the source subject plugin.
+    /// </summary>
+    public ISubjectPlugin SourceSubjectPlugin
+    {
+      get
+      {
+        if (this.sourceSubjectPlugin == null && this.SourceSubject != null)
+        {
+          this.sourceSubjectPlugin = PluginsManager.Instance.GetPlugin(this.SourceSubject);
+        }
+
+        return this.sourceSubjectPlugin;
+      }
+
+      set => this.sourceSubjectPlugin = value;
+    }
+
+    /// <summary>
+    /// Gets the identifier.
+    /// </summary>
+    public Guid Identifier { get; private set; }
 
     /// <summary>
     /// Gets or sets the name of the subject.
@@ -45,7 +83,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// <summary>
     /// Gets the configuration.
     /// </summary>
-    public List<ConfigurationItemViewModel> ConfigurationItems => this.configurationItems;
+    public List<ConfigurationItemViewModel> ConfigurationItems { get; private set; }
 
     /// <summary>
     /// Loads the subject view model from the source object.
@@ -57,13 +95,14 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       try
       {
         this.SourceSubject = subjectSource;
-        this.name = subjectSource.Name;
-        if (this.configurationItems == null)
+        this.Name = subjectSource.Name;
+        this.Identifier = subjectSource.Identifier;
+        if (this.ConfigurationItems == null)
         {
-          this.configurationItems = new List<ConfigurationItemViewModel>();
+          this.ConfigurationItems = new List<ConfigurationItemViewModel>();
         }
 
-        var configurationItemsToNull = this.configurationItems.Where(cvm => this.SourceSubject.Configuration.All(c => c.Key != cvm.Key));
+        var configurationItemsToNull = this.ConfigurationItems.Where(cvm => this.SourceSubject.Configuration.All(c => c.Key != cvm.Key));
         foreach (var configurationItemToNull in configurationItemsToNull)
         {
           configurationItemToNull.Value = null;
@@ -103,24 +142,9 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     }
 
     /// <summary>
-    /// Marks the subject for deletion.
-    /// </summary>
-    public void Delete()
-    {
-      this.IsDeleted = true;
-    }
-
-    /// <summary>
-    /// The flag which indicated that the <see cref="Subject"/> will deleted on apply operation.
-    /// </summary>
-    /// <value>
-    ///   <c>true</c> if this instance is deleted; otherwise, <c>false</c>.
-    /// </value>
-    public bool IsDeleted { get; private set; }
-
-    /// <summary>
     /// Applies modifications to source.
     /// </summary>
+    /// <param name="newSubjectCreated">if set to <c>true</c> new subject was created.</param>
     public void ApplyToSource(out bool newSubjectCreated)
     {
       newSubjectCreated = false;
@@ -149,7 +173,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// <returns>The found or created <see cref="ConfigurationItemViewModel"/>.</returns>
     private ConfigurationItemViewModel GetConfigurationItemViewModel(string key)
     {
-      var configItemViewModel = this.configurationItems.FirstOrDefault(x => x.Key == key);
+      var configItemViewModel = this.ConfigurationItems.FirstOrDefault(x => x.Key == key);
       if (configItemViewModel == null)
       {
         configItemViewModel = new ConfigurationItemViewModel();
@@ -161,7 +185,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
           }
         };
 
-        this.configurationItems.Add(configItemViewModel);
+        this.ConfigurationItems.Add(configItemViewModel);
       }
 
       return configItemViewModel;

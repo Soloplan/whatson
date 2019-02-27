@@ -18,14 +18,14 @@ namespace Soloplan.WhatsON.GUI.Config
     private static volatile ConfigControlBuilderFactory instance;
 
     /// <summary>
-    /// Indicates whether this control builder factory is already configured or not.
-    /// </summary>
-    private bool isConfigured;
-
-    /// <summary>
     /// Caches control builders that should be used by a given type.
     /// </summary>
     private readonly Dictionary<Type, IConfigControlBuilder> controlBuilderByType = new Dictionary<Type, IConfigControlBuilder>();
+
+    /// <summary>
+    /// Indicates whether this control builder factory is already configured or not.
+    /// </summary>
+    private bool isConfigured;
 
     /// <summary>
     /// Gets the singleton instance.
@@ -37,27 +37,6 @@ namespace Soloplan.WhatsON.GUI.Config
     {
       [MethodImpl(MethodImplOptions.Synchronized)]
       get => instance ?? (instance = new ConfigControlBuilderFactory());
-    }
-
-    /// <summary>
-    /// Checks whether this control builder factory is already configured.
-    /// </summary>
-    private void CheckConfiguration()
-    {
-      if (!this.isConfigured)
-      {
-        this.RegisterBuiltInTypeSpecificControlBuilders();
-        this.isConfigured = true;
-      }
-    }
-
-    /// <summary>
-    /// Registers control builders for specific types.
-    /// </summary>
-    protected void RegisterBuiltInTypeSpecificControlBuilders()
-    {
-      this.RegisterControlBuilder(typeof(string), new TextConfigControlBuilder());
-      this.RegisterControlBuilder(typeof(int), new NumericConfigControlBuilder());
     }
 
     /// <summary>
@@ -79,6 +58,27 @@ namespace Soloplan.WhatsON.GUI.Config
     {
       this.CheckConfiguration();
       return this.controlBuilderByType.TryGetValue(type, out var result) ? result : null;
+    }
+
+    /// <summary>
+    /// Registers control builders for specific types.
+    /// </summary>
+    private void RegisterBuiltInTypeSpecificControlBuilders()
+    {
+      this.RegisterControlBuilder(typeof(string), new TextConfigControlBuilder());
+      this.RegisterControlBuilder(typeof(int), new NumericConfigControlBuilder());
+    }
+
+    /// <summary>
+    /// Checks whether this control builder factory is already configured.
+    /// </summary>
+    private void CheckConfiguration()
+    {
+      if (!this.isConfigured)
+      {
+        this.RegisterBuiltInTypeSpecificControlBuilders();
+        this.isConfigured = true;
+      }
     }
   }
 }

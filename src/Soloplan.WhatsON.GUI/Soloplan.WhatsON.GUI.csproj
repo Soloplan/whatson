@@ -80,6 +80,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Config\View\OkCancelDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Config\View\CreateEditSubjectDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -108,6 +116,13 @@
       <DependentUpon>SubjectsConfigPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Config\TextConfigControlBuilder.cs" />
+    <Compile Include="Config\View\OkCancelDialog.xaml.cs">
+      <DependentUpon>OkCancelDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Config\View\CreateEditSubjectDialog.xaml.cs">
+      <DependentUpon>CreateEditSubjectDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Config\View\SubjectViewModelCollection.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
