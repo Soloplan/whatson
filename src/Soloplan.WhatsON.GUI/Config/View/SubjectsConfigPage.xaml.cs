@@ -16,6 +16,11 @@ namespace Soloplan.WhatsON.GUI.Config.View
   public partial class SubjectsPage : Page
   {
     /// <summary>
+    /// The current subject.
+    /// </summary>
+    private SubjectViewModel currentSubject;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="SubjectsPage"/> class.
     /// </summary>
     /// <param name="subjects">The subjects.</param>
@@ -36,7 +41,7 @@ namespace Soloplan.WhatsON.GUI.Config.View
     /// <summary>
     /// Gets the current subject.
     /// </summary>
-    public SubjectViewModel CurrentSubject => (SubjectViewModel)this.uxSubjects.SelectedItem;
+    public SubjectViewModel CurrentSubject => this.currentSubject ?? (SubjectViewModel)this.uxSubjects.SelectedItem;
 
     /// <summary>
     /// Handles the Loaded event of the Subjects control.
@@ -106,7 +111,24 @@ namespace Soloplan.WhatsON.GUI.Config.View
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private async void RenameSubjectClick(object sender, System.Windows.RoutedEventArgs e)
     {
-      await DialogHost.Show(new CreateEditSubjectDialog((SubjectViewModel)this.uxSubjects.SelectedItem), "SubjectsConfigPageHost");
+      await DialogHost.Show(new CreateEditSubjectDialog((SubjectViewModel)this.uxSubjects.SelectedItem, false), "SubjectsConfigPageHost");
+    }
+
+    /// <summary>
+    /// Handles the request for subject rename.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
+    private async void AddSubjectClick(object sender, System.Windows.RoutedEventArgs e)
+    {
+      this.currentSubject = new SubjectViewModel();
+      var createEditDialod = new CreateEditSubjectDialog(this.currentSubject, true);
+      await DialogHost.Show(createEditDialod, "SubjectsConfigPageHost");
+      this.currentSubject.SourceSubjectPlugin = (ISubjectPlugin)createEditDialod.uxPluginType.SelectedItem;
+      this.currentSubject.Load(null);
+      this.Subjects.Add(this.currentSubject);
+      this.uxSubjects.SelectedItem = this.currentSubject;
+      this.currentSubject = null;
     }
   }
 }

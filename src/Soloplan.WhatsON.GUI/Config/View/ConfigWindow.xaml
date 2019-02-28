@@ -28,7 +28,7 @@
           ActionContent="Reset"
           ActionClick="SnackbarMessageActionClick"/>
       </materialDesign:Snackbar>
-      <materialDesign:ColorZone Mode="Light" Width="158" DockPanel.Dock="Left">
+      <materialDesign:ColorZone Mode="PrimaryLight" Width="158" DockPanel.Dock="Left">
         <ListBox x:Name="ConfigTopicsListBox" SelectionChanged="ListBoxSelectionChanged" Padding="5" Cursor="Hand">
           <ListBoxItem Content="Main" Tag="{x:Static view:ConfigWindow.MainListItemTag}"/>
           <ListBoxItem Content="Subjects" Tag="{x:Static view:ConfigWindow.SubjectsListItemTag}"/>

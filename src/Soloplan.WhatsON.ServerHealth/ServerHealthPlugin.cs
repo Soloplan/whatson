@@ -1,6 +1,7 @@
 ﻿namespace Soloplan.WhatsON.ServerHealth
 {
   using System.Collections.Generic;
+  using System.Linq;
   using Soloplan.WhatsON.ServerBase;
 
   public class ServerHealthPlugin : SubjectPlugin
@@ -10,9 +11,9 @@
     {
     }
 
-    public override Subject CreateNew(string name, IDictionary<string, string> configuration)
+    public override Subject CreateNew(string name, IList<ConfigurationItem> configuration)
     {
-      var address = configuration[ServerSubject.ServerAddress];
+      var address = configuration.First(c => c.Key == ServerSubject.ServerAddress).Value;
       if (string.IsNullOrWhiteSpace(address))
       {
         return null;

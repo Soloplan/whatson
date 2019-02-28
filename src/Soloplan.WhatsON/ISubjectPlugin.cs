@@ -9,6 +9,6 @@
 
     SubjectTypeAttribute SubjectTypeAttribute { get; }
 
-    Subject CreateNew(string name, IDictionary<string, string> configuration);
+    Subject CreateNew(string name, IList<ConfigurationItem> configuration);
   }
 }

@@ -16,11 +16,24 @@ namespace Soloplan.WhatsON.GUI.Config.View
   /// </summary>
   public partial class CreateEditSubjectDialog : UserControl
   {
-    public CreateEditSubjectDialog(SubjectViewModel selectedSubject)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CreateEditSubjectDialog" /> class.
+    /// </summary>
+    /// <param name="selectedSubject">The selected subject.</param>
+    /// <param name="isNew">if set to <c>true</c> the subject is new.</param>
+    public CreateEditSubjectDialog(SubjectViewModel selectedSubject, bool isNew)
     {
       this.InitializeComponent();
-      this.uxPluginType.SelectedItem = PluginsManager.Instance.GetPlugin(selectedSubject.SourceSubject);
-      this.uxPluginType.IsEnabled = selectedSubject.SourceSubject == null;
+      if (isNew && this.uxPluginType.Items.Count > 0)
+      {
+        this.uxPluginType.SelectedIndex = 0;
+      }
+      else
+      {
+        this.uxPluginType.SelectedItem = PluginsManager.Instance.GetPlugin(selectedSubject.SourceSubject);
+      }
+
+      this.uxPluginType.IsEnabled = isNew;
     }
 
     /// <summary>

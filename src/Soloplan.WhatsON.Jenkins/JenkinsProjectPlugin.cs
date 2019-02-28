@@ -1,6 +1,7 @@
 ﻿namespace Soloplan.WhatsON.Jenkins
 {
   using System.Collections.Generic;
+  using System.Linq;
   using Soloplan.WhatsON.ServerBase;
 
   public class JenkinsProjectPlugin : SubjectPlugin
@@ -10,24 +11,25 @@
     {
     }
 
-    public override Subject CreateNew(string name, IDictionary<string, string> configuration)
+    public override Subject CreateNew(string name, IList<ConfigurationItem> configuration)
     {
-      var address = configuration[ServerSubject.ServerAddress];
+      var address = configuration.First(c => c.Key == ServerSubject.ServerAddress).Value;
       if (string.IsNullOrWhiteSpace(address))
       {
         return null;
       }
 
-      var jobName = configuration[JenkinsProject.ProjectName];
+      var jobName = configuration.First(c => c.Key == JenkinsProject.ProjectName).Value;
       if (string.IsNullOrWhiteSpace(jobName))
       {
         return null;
       }
 
       string port = null;
-      if (configuration.TryGetValue(ServerSubject.ServerPort, out var p))
+      var serverPortConfiguration = configuration.FirstOrDefault(c => c.Key == ServerSubject.ServerPort);
+      if (serverPortConfiguration != null)
       {
-        port = p;
+        port = serverPortConfiguration.Value;
       }
 
       return new JenkinsProject(address, jobName, serverPort: port, name: name);

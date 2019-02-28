@@ -95,23 +95,26 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       try
       {
         this.SourceSubject = subjectSource;
-        this.Name = subjectSource.Name;
-        this.Identifier = subjectSource.Identifier;
         if (this.ConfigurationItems == null)
         {
           this.ConfigurationItems = new List<ConfigurationItemViewModel>();
         }
 
-        var configurationItemsToNull = this.ConfigurationItems.Where(cvm => this.SourceSubject.Configuration.All(c => c.Key != cvm.Key));
-        foreach (var configurationItemToNull in configurationItemsToNull)
+        if (subjectSource != null)
         {
-          configurationItemToNull.Value = null;
-        }
+          this.Name = subjectSource.Name;
+          this.Identifier = subjectSource.Identifier;
+          var configurationItemsToNull = this.ConfigurationItems.Where(cvm => this.SourceSubject.Configuration.All(c => c.Key != cvm.Key));
+          foreach (var configurationItemToNull in configurationItemsToNull)
+          {
+            configurationItemToNull.Value = null;
+          }
 
-        foreach (var configItem in subjectSource.Configuration)
-        {
-          var configItemViewModel = this.GetConfigurationItemViewModel(configItem.Key);
-          configItemViewModel.Load(configItem);
+          foreach (var configItem in subjectSource.Configuration)
+          {
+            var configItemViewModel = this.GetConfigurationItemViewModel(configItem.Key);
+            configItemViewModel.Load(configItem);
+          }
         }
       }
       finally
@@ -126,7 +129,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// <returns>The subject attributes.</returns>
     public IList<ConfigurationItemAttribute> GetSubjectConfigAttributes()
     {
-      return this.SourceSubject.GetType().GetCustomAttributes(typeof(ConfigurationItemAttribute), true).Cast<ConfigurationItemAttribute>().ToList();
+      return this.SourceSubjectPlugin.SubjectType.GetCustomAttributes(typeof(ConfigurationItemAttribute), true).Cast<ConfigurationItemAttribute>().ToList();
     }
 
     /// <summary>
@@ -148,20 +151,30 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     public void ApplyToSource(out bool newSubjectCreated)
     {
       newSubjectCreated = false;
+      IList<ConfigurationItem> sourceConfiguration;
       if (this.SourceSubject == null)
       {
         newSubjectCreated = true;
-        // TODO create a new subject of specific type
+        sourceConfiguration = new List<ConfigurationItem>();
+      }
+      else
+      {
+        sourceConfiguration = this.sourceSubject.Configuration;
+        this.SourceSubject.Name = this.name;
       }
 
-      this.SourceSubject.Name = this.name;
       foreach (var configurationItem in this.ConfigurationItems)
       {
         configurationItem.ApplyToSource(out bool newItemCreated);
         if (newItemCreated)
         {
-          this.SourceSubject.Configuration.Add(configurationItem.ConfigurationItem);
+          sourceConfiguration.Add(configurationItem.ConfigurationItem);
         }
+      }
+
+      if (newSubjectCreated)
+      {
+        this.sourceSubject = this.SourceSubjectPlugin.CreateNew(this.name, sourceConfiguration);
       }
     }
 

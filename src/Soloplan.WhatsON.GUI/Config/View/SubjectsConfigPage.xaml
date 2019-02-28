@@ -23,40 +23,30 @@
 
   <materialDesign:DialogHost Identifier="SubjectsConfigPageHost">
     <Grid Margin="0">
-    <materialDesign:PopupBox
+      <materialDesign:PopupBox
       Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}"
       PlacementMode="TopAndAlignCentres"
       ToolTip="Add new subject"
       Panel.ZIndex="2" Margin="0,0,10,10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="56">
-      <materialDesign:PopupBox.ToggleCheckedContent>
-        <materialDesign:PackIcon
-            Kind="Add"
-            Width="24"
-            Height="24" 
-          />
-      </materialDesign:PopupBox.ToggleCheckedContent>
       <StackPanel>
-          <Button
-          ToolTip="Rename subject"
-          Click="RenameSubjectClick">
-            <materialDesign:PackIcon
-            Kind="Edit"
-            Width="24"
-            Height="24" />
+
+        <Button ToolTip="Delete subject" Click="DeleteSubjectClick">
+          <materialDesign:PackIcon Kind="RemoveCircle" Width="24" Height="24" />
         </Button>
-        <Button
-          ToolTip="Delete subject"
-          Click="DeleteSubjectClick">
-          <materialDesign:PackIcon
-            Kind="RemoveCircle"
-            Width="24"
-            Height="24" />
+
+        <Button ToolTip="Rename subject" Click="RenameSubjectClick">
+          <materialDesign:PackIcon Kind="Edit" Width="24" Height="24" />
         </Button>
-      </StackPanel>
+
+        <Button ToolTip="Add subject" Click="AddSubjectClick">
+          <materialDesign:PackIcon Kind="Add" Width="24" Height="24" />
+        </Button>
+
+        </StackPanel>
     </materialDesign:PopupBox>
 
     <DockPanel>
-      <materialDesign:ColorZone Mode="Light" DockPanel.Dock="Top" Padding="8 4 8 4">
+      <materialDesign:ColorZone Mode="PrimaryMid" DockPanel.Dock="Top" Padding="8 4 8 4" CornerRadius="3">
         <ComboBox x:Name="uxSubjects" Height="28" SelectionChanged="UxSubjectsSelectionChanged" Cursor="Hand" 
                   ItemsSource="{Binding Subjects}" DisplayMemberPath="Name" IsSynchronizedWithCurrentItem="true"/>
       </materialDesign:ColorZone>

@@ -79,14 +79,14 @@ namespace Soloplan.WhatsON.CLI
       var healthFactory = plugins.FirstOrDefault(x => x is ServerHealthPlugin);
       var jenkinsFactory = plugins.FirstOrDefault(x => x is JenkinsProjectPlugin);
 
-      var subject = healthFactory?.CreateNew("Google", new Dictionary<string, string> { [ServerSubject.ServerAddress] = "google.com", });
-      var subject2 = healthFactory?.CreateNew("Soloplan", new Dictionary<string, string> { [ServerSubject.ServerAddress] = "soloplan.de", });
-      var subject3 = healthFactory?.CreateNew("GitHub", new Dictionary<string, string> { [ServerSubject.ServerAddress] = "github.com", });
+      var subject = healthFactory?.CreateNew("Google", new List<ConfigurationItem> { new ConfigurationItem(ServerSubject.ServerAddress, "google.com") });
+      var subject2 = healthFactory?.CreateNew("Soloplan", new List<ConfigurationItem> { new ConfigurationItem(ServerSubject.ServerAddress, "soloplan.de") });
+      var subject3 = healthFactory?.CreateNew("GitHub", new List<ConfigurationItem> { new ConfigurationItem(ServerSubject.ServerAddress, "github.com") });
 
-      var jenkinsParameters = new Dictionary<string, string>
+      var jenkinsParameters = new List<ConfigurationItem>
       {
-        [ServerSubject.ServerAddress] = "https://jenkins.mono-project.com",
-        [JenkinsProject.ProjectName] = "test-mono-pipeline",
+        new ConfigurationItem(ServerSubject.ServerAddress,"https://jenkins.mono-project.com"),
+        new ConfigurationItem(JenkinsProject.ProjectName, "test-mono-pipeline"),
       };
 
       // test jenkins api of publically available jenkins

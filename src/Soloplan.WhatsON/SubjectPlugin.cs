@@ -16,6 +16,6 @@
 
     public SubjectTypeAttribute SubjectTypeAttribute { get; }
 
-    public abstract Subject CreateNew(string name, IDictionary<string, string> configuration);
+    public abstract Subject CreateNew(string name, IList<ConfigurationItem> configuration);
   }
 }

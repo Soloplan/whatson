@@ -6,6 +6,8 @@
 
 namespace Soloplan.WhatsON
 {
+  using Newtonsoft.Json;
+
   /// <summary>
   /// The configuration item.
   /// </summary>
@@ -15,9 +17,21 @@ namespace Soloplan.WhatsON
     /// Initializes a new instance of the <see cref="ConfigurationItem"/> class.
     /// </summary>
     /// <param name="key">The key.</param>
+    [JsonConstructor]
     public ConfigurationItem(string key)
     {
       this.Key = key;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConfigurationItem" /> class.
+    /// </summary>
+    /// <param name="key">The key.</param>
+    /// <param name="value">The value.</param>
+    public ConfigurationItem(string key, string value)
+    {
+      this.Key = key;
+      this.Value = value;
     }
 
     /// <summary>
