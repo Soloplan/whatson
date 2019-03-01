@@ -30,7 +30,7 @@ namespace Soloplan.WhatsON.GUI.Config.View
       }
       else
       {
-        this.uxPluginType.SelectedItem = PluginsManager.Instance.GetPlugin(selectedSubject.SourceSubject);
+        this.uxPluginType.SelectedItem = selectedSubject.SourceSubjectPlugin;
       }
 
       this.uxPluginType.IsEnabled = isNew;

@@ -44,7 +44,7 @@ namespace Soloplan.WhatsON.GUI.Config.View
     {
       try
       {
-        var subjectsToRemove = this.Where(svm => configurationSource.Subjects.All(s => s.Identifier != svm.Identifier));
+        var subjectsToRemove = this.Where(svm => configurationSource.Subjects.All(s => s.Identifier != svm.Identifier)).ToList();
         foreach (var subjectToRemove in subjectsToRemove)
         {
           this.Remove(subjectToRemove);

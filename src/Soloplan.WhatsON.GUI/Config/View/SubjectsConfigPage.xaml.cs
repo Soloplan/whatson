@@ -123,12 +123,15 @@ namespace Soloplan.WhatsON.GUI.Config.View
     {
       this.currentSubject = new SubjectViewModel();
       var createEditDialod = new CreateEditSubjectDialog(this.currentSubject, true);
-      await DialogHost.Show(createEditDialod, "SubjectsConfigPageHost");
-      this.currentSubject.SourceSubjectPlugin = (ISubjectPlugin)createEditDialod.uxPluginType.SelectedItem;
-      this.currentSubject.Load(null);
-      this.Subjects.Add(this.currentSubject);
-      this.uxSubjects.SelectedItem = this.currentSubject;
-      this.currentSubject = null;
+      var result = (bool)await DialogHost.Show(createEditDialod, "SubjectsConfigPageHost");
+      if (result)
+      {
+        // TODO move to subject view model/model
+        this.currentSubject.SourceSubjectPlugin = (ISubjectPlugin)createEditDialod.uxPluginType.SelectedItem;
+        this.currentSubject.Load(null);
+        this.Subjects.Add(this.currentSubject);
+        this.uxSubjects.SelectedItem = this.currentSubject;
+      }
     }
   }
 }
