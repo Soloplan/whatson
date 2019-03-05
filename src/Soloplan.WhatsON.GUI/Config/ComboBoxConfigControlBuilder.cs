@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="TextConfigControlBuilder.cs" company="Soloplan GmbH">
+// <copyright file="TextWithComboBoxPreselectionConfigControlBuilder.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -13,15 +13,15 @@ namespace Soloplan.WhatsON.GUI.Config
   using Soloplan.WhatsON.GUI.Config.ViewModel;
 
   /// <summary>
-  /// The control builder for a text edit control.
+  /// The control builder for editable combo box with provided suggested values.
   /// </summary>
   /// <seealso cref="Soloplan.WhatsON.GUI.Config.IConfigControlBuilder" />
-  public class TextConfigControlBuilder : IConfigControlBuilder
+  public class ComboBoxConfigControlBuilder : IConfigControlBuilder
   {
     /// <summary>
     /// Gets the supported configuration items key.
     /// </summary>
-    public string SupportedConfigurationItemsKey => null;
+    public virtual string SupportedConfigurationItemsKey => null;
 
     /// <summary>
     /// Creates a new control and returns it.
@@ -33,21 +33,21 @@ namespace Soloplan.WhatsON.GUI.Config
     /// </returns>
     public virtual Control GetControl(ConfigurationItemViewModel configItem, ConfigurationItemAttribute configItemAttribute)
     {
-      var textBox = new TextBox();
-      textBox.DataContext = configItem;
-      var style = Application.Current.FindResource("MaterialDesignFloatingHintTextBox") as Style;
-      textBox.Style = style;
-      HintAssist.SetIsFloating(textBox, true);
-      HintAssist.SetHint(textBox, configItemAttribute.Key);
-      textBox.Margin = new Thickness(0, 0, 0, 8);
+      var comboBox = new ComboBox();
+      comboBox.DataContext = configItem;
+      var style = Application.Current.FindResource("MaterialDesignFloatingHintComboBox") as Style;
+      comboBox.Style = style;
+      HintAssist.SetIsFloating(comboBox, true);
+      HintAssist.SetHint(comboBox, configItemAttribute.Key);
+      comboBox.Margin = new Thickness(0, 0, 0, 8);
 
       var valueBinding = new Binding();
       valueBinding.Source = configItem;
       valueBinding.Path = new PropertyPath(nameof(ConfigurationItemViewModel.Value));
       valueBinding.Mode = BindingMode.TwoWay;
       valueBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-      BindingOperations.SetBinding(textBox, TextBox.TextProperty, valueBinding);
-      return textBox;
+      BindingOperations.SetBinding(comboBox, ComboBox.TextProperty, valueBinding);
+      return comboBox;
     }
   }
 }

@@ -54,6 +54,7 @@ namespace Soloplan.WhatsON.GUI.Config.View
       this.configurationSource = configuration;
       this.configurationViewModel.Load(configuration);
       this.DataContext = this.configurationViewModel;
+      GlobalConfigDataViewModel.Instance.UseConfiguration(this.configurationViewModel);
       this.InitializeComponent();
       this.ConfigTopicsListBox.SelectedIndex = 0;
     }

@@ -6,11 +6,9 @@
 
 namespace Soloplan.WhatsON.GUI.Config
 {
-  using System.Collections.Generic;
   using System.Text.RegularExpressions;
   using System.Windows;
   using System.Windows.Controls;
-  using MaterialDesignThemes.Wpf;
   using Soloplan.WhatsON.GUI.Config.ViewModel;
 
   public class NumericConfigControlBuilder : TextConfigControlBuilder

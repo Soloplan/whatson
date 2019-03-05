@@ -96,9 +96,12 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Config\ComboBoxConfigControlBuilder.cs" />
     <Compile Include="Config\ConfigControlBuilderFactory.cs" />
+    <Compile Include="Config\CategoryComboBoxConfigControlBuilder.cs" />
     <Compile Include="Config\ViewModel\ConfigurationItemViewModel.cs" />
     <Compile Include="Config\ViewModel\ConfigViewModel.cs" />
+    <Compile Include="Config\ViewModel\GlobalConfigDataViewModel.cs" />
     <Compile Include="Config\ViewModel\SubjectViewModel.cs" />
     <Compile Include="Config\ViewModel\ViewModelBase.cs" />
     <Compile Include="Config\View\ConfigWindow.xaml.cs">

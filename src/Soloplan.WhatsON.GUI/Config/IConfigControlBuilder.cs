@@ -9,8 +9,16 @@ namespace Soloplan.WhatsON.GUI.Config
   using System.Windows.Controls;
   using Soloplan.WhatsON.GUI.Config.ViewModel;
 
+  /// <summary>
+  /// The interface for every configuration control builder.
+  /// </summary>
   public interface IConfigControlBuilder
   {
+    /// <summary>
+    /// Gets the supported configuration items key.
+    /// </summary>
+    string SupportedConfigurationItemsKey { get; }
+
     /// <summary>
     /// Creates a new control and returns it.
     /// </summary>

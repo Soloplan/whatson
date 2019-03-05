@@ -5,8 +5,17 @@
   using System.Linq;
   using System.Text;
 
+  /// <summary>
+  /// The subject - represent an executable job defined by the plugin.
+  /// </summary>
+  [ConfigurationItem(Category, typeof(string))]
   public abstract class Subject
   {
+    /// <summary>
+    /// The category tag.
+    /// </summary>
+    public const string Category = "Category";
+
     private const int MaxSnapshotsDefault = 5;
 
     protected Subject(string name)
@@ -23,8 +32,6 @@
     public string Name { get; set; }
 
     public string Description { get; set; }
-
-    public string Category { get; set; }
 
     public IList<ConfigurationItem> Configuration { get; set; }
 

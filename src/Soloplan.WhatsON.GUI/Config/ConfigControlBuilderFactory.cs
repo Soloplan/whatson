@@ -8,6 +8,7 @@ namespace Soloplan.WhatsON.GUI.Config
 {
   using System;
   using System.Collections.Generic;
+  using System.Linq;
   using System.Runtime.CompilerServices;
 
   public sealed class ConfigControlBuilderFactory
@@ -20,7 +21,7 @@ namespace Soloplan.WhatsON.GUI.Config
     /// <summary>
     /// Caches control builders that should be used by a given type.
     /// </summary>
-    private readonly Dictionary<Type, IConfigControlBuilder> controlBuilderByType = new Dictionary<Type, IConfigControlBuilder>();
+    private readonly IList<KeyValuePair<Type, IConfigControlBuilder>> controlBuilderByType = new List<KeyValuePair<Type, IConfigControlBuilder>>();
 
     /// <summary>
     /// Indicates whether this control builder factory is already configured or not.
@@ -46,18 +47,27 @@ namespace Soloplan.WhatsON.GUI.Config
     /// <param name="controlBuilder">The control builder to use with <paramref name="type"/>.</param>
     public void RegisterControlBuilder(Type type, IConfigControlBuilder controlBuilder)
     {
-      this.controlBuilderByType.Add(type, controlBuilder);
+      this.controlBuilderByType.Add(new KeyValuePair<Type, IConfigControlBuilder>(type, controlBuilder));
     }
 
     /// <summary>
-    /// Gets the control builder for the specified <paramref name="type"/>.
+    /// Gets the control builder for the specified <paramref name="type" />.
     /// </summary>
     /// <param name="type">The type to get the control builder.</param>
-    /// <returns>The control builder for this type or null if not found.</returns>
-    internal IConfigControlBuilder GetControlBuilder(Type type)
+    /// <param name="configurationItemKey">The configuration item key.</param>
+    /// <returns>
+    /// The control builder for this type or null if not found.
+    /// </returns>
+    internal IConfigControlBuilder GetControlBuilder(Type type, string configurationItemKey)
     {
       this.CheckConfiguration();
-      return this.controlBuilderByType.TryGetValue(type, out var result) ? result : null;
+      var builder = this.controlBuilderByType.FirstOrDefault(b => b.Key == type && b.Value.SupportedConfigurationItemsKey == configurationItemKey);
+      if (builder.Key == null)
+      {
+        builder = this.controlBuilderByType.FirstOrDefault(b => b.Key == type);
+      }
+
+      return builder.Key != null ? builder.Value : null;
     }
 
     /// <summary>
@@ -67,6 +77,7 @@ namespace Soloplan.WhatsON.GUI.Config
     {
       this.RegisterControlBuilder(typeof(string), new TextConfigControlBuilder());
       this.RegisterControlBuilder(typeof(int), new NumericConfigControlBuilder());
+      this.RegisterControlBuilder(typeof(string), new CategoryComboBoxConfigControlBuilder());
     }
 
     /// <summary>

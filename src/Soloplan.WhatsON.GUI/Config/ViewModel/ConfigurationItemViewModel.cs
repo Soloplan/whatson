@@ -6,8 +6,6 @@
 
 namespace Soloplan.WhatsON.GUI.Config.ViewModel
 {
-  using System;
-
   /// <summary>
   /// The view model for see <see cref="ConfigurationItem"/>.
   /// </summary>

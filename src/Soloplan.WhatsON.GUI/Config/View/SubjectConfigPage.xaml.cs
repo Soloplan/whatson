@@ -35,7 +35,7 @@
       foreach (var configAttribute in subjectConfigAttributes)
       {
         var configItem = subject.GetConfigurationByKey(configAttribute.Key);
-        var builder = ConfigControlBuilderFactory.Instance.GetControlBuilder(configAttribute.Type);
+        var builder = ConfigControlBuilderFactory.Instance.GetControlBuilder(configAttribute.Type, configAttribute.Key);
         if (builder == null)
         {
           // TODO log error - no defined control builder for type configAttribute.Type

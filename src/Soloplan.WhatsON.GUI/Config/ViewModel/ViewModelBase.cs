@@ -6,10 +6,8 @@
 
 namespace Soloplan.WhatsON.GUI.Config.ViewModel
 {
-  using System;
   using System.ComponentModel;
   using System.Runtime.CompilerServices;
-  using System.Windows.Input;
 
   public abstract class ViewModelBase : INotifyPropertyChanged
   {
