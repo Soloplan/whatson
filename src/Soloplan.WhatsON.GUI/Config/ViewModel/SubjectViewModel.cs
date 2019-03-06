@@ -113,7 +113,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
           foreach (var configItem in subjectSource.Configuration)
           {
             var configItemViewModel = this.GetConfigurationItemViewModel(configItem.Key);
-            configItemViewModel.Load(configItem.Key);
+            configItemViewModel.Load(configItem);
           }
         }
       }
