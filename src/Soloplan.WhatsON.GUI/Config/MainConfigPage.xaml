@@ -9,6 +9,12 @@
       Title="MainConfigPage">
 
     <Grid>
-        
-    </Grid>
+    <StackPanel>
+      <StackPanel Orientation="Horizontal">
+        <Label>Light</Label>
+        <ToggleButton Style="{StaticResource MaterialDesignSwitchToggleButton}" Checked="ToggleButtonChecked" Unchecked="ToggleButtonUnchecked" IsChecked="{Binding DarkThemeEnabled}" />
+        <Label>Dark</Label>
+      </StackPanel>
+    </StackPanel>
+  </Grid>
 </Page>

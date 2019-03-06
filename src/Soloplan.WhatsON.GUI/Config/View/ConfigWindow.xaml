@@ -28,13 +28,11 @@
           ActionContent="Reset"
           ActionClick="SnackbarMessageActionClick"/>
       </materialDesign:Snackbar>
-      <materialDesign:ColorZone Mode="PrimaryLight" Width="158" DockPanel.Dock="Left">
-        <ListBox x:Name="ConfigTopicsListBox" SelectionChanged="ListBoxSelectionChanged" Padding="5" Cursor="Hand">
+      <ListBox x:Name="ConfigTopicsListBox" SelectionChanged="ListBoxSelectionChanged" Padding="5" Cursor="Hand" Width="158" DockPanel.Dock="Left">
           <ListBoxItem Content="Main" Tag="{x:Static view:ConfigWindow.MainListItemTag}"/>
           <ListBoxItem Content="Subjects" Tag="{x:Static view:ConfigWindow.SubjectsListItemTag}"/>
         </ListBox>
-      </materialDesign:ColorZone>
-      <Frame x:Name="ConfigFrame" Content="Frame" NavigationUIVisibility="Hidden" DockPanel.Dock="Right" Margin="5,0,5,0"/>
+        <Frame x:Name="ConfigFrame" Content="Frame" NavigationUIVisibility="Hidden" DockPanel.Dock="Right" Margin="5,0,5,0"/>
     </DockPanel>
   </Grid>
 </Window>

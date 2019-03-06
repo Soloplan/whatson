@@ -75,7 +75,7 @@ namespace Soloplan.WhatsON.GUI.Config.View
       switch (selectedItemTag)
       {
         case MainListItemTag:
-          this.mainPage = this.mainPage ?? new MainConfigPage();
+          this.mainPage = this.mainPage ?? new MainConfigPage(this.configurationViewModel);
           this.ConfigFrame.Content = this.mainPage;
           return;
         case SubjectsListItemTag:

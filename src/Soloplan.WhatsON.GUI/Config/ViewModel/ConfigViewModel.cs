@@ -16,14 +16,32 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
   public class ConfigViewModel : ViewModelBase
   {
     /// <summary>
+    /// The dark theme enabled.
+    /// </summary>
+    private bool darkThemeEnabled;
+
+    /// <summary>
     /// Gets the subjects list.
     /// </summary>
     public SubjectViewModelCollection Subjects { get; private set; }
 
     /// <summary>
-    /// Gets the original configuration.
+    /// Gets or sets a value indicating whether dark theme is enabled.
     /// </summary>
-    public Configuration Configuration { get; private set; }
+    public bool DarkThemeEnabled
+    {
+      get => this.darkThemeEnabled;
+      set
+      {
+        this.darkThemeEnabled = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+  /// <summary>
+  /// Gets the original configuration.
+  /// </summary>
+  public Configuration Configuration { get; private set; }
 
     /// <summary>
     /// Gets a value indicating whether configuration is modified.
@@ -48,6 +66,8 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
         {
           this.Subjects = new SubjectViewModelCollection();
         }
+
+        this.DarkThemeEnabled = configurationSource.DarkThemeEnabled;
 
         this.ConfigurationIsModified = false;
 
@@ -100,6 +120,8 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
           this.Configuration.Subjects.Add(subject.SourceSubject);
         }
       }
+
+      this.Configuration.DarkThemeEnabled = this.DarkThemeEnabled;
     }
 
     /// <summary>

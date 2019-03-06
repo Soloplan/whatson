@@ -24,7 +24,7 @@
   <materialDesign:DialogHost Identifier="SubjectsConfigPageHost">
     <Grid Margin="0">
       <materialDesign:PopupBox
-      Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}"
+      Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}"
       PlacementMode="TopAndAlignCentres"
       ToolTip="Add new subject"
       Panel.ZIndex="2" Margin="0,0,10,10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="56">

@@ -18,12 +18,16 @@ namespace Soloplan.WhatsON.GUI
     /// <summary>
     /// The configuration.
     /// </summary>
-    private Configuration config;
+    private readonly Configuration config;
 
     public MainWindow()
     {
       this.InitializeComponent();
       this.config = SerializationHelper.LoadConfiguration();
+
+      var themeHelper = new ThemeHelper();
+      themeHelper.Initialize();
+      themeHelper.ApplyLightDarkMode(this.config.DarkThemeEnabled);
     }
 
     private void OpenConfig(object sender, RoutedEventArgs e)

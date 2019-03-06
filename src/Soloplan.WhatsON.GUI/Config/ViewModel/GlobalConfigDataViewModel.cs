@@ -54,7 +54,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
         foreach (var subject in this.configuration.Subjects)
         {
           var configItemViewModel = subject.GetConfigurationByKey(Subject.Category);
-          if (configItemViewModel != null && !string.IsNullOrWhiteSpace(configItemViewModel.Value))
+          if (configItemViewModel != null && !string.IsNullOrWhiteSpace(configItemViewModel.Value) && !result.Contains(configItemViewModel.Value))
           {
             result.Add(configItemViewModel.Value);
           }
@@ -71,6 +71,14 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     public void UseConfiguration(ConfigViewModel configurationViewModel)
     {
       this.configuration = configurationViewModel;
+      this.ConfigurationResetOrUpdated();
+    }
+
+    /// <summary>
+    /// Configurations was reset or updated.
+    /// </summary>
+    public void ConfigurationResetOrUpdated()
+    {
       this.OnPropertyChanged(nameof(this.UsedCategories));
     }
 
