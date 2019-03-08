@@ -55,7 +55,6 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
         this.Subjects.CollectionItemPropertyChanged -= this.SubjectsCollectionItemPropertyChanged;
 
         this.Subjects.Load(configurationSource);
-
       }
       finally
       {

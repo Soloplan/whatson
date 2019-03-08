@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Soloplan.WhatsON.GUI"
+        xmlns:treeListControl="clr-namespace:Soloplan.WhatsON.GUI.SubjectTreeView"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -11,7 +12,8 @@
         TextElement.FontWeight="Medium"
         TextElement.FontSize="14"
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
-  <Grid>
+  <StackPanel>
     <Button Content="Open config" HorizontalAlignment="Left" Margin="27,10,0,0" VerticalAlignment="Top" Width="119" Click="OpenConfig"/>
-  </Grid>
+    <treeListControl:SubjectsTreeView x:Name="mainTreeView"/>
+  </StackPanel>
 </Window>

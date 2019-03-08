@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Soloplan.WhatsON.ServerBase
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.WhatsON.GUI", "Soloplan.WhatsON.GUI\Soloplan.WhatsON.GUI.csproj", "{BB65378F-518E-43E4-A374-592A9FE88E51}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.WhatsON.PluginGUIExtensions", "Soloplan.WhatsON.PluginGUIExtensions\Soloplan.WhatsON.PluginGUIExtensions.csproj", "{D97A8094-EF1F-4CF7-8511-3619B2BAF31A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{BB65378F-518E-43E4-A374-592A9FE88E51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB65378F-518E-43E4-A374-592A9FE88E51}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB65378F-518E-43E4-A374-592A9FE88E51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D97A8094-EF1F-4CF7-8511-3619B2BAF31A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D97A8094-EF1F-4CF7-8511-3619B2BAF31A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D97A8094-EF1F-4CF7-8511-3619B2BAF31A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D97A8094-EF1F-4CF7-8511-3619B2BAF31A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

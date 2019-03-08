@@ -1,0 +1,18 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:serverHealth="clr-namespace:Soloplan.WhatsON.GUI.SubjectTreeView.ServerHealth"
+                    xmlns:subjectTreeView="clr-namespace:Soloplan.WhatsON.GUI.SubjectTreeView">
+  
+  <subjectTreeView:StatusToColorConverter x:Key="StatusToColorConverter" />
+  <!-- ToDo DGO: this should be separate control for displaying status. This way it will be easier to reuse.-->
+
+  <DataTemplate DataType="{x:Type serverHealth:ServerHealthViewModel}">
+    <StackPanel Orientation="Horizontal">
+      <TextBlock Text="Ping: "/>
+      <TextBlock Text="{Binding Name}"/>
+      <TextBlock Text="Status: "/>
+      <Rectangle Width="10" Height="10" Fill="{Binding CurrentStatus.State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"/>
+    </StackPanel>
+  </DataTemplate>
+
+</ResourceDictionary>

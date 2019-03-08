@@ -1,0 +1,39 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                    xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.SubjectTreeView"
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+                    xmlns:jenkins="clr-namespace:Soloplan.WhatsON.PluginGUIExtensions.Jenkins;assembly=Soloplan.WhatsON.PluginGUIExtensions"
+                    xmlns:subjectTreeView="clr-namespace:Soloplan.WhatsON.GUI.SubjectTreeView;assembly=Soloplan.WhatsON.GUI">
+
+  <subjectTreeView:StatusToColorConverter x:Key="StatusToColorConverter" />
+  <!-- ToDo DGO: this should be separate control for displaying status. This way it will be easier to reuse.-->
+
+  <ContextMenu x:Key="contextMenuJenkins">
+    <MenuItem Header="Open webpage" Command="{Binding OpenWebPage}"/>
+  </ContextMenu>
+
+
+  <DataTemplate DataType="{x:Type jenkins:JenkinsProjectViewModel}">
+    <StackPanel ContextMenu="{StaticResource contextMenuJenkins}">
+      <StackPanel Orientation="Horizontal">
+        <TextBlock Text=" Jenkins: "/>
+        <TextBlock FontWeight="Black" Text="{Binding Name}"/>
+        <TextBlock Text=" Status: "/>
+        <Rectangle Width="10" Height="10" Fill="{Binding CurrentStatus.State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"/>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal">
+        <TextBlock Text=" Time: "/>
+        <TextBlock Text="{Binding CurrentStatus.Time}"/>
+        <TextBlock Text=" BuildNumber: "/>
+        <TextBlock Text="{Binding CurrentStatus.BuildNumber}"/>
+        <TextBlock Text=" Completion: "/>
+        <TextBlock Text="{Binding CurrentStatus.Progres}"/>
+        <TextBlock Text="% "/>
+        <ProgressBar Width="100" Value="{Binding CurrentStatus.Progres, Mode=OneWay}" materialDesign:TransitionAssist.DisableTransitions="True" />
+      </StackPanel>
+    </StackPanel>
+  </DataTemplate>
+
+</ResourceDictionary>

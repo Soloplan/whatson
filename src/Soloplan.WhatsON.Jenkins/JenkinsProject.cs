@@ -1,7 +1,6 @@
 ﻿namespace Soloplan.WhatsON.Jenkins
 {
   using System;
-  using System.Linq;
   using Soloplan.WhatsON.Jenkins.Model;
   using Soloplan.WhatsON.ServerBase;
 
