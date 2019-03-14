@@ -16,7 +16,7 @@
       this.GetConfigurationByKey(ProjectName).Value = jobName;
     }
 
-    protected string Project => this.GetProject();
+    public string Project => this.GetProject();
 
     /// <summary>
     /// Gets the project.

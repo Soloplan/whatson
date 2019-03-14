@@ -1,10 +1,4 @@
-﻿// // --------------------------------------------------------------------------------------------------------------------
-// // <copyright file="StatusToColorConverter.cs" company="Soloplan GmbH">
-// //   Copyright (c) Soloplan GmbH. All rights reserved.
-// // </copyright>
-// // --------------------------------------------------------------------------------------------------------------------
-
-namespace Soloplan.WhatsON.GUI.SubjectTreeView
+﻿namespace Soloplan.WhatsON.GUI.SubjectTreeView
 {
   using System;
   using System.Globalization;

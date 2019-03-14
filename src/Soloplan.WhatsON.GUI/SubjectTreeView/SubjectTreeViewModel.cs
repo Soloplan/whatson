@@ -1,10 +1,4 @@
-﻿// // --------------------------------------------------------------------------------------------------------------------
-// // <copyright file="SubjectTreeViewModel.cs" company="Soloplan GmbH">
-// //   Copyright (c) Soloplan GmbH. All rights reserved.
-// // </copyright>
-// // --------------------------------------------------------------------------------------------------------------------
-
-namespace Soloplan.WhatsON.GUI.SubjectTreeView
+﻿namespace Soloplan.WhatsON.GUI.SubjectTreeView
 {
   using System;
   using System.Collections.ObjectModel;
@@ -13,8 +7,6 @@ namespace Soloplan.WhatsON.GUI.SubjectTreeView
   public class SubjectTreeViewModel
   {
     private object lockObject = new object();
-
-    private ObservationScheduler scheduler;
 
     private ObservableCollection<SubjectGroupViewModel> subjectGroups;
 
@@ -44,10 +36,8 @@ namespace Soloplan.WhatsON.GUI.SubjectTreeView
 
     public void Init(ObservationScheduler scheduler, Configuration configuration)
     {
-      var subjectGroup = new SubjectGroupViewModel();
-      this.scheduler = scheduler;
-      this.scheduler.StatusQueried -= this.SchedulerStatusQueried;
-      this.scheduler.StatusQueried += this.SchedulerStatusQueried;
+      scheduler.StatusQueried -= this.SchedulerStatusQueried;
+      scheduler.StatusQueried += this.SchedulerStatusQueried;
       this.ParseConfiguration(configuration);
     }
 
@@ -75,6 +65,5 @@ namespace Soloplan.WhatsON.GUI.SubjectTreeView
         }
       }
     }
-
   }
 }

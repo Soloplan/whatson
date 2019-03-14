@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Soloplan.WhatsON.ServerBase
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.WhatsON.GUI", "Soloplan.WhatsON.GUI\Soloplan.WhatsON.GUI.csproj", "{BB65378F-518E-43E4-A374-592A9FE88E51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.WhatsON.PluginGUIExtensions", "Soloplan.WhatsON.PluginGUIExtensions\Soloplan.WhatsON.PluginGUIExtensions.csproj", "{D97A8094-EF1F-4CF7-8511-3619B2BAF31A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.WhatsON.Jenkins.GUI", "Soloplan.WhatsON.Jenkins.GUI\Soloplan.WhatsON.Jenkins.GUI.csproj", "{D97A8094-EF1F-4CF7-8511-3619B2BAF31A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.WhatsON.ServerHealth.GUI", "Soloplan.WhatsON.ServerHealth.GUI\Soloplan.WhatsON.ServerHealth.GUI.csproj", "{20B706EB-A7B3-41A0-9102-9CA431FC2CAB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{D97A8094-EF1F-4CF7-8511-3619B2BAF31A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D97A8094-EF1F-4CF7-8511-3619B2BAF31A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D97A8094-EF1F-4CF7-8511-3619B2BAF31A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20B706EB-A7B3-41A0-9102-9CA431FC2CAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20B706EB-A7B3-41A0-9102-9CA431FC2CAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20B706EB-A7B3-41A0-9102-9CA431FC2CAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20B706EB-A7B3-41A0-9102-9CA431FC2CAB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

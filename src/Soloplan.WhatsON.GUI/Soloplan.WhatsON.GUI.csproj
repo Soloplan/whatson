@@ -14,6 +14,21 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -29,7 +44,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -64,12 +79,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="SubjectTreeView\IStatusGuiProvider.cs" />
-    <Compile Include="SubjectTreeView\ISubjectViewModelFactory.cs" />
-    <Compile Include="SubjectTreeView\ServerHealth\ServerHealthViewModel.cs" />
+    <Compile Include="SubjectTreeView\ITreeViewPresentationPlugIn.cs" />
     <Compile Include="SubjectTreeView\StatusToColorConverter.cs" />
     <Compile Include="SubjectTreeView\SubjectTreeViewModel.cs" />
     <Compile Include="SubjectTreeView\SubjectViewModel.cs" />
+    <Compile Include="SubjectTreeView\PluginsManagerExtension.cs" />
     <Compile Include="SubjectTreeView\UpdatableViewModelBase.cs" />
     <Page Include="Config\View\ConfigWindow.xaml">
       <SubType>Designer</SubType>
@@ -143,10 +157,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="SubjectTreeView\ServerHealth\ServerHealthDataTemplate.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="SubjectTreeView\SubjectsTreeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -179,18 +189,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Soloplan.WhatsON.Jenkins\Soloplan.WhatsON.Jenkins.csproj">
-      <Project>{ed2ae201-2f23-44d3-a98a-cedb0f2c6003}</Project>
-      <Name>Soloplan.WhatsON.Jenkins</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Soloplan.WhatsON.ServerBase\Soloplan.WhatsON.ServerBase.csproj">
-      <Project>{4FF2C930-A740-4323-B63F-0D7B773E4355}</Project>
-      <Name>Soloplan.WhatsON.ServerBase</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Soloplan.WhatsON.ServerHealth\Soloplan.WhatsON.ServerHealth.csproj">
-      <Project>{1EFDF62C-568C-49BA-8D1D-3B0B05945271}</Project>
-      <Name>Soloplan.WhatsON.ServerHealth</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Soloplan.WhatsON\Soloplan.WhatsON.csproj">
       <Project>{C5EEC17B-E8A9-4CD2-BE0B-491E70D9F511}</Project>
       <Name>Soloplan.WhatsON</Name>

@@ -3,7 +3,7 @@
   using System;
   using System.Collections.Generic;
 
-  public interface ISubjectPlugin
+  public interface ISubjectPlugin : IPlugIn
   {
     Type SubjectType { get; }
 

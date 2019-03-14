@@ -14,7 +14,7 @@
     /// </summary>
     /// <param name="assemblies">A list of assemblies that contain plugins.</param>
     /// <returns>An enumerator with all the found plugins.</returns>
-    public static IEnumerable<ISubjectPlugin> FindAllSubjectPlugins(params string[] assemblies)
+    public static IEnumerable<IPlugIn> FindAllPlugins(params string[] assemblies)
     {
       foreach (var assemblyName in assemblies)
       {
@@ -27,9 +27,9 @@
         var assembly = Assembly.LoadFile(absoluteName);
         foreach (var type in assembly.GetExportedTypes())
         {
-          if (typeof(ISubjectPlugin).IsAssignableFrom(type))
+          if (typeof(IPlugIn).IsAssignableFrom(type))
           {
-            yield return Activator.CreateInstance(type) as ISubjectPlugin;
+            yield return Activator.CreateInstance(type) as IPlugIn;
           }
         }
       }

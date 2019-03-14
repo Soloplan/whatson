@@ -3,29 +3,14 @@
   using System;
   using System.Collections.ObjectModel;
   using Soloplan.WhatsON.GUI.Config.ViewModel;
-  using Soloplan.WhatsON.Jenkins;
 
   public class SubjectViewModel : ViewModelBase
   {
-
-    public SubjectViewModel()
-    {
-
-    }
-
     ObservableCollection<StatusViewModel> statusViewModels;
-
-    private Subject subject;
 
     private string name;
 
     private string description;
-
-    public Guid Identifier
-    {
-      get;
-      private set;
-    }
 
     public string Name
     {
@@ -55,12 +40,16 @@
 
     public StatusViewModel CurrentStatus { get; private set; }
 
+    protected Subject Subject { get; private set; }
+
+    public Guid Identifier { get; private set; }
+
     //ToDo DGO: implement snapshot support.
     //public ObservableCollection<StatusViewModel> SubjectViewModels => this.statusViewModels ?? (this.statusViewModels = new ObservableCollection<StatusViewModel>());
 
     public void Init(Subject subject)
     {
-      this.subject = subject;
+      this.Subject = subject;
       this.Identifier = subject.Identifier;
       this.CurrentStatus = this.GetViewModelForStatus(subject);
     }
@@ -75,8 +64,6 @@
     protected virtual StatusViewModel GetViewModelForStatus(Subject subject)
     {
       StatusViewModel result = new StatusViewModel();
-      //result = subject is JenkinsProject ? new JenkinsStatusViewModel() : new StatusViewModel();
-
       result.Update(subject.CurrentStatus);
 
       return result;

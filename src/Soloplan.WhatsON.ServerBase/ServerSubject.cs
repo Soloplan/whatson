@@ -27,9 +27,9 @@
       }
     }
 
-    protected string Address => this.GetConfigurationByKey(ServerAddress).Value;
+    public string Address => this.GetConfigurationByKey(ServerAddress).Value;
 
-    protected int Port
+    public int Port
     {
       get
       {

@@ -23,14 +23,11 @@
           <Rectangle Width="10" Height="10" Fill="{Binding CurrentStatus.State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"/>
         </StackPanel>
       </DataTemplate>
-
-      <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="ServerHealth/ServerHealthDataTemplate.xaml"/>
-      </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
   </UserControl.Resources>
 
-  <TreeView  Name="mainTreeView" ItemsSource="{Binding SubjectGroups}">
-
-  </TreeView>
+  <StackPanel>
+    <TreeView  Name="mainTreeView" ItemsSource="{Binding SubjectGroups}">
+    </TreeView>
+  </StackPanel>
 </UserControl>
