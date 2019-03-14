@@ -19,7 +19,9 @@
         return null;
       }
 
-      return new ServerHealth(name, address);
+      var newServerHealth = new ServerHealth();
+      newServerHealth.Name = name;
+      return newServerHealth;
     }
   }
 }

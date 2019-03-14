@@ -4,6 +4,7 @@
   using System.Collections.Generic;
   using System.Linq;
   using System.Text;
+  using Newtonsoft.Json;
 
   /// <summary>
   /// The subject - represent an executable job defined by the plugin.
@@ -18,16 +19,15 @@
 
     private const int MaxSnapshotsDefault = 5;
 
-    protected Subject(string name)
+    protected Subject()
     {
       this.Snapshots = new Queue<Snapshot>();
       this.Configuration = new List<ConfigurationItem>();
       this.MaxSnapshots = MaxSnapshotsDefault;
-      this.Name = name;
-      this.Identifier = Guid.NewGuid(); // TODO probably should be persisted and not new every time
+      this.Identifier = Guid.NewGuid();
     }
 
-    public Guid Identifier { get; }
+    public Guid Identifier { get; set; }
 
     public string Name { get; set; }
 

@@ -8,20 +8,20 @@ namespace Soloplan.WhatsON.GUI.Config
 {
   using System.Windows;
   using System.Windows.Controls;
-  using System.Windows.Data;
   using MaterialDesignThemes.Wpf;
+  using Soloplan.WhatsON.GUI.Config.View;
   using Soloplan.WhatsON.GUI.Config.ViewModel;
 
   /// <summary>
   /// The control builder for editable combo box with provided suggested values.
   /// </summary>
   /// <seealso cref="Soloplan.WhatsON.GUI.Config.IConfigControlBuilder" />
-  public class ComboBoxConfigControlBuilder : IConfigControlBuilder
+  public class ComboBoxConfigControlBuilder : ConfigControlBuilder
   {
     /// <summary>
     /// Gets the supported configuration items key.
     /// </summary>
-    public virtual string SupportedConfigurationItemsKey => null;
+    public override string SupportedConfigurationItemsKey => null;
 
     /// <summary>
     /// Creates a new control and returns it.
@@ -31,7 +31,7 @@ namespace Soloplan.WhatsON.GUI.Config
     /// <returns>
     /// Returns the <see cref="Control" /> for the <see cref="configItem" />.
     /// </returns>
-    public virtual Control GetControl(ConfigurationItemViewModel configItem, ConfigurationItemAttribute configItemAttribute)
+    public override Control GetControlInternal(ConfigurationItemViewModel configItem, ConfigurationItemAttribute configItemAttribute)
     {
       var comboBox = new ComboBox();
       comboBox.DataContext = configItem;
@@ -40,13 +40,6 @@ namespace Soloplan.WhatsON.GUI.Config
       HintAssist.SetIsFloating(comboBox, true);
       HintAssist.SetHint(comboBox, configItemAttribute.Key);
       comboBox.Margin = new Thickness(0, 0, 0, 8);
-
-      var valueBinding = new Binding();
-      valueBinding.Source = configItem;
-      valueBinding.Path = new PropertyPath(nameof(ConfigurationItemViewModel.Value));
-      valueBinding.Mode = BindingMode.TwoWay;
-      valueBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-      BindingOperations.SetBinding(comboBox, ComboBox.TextProperty, valueBinding);
       return comboBox;
     }
   }

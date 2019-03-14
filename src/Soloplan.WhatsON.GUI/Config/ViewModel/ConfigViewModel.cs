@@ -9,6 +9,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
   using System.Linq;
   using System.Runtime.CompilerServices;
   using Soloplan.WhatsON.GUI.Config.View;
+  using Soloplan.WhatsON.Serialization;
 
   /// <summary>
   /// The view model for see <see cref="Configuration"/>.
@@ -94,10 +95,15 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     }
 
     /// <summary>
-    /// Applies to source.
+    /// Applies to source and saves changes.
     /// </summary>
-    public void ApplyToSource()
+    public void ApplyToSourceAndSave()
     {
+      if (!this.ConfigurationIsModified)
+      {
+        return;
+      }
+
       IList<Subject> subjectsToRemove = new List<Subject>();
       foreach (var sourceSubject in this.Configuration.Subjects)
       {
@@ -122,6 +128,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       }
 
       this.Configuration.DarkThemeEnabled = this.DarkThemeEnabled;
+      SerializationHelper.SaveConfiguration(this.Configuration);
     }
 
     /// <summary>

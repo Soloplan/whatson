@@ -11,13 +11,24 @@
   {
     public const string ProjectName = "ProjectName";
 
-    public JenkinsProject(string serverAdress, string jobName, string serverPort = null, string name = null)
-      : base(name ?? jobName, serverAdress, serverPort ?? GetDefaultPort(serverAdress))
-    {
-      this.GetConfigurationByKey(ProjectName).Value = jobName;
-    }
-
     protected string Project => this.GetProject();
+
+    /// <summary>
+    /// Gets the port number.
+    /// </summary>
+    public override int Port
+    {
+      get
+      {
+        var configItem = this.GetConfigurationByKey(ServerPort);
+        if (configItem != null)
+        {
+          return int.TryParse(configItem.Value, out var port) ? port : GetDefaultPort(this.Address);
+        }
+
+        return 80;
+      }
+    }
 
     /// <summary>
     /// Gets the project.
@@ -67,14 +78,14 @@
       return ObservationState.Unknown;
     }
 
-    private static string GetDefaultPort(string address)
+    private static int GetDefaultPort(string address)
     {
       if (!string.IsNullOrWhiteSpace(address) && address.StartsWith("https", StringComparison.InvariantCultureIgnoreCase))
       {
-        return "443";
+        return 443;
       }
 
-      return "80";
+      return 80;
     }
 
     public static class BuildPropertyKeys

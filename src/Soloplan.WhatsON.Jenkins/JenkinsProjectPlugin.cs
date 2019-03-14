@@ -32,7 +32,14 @@
         port = serverPortConfiguration.Value;
       }
 
-      return new JenkinsProject(address, jobName, serverPort: port, name: name);
+      var jenkinsProject = new JenkinsProject();
+      jenkinsProject.Address = address;
+      if (int.TryParse(port, out var newPort))
+      {
+        jenkinsProject.Port = newPort;
+      }
+
+      return jenkinsProject;
     }
   }
 }

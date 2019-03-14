@@ -71,6 +71,21 @@ namespace Soloplan.WhatsON.GUI.Config.View
         return;
       }
 
+      if (!Validation.IsValid(this))
+      {
+        e.Handled = true;
+        try
+        {
+          this.ConfigTopicsListBox.SelectionChanged -= this.ListBoxSelectionChanged;
+          this.ConfigTopicsListBox.SelectedItem = e.RemovedItems[0];
+          return;
+        }
+        finally
+        {
+          this.ConfigTopicsListBox.SelectionChanged += this.ListBoxSelectionChanged;
+        }
+      }
+
       var selectedItemTag = (string)((ListBoxItem)e.AddedItems[0]).Tag;
       switch (selectedItemTag)
       {
@@ -92,7 +107,13 @@ namespace Soloplan.WhatsON.GUI.Config.View
     /// <param name="e">The <see cref="System.ComponentModel.CancelEventArgs"/> instance containing the event data.</param>
     private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
     {
-      this.configurationViewModel.ApplyToSource();
+      if (!Validation.IsValid(this))
+      {
+        e.Cancel = true;
+        return;
+      }
+
+      this.configurationViewModel.ApplyToSourceAndSave();
     }
 
     /// <summary>

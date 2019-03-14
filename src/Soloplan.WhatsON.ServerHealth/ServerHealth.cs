@@ -8,11 +8,6 @@
   [SubjectType("Server Health Check", Description = "Ping a server and return the state depending on the reply.")]
   public class ServerHealth : ServerSubject
   {
-    public ServerHealth(string name, string serverAdress)
-      : base(name, serverAdress)
-    {
-    }
-
     protected override void ExecuteQuery(params string[] args)
     {
       var ping = new Ping();

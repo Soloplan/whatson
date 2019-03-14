@@ -6,6 +6,7 @@
 
 namespace Soloplan.WhatsON.GUI
 {
+  using System;
   using System.Windows;
   using Soloplan.WhatsON.GUI.Config.View;
   using Soloplan.WhatsON.Serialization;
@@ -23,7 +24,7 @@ namespace Soloplan.WhatsON.GUI
     public MainWindow()
     {
       this.InitializeComponent();
-      this.config = SerializationHelper.LoadConfiguration();
+      this.config = SerializationHelper.LoadOrCreateConfiguration();
 
       var themeHelper = new ThemeHelper();
       themeHelper.Initialize();

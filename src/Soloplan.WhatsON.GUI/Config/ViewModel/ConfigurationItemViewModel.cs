@@ -17,7 +17,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     private string key;
 
     /// <summary>
-    /// The value.s
+    /// The value.
     /// </summary>
     private string value;
 
@@ -29,6 +29,11 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       get => this.key;
       private set
       {
+        if (this.key == value)
+        {
+          return;
+        }
+
         this.key = value;
         this.OnPropertyChanged();
       }
@@ -42,6 +47,11 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       get => this.value;
       set
       {
+        if (this.value == value)
+        {
+          return;
+        }
+
         this.value = value;
         this.OnPropertyChanged();
       }

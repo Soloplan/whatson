@@ -30,9 +30,9 @@ namespace Soloplan.WhatsON.GUI.Config
     /// <returns>
     /// Returns the <see cref="Control" /> for the <see cref="configItem" />.
     /// </returns>
-    public override Control GetControl(ConfigurationItemViewModel configItem, ConfigurationItemAttribute configItemAttribute)
+    public override Control GetControlInternal (ConfigurationItemViewModel configItem, ConfigurationItemAttribute configItemAttribute)
     {
-      var comboBox = (ComboBox)base.GetControl(configItem, configItemAttribute);
+      var comboBox = (ComboBox)base.GetControlInternal(configItem, configItemAttribute);
       comboBox.IsEditable = true;
       var suggestedValueBinding = new Binding();
       suggestedValueBinding.Source = GlobalConfigDataViewModel.Instance;

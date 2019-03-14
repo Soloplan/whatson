@@ -64,6 +64,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Config\ConfigControlBuilder.cs" />
+    <Compile Include="Config\NotEmptyValidationRule.cs" />
+    <Compile Include="Config\View\Validation.cs" />
     <Compile Include="ThemeHelper.cs" />
     <Page Include="Config\View\ConfigWindow.xaml">
       <SubType>Designer</SubType>
@@ -153,6 +156,7 @@
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -63,6 +63,21 @@ namespace Soloplan.WhatsON.GUI.Config.View
     /// <param name="e">The <see cref="SelectionChangedEventArgs"/> instance containing the event data.</param>
     private void UxSubjectsSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+      if (!Validation.IsValid(this) && e.RemovedItems.Count > 0)
+      {
+        e.Handled = true;
+        try
+        {
+          this.uxSubjects.SelectionChanged -= this.UxSubjectsSelectionChanged;
+          this.uxSubjects.SelectedItem = e.RemovedItems[0];
+          return;
+        }
+        finally
+        {
+          this.uxSubjects.SelectionChanged += this.UxSubjectsSelectionChanged;
+        }
+      }
+
       if (!this.IsInitialized)
       {
         return;
@@ -111,6 +126,11 @@ namespace Soloplan.WhatsON.GUI.Config.View
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private async void RenameSubjectClick(object sender, System.Windows.RoutedEventArgs e)
     {
+      if (this.uxSubjects.SelectedItem == null)
+      {
+        return;
+      }
+
       await DialogHost.Show(new CreateEditSubjectDialog((SubjectViewModel)this.uxSubjects.SelectedItem, false), "SubjectsConfigPageHost");
     }
 
@@ -121,6 +141,11 @@ namespace Soloplan.WhatsON.GUI.Config.View
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private async void AddSubjectClick(object sender, System.Windows.RoutedEventArgs e)
     {
+      if (!Validation.IsValid(this))
+      {
+        return;
+      }
+
       this.currentSubject = new SubjectViewModel();
       var createEditDialod = new CreateEditSubjectDialog(this.currentSubject, true);
       var result = (bool)await DialogHost.Show(createEditDialod, "SubjectsConfigPageHost");
