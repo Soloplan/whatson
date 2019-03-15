@@ -6,7 +6,6 @@
 
 namespace Soloplan.WhatsON.GUI
 {
-  using System;
   using System.Windows;
   using Soloplan.WhatsON.GUI.Config.View;
   using Soloplan.WhatsON.Serialization;
@@ -19,7 +18,7 @@ namespace Soloplan.WhatsON.GUI
     /// <summary>
     /// The configuration.
     /// </summary>
-    private readonly Configuration config;
+    private Configuration config;
 
     public MainWindow()
     {
@@ -34,6 +33,7 @@ namespace Soloplan.WhatsON.GUI
     private void OpenConfig(object sender, RoutedEventArgs e)
     {
       var configWindow = new ConfigWindow(this.config);
+      configWindow.ConfigurationImported += (s, ev) => this.config = ev.Value;
       configWindow.ShowDialog();
     }
   }

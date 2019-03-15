@@ -5,6 +5,7 @@
 
 namespace Soloplan.WhatsON.GUI.Config.ViewModel
 {
+  using System;
   using System.Collections.Generic;
   using System.Linq;
   using System.Runtime.CompilerServices;
@@ -20,6 +21,11 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// The dark theme enabled.
     /// </summary>
     private bool darkThemeEnabled;
+
+    /// <summary>
+    /// Occurs when configuration was imported.
+    /// </summary>
+    public event EventHandler<ValueEventArgs<Configuration>> ConfigurationImported;
 
     /// <summary>
     /// Gets the subjects list.
@@ -39,10 +45,10 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       }
     }
 
-  /// <summary>
-  /// Gets the original configuration.
-  /// </summary>
-  public Configuration Configuration { get; private set; }
+    /// <summary>
+    /// Gets the original configuration.
+    /// </summary>
+    public Configuration Configuration { get; private set; }
 
     /// <summary>
     /// Gets a value indicating whether configuration is modified.
@@ -51,6 +57,14 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     ///   <c>true</c> if configuration is modified; otherwise, <c>false</c>.
     /// </value>
     public bool ConfigurationIsModified { get; private set; }
+
+    /// <summary>
+    /// Gets a value indicating whether configuration is not modified.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if configuration is not modified; otherwise, <c>false</c>.
+    /// </value>
+    public bool ConfigurationIsNotModified => !this.ConfigurationIsModified;
 
     /// <summary>
     /// Loads the configuration view model from the source object.
@@ -91,6 +105,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       if (configurationIsModifiedOldValue)
       {
         this.OnPropertyChanged(nameof(this.ConfigurationIsModified));
+        this.OnPropertyChanged(nameof(this.ConfigurationIsNotModified));
       }
     }
 
@@ -131,16 +146,29 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       SerializationHelper.SaveConfiguration(this.Configuration);
     }
 
+    public void Export(string filePath)
+    {
+      SerializationHelper.Save(this.Configuration, filePath);
+    }
+
+    public void Import(string filePath)
+    {
+      var newConfiguration = SerializationHelper.Load<Configuration>(filePath);
+      this.Load(newConfiguration);
+      this.ConfigurationImported?.Invoke(this, new ValueEventArgs<Configuration>(this.Configuration));
+    }
+
     /// <summary>
     /// Called when significant property of the view model was changed.
     /// </summary>
     /// <param name="propertyName">Name of the property.</param>
     protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
-      if (!this.ConfigurationIsModified && propertyName != nameof(this.ConfigurationIsModified) && this.IsLoaded)
+      if (!this.ConfigurationIsModified && propertyName != nameof(this.ConfigurationIsModified) && propertyName != nameof(this.ConfigurationIsNotModified) && this.IsLoaded)
       {
         this.ConfigurationIsModified = true;
         this.OnPropertyChanged(nameof(this.ConfigurationIsModified));
+        this.OnPropertyChanged(nameof(this.ConfigurationIsNotModified));
       }
 
       base.OnPropertyChanged(propertyName);
@@ -165,6 +193,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     {
       this.ConfigurationIsModified = true;
       this.OnPropertyChanged(nameof(this.ConfigurationIsModified));
+      this.OnPropertyChanged(nameof(this.ConfigurationIsNotModified));
     }
   }
 }

@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Config"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:view="clr-namespace:Soloplan.WhatsON.GUI.Config.View"
+        xmlns:properties="clr-namespace:Soloplan.WhatsON.GUI.Properties"
         x:Class="Soloplan.WhatsON.GUI.Config.View.ConfigWindow"
         mc:Ignorable="d"
         Title="ConfigWindow" Height="450" Width="368.908" MinWidth="550"
@@ -28,11 +29,27 @@
           ActionContent="Reset"
           ActionClick="SnackbarMessageActionClick"/>
       </materialDesign:Snackbar>
-      <ListBox x:Name="ConfigTopicsListBox" SelectionChanged="ListBoxSelectionChanged" Padding="5" Cursor="Hand" Width="158" DockPanel.Dock="Left">
+      <DockPanel DockPanel.Dock="Left">
+        <ListBox x:Name="ConfigTopicsListBox" SelectionChanged="ListBoxSelectionChanged" Padding="5" Cursor="Hand" Width="158" DockPanel.Dock="Top">
           <ListBoxItem Content="Main" Tag="{x:Static view:ConfigWindow.MainListItemTag}"/>
           <ListBoxItem Content="Subjects" Tag="{x:Static view:ConfigWindow.SubjectsListItemTag}"/>
         </ListBox>
-        <Frame x:Name="ConfigFrame" Content="Frame" NavigationUIVisibility="Hidden" DockPanel.Dock="Right" Margin="5,0,5,0"/>
+
+        <materialDesign:PopupBox StaysOpen="True" x:Name="uxImportExportPopup" DockPanel.Dock="Bottom" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Bottom">
+          <materialDesign:PopupBox.ToggleContent>
+            <Button x:Name="MainMenuButton" Content="{x:Static properties:Resources.ImportExport}"
+                      Height="30"
+                      Click="ImportExportButtonClick" Margin="0" Width="156"
+              />
+
+          </materialDesign:PopupBox.ToggleContent>
+          <StackPanel>
+            <Button Content="{x:Static properties:Resources.Import}" Click="ImportButtonClick" Width="166"/>
+            <Button Content="{x:Static properties:Resources.Export}" Click="ExportButtonClick" Width="166" IsEnabled="{Binding ConfigurationIsNotModified}" />
+          </StackPanel>
+          </materialDesign:PopupBox>
+      </DockPanel>
+      <Frame x:Name="ConfigFrame" Content="Frame" NavigationUIVisibility="Hidden" DockPanel.Dock="Right" Margin="5,0,5,0"/>
     </DockPanel>
   </Grid>
 </Window>

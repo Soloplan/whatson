@@ -15,12 +15,19 @@ namespace Soloplan.WhatsON.Serialization
   /// </summary>
   public static class SerializationHelper
   {
-    public static readonly string ConfigFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\WhatsOn\\configuration.json";
+    public static readonly string ConfigFileExtension = "json";
+    public static readonly string ConfigFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\WhatsOn\\configuration." + ConfigFileExtension;
 
-    public static void Save<T>(T subject, string file)
+    /// <summary>
+    /// Saves the configuration to specified file.
+    /// </summary>
+    /// <typeparam name="T">The type of configuration.</typeparam>
+    /// <param name="configuration">The configuration.</param>
+    /// <param name="file">The file path.</param>
+    public static void Save<T>(T configuration, string file)
     {
       var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto, NullValueHandling = NullValueHandling.Ignore,  Formatting = Formatting.Indented };
-      var json = JsonConvert.SerializeObject(subject, settings);
+      var json = JsonConvert.SerializeObject(configuration, settings);
       File.WriteAllText(file, json);
     }
 
