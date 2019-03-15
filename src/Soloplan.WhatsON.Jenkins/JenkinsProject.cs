@@ -18,6 +18,8 @@
 
     public string Project => this.GetProject();
 
+    private Status PreviousCheckStatus { get; set; }
+
     /// <summary>
     /// Gets the project.
     /// </summary>
@@ -31,7 +33,32 @@
     {
       var job = JenkinsApi.GetJenkinsJob(this);
       var latestBuild = JenkinsApi.GetJenkinsBuild(this, job.LastBuild.Number);
+
       this.CurrentStatus = CreateStatus(latestBuild);
+      if (this.Snapshots.Count == 0 && this.MaxSnapshots > 0)
+      {
+        var startBuildNumber = latestBuild.Building ? latestBuild.Number - 1 : latestBuild.Number;
+        var lastHistoryBuild = Math.Max(startBuildNumber - this.MaxSnapshots, 0);
+        for (int i = startBuildNumber; i > lastHistoryBuild; i--)
+        {
+          this.AddSnapshot(CreateStatus(JenkinsApi.GetJenkinsBuild(this, i)));
+        }
+      }
+    }
+
+    protected override bool ShouldTakeSnapshot(Status status)
+    {
+      if (this.PreviousCheckStatus != null)
+      {
+        if (status.State != this.PreviousCheckStatus.State || status.Properties[BuildPropertyKeys.Number] != this.PreviousCheckStatus.Properties[BuildPropertyKeys.Number])
+        {
+          this.PreviousCheckStatus = status;
+          return true;
+        }
+      }
+
+      this.PreviousCheckStatus = status;
+      return false;
     }
 
     private static Status CreateStatus(JenkinsBuild latestBuild)

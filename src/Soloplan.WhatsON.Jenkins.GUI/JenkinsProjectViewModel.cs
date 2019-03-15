@@ -16,10 +16,10 @@
     /// </summary>
     public ICommand OpenWebPage => this.openWebPage ?? (this.openWebPage = new OpenWebPageCommand(this.Subject));
 
-    protected override StatusViewModel GetViewModelForStatus(Subject subject)
+    protected override StatusViewModel GetViewModelForStatus(Status status)
     {
       var viewModel = new JenkinsStatusViewModel();
-      viewModel.Update(subject.CurrentStatus);
+      viewModel.Update(status);
       return viewModel;
     }
 

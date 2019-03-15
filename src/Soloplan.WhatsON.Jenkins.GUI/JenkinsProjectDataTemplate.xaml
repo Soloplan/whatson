@@ -13,28 +13,56 @@
     <MenuItem Header="Open webpage" Command="{Binding OpenWebPage}"/>
   </ContextMenu>
 
-
   <DataTemplate DataType="{x:Type jenkins:JenkinsProjectViewModel}">
-    <StackPanel ContextMenu="{StaticResource contextMenuJenkins}">
-      <StackPanel Orientation="Horizontal">
+    <Grid ContextMenu="{StaticResource contextMenuJenkins}">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="Auto"/>
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+      <StackPanel Grid.Column="0" Orientation="Horizontal">
         <TextBlock Text=" Jenkins: "/>
         <TextBlock FontWeight="Black" Text="{Binding Name}"/>
+      </StackPanel>
+      <StackPanel Grid.Column="2" Orientation="Horizontal">
         <TextBlock Text=" Status: "/>
         <Rectangle Width="10" Height="10" Fill="{Binding CurrentStatus.State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"/>
+        <ListView ItemsSource="{Binding SubjectSnapshots, Mode=OneWay}">
+          <ListView.Resources>
+            <DataTemplate DataType="{x:Type subjectTreeView:StatusViewModel}">
+              <Rectangle Width="10" Height="10" Fill="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"/>
+            </DataTemplate>
+          </ListView.Resources>
+          <ListView.ItemContainerStyle> <!--It is possible, that this disables Material design themes.-->
+            <Style TargetType="ListViewItem">
+              <Setter Property="Focusable" Value="false"/>
+            </Style>
+          </ListView.ItemContainerStyle>
+          <ListView.ItemsPanel>
+            <ItemsPanelTemplate>
+              <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft"></StackPanel>
+            </ItemsPanelTemplate>
+          </ListView.ItemsPanel>
+        </ListView>
       </StackPanel>
-      <StackPanel Orientation="Horizontal">
+      <StackPanel Grid.Row="1" Orientation="Horizontal">
         <TextBlock Text=" Time: "/>
         <TextBlock Text="{Binding CurrentStatus.Time}"/>
         <TextBlock Text=" BuildNumber: "/>
         <TextBlock Text="{Binding CurrentStatus.BuildNumber}"/>
-        <WrapPanel x:Name="wrapPanelProgres">
-          <TextBlock Text=" Completion: "/>
-          <TextBlock Text="{Binding CurrentStatus.Progres}"/>
-          <TextBlock Text="% "/>
-          <ProgressBar Width="100" Value="{Binding CurrentStatus.Progres, Mode=OneWay}" materialDesign:TransitionAssist.DisableTransitions="True" />
-        </WrapPanel>
       </StackPanel>
-    </StackPanel>
+      <WrapPanel Grid.Row="1" Grid.Column="2" x:Name="wrapPanelProgres">
+        <TextBlock Text=" Completion: "/>
+        <TextBlock Text="{Binding CurrentStatus.Progres}"/>
+        <TextBlock Text="% "/>
+        <ProgressBar Width="100" Value="{Binding CurrentStatus.Progres, Mode=OneWay}" materialDesign:TransitionAssist.DisableTransitions="True" />
+      </WrapPanel>
+    </Grid>
+
     <DataTemplate.Triggers>
       <DataTrigger Binding="{Binding  Path=CurrentStatus.Building, RelativeSource={RelativeSource FindAncestor, AncestorType=TreeViewItem}}" Value="False">
         <Setter TargetName="wrapPanelProgres" Property="Visibility" Value="Visible" />
