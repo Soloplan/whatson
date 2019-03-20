@@ -1,7 +1,6 @@
 ﻿namespace Soloplan.WhatsON
 {
   using System;
-  using System.Collections.Generic;
   using System.Reflection;
 
   public abstract class SubjectPlugin : ISubjectPlugin
@@ -16,6 +15,6 @@
 
     public SubjectTypeAttribute SubjectTypeAttribute { get; }
 
-    public abstract Subject CreateNew(string name, IList<ConfigurationItem> configuration);
+    public abstract Subject CreateNew(SubjectConfiguration configuration);
   }
 }

@@ -11,6 +11,7 @@ namespace Soloplan.WhatsON.GUI.Config.View
   using System.ComponentModel;
   using System.Linq;
   using Soloplan.WhatsON.GUI.Config.ViewModel;
+  using Soloplan.WhatsON.Serialization;
 
   /// <summary>
   /// The <see cref="ObservableCollection{T}"/> implementation for subjects with some additional events.
@@ -40,27 +41,27 @@ namespace Soloplan.WhatsON.GUI.Config.View
     /// Loads the subjects from the source configuration.
     /// </summary>
     /// <param name="configurationSource">The source configuration.</param>
-    public void Load(Configuration configurationSource)
+    public void Load(ApplicationConfiguration configurationSource)
     {
       try
       {
-        var subjectsToRemove = this.Where(svm => configurationSource.Subjects.All(s => s.Identifier != svm.Identifier)).ToList();
+        var subjectsToRemove = this.Where(svm => configurationSource.SubjectsConfiguration.All(s => s.Identifier != svm.Identifier)).ToList();
         foreach (var subjectToRemove in subjectsToRemove)
         {
           this.Remove(subjectToRemove);
         }
 
-        foreach (var subject in configurationSource.Subjects)
+        foreach (var subjectConfiguration in configurationSource.SubjectsConfiguration)
         {
-          var subjectViewModel = this.FirstOrDefault(x => x.Identifier == subject.Identifier);
+          var subjectViewModel = this.FirstOrDefault(x => x.Identifier == subjectConfiguration.Identifier);
           if (subjectViewModel != null)
           {
-            subjectViewModel.Load(subject);
+            subjectViewModel.Load(subjectConfiguration);
             continue;
           }
 
           subjectViewModel = new SubjectViewModel();
-          subjectViewModel.Load(subject);
+          subjectViewModel.Load(subjectConfiguration);
           this.Add(subjectViewModel);
           subjectViewModel.PropertyChanged += (s, e) =>
           {

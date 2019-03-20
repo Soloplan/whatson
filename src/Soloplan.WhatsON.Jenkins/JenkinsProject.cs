@@ -1,7 +1,6 @@
 ﻿namespace Soloplan.WhatsON.Jenkins
 {
   using System;
-  using System.Linq;
   using Soloplan.WhatsON.Jenkins.Model;
   using Soloplan.WhatsON.ServerBase;
 
@@ -10,6 +9,15 @@
   public class JenkinsProject : ServerSubject
   {
     public const string ProjectName = "ProjectName";
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="JenkinsProject"/> class.
+    /// </summary>
+    /// <param name="configuration">The configuration.</param>
+    public JenkinsProject(SubjectConfiguration configuration)
+      : base(configuration)
+    {
+    }
 
     protected string Project => this.GetProject();
 
@@ -20,7 +28,7 @@
     {
       get
       {
-        var configItem = this.GetConfigurationByKey(ServerPort);
+        var configItem = this.SubjectConfiguration.GetConfigurationByKey(ServerPort);
         if (configItem != null)
         {
           return int.TryParse(configItem.Value, out var port) ? port : GetDefaultPort(this.Address);
@@ -36,7 +44,7 @@
     /// <returns>Project name.</returns>
     public string GetProject()
     {
-      return this.GetConfigurationByKey(JenkinsProject.ProjectName).Value;
+      return this.SubjectConfiguration.GetConfigurationByKey(JenkinsProject.ProjectName).Value;
     }
 
     protected override void ExecuteQuery(params string[] args)

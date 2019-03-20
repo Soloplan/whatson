@@ -6,6 +6,7 @@
 
 namespace Soloplan.WhatsON
 {
+  using System;
   using System.Collections.Generic;
   using System.Linq;
   using System.Runtime.CompilerServices;
@@ -25,6 +26,11 @@ namespace Soloplan.WhatsON
     /// The subject plugins list.
     /// </summary>
     private List<ISubjectPlugin> subjectPlugins = new List<ISubjectPlugin>();
+
+    /// <summary>
+    /// The subjects.
+    /// </summary>
+    private readonly IList<Subject> subjects = new List<Subject>();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PluginsManager"/> class.
@@ -59,6 +65,58 @@ namespace Soloplan.WhatsON
     public ISubjectPlugin GetPlugin(Subject subject)
     {
       return this.subjectPlugins.FirstOrDefault(sp => sp.SubjectType == subject.GetType());
+    }
+
+    /// <summary>
+    /// Gets the Plugin instance of a Subject Configuration.
+    /// </summary>
+    /// <param name="subjectConfiguration">The subject configuration.</param>
+    /// <returns>The Plugin instance.</returns>
+    public ISubjectPlugin GetPlugin(SubjectConfiguration subjectConfiguration)
+    {
+      return this.subjectPlugins.FirstOrDefault(sp => sp.GetType().FullName == subjectConfiguration.PluginTypeName);
+    }
+
+    /// <summary>
+    /// Creates the new subject.
+    /// </summary>
+    /// <param name="subjectConfiguration">The subject configuration.</param>
+    /// <returns>Creates new subject with given configuration.</returns>
+    /// <exception cref="InvalidOperationException">Couldn't find plugin for a type: {subjectConfiguration.TypeName}</exception>
+    public Subject CreateNewSubject(SubjectConfiguration subjectConfiguration)
+    {
+      var plugin = this.subjectPlugins.FirstOrDefault(p => p.GetType().FullName == subjectConfiguration.PluginTypeName);
+      if (plugin == null)
+      {
+        throw new InvalidOperationException($"Couldn't find plugin for a type: {subjectConfiguration.PluginTypeName}");
+      }
+
+      var subject = plugin.CreateNew(subjectConfiguration);
+      this.subjects.Add(subject);
+      return subject;
+    }
+
+    /// <summary>
+    /// Gets the subject.
+    /// </summary>
+    /// <param name="subjectConfiguration">The subject configuration.</param>
+    /// <returns>A new subject with given configuration.</returns>
+    /// <exception cref="InvalidOperationException">Couldn't find plugin for a type: {subjectConfiguration.TypeName}</exception>
+    public Subject GetSubject(SubjectConfiguration subjectConfiguration)
+    {
+      var subject = this.subjects.FirstOrDefault(s => s.SubjectConfiguration.Identifier == subjectConfiguration.Identifier);
+      if (subject != null)
+      {
+        return subject;
+      }
+
+      var plugin = this.subjectPlugins.FirstOrDefault(p => p.GetType().FullName == subjectConfiguration.PluginTypeName);
+      if (plugin == null)
+      {
+        throw new InvalidOperationException($"Couldn't find plugin for a type: {subjectConfiguration.PluginTypeName}");
+      }
+
+      return plugin.CreateNew(subjectConfiguration);
     }
 
     /// <summary>

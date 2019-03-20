@@ -37,30 +37,30 @@ namespace Soloplan.WhatsON.Serialization
       return JsonConvert.DeserializeObject<T>(File.ReadAllText(file), settings);
     }
 
-    public static Configuration LoadConfiguration()
+    public static ApplicationConfiguration LoadConfiguration()
     {
-      return Load<Configuration>(ConfigFile);
+      return Load<ApplicationConfiguration>(ConfigFile);
     }
 
     /// <summary>
     /// Loads the or creates the configuration.
     /// </summary>
     /// <returns>The existing or new configuration.</returns>
-    public static Configuration LoadOrCreateConfiguration()
+    public static ApplicationConfiguration LoadOrCreateConfiguration()
     {
       if (File.Exists(ConfigFile))
       {
         return LoadConfiguration();
       }
 
-      return new Configuration();
+      return new ApplicationConfiguration();
     }
 
     /// <summary>
     /// Saves the configuration.
     /// </summary>
     /// <param name="configuration">The configuration.</param>
-    public static void SaveConfiguration(Configuration configuration)
+    public static void SaveConfiguration(ApplicationConfiguration configuration)
     {
       var configFilePath = Path.GetDirectoryName(ConfigFile);
       if (configFilePath == null)

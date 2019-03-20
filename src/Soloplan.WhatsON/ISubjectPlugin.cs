@@ -1,7 +1,6 @@
 ﻿namespace Soloplan.WhatsON
 {
   using System;
-  using System.Collections.Generic;
 
   public interface ISubjectPlugin
   {
@@ -9,6 +8,6 @@
 
     SubjectTypeAttribute SubjectTypeAttribute { get; }
 
-    Subject CreateNew(string name, IList<ConfigurationItem> configuration);
+    Subject CreateNew(SubjectConfiguration configuration);
   }
 }

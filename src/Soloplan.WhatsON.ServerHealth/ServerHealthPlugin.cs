@@ -1,7 +1,5 @@
 ﻿namespace Soloplan.WhatsON.ServerHealth
 {
-  using System.Collections.Generic;
-
   public class ServerHealthPlugin : SubjectPlugin
   {
     public ServerHealthPlugin()
@@ -9,12 +7,14 @@
     {
     }
 
-    public override Subject CreateNew(string name, IList<ConfigurationItem> configuration)
+    /// <summary>
+    /// Creates the new.
+    /// </summary>
+    /// <param name="configuration">The configuration.</param>
+    /// <returns>The new plugin.</returns>
+    public override Subject CreateNew(SubjectConfiguration configuration)
     {
-      var newServerHealth = new ServerHealth();
-      newServerHealth.Configuration = configuration;
-      newServerHealth.Name = name;
-      return newServerHealth;
+      return new ServerHealth(configuration);
     }
   }
 }

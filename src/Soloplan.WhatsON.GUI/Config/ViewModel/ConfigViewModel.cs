@@ -23,9 +23,14 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     private bool darkThemeEnabled;
 
     /// <summary>
-    /// Occurs when configuration was imported.
+    /// Occurs when configuration was applied.
     /// </summary>
-    public event EventHandler<ValueEventArgs<Configuration>> ConfigurationImported;
+    public event EventHandler<ValueEventArgs<ApplicationConfiguration>> ConfigurationApplied;
+
+    /// <summary>
+    /// Occurs when configuration is about to be applied.
+    /// </summary>
+    public event EventHandler<EventArgs> ConfigurationApplying;
 
     /// <summary>
     /// Gets the subjects list.
@@ -48,7 +53,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// <summary>
     /// Gets the original configuration.
     /// </summary>
-    public Configuration Configuration { get; private set; }
+    public ApplicationConfiguration Configuration { get; private set; }
 
     /// <summary>
     /// Gets a value indicating whether configuration is modified.
@@ -70,7 +75,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// Loads the configuration view model from the source object.
     /// </summary>
     /// <param name="configurationSource">The configuration source.</param>
-    public void Load(Configuration configurationSource)
+    public void Load(ApplicationConfiguration configurationSource)
     {
       this.IsLoaded = false;
       var configurationIsModifiedOldValue = this.ConfigurationIsModified;
@@ -114,48 +119,71 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// </summary>
     public void ApplyToSourceAndSave()
     {
-      if (!this.ConfigurationIsModified)
+      this.ConfigurationApplying?.Invoke(this, new EventArgs());
+      try
       {
-        return;
-      }
-
-      IList<Subject> subjectsToRemove = new List<Subject>();
-      foreach (var sourceSubject in this.Configuration.Subjects)
-      {
-        if (this.Subjects.All(s => s.SourceSubject != sourceSubject))
+        if (!this.ConfigurationIsModified)
         {
-          subjectsToRemove.Add(sourceSubject);
+          return;
         }
-      }
 
-      foreach (var subjectToRemove in subjectsToRemove)
-      {
-        this.Configuration.Subjects.Remove(subjectToRemove);
-      }
-
-      foreach (var subject in this.Subjects)
-      {
-        subject.ApplyToSource(out bool newSubjectCreated);
-        if (newSubjectCreated)
+        IList<SubjectConfiguration> subjectsToRemove = new List<SubjectConfiguration>();
+        foreach (var sourceSubject in this.Configuration.SubjectsConfiguration)
         {
-          this.Configuration.Subjects.Add(subject.SourceSubject);
+          if (this.Subjects.All(s => s.SourceSubjectConfiguration != sourceSubject))
+          {
+            subjectsToRemove.Add(sourceSubject);
+          }
         }
-      }
 
-      this.Configuration.DarkThemeEnabled = this.DarkThemeEnabled;
-      SerializationHelper.SaveConfiguration(this.Configuration);
+        foreach (var subjectToRemove in subjectsToRemove)
+        {
+          this.Configuration.SubjectsConfiguration.Remove(subjectToRemove);
+        }
+
+        foreach (var subject in this.Subjects)
+        {
+          subject.ApplyToSource(out bool newSubjectConfigurationCreated);
+          if (newSubjectConfigurationCreated)
+          {
+            this.Configuration.SubjectsConfiguration.Add(subject.SourceSubjectConfiguration);
+          }
+        }
+
+        this.Configuration.DarkThemeEnabled = this.DarkThemeEnabled;
+        SerializationHelper.SaveConfiguration(this.Configuration);
+      }
+      finally
+      {
+        this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.Configuration));
+      }
     }
 
+    /// <summary>
+    /// Exports the configuration to specified file path.
+    /// </summary>
+    /// <param name="filePath">The file path.</param>
     public void Export(string filePath)
     {
       SerializationHelper.Save(this.Configuration, filePath);
     }
 
+    /// <summary>
+    /// Imports the configuration from specified file.
+    /// </summary>
+    /// <param name="filePath">The file path.</param>
     public void Import(string filePath)
     {
-      var newConfiguration = SerializationHelper.Load<Configuration>(filePath);
-      this.Load(newConfiguration);
-      this.ConfigurationImported?.Invoke(this, new ValueEventArgs<Configuration>(this.Configuration));
+      this.ConfigurationApplying?.Invoke(this, new EventArgs());
+      try
+      {
+        var newConfiguration = SerializationHelper.Load<ApplicationConfiguration>(filePath);
+        this.Load(newConfiguration);
+      }
+      finally
+      {
+        this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.Configuration));
+      }
     }
 
     /// <summary>

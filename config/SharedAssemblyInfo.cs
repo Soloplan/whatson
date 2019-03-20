@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="SharedAssemblyInfo.cs" company="Soloplan GmbH">
 //     Copyright (c) Soloplan GmbH. All rights reserved.
 // </copyright>

@@ -23,7 +23,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// <summary>
     /// The source subject.
     /// </summary>
-    private Subject sourceSubject;
+    private SubjectConfiguration sourceSubjectConfiguration;
 
     /// <summary>
     /// The source subject Plugin.
@@ -33,12 +33,12 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// <summary>
     /// Gets the subject source configuration.
     /// </summary>
-    public Subject SourceSubject
+    public SubjectConfiguration SourceSubjectConfiguration
     {
-      get => this.sourceSubject;
+      get => this.sourceSubjectConfiguration;
       private set
       {
-        this.sourceSubject = value;
+        this.sourceSubjectConfiguration = value;
         this.OnPropertyChanged();
         this.OnPropertyChanged(nameof(this.SourceSubjectPlugin));
       }
@@ -51,9 +51,9 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     {
       get
       {
-        if (this.sourceSubjectPlugin == null && this.SourceSubject != null)
+        if (this.sourceSubjectPlugin == null && this.SourceSubjectConfiguration != null)
         {
-          this.sourceSubjectPlugin = PluginsManager.Instance.GetPlugin(this.SourceSubject);
+          this.sourceSubjectPlugin = PluginsManager.Instance.GetPlugin(this.SourceSubjectConfiguration);
         }
 
         return this.sourceSubjectPlugin;
@@ -89,12 +89,12 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// Loads the subject view model from the source object.
     /// </summary>
     /// <param name="subjectSource">The subject source.</param>
-    public void Load(Subject subjectSource)
+    public void Load(SubjectConfiguration subjectSource)
     {
       this.IsLoaded = false;
       try
       {
-        this.SourceSubject = subjectSource;
+        this.SourceSubjectConfiguration = subjectSource;
         if (this.ConfigurationItems == null)
         {
           this.ConfigurationItems = new List<ConfigurationItemViewModel>();
@@ -104,13 +104,13 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
         {
           this.Name = subjectSource.Name;
           this.Identifier = subjectSource.Identifier;
-          var configurationItemsToNull = this.ConfigurationItems.Where(cvm => this.SourceSubject.Configuration.All(c => c.Key != cvm.Key));
+          var configurationItemsToNull = this.ConfigurationItems.Where(cvm => this.SourceSubjectConfiguration.ConfigurationItems.All(c => c.Key != cvm.Key));
           foreach (var configurationItemToNull in configurationItemsToNull)
           {
             configurationItemToNull.Value = null;
           }
 
-          foreach (var configItem in subjectSource.Configuration)
+          foreach (var configItem in subjectSource.ConfigurationItems)
           {
             var configItemViewModel = this.GetConfigurationItemViewModel(configItem.Key);
             configItemViewModel.Load(configItem);
@@ -147,34 +147,25 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// <summary>
     /// Applies modifications to source.
     /// </summary>
-    /// <param name="newSubjectCreated">if set to <c>true</c> new subject was created.</param>
-    public void ApplyToSource(out bool newSubjectCreated)
+    /// <param name="newSubjectConfigurationCreated">if set to <c>true</c> new subject was created.</param>
+    public void ApplyToSource(out bool newSubjectConfigurationCreated)
     {
-      newSubjectCreated = false;
-      IList<ConfigurationItem> sourceConfiguration;
-      if (this.SourceSubject == null)
+      newSubjectConfigurationCreated = false;
+      if (this.sourceSubjectConfiguration == null)
       {
-        newSubjectCreated = true;
-        sourceConfiguration = new List<ConfigurationItem>();
+        newSubjectConfigurationCreated = true;
+        this.sourceSubjectConfiguration = new SubjectConfiguration(this.SourceSubjectPlugin.GetType().FullName);
       }
-      else
-      {
-        sourceConfiguration = this.sourceSubject.Configuration;
-        this.SourceSubject.Name = this.name;
-      }
+
+      this.sourceSubjectConfiguration.Name = this.name;
 
       foreach (var configurationItem in this.ConfigurationItems)
       {
         configurationItem.ApplyToSource(out bool newItemCreated);
         if (newItemCreated)
         {
-          sourceConfiguration.Add(configurationItem.ConfigurationItem);
+          this.sourceSubjectConfiguration.ConfigurationItems.Add(configurationItem.ConfigurationItem);
         }
-      }
-
-      if (newSubjectCreated)
-      {
-        this.sourceSubject = this.SourceSubjectPlugin.CreateNew(this.name, sourceConfiguration);
       }
     }
 

@@ -2,7 +2,6 @@ namespace Soloplan.WhatsON.CLI
 {
   using System;
   using System.Collections.Generic;
-  using System.Linq;
   using System.Threading;
   using CommandLine;
   using Soloplan.WhatsON.Jenkins;
@@ -48,21 +47,22 @@ namespace Soloplan.WhatsON.CLI
     {
       var config = ListConfiguredSubjects();
       var scheduler = PrepareScheduler();
-      foreach (var subject in config.Subjects)
+      foreach (var subjectConfiguration in config.SubjectsConfiguration)
       {
+        var subject = PluginsManager.Instance.GetSubject(subjectConfiguration);
         scheduler.Observe(subject);
       }
 
       scheduler.Start();
     }
 
-    private static Configuration ListConfiguredSubjects()
+    private static ApplicationConfiguration ListConfiguredSubjects()
     {
       var config = SerializationHelper.LoadConfiguration();
 
       Console.WriteLine("Configured observation subjects:");
       Console.ForegroundColor = ConsoleColor.DarkGray;
-      foreach (var subject in config.Subjects)
+      foreach (var subject in config.SubjectsConfiguration)
       {
         Console.WriteLine($"  {subject.Name}");
       }
@@ -75,13 +75,9 @@ namespace Soloplan.WhatsON.CLI
     private static void CreateDummyData()
     {
       // create some dummy data for the configuration
-      var plugins = PluginsManager.Instance.SubjectPlugins;
-      var healthFactory = plugins.FirstOrDefault(x => x is ServerHealthPlugin);
-      var jenkinsFactory = plugins.FirstOrDefault(x => x is JenkinsProjectPlugin);
-
-      var subject = healthFactory?.CreateNew("Google", new List<ConfigurationItem> { new ConfigurationItem(ServerSubject.ServerAddress, "google.com") });
-      var subject2 = healthFactory?.CreateNew("Soloplan", new List<ConfigurationItem> { new ConfigurationItem(ServerSubject.ServerAddress, "soloplan.de") });
-      var subject3 = healthFactory?.CreateNew("GitHub", new List<ConfigurationItem> { new ConfigurationItem(ServerSubject.ServerAddress, "github.com") });
+      var subject = PluginsManager.Instance.CreateNewSubject(new SubjectConfiguration(typeof(ServerHealthPlugin).FullName, "Google", ServerSubject.ServerAddress, "google.com"));
+      var subject2 = PluginsManager.Instance.CreateNewSubject(new SubjectConfiguration(typeof(ServerHealthPlugin).FullName, "Soloplan", ServerSubject.ServerAddress, "soloplan.de"));
+      var subject3 = PluginsManager.Instance.CreateNewSubject(new SubjectConfiguration(typeof(ServerHealthPlugin).FullName, "GitHub", ServerSubject.ServerAddress, "github.com"));
 
       var jenkinsParameters = new List<ConfigurationItem>
       {
@@ -90,7 +86,7 @@ namespace Soloplan.WhatsON.CLI
       };
 
       // test jenkins api of publically available jenkins
-      var subjectJenkins = jenkinsFactory?.CreateNew("Test Mono Pipeline", jenkinsParameters);
+      var subjectJenkins = PluginsManager.Instance.CreateNewSubject(new SubjectConfiguration(typeof(JenkinsProjectPlugin).FullName, "Test Mono Pipeline", jenkinsParameters));
 
       var scheduler = PrepareScheduler();
       if (subject != null)
@@ -106,11 +102,11 @@ namespace Soloplan.WhatsON.CLI
       // make sure to wait a bit so that we get the first status for each subject
       Thread.Sleep(10000);
 
-      var config = new Configuration();
-      config.Subjects.Add(subject);
-      config.Subjects.Add(subject2);
-      config.Subjects.Add(subject3);
-      config.Subjects.Add(subjectJenkins);
+      var config = new ApplicationConfiguration();
+      config.SubjectsConfiguration.Add(subject.SubjectConfiguration);
+      config.SubjectsConfiguration.Add(subject2.SubjectConfiguration);
+      config.SubjectsConfiguration.Add(subject3.SubjectConfiguration);
+      config.SubjectsConfiguration.Add(subjectJenkins.SubjectConfiguration);
       SerializationHelper.SaveConfiguration(config);
     }
 
@@ -128,7 +124,7 @@ namespace Soloplan.WhatsON.CLI
         {
           if (sub.CurrentStatus != null)
           {
-            Console.Write($"{sub.Name} [{sub.CurrentStatus.Time}]: {sub.CurrentStatus.Name} - ");
+            Console.Write($"{sub.SubjectConfiguration.Name} [{sub.CurrentStatus.Time}]: {sub.CurrentStatus.Name} - ");
             var stateColor = ConsoleColor.DarkMagenta;
             switch (sub.CurrentStatus.State)
             {

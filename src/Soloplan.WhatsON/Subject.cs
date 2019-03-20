@@ -1,10 +1,13 @@
-﻿namespace Soloplan.WhatsON
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Subject.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Soloplan.WhatsON
 {
-  using System;
   using System.Collections.Generic;
-  using System.Linq;
   using System.Text;
-  using Newtonsoft.Json;
 
   /// <summary>
   /// The subject - represent an executable job defined by the plugin.
@@ -19,45 +22,35 @@
 
     private const int MaxSnapshotsDefault = 5;
 
-    protected Subject()
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Subject"/> class.
+    /// </summary>
+    /// <param name="configuration">The configuration.</param>
+    protected Subject(SubjectConfiguration configuration)
     {
       this.Snapshots = new Queue<Snapshot>();
-      this.Configuration = new List<ConfigurationItem>();
       this.MaxSnapshots = MaxSnapshotsDefault;
-      this.Identifier = Guid.NewGuid();
+      if (configuration == null)
+      {
+        var plugin = PluginsManager.Instance.GetPlugin(this);
+        configuration = new SubjectConfiguration(plugin.GetType().FullName);
+      }
+
+      this.SubjectConfiguration = configuration;
     }
 
-    public Guid Identifier { get; set; }
-
-    public string Name { get; set; }
-
     public string Description { get; set; }
-
-    public IList<ConfigurationItem> Configuration { get; set; }
 
     public Status CurrentStatus { get; set; }
 
     public int MaxSnapshots { get; set; }
 
-    public Queue<Snapshot> Snapshots { get; set;  }
+    public Queue<Snapshot> Snapshots { get; set; }
 
     /// <summary>
-    /// Gets the configuration by key.
+    /// Gets or sets the configuration of a subject.
     /// </summary>
-    /// <param name="key">The key.</param>
-    /// <returns>The configuration item.</returns>
-    public ConfigurationItem GetConfigurationByKey(string key)
-    {
-      var configItem = this.Configuration.FirstOrDefault(x => x.Key == key);
-      if (configItem == null)
-      {
-        configItem = new ConfigurationItem(key);
-        this.Configuration.Add(configItem);
-        return configItem;
-      }
-
-      return this.Configuration.FirstOrDefault(x => x.Key == key);
-    }
+    public SubjectConfiguration SubjectConfiguration { get; set; }
 
     public void QueryStatus(params string[] args)
     {
@@ -81,7 +74,7 @@
 
     public override string ToString()
     {
-      var sb = new StringBuilder(this.Name);
+      var sb = new StringBuilder(this.SubjectConfiguration.Name);
       if (!string.IsNullOrWhiteSpace(this.Description))
       {
         sb.Append(" - ");

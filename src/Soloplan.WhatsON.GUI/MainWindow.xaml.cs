@@ -18,7 +18,7 @@ namespace Soloplan.WhatsON.GUI
     /// <summary>
     /// The configuration.
     /// </summary>
-    private Configuration config;
+    private ApplicationConfiguration config;
 
     public MainWindow()
     {
@@ -33,7 +33,7 @@ namespace Soloplan.WhatsON.GUI
     private void OpenConfig(object sender, RoutedEventArgs e)
     {
       var configWindow = new ConfigWindow(this.config);
-      configWindow.ConfigurationImported += (s, ev) => this.config = ev.Value;
+      configWindow.ConfigurationApplied += (s, ev) => this.config = ev.Value;
       configWindow.ShowDialog();
     }
   }

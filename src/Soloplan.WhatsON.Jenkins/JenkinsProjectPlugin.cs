@@ -1,7 +1,5 @@
 ﻿namespace Soloplan.WhatsON.Jenkins
 {
-  using System.Collections.Generic;
-
   public class JenkinsProjectPlugin : SubjectPlugin
   {
     public JenkinsProjectPlugin()
@@ -9,11 +7,9 @@
     {
     }
 
-    public override Subject CreateNew(string name, IList<ConfigurationItem> configuration)
+    public override Subject CreateNew(SubjectConfiguration configuration)
     {
-      var jenkinsProject = new JenkinsProject();
-      jenkinsProject.Configuration = configuration;
-      jenkinsProject.Name = name;
+      var jenkinsProject = new JenkinsProject(configuration);
       return jenkinsProject;
     }
   }

@@ -36,7 +36,7 @@ namespace Soloplan.WhatsON.GUI.Config.View
     /// <summary>
     /// The configuration source.
     /// </summary>
-    private readonly Configuration configurationSource;
+    private readonly ApplicationConfiguration configurationSource;
 
     /// <summary>
     /// The subject page.
@@ -52,7 +52,7 @@ namespace Soloplan.WhatsON.GUI.Config.View
     /// Initializes a new instance of the <see cref="ConfigWindow"/> class.
     /// </summary>
     /// <param name="configuration">The configuration.</param>
-    public ConfigWindow(Configuration configuration)
+    public ConfigWindow(ApplicationConfiguration configuration)
     {
       this.configurationSource = configuration;
       this.configurationViewModel.Load(configuration);
@@ -60,13 +60,19 @@ namespace Soloplan.WhatsON.GUI.Config.View
       GlobalConfigDataViewModel.Instance.UseConfiguration(this.configurationViewModel);
       this.InitializeComponent();
       this.ConfigTopicsListBox.SelectedIndex = 0;
-      this.configurationViewModel.ConfigurationImported += (s, e) => this.ConfigurationImported?.Invoke(s, e);
+      this.configurationViewModel.ConfigurationApplied += (s, e) => this.ConfigurationApplied?.Invoke(s, e);
+      this.configurationViewModel.ConfigurationApplying += (s, e) => this.ConfigurationApplying?.Invoke(s, e);
     }
 
     /// <summary>
-    /// Occurs when configuration was imported.
+    /// Occurs when configuration was applied.
     /// </summary>
-    public event EventHandler<ValueEventArgs<Configuration>> ConfigurationImported;
+    public event EventHandler<ValueEventArgs<ApplicationConfiguration>> ConfigurationApplied;
+
+    /// <summary>
+    /// Occurs when configuration is about to be applied.
+    /// </summary>
+    public event EventHandler<EventArgs> ConfigurationApplying;
 
     /// <summary>
     /// Handles the SelectionChanged event of the ListBox control.

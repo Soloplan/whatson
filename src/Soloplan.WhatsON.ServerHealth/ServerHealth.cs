@@ -8,6 +8,15 @@
   [SubjectType("Server Health Check", Description = "Ping a server and return the state depending on the reply.")]
   public class ServerHealth : ServerSubject
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ServerHealth"/> class.
+    /// </summary>
+    /// <param name="configuration">The configuration.</param>
+    public ServerHealth(SubjectConfiguration configuration)
+      : base(configuration)
+    {
+    }
+
     protected override void ExecuteQuery(params string[] args)
     {
       var ping = new Ping();

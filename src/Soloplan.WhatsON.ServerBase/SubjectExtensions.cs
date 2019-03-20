@@ -2,14 +2,14 @@
 {
   public static class SubjectExtensions
   {
-    public static string GetAddress(this ServerSubject project)
+    public static string GetAddress(this ServerSubject subject)
     {
-      return project.GetConfigurationByKey(ServerSubject.ServerAddress).Value;
+      return subject.SubjectConfiguration.GetConfigurationByKey(ServerSubject.ServerAddress).Value;
     }
 
-    public static string GetPort(this ServerSubject project)
+    public static string GetPort(this ServerSubject subject)
     {
-      return project.GetConfigurationByKey(ServerSubject.ServerPort).Value;
+      return subject.SubjectConfiguration.GetConfigurationByKey(ServerSubject.ServerPort).Value;
     }
   }
 }
