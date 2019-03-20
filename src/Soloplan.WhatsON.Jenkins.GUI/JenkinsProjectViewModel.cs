@@ -20,6 +20,12 @@
     {
       var viewModel = new JenkinsStatusViewModel();
       viewModel.Update(status);
+      var jenkinsAddress = this.Subject as JenkinsProject;
+      if (jenkinsAddress != null)
+      {
+        viewModel.SetJobAddress(jenkinsAddress.Address + "/job/" + jenkinsAddress.Project);
+      }
+
       return viewModel;
     }
 
@@ -41,7 +47,7 @@
 
       public void Execute(object parameter)
       {
-        System.Diagnostics.Process.Start(this.subject.Address+"/job/"+ this.subject.Project);
+        System.Diagnostics.Process.Start(this.subject.Address + "/job/" + this.subject.Project);
       }
     }
   }

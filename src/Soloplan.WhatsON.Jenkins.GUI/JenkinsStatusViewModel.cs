@@ -1,6 +1,7 @@
 ﻿namespace Soloplan.WhatsON.Jenkins.GUI
 {
   using System;
+  using System.Windows.Input;
   using Soloplan.WhatsON.GUI.SubjectTreeView;
 
   class JenkinsStatusViewModel : StatusViewModel
@@ -11,6 +12,16 @@
     private int buildNumber;
 
     private int progres;
+
+    /// <summary>
+    /// Backing field for <see cref="OpenWebPage"/>.
+    /// </summary>
+    private OpenWebPageCommand openBuildPage;
+
+    /// <summary>
+    /// Command for opening builds webPage.
+    /// </summary>
+    public ICommand OpenBuildPage => this.openBuildPage ?? (this.openBuildPage = new OpenWebPageCommand());
 
     public int BuildNumber
     {
@@ -128,6 +139,50 @@
       else
       {
         this.Progres = 100;
+      }
+    }
+
+    public void SetJobAddress(string address)
+    {
+      if (this.openBuildPage == null)
+      {
+        this.openBuildPage = new OpenWebPageCommand();
+      }
+
+      this.openBuildPage.Address = address + "/" + this.BuildNumber;
+    }
+
+    private class OpenWebPageCommand : ICommand
+    {
+      private string address;
+
+      public event EventHandler CanExecuteChanged;
+
+      public string Address
+      {
+        get
+        {
+          return this.address;
+        }
+
+        set
+        {
+          if (this.address != value)
+          {
+            this.address = value;
+            this.CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+          }
+        }
+      }
+
+      public bool CanExecute(object parameter)
+      {
+        return !string.IsNullOrEmpty(this.address);
+      }
+
+      public void Execute(object parameter)
+      {
+        System.Diagnostics.Process.Start(this.Address);
       }
     }
   }

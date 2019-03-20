@@ -13,8 +13,12 @@
     <MenuItem Header="Open webpage" Command="{Binding OpenWebPage}"/>
   </ContextMenu>
 
+  <ContextMenu x:Key="contextMenuBuild">
+    <MenuItem Header="Open build menu" Command="{Binding OpenBuildPage}"/>
+  </ContextMenu>
+
   <DataTemplate DataType="{x:Type jenkins:JenkinsProjectViewModel}">
-    <Grid ContextMenu="{StaticResource contextMenuJenkins}">
+    <Grid ContextMenu="{StaticResource contextMenuJenkins}" HorizontalAlignment="Stretch">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="*"/>
@@ -31,15 +35,18 @@
       <StackPanel Grid.Column="2" Orientation="Horizontal">
         <TextBlock Text=" Status: "/>
         <Rectangle Width="10" Height="10" Fill="{Binding CurrentStatus.State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"/>
-        <ListView ItemsSource="{Binding SubjectSnapshots, Mode=OneWay}">
+        <ListView ItemsSource="{Binding SubjectSnapshots, Mode=OneWay}" >
           <ListView.Resources>
             <DataTemplate DataType="{x:Type subjectTreeView:StatusViewModel}">
-              <Rectangle Width="10" Height="10" Fill="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"/>
+              <StackPanel ContextMenu="{StaticResource contextMenuBuild}">
+                <Rectangle Width="10" Height="10"  Fill="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"/>
+              </StackPanel>
             </DataTemplate>
           </ListView.Resources>
-          <ListView.ItemContainerStyle> <!--It is possible, that this disables Material design themes.-->
-            <Style TargetType="ListViewItem">
+          <ListView.ItemContainerStyle>
+            <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
               <Setter Property="Focusable" Value="false"/>
+              <Setter Property="Padding" Value="2"/>
             </Style>
           </ListView.ItemContainerStyle>
           <ListView.ItemsPanel>
