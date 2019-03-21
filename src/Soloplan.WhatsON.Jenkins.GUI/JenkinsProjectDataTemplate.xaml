@@ -2,19 +2,21 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:jenkins="clr-namespace:Soloplan.WhatsON.Jenkins.GUI;assembly=Soloplan.WhatsON.Jenkins.GUI"
                     xmlns:subjectTreeView="clr-namespace:Soloplan.WhatsON.GUI.SubjectTreeView;assembly=Soloplan.WhatsON.GUI">
 
+  <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
   <subjectTreeView:StatusToColorConverter x:Key="StatusToColorConverter" />
   <!-- ToDo DGO: this should be separate control for displaying status. This way it will be easier to reuse.-->
 
   <ContextMenu x:Key="contextMenuJenkins">
-    <MenuItem Header="Open webpage" Command="{Binding OpenWebPage}"/>
+    <MenuItem Header="Open project web page" Command="{Binding OpenWebPage}"/>
   </ContextMenu>
 
   <ContextMenu x:Key="contextMenuBuild">
-    <MenuItem Header="Open build menu" Command="{Binding OpenBuildPage}"/>
+    <MenuItem Header="Open build web page" Command="{Binding OpenBuildPage}"/>
   </ContextMenu>
 
   <DataTemplate DataType="{x:Type jenkins:JenkinsProjectViewModel}">
@@ -33,13 +35,47 @@
         <TextBlock FontWeight="Black" Text="{Binding Name}"/>
       </StackPanel>
       <StackPanel Grid.Column="2" Orientation="Horizontal">
-        <TextBlock Text=" Status: "/>
-        <Rectangle Width="10" Height="10" Fill="{Binding CurrentStatus.State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"/>
-        <ListView ItemsSource="{Binding SubjectSnapshots, Mode=OneWay}" >
+        <TextBlock Text=" History: "/>
+        <!--<Rectangle Width="10" Height="10" Fill="{Binding CurrentStatus.State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"/>-->
+        <ListView ItemsSource="{Binding SubjectSnapshots, Mode=OneWay}">
+          <!--History builds-->
           <ListView.Resources>
-            <DataTemplate DataType="{x:Type subjectTreeView:StatusViewModel}">
+            <DataTemplate DataType="{x:Type jenkins:JenkinsStatusViewModel}">
               <StackPanel ContextMenu="{StaticResource contextMenuBuild}">
-                <Rectangle Width="10" Height="10"  Fill="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"/>
+                <StackPanel.ToolTip>
+                  <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                      <TextBlock Text="Build No.: " />
+                      <TextBlock Text="{Binding BuildNumber}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                      <TextBlock Text="Duration: "/>
+                      <TextBlock>
+                        <TextBlock.Text>
+                          <MultiBinding StringFormat="{}{0:00}:{1:00}:{2:00}" >
+                            <Binding Path="Duration.Hours"/>
+                            <Binding Path="Duration.Minutes"/>
+                            <Binding Path="Duration.Seconds"/>
+                          </MultiBinding>
+                        </TextBlock.Text>
+                      </TextBlock>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                      <TextBlock  Text="Build date: "/>
+                      <TextBlock Text="{Binding Time}"/>
+                    </StackPanel>
+                  </StackPanel>
+                </StackPanel.ToolTip>
+                <Button Width="10" Height="10"  Background="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}" 
+                        BorderBrush="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}" >
+                  <i:Interaction.Triggers>
+                    <!--Handle clicking on history builds.-->
+                    <i:EventTrigger EventName="Click">
+                      <i:InvokeCommandAction Command="{Binding OpenBuildPage}"/>
+                    </i:EventTrigger>
+                  </i:Interaction.Triggers>
+                  <Style TargetType="{x:Type Button}"/>
+                </Button>
               </StackPanel>
             </DataTemplate>
           </ListView.Resources>
@@ -51,7 +87,7 @@
           </ListView.ItemContainerStyle>
           <ListView.ItemsPanel>
             <ItemsPanelTemplate>
-              <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft"></StackPanel>
+              <StackPanel Orientation="Horizontal"></StackPanel>
             </ItemsPanelTemplate>
           </ListView.ItemsPanel>
         </ListView>
@@ -62,7 +98,7 @@
         <TextBlock Text=" BuildNumber: "/>
         <TextBlock Text="{Binding CurrentStatus.BuildNumber}"/>
       </StackPanel>
-      <WrapPanel Grid.Row="1" Grid.Column="2" x:Name="wrapPanelProgres">
+      <WrapPanel Grid.Row="1" Grid.Column="2" x:Name="wrapPanelProgres" Visibility="{Binding CurrentStatus.Building, Converter={StaticResource BoolToVisibility}}">
         <TextBlock Text=" Completion: "/>
         <TextBlock Text="{Binding CurrentStatus.Progres}"/>
         <TextBlock Text="% "/>
