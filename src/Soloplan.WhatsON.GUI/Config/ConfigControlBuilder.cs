@@ -71,7 +71,7 @@ namespace Soloplan.WhatsON.GUI.Config
       valueBinding.Path = new PropertyPath(nameof(ConfigurationItemViewModel.Value));
       valueBinding.Mode = BindingMode.TwoWay;
       valueBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-      if (configItemAttribute.Optional)
+      if (!configItemAttribute.Optional)
       {
         var notEmptyValidationRule = new NotEmptyValidationRule();
         notEmptyValidationRule.ValidatesOnTargetUpdated = true;

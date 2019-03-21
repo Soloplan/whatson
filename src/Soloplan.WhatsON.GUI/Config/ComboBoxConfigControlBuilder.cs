@@ -9,7 +9,6 @@ namespace Soloplan.WhatsON.GUI.Config
   using System.Windows;
   using System.Windows.Controls;
   using MaterialDesignThemes.Wpf;
-  using Soloplan.WhatsON.GUI.Config.View;
   using Soloplan.WhatsON.GUI.Config.ViewModel;
 
   /// <summary>
@@ -22,6 +21,12 @@ namespace Soloplan.WhatsON.GUI.Config
     /// Gets the supported configuration items key.
     /// </summary>
     public override string SupportedConfigurationItemsKey => null;
+
+    /// <summary>
+    /// Gets the value binding dependency property.
+    /// If set, value binding will be initialized.
+    /// </summary>
+    public override DependencyProperty ValueBindingDependencyProperty => ComboBox.TextProperty;
 
     /// <summary>
     /// Creates a new control and returns it.
