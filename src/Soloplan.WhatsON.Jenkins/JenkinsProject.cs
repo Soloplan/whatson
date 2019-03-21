@@ -5,7 +5,7 @@
   using Soloplan.WhatsON.ServerBase;
 
   [SubjectType("Jenkins Project Status", Description = "Retrieve the current status of a Jenkins project.")]
-  [ConfigurationItem(ProjectName, typeof(string))]
+  [ConfigurationItem(ProjectName, typeof(string), Optional = false)]
   public class JenkinsProject : ServerSubject
   {
     public const string ProjectName = "ProjectName";

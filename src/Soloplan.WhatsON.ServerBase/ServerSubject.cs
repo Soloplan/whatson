@@ -1,6 +1,6 @@
 ﻿namespace Soloplan.WhatsON.ServerBase
 {
-  [ConfigurationItem(ServerAddress, typeof(string))]
+  [ConfigurationItem(ServerAddress, typeof(string), Optional = false)]
   [ConfigurationItem(ServerPort, typeof(int))]
   public abstract class ServerSubject : Subject
   {
