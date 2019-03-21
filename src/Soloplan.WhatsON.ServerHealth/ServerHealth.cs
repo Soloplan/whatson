@@ -3,6 +3,8 @@
   using System;
   using System.Net.NetworkInformation;
   using System.Text;
+  using System.Threading;
+  using System.Threading.Tasks;
   using Soloplan.WhatsON.ServerBase;
 
   [SubjectType("Server Health Check", Description = "Ping a server and return the state depending on the reply.")]
@@ -17,7 +19,7 @@
     {
     }
 
-    protected override void ExecuteQuery(params string[] args)
+    protected override async Task ExecuteQuery(CancellationToken cancellationToken, params string[] args)
     {
       var ping = new Ping();
       var options = new PingOptions();
@@ -27,7 +29,7 @@
 
       try
       {
-        var reply = ping.Send(this.Address, 120, buffer, options);
+        var reply = await ping.SendPingAsync(this.Address, 120, buffer, options);
 
         var state = ObservationState.Unknown;
         if (reply?.Status == IPStatus.Success)

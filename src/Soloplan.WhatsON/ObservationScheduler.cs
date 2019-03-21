@@ -10,18 +10,19 @@
   {
     private const int DefaultPollInterval = 5;
     private readonly IList<ObservationSubject> observedSubjects;
-    private readonly Thread schedulerThread;
 
     private bool running;
+
+    /// <summary>
+    /// Observation is stopping.
+    /// </summary>
+    private bool stopping;
+
+    private CancellationTokenSource cancellationTokenSource;
 
     public ObservationScheduler()
     {
       this.observedSubjects = new List<ObservationSubject>();
-      this.schedulerThread = new Thread(this.Observe);
-      AppDomain.CurrentDomain.ProcessExit += (e, a) =>
-      {
-        this.Terminate();
-      };
     }
 
     public event EventHandler<Subject> StatusQueried;
@@ -30,10 +31,23 @@
 
     public event EventHandler ObservationRunEnded;
 
+    public bool Running
+    {
+      get => this.running;
+      private set => this.running = value;
+    }
+
     public void Start()
     {
-      this.running = true;
-      this.schedulerThread.Start();
+      if (!this.Running && !this.stopping)
+      {
+        this.Running = true;
+        this.cancellationTokenSource = new CancellationTokenSource();
+        foreach (var observationSubject in this.observedSubjects)
+        {
+          this.Observe(observationSubject, this.cancellationTokenSource.Token);
+        }
+      }
     }
 
     public void Stop()
@@ -57,32 +71,50 @@
       this.observedSubjects.Add(new ObservationSubject(subject, interval));
     }
 
-    private void Observe()
+    public void UnobserveAll()
     {
-      while (this.running)
+      if (this.Running || this.stopping)
       {
-        var requiredPollSubjects = this.observedSubjects.Where(x => DateTime.Now - x.LastPoll > x.Interval).ToList();
-        if (requiredPollSubjects.Count > 0)
+        throw new InvalidOperationException("Can't stop observing while observation is running.");
+      }
+
+      this.observedSubjects.Clear();
+    }
+
+    private async Task Observe(ObservationSubject subject, CancellationToken token)
+    {
+      while (this.Running)
+      {
+        if (DateTime.Now - subject.LastPoll > subject.Interval)
         {
           this.ObservationRunStarted?.Invoke(this, EventArgs.Empty);
-          Parallel.ForEach(requiredPollSubjects, subject =>
-          {
-            subject.Subject.QueryStatus();
-            subject.LastPoll = DateTime.Now;
-
-            this.StatusQueried?.Invoke(this, subject.Subject);
-          });
-
+          await this.ObserveSingle(subject, token);
           this.ObservationRunEnded?.Invoke(this, EventArgs.Empty);
         }
 
-        Thread.Sleep(1000);
+        await Task.Delay(1000, token);
       }
+    }
+
+    private async Task ObserveSingle(ObservationSubject subject, CancellationToken token)
+    {
+      await subject.Subject.QueryStatus(token);
+      subject.LastPoll = DateTime.Now;
+      this.StatusQueried?.Invoke(this, subject.Subject);
     }
 
     private void Terminate()
     {
-      this.running = false;
+      try
+      {
+        this.stopping = true;
+        this.Running = false;
+        this.cancellationTokenSource.Cancel();
+      }
+      finally
+      {
+        this.stopping = false;
+      }
     }
 
     public class ObservationSubject

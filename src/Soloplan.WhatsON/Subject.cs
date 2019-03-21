@@ -8,6 +8,8 @@ namespace Soloplan.WhatsON
 {
   using System.Collections.Generic;
   using System.Text;
+  using System.Threading;
+  using System.Threading.Tasks;
 
   /// <summary>
   /// The subject - represent an executable job defined by the plugin.
@@ -52,9 +54,9 @@ namespace Soloplan.WhatsON
     /// </summary>
     public SubjectConfiguration SubjectConfiguration { get; set; }
 
-    public void QueryStatus(params string[] args)
+    public async Task QueryStatus(CancellationToken cancellationToken, params string[] args)
     {
-      this.ExecuteQuery(args);
+      await this.ExecuteQuery(cancellationToken, args);
 
       if (this.CurrentStatus != null && this.ShouldTakeSnapshot(this.CurrentStatus))
       {
@@ -90,7 +92,7 @@ namespace Soloplan.WhatsON
       return sb.ToString();
     }
 
-    protected abstract void ExecuteQuery(params string[] args);
+    protected abstract Task ExecuteQuery(CancellationToken cancellationToken, params string[] args);
 
     protected virtual bool ShouldTakeSnapshot(Status status)
     {

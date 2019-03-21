@@ -1,6 +1,8 @@
 ﻿namespace Soloplan.WhatsON.Jenkins
 {
   using System;
+  using System.Threading;
+  using System.Threading.Tasks;
   using Soloplan.WhatsON.Jenkins.Model;
   using Soloplan.WhatsON.ServerBase;
 
@@ -49,11 +51,10 @@
       return this.SubjectConfiguration.GetConfigurationByKey(JenkinsProject.ProjectName).Value;
     }
 
-    protected override void ExecuteQuery(params string[] args)
+    protected override async Task ExecuteQuery(CancellationToken cancellationToken, params string[] args)
     {
-      var job = JenkinsApi.GetJenkinsJob(this);
-      var latestBuild = JenkinsApi.GetJenkinsBuild(this, job.LastBuild.Number);
-
+      var job = await JenkinsApi.GetJenkinsJob(this, cancellationToken);
+      var latestBuild = await JenkinsApi.GetJenkinsBuild(this, job.LastBuild.Number, cancellationToken);
       this.CurrentStatus = CreateStatus(latestBuild);
       if (this.Snapshots.Count == 0 && this.MaxSnapshots > 0)
       {
@@ -61,7 +62,8 @@
         var lastHistoryBuild = Math.Max(startBuildNumber - this.MaxSnapshots, 0);
         for (int i = startBuildNumber; i > lastHistoryBuild; i--)
         {
-          this.AddSnapshot(CreateStatus(JenkinsApi.GetJenkinsBuild(this, i)));
+          var buildStatus = await JenkinsApi.GetJenkinsBuild(this, i, cancellationToken);
+          this.AddSnapshot(CreateStatus(buildStatus));
         }
       }
     }
