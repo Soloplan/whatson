@@ -2,7 +2,7 @@
 {
   using System;
 
-  public interface ISubjectPlugin
+  public interface ISubjectPlugin : IPlugIn
   {
     Type SubjectType { get; }
 

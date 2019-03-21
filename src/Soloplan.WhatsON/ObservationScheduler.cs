@@ -36,6 +36,11 @@
       this.schedulerThread.Start();
     }
 
+    public void Stop()
+    {
+      this.Terminate();
+    }
+
     public void Observe(Subject subject, int interval = DefaultPollInterval)
     {
       if (subject == null)

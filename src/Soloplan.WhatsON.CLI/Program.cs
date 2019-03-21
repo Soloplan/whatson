@@ -4,10 +4,7 @@ namespace Soloplan.WhatsON.CLI
   using System.Collections.Generic;
   using System.Threading;
   using CommandLine;
-  using Soloplan.WhatsON.Jenkins;
   using Soloplan.WhatsON.Serialization;
-  using Soloplan.WhatsON.ServerBase;
-  using Soloplan.WhatsON.ServerHealth;
 
   public class Program
   {
@@ -75,18 +72,18 @@ namespace Soloplan.WhatsON.CLI
     private static void CreateDummyData()
     {
       // create some dummy data for the configuration
-      var subject = PluginsManager.Instance.CreateNewSubject(new SubjectConfiguration(typeof(ServerHealthPlugin).FullName, "Google", ServerSubject.ServerAddress, "google.com"));
-      var subject2 = PluginsManager.Instance.CreateNewSubject(new SubjectConfiguration(typeof(ServerHealthPlugin).FullName, "Soloplan", ServerSubject.ServerAddress, "soloplan.de"));
-      var subject3 = PluginsManager.Instance.CreateNewSubject(new SubjectConfiguration(typeof(ServerHealthPlugin).FullName, "GitHub", ServerSubject.ServerAddress, "github.com"));
+      var subject = PluginsManager.Instance.CreateNewSubject(new SubjectConfiguration("Soloplan.WhatsON.ServerHealth.ServerHealthPlugin", "Google", "Address", "google.com"));
+      var subject2 = PluginsManager.Instance.CreateNewSubject(new SubjectConfiguration("Soloplan.WhatsON.ServerHealth.ServerHealthPlugin", "Soloplan", "Address", "soloplan.de"));
+      var subject3 = PluginsManager.Instance.CreateNewSubject(new SubjectConfiguration("Soloplan.WhatsON.ServerHealth.ServerHealthPlugin", "GitHub", "Address", "github.com"));
 
       var jenkinsParameters = new List<ConfigurationItem>
       {
-        new ConfigurationItem(ServerSubject.ServerAddress,"https://jenkins.mono-project.com"),
-        new ConfigurationItem(JenkinsProject.ProjectName, "test-mono-pipeline"),
+        new ConfigurationItem("Address","https://jenkins.mono-project.com"),
+        new ConfigurationItem( "ProjectName", "test-mono-pipeline"),
       };
 
       // test jenkins api of publically available jenkins
-      var subjectJenkins = PluginsManager.Instance.CreateNewSubject(new SubjectConfiguration(typeof(JenkinsProjectPlugin).FullName, "Test Mono Pipeline", jenkinsParameters));
+      var subjectJenkins = PluginsManager.Instance.CreateNewSubject(new SubjectConfiguration("Soloplan.WhatsON.Jenkins.JenkinsProjectPlugin", "Test Mono Pipeline", jenkinsParameters));
 
       var scheduler = PrepareScheduler();
       if (subject != null)

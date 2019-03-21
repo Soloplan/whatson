@@ -8,6 +8,7 @@ namespace Soloplan.WhatsON
 {
   using System;
   using System.Collections.Generic;
+  using System.IO;
   using System.Linq;
   using System.Runtime.CompilerServices;
   using Soloplan.WhatsON.Composition;
@@ -25,7 +26,9 @@ namespace Soloplan.WhatsON
     /// <summary>
     /// The subject plugins list.
     /// </summary>
-    private List<ISubjectPlugin> subjectPlugins = new List<ISubjectPlugin>();
+    private List<ISubjectPlugin> subjectPlugins;
+
+    private List<IPlugIn> plugIns = new List<IPlugIn>();
 
     /// <summary>
     /// The subjects.
@@ -55,7 +58,37 @@ namespace Soloplan.WhatsON
     /// <summary>
     /// Gets the read only list of Subject Plugins.
     /// </summary>
-    public IReadOnlyList<ISubjectPlugin> SubjectPlugins => this.subjectPlugins.AsReadOnly();
+    public IReadOnlyList<ISubjectPlugin> SubjectPlugins
+    {
+      get
+      {
+        if(this.subjectPlugins != null)
+        {
+          return this.subjectPlugins.AsReadOnly();
+        }
+
+        this.subjectPlugins = new List<ISubjectPlugin>();
+        foreach (var plugIn in this.plugIns.OfType<ISubjectPlugin>())
+        {
+          if (plugIn.SubjectType == null)
+          {
+            continue;
+          }
+
+          var typeDesc = plugIn.SubjectTypeAttribute;
+          if (typeDesc == null)
+          {
+            continue;
+          }
+
+          this.subjectPlugins.Add(plugIn);
+        }
+
+        return this.subjectPlugins.AsReadOnly();
+      }
+    }
+
+    public IReadOnlyList<IPlugIn> PlugIns => this.plugIns.AsReadOnly();
 
     /// <summary>
     /// Gets the Plugin instance of a Subject Plugin.
@@ -64,7 +97,7 @@ namespace Soloplan.WhatsON
     /// <returns>The Plugin instance.</returns>
     public ISubjectPlugin GetPlugin(Subject subject)
     {
-      return this.subjectPlugins.FirstOrDefault(sp => sp.SubjectType == subject.GetType());
+      return this.SubjectPlugins.FirstOrDefault(sp => sp.SubjectType == subject.GetType());
     }
 
     /// <summary>
@@ -74,7 +107,7 @@ namespace Soloplan.WhatsON
     /// <returns>The Plugin instance.</returns>
     public ISubjectPlugin GetPlugin(SubjectConfiguration subjectConfiguration)
     {
-      return this.subjectPlugins.FirstOrDefault(sp => sp.GetType().FullName == subjectConfiguration.PluginTypeName);
+      return this.SubjectPlugins.FirstOrDefault(sp => sp.GetType().FullName == subjectConfiguration.PluginTypeName);
     }
 
     /// <summary>
@@ -85,7 +118,7 @@ namespace Soloplan.WhatsON
     /// <exception cref="InvalidOperationException">Couldn't find plugin for a type: {subjectConfiguration.TypeName}</exception>
     public Subject CreateNewSubject(SubjectConfiguration subjectConfiguration)
     {
-      var plugin = this.subjectPlugins.FirstOrDefault(p => p.GetType().FullName == subjectConfiguration.PluginTypeName);
+      var plugin = this.SubjectPlugins.FirstOrDefault(p => p.GetType().FullName == subjectConfiguration.PluginTypeName);
       if (plugin == null)
       {
         throw new InvalidOperationException($"Couldn't find plugin for a type: {subjectConfiguration.PluginTypeName}");
@@ -110,7 +143,7 @@ namespace Soloplan.WhatsON
         return subject;
       }
 
-      var plugin = this.subjectPlugins.FirstOrDefault(p => p.GetType().FullName == subjectConfiguration.PluginTypeName);
+      var plugin = this.SubjectPlugins.FirstOrDefault(p => p.GetType().FullName == subjectConfiguration.PluginTypeName);
       if (plugin == null)
       {
         throw new InvalidOperationException($"Couldn't find plugin for a type: {subjectConfiguration.PluginTypeName}");
@@ -124,22 +157,16 @@ namespace Soloplan.WhatsON
     /// </summary>
     private void InitializePlugInTypes()
     {
-      var found = PluginFinder.FindAllSubjectPlugins("Soloplan.WhatsON.ServerHealth.dll", "Soloplan.WhatsON.Jenkins.dll");
-      this.subjectPlugins = new List<ISubjectPlugin>();
-      foreach (var plugin in found)
+      var path = System.IO.Path.GetDirectoryName(System.AppContext.BaseDirectory);
+      var plugInPath = Path.Combine(path, "PlugIns");
+      if (Directory.Exists(plugInPath))
       {
-        if (plugin.SubjectType == null)
+        var found = PluginFinder.FindAllPlugins(Directory.EnumerateFiles(plugInPath,"*.dll").ToArray());
+        this.plugIns = new List<IPlugIn>();
+        foreach (var plugin in found)
         {
-          continue;
+          this.plugIns.Add(plugin);
         }
-
-        var typeDesc = plugin.SubjectTypeAttribute;
-        if (typeDesc == null)
-        {
-          continue;
-        }
-
-        this.subjectPlugins.Add(plugin);
       }
     }
   }
