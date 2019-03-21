@@ -60,18 +60,22 @@
     <ProjectReference Include="..\Soloplan.WhatsON.GUI\Soloplan.WhatsON.GUI.csproj">
       <Project>{bb65378f-518e-43e4-a374-592a9fe88e51}</Project>
       <Name>Soloplan.WhatsON.GUI</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Soloplan.WhatsON.Jenkins\Soloplan.WhatsON.Jenkins.csproj">
       <Project>{ed2ae201-2f23-44d3-a98a-cedb0f2c6003}</Project>
       <Name>Soloplan.WhatsON.Jenkins</Name>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\Soloplan.WhatsON.ServerBase\Soloplan.WhatsON.ServerBase.csproj">
       <Project>{4ff2c930-a740-4323-b63f-0d7b773e4355}</Project>
       <Name>Soloplan.WhatsON.ServerBase</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Soloplan.WhatsON\Soloplan.WhatsON.csproj">
       <Project>{c5eec17b-e8a9-4cd2-be0b-491e70d9f511}</Project>
       <Name>Soloplan.WhatsON</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
