@@ -15,5 +15,9 @@
   <StackPanel>
     <Button Content="Open config" HorizontalAlignment="Left" Margin="27,10,0,0" VerticalAlignment="Top" Width="119" Click="OpenConfig"/>
     <treeListControl:SubjectsTreeView x:Name="mainTreeView"/>
+    <StackPanel Orientation="Horizontal">
+      <Button Click="StopObservation">Stop</Button>
+      <Button Click="StartObservation">Start</Button>
+    </StackPanel>
   </StackPanel>
 </Window>

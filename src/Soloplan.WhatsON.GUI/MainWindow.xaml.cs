@@ -24,6 +24,8 @@ namespace Soloplan.WhatsON.GUI
 
     private ObservationScheduler scheduler;
 
+    private bool shown;
+
     protected override void OnClosed(EventArgs e)
     {
       this.scheduler.Stop();
@@ -38,12 +40,11 @@ namespace Soloplan.WhatsON.GUI
 
       foreach (var subjectConfiguration in this.config.SubjectsConfiguration)
       {
-        var subject = PluginsManager.Instance.CreateNewSubject(subjectConfiguration);
+        var subject = PluginsManager.Instance.GetSubject(subjectConfiguration);
         this.scheduler.Observe(subject);
       }
 
       this.mainTreeView.Init(this.scheduler, this.config);
-      this.scheduler.Start();
 
       var themeHelper = new ThemeHelper();
       themeHelper.Initialize();
@@ -53,8 +54,60 @@ namespace Soloplan.WhatsON.GUI
     private void OpenConfig(object sender, RoutedEventArgs e)
     {
       var configWindow = new ConfigWindow(this.config);
-      configWindow.ConfigurationApplied += (s, ev) => this.config = ev.Value;
+      configWindow.ConfigurationApplied += (s, ev) =>
+      {
+        this.config = ev.Value;
+
+        this.ApplyConfiguration();
+      };
+
       configWindow.ShowDialog();
+    }
+
+    protected override void OnContentRendered(EventArgs e)
+    {
+      base.OnContentRendered(e);
+
+      if (this.shown)
+      {
+        return;
+      }
+
+      this.scheduler.Start();
+      this.shown = true;
+    }
+
+    private void ApplyConfiguration()
+    {
+      var schedulerRunning = this.scheduler.Running;
+      if (this.scheduler.Running)
+      {
+        this.scheduler.Stop();
+      }
+
+      this.scheduler.UnobserveAll();
+      foreach (var subjectConfiguration in this.config.SubjectsConfiguration)
+      {
+        var subject = PluginsManager.Instance.GetSubject(subjectConfiguration);
+        this.scheduler.Observe(subject);
+      }
+
+      this.mainTreeView.Update(this.config);
+
+      if (schedulerRunning)
+      {
+        this.scheduler.Start();
+      }
+    }
+
+    private void StopObservation(object sender, RoutedEventArgs e)
+    {
+      this.scheduler.Stop();
+    }
+
+    private void StartObservation(object sender, RoutedEventArgs e)
+    {
+      this.scheduler.Start();
     }
   }
 }

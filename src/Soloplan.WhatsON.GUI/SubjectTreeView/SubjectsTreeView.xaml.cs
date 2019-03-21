@@ -39,5 +39,10 @@ namespace Soloplan.WhatsON.GUI.SubjectTreeView
       this.model.Init(scheduler, configuration);
       this.DataContext = this.model;
     }
+
+    public void Update(ApplicationConfiguration configuration)
+    {
+      this.model.Update(configuration);
+    }
   }
 }

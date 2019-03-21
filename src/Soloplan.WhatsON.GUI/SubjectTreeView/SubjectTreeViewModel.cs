@@ -7,8 +7,6 @@
 
   public class SubjectTreeViewModel
   {
-    private object lockObject = new object();
-
     private ObservableCollection<SubjectGroupViewModel> subjectGroups;
 
     public event EventHandler CountChanged;
@@ -42,6 +40,12 @@
       this.ParseConfiguration(configuration);
     }
 
+    public void Update(ApplicationConfiguration configuration)
+    {
+      this.SubjectGroups.Clear();
+      this.ParseConfiguration(configuration);
+    }
+
     private void ParseConfiguration(ApplicationConfiguration configuration)
     {
       var grouping = configuration.SubjectsConfiguration.GroupBy(config => config.GetConfigurationByKey(Subject.Category)?.Value);
@@ -55,14 +59,11 @@
 
     private void SchedulerStatusQueried(object sender, Subject e)
     {
-      lock (this.lockObject)
+      foreach (var subjectGroupViewModel in this.SubjectGroups)
       {
-        foreach (var subjectGroupViewModel in this.SubjectGroups)
+        if (subjectGroupViewModel.Update(e))
         {
-          if (subjectGroupViewModel.Update(e))
-          {
-            return;
-          }
+          return;
         }
       }
     }
