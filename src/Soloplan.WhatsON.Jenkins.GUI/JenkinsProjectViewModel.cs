@@ -18,7 +18,7 @@
 
     protected override StatusViewModel GetViewModelForStatus(Status status)
     {
-      var viewModel = new JenkinsStatusViewModel();
+      var viewModel = new JenkinsStatusViewModel(this);
       viewModel.Update(status);
       var jenkinsAddress = this.Subject as JenkinsProject;
       if (jenkinsAddress != null)

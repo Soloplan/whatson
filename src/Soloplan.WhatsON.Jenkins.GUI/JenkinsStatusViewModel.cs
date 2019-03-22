@@ -18,6 +18,11 @@
     /// </summary>
     private OpenWebPageCommand openBuildPage;
 
+    public JenkinsStatusViewModel(JenkinsProjectViewModel model)
+      : base(model)
+    {
+    }
+
     /// <summary>
     /// Command for opening builds webPage.
     /// </summary>

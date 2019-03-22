@@ -60,7 +60,7 @@
       {
         var startBuildNumber = latestBuild.Building ? latestBuild.Number - 1 : latestBuild.Number;
         var lastHistoryBuild = Math.Max(startBuildNumber - this.MaxSnapshots, 0);
-        for (int i = startBuildNumber; i > lastHistoryBuild; i--)
+        for (int i = lastHistoryBuild; i <= startBuildNumber; i++)
         {
           var buildStatus = await JenkinsApi.GetJenkinsBuild(this, i, cancellationToken);
           this.AddSnapshot(CreateStatus(buildStatus));
@@ -72,7 +72,12 @@
     {
       if (this.PreviousCheckStatus != null)
       {
-        if (status.State != this.PreviousCheckStatus.State || status.Properties[BuildPropertyKeys.Number] != this.PreviousCheckStatus.Properties[BuildPropertyKeys.Number])
+        if (!int.TryParse(this.PreviousCheckStatus.Properties[BuildPropertyKeys.Number], out int prevBuildNumber) || !int.TryParse(status.Properties[BuildPropertyKeys.Number], out int currentBuildNumber))
+        {
+          return false;
+        }
+
+        if ((status.State != ObservationState.Running && (status.State != this.PreviousCheckStatus.State || prevBuildNumber != currentBuildNumber)) || currentBuildNumber - prevBuildNumber > 1)
         {
           this.PreviousCheckStatus = status;
           return true;

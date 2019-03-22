@@ -9,6 +9,11 @@
   //Todo DGO: Move to some more general location
   public class StatusViewModel : ViewModelBase
   {
+    public StatusViewModel(SubjectViewModel subject)
+    {
+      this.Parent = subject;
+    }
+
     private string name;
 
     private string details;
@@ -81,6 +86,8 @@
         }
       }
     }
+
+    public SubjectViewModel Parent { get; }
 
     public virtual void Update(Status newStatus)
     {

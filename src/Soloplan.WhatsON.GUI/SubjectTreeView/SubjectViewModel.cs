@@ -90,7 +90,7 @@
 
     protected virtual StatusViewModel GetViewModelForStatus(Status status)
     {
-      StatusViewModel result = new StatusViewModel();
+      StatusViewModel result = new StatusViewModel(this);
       result.Update(status);
 
       return result;
