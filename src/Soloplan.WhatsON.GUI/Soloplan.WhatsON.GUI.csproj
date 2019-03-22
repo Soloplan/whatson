@@ -89,6 +89,7 @@
     <Compile Include="Config\NotEmptyValidationRule.cs" />
     <Compile Include="Config\View\Validation.cs" />
     <Compile Include="ThemeHelper.cs" />
+    <Compile Include="TrayHandler.cs" />
     <Page Include="Config\View\ConfigWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -227,6 +228,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\whatsONx16.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\config\Soloplan.WhatsON.targets" />

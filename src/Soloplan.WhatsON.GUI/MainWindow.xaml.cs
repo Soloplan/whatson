@@ -6,7 +6,6 @@
 
 namespace Soloplan.WhatsON.GUI
 {
-  using System;
   using System.ComponentModel;
   using System.Windows;
   using Soloplan.WhatsON.GUI.Config.View;
@@ -24,31 +23,12 @@ namespace Soloplan.WhatsON.GUI
 
     private ObservationScheduler scheduler;
 
-    private bool shown;
-
-    protected override void OnClosed(EventArgs e)
-    {
-      this.scheduler.Stop();
-      base.OnClosed(e);
-    }
-
-    public MainWindow()
+    public MainWindow(ObservationScheduler scheduler, ApplicationConfiguration configuration) 
     {
       this.InitializeComponent();
-      this.config = SerializationHelper.LoadOrCreateConfiguration();
-      this.scheduler = new ObservationScheduler();
-
-      foreach (var subjectConfiguration in this.config.SubjectsConfiguration)
-      {
-        var subject = PluginsManager.Instance.GetSubject(subjectConfiguration);
-        this.scheduler.Observe(subject);
-      }
-
+      this.scheduler = scheduler;
+      this.config = configuration;
       this.mainTreeView.Init(this.scheduler, this.config);
-
-      var themeHelper = new ThemeHelper();
-      themeHelper.Initialize();
-      themeHelper.ApplyLightDarkMode(this.config.DarkThemeEnabled);
     }
 
     private void OpenConfig(object sender, RoutedEventArgs e)
@@ -62,19 +42,6 @@ namespace Soloplan.WhatsON.GUI
       };
 
       configWindow.ShowDialog();
-    }
-
-    protected override void OnContentRendered(EventArgs e)
-    {
-      base.OnContentRendered(e);
-
-      if (this.shown)
-      {
-        return;
-      }
-
-      this.scheduler.Start();
-      this.shown = true;
     }
 
     private void ApplyConfiguration()

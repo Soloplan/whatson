@@ -105,6 +105,11 @@
 
     private void Terminate()
     {
+      if (!this.Running)
+      {
+        return;
+      }
+
       try
       {
         this.stopping = true;
