@@ -5,11 +5,11 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>..\bin\Debug\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>..\bin\Release\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
   </PropertyGroup>
 
   <Import Project="..\..\config\Soloplan.WhatsON.targets" />
@@ -17,4 +17,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Soloplan.WhatsON\Soloplan.WhatsON.csproj" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy $(TargetPath) $(SolutionDir)bin\$(ConfigurationName)\$(TargetName)$(TargetExt)* /Y" />
+  </Target>
 </Project>
