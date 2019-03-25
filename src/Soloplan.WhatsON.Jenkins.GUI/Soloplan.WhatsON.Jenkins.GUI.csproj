@@ -92,7 +92,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\config\Soloplan.WhatsON.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy $(TargetPath) $(SolutionDir)$(OutDir)PlugIns\$(TargetName)$(TargetExt)* /Y 
+    <PostBuildEvent>xcopy $(TargetPath) $(SolutionDir)bin\$(ConfigurationName)\PlugIns\$(TargetName)$(TargetExt)* /Y
 
 </PostBuildEvent>
   </PropertyGroup>
