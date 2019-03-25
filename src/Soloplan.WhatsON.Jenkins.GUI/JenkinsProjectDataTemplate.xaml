@@ -20,21 +20,14 @@
   </ContextMenu>
 
   <DataTemplate DataType="{x:Type jenkins:JenkinsProjectViewModel}">
-    <Grid ContextMenu="{StaticResource contextMenuJenkins}" HorizontalAlignment="Stretch">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="Auto"/>
-        <ColumnDefinition Width="*"/>
-        <ColumnDefinition Width="Auto"/>
-      </Grid.ColumnDefinitions>
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-      </Grid.RowDefinitions>
-      <StackPanel Grid.Column="0" Orientation="Horizontal">
+    <DockPanel ContextMenu="{StaticResource contextMenuJenkins}" LastChildFill="True">
+      <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
         <TextBlock Text=" Jenkins: "/>
         <TextBlock FontWeight="Black" Text="{Binding Name}"/>
+        <TextBlock Text=" Build No.: "/>
+        <TextBlock Text="{Binding CurrentStatus.BuildNumber}"/>
       </StackPanel>
-      <StackPanel Grid.Column="2" Orientation="Horizontal">
+      <StackPanel  DockPanel.Dock="Right" Orientation="Horizontal">
         <TextBlock Text=" History: "/>
         <!--<Rectangle Width="10" Height="10" Fill="{Binding CurrentStatus.State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"/>-->
         <ListView ItemsSource="{Binding SubjectSnapshots, Mode=OneWay}">
@@ -91,26 +84,41 @@
             </ItemsPanelTemplate>
           </ListView.ItemsPanel>
         </ListView>
+        <StackPanel Orientation="Horizontal" Visibility="{Binding CurrentStatus.BuildingNoLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
+          <StackPanel.ToolTip>
+            <StackPanel Orientation="Horizontal">
+              <TextBlock>
+                <TextBlock.Text>
+                  <MultiBinding StringFormat="{}{0:00}:{1:00}:{2:00}">
+                    <Binding Path="CurrentStatus.EstimatedRemaining.Hours" />
+                    <Binding Path="CurrentStatus.EstimatedRemaining.Minutes" />
+                    <Binding Path="CurrentStatus.EstimatedRemaining.Seconds" />
+                  </MultiBinding>
+                </TextBlock.Text>
+              </TextBlock>
+              <TextBlock Text=" estimated remaining" />
+            </StackPanel>
+          </StackPanel.ToolTip>
+          <TextBlock FontSize="10" Text=" Completion: "/>
+          <TextBlock FontSize="10" Text="{Binding CurrentStatus.Progres}"/>
+          <TextBlock FontSize="10" Text="% "/>
+          <ProgressBar Width="100" Value="{Binding CurrentStatus.Progres, Mode=OneWay}" materialDesign:TransitionAssist.DisableTransitions="True" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Visibility="{Binding CurrentStatus.BuildingLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
+          <TextBlock FontSize="10" Text=" Taking "/>
+          <TextBlock FontSize="10" >
+            <TextBlock.Text>
+              <MultiBinding StringFormat="{}{0:00}:{1:00}:{2:00}" >
+                <Binding Path="CurrentStatus.BuildTimeExcedingEstimation.Hours"/>
+                <Binding Path="CurrentStatus.BuildTimeExcedingEstimation.Minutes"/>
+                <Binding Path="CurrentStatus.BuildTimeExcedingEstimation.Seconds"/>
+              </MultiBinding>
+            </TextBlock.Text>
+          </TextBlock>
+          <TextBlock FontSize="10" Text=" longer then estimated."/>
+        </StackPanel>
       </StackPanel>
-      <StackPanel Grid.Row="1" Orientation="Horizontal">
-        <TextBlock Text=" Time: "/>
-        <TextBlock Text="{Binding CurrentStatus.Time}"/>
-        <TextBlock Text=" BuildNumber: "/>
-        <TextBlock Text="{Binding CurrentStatus.BuildNumber}"/>
-      </StackPanel>
-      <WrapPanel Grid.Row="1" Grid.Column="2" x:Name="wrapPanelProgres" Visibility="{Binding CurrentStatus.Building, Converter={StaticResource BoolToVisibility}}">
-        <TextBlock Text=" Completion: "/>
-        <TextBlock Text="{Binding CurrentStatus.Progres}"/>
-        <TextBlock Text="% "/>
-        <ProgressBar Width="100" Value="{Binding CurrentStatus.Progres, Mode=OneWay}" materialDesign:TransitionAssist.DisableTransitions="True" />
-      </WrapPanel>
-    </Grid>
-
-    <DataTemplate.Triggers>
-      <DataTrigger Binding="{Binding  Path=CurrentStatus.Building, RelativeSource={RelativeSource FindAncestor, AncestorType=TreeViewItem}}" Value="False">
-        <Setter TargetName="wrapPanelProgres" Property="Visibility" Value="Visible" />
-      </DataTrigger>
-    </DataTemplate.Triggers>
+    </DockPanel>
   </DataTemplate>
 
 </ResourceDictionary>

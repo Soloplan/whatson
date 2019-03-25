@@ -52,6 +52,9 @@
   <PropertyGroup>
     <StartupObject>Soloplan.WhatsON.GUI.App</StartupObject>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>whatsONx32.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -231,6 +234,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\whatsONx16.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="whatsONx32.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\config\Soloplan.WhatsON.targets" />

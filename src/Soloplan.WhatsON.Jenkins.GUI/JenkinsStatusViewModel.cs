@@ -18,6 +18,14 @@
     /// </summary>
     private OpenWebPageCommand openBuildPage;
 
+    private bool buildingNoLongerThenExpected;
+
+    private bool buildingLongerThenExpected;
+
+    private TimeSpan estimatedRemaining;
+
+    private TimeSpan buildTimeExcedingEstimation;
+
     public JenkinsStatusViewModel(JenkinsProjectViewModel model)
       : base(model)
     {
@@ -58,6 +66,7 @@
         {
           this.building = value;
           this.OnPropertyChanged();
+          this.UpdateEstimatedRemaining();
         }
       }
     }
@@ -75,6 +84,7 @@
         {
           this.duration = value;
           this.OnPropertyChanged();
+          this.UpdateEstimatedRemaining();
         }
       }
     }
@@ -92,6 +102,33 @@
         {
           this.estimatedDuration = value;
           this.OnPropertyChanged();
+          this.UpdateEstimatedRemaining();
+        }
+      }
+    }
+
+    public TimeSpan EstimatedRemaining
+    {
+      get => this.estimatedRemaining;
+      set
+      {
+        if (this.estimatedRemaining != value)
+        {
+          this.estimatedRemaining = value;
+          this.OnPropertyChanged();
+        }
+      }
+    }
+
+    public TimeSpan BuildTimeExcedingEstimation
+    {
+      get => this.buildTimeExcedingEstimation;
+      set
+      {
+        if (this.buildTimeExcedingEstimation != value)
+        {
+          this.buildTimeExcedingEstimation = value;
+          this.OnPropertyChanged();
         }
       }
     }
@@ -108,6 +145,34 @@
         if (this.progres != value)
         {
           this.progres = value;
+          this.OnPropertyChanged();
+          this.UpdateEstimatedRemaining();
+        }
+      }
+    }
+
+    public bool BuildingNoLongerThenExpected
+    {
+      get => this.buildingNoLongerThenExpected;
+      set
+      {
+        if (this.buildingNoLongerThenExpected != value)
+        {
+          this.buildingNoLongerThenExpected = value;
+          this.OnPropertyChanged();
+        }
+      }
+    }
+
+    public bool BuildingLongerThenExpected
+    {
+      get => this.buildingLongerThenExpected;
+      set
+      {
+
+        if (this.buildingLongerThenExpected != value)
+        {
+          this.buildingLongerThenExpected = value;
           this.OnPropertyChanged();
         }
       }
@@ -144,8 +209,9 @@
 
       if (this.State == ObservationState.Running)
       {
-        var elapsedSinceStart = (DateTime.UtcNow - this.Time).TotalSeconds;
+        var elapsedSinceStart = (DateTime.Now - this.Time).TotalSeconds;
         this.Progres = (int)((100 * elapsedSinceStart) / this.EstimatedDuration.TotalSeconds);
+        this.Duration = DateTime.Now - this.Time;
       }
       else
       {
@@ -161,6 +227,31 @@
       }
 
       this.openBuildPage.Address = address + "/" + this.BuildNumber;
+    }
+
+    private void UpdateEstimatedRemaining()
+    {
+      if (!this.Building)
+      {
+        this.BuildingNoLongerThenExpected = false;
+        this.buildingLongerThenExpected = false;
+        this.EstimatedDuration = TimeSpan.Zero;
+      }
+      else
+      {
+        this.BuildingNoLongerThenExpected = this.EstimatedDuration > this.Duration;
+        this.BuildingLongerThenExpected = !this.BuildingNoLongerThenExpected;
+        if (this.BuildingNoLongerThenExpected)
+        {
+          this.EstimatedRemaining = this.EstimatedDuration - this.Duration;
+          this.BuildTimeExcedingEstimation = TimeSpan.Zero;
+        }
+        else
+        {
+          this.EstimatedRemaining = TimeSpan.Zero;
+          this.BuildTimeExcedingEstimation = this.Duration - this.EstimatedDuration;
+        }
+      }
     }
 
     private class OpenWebPageCommand : ICommand

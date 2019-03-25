@@ -101,7 +101,7 @@
 
       this.Name = newStatus.Name;
       this.Details = newStatus.Detail;
-      this.Time = newStatus.Time;
+      this.Time = newStatus.Time.ToLocalTime();
       this.State = newStatus.State;
     }
   }
