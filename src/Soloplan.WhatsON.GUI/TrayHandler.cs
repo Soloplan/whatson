@@ -145,6 +145,7 @@
       {
         System.Windows.Application.Current.MainWindow = this.MainWindow;
         this.MainWindow.Show();
+        this.MainWindow.Activate();
       }
     }
   }
