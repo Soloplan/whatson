@@ -16,7 +16,7 @@ pipeline {
 
     stage('Build') {
       steps {
-        stepMSBuild(project: 'src/Soloplan.WhatsON.sln')
+        stepMSBuild(project: 'src/Soloplan.WhatsON.sln', outputDir: '')
       }
     }
 
@@ -26,7 +26,7 @@ pipeline {
       }
       
       steps {
-        stepPublishArtifacts(bucket: "whatson")
+        stepPublishArtifacts(bucket: "whatson", exclude: [])
       }
     }
   }

@@ -5,11 +5,11 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>bin\Debug</OutputPath>
+    <OutputPath>..\bin\Debug\plugins</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>bin\Release</OutputPath>
+    <OutputPath>..\bin\Release\plugins</OutputPath>
   </PropertyGroup>
 
   <Import Project="..\..\config\Soloplan.WhatsON.targets" />
@@ -22,8 +22,4 @@
       <Private>false</Private>
     </ProjectReference>
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy $(TargetPath) $(SolutionDir)bin\$(ConfigurationName)\PlugIns\$(TargetName)$(TargetExt)* /Y" />
-  </Target>
 </Project>
