@@ -26,14 +26,14 @@ pipeline {
       }
       
       steps {
-        stepPublishArtifacts(bucket: "whatson", exclude: [])
+        stepPublishArtifacts(folder: "src/bin/Release", bucket: "whatson", exclude: [])
       }
     }
   }
 
   post {
     success {
-      stepArchiveArtifacts()
+      stepArchiveArtifacts(folder: "src/bin/Release")
     }
   }
 }
