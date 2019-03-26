@@ -30,10 +30,4 @@ pipeline {
       }
     }
   }
-
-  post {
-    success {
-      stepArchiveArtifacts(folder: "src/bin/Release")
-    }
-  }
 }
