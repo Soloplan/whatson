@@ -34,6 +34,7 @@ namespace Soloplan.WhatsON.GUI
     private void OpenConfig(object sender, RoutedEventArgs e)
     {
       var configWindow = new ConfigWindow(this.config);
+      configWindow.Owner = this;
       configWindow.ConfigurationApplied += (s, ev) =>
       {
         this.config = ev.Value;
