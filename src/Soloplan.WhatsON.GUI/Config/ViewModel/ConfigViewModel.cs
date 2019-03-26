@@ -181,6 +181,8 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       }
       finally
       {
+        this.ConfigurationIsModified = true;
+        this.ApplyToSourceAndSave();
         this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.Configuration));
       }
     }
