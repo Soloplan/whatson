@@ -29,6 +29,11 @@ namespace Soloplan.WhatsON.GUI.Config.View
     public const string SubjectsListItemTag = "Subjects";
 
     /// <summary>
+    /// The settings About item tag.
+    /// </summary>
+    public const string AboutListItemTag = "About";
+
+    /// <summary>
     /// The configuration view model.
     /// </summary>
     private readonly ConfigViewModel configurationViewModel = new ConfigViewModel();
@@ -47,6 +52,11 @@ namespace Soloplan.WhatsON.GUI.Config.View
     /// The main page.
     /// </summary>
     private Page mainPage;
+
+    /// <summary>
+    /// The about page.
+    /// </summary>
+    private AboutPage aboutPage;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ConfigWindow"/> class.
@@ -111,6 +121,10 @@ namespace Soloplan.WhatsON.GUI.Config.View
         case SubjectsListItemTag:
           this.subjectPage = this.subjectPage ?? new SubjectsPage(this.configurationViewModel.Subjects);
           this.ConfigFrame.Content = this.subjectPage;
+          return;
+        case AboutListItemTag:
+          this.aboutPage = this.aboutPage ?? new AboutPage();
+          this.ConfigFrame.Content = this.aboutPage;
           return;
       }
     }

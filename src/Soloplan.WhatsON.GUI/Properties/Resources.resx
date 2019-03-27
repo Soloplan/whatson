@@ -129,6 +129,9 @@
   <data name="JsonFilesFilterName" xml:space="preserve">
     <value>Json files</value>
   </data>
+  <data name="NotInstalled" xml:space="preserve">
+    <value>not installed</value>
+  </data>
   <data name="ValueIsRequired" xml:space="preserve">
     <value>Value is required.</value>
   </data>
