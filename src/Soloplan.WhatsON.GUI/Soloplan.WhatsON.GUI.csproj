@@ -88,6 +88,7 @@
     <Compile Include="SubjectTreeView\SubjectTreeViewModel.cs" />
     <Compile Include="SubjectTreeView\SubjectViewModel.cs" />
     <Compile Include="SubjectTreeView\PluginsManagerExtension.cs" />
+    <Compile Include="SubjectTreeView\TimeToAproximateTimeConverter.cs" />
     <Compile Include="SubjectTreeView\UpdatableViewModelBase.cs" />
     <Compile Include="Config\ConfigControlBuilder.cs" />
     <Compile Include="Config\NotEmptyValidationRule.cs" />

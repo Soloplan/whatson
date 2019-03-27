@@ -9,6 +9,7 @@
 
   <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
   <subjectTreeView:StatusToColorConverter x:Key="StatusToColorConverter" />
+  <subjectTreeView:TimeToAproximateTimeConverter x:Key="TimeToAproximateTimeConverter" />
   <!-- ToDo DGO: this should be separate control for displaying status. This way it will be easier to reuse.-->
 
   <ContextMenu x:Key="contextMenuJenkins">
@@ -24,12 +25,11 @@
       <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
         <TextBlock Text=" Jenkins: "/>
         <TextBlock FontWeight="Black" Text="{Binding Name}"/>
-        <TextBlock Text=" Build No.: "/>
+        <TextBlock Text=" #" />
         <TextBlock Text="{Binding CurrentStatus.BuildNumber}"/>
       </StackPanel>
       <StackPanel  DockPanel.Dock="Right" Orientation="Horizontal">
         <TextBlock Text=" History: "/>
-        <!--<Rectangle Width="10" Height="10" Fill="{Binding CurrentStatus.State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"/>-->
         <ListView ItemsSource="{Binding SubjectSnapshots, Mode=OneWay}">
           <!--History builds-->
           <ListView.Resources>
@@ -38,8 +38,10 @@
                 <StackPanel.ToolTip>
                   <StackPanel>
                     <StackPanel Orientation="Horizontal">
-                      <TextBlock Text="Build No.: " />
+                      <TextBlock Text="#" />
                       <TextBlock Text="{Binding BuildNumber}" />
+                      <TextBlock Text=", build " />
+                      <TextBlock Text="{Binding Time, Converter={StaticResource TimeToAproximateTimeConverter}}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                       <TextBlock Text="Duration: "/>
@@ -59,8 +61,8 @@
                     </StackPanel>
                   </StackPanel>
                 </StackPanel.ToolTip>
-                <Button Width="10" Height="10"  Background="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}" 
-                        BorderBrush="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}" >
+                <Button Width="10" Height="10"  Background="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
+                          BorderBrush="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}" >
                   <i:Interaction.Triggers>
                     <!--Handle clicking on history builds.-->
                     <i:EventTrigger EventName="Click">

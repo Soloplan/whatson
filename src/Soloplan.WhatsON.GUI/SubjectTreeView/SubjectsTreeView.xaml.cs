@@ -18,6 +18,7 @@ namespace Soloplan.WhatsON.GUI.SubjectTreeView
   public partial class SubjectsTreeView : UserControl
   {
     public SubjectTreeViewModel model;
+
     public SubjectsTreeView()
     {
       this.InitializeComponent();
