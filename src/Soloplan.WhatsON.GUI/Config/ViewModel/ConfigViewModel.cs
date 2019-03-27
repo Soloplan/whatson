@@ -118,14 +118,14 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// </summary>
     public void ApplyToSourceAndSave()
     {
+      if (!this.ConfigurationIsModified)
+      {
+        return;
+      }
+
       this.ConfigurationApplying?.Invoke(this, new EventArgs());
       try
       {
-        if (!this.ConfigurationIsModified)
-        {
-          return;
-        }
-
         IList<SubjectConfiguration> subjectsToRemove = new List<SubjectConfiguration>();
         foreach (var sourceSubject in this.Configuration.SubjectsConfiguration)
         {
