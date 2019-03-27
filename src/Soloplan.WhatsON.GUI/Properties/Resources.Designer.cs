@@ -97,11 +97,30 @@ namespace Soloplan.WhatsON.GUI.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to not installed.
+        /// </summary>
+        public static string NotInstalled {
+            get {
+                return ResourceManager.GetString("NotInstalled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Value is required..
         /// </summary>
         public static string ValueIsRequired {
             get {
                 return ResourceManager.GetString("ValueIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        public static System.Drawing.Icon whatsONx16 {
+            get {
+                object obj = ResourceManager.GetObject("whatsONx16", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
     }
