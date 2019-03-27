@@ -8,6 +8,7 @@ namespace Soloplan.WhatsON.GUI.SubjectTreeView
   using System.Windows;
   using System.Windows.Controls;
   using System.Windows.Data;
+  using System.Windows.Input;
   using System.Windows.Markup;
   using Soloplan.WhatsON.Serialization;
 
@@ -43,6 +44,11 @@ namespace Soloplan.WhatsON.GUI.SubjectTreeView
     public void Update(ApplicationConfiguration configuration)
     {
       this.model.Update(configuration);
+    }
+
+    private void OnTreeItemDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+      this.model.OnDoubleClick(sender, e);
     }
   }
 }

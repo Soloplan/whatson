@@ -2,9 +2,10 @@
 {
   using System.Collections.ObjectModel;
   using System.Linq;
+  using System.Windows.Input;
   using Soloplan.WhatsON.GUI.Config.ViewModel;
 
-  public class SubjectGroupViewModel : ViewModelBase
+  public class SubjectGroupViewModel : ViewModelBase, IHandleDoubleClick
   {
     private string groupName;
 
@@ -51,6 +52,14 @@
         SubjectViewModel subjectViewModel = this.GetSubjectViewModel(subject);
         subjectViewModel.Init(subject);
         this.SubjectViewModels.Add(subjectViewModel);
+      }
+    }
+
+    public void OnDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+      foreach (var subjectViewModel in this.SubjectViewModels)
+      {
+        subjectViewModel.OnDoubleClick(sender, e);
       }
     }
 

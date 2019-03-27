@@ -1,6 +1,7 @@
 ﻿namespace Soloplan.WhatsON.Jenkins.GUI
 {
   using System;
+  using System.Windows.Controls;
   using System.Windows.Input;
   using Soloplan.WhatsON.GUI.SubjectTreeView;
 
@@ -15,6 +16,16 @@
     /// Command for opening builds webPage.
     /// </summary>
     public ICommand OpenWebPage => this.openWebPage ?? (this.openWebPage = new OpenWebPageCommand(this.Subject));
+
+    public override void OnDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+      base.OnDoubleClick(sender, e);
+      var treeViewItem = sender as TreeViewItem;
+      if (treeViewItem != null && treeViewItem.DataContext == this && this.OpenWebPage.CanExecute(null))
+      {
+        this.OpenWebPage.Execute(null);
+      }
+    }
 
     protected override StatusViewModel GetViewModelForStatus(Status status)
     {

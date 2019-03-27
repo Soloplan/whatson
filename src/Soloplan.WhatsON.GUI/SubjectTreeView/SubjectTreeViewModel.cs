@@ -3,9 +3,10 @@
   using System;
   using System.Collections.ObjectModel;
   using System.Linq;
+  using System.Windows.Input;
   using Soloplan.WhatsON.Serialization;
 
-  public class SubjectTreeViewModel
+  public class SubjectTreeViewModel : IHandleDoubleClick
   {
     private ObservableCollection<SubjectGroupViewModel> subjectGroups;
 
@@ -44,6 +45,14 @@
     {
       this.SubjectGroups.Clear();
       this.ParseConfiguration(configuration);
+    }
+
+    public void OnDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+      foreach (var subjectGroupViewModel in this.SubjectGroups)
+      {
+        subjectGroupViewModel.OnDoubleClick(sender, e);
+      }
     }
 
     private void ParseConfiguration(ApplicationConfiguration configuration)

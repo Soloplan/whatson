@@ -28,6 +28,11 @@
 
   <StackPanel>
     <TreeView  Name="mainTreeView" ItemsSource="{Binding SubjectGroups}">
+      <TreeView.ItemContainerStyle>
+        <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+          <EventSetter Event="MouseDoubleClick" Handler="OnTreeItemDoubleClick"/>
+        </Style>
+      </TreeView.ItemContainerStyle>
     </TreeView>
   </StackPanel>
 </UserControl>

@@ -2,9 +2,10 @@
 {
   using System;
   using System.Collections.ObjectModel;
+  using System.Windows.Input;
   using Soloplan.WhatsON.GUI.Config.ViewModel;
 
-  public class SubjectViewModel : ViewModelBase
+  public class SubjectViewModel : ViewModelBase, IHandleDoubleClick
   {
     ObservableCollection<StatusViewModel> subjectSnapshots;
 
@@ -56,6 +57,10 @@
         var subjectSnapshotViewModel = this.GetViewModelForStatus(subjectSnapshot.Status);
         this.SubjectSnapshots.Insert(0, subjectSnapshotViewModel);
       }
+    }
+
+    public virtual void OnDoubleClick(object sender, MouseButtonEventArgs e)
+    {
     }
 
     public virtual void Update(Subject changedSubject)

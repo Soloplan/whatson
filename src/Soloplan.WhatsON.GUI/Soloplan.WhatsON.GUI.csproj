@@ -82,6 +82,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="SubjectTreeView\IHandleDoubleClick.cs" />
     <Compile Include="SubjectTreeView\ITreeViewPresentationPlugIn.cs" />
     <Compile Include="SubjectTreeView\StatusToColorConverter.cs" />
     <Compile Include="SubjectTreeView\SubjectTreeViewModel.cs" />
