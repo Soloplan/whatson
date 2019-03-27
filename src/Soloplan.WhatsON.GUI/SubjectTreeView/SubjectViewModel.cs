@@ -41,11 +41,11 @@
 
     public StatusViewModel CurrentStatus { get; private set; }
 
-    protected Subject Subject { get; private set; }
-
     public Guid Identifier { get; private set; }
 
     public ObservableCollection<StatusViewModel> SubjectSnapshots => this.subjectSnapshots ?? (this.subjectSnapshots = new ObservableCollection<StatusViewModel>());
+
+    protected Subject Subject { get; private set; }
 
     public void Init(Subject subject)
     {
@@ -55,7 +55,7 @@
       foreach (var subjectSnapshot in subject.Snapshots)
       {
         var subjectSnapshotViewModel = this.GetViewModelForStatus(subjectSnapshot.Status);
-        this.SubjectSnapshots.Insert(0, subjectSnapshotViewModel);
+        this.SubjectSnapshots.Add(subjectSnapshotViewModel);
       }
     }
 
@@ -69,17 +69,17 @@
       this.Description = changedSubject.Description;
       this.CurrentStatus.Update(changedSubject.CurrentStatus);
 
-      int i = this.SubjectSnapshots.Count - 1;
+      int i = 0;
       bool clearList = false;
       foreach (var changedSubjectSnapshot in changedSubject.Snapshots)
       {
-        if (i < 0 || this.SubjectSnapshots[i].Time != changedSubjectSnapshot.Status.Time)
+        if (i >= this.SubjectSnapshots.Count || this.SubjectSnapshots[i].Time.ToUniversalTime() != changedSubjectSnapshot.Status.Time)
         {
           clearList = true;
           break;
         }
 
-        i--;
+        i++;
       }
 
       if (clearList)
@@ -88,7 +88,7 @@
         foreach (var subjectSnapshot in changedSubject.Snapshots)
         {
           var subjectSnapshotViewModel = this.GetViewModelForStatus(subjectSnapshot.Status);
-          this.SubjectSnapshots.Insert(0, subjectSnapshotViewModel);
+          this.SubjectSnapshots.Add(subjectSnapshotViewModel);
         }
       }
     }
