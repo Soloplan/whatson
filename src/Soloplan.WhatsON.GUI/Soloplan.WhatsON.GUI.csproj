@@ -59,6 +59,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
@@ -82,6 +83,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Config\AboutPage.xaml.cs">
+      <DependentUpon>AboutPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SubjectTreeView\ITreeViewPresentationPlugIn.cs" />
     <Compile Include="SubjectTreeView\StatusToColorConverter.cs" />
     <Compile Include="SubjectTreeView\SubjectTreeViewModel.cs" />
@@ -93,6 +97,10 @@
     <Compile Include="Config\View\Validation.cs" />
     <Compile Include="ThemeHelper.cs" />
     <Compile Include="TrayHandler.cs" />
+    <Page Include="Config\AboutPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Config\View\ConfigWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

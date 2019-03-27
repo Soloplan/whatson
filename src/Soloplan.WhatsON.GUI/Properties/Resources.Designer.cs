@@ -97,6 +97,15 @@ namespace Soloplan.WhatsON.GUI.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to not installed.
+        /// </summary>
+        public static string NotInstalled {
+            get {
+                return ResourceManager.GetString("NotInstalled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Value is required..
         /// </summary>
         public static string ValueIsRequired {
