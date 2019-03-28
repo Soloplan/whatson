@@ -7,10 +7,16 @@
   using Soloplan.WhatsON.ServerBase;
 
   [SubjectType("Jenkins Project Status", Description = "Retrieve the current status of a Jenkins project.")]
-  [ConfigurationItem(ProjectName, typeof(string), Optional = false)]
+  [ConfigurationItem(ProjectName, typeof(string), Optional = false, Priority = 300)]
+  [ConfigurationItem(RedirectPlugin, typeof(bool), Priority = 400)] // defines use of Display URL API Plugin https://wiki.jenkins.io/display/JENKINS/Display+URL+API+Plugin
   public class JenkinsProject : ServerSubject
   {
     public const string ProjectName = "ProjectName";
+
+    /// <summary>
+    /// The redirect plugin tag.
+    /// </summary>
+    public const string RedirectPlugin = "RedirectPlugin";
 
     /// <summary>
     /// Initializes a new instance of the <see cref="JenkinsProject"/> class.

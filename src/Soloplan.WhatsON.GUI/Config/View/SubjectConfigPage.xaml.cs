@@ -1,5 +1,6 @@
 ﻿namespace Soloplan.WhatsON.GUI.Config.View
 {
+  using System.Linq;
   using System.Windows.Controls;
   using Soloplan.WhatsON.GUI.Config.ViewModel;
 
@@ -31,7 +32,14 @@
         return;
       }
 
-      var subjectConfigAttributes = subject.GetSubjectConfigAttributes();
+      var subjectConfigAttributes = subject.GetSubjectConfigAttributes().OrderBy(s => s.Priority).ToList();
+
+      // move 0 priority subjects to the end of the list
+      var zeroPrioritySubjects = subjectConfigAttributes.Where(s => s.Priority == 0).ToList();
+      subjectConfigAttributes.RemoveAll(s => s.Priority == 0);
+      subjectConfigAttributes.AddRange(zeroPrioritySubjects);
+
+      // create controls
       foreach (var configAttribute in subjectConfigAttributes)
       {
         var configItem = subject.GetConfigurationByKey(configAttribute.Key);

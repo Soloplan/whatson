@@ -34,9 +34,9 @@ namespace Soloplan.WhatsON.GUI.Config
     /// <param name="configItem">The configuration item of the subject.</param>
     /// <param name="configItemAttribute">The configuration item attribute.</param>
     /// <returns>
-    /// Returns the <see cref="Control" /> for the <see cref="configItem" />.
+    /// Returns the <see cref="FrameworkElement" /> for the <see cref="configItem" />.
     /// </returns>
-    public Control GetControl(ConfigurationItemViewModel configItem, ConfigurationItemAttribute configItemAttribute)
+    public FrameworkElement GetControl(ConfigurationItemViewModel configItem, ConfigurationItemAttribute configItemAttribute)
     {
       var control = this.GetControlInternal(configItem, configItemAttribute);
       if (this.ValueBindingDependencyProperty != null)
@@ -53,7 +53,7 @@ namespace Soloplan.WhatsON.GUI.Config
     /// <param name="configItem">The configuration item.</param>
     /// <param name="configItemAttribute">The configuration item attribute.</param>
     /// <returns>Returns the <see cref="Control" /> for the <see cref="configItem" />.</returns>
-    public abstract Control GetControlInternal(ConfigurationItemViewModel configItem, ConfigurationItemAttribute configItemAttribute);
+    public abstract FrameworkElement GetControlInternal(ConfigurationItemViewModel configItem, ConfigurationItemAttribute configItemAttribute);
 
     /// <summary>
     /// Initilizes the value binding.
@@ -64,7 +64,7 @@ namespace Soloplan.WhatsON.GUI.Config
     /// <returns>
     /// The binding instance assigned to the control.
     /// </returns>
-    public virtual Binding InitilizeValueBinding(Control control, ConfigurationItemViewModel configItem, ConfigurationItemAttribute configItemAttribute)
+    public virtual Binding InitilizeValueBinding(FrameworkElement control, ConfigurationItemViewModel configItem, ConfigurationItemAttribute configItemAttribute)
     {
       var valueBinding = new Binding();
       valueBinding.Source = configItem;
@@ -79,8 +79,19 @@ namespace Soloplan.WhatsON.GUI.Config
         valueBinding.ValidationRules.Add(notEmptyValidationRule);
       }
 
-      BindingOperations.SetBinding(control, this.ValueBindingDependencyProperty, valueBinding);
+      this.SetValueBinding(control, this.ValueBindingDependencyProperty, valueBinding);
       return valueBinding;
+    }
+
+    /// <summary>
+    /// Sets the value binding.
+    /// </summary>
+    /// <param name="control">The control.</param>
+    /// <param name="dependencyProperty">The dependency property.</param>
+    /// <param name="valueBinding">The value binding.</param>
+    public virtual void SetValueBinding(FrameworkElement control, DependencyProperty dependencyProperty, Binding valueBinding)
+    {
+      BindingOperations.SetBinding(control, this.ValueBindingDependencyProperty, valueBinding);
     }
   }
 }

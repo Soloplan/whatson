@@ -1,7 +1,7 @@
 ﻿namespace Soloplan.WhatsON.ServerBase
 {
-  [ConfigurationItem(ServerAddress, typeof(string), Optional = false)]
-  [ConfigurationItem(ServerPort, typeof(int))]
+  [ConfigurationItem(ServerAddress, typeof(string), Optional = false, Priority = 100)]
+  [ConfigurationItem(ServerPort, typeof(int), Priority = 200)]
   public abstract class ServerSubject : Subject
   {
     public const string ServerAddress = "Address";

@@ -34,9 +34,9 @@ namespace Soloplan.WhatsON.GUI.Config
     /// <param name="configItem">The configuration item of the subject.</param>
     /// <param name="configItemAttribute">The configuration item attribute.</param>
     /// <returns>
-    /// Returns the <see cref="Control" /> for the <see cref="configItem" />.
+    /// Returns the <see cref="FrameworkElement" /> for the <see cref="configItem" />.
     /// </returns>
-    public override Control GetControlInternal(ConfigurationItemViewModel configItem, ConfigurationItemAttribute configItemAttribute)
+    public override FrameworkElement GetControlInternal(ConfigurationItemViewModel configItem, ConfigurationItemAttribute configItemAttribute)
     {
       var comboBox = new ComboBox();
       comboBox.DataContext = configItem;

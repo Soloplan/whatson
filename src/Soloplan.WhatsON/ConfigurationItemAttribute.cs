@@ -17,5 +17,7 @@
     public Type Type { get; }
 
     public bool Optional { get; set; }
+
+    public int Priority { get; set; }
   }
 }

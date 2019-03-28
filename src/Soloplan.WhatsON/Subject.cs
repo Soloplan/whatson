@@ -14,7 +14,7 @@ namespace Soloplan.WhatsON
   /// <summary>
   /// The subject - represent an executable job defined by the plugin.
   /// </summary>
-  [ConfigurationItem(Category, typeof(string))]
+  [ConfigurationItem(Category, typeof(string), Priority = 2147483500)]
   public abstract class Subject
   {
     /// <summary>

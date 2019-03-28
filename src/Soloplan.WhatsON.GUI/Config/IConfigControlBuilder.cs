@@ -6,6 +6,7 @@
 
 namespace Soloplan.WhatsON.GUI.Config
 {
+  using System.Windows;
   using System.Windows.Controls;
   using Soloplan.WhatsON.GUI.Config.ViewModel;
 
@@ -25,8 +26,8 @@ namespace Soloplan.WhatsON.GUI.Config
     /// <param name="configItem">The configuration item of the subject.</param>
     /// <param name="configItemAttribute">The configuration item attribute.</param>
     /// <returns>
-    /// Returns the <see cref="Control" /> for the <see cref="configItem" />.
+    /// Returns the <see cref="FrameworkElement" /> for the <see cref="configItem" />.
     /// </returns>
-    Control GetControl(ConfigurationItemViewModel configItem, ConfigurationItemAttribute configItemAttribute);
+    FrameworkElement GetControl(ConfigurationItemViewModel configItem, ConfigurationItemAttribute configItemAttribute);
   }
 }
