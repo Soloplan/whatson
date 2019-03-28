@@ -169,7 +169,6 @@
       get => this.buildingLongerThenExpected;
       set
       {
-
         if (this.buildingLongerThenExpected != value)
         {
           this.buildingLongerThenExpected = value;
@@ -234,7 +233,7 @@
       if (!this.Building)
       {
         this.BuildingNoLongerThenExpected = false;
-        this.buildingLongerThenExpected = false;
+        this.BuildingLongerThenExpected = false;
         this.EstimatedDuration = TimeSpan.Zero;
       }
       else
