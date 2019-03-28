@@ -44,7 +44,7 @@
 
     public ObservableCollection<StatusViewModel> SubjectSnapshots => this.subjectSnapshots ?? (this.subjectSnapshots = new ObservableCollection<StatusViewModel>());
 
-    protected Subject Subject { get; private set; }
+    public Subject Subject { get; private set; }
 
     public void Init(Subject subject)
     {

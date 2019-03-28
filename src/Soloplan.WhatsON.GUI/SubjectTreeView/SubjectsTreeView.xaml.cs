@@ -1,10 +1,7 @@
-﻿
-namespace Soloplan.WhatsON.GUI.SubjectTreeView
+﻿namespace Soloplan.WhatsON.GUI.SubjectTreeView
 {
-  using System;
+  using System.Collections.Generic;
   using System.ComponentModel;
-  using System.Linq;
-  using System.Reflection;
   using System.Windows;
   using System.Windows.Controls;
   using System.Windows.Data;
@@ -35,10 +32,10 @@ namespace Soloplan.WhatsON.GUI.SubjectTreeView
       }
     }
 
-    public void Init(ObservationScheduler scheduler, ApplicationConfiguration configuration)
+    public void Init(ObservationScheduler scheduler, ApplicationConfiguration configuration, IList<Subject> initialSubjectState)
     {
       this.model = new SubjectTreeViewModel();
-      this.model.Init(scheduler, configuration);
+      this.model.Init(scheduler, configuration, initialSubjectState);
       this.DataContext = this.model;
       this.SetupDataContext();
     }

@@ -18,5 +18,10 @@
     {
       this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
+
+    protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs eventArgs)
+    {
+      this.PropertyChanged?.Invoke(sender, eventArgs);
+    }
   }
 }

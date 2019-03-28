@@ -6,7 +6,7 @@
 
 namespace Soloplan.WhatsON.GUI
 {
-  using System.ComponentModel;
+  using System.Collections.Generic;
   using System.Windows;
   using Soloplan.WhatsON.GUI.Config.View;
   using Soloplan.WhatsON.Serialization;
@@ -23,12 +23,12 @@ namespace Soloplan.WhatsON.GUI
 
     private ObservationScheduler scheduler;
 
-    public MainWindow(ObservationScheduler scheduler, ApplicationConfiguration configuration) 
+    public MainWindow(ObservationScheduler scheduler, ApplicationConfiguration configuration, IList<Subject> initialSubjectState)
     {
       this.InitializeComponent();
       this.scheduler = scheduler;
       this.config = configuration;
-      this.mainTreeView.Init(this.scheduler, this.config);
+      this.mainTreeView.Init(this.scheduler, this.config, initialSubjectState);
     }
 
     private void OpenConfig(object sender, RoutedEventArgs e)
@@ -66,16 +66,6 @@ namespace Soloplan.WhatsON.GUI
       {
         this.scheduler.Start();
       }
-    }
-
-    private void StopObservation(object sender, RoutedEventArgs e)
-    {
-      this.scheduler.Stop();
-    }
-
-    private void StartObservation(object sender, RoutedEventArgs e)
-    {
-      this.scheduler.Start();
     }
   }
 }

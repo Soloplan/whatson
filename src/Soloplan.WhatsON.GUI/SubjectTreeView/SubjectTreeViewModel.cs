@@ -16,11 +16,16 @@
 
     public bool OneGroup => this.SubjectGroups.Count == 1;
 
-    public void Init(ObservationScheduler scheduler, ApplicationConfiguration configuration)
+    public void Init(ObservationScheduler scheduler, ApplicationConfiguration configuration, IList<Subject> initialSubjectState)
     {
+      this.Update(configuration);
+      foreach (var subject in initialSubjectState)
+      {
+        this.SchedulerStatusQueried(this, subject);
+      }
+
       scheduler.StatusQueried -= this.SchedulerStatusQueried;
       scheduler.StatusQueried += this.SchedulerStatusQueried;
-      this.Update(configuration);
     }
 
     public void Update(ApplicationConfiguration configuration)

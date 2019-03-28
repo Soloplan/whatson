@@ -1,7 +1,9 @@
 ﻿namespace Soloplan.WhatsON.GUI
 {
   using System;
+  using System.Linq;
   using System.Windows.Forms;
+  using Soloplan.WhatsON.GUI.SubjectTreeView;
   using Soloplan.WhatsON.Serialization;
   using Application = System.Windows.Application;
 
@@ -34,6 +36,8 @@
 
     private bool allowClosingApplication;
 
+    private NotificationsModel model;
+
     public TrayHandler(ObservationScheduler scheduler, ApplicationConfiguration configuration)
     {
       this.icon = new System.Windows.Forms.NotifyIcon();
@@ -46,6 +50,9 @@
       this.icon.ContextMenu = this.contextMenu;
       this.contextMenu.Popup += this.OnContextMenuPopup;
       this.icon.DoubleClick += (s, e) => this.ShowOrHideWindow();
+
+      this.model = new NotificationsModel(this.scheduler);
+      this.model.PropertyChanged += this.CurrentStatusPropertyChanged;
     }
 
     /// <summary>
@@ -62,7 +69,7 @@
       {
         if (this.mainWindow == null)
         {
-          this.mainWindow = new MainWindow(this.scheduler, this.configuration);
+          this.mainWindow = new MainWindow(this.scheduler, this.configuration, this.model.Subjects.Select(sub => sub.Subject).ToList());
           this.mainWindow.Closing += this.MainWindowClosing;
         }
 
@@ -146,6 +153,35 @@
         System.Windows.Application.Current.MainWindow = this.MainWindow;
         this.MainWindow.Show();
         this.MainWindow.Activate();
+      }
+    }
+
+
+    private void CurrentStatusPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+      if (sender is StatusViewModel statusViewModel && e.PropertyName == nameof(StatusViewModel.State))
+      {
+        var description = $"Project name: {statusViewModel.Parent.Name}.";
+        if (statusViewModel.State == ObservationState.Running)
+        {
+          this.ShowBaloon("Build started.", description, System.Windows.Forms.ToolTipIcon.None);
+        }
+        else if (statusViewModel.State == ObservationState.Failure)
+        {
+          this.ShowBaloon("Build Failed.", description, System.Windows.Forms.ToolTipIcon.Error);
+        }
+        else if (statusViewModel.State == ObservationState.Success)
+        {
+          this.ShowBaloon("Build succeed", description, System.Windows.Forms.ToolTipIcon.Info);
+        }
+        else if (statusViewModel.State == ObservationState.Unstable)
+        {
+          this.ShowBaloon("Build succeed (Unstable)", description, System.Windows.Forms.ToolTipIcon.Warning);
+        }
+        else if (statusViewModel.State == ObservationState.Unknown)
+        {
+          this.ShowBaloon("Build interrupted", description, System.Windows.Forms.ToolTipIcon.Warning);
+        }
       }
     }
   }
