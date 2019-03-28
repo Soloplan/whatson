@@ -40,11 +40,35 @@ namespace Soloplan.WhatsON.GUI.SubjectTreeView
       this.model = new SubjectTreeViewModel();
       this.model.Init(scheduler, configuration);
       this.DataContext = this.model;
+      this.SetupDataContext();
     }
 
     public void Update(ApplicationConfiguration configuration)
     {
       this.model.Update(configuration);
+      this.SetupDataContext();
+    }
+
+    private void SetupDataContext()
+    {
+      if (this.model.OneGroup && string.IsNullOrEmpty(this.model.FirstGroup.GroupName))
+      {
+        Binding myBinding = new Binding();
+        myBinding.Source = this.model.FirstGroup;
+        myBinding.Path = new PropertyPath("SubjectViewModels");
+        myBinding.Mode = BindingMode.OneWay;
+        myBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+        BindingOperations.SetBinding(this.mainTreeView, TreeView.ItemsSourceProperty, myBinding);
+      }
+      else
+      {
+        Binding myBinding = new Binding();
+        myBinding.Source = this.model;
+        myBinding.Path = new PropertyPath("SubjectGroups");
+        myBinding.Mode = BindingMode.OneWay;
+        myBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+        BindingOperations.SetBinding(this.mainTreeView, TreeView.ItemsSourceProperty, myBinding);
+      }
     }
 
     private void OnTreeItemDoubleClick(object sender, MouseButtonEventArgs e)

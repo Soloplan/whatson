@@ -1,6 +1,6 @@
 ﻿namespace Soloplan.WhatsON.GUI.SubjectTreeView
 {
-  using System;
+  using System.Collections.Generic;
   using System.Collections.ObjectModel;
   using System.Linq;
   using System.Windows.Input;
@@ -10,25 +10,7 @@
   {
     private ObservableCollection<SubjectGroupViewModel> subjectGroups;
 
-    public event EventHandler CountChanged;
-
     public ObservableCollection<SubjectGroupViewModel> SubjectGroups => this.subjectGroups ?? (this.subjectGroups = this.CreateSubjectGroupViewModelCollection());
-
-    private ObservableCollection<SubjectGroupViewModel> CreateSubjectGroupViewModelCollection()
-    {
-      var subject = new ObservableCollection<SubjectGroupViewModel>();
-      subject.CollectionChanged += this.OnSubjectCollectionChanged;
-
-      return subject;
-    }
-
-    private void OnSubjectCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-    {
-      if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add || e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
-      {
-        this.CountChanged?.Invoke(this, EventArgs.Empty);
-      }
-    }
 
     public SubjectGroupViewModel FirstGroup => this.SubjectGroups.FirstOrDefault();
 
@@ -38,13 +20,29 @@
     {
       scheduler.StatusQueried -= this.SchedulerStatusQueried;
       scheduler.StatusQueried += this.SchedulerStatusQueried;
-      this.ParseConfiguration(configuration);
+      this.Update(configuration);
     }
 
     public void Update(ApplicationConfiguration configuration)
     {
-      this.SubjectGroups.Clear();
-      this.ParseConfiguration(configuration);
+      var grouping = this.ParseConfiguration(configuration);
+      foreach (var group in grouping)
+      {
+        var subjectGroupViewModel = this.SubjectGroups.FirstOrDefault(grp => grp.GroupName == group.Key);
+        if (subjectGroupViewModel == null)
+        {
+          subjectGroupViewModel = new SubjectGroupViewModel();
+          this.SubjectGroups.Add(subjectGroupViewModel);
+        }
+
+        subjectGroupViewModel.Init(group);
+      }
+
+      var noLongerAvailable = this.SubjectGroups.Where(grp => grouping.All(group => group.Key != grp.GroupName)).ToList();
+      foreach (var subjectGroupViewModel in noLongerAvailable)
+      {
+        this.SubjectGroups.Remove(subjectGroupViewModel);
+      }
     }
 
     public void OnDoubleClick(object sender, MouseButtonEventArgs e)
@@ -55,15 +53,9 @@
       }
     }
 
-    private void ParseConfiguration(ApplicationConfiguration configuration)
+    private IEnumerable<IGrouping<string, SubjectConfiguration>> ParseConfiguration(ApplicationConfiguration configuration)
     {
-      var grouping = configuration.SubjectsConfiguration.GroupBy(config => config.GetConfigurationByKey(Subject.Category)?.Value);
-      foreach (var group in grouping)
-      {
-        var subjectGroupViewModel = new SubjectGroupViewModel();
-        subjectGroupViewModel.Init(group);
-        this.SubjectGroups.Add(subjectGroupViewModel);
-      }
+      return configuration.SubjectsConfiguration.GroupBy(config => config.GetConfigurationByKey(Subject.Category)?.Value);
     }
 
     private void SchedulerStatusQueried(object sender, Subject e)
@@ -75,6 +67,12 @@
           return;
         }
       }
+    }
+
+    private ObservableCollection<SubjectGroupViewModel> CreateSubjectGroupViewModelCollection()
+    {
+      var subject = new ObservableCollection<SubjectGroupViewModel>();
+      return subject;
     }
   }
 }
