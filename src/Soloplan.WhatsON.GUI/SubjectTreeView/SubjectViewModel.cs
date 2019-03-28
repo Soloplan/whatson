@@ -3,9 +3,8 @@
   using System;
   using System.Collections.ObjectModel;
   using System.Windows.Input;
-  using Soloplan.WhatsON.GUI.Config.ViewModel;
 
-  public class SubjectViewModel : ViewModelBase, IHandleDoubleClick
+  public class SubjectViewModel : NotifyPropertyChanged, IHandleDoubleClick
   {
     ObservableCollection<StatusViewModel> subjectSnapshots;
 

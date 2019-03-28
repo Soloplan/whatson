@@ -86,6 +86,7 @@
     <Compile Include="Config\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="NotifyPropertyChanged.cs" />
     <Compile Include="SubjectTreeView\IHandleDoubleClick.cs" />
     <Compile Include="SubjectTreeView\ITreeViewPresentationPlugIn.cs" />
     <Compile Include="SubjectTreeView\StatusToColorConverter.cs" />
@@ -93,7 +94,6 @@
     <Compile Include="SubjectTreeView\SubjectViewModel.cs" />
     <Compile Include="SubjectTreeView\PluginsManagerExtension.cs" />
     <Compile Include="SubjectTreeView\TimeToAproximateTimeConverter.cs" />
-    <Compile Include="SubjectTreeView\UpdatableViewModelBase.cs" />
     <Compile Include="Config\ConfigControlBuilder.cs" />
     <Compile Include="Config\NotEmptyValidationRule.cs" />
     <Compile Include="Config\View\Validation.cs" />
@@ -128,7 +128,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Compile Include="SubjectTreeView\StatusViewModel.cs" />
-    <Compile Include="SubjectTreeView\SubjectGroup.cs" />
     <Compile Include="SubjectTreeView\SubjectsTreeView.xaml.cs">
       <DependentUpon>SubjectsTreeView.xaml</DependentUpon>
     </Compile>

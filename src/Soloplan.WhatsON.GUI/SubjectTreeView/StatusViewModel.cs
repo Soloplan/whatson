@@ -1,13 +1,11 @@
 ﻿namespace Soloplan.WhatsON.GUI.SubjectTreeView
 {
   using System;
-  using Soloplan.WhatsON.GUI.Config.ViewModel;
 
   /// <summary>
   /// Base ViewModel used for any kind of <see cref="Subject"/>;
   /// </summary>
-  //Todo DGO: Move to some more general location
-  public class StatusViewModel : ViewModelBase
+  public class StatusViewModel : NotifyPropertyChanged
   {
     public StatusViewModel(SubjectViewModel subject)
     {

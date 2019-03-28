@@ -3,9 +3,8 @@
   using System.Collections.ObjectModel;
   using System.Linq;
   using System.Windows.Input;
-  using Soloplan.WhatsON.GUI.Config.ViewModel;
 
-  public class SubjectGroupViewModel : ViewModelBase, IHandleDoubleClick
+  public class SubjectGroupViewModel : NotifyPropertyChanged, IHandleDoubleClick
   {
     private string groupName;
 
