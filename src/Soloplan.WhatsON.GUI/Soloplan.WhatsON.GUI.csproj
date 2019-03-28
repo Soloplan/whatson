@@ -86,7 +86,7 @@
     <Compile Include="Config\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Config\CheckBoxBoxConfigControlBuilder.cs" />
+    <Compile Include="Config\CheckBoxConfigControlBuilder.cs" />
     <Compile Include="NotificationsModel.cs" />
     <Compile Include="NotifyPropertyChanged.cs" />
     <Compile Include="SubjectTreeView\IHandleDoubleClick.cs" />
