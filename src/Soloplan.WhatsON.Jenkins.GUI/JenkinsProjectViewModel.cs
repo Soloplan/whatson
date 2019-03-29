@@ -1,64 +1,78 @@
 ﻿namespace Soloplan.WhatsON.Jenkins.GUI
 {
-  using System;
   using System.Windows.Controls;
   using System.Windows.Input;
   using Soloplan.WhatsON.GUI.SubjectTreeView;
+  using Soloplan.WhatsON.ServerBase;
 
   public class JenkinsProjectViewModel : SubjectViewModel
   {
-    /// <summary>
-    /// Backing field for <see cref="OpenWebPage"/>.
-    /// </summary>
-    private ICommand openWebPage;
+    private OpenWebPageCommandData openWebPageParam;
 
     /// <summary>
-    /// Command for opening builds webPage.
+    /// Gets command for opening builds webPage.
     /// </summary>
-    public ICommand OpenWebPage => this.openWebPage ?? (this.openWebPage = new OpenWebPageCommand(this.Subject));
+    public ICommand OpenWebPage { get; } = new OpenWebPageCommand();
+
+    public OpenWebPageCommandData OpenWebPageParam
+    {
+      get => this.openWebPageParam;
+      set
+      {
+        this.openWebPageParam = value;
+        this.OnPropertyChanged(nameof(this.OpenWebPageParam));
+      }
+    }
 
     public override void OnDoubleClick(object sender, MouseButtonEventArgs e)
     {
       base.OnDoubleClick(sender, e);
       var treeViewItem = sender as TreeViewItem;
-      if (treeViewItem != null && treeViewItem.DataContext == this && this.OpenWebPage.CanExecute(null))
+      if (treeViewItem != null && treeViewItem.DataContext == this && this.OpenWebPage.CanExecute(this.OpenWebPageParam))
       {
-        this.OpenWebPage.Execute(null);
+        this.OpenWebPage.Execute(this.OpenWebPageParam);
       }
     }
 
-    protected override StatusViewModel GetViewModelForStatus(Status status)
+    public override void Init(SubjectConfiguration configuration)
     {
-      var viewModel = new JenkinsStatusViewModel(this);
-      viewModel.Update(status);
-      var jenkinsAddress = this.Subject as JenkinsProject;
-      if (jenkinsAddress != null)
+      base.Init(configuration);
+
+      OpenWebPageCommandData param = new OpenWebPageCommandData();
+      if (bool.TryParse(configuration.GetConfigurationByKey(JenkinsProject.RedirectPlugin)?.Value, out var redirect) && redirect)
       {
-        viewModel.SetJobAddress(jenkinsAddress.Address + "/job/" + jenkinsAddress.Project);
+        param.Redirect = true;
+      }
+      else
+      {
+        param.Redirect = false;
       }
 
-      return viewModel;
+      param.Address = configuration.GetConfigurationByKey(ServerSubject.ServerAddress).Value + "/job/" + configuration.GetConfigurationByKey(JenkinsProject.ProjectName).Value;
+
+      this.OpenWebPageParam = param;
+
+      this.SetAddressForState(this.CurrentStatus);
+
+      foreach (var subjectSnapshot in this.SubjectSnapshots)
+      {
+        this.SetAddressForState(subjectSnapshot);
+      }
     }
 
-    private class OpenWebPageCommand : ICommand
+    protected override StatusViewModel GetViewModelForStatus()
     {
-      private readonly JenkinsProject subject;
+      var jenkinsModel = new JenkinsStatusViewModel(this);
+      this.SetAddressForState(jenkinsModel);
+      this.SetAddressForState(jenkinsModel);
+      return jenkinsModel;
+    }
 
-      public OpenWebPageCommand(Subject subject)
+    private void SetAddressForState(StatusViewModel model)
+    {
+      if (model is JenkinsStatusViewModel jenkinsModel)
       {
-        this.subject = subject as JenkinsProject;
-      }
-
-      public event EventHandler CanExecuteChanged;
-
-      public bool CanExecute(object parameter)
-      {
-        return this.subject != null;
-      }
-
-      public void Execute(object parameter)
-      {
-        System.Diagnostics.Process.Start(this.subject.Address + "/job/" + this.subject.Project);
+        jenkinsModel.SetJobAddress(this.OpenWebPageParam);
       }
     }
   }

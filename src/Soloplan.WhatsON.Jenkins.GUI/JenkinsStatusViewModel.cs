@@ -13,11 +13,6 @@
 
     private int progres;
 
-    /// <summary>
-    /// Backing field for <see cref="OpenWebPage"/>.
-    /// </summary>
-    private OpenWebPageCommand openBuildPage;
-
     private bool buildingNoLongerThenExpected;
 
     private bool buildingLongerThenExpected;
@@ -25,6 +20,8 @@
     private TimeSpan estimatedRemaining;
 
     private TimeSpan buildTimeExcedingEstimation;
+
+    private OpenWebPageCommandData parentCommandData;
 
     public JenkinsStatusViewModel(JenkinsProjectViewModel model)
       : base(model)
@@ -34,7 +31,24 @@
     /// <summary>
     /// Command for opening builds webPage.
     /// </summary>
-    public ICommand OpenBuildPage => this.openBuildPage ?? (this.openBuildPage = new OpenWebPageCommand());
+    public ICommand OpenBuildPage { get; } = new OpenWebPageCommand();
+
+    public OpenWebPageCommandData OpenBuildPageCommandData
+    {
+      get
+      {
+        if (this.parentCommandData == null)
+        {
+          return null;
+        }
+
+        return new OpenWebPageCommandData
+        {
+          Address = this.parentCommandData.Address + "/" + this.BuildNumber,
+          Redirect = this.parentCommandData.Redirect
+        };
+      }
+    }
 
     public int? BuildNumber
     {
@@ -218,14 +232,10 @@
       }
     }
 
-    public void SetJobAddress(string address)
+    public void SetJobAddress(OpenWebPageCommandData parentData)
     {
-      if (this.openBuildPage == null)
-      {
-        this.openBuildPage = new OpenWebPageCommand();
-      }
-
-      this.openBuildPage.Address = address + "/" + this.BuildNumber;
+      this.parentCommandData = parentData;
+      this.OnPropertyChanged(nameof(this.OpenBuildPageCommandData));
     }
 
     private void UpdateEstimatedRemaining()
@@ -250,40 +260,6 @@
           this.EstimatedRemaining = TimeSpan.Zero;
           this.BuildTimeExcedingEstimation = this.Duration - this.EstimatedDuration;
         }
-      }
-    }
-
-    private class OpenWebPageCommand : ICommand
-    {
-      private string address;
-
-      public event EventHandler CanExecuteChanged;
-
-      public string Address
-      {
-        get
-        {
-          return this.address;
-        }
-
-        set
-        {
-          if (this.address != value)
-          {
-            this.address = value;
-            this.CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-          }
-        }
-      }
-
-      public bool CanExecute(object parameter)
-      {
-        return !string.IsNullOrEmpty(this.address);
-      }
-
-      public void Execute(object parameter)
-      {
-        System.Diagnostics.Process.Start(this.Address);
       }
     }
   }

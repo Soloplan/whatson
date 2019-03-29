@@ -6,7 +6,7 @@
 
   public class SubjectViewModel : NotifyPropertyChanged, IHandleDoubleClick
   {
-    ObservableCollection<StatusViewModel> subjectSnapshots;
+    private ObservableCollection<StatusViewModel> subjectSnapshots;
 
     private string name;
 
@@ -46,16 +46,11 @@
 
     public Subject Subject { get; private set; }
 
-    public void Init(Subject subject)
+    public virtual void Init(SubjectConfiguration configuration)
     {
-      this.Subject = subject;
-      this.Identifier = subject.SubjectConfiguration.Identifier;
-      this.CurrentStatus = this.GetViewModelForStatus(subject.CurrentStatus);
-      foreach (var subjectSnapshot in subject.Snapshots)
-      {
-        var subjectSnapshotViewModel = this.GetViewModelForStatus(subjectSnapshot.Status);
-        this.SubjectSnapshots.Add(subjectSnapshotViewModel);
-      }
+      this.Identifier = configuration.Identifier;
+      this.Name = configuration.Name;
+      this.CurrentStatus = this.GetViewModelForStatus();
     }
 
     public virtual void OnDoubleClick(object sender, MouseButtonEventArgs e)
@@ -64,7 +59,11 @@
 
     public virtual void Update(Subject changedSubject)
     {
-      this.Name = changedSubject.SubjectConfiguration.Name;
+      if (this.Subject == null)
+      {
+        this.Subject = changedSubject;
+      }
+
       this.Description = changedSubject.Description;
       this.CurrentStatus.Update(changedSubject.CurrentStatus);
 
@@ -86,16 +85,16 @@
         this.SubjectSnapshots.Clear();
         foreach (var subjectSnapshot in changedSubject.Snapshots)
         {
-          var subjectSnapshotViewModel = this.GetViewModelForStatus(subjectSnapshot.Status);
+          var subjectSnapshotViewModel = this.GetViewModelForStatus();
+          subjectSnapshotViewModel.Update(subjectSnapshot.Status);
           this.SubjectSnapshots.Add(subjectSnapshotViewModel);
         }
       }
     }
 
-    protected virtual StatusViewModel GetViewModelForStatus(Status status)
+    protected virtual StatusViewModel GetViewModelForStatus()
     {
       StatusViewModel result = new StatusViewModel(this);
-      result.Update(status);
 
       return result;
     }

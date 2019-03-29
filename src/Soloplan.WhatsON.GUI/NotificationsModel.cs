@@ -40,7 +40,7 @@ namespace Soloplan.WhatsON.GUI
         if (presentationPlugIn != null)
         {
           modelToUpdate = presentationPlugIn.CreateViewModel();
-          modelToUpdate.Init(subject);
+          modelToUpdate.Init(subject.SubjectConfiguration);
           modelToUpdate.PropertyChanged += this.OnPropertyChanged;
           this.subjects.Add(modelToUpdate);
         }

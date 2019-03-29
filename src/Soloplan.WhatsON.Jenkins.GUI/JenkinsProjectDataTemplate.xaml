@@ -13,11 +13,12 @@
   <!-- ToDo DGO: this should be separate control for displaying status. This way it will be easier to reuse.-->
 
   <ContextMenu x:Key="contextMenuJenkins">
-    <MenuItem Header="Open project web page" Command="{Binding OpenWebPage}"/>
+    <!--CommandParameter must be declared before Command or else value from previous opening of context menu will be passed. WTF?!-->
+    <MenuItem Header="Open project web page"  CommandParameter="{Binding OpenWebPageParam}" Command="{Binding OpenWebPage}" />
   </ContextMenu>
 
   <ContextMenu x:Key="contextMenuBuild">
-    <MenuItem Header="Open build web page" Command="{Binding OpenBuildPage}"/>
+    <MenuItem Header="Open build web page" CommandParameter="{Binding OpenBuildPageCommandData}" Command="{Binding OpenBuildPage}"/>
   </ContextMenu>
 
   <DataTemplate DataType="{x:Type jenkins:JenkinsProjectViewModel}">
@@ -66,7 +67,7 @@
                   <i:Interaction.Triggers>
                     <!--Handle clicking on history builds.-->
                     <i:EventTrigger EventName="Click">
-                      <i:InvokeCommandAction Command="{Binding OpenBuildPage}"/>
+                      <i:InvokeCommandAction CommandParameter="{Binding OpenBuildPageCommandData}" Command="{Binding OpenBuildPage}"/>
                     </i:EventTrigger>
                   </i:Interaction.Triggers>
                   <Style TargetType="{x:Type Button}"/>

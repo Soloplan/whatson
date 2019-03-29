@@ -77,6 +77,12 @@
         this.SubjectViewModels.Remove(noLongerPresentSubjectViewModel);
       }
 
+      foreach (var subjectViewModel in this.SubjectViewModels)
+      {
+        var config = subjectGroup.FirstOrDefault(configurationSubject => subjectViewModel.Identifier == configurationSubject.Identifier);
+        subjectViewModel.Init(config);
+      }
+
       foreach (var newSubject in newSubjects)
       {
         this.CreateViewModelForSubjectConfiguration(newSubject);
@@ -87,7 +93,8 @@
     {
       var subject = PluginsManager.Instance.GetSubject(subjectConfiguration);
       SubjectViewModel subjectViewModel = this.GetSubjectViewModel(subject);
-      subjectViewModel.Init(subject);
+      subjectViewModel.Init(subjectConfiguration);
+      subjectViewModel.Update(subject);
       this.SubjectViewModels.Add(subjectViewModel);
     }
 
