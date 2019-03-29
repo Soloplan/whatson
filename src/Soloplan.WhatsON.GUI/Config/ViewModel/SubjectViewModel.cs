@@ -129,7 +129,13 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// <returns>The subject attributes.</returns>
     public IList<ConfigurationItemAttribute> GetSubjectConfigAttributes()
     {
-      return this.SourceSubjectPlugin.SubjectType.GetCustomAttributes(typeof(ConfigurationItemAttribute), true).Cast<ConfigurationItemAttribute>().ToList();
+      var configurationItemAttributes = this.SourceSubjectPlugin.SubjectType.GetCustomAttributes(typeof(ConfigurationItemAttribute), true).Cast<ConfigurationItemAttribute>().ToList();
+      foreach (var configurationItemAttribute in configurationItemAttributes)
+      {
+        ConfigResourcesHelper.ApplyConfigResourses(configurationItemAttribute, this.SourceSubjectPlugin.SubjectType);
+      }
+
+      return configurationItemAttributes;
     }
 
     /// <summary>

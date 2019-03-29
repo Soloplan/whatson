@@ -26,7 +26,7 @@ namespace Soloplan.WhatsON.GUI.Config
     /// Gets the value binding dependency property.
     /// If set, value binding will be initialized.
     /// </summary>
-    public virtual DependencyProperty ValueBindingDependencyProperty { get; }
+    public virtual DependencyProperty ValueBindingDependencyProperty { get; } = null;
 
     /// <summary>
     /// Creates a new control and returns it.

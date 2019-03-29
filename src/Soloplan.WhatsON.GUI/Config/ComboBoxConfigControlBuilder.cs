@@ -43,7 +43,7 @@ namespace Soloplan.WhatsON.GUI.Config
       var style = Application.Current.FindResource("MaterialDesignFloatingHintComboBox") as Style;
       comboBox.Style = style;
       HintAssist.SetIsFloating(comboBox, true);
-      HintAssist.SetHint(comboBox, configItemAttribute.Key);
+      HintAssist.SetHint(comboBox, configItemAttribute.Caption);
       comboBox.Margin = new Thickness(0, 0, 0, 8);
       return comboBox;
     }

@@ -8,7 +8,6 @@ namespace Soloplan.WhatsON.GUI.Config
 {
   using System.Text.RegularExpressions;
   using System.Windows;
-  using System.Windows.Controls;
   using Soloplan.WhatsON.GUI.Config.ViewModel;
 
   /// <summary>

@@ -9,7 +9,6 @@ namespace Soloplan.WhatsON.GUI.Config
   using System.Windows;
   using System.Windows.Controls;
   using MaterialDesignThemes.Wpf;
-  using Soloplan.WhatsON.GUI.Config.View;
   using Soloplan.WhatsON.GUI.Config.ViewModel;
 
   /// <summary>
@@ -40,7 +39,7 @@ namespace Soloplan.WhatsON.GUI.Config
       var style = Application.Current.FindResource("MaterialDesignFloatingHintTextBox") as Style;
       textBox.Style = style;
       HintAssist.SetIsFloating(textBox, true);
-      HintAssist.SetHint(textBox, configItemAttribute.Key);
+      HintAssist.SetHint(textBox, configItemAttribute.Caption);
       textBox.Margin = new Thickness(0, 0, 0, 8);
       return textBox;
     }

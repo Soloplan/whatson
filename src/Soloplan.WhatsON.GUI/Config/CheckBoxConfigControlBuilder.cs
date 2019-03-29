@@ -52,7 +52,7 @@ namespace Soloplan.WhatsON.GUI.Config
       stackPanel.Children.Add(checkBox);
 
       var label = new Label();
-      label.Content = configItemAttribute.Key;
+      label.Content = configItemAttribute.Caption;
       label.Margin = new Thickness(8, 8, 0, 8);
       label.Padding = new Thickness(0, 0, 0, 0);
       label.VerticalAlignment = VerticalAlignment.Center;

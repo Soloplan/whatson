@@ -87,8 +87,14 @@
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Config\CheckBoxConfigControlBuilder.cs" />
+    <Compile Include="Config\ConfigResourcesHelper.cs" />
     <Compile Include="NotificationsModel.cs" />
     <Compile Include="NotifyPropertyChanged.cs" />
+    <Compile Include="Properties\ConfigurationItems.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ConfigurationItems.resx</DependentUpon>
+    </Compile>
     <Compile Include="SubjectTreeView\IHandleDoubleClick.cs" />
     <Compile Include="SubjectTreeView\ITreeViewPresentationPlugIn.cs" />
     <Compile Include="SubjectTreeView\StatusToColorConverter.cs" />
@@ -195,9 +201,15 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="Properties\ConfigurationItems.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ConfigurationItems.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
