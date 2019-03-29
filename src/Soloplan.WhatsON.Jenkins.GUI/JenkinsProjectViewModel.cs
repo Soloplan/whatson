@@ -38,6 +38,11 @@
     {
       base.Init(configuration);
 
+      if (this.CurrentStatus is JenkinsStatusViewModel status)
+      {
+        status.OpenBuildPage.CanExecuteExternal += (s, e) => e.Cancel = this.CurrentStatus is JenkinsStatusViewModel model && !model.Building;
+      }
+
       OpenWebPageCommandData param = new OpenWebPageCommandData();
       if (bool.TryParse(configuration.GetConfigurationByKey(JenkinsProject.RedirectPlugin)?.Value, out var redirect) && redirect)
       {

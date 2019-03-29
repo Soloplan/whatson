@@ -15,6 +15,11 @@
   <ContextMenu x:Key="contextMenuJenkins">
     <!--CommandParameter must be declared before Command or else value from previous opening of context menu will be passed. WTF?!-->
     <MenuItem Header="Open project web page"  CommandParameter="{Binding OpenWebPageParam}" Command="{Binding OpenWebPage}" />
+    <MenuItem Header="Open current build page" 
+              CommandParameter="{Binding CurrentStatus.OpenBuildPageCommandData}"
+              Command="{Binding CurrentStatus.OpenBuildPage}" 
+              Visibility="{Binding Path=IsEnabled, RelativeSource={RelativeSource Self}, Mode=OneWay, Converter={StaticResource BoolToVisibility}}"
+              />
   </ContextMenu>
 
   <ContextMenu x:Key="contextMenuBuild">

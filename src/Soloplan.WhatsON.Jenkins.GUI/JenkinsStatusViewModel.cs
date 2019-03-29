@@ -31,7 +31,7 @@
     /// <summary>
     /// Command for opening builds webPage.
     /// </summary>
-    public ICommand OpenBuildPage { get; } = new OpenWebPageCommand();
+    public OpenWebPageCommand OpenBuildPage { get; } = new OpenWebPageCommand();
 
     public OpenWebPageCommandData OpenBuildPageCommandData
     {

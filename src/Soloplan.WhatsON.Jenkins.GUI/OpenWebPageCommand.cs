@@ -8,18 +8,22 @@
 namespace Soloplan.WhatsON.Jenkins.GUI
 {
   using System;
+  using System.ComponentModel;
   using System.Windows.Input;
 
   public class OpenWebPageCommand : ICommand
   {
-
     public event EventHandler CanExecuteChanged;
+
+    public event CancelEventHandler CanExecuteExternal;
 
     public bool CanExecute(object parameter)
     {
-      if (parameter is OpenWebPageCommandData webPageParam)
+      if (parameter is OpenWebPageCommandData webPageParam && !string.IsNullOrEmpty(webPageParam.Address))
       {
-        return !string.IsNullOrEmpty(webPageParam.Address);
+        var cancelEventArgs = new CancelEventArgs();
+        this.CanExecuteExternal?.Invoke(this, cancelEventArgs);
+        return !cancelEventArgs.Cancel;
       }
 
       return false;
