@@ -12,6 +12,8 @@
 
     private string description;
 
+    private StatusViewModel currentStatus;
+
     public string Name
     {
       get => this.name;
@@ -38,7 +40,18 @@
       }
     }
 
-    public StatusViewModel CurrentStatus { get; private set; }
+    public StatusViewModel CurrentStatus
+    {
+      get => this.currentStatus;
+      private set
+      {
+        if (!object.ReferenceEquals(this.currentStatus, value))
+        {
+          this.currentStatus = value;
+          this.OnPropertyChanged();
+        }
+      }
+    }
 
     public Guid Identifier { get; private set; }
 
