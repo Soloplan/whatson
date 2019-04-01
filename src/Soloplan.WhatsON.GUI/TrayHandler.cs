@@ -50,6 +50,7 @@
       this.icon.ContextMenu = this.contextMenu;
       this.contextMenu.Popup += this.OnContextMenuPopup;
       this.icon.DoubleClick += (s, e) => this.ShowOrHideWindow();
+      this.icon.BalloonTipClicked += (s, e) => this.BringToFront();
 
       this.model = new NotificationsModel(this.scheduler);
       this.model.PropertyChanged += this.CurrentStatusPropertyChanged;
@@ -156,6 +157,18 @@
       }
     }
 
+    private void BringToFront()
+    {
+      if (this.MainWindowVisible)
+      {
+        this.MainWindow.Show();
+        this.MainWindow.Activate();
+      }
+      else
+      {
+        this.ShowOrHideWindow();
+      }
+    }
 
     private void CurrentStatusPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {

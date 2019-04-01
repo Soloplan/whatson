@@ -29,13 +29,11 @@
   <DataTemplate DataType="{x:Type jenkins:JenkinsProjectViewModel}">
     <DockPanel ContextMenu="{StaticResource contextMenuJenkins}" LastChildFill="True">
       <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
-        <TextBlock Text=" Jenkins: "/>
         <TextBlock FontWeight="Black" Text="{Binding Name}"/>
         <TextBlock Text=" #" />
         <TextBlock Text="{Binding CurrentStatus.BuildNumber}"/>
       </StackPanel>
       <StackPanel  DockPanel.Dock="Right" Orientation="Horizontal">
-        <TextBlock Text=" History: "/>
         <ListView ItemsSource="{Binding SubjectSnapshots, Mode=OneWay}">
           <!--History builds-->
           <ListView.Resources>
