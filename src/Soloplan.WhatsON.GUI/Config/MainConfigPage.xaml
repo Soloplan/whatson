@@ -8,13 +8,17 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="MainConfigPage">
 
-    <Grid>
+  <StackPanel>
     <StackPanel>
       <StackPanel Orientation="Horizontal">
         <Label>Light</Label>
-        <ToggleButton Style="{StaticResource MaterialDesignSwitchToggleButton}" Checked="ToggleButtonChecked" Unchecked="ToggleButtonUnchecked" IsChecked="{Binding DarkThemeEnabled}" />
+        <ToggleButton Style="{StaticResource MaterialDesignSwitchToggleButton}" Checked="LightOrDarkModeToggleButtonChecked" Unchecked="LightOrDarkModeToggleButtonUnchecked" IsChecked="{Binding DarkThemeEnabled}" />
         <Label>Dark</Label>
       </StackPanel>
     </StackPanel>
-  </Grid>
+    <StackPanel Orientation="Horizontal">
+      <ToggleButton Style="{StaticResource MaterialDesignSwitchToggleButton}"  IsChecked="{Binding OpenOnSystemStart}" />
+      <Label>Run when Windows starts</Label>
+    </StackPanel>
+  </StackPanel>
 </Page>

@@ -9,6 +9,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
   using System.Collections.Generic;
   using System.Linq;
   using System.Runtime.CompilerServices;
+  using Microsoft.Win32;
   using Soloplan.WhatsON.GUI.Config.View;
   using Soloplan.WhatsON.Serialization;
 
@@ -18,9 +19,24 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
   public class ConfigViewModel : ViewModelBase
   {
     /// <summary>
+    /// The Windows Startup Keys registry location.
+    /// </summary>
+    private const string StartupSubKeyPath = "Software\\Microsoft\\Windows\\CurrentVersion\\Run";
+
+    /// <summary>
+    /// The registry startup key name.
+    /// </summary>
+    private const string StartupKey = "WhatsON";
+
+    /// <summary>
     /// The dark theme enabled.
     /// </summary>
     private bool darkThemeEnabled;
+
+    /// <summary>
+    /// The open on system start.
+    /// </summary>
+    private bool? openOnSystemStart;
 
     /// <summary>
     /// Occurs when configuration was applied.
@@ -46,6 +62,63 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       set
       {
         this.darkThemeEnabled = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether application should start with system.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if true, start APP with the system ; otherwise, <c>false</c>.
+    /// </value>
+    public bool OpenOnSystemStart
+    {
+      get
+      {
+        if (this.openOnSystemStart != null)
+        {
+          return this.openOnSystemStart.Value;
+        }
+
+        try
+        {
+          using (var startUpKey = Registry.CurrentUser.OpenSubKey(StartupSubKeyPath))
+          {
+            var startUpKeyValue = startUpKey?.GetValue(StartupKey);
+            var startUpKeyValueString = startUpKeyValue as string;
+            if (startUpKeyValueString == null)
+            {
+              return false;
+            }
+
+            if (startUpKeyValueString != System.Reflection.Assembly.GetEntryAssembly().Location)
+            {
+              return false;
+            }
+
+            this.openOnSystemStart = true;
+            return this.openOnSystemStart.Value;
+          }
+        }
+        catch (Exception)
+        {
+          this.openOnSystemStart = false;
+        }
+        finally
+        {
+          if (this.openOnSystemStart == null)
+          {
+            this.openOnSystemStart = false;
+          }
+        }
+
+        return this.openOnSystemStart.Value;
+      }
+
+      set
+      {
+        this.openOnSystemStart = value;
         this.OnPropertyChanged();
       }
     }
@@ -88,6 +161,8 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
         }
 
         this.DarkThemeEnabled = configurationSource.DarkThemeEnabled;
+        this.openOnSystemStart = null; // as this option is not really saved, we reset the private variable value.
+        this.OnPropertyChanged(nameof(this.OpenOnSystemStart));
 
         this.ConfigurationIsModified = false;
 
@@ -150,6 +225,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
         }
 
         this.Configuration.DarkThemeEnabled = this.DarkThemeEnabled;
+        this.ApplyRunWithWindowsOption();
         SerializationHelper.SaveConfiguration(this.Configuration);
       }
       finally
@@ -223,6 +299,37 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       this.ConfigurationIsModified = true;
       this.OnPropertyChanged(nameof(this.ConfigurationIsModified));
       this.OnPropertyChanged(nameof(this.ConfigurationIsNotModified));
+    }
+
+    /// <summary>
+    /// Applies the start with Windows option.
+    /// </summary>
+    private void ApplyRunWithWindowsOption()
+    {
+      try
+      {
+        using (var startUpKey = Registry.CurrentUser.OpenSubKey(StartupSubKeyPath, true))
+        {
+          if (startUpKey == null)
+          {
+            throw new InvalidOperationException("The Windows startup key does not exists.");
+          }
+
+          var startUpKeyValue = startUpKey.GetValue(StartupKey);
+          if (this.OpenOnSystemStart)
+          {
+            startUpKey.SetValue(StartupKey, System.Reflection.Assembly.GetEntryAssembly().Location);
+          }
+          else if (startUpKeyValue != null)
+          {
+            startUpKey.DeleteValue(StartupKey);
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        // TODO log error
+      }
     }
   }
 }

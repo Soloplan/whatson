@@ -32,7 +32,7 @@ namespace Soloplan.WhatsON.GUI.Config
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-    private void ToggleButtonChecked(object sender, RoutedEventArgs e)
+    private void LightOrDarkModeToggleButtonChecked(object sender, RoutedEventArgs e)
     {
       this.SwitchLightDarkMode((ToggleButton)e.Source);
     }
@@ -42,7 +42,7 @@ namespace Soloplan.WhatsON.GUI.Config
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-    private void ToggleButtonUnchecked(object sender, RoutedEventArgs e)
+    private void LightOrDarkModeToggleButtonUnchecked(object sender, RoutedEventArgs e)
     {
       this.SwitchLightDarkMode((ToggleButton)e.Source);
     }
