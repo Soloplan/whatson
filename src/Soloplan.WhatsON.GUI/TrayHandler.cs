@@ -1,9 +1,11 @@
 ﻿namespace Soloplan.WhatsON.GUI
 {
   using System;
+  using System.IO;
   using System.Linq;
   using System.Windows.Forms;
   using Soloplan.WhatsON.GUI.SubjectTreeView;
+  using Soloplan.WhatsON.GUI.VisualConfig;
   using Soloplan.WhatsON.Serialization;
   using Application = System.Windows.Application;
 
@@ -12,6 +14,8 @@
   /// </summary>
   public class TrayHandler : IDisposable
   {
+    private const string VisualSettingsFile = "VisualSettingsFile.json";
+
     /// <summary>
     /// Scheduler instance.
     /// </summary>
@@ -34,9 +38,9 @@
 
     private MainWindow mainWindow;
 
-    private bool allowClosingApplication;
-
     private NotificationsModel model;
+
+    private MainWindowSettigns visualSettings;
 
     public TrayHandler(ObservationScheduler scheduler, ApplicationConfiguration configuration)
     {
@@ -54,6 +58,11 @@
 
       this.model = new NotificationsModel(this.scheduler);
       this.model.PropertyChanged += this.CurrentStatusPropertyChanged;
+
+      if (File.Exists(Path.Combine(SerializationHelper.ConfigFolder, VisualSettingsFile)))
+      {
+        this.visualSettings = SerializationHelper.Load<MainWindowSettigns>(Path.Combine(SerializationHelper.ConfigFolder, VisualSettingsFile));
+      }
     }
 
     /// <summary>
@@ -71,7 +80,11 @@
         if (this.mainWindow == null)
         {
           this.mainWindow = new MainWindow(this.scheduler, this.configuration, this.model.Subjects.Select(sub => sub.Subject).ToList());
+
+          this.mainWindow.ApplyVisualSettings(this.visualSettings);
+
           this.mainWindow.Closing += this.MainWindowClosing;
+          this.mainWindow.Closed += this.MainWindowClosed;
         }
 
         return this.mainWindow;
@@ -105,11 +118,19 @@
     /// <param name="e">The event args.</param>
     private void MainWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
     {
-      if (!this.allowClosingApplication)
+      this.visualSettings = this.mainWindow.GetVisualSettigns();
+    }
+
+    private void MainWindowClosed(object sender, EventArgs e)
+    {
+      if (this.visualSettings != null)
       {
-        e.Cancel = true;
-        this.ShowOrHideWindow();
+        SerializationHelper.Save(this.visualSettings, Path.Combine(SerializationHelper.ConfigFolder, VisualSettingsFile));
       }
+
+      this.mainWindow.Closing -= this.MainWindowClosing;
+      this.mainWindow.Closed -= this.MainWindowClosed;
+      this.mainWindow = null;
     }
 
     /// <summary>
@@ -135,7 +156,6 @@
     /// </summary>
     private void OnCloseApplicationClick(object sender, EventArgs e)
     {
-      this.allowClosingApplication = true;
       Application.Current.Shutdown();
     }
 
@@ -146,12 +166,11 @@
     {
       if (this.MainWindowVisible)
       {
-        this.MainWindow.Hide();
-        Application.Current.MainWindow = null;
+        this.MainWindow.Close();
       }
       else
       {
-        System.Windows.Application.Current.MainWindow = this.MainWindow;
+        Application.Current.MainWindow = this.MainWindow;
         this.MainWindow.Show();
         this.MainWindow.Activate();
       }

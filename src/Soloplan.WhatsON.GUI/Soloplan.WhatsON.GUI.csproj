@@ -88,6 +88,8 @@
     </Compile>
     <Compile Include="Config\CheckBoxConfigControlBuilder.cs" />
     <Compile Include="Config\ConfigResourcesHelper.cs" />
+    <Compile Include="VisualConfig\GroupExpansionSettings.cs" />
+    <Compile Include="VisualConfig\MainWindowSettigns.cs" />
     <Compile Include="NotificationsModel.cs" />
     <Compile Include="NotifyPropertyChanged.cs" />
     <Compile Include="Properties\ConfigurationItems.Designer.cs">
@@ -107,6 +109,8 @@
     <Compile Include="Config\View\Validation.cs" />
     <Compile Include="ThemeHelper.cs" />
     <Compile Include="TrayHandler.cs" />
+    <Compile Include="VisualConfig\TreeListSettings.cs" />
+    <Compile Include="VisualConfig\WindowSettings.cs" />
     <Page Include="Config\AboutPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

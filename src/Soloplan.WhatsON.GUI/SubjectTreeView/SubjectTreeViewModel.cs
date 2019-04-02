@@ -4,6 +4,7 @@
   using System.Collections.ObjectModel;
   using System.Linq;
   using System.Windows.Input;
+  using Soloplan.WhatsON.GUI.VisualConfig;
   using Soloplan.WhatsON.Serialization;
 
   public class SubjectTreeViewModel : IHandleDoubleClick
@@ -55,6 +56,32 @@
       foreach (var subjectGroupViewModel in this.SubjectGroups)
       {
         subjectGroupViewModel.OnDoubleClick(sender, e);
+      }
+    }
+
+    public IList<GroupExpansionSettings> GetGroupExpansionState()
+    {
+      return this.SubjectGroups.Select(group => new GroupExpansionSettings
+      {
+        GroupName = group.GroupName,
+        Expanded = group.IsNodeExpanded,
+      }).ToList();
+    }
+
+    public void ApplyGroupExpansionState(IList<GroupExpansionSettings> groupExpansion)
+    {
+      if (groupExpansion == null)
+      {
+        return;
+      }
+
+      foreach (var expansion in groupExpansion)
+      {
+        var targetGroup = this.SubjectGroups.FirstOrDefault(group => group.GroupName == expansion.GroupName);
+        if (targetGroup != null)
+        {
+          targetGroup.IsNodeExpanded = expansion.Expanded;
+        }
       }
     }
 

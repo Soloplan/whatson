@@ -16,6 +16,7 @@ namespace Soloplan.WhatsON.Serialization
   public static class SerializationHelper
   {
     public static readonly string ConfigFileExtension = "json";
+    public static readonly string ConfigFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\WhatsOn";
     public static readonly string ConfigFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\WhatsOn\\configuration." + ConfigFileExtension;
 
     /// <summary>

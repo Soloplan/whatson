@@ -7,6 +7,7 @@
   using System.Windows.Data;
   using System.Windows.Input;
   using System.Windows.Markup;
+  using Soloplan.WhatsON.GUI.VisualConfig;
   using Soloplan.WhatsON.Serialization;
 
   /// <summary>
@@ -44,6 +45,24 @@
     {
       this.model.Update(configuration);
       this.SetupDataContext();
+    }
+
+    public TreeListSettings GetTreeListSettings()
+    {
+      return new TreeListSettings
+      {
+        GroupExpansions = this.model.GetGroupExpansionState()
+      };
+    }
+
+    public void ApplyTreeListSettings(TreeListSettings treeListSettings)
+    {
+      if (treeListSettings == null)
+      {
+        return;
+      }
+
+      this.model.ApplyGroupExpansionState(treeListSettings.GroupExpansions);
     }
 
     private void SetupDataContext()

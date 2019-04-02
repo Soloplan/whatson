@@ -1,6 +1,7 @@
 ﻿namespace Soloplan.WhatsON.GUI
 {
   using System.Windows;
+  using System.Windows.Interop;
   using Soloplan.WhatsON.Serialization;
 
   /// <summary>
@@ -33,6 +34,15 @@
 
       this.handler = new TrayHandler(this.scheduler, this.config);
       this.scheduler.Start();
+      ComponentDispatcher.ThreadPreprocessMessage += this.ComponentDispatcherThreadPreprocessMessage;
+    }
+
+    private void ComponentDispatcherThreadPreprocessMessage(ref MSG msg, ref bool handled)
+    {
+      if (msg.message == 0x10)
+      {
+        System.Windows.Application.Current.Shutdown();
+      }
     }
 
     /// <summary>
