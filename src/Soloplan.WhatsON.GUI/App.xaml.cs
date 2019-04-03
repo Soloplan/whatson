@@ -19,6 +19,10 @@
     {
       base.OnStartup(e);
 
+      var logConfiguration = new LoggingConfiguration();
+      logConfiguration.Initialize();
+      ExceptionHandlingInitialization.Initialize();
+
       this.config = SerializationHelper.LoadOrCreateConfiguration();
       this.scheduler = new ObservationScheduler();
 

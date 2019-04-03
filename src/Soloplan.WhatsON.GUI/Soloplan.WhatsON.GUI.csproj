@@ -88,6 +88,8 @@
     </Compile>
     <Compile Include="Config\CheckBoxConfigControlBuilder.cs" />
     <Compile Include="Config\ConfigResourcesHelper.cs" />
+    <Compile Include="ExceptionHandlingInitialization.cs" />
+    <Compile Include="LoggingConfiguration.cs" />
     <Compile Include="VisualConfig\GroupExpansionSettings.cs" />
     <Compile Include="VisualConfig\MainWindowSettigns.cs" />
     <Compile Include="NotificationsModel.cs" />
@@ -233,6 +235,9 @@
   <ItemGroup>
     <PackageReference Include="Humanizer.Core">
       <Version>2.6.2</Version>
+    </PackageReference>
+    <PackageReference Include="log4net">
+      <Version>2.0.8</Version>
     </PackageReference>
     <PackageReference Include="MaterialDesignColors">
       <Version>1.1.3</Version>
