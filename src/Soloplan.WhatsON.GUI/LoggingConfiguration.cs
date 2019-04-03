@@ -48,9 +48,9 @@ namespace Soloplan.WhatsON.GUI
         error = $"Logging is disabled. File {file} does not exist.";
       }
 
-      if (!string.IsNullOrEmpty(this.Error))
+      if (!string.IsNullOrEmpty(error))
       {
-        MessageBox.Show(this.Error, "Failed to initialize Log4Net", MessageBoxButton.OK, MessageBoxImage.Error);
+        MessageBox.Show(error, "Failed to initialize Log4Net", MessageBoxButton.OK, MessageBoxImage.Error);
       }
     }
   }
