@@ -27,6 +27,11 @@ namespace Soloplan.WhatsON.GUI
       {
         try
         {
+          if (!Directory.Exists(SerializationHelper.ConfigFolder))
+          {
+            Directory.CreateDirectory(SerializationHelper.ConfigFolder);
+          }
+
           File.WriteAllLines(file, new[] { Resources.loggingConfiguration }, Encoding.UTF8);
         }
         catch (Exception e)
