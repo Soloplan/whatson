@@ -11,8 +11,6 @@
     private const int DefaultPollInterval = 5;
     private readonly IList<ObservationSubject> observedSubjects;
 
-    private bool running;
-
     /// <summary>
     /// Observation is stopping.
     /// </summary>
@@ -33,15 +31,18 @@
 
     public bool Running
     {
-      get => this.running;
-      private set => this.running = value;
+      get => this.observedSubjects.Any(subject => subject.Running);
     }
 
     public void Start()
     {
       if (!this.Running && !this.stopping)
       {
-        this.Running = true;
+        foreach (var observationSubject in this.observedSubjects)
+        {
+          observationSubject.Running = true;
+        }
+
         this.cancellationTokenSource = new CancellationTokenSource();
         foreach (var observationSubject in this.observedSubjects)
         {
@@ -83,16 +84,30 @@
 
     private async Task Observe(ObservationSubject subject, CancellationToken token)
     {
-      while (this.Running)
+      while (subject.Running)
       {
         if (DateTime.Now - subject.LastPoll > subject.Interval)
         {
-          this.ObservationRunStarted?.Invoke(this, EventArgs.Empty);
-          await this.ObserveSingle(subject, token);
-          this.ObservationRunEnded?.Invoke(this, EventArgs.Empty);
+          try
+          {
+            this.ObservationRunStarted?.Invoke(this, EventArgs.Empty);
+            await this.ObserveSingle(subject, token);
+            this.ObservationRunEnded?.Invoke(this, EventArgs.Empty);
+          }
+          catch (Exception e)
+          {
+            // Todo: should be logged.
+          }
         }
 
-        await Task.Delay(1000, token);
+        try
+        {
+          await Task.Delay(1000, token);
+        }
+        catch (Exception e)
+        {
+          // Todo: should be logged.
+        }
       }
     }
 
@@ -113,7 +128,11 @@
       try
       {
         this.stopping = true;
-        this.Running = false;
+        foreach (var observationSubject in this.observedSubjects)
+        {
+          observationSubject.Running = false;
+        }
+
         this.cancellationTokenSource.Cancel();
       }
       finally
@@ -122,13 +141,15 @@
       }
     }
 
-    public class ObservationSubject
+    private class ObservationSubject
     {
       public ObservationSubject(Subject subject, int interval)
       {
         this.Subject = subject;
         this.Interval = TimeSpan.FromSeconds(interval);
       }
+
+      public bool Running { get; set; }
 
       public Subject Subject { get; }
 
