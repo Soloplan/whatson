@@ -97,6 +97,26 @@ namespace Soloplan.WhatsON.GUI.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot;?&gt;
+        ///&lt;log4net&gt;
+        ///  &lt;appender name=&quot;RootLogFileAppender&quot; type=&quot;log4net.Appender.RollingFileAppender&quot;&gt;
+        ///    &lt;lockingModel type=&quot;log4net.Appender.FileAppender+MinimalLock&quot; /&gt;
+        ///    &lt;file type=&quot;log4net.Util.PatternString&quot;&gt;
+        ///      &lt;conversionPattern value=&quot;%property{LogFilePath}\whatsON.log4net.log&quot; /&gt;
+        ///    &lt;/file&gt;
+        ///    &lt;!-- Set append to &quot;false&quot; for debugging --&gt;
+        ///    &lt;appendToFile value=&quot;true&quot; /&gt;
+        ///    &lt;rollingStyle value=&quot;Size&quot; /&gt;
+        ///    &lt;maxSizeRollBackups value=&quot;3&quot; /&gt;
+        ///    &lt;maximumFileSize valu [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string loggingConfiguration {
+            get {
+                return ResourceManager.GetString("loggingConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to not installed.
         /// </summary>
         public static string NotInstalled {

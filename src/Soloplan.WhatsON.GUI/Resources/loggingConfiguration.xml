@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<log4net>
+  <appender name="RootLogFileAppender" type="log4net.Appender.RollingFileAppender">
+    <lockingModel type="log4net.Appender.FileAppender+MinimalLock" />
+    <file type="log4net.Util.PatternString">
+      <conversionPattern value="%property{LogFilePath}\whatsON.log4net.log" />
+    </file>
+    <!-- Set append to "false" for debugging -->
+    <appendToFile value="true" />
+    <rollingStyle value="Size" />
+    <maxSizeRollBackups value="3" />
+    <maximumFileSize value="20MB" />
+    <staticLogFileName value="true" />
+    <layout type="log4net.Layout.PatternLayout">
+      <param name="ConversionPattern" value="%date{dd.MM.yyyy-HH:mm:ss.fff} %-5level [%thread] %-30location - %message%newline%exception" />
+    </layout>
+  </appender>
+  <root>
+    <level value="ALL" />
+    <appender-ref ref="RootLogFileAppender" />
+  </root>
+</log4net>

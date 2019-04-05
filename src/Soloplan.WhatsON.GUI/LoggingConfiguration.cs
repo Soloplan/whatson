@@ -12,6 +12,7 @@ namespace Soloplan.WhatsON.GUI
   using System.Windows;
   using log4net;
   using log4net.Config;
+  using Soloplan.WhatsON.GUI.Properties;
   using Soloplan.WhatsON.Serialization;
 
   /// <summary>
@@ -21,31 +22,35 @@ namespace Soloplan.WhatsON.GUI
   {
     public void Initialize()
     {
-      string error = "Log configuration wasn't run.";
       var file = Path.Combine(SerializationHelper.ConfigFolder, "loggingConfiguration.xml");
-      if (File.Exists(file))
+      if (!File.Exists(file))
       {
-        GlobalContext.Properties["LogFilePath"] = Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), "Soloplan GmbH", "WhatsOn");
-        XmlConfigurator.ConfigureAndWatch(new FileInfo(file));
-        error = string.Empty;
-
-        if (!log4net.LogManager.GetRepository().Configured)
+        try
         {
-          var builder = new StringBuilder();
-
-          // log4net not configured
-          foreach (log4net.Util.LogLog message in log4net.LogManager.GetRepository().ConfigurationMessages.Cast<log4net.Util.LogLog>())
-          {
-            // evaluate configuration message
-            builder.AppendLine(message.Message);
-          }
-
-          error = builder.ToString();
+          File.WriteAllLines(file, new[] { Resources.loggingConfiguration }, Encoding.UTF8);
+        }
+        catch (Exception e)
+        {
+          MessageBox.Show($"Failed to create logging configuration file {file}. Error: {e}", "Failed to initialize Log4Net", MessageBoxButton.OK, MessageBoxImage.Error);
         }
       }
-      else
+
+      GlobalContext.Properties["LogFilePath"] = Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), "Soloplan GmbH", "WhatsOn");
+      XmlConfigurator.ConfigureAndWatch(new FileInfo(file));
+      var error = string.Empty;
+
+      if (!log4net.LogManager.GetRepository().Configured)
       {
-        error = $"Logging is disabled. File {file} does not exist.";
+        var builder = new StringBuilder();
+
+        // log4net not configured
+        foreach (log4net.Util.LogLog message in log4net.LogManager.GetRepository().ConfigurationMessages.Cast<log4net.Util.LogLog>())
+        {
+          // evaluate configuration message
+          builder.AppendLine(message.Message);
+        }
+
+        error = builder.ToString();
       }
 
       if (!string.IsNullOrEmpty(error))
