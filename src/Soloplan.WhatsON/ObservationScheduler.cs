@@ -25,10 +25,6 @@
 
     public event EventHandler<Subject> StatusQueried;
 
-    public event EventHandler ObservationRunStarted;
-
-    public event EventHandler ObservationRunEnded;
-
     public bool Running
     {
       get => this.observedSubjects.Any(subject => subject.Running);
@@ -90,9 +86,7 @@
         {
           try
           {
-            this.ObservationRunStarted?.Invoke(this, EventArgs.Empty);
             await this.ObserveSingle(subject, token);
-            this.ObservationRunEnded?.Invoke(this, EventArgs.Empty);
           }
           catch (Exception e)
           {

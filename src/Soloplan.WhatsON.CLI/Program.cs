@@ -110,10 +110,6 @@ namespace Soloplan.WhatsON.CLI
     private static ObservationScheduler PrepareScheduler()
     {
       var scheduler = new ObservationScheduler();
-      scheduler.ObservationRunStarted += (s, e) =>
-      {
-        Console.WriteLine();
-      };
 
       scheduler.StatusQueried += (s, sub) =>
       {
