@@ -54,7 +54,8 @@
       this.icon.ContextMenu = this.contextMenu;
       this.contextMenu.Popup += this.OnContextMenuPopup;
       this.icon.DoubleClick += (s, e) => this.ShowOrHideWindow();
-      this.icon.BalloonTipClicked += (s, e) => this.BringToFront();
+      this.icon.BalloonTipClicked += (s, e) => this.BringToFront(true);
+      this.icon.Click += (s, e) => this.BringToFront(false);
 
       this.model = new NotificationsModel(this.scheduler);
       this.model.PropertyChanged += this.CurrentStatusPropertyChanged;
@@ -176,7 +177,11 @@
       }
     }
 
-    private void BringToFront()
+    /// <summary>
+    /// Brings the window to front.
+    /// </summary>
+    /// <param name="ifVisible">If set to true the window will only be shown if it is already visible, just not on top.</param>
+    private void BringToFront(bool ifVisible)
     {
       if (this.MainWindowVisible)
       {
@@ -185,7 +190,10 @@
       }
       else
       {
-        this.ShowOrHideWindow();
+        if (ifVisible)
+        {
+          this.ShowOrHideWindow();
+        }
       }
     }
 
