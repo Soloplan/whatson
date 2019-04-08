@@ -194,31 +194,17 @@
     public override void Update(Status newStatus)
     {
       base.Update(newStatus);
-      if (newStatus == null)
+      var jenkinsStatus = newStatus as JenkinsStatus;
+      if (jenkinsStatus == null)
       {
         this.BuildNumber = null;
         return;
       }
 
-      if (newStatus.Properties.TryGetValue(JenkinsProject.BuildPropertyKeys.Number, out var buildNubmerString) && int.TryParse(buildNubmerString, out var buildNubmer))
-      {
-        this.BuildNumber = buildNubmer;
-      }
-
-      if (newStatus.Properties.TryGetValue(JenkinsProject.BuildPropertyKeys.Building, out var buildingString) && bool.TryParse(buildingString, out var isBuilding))
-      {
-        this.Building = isBuilding;
-      }
-
-      if (newStatus.Properties.TryGetValue(JenkinsProject.BuildPropertyKeys.Duration, out var durationString) && long.TryParse(durationString, out var durationInMs))
-      {
-        this.Duration = new TimeSpan(durationInMs * 10000);
-      }
-
-      if (newStatus.Properties.TryGetValue(JenkinsProject.BuildPropertyKeys.EstimatedDuration, out var estimatedDurationString) && long.TryParse(estimatedDurationString, out var estimatedDurationInMs))
-      {
-        this.EstimatedDuration = new TimeSpan(estimatedDurationInMs * 10000);
-      }
+      this.BuildNumber = jenkinsStatus.BuildNumber;
+      this.Building = jenkinsStatus.Building;
+      this.Duration = jenkinsStatus.Duration;
+      this.EstimatedDuration = jenkinsStatus.EstimatedDuration;
 
       if (this.State == ObservationState.Running)
       {

@@ -36,7 +36,7 @@
 
     public string Project => this.GetProject();
 
-    private Status PreviousCheckStatus { get; set; }
+    private JenkinsStatus PreviousCheckStatus { get; set; }
 
     /// <summary>
     /// Gets the port number.
@@ -83,37 +83,36 @@
 
     protected override bool ShouldTakeSnapshot(Status status)
     {
-      if (this.PreviousCheckStatus != null)
+      if (status is JenkinsStatus currentStatus)
       {
-        if (!int.TryParse(this.PreviousCheckStatus.Properties[BuildPropertyKeys.Number], out int prevBuildNumber) || !int.TryParse(status.Properties[BuildPropertyKeys.Number], out int currentBuildNumber))
+        if (this.PreviousCheckStatus != null)
         {
-          return false;
+          if ((status.State != ObservationState.Running && (status.State != this.PreviousCheckStatus.State || this.PreviousCheckStatus.BuildNumber != currentStatus.BuildNumber)) || currentStatus.BuildNumber - this.PreviousCheckStatus.BuildNumber > 1)
+          {
+            this.PreviousCheckStatus = currentStatus;
+            return true;
+          }
         }
 
-        if ((status.State != ObservationState.Running && (status.State != this.PreviousCheckStatus.State || prevBuildNumber != currentBuildNumber)) || currentBuildNumber - prevBuildNumber > 1)
-        {
-          this.PreviousCheckStatus = status;
-          return true;
-        }
+        this.PreviousCheckStatus = currentStatus;
       }
 
-      this.PreviousCheckStatus = status;
       return false;
     }
 
     private static Status CreateStatus(JenkinsBuild latestBuild)
     {
-      var newStatus = new Status(GetState(latestBuild))
+      var newStatus = new JenkinsStatus(GetState(latestBuild))
       {
         Name = $"{latestBuild.DisplayName} ({TimeSpan.FromMilliseconds(latestBuild.Duration):g})",
         Time = DateTimeOffset.FromUnixTimeMilliseconds(latestBuild.Timestamp).UtcDateTime,
         Detail = latestBuild.Description,
       };
 
-      newStatus.Properties[BuildPropertyKeys.Number] = $"{latestBuild.Number}";
-      newStatus.Properties[BuildPropertyKeys.Building] = $"{latestBuild.Building}";
-      newStatus.Properties[BuildPropertyKeys.Duration] = $"{latestBuild.Duration}";
-      newStatus.Properties[BuildPropertyKeys.EstimatedDuration] = $"{latestBuild.EstimatedDuration}";
+      newStatus.BuildNumber = latestBuild.Number;
+      newStatus.Building = latestBuild.Building;
+      newStatus.DurationInMs = latestBuild.Duration;
+      newStatus.EstimatedDurationInMs = latestBuild.EstimatedDuration;
 
       return newStatus;
     }
@@ -141,14 +140,6 @@
       }
 
       return 80;
-    }
-
-    public static class BuildPropertyKeys
-    {
-      public const string Number = "BuildNumber";
-      public const string Building = "Building";
-      public const string Duration = "Duration";
-      public const string EstimatedDuration = "EstimatedDuration";
     }
   }
 }
