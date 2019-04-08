@@ -10,9 +10,9 @@ namespace Soloplan.WhatsON.Jenkins
   using Soloplan.WhatsON.Jenkins.Model;
   using Soloplan.WhatsON.ServerBase;
 
-  public static class JenkinsApi
+  public class JenkinsApi : IJenkinsApi
   {
-    public static async Task<JenkinsJob> GetJenkinsJob(JenkinsProject subject, CancellationToken token)
+    public async Task<JenkinsJob> GetJenkinsJob(JenkinsProject subject, CancellationToken token)
     {
       var address = subject.GetAddress();
       var port = subject.GetPort();
@@ -22,7 +22,7 @@ namespace Soloplan.WhatsON.Jenkins
       return await GetJenkinsModel<JenkinsJob>(subject, jobRequest, token);
     }
 
-    public static async Task<JenkinsBuild> GetJenkinsBuild(JenkinsProject subject, int buildNumber, CancellationToken token)
+    public async Task<JenkinsBuild> GetJenkinsBuild(JenkinsProject subject, int buildNumber, CancellationToken token)
     {
       var address = subject.GetAddress();
       var port = subject.GetPort();

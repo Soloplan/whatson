@@ -9,7 +9,7 @@
 
     public override Subject CreateNew(SubjectConfiguration configuration)
     {
-      var jenkinsProject = new JenkinsProject(configuration);
+      var jenkinsProject = new JenkinsProject(configuration, new JenkinsApi());
       return jenkinsProject;
     }
   }

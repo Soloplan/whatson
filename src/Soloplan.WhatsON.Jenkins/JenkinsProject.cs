@@ -19,12 +19,19 @@
     public const string RedirectPlugin = "RedirectPlugin";
 
     /// <summary>
+    /// API class for accessing Jenkins.
+    /// </summary>
+    private IJenkinsApi api;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="JenkinsProject"/> class.
     /// </summary>
     /// <param name="configuration">The configuration.</param>
-    public JenkinsProject(SubjectConfiguration configuration)
+    /// <param name="api">API for Jenkins.</param>
+    public JenkinsProject(SubjectConfiguration configuration, IJenkinsApi api)
       : base(configuration)
     {
+      this.api = api;
     }
 
     public string Project => this.GetProject();
@@ -59,8 +66,8 @@
 
     protected override async Task ExecuteQuery(CancellationToken cancellationToken, params string[] args)
     {
-      var job = await JenkinsApi.GetJenkinsJob(this, cancellationToken);
-      var latestBuild = await JenkinsApi.GetJenkinsBuild(this, job.LastBuild.Number, cancellationToken);
+      var job = await this.api.GetJenkinsJob(this, cancellationToken);
+      var latestBuild = await this.api.GetJenkinsBuild(this, job.LastBuild.Number, cancellationToken);
       this.CurrentStatus = CreateStatus(latestBuild);
       if (this.Snapshots.Count == 0 && this.MaxSnapshots > 0)
       {
@@ -68,7 +75,7 @@
         var lastHistoryBuild = Math.Max(startBuildNumber - this.MaxSnapshots, 0);
         for (int i = lastHistoryBuild; i <= startBuildNumber; i++)
         {
-          var buildStatus = await JenkinsApi.GetJenkinsBuild(this, i, cancellationToken);
+          var buildStatus = await this.api.GetJenkinsBuild(this, i, cancellationToken);
           this.AddSnapshot(CreateStatus(buildStatus));
         }
       }
