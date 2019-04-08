@@ -20,13 +20,23 @@ pipeline {
       }
     }
 
-    stage('Publish') {
+    stage('Publish Snapshot') {
       when {
         branch 'master'
       }
       
       steps {
         stepPublishArtifacts(folder: "src/bin/Release", bucket: "whatson", exclude: [], subfolders: false)
+      }
+    }
+
+    stage('Publish Release') {
+      when {
+        tag "v*"
+      }
+      
+      steps {
+        stepPublishArtifacts(folder: "src/bin/Release", bucket: "whatson-${env.TAG_NAME}", exclude: [], subfolders: false)
       }
     }
   }
