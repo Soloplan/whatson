@@ -39,6 +39,11 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     private bool? openOnSystemStart;
 
     /// <summary>
+    /// Backing field for <see cref="ShowInTaskbar"/>.
+    /// </summary>
+    private bool showInTaskbar;
+
+    /// <summary>
     /// Occurs when configuration was applied.
     /// </summary>
     public event EventHandler<ValueEventArgs<ApplicationConfiguration>> ConfigurationApplied;
@@ -62,6 +67,19 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       set
       {
         this.darkThemeEnabled = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether window should be shown in taskbar.
+    /// </summary>
+    public bool ShowInTaskbar
+    {
+      get => this.showInTaskbar;
+      set
+      {
+        this.showInTaskbar = value;
         this.OnPropertyChanged();
       }
     }
@@ -161,6 +179,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
         }
 
         this.DarkThemeEnabled = configurationSource.DarkThemeEnabled;
+        this.ShowInTaskbar = configurationSource.ShowInTaskbar;
         this.openOnSystemStart = null; // as this option is not really saved, we reset the private variable value.
         this.OnPropertyChanged(nameof(this.OpenOnSystemStart));
 
@@ -225,6 +244,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
         }
 
         this.Configuration.DarkThemeEnabled = this.DarkThemeEnabled;
+        this.Configuration.ShowInTaskbar = this.ShowInTaskbar;
         this.ApplyRunWithWindowsOption();
         SerializationHelper.SaveConfiguration(this.Configuration);
       }

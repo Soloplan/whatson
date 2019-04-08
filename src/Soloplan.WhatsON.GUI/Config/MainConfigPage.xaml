@@ -20,5 +20,9 @@
       <ToggleButton Style="{StaticResource MaterialDesignSwitchToggleButton}"  IsChecked="{Binding OpenOnSystemStart}" />
       <Label>Run when Windows starts</Label>
     </StackPanel>
+    <StackPanel Orientation="Horizontal">
+      <ToggleButton Style="{StaticResource MaterialDesignSwitchToggleButton}"  IsChecked="{Binding ShowInTaskbar}"/>
+      <Label>Show in Taskbar</Label>
+    </StackPanel>
   </StackPanel>
 </Page>

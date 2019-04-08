@@ -19,6 +19,11 @@ namespace Soloplan.WhatsON.Serialization
     public bool DarkThemeEnabled { get; set; }
 
     /// <summary>
+    /// Gets or sets a value indicating whether icon on taskbar should be shown.
+    /// </summary>
+    public bool ShowInTaskbar { get; set; }
+
+    /// <summary>
     /// Gets the subjects configuration.
     /// </summary>
     public IList<SubjectConfiguration> SubjectsConfiguration { get; } = new List<SubjectConfiguration>();

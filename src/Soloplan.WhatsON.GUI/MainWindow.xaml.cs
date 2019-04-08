@@ -32,6 +32,7 @@ namespace Soloplan.WhatsON.GUI
       this.scheduler = scheduler;
       this.config = configuration;
       this.mainTreeView.Init(this.scheduler, this.config, initialSubjectState);
+      this.ShowInTaskbar = this.config.ShowInTaskbar;
     }
 
     public MainWindowSettigns GetVisualSettigns()
@@ -99,6 +100,8 @@ namespace Soloplan.WhatsON.GUI
       {
         this.scheduler.Start();
       }
+
+      this.ShowInTaskbar = this.config.ShowInTaskbar;
     }
   }
 }
