@@ -96,7 +96,12 @@
 
         try
         {
-          await Task.Delay(1000, token);
+          var remainingOfInterval = subject.Interval - (DateTime.Now - subject.LastPoll);
+          if (remainingOfInterval.TotalMilliseconds > 0)
+          {
+            int milisecondsToWait = remainingOfInterval.TotalMilliseconds < int.MaxValue ? (int)remainingOfInterval.TotalMilliseconds : int.MaxValue;
+            await Task.Delay(milisecondsToWait, token);
+          }
         }
         catch (Exception e)
         {
