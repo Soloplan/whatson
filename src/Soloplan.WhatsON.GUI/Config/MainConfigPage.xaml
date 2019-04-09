@@ -11,9 +11,8 @@
   <StackPanel>
     <StackPanel>
       <StackPanel Orientation="Horizontal">
-        <Label>Light</Label>
         <ToggleButton Style="{StaticResource MaterialDesignSwitchToggleButton}" Checked="LightOrDarkModeToggleButtonChecked" Unchecked="LightOrDarkModeToggleButtonUnchecked" IsChecked="{Binding DarkThemeEnabled}" />
-        <Label>Dark</Label>
+        <Label>Dark mode on</Label>
       </StackPanel>
     </StackPanel>
     <StackPanel Orientation="Horizontal">
