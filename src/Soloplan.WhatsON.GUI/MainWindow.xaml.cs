@@ -6,6 +6,7 @@
 
 namespace Soloplan.WhatsON.GUI
 {
+  using System;
   using System.Collections.Generic;
   using System.Windows;
   using Soloplan.WhatsON.GUI.Config.View;
@@ -25,6 +26,11 @@ namespace Soloplan.WhatsON.GUI
     private ObservationScheduler scheduler;
 
     private MainWindowSettigns settings;
+
+    /// <summary>
+    /// Occurs when configuration was applied.
+    /// </summary>
+    public event EventHandler<ValueEventArgs<ApplicationConfiguration>> ConfigurationApplied;
 
     public MainWindow(ObservationScheduler scheduler, ApplicationConfiguration configuration, IList<Subject> initialSubjectState)
     {
@@ -55,15 +61,24 @@ namespace Soloplan.WhatsON.GUI
       this.mainTreeView.ApplyTreeListSettings(this.settings.TreeListSettings);
     }
 
+    /// <summary>
+    /// Applies configuration to main window.
+    /// </summary>
+    /// <param name="configuration">New configuration.</param>
+    public void ApplyConfiguration(ApplicationConfiguration configuration)
+    {
+      this.config = configuration;
+      this.mainTreeView.Update(this.config);
+      this.ShowInTaskbar = this.config.ShowInTaskbar;
+    }
+
     private void OpenConfig(object sender, RoutedEventArgs e)
     {
       var configWindow = new ConfigWindow(this.config);
       configWindow.Owner = this;
       configWindow.ConfigurationApplied += (s, ev) =>
       {
-        this.config = ev.Value;
-
-        this.ApplyConfiguration();
+        this.ConfigurationApplied?.Invoke(this, ev);
       };
 
       if (this.settings.ConfigDialogSettings != null)
@@ -77,31 +92,6 @@ namespace Soloplan.WhatsON.GUI
       };
 
       configWindow.ShowDialog();
-    }
-
-    private void ApplyConfiguration()
-    {
-      var schedulerRunning = this.scheduler.Running;
-      if (this.scheduler.Running)
-      {
-        this.scheduler.Stop();
-      }
-
-      this.scheduler.UnobserveAll();
-      foreach (var subjectConfiguration in this.config.SubjectsConfiguration)
-      {
-        var subject = PluginsManager.Instance.GetSubject(subjectConfiguration);
-        this.scheduler.Observe(subject);
-      }
-
-      this.mainTreeView.Update(this.config);
-
-      if (schedulerRunning)
-      {
-        this.scheduler.Start();
-      }
-
-      this.ShowInTaskbar = this.config.ShowInTaskbar;
     }
   }
 }

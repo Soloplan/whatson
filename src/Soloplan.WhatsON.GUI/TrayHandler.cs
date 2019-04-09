@@ -24,7 +24,7 @@
     /// <summary>
     /// Configuration of application.
     /// </summary>
-    private readonly ApplicationConfiguration configuration;
+    private ApplicationConfiguration configuration;
 
     /// <summary>
     /// The context menu displayed by tray icon.
@@ -86,6 +86,7 @@
 
           this.mainWindow.Closing += this.MainWindowClosing;
           this.mainWindow.Closed += this.MainWindowClosed;
+          this.mainWindow.ConfigurationApplied += this.MainWindowConfigurationApplied;
         }
 
         return this.mainWindow;
@@ -194,6 +195,33 @@
         {
           this.ShowOrHideWindow();
         }
+      }
+    }
+
+    private void MainWindowConfigurationApplied(object sender, ValueEventArgs<ApplicationConfiguration> e)
+    {
+      this.configuration = e.Value;
+      var schedulerRunning = this.scheduler.Running;
+      if (this.scheduler.Running)
+      {
+        this.scheduler.Stop();
+      }
+
+      this.scheduler.UnobserveAll();
+      foreach (var subjectConfiguration in this.configuration.SubjectsConfiguration)
+      {
+        var subject = PluginsManager.Instance.GetSubject(subjectConfiguration);
+        this.scheduler.Observe(subject);
+      }
+
+      this.mainWindow?.ApplyConfiguration(this.configuration);
+      this.model.PropertyChanged -= this.CurrentStatusPropertyChanged;
+      this.model = new NotificationsModel(this.scheduler);
+      this.model.PropertyChanged += this.CurrentStatusPropertyChanged;
+
+      if (schedulerRunning)
+      {
+        this.scheduler.Start();
       }
     }
 
