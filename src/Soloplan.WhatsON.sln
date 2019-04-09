@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.WhatsON.Jenkins.GU
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.WhatsON.ServerHealth.GUI", "Soloplan.WhatsON.ServerHealth.GUI\Soloplan.WhatsON.ServerHealth.GUI.csproj", "{20B706EB-A7B3-41A0-9102-9CA431FC2CAB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.WhatsON.Jenkins.Tests", "Soloplan.WhatsON.Jenkins.Tests\Soloplan.WhatsON.Jenkins.Tests.csproj", "{09784F4C-4E89-4AF4-B913-9F05AD714090}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{20B706EB-A7B3-41A0-9102-9CA431FC2CAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20B706EB-A7B3-41A0-9102-9CA431FC2CAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20B706EB-A7B3-41A0-9102-9CA431FC2CAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09784F4C-4E89-4AF4-B913-9F05AD714090}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09784F4C-4E89-4AF4-B913-9F05AD714090}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09784F4C-4E89-4AF4-B913-9F05AD714090}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09784F4C-4E89-4AF4-B913-9F05AD714090}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

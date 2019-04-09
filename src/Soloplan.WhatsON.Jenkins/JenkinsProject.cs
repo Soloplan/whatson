@@ -73,10 +73,29 @@
       {
         var startBuildNumber = latestBuild.Building ? latestBuild.Number - 1 : latestBuild.Number;
         var lastHistoryBuild = Math.Max(startBuildNumber - this.MaxSnapshots, 0);
+        JenkinsStatus buildStatus = null;
         for (int i = lastHistoryBuild; i <= startBuildNumber; i++)
         {
-          var buildStatus = await this.api.GetJenkinsBuild(this, i, cancellationToken);
-          this.AddSnapshot(CreateStatus(buildStatus));
+          buildStatus = CreateStatus(await this.api.GetJenkinsBuild(this, i, cancellationToken));
+          this.AddSnapshot(buildStatus);
+        }
+
+        this.PreviousCheckStatus = buildStatus;
+      }
+
+      if (this.PreviousCheckStatus != null && this.CurrentStatus is JenkinsStatus currentStatus)
+      {
+        if (currentStatus.BuildNumber - this.PreviousCheckStatus.BuildNumber > 1)
+        {
+          var start = this.PreviousCheckStatus.BuildNumber + 1;
+          for (int i = start; i < currentStatus.BuildNumber; i++)
+          {
+            var buildStatus = CreateStatus(await this.api.GetJenkinsBuild(this, i, cancellationToken));
+            if (this.ShouldTakeSnapshot(buildStatus))
+            {
+              this.AddSnapshot(buildStatus);
+            }
+          }
         }
       }
     }
@@ -87,20 +106,22 @@
       {
         if (this.PreviousCheckStatus != null)
         {
-          if ((status.State != ObservationState.Running && (status.State != this.PreviousCheckStatus.State || this.PreviousCheckStatus.BuildNumber != currentStatus.BuildNumber)) || currentStatus.BuildNumber - this.PreviousCheckStatus.BuildNumber > 1)
+          if (status.State != ObservationState.Running && (status.State != this.PreviousCheckStatus.State || this.PreviousCheckStatus.BuildNumber != currentStatus.BuildNumber))
           {
             this.PreviousCheckStatus = currentStatus;
             return true;
           }
         }
-
-        this.PreviousCheckStatus = currentStatus;
+        else
+        {
+          this.PreviousCheckStatus = currentStatus;
+        }
       }
 
       return false;
     }
 
-    private static Status CreateStatus(JenkinsBuild latestBuild)
+    private static JenkinsStatus CreateStatus(JenkinsBuild latestBuild)
     {
       var newStatus = new JenkinsStatus(GetState(latestBuild))
       {
