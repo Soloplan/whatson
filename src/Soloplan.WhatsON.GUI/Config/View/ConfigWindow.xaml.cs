@@ -59,6 +59,16 @@ namespace Soloplan.WhatsON.GUI.Config.View
     private AboutPage aboutPage;
 
     /// <summary>
+    /// The Theme helper.
+    /// </summary>
+    private ThemeHelper themeHelper;
+
+    /// <summary>
+    /// The window shown flag.
+    /// </summary>
+    private bool windowShown;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="ConfigWindow"/> class.
     /// </summary>
     /// <param name="configuration">The configuration.</param>
@@ -83,6 +93,24 @@ namespace Soloplan.WhatsON.GUI.Config.View
     /// Occurs when configuration is about to be applied.
     /// </summary>
     public event EventHandler<EventArgs> ConfigurationApplying;
+
+    /// <summary>
+    /// Raises the <see cref="E:ContentRendered" /> event.
+    /// </summary>
+    /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+    protected override void OnContentRendered(EventArgs e)
+    {
+      base.OnContentRendered(e);
+
+      if (this.windowShown)
+      {
+        return;
+      }
+
+      this.windowShown = true;
+
+      this.GetThemeHelper().ApplyLightDarkMode(this.configurationSource.DarkThemeEnabled);
+    }
 
     /// <summary>
     /// Handles the SelectionChanged event of the ListBox control.
@@ -115,7 +143,7 @@ namespace Soloplan.WhatsON.GUI.Config.View
       switch (selectedItemTag)
       {
         case MainListItemTag:
-          this.mainPage = this.mainPage ?? new MainConfigPage(this.configurationViewModel);
+          this.mainPage = this.mainPage ?? new MainConfigPage(this.configurationViewModel, this.GetThemeHelper());
           this.ConfigFrame.Content = this.mainPage;
           return;
         case SubjectsListItemTag:
@@ -127,6 +155,22 @@ namespace Soloplan.WhatsON.GUI.Config.View
           this.ConfigFrame.Content = this.aboutPage;
           return;
       }
+    }
+
+    /// <summary>
+    /// Gets the theme helper.
+    /// </summary>
+    /// <returns>The Theme helper.</returns>
+    private ThemeHelper GetThemeHelper()
+    {
+      if (this.themeHelper != null)
+      {
+        return this.themeHelper;
+      }
+
+      this.themeHelper = new ThemeHelper();
+      this.themeHelper.Initialize();
+      return this.themeHelper;
     }
 
     /// <summary>
