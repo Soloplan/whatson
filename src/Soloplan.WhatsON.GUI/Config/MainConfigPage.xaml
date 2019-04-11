@@ -27,5 +27,13 @@
       <ToggleButton IsChecked="{Binding ShowInTaskbar}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
       <Label>Show in Taskbar</Label>
     </StackPanel>
+    <StackPanel Orientation="Horizontal">
+      <ToggleButton IsChecked="{Binding AlwaysOnTop}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
+      <Label>Always on top</Label>
+    </StackPanel>
+    <StackPanel Orientation="Horizontal">
+      <ToggleButton IsChecked="{Binding OpenMinimized}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
+      <Label>Open minimized</Label>
+    </StackPanel>
   </StackPanel>
 </Page>

@@ -64,6 +64,11 @@
       {
         this.visualSettings = SerializationHelper.Load<MainWindowSettigns>(Path.Combine(SerializationHelper.ConfigFolder, VisualSettingsFile));
       }
+
+      if (!this.configuration.OpenMinimized)
+      {
+        this.ShowOrHideWindow();
+      }
     }
 
     /// <summary>

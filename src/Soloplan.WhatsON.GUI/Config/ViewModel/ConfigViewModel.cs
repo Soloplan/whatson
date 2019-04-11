@@ -44,6 +44,16 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     private bool showInTaskbar;
 
     /// <summary>
+    /// Backing field for <see cref="AlwaysOnTop"/>.
+    /// </summary>
+    private bool alwaysOnTop;
+
+    /// <summary>
+    /// Backing field for <see cref="OpenMinimized"/>.
+    /// </summary>
+    private bool openMinimized;
+
+    /// <summary>
     /// Occurs when configuration was applied.
     /// </summary>
     public event EventHandler<ValueEventArgs<ApplicationConfiguration>> ConfigurationApplied;
@@ -80,6 +90,32 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       set
       {
         this.showInTaskbar = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether window should be always on top of other windows.
+    /// </summary>
+    public bool AlwaysOnTop
+    {
+      get => this.alwaysOnTop;
+      set
+      {
+        this.alwaysOnTop = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the window should open minimized.
+    /// </summary>
+    public bool OpenMinimized
+    {
+      get => this.openMinimized;
+      set
+      {
+        this.openMinimized = value;
         this.OnPropertyChanged();
       }
     }
@@ -180,6 +216,8 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
 
         this.DarkThemeEnabled = configurationSource.DarkThemeEnabled;
         this.ShowInTaskbar = configurationSource.ShowInTaskbar;
+        this.AlwaysOnTop = configurationSource.AlwaysOnTop;
+        this.OpenMinimized = configurationSource.OpenMinimized;
         this.openOnSystemStart = null; // as this option is not really saved, we reset the private variable value.
         this.OnPropertyChanged(nameof(this.OpenOnSystemStart));
 
@@ -245,6 +283,8 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
 
         this.Configuration.DarkThemeEnabled = this.DarkThemeEnabled;
         this.Configuration.ShowInTaskbar = this.ShowInTaskbar;
+        this.Configuration.AlwaysOnTop = this.AlwaysOnTop;
+        this.Configuration.OpenMinimized = this.OpenMinimized;
         this.ApplyRunWithWindowsOption();
         SerializationHelper.SaveConfiguration(this.Configuration);
       }

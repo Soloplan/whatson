@@ -23,8 +23,14 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     private ApplicationConfiguration config;
 
+    /// <summary>
+    /// The scheduler used for observing subjects.
+    /// </summary>
     private ObservationScheduler scheduler;
 
+    /// <summary>
+    /// App settings.
+    /// </summary>
     private MainWindowSettigns settings;
 
     /// <summary>
@@ -32,6 +38,12 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     public event EventHandler<ValueEventArgs<ApplicationConfiguration>> ConfigurationApplied;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MainWindow"/> class.
+    /// </summary>
+    /// <param name="scheduler">The scheduler observing build servers.</param>
+    /// <param name="configuration">App configuration.</param>
+    /// <param name="initialSubjectState">The initial state of observed subjects.</param>
     public MainWindow(ObservationScheduler scheduler, ApplicationConfiguration configuration, IList<Subject> initialSubjectState)
     {
       this.InitializeComponent();
@@ -39,6 +51,7 @@ namespace Soloplan.WhatsON.GUI
       this.config = configuration;
       this.mainTreeView.Init(this.scheduler, this.config, initialSubjectState);
       this.ShowInTaskbar = this.config.ShowInTaskbar;
+      this.Topmost = this.config.AlwaysOnTop;
     }
 
     public MainWindowSettigns GetVisualSettigns()
@@ -70,6 +83,7 @@ namespace Soloplan.WhatsON.GUI
       this.config = configuration;
       this.mainTreeView.Update(this.config);
       this.ShowInTaskbar = this.config.ShowInTaskbar;
+      this.Topmost = this.config.AlwaysOnTop;
     }
 
     private void OpenConfig(object sender, RoutedEventArgs e)
