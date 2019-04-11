@@ -1,10 +1,11 @@
 ﻿namespace Soloplan.WhatsON.Jenkins.Model
 {
+  using System.Collections.Generic;
   using Newtonsoft.Json;
 
   public class JenkinsBuild
   {
-    public const string RequestProperties = "number,displayName,description,building,duration,estimatedDuration,result,timestamp";
+    public const string RequestProperties = "number,displayName,description,building,duration,estimatedDuration,result,timestamp,culprits[fullName,absoluteUrl]";
 
     public int Number { get; set; }
 
@@ -21,5 +22,7 @@
     public string Result { get; set; }
 
     public long Timestamp { get; set; }
+
+    public IList<Culprit> Culprits { get; set; }
   }
 }

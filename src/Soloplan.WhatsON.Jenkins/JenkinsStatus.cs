@@ -8,7 +8,10 @@
 namespace Soloplan.WhatsON.Jenkins
 {
   using System;
+  using System.Collections.Generic;
   using System.Globalization;
+  using Newtonsoft.Json;
+  using Soloplan.WhatsON.Jenkins.Model;
 
   public class JenkinsStatus : Status
   {
@@ -103,12 +106,32 @@ namespace Soloplan.WhatsON.Jenkins
       }
     }
 
+    public IList<Culprit> Culprits
+    {
+      get
+      {
+        var list = new List<Culprit>();
+        if (this.Properties.TryGetValue(BuildPropertyKeys.Culprits, out var data))
+        {
+          foreach (var culprit in JsonConvert.DeserializeObject<IList<Culprit>>(data))
+          {
+            list.Add(culprit);
+          }
+        }
+
+        return list.AsReadOnly();
+      }
+
+      set => this.Properties[BuildPropertyKeys.Culprits] = JsonConvert.SerializeObject(value);
+    }
+
     private static class BuildPropertyKeys
     {
       public const string Number = "BuildNumber";
       public const string Building = "Building";
       public const string Duration = "Duration";
       public const string EstimatedDuration = "EstimatedDuration";
+      public const string Culprits = "Culprits";
     }
   }
 }

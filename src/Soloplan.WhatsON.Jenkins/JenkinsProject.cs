@@ -134,6 +134,7 @@
       newStatus.Building = latestBuild.Building;
       newStatus.DurationInMs = latestBuild.Duration;
       newStatus.EstimatedDurationInMs = latestBuild.EstimatedDuration;
+      newStatus.Culprits = latestBuild.Culprits;
 
       return newStatus;
     }
