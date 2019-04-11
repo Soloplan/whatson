@@ -2,34 +2,40 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Soloplan.WhatsON.GUI"
-        xmlns:treeListControl="clr-namespace:Soloplan.WhatsON.GUI.SubjectTreeView"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:treeListControl="clr-namespace:Soloplan.WhatsON.GUI.SubjectTreeView"
+        Title="MainWindow"
+        Width="800"
+        Height="450"
         Background="{DynamicResource MaterialDesignPaper}"
-        TextElement.FontWeight="Medium"
+        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
         TextElement.FontSize="14"
-        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
+        TextElement.FontWeight="Medium"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        mc:Ignorable="d">
   <StackPanel>
-    <materialDesign:ColorZone Padding="6" materialDesign:ShadowAssist.ShadowDepth="Depth2"
-                              Mode="PrimaryMid" DockPanel.Dock="Top">
+    <materialDesign:ColorZone Padding="6"
+                              materialDesign:ShadowAssist.ShadowDepth="Depth2"
+                              DockPanel.Dock="Top"
+                              Mode="PrimaryMid">
       <DockPanel>
-        <Button
-          DockPanel.Dock="Right"
-          Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
-          ToolTip="MaterialDesignFloatingActionMiniLightButton"
-          Click="OpenConfig">
-          <materialDesign:PackIcon
-            Kind="SettingsOutline"
-            Height="20"
-            Width="20" />
+        <Button Click="OpenConfig"
+                DockPanel.Dock="Right"
+                Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+                ToolTip="MaterialDesignFloatingActionMiniLightButton">
+          <materialDesign:PackIcon Width="20"
+                                   Height="20"
+                                   Kind="SettingsOutline" />
         </Button>
-        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18">Soloplan WhatsON</TextBlock>
+        <TextBlock HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   FontSize="18">
+          Soloplan WhatsON
+        </TextBlock>
       </DockPanel>
     </materialDesign:ColorZone>
-    <treeListControl:SubjectsTreeView x:Name="mainTreeView"/>
+    <treeListControl:SubjectsTreeView x:Name="mainTreeView" />
   </StackPanel>
 </Window>

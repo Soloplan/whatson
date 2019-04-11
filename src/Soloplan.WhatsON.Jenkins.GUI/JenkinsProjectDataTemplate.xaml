@@ -1,43 +1,46 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:jenkins="clr-namespace:Soloplan.WhatsON.Jenkins.GUI;assembly=Soloplan.WhatsON.Jenkins.GUI"
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     xmlns:subjectTreeView="clr-namespace:Soloplan.WhatsON.GUI.SubjectTreeView;assembly=Soloplan.WhatsON.GUI">
 
   <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
   <subjectTreeView:StatusToColorConverter x:Key="StatusToColorConverter" />
   <subjectTreeView:TimeToAproximateTimeConverter x:Key="TimeToAproximateTimeConverter" />
-  <!-- ToDo DGO: this should be separate control for displaying status. This way it will be easier to reuse.-->
+  <!--  ToDo DGO: this should be separate control for displaying status. This way it will be easier to reuse.  -->
 
   <ContextMenu x:Key="contextMenuJenkins">
-    <!--CommandParameter must be declared before Command or else value from previous opening of context menu will be passed. WTF?!-->
-    <MenuItem Header="Open project web page"  CommandParameter="{Binding OpenWebPageParam}" Command="{Binding OpenWebPage}" />
-    <MenuItem Header="Open current build page" 
-              CommandParameter="{Binding CurrentStatus.OpenBuildPageCommandData}"
-              Command="{Binding CurrentStatus.OpenBuildPage}" 
+    <!--  CommandParameter must be declared before Command or else value from previous opening of context menu will be passed. WTF?!  -->
+    <MenuItem Header="Open project web page"
+              CommandParameter="{Binding OpenWebPageParam}"
+              Command="{Binding OpenWebPage}" />
+    <MenuItem Header="Open current build page"
               Visibility="{Binding Path=IsEnabled, RelativeSource={RelativeSource Self}, Mode=OneWay, Converter={StaticResource BoolToVisibility}}"
-              />
+              CommandParameter="{Binding CurrentStatus.OpenBuildPageCommandData}"
+              Command="{Binding CurrentStatus.OpenBuildPage}" />
   </ContextMenu>
 
   <ContextMenu x:Key="contextMenuBuild">
-    <MenuItem Header="Open build web page" CommandParameter="{Binding OpenBuildPageCommandData}" Command="{Binding OpenBuildPage}"/>
+    <MenuItem Header="Open build web page"
+              CommandParameter="{Binding OpenBuildPageCommandData}"
+              Command="{Binding OpenBuildPage}" />
   </ContextMenu>
 
   <DataTemplate DataType="{x:Type jenkins:JenkinsProjectViewModel}">
     <StackPanel ContextMenu="{StaticResource contextMenuJenkins}" Orientation="Vertical">
       <StackPanel Orientation="Horizontal">
         <StackPanel Orientation="Horizontal">
-          <TextBlock FontWeight="Black" Text="{Binding Name}"/>
+          <TextBlock FontWeight="Black" Text="{Binding Name}" />
           <TextBlock Text=" #" />
-          <TextBlock Text="{Binding CurrentStatus.BuildNumber}"/>
+          <TextBlock Text="{Binding CurrentStatus.BuildNumber}" />
           <TextBlock Text=" " />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
           <ListView ItemsSource="{Binding SubjectSnapshots, Mode=OneWay}">
-            <!--History builds-->
+            <!--  History builds  -->
             <ListView.Resources>
               <DataTemplate DataType="{x:Type jenkins:JenkinsStatusViewModel}">
                 <StackPanel ContextMenu="{StaticResource contextMenuBuild}">
@@ -50,54 +53,53 @@
                         <TextBlock Text="{Binding Time, Converter={StaticResource TimeToAproximateTimeConverter}}" />
                       </StackPanel>
                       <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Duration: "/>
+                        <TextBlock Text="Duration: " />
                         <TextBlock>
                           <TextBlock.Text>
                             <MultiBinding StringFormat="{}{0:00}:{1:00}:{2:00}">
-                              <Binding Path="Duration.Hours"/>
-                              <Binding Path="Duration.Minutes"/>
-                              <Binding Path="Duration.Seconds"/>
+                              <Binding Path="Duration.Hours" />
+                              <Binding Path="Duration.Minutes" />
+                              <Binding Path="Duration.Seconds" />
                             </MultiBinding>
                           </TextBlock.Text>
                         </TextBlock>
                       </StackPanel>
                       <StackPanel Orientation="Horizontal">
-                        <TextBlock  Text="Build date: "/>
-                        <TextBlock Text="{Binding Time}"/>
+                        <TextBlock Text="Build date: " />
+                        <TextBlock Text="{Binding Time}" />
                       </StackPanel>
                     </StackPanel>
                   </StackPanel.ToolTip>
-                  <Button Width="10" Height="10"
+                  <Button Width="10"
+                          Height="10"
                           Background="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
                           BorderBrush="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}">
                     <i:Interaction.Triggers>
-                      <!--Handle clicking on history builds.-->
+                      <!--  Handle clicking on history builds.  -->
                       <i:EventTrigger EventName="Click">
-                        <i:InvokeCommandAction CommandParameter="{Binding OpenBuildPageCommandData}"
-                                               Command="{Binding OpenBuildPage}"/>
+                        <i:InvokeCommandAction CommandParameter="{Binding OpenBuildPageCommandData}" Command="{Binding OpenBuildPage}" />
                       </i:EventTrigger>
                     </i:Interaction.Triggers>
-                    <Style TargetType="{x:Type Button}"/>
+                    <Style TargetType="{x:Type Button}" />
                   </Button>
                 </StackPanel>
               </DataTemplate>
             </ListView.Resources>
             <ListView.ItemContainerStyle>
-              <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
-                <Setter Property="Focusable" Value="false"/>
-                <Setter Property="Padding" Value="2"/>
+              <Style BasedOn="{StaticResource {x:Type ListViewItem}}" TargetType="{x:Type ListViewItem}">
+                <Setter Property="Focusable" Value="false" />
+                <Setter Property="Padding" Value="2" />
               </Style>
             </ListView.ItemContainerStyle>
             <ListView.ItemsPanel>
               <ItemsPanelTemplate>
-                <StackPanel Orientation="Horizontal"></StackPanel>
+                <StackPanel Orientation="Horizontal" />
               </ItemsPanelTemplate>
             </ListView.ItemsPanel>
           </ListView>
         </StackPanel>
       </StackPanel>
-      <StackPanel Orientation="Horizontal"
-                      Visibility="{Binding CurrentStatus.BuildingNoLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
+      <StackPanel Orientation="Horizontal" Visibility="{Binding CurrentStatus.BuildingNoLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
         <StackPanel.ToolTip>
           <StackPanel Orientation="Horizontal">
             <TextBlock>
@@ -112,25 +114,25 @@
             <TextBlock Text=" estimated remaining" />
           </StackPanel>
         </StackPanel.ToolTip>
-        <TextBlock FontSize="10" Text=" Completion: "/>
-        <TextBlock FontSize="10" Text="{Binding CurrentStatus.Progres}"/>
-        <TextBlock FontSize="10" Text="% "/>
-        <ProgressBar Width="100" Value="{Binding CurrentStatus.Progres, Mode=OneWay}"
-                         materialDesign:TransitionAssist.DisableTransitions="True" />
+        <TextBlock FontSize="10" Text=" Completion: " />
+        <TextBlock FontSize="10" Text="{Binding CurrentStatus.Progres}" />
+        <TextBlock FontSize="10" Text="% " />
+        <ProgressBar Width="100"
+                     materialDesign:TransitionAssist.DisableTransitions="True"
+                     Value="{Binding CurrentStatus.Progres, Mode=OneWay}" />
       </StackPanel>
-      <StackPanel Orientation="Horizontal"
-                      Visibility="{Binding CurrentStatus.BuildingLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
-        <TextBlock FontSize="10" Text=" Taking "/>
+      <StackPanel Orientation="Horizontal" Visibility="{Binding CurrentStatus.BuildingLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
+        <TextBlock FontSize="10" Text=" Taking " />
         <TextBlock FontSize="10">
           <TextBlock.Text>
             <MultiBinding StringFormat="{}{0:00}:{1:00}:{2:00}">
-              <Binding Path="CurrentStatus.BuildTimeExcedingEstimation.Hours"/>
-              <Binding Path="CurrentStatus.BuildTimeExcedingEstimation.Minutes"/>
-              <Binding Path="CurrentStatus.BuildTimeExcedingEstimation.Seconds"/>
+              <Binding Path="CurrentStatus.BuildTimeExcedingEstimation.Hours" />
+              <Binding Path="CurrentStatus.BuildTimeExcedingEstimation.Minutes" />
+              <Binding Path="CurrentStatus.BuildTimeExcedingEstimation.Seconds" />
             </MultiBinding>
           </TextBlock.Text>
         </TextBlock>
-        <TextBlock FontSize="10" Text=" longer then estimated."/>
+        <TextBlock FontSize="10" Text=" longer then estimated." />
       </StackPanel>
     </StackPanel>
   </DataTemplate>
