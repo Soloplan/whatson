@@ -1,7 +1,7 @@
 ﻿namespace Soloplan.WhatsON.Jenkins.GUI
 {
   using System;
-  using System.Windows.Input;
+  using System.Collections.ObjectModel;
   using Soloplan.WhatsON.GUI.SubjectTreeView;
 
   class JenkinsStatusViewModel : StatusViewModel
@@ -22,6 +22,8 @@
     private TimeSpan buildTimeExcedingEstimation;
 
     private OpenWebPageCommandData parentCommandData;
+
+    private ObservableCollection<CulpritViewModel> culprits;
 
     public JenkinsStatusViewModel(JenkinsProjectViewModel model)
       : base(model)
@@ -191,6 +193,8 @@
       }
     }
 
+    public ObservableCollection<CulpritViewModel> Culprits => this.culprits ?? (this.culprits = new ObservableCollection<CulpritViewModel>());
+
     public override void Update(Status newStatus)
     {
       base.Update(newStatus);
@@ -215,6 +219,14 @@
       else
       {
         this.Progres = 100;
+      }
+
+      this.Culprits.Clear();
+      foreach (var culprit in jenkinsStatus.Culprits)
+      {
+        var culpritModle = new CulpritViewModel();
+        culpritModle.Init(culprit);
+        this.Culprits.Add(culpritModle);
       }
     }
 

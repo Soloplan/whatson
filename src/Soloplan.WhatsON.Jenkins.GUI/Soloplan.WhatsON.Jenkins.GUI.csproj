@@ -44,6 +44,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CulpritViewModel.cs" />
     <Compile Include="GetJenkinsTreeViewPresentationPlugIn.cs" />
     <Compile Include="JenkinsProjectViewModel.cs" />
     <Compile Include="JenkinsStatusViewModel.cs" />

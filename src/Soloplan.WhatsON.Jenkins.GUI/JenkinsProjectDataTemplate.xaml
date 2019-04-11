@@ -68,6 +68,17 @@
                         <TextBlock Text="Build date: " />
                         <TextBlock Text="{Binding Time}" />
                       </StackPanel>
+                      <TextBlock Text="---------------------------" />
+                      <TextBlock Text="Changes by:" />
+                      <ItemsControl ItemsSource="{Binding Culprits}">
+                        <ItemsControl.ItemTemplate>
+                          <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                              <TextBlock Text="{Binding FullName}" />
+                            </StackPanel>
+                          </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                      </ItemsControl>
                     </StackPanel>
                   </StackPanel.ToolTip>
                   <Button Width="10"
