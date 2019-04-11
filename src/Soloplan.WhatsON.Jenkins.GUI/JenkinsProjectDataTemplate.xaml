@@ -27,104 +27,112 @@
   </ContextMenu>
 
   <DataTemplate DataType="{x:Type jenkins:JenkinsProjectViewModel}">
-    <DockPanel ContextMenu="{StaticResource contextMenuJenkins}" LastChildFill="True">
-      <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
-        <TextBlock FontWeight="Black" Text="{Binding Name}"/>
-        <TextBlock Text=" #" />
-        <TextBlock Text="{Binding CurrentStatus.BuildNumber}"/>
-      </StackPanel>
-      <StackPanel  DockPanel.Dock="Right" Orientation="Horizontal">
-        <ListView ItemsSource="{Binding SubjectSnapshots, Mode=OneWay}">
-          <!--History builds-->
-          <ListView.Resources>
-            <DataTemplate DataType="{x:Type jenkins:JenkinsStatusViewModel}">
-              <StackPanel ContextMenu="{StaticResource contextMenuBuild}">
-                <StackPanel.ToolTip>
-                  <StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                      <TextBlock Text="#" />
-                      <TextBlock Text="{Binding BuildNumber}" />
-                      <TextBlock Text=", build " />
-                      <TextBlock Text="{Binding Time, Converter={StaticResource TimeToAproximateTimeConverter}}" />
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                      <TextBlock Text="Duration: "/>
-                      <TextBlock>
-                        <TextBlock.Text>
-                          <MultiBinding StringFormat="{}{0:00}:{1:00}:{2:00}" >
-                            <Binding Path="Duration.Hours"/>
-                            <Binding Path="Duration.Minutes"/>
-                            <Binding Path="Duration.Seconds"/>
-                          </MultiBinding>
-                        </TextBlock.Text>
-                      </TextBlock>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                      <TextBlock  Text="Build date: "/>
-                      <TextBlock Text="{Binding Time}"/>
-                    </StackPanel>
-                  </StackPanel>
-                </StackPanel.ToolTip>
-                <Button Width="10" Height="10"  Background="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
-                          BorderBrush="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}" >
-                  <i:Interaction.Triggers>
-                    <!--Handle clicking on history builds.-->
-                    <i:EventTrigger EventName="Click">
-                      <i:InvokeCommandAction CommandParameter="{Binding OpenBuildPageCommandData}" Command="{Binding OpenBuildPage}"/>
-                    </i:EventTrigger>
-                  </i:Interaction.Triggers>
-                  <Style TargetType="{x:Type Button}"/>
-                </Button>
-              </StackPanel>
-            </DataTemplate>
-          </ListView.Resources>
-          <ListView.ItemContainerStyle>
-            <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
-              <Setter Property="Focusable" Value="false"/>
-              <Setter Property="Padding" Value="2"/>
-            </Style>
-          </ListView.ItemContainerStyle>
-          <ListView.ItemsPanel>
-            <ItemsPanelTemplate>
-              <StackPanel Orientation="Horizontal"></StackPanel>
-            </ItemsPanelTemplate>
-          </ListView.ItemsPanel>
-        </ListView>
-        <StackPanel Orientation="Horizontal" Visibility="{Binding CurrentStatus.BuildingNoLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
-          <StackPanel.ToolTip>
-            <StackPanel Orientation="Horizontal">
-              <TextBlock>
-                <TextBlock.Text>
-                  <MultiBinding StringFormat="{}{0:00}:{1:00}:{2:00}">
-                    <Binding Path="CurrentStatus.EstimatedRemaining.Hours" />
-                    <Binding Path="CurrentStatus.EstimatedRemaining.Minutes" />
-                    <Binding Path="CurrentStatus.EstimatedRemaining.Seconds" />
-                  </MultiBinding>
-                </TextBlock.Text>
-              </TextBlock>
-              <TextBlock Text=" estimated remaining" />
-            </StackPanel>
-          </StackPanel.ToolTip>
-          <TextBlock FontSize="10" Text=" Completion: "/>
-          <TextBlock FontSize="10" Text="{Binding CurrentStatus.Progres}"/>
-          <TextBlock FontSize="10" Text="% "/>
-          <ProgressBar Width="100" Value="{Binding CurrentStatus.Progres, Mode=OneWay}" materialDesign:TransitionAssist.DisableTransitions="True" />
+    <StackPanel ContextMenu="{StaticResource contextMenuJenkins}" Orientation="Vertical">
+      <StackPanel Orientation="Horizontal">
+        <StackPanel Orientation="Horizontal">
+          <TextBlock FontWeight="Black" Text="{Binding Name}"/>
+          <TextBlock Text=" #" />
+          <TextBlock Text="{Binding CurrentStatus.BuildNumber}"/>
+          <TextBlock Text=" " />
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Visibility="{Binding CurrentStatus.BuildingLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
-          <TextBlock FontSize="10" Text=" Taking "/>
-          <TextBlock FontSize="10" >
-            <TextBlock.Text>
-              <MultiBinding StringFormat="{}{0:00}:{1:00}:{2:00}" >
-                <Binding Path="CurrentStatus.BuildTimeExcedingEstimation.Hours"/>
-                <Binding Path="CurrentStatus.BuildTimeExcedingEstimation.Minutes"/>
-                <Binding Path="CurrentStatus.BuildTimeExcedingEstimation.Seconds"/>
-              </MultiBinding>
-            </TextBlock.Text>
-          </TextBlock>
-          <TextBlock FontSize="10" Text=" longer then estimated."/>
+        <StackPanel Orientation="Horizontal">
+          <ListView ItemsSource="{Binding SubjectSnapshots, Mode=OneWay}">
+            <!--History builds-->
+            <ListView.Resources>
+              <DataTemplate DataType="{x:Type jenkins:JenkinsStatusViewModel}">
+                <StackPanel ContextMenu="{StaticResource contextMenuBuild}">
+                  <StackPanel.ToolTip>
+                    <StackPanel>
+                      <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="#" />
+                        <TextBlock Text="{Binding BuildNumber}" />
+                        <TextBlock Text=", build " />
+                        <TextBlock Text="{Binding Time, Converter={StaticResource TimeToAproximateTimeConverter}}" />
+                      </StackPanel>
+                      <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Duration: "/>
+                        <TextBlock>
+                          <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0:00}:{1:00}:{2:00}">
+                              <Binding Path="Duration.Hours"/>
+                              <Binding Path="Duration.Minutes"/>
+                              <Binding Path="Duration.Seconds"/>
+                            </MultiBinding>
+                          </TextBlock.Text>
+                        </TextBlock>
+                      </StackPanel>
+                      <StackPanel Orientation="Horizontal">
+                        <TextBlock  Text="Build date: "/>
+                        <TextBlock Text="{Binding Time}"/>
+                      </StackPanel>
+                    </StackPanel>
+                  </StackPanel.ToolTip>
+                  <Button Width="10" Height="10"
+                          Background="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
+                          BorderBrush="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}">
+                    <i:Interaction.Triggers>
+                      <!--Handle clicking on history builds.-->
+                      <i:EventTrigger EventName="Click">
+                        <i:InvokeCommandAction CommandParameter="{Binding OpenBuildPageCommandData}"
+                                               Command="{Binding OpenBuildPage}"/>
+                      </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <Style TargetType="{x:Type Button}"/>
+                  </Button>
+                </StackPanel>
+              </DataTemplate>
+            </ListView.Resources>
+            <ListView.ItemContainerStyle>
+              <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
+                <Setter Property="Focusable" Value="false"/>
+                <Setter Property="Padding" Value="2"/>
+              </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemsPanel>
+              <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal"></StackPanel>
+              </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+          </ListView>
         </StackPanel>
       </StackPanel>
-    </DockPanel>
+      <StackPanel Orientation="Horizontal"
+                      Visibility="{Binding CurrentStatus.BuildingNoLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
+        <StackPanel.ToolTip>
+          <StackPanel Orientation="Horizontal">
+            <TextBlock>
+              <TextBlock.Text>
+                <MultiBinding StringFormat="{}{0:00}:{1:00}:{2:00}">
+                  <Binding Path="CurrentStatus.EstimatedRemaining.Hours" />
+                  <Binding Path="CurrentStatus.EstimatedRemaining.Minutes" />
+                  <Binding Path="CurrentStatus.EstimatedRemaining.Seconds" />
+                </MultiBinding>
+              </TextBlock.Text>
+            </TextBlock>
+            <TextBlock Text=" estimated remaining" />
+          </StackPanel>
+        </StackPanel.ToolTip>
+        <TextBlock FontSize="10" Text=" Completion: "/>
+        <TextBlock FontSize="10" Text="{Binding CurrentStatus.Progres}"/>
+        <TextBlock FontSize="10" Text="% "/>
+        <ProgressBar Width="100" Value="{Binding CurrentStatus.Progres, Mode=OneWay}"
+                         materialDesign:TransitionAssist.DisableTransitions="True" />
+      </StackPanel>
+      <StackPanel Orientation="Horizontal"
+                      Visibility="{Binding CurrentStatus.BuildingLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
+        <TextBlock FontSize="10" Text=" Taking "/>
+        <TextBlock FontSize="10">
+          <TextBlock.Text>
+            <MultiBinding StringFormat="{}{0:00}:{1:00}:{2:00}">
+              <Binding Path="CurrentStatus.BuildTimeExcedingEstimation.Hours"/>
+              <Binding Path="CurrentStatus.BuildTimeExcedingEstimation.Minutes"/>
+              <Binding Path="CurrentStatus.BuildTimeExcedingEstimation.Seconds"/>
+            </MultiBinding>
+          </TextBlock.Text>
+        </TextBlock>
+        <TextBlock FontSize="10" Text=" longer then estimated."/>
+      </StackPanel>
+    </StackPanel>
   </DataTemplate>
 
 </ResourceDictionary>
