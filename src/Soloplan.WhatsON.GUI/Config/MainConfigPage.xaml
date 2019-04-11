@@ -1,26 +1,30 @@
 ﻿<Page x:Class="Soloplan.WhatsON.GUI.Config.MainConfigPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Config"
-      mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="MainConfigPage">
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      Title="MainConfigPage"
+      d:DesignHeight="450"
+      d:DesignWidth="800"
+      mc:Ignorable="d">
 
   <StackPanel>
     <StackPanel>
       <StackPanel Orientation="Horizontal">
-        <ToggleButton Style="{StaticResource MaterialDesignSwitchToggleButton}" Checked="LightOrDarkModeToggleButtonChecked" Unchecked="LightOrDarkModeToggleButtonUnchecked" IsChecked="{Binding DarkThemeEnabled}" />
+        <ToggleButton Checked="LightOrDarkModeToggleButtonChecked"
+                      IsChecked="{Binding DarkThemeEnabled}"
+                      Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                      Unchecked="LightOrDarkModeToggleButtonUnchecked" />
         <Label>Dark mode on</Label>
       </StackPanel>
     </StackPanel>
     <StackPanel Orientation="Horizontal">
-      <ToggleButton Style="{StaticResource MaterialDesignSwitchToggleButton}"  IsChecked="{Binding OpenOnSystemStart}" />
+      <ToggleButton IsChecked="{Binding OpenOnSystemStart}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
       <Label>Run when Windows starts</Label>
     </StackPanel>
     <StackPanel Orientation="Horizontal">
-      <ToggleButton Style="{StaticResource MaterialDesignSwitchToggleButton}"  IsChecked="{Binding ShowInTaskbar}"/>
+      <ToggleButton IsChecked="{Binding ShowInTaskbar}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
       <Label>Show in Taskbar</Label>
     </StackPanel>
   </StackPanel>
