@@ -1,4 +1,4 @@
-![whatsON Logo](https://github.com/Soloplan/whatson/blob/master/whatsON-logo.png)
+![whatsON Logo](https://github.com/Soloplan/whatson/blob/master/whatsON-logo.png | width=50)
 
 # whatsON
 A build and infrastructure monitoring tool written in C#.
