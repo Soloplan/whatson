@@ -9,6 +9,7 @@
   [SubjectType("Jenkins Project Status", Description = "Retrieve the current status of a Jenkins project.")]
   [ConfigurationItem(ProjectName, typeof(string), Optional = false, Priority = 300)]
   [ConfigurationItem(RedirectPlugin, typeof(bool), Priority = 400)] // defines use of Display URL API Plugin https://wiki.jenkins.io/display/JENKINS/Display+URL+API+Plugin
+  [ConfigurationItem(ServerPort, typeof(int), Priority = 200)]
   public class JenkinsProject : ServerSubject
   {
     public const string ProjectName = "ProjectName";
@@ -17,6 +18,11 @@
     /// The redirect plugin tag.
     /// </summary>
     public const string RedirectPlugin = "RedirectPlugin";
+
+    /// <summary>
+    /// The server port.
+    /// </summary>
+    public const string ServerPort = "Port";
 
     /// <summary>
     /// API class for accessing Jenkins.
@@ -36,12 +42,10 @@
 
     public string Project => this.GetProject();
 
-    private JenkinsStatus PreviousCheckStatus { get; set; }
-
     /// <summary>
     /// Gets the port number.
     /// </summary>
-    public override int Port
+    public int Port
     {
       get
       {
@@ -55,6 +59,8 @@
       }
     }
 
+    private JenkinsStatus PreviousCheckStatus { get; set; }
+
     /// <summary>
     /// Gets the project.
     /// </summary>
@@ -62,6 +68,15 @@
     public string GetProject()
     {
       return this.SubjectConfiguration.GetConfigurationByKey(JenkinsProject.ProjectName).Value;
+    }
+
+    /// <summary>
+    /// Gets the port.
+    /// </summary>
+    /// <returns>The port number.</returns>
+    public string GetPort()
+    {
+      return this.SubjectConfiguration.GetConfigurationByKey(ServerPort).Value;
     }
 
     protected override async Task ExecuteQuery(CancellationToken cancellationToken, params string[] args)

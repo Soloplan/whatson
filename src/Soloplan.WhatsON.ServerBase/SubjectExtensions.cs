@@ -6,10 +6,5 @@
     {
       return subject.SubjectConfiguration.GetConfigurationByKey(ServerSubject.ServerAddress).Value;
     }
-
-    public static string GetPort(this ServerSubject subject)
-    {
-      return subject.SubjectConfiguration.GetConfigurationByKey(ServerSubject.ServerPort).Value;
-    }
   }
 }
