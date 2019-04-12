@@ -25,6 +25,14 @@
 
     private ObservableCollection<CulpritViewModel> culprits;
 
+    private bool failure;
+
+    private bool unknown;
+
+    private bool succees;
+
+    private bool unstable;
+
     public JenkinsStatusViewModel(JenkinsProjectViewModel model)
       : base(model)
     {
@@ -84,6 +92,46 @@
           this.OnPropertyChanged();
           this.UpdateEstimatedRemaining();
         }
+      }
+    }
+
+    public bool Failure
+    {
+      get => this.failure;
+      set
+      {
+          this.failure = value;
+          this.OnPropertyChanged();
+      }
+    }
+
+    public bool Unknown
+    {
+      get => this.unknown;
+      set
+      {
+          this.unknown = value;
+          this.OnPropertyChanged();
+      }
+    }
+
+    public bool Succees
+    {
+      get => this.succees;
+      set
+      {
+          this.succees = value;
+          this.OnPropertyChanged();
+      }
+    }
+
+    public bool Unstable
+    {
+      get => this.unstable;
+      set
+      {
+          this.unstable = value;
+          this.OnPropertyChanged();
       }
     }
 
@@ -228,6 +276,8 @@
         culpritModle.Init(culprit);
         this.Culprits.Add(culpritModle);
       }
+
+      this.UpdateStateFlags();
     }
 
     public void SetJobAddress(OpenWebPageCommandData parentData)
@@ -236,6 +286,9 @@
       this.OnPropertyChanged(nameof(this.OpenBuildPageCommandData));
     }
 
+    /// <summary>
+    /// Updates flags controlling visibility of progress bar and the progress bar buttons.
+    /// </summary>
     private void UpdateEstimatedRemaining()
     {
       if (!this.Building)
@@ -257,6 +310,35 @@
         {
           this.EstimatedRemaining = TimeSpan.Zero;
           this.BuildTimeExcedingEstimation = this.Duration - this.EstimatedDuration;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Updates flags used to control visibility of controls based on <see cref="State"/>.
+    /// </summary>
+    private void UpdateStateFlags()
+    {
+      this.Succees = false;
+      this.Failure = false;
+      this.Unknown = false;
+      this.Unstable = false;
+      if (!this.Building)
+      {
+        switch (this.State)
+        {
+          case ObservationState.Unknown:
+            this.Unknown = true;
+            break;
+          case ObservationState.Unstable:
+            this.Unstable = true;
+            break;
+          case ObservationState.Failure:
+            this.Failure = true;
+            break;
+          case ObservationState.Success:
+            this.Succees = true;
+            break;
         }
       }
     }
