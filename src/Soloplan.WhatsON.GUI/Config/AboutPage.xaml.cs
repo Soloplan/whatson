@@ -1,6 +1,6 @@
 ﻿namespace Soloplan.WhatsON.GUI.Config
 {
-  using System.Deployment.Application;
+  using System;
   using System.Reflection;
   using System.Windows;
   using System.Windows.Controls;
@@ -19,9 +19,9 @@
       this.InitializeComponent();
       try
       {
-        this.VersionLabel.Text = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
+        this.VersionLabel.Text = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
       }
-      catch (InvalidDeploymentException)
+      catch (Exception)
       {
         this.VersionLabel.Text = Properties.Resources.NotInstalled;
       }

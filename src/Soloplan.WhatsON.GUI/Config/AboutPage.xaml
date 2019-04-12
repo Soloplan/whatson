@@ -24,7 +24,7 @@
         <TextBlock x:Name="VersionLabel" TextWrapping="Wrap" Text="{}{Version}" Width="176"/>
       </StackPanel>
       <StackPanel Height="22" Margin="20,0,20,10" Orientation="Horizontal">
-        <TextBlock TextWrapping="Wrap" Text="MatrialDesign in XAML version:" Margin="0,0,3,0"/>
+        <TextBlock TextWrapping="Wrap" Text="MaterialDesign in XAML version:" Margin="0,0,3,0"/>
         <TextBlock x:Name="MDIXVersionLabel" TextWrapping="Wrap" Text="{}{Version}" Width="176"/>
       </StackPanel>
       <TextBlock TextWrapping="Wrap" Text="Made by Soloplan GmbH" Margin="20,0,20,30"  Foreground="#FF2B7AD2" AutomationProperties.Name="MadeBySoloplanLabel" MouseUp="MadeBySoloplanLinkMouseUp" MouseEnter="TextBlockMouseEnter" MouseLeave="TextBlockMouseLeave"/>
