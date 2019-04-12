@@ -53,7 +53,7 @@
     <StartupObject>Soloplan.WhatsON.GUI.App</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>whatsONx16.ico</ApplicationIcon>
+    <ApplicationIcon>whatsONx128.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -268,16 +268,16 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\whatsONx16.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="whatsONx32.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="whatsONx16.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\loggingConfiguration.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\whatsONx128.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="whatsONx128.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\whatsONx16.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\config\Soloplan.WhatsON.targets" />

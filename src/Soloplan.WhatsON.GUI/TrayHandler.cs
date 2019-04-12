@@ -1,8 +1,10 @@
 ﻿namespace Soloplan.WhatsON.GUI
 {
   using System;
+  using System.Drawing;
   using System.IO;
   using System.Linq;
+  using System.Reflection;
   using System.Windows.Forms;
   using Soloplan.WhatsON.GUI.SubjectTreeView;
   using Soloplan.WhatsON.GUI.VisualConfig;
