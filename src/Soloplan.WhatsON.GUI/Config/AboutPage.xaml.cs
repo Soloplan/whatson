@@ -52,7 +52,7 @@
     {
       if (e.LeftButton == MouseButtonState.Released)
       {
-        System.Diagnostics.Process.Start("http://soloplan.de");
+        System.Diagnostics.Process.Start("http://www.soloplan.de");
       }
     }
 
