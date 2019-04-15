@@ -44,7 +44,6 @@ namespace Soloplan.WhatsON.GUI.Config
       comboBox.Style = style;
       HintAssist.SetIsFloating(comboBox, true);
       HintAssist.SetHint(comboBox, configItemAttribute.Caption);
-      comboBox.Margin = new Thickness(0, 0, 0, 8);
       return comboBox;
     }
   }

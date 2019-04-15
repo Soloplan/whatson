@@ -40,7 +40,6 @@ namespace Soloplan.WhatsON.GUI.Config
       textBox.Style = style;
       HintAssist.SetIsFloating(textBox, true);
       HintAssist.SetHint(textBox, configItemAttribute.Caption);
-      textBox.Margin = new Thickness(0, 0, 0, 8);
       return textBox;
     }
   }

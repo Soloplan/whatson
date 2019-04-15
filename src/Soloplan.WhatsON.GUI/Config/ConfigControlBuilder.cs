@@ -23,6 +23,11 @@ namespace Soloplan.WhatsON.GUI.Config
     public abstract string SupportedConfigurationItemsKey { get; }
 
     /// <summary>
+    /// Gets the required bottom margin for built control.
+    /// </summary>
+    public virtual int RequiredBottomMargin { get; } = 13;
+
+    /// <summary>
     /// Gets the value binding dependency property.
     /// If set, value binding will be initialized.
     /// </summary>
@@ -39,6 +44,7 @@ namespace Soloplan.WhatsON.GUI.Config
     public FrameworkElement GetControl(ConfigurationItemViewModel configItem, ConfigurationItemAttribute configItemAttribute)
     {
       var control = this.GetControlInternal(configItem, configItemAttribute);
+      control.Margin = new Thickness(control.Margin.Left, control.Margin.Top, control.Margin.Right, control.Margin.Bottom + this.RequiredBottomMargin);
       if (this.ValueBindingDependencyProperty != null)
       {
         this.InitilizeValueBinding(control, configItem, configItemAttribute);
