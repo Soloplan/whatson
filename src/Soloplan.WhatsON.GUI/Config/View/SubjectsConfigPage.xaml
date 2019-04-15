@@ -46,9 +46,10 @@
     </materialDesign:PopupBox>
 
     <DockPanel>
-      <materialDesign:ColorZone Mode="PrimaryMid" DockPanel.Dock="Top" Padding="8 4 8 4" CornerRadius="3">
+      <materialDesign:ColorZone Mode="Standard" DockPanel.Dock="Top" Padding="8 4 8 4" CornerRadius="3" Background="DarkGray">
         <ComboBox x:Name="uxSubjects" Height="28" SelectionChanged="UxSubjectsSelectionChanged" Cursor="Hand" 
-                  ItemsSource="{Binding Subjects}" DisplayMemberPath="Name" IsSynchronizedWithCurrentItem="true"/>
+                  ItemsSource="{Binding Subjects}" DisplayMemberPath="Name" IsSynchronizedWithCurrentItem="true"
+                  />
       </materialDesign:ColorZone>
 
       <Frame x:Name="uxSubjectFrame" Content="Frame" />
