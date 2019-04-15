@@ -70,7 +70,7 @@ namespace Soloplan.WhatsON.Jenkins.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use Display URL API Jenkins Plugin.
+        ///   Looks up a localized string similar to Use Blue Ocean URL.
         /// </summary>
         internal static string RedirectPlugin {
             get {

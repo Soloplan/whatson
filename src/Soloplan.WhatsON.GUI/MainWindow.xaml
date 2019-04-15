@@ -21,17 +21,12 @@
                               DockPanel.Dock="Top"
                               Mode="PrimaryMid">
       <DockPanel>
-        <Button Click="OpenConfig"
-                DockPanel.Dock="Right"
-                Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
-                ToolTip="MaterialDesignFloatingActionMiniLightButton">
-          <materialDesign:PackIcon Width="20"
-                                   Height="20"
-                                   Kind="SettingsOutline" />
-        </Button>
-        <TextBlock HorizontalAlignment="Center"
+        <materialDesign:PackIcon Kind="SettingsOutline" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                 Width="30" Height="30" MouseUp="OpenConfig" DockPanel.Dock="Right" Cursor="Hand" Background="Transparent"
+        />
+          <TextBlock HorizontalAlignment="Center"
                    VerticalAlignment="Center"
-                   FontSize="18">
+                   FontSize="18" Name="appName">
           Soloplan WhatsON
         </TextBlock>
       </DockPanel>
