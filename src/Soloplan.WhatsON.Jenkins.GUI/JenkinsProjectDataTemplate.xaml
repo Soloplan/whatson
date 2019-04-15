@@ -45,14 +45,64 @@
                 Fill="{Binding CurrentStatus.State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
                 Stretch="Fill"
                 Visibility="{Binding CurrentStatus.Unknown, Converter={StaticResource BoolToVisibility}}" />
-          <Path Data="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z"
-                Fill="{Binding CurrentStatus.State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
-                Stretch="Fill"
-                Visibility="{Binding CurrentStatus.Building, Converter={StaticResource BoolToVisibility}}" />
           <Path Data="M13,13H11V7H13M13,17H11V15H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"
                 Fill="{Binding CurrentStatus.State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
                 Stretch="Fill"
                 Visibility="{Binding CurrentStatus.Failure, Converter={StaticResource BoolToVisibility}}" />
+          <StackPanel Orientation="Horizontal">
+            <ProgressBar IsIndeterminate="True"
+                         Style="{StaticResource MaterialDesignCircularProgressBar}"
+                         Visibility="{Binding CurrentStatus.Building, Converter={StaticResource BoolToVisibility}}"
+                         Value="{Binding CurrentStatus.Progres, Mode=OneWay}">
+              <ProgressBar.ToolTip>
+                <StackPanel Orientation="Vertical">
+                  <StackPanel Orientation="Vertical" Visibility="{Binding CurrentStatus.BuildingNoLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
+                    <StackPanel Orientation="Horizontal">
+                      <TextBlock Text="Completion: " />
+                      <TextBlock Text="{Binding CurrentStatus.Progres}" />
+                      <TextBlock Text="% " />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                      <TextBlock>
+                        <TextBlock.Text>
+                          <MultiBinding StringFormat="{}{0:00}:{1:00}:{2:00}">
+                            <Binding Path="CurrentStatus.EstimatedRemaining.Hours" />
+                            <Binding Path="CurrentStatus.EstimatedRemaining.Minutes" />
+                            <Binding Path="CurrentStatus.EstimatedRemaining.Seconds" />
+                          </MultiBinding>
+                        </TextBlock.Text>
+                      </TextBlock>
+                      <TextBlock Text=" estimated remaining" />
+                    </StackPanel>
+                  </StackPanel>
+                  <StackPanel Visibility="{Binding CurrentStatus.BuildingLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
+                    <TextBlock FontSize="10" Text=" Taking " />
+                    <TextBlock FontSize="10">
+                      <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0:00}:{1:00}:{2:00}">
+                          <Binding Path="CurrentStatus.BuildTimeExcedingEstimation.Hours" />
+                          <Binding Path="CurrentStatus.BuildTimeExcedingEstimation.Minutes" />
+                          <Binding Path="CurrentStatus.BuildTimeExcedingEstimation.Seconds" />
+                        </MultiBinding>
+                      </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock FontSize="10" Text=" longer then estimated." />
+                  </StackPanel>
+                  <TextBlock Text="---------------------------" />
+                  <TextBlock Text="Changes by:" />
+                  <ItemsControl ItemsSource="{Binding CurrentStatus.Culprits}">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                          <TextBlock Text="{Binding FullName}" />
+                        </StackPanel>
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </StackPanel>
+              </ProgressBar.ToolTip>
+            </ProgressBar>
+          </StackPanel>
           <TextBlock Text=" " />
           <TextBlock FontWeight="Black" Text="{Binding Name}" />
           <TextBlock Text=" #" />
@@ -130,68 +180,6 @@
             </ListView.ItemsPanel>
           </ListView>
         </StackPanel>
-      </StackPanel>
-      <StackPanel Orientation="Horizontal" Visibility="{Binding CurrentStatus.BuildingNoLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
-        <StackPanel.ToolTip>
-          <StackPanel Orientation="Vertical">
-            <StackPanel Orientation="Horizontal">
-              <TextBlock>
-                <TextBlock.Text>
-                  <MultiBinding StringFormat="{}{0:00}:{1:00}:{2:00}">
-                    <Binding Path="CurrentStatus.EstimatedRemaining.Hours" />
-                    <Binding Path="CurrentStatus.EstimatedRemaining.Minutes" />
-                    <Binding Path="CurrentStatus.EstimatedRemaining.Seconds" />
-                  </MultiBinding>
-                </TextBlock.Text>
-              </TextBlock>
-              <TextBlock Text=" estimated remaining" />
-            </StackPanel>
-            <TextBlock Text="---------------------------" />
-            <TextBlock Text="Changes by:" />
-            <ItemsControl ItemsSource="{Binding CurrentStatus.Culprits}">
-              <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                  <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="{Binding FullName}" />
-                  </StackPanel>
-                </DataTemplate>
-              </ItemsControl.ItemTemplate>
-            </ItemsControl>
-          </StackPanel>
-        </StackPanel.ToolTip>
-        <TextBlock FontSize="10" Text=" Completion: " />
-        <TextBlock FontSize="10" Text="{Binding CurrentStatus.Progres}" />
-        <TextBlock FontSize="10" Text="% " />
-        <ProgressBar Width="100"
-                     materialDesign:TransitionAssist.DisableTransitions="True"
-                     Value="{Binding CurrentStatus.Progres, Mode=OneWay}" />
-      </StackPanel>
-      <StackPanel Orientation="Horizontal" Visibility="{Binding CurrentStatus.BuildingLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
-        <StackPanel.ToolTip>
-          <StackPanel>
-            <TextBlock Text="Changes by:" />
-            <ItemsControl ItemsSource="{Binding CurrentStatus.Culprits}">
-              <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                  <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="{Binding FullName}" />
-                  </StackPanel>
-                </DataTemplate>
-              </ItemsControl.ItemTemplate>
-            </ItemsControl>
-          </StackPanel>
-        </StackPanel.ToolTip>
-        <TextBlock FontSize="10" Text=" Taking " />
-        <TextBlock FontSize="10">
-          <TextBlock.Text>
-            <MultiBinding StringFormat="{}{0:00}:{1:00}:{2:00}">
-              <Binding Path="CurrentStatus.BuildTimeExcedingEstimation.Hours" />
-              <Binding Path="CurrentStatus.BuildTimeExcedingEstimation.Minutes" />
-              <Binding Path="CurrentStatus.BuildTimeExcedingEstimation.Seconds" />
-            </MultiBinding>
-          </TextBlock.Text>
-        </TextBlock>
-        <TextBlock FontSize="10" Text=" longer then estimated." />
       </StackPanel>
     </StackPanel>
   </DataTemplate>
