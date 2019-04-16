@@ -14,7 +14,7 @@
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.FontWeight="Medium"
         TextElement.FontSize="14"
-        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto" Closing="WindowClosing" ShowInTaskbar="False">
+        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto" Closing="WindowClosing" ShowInTaskbar="False" MinHeight="400">
 
   <Grid>
     <DockPanel Margin="5" LastChildFill="True">
@@ -42,7 +42,6 @@
                       Height="30"
                       Click="ImportExportButtonClick" Margin="0" Width="156"
               />
-
           </materialDesign:PopupBox.ToggleContent>
           <StackPanel>
             <Button Content="{x:Static properties:Resources.Import}" Click="ImportButtonClick" Width="166"/>
