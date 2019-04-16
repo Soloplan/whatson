@@ -210,7 +210,7 @@
       var schedulerRunning = this.scheduler.Running;
       if (this.scheduler.Running)
       {
-        this.scheduler.Stop();
+        this.scheduler.Stop(false);
       }
 
       this.scheduler.UnobserveAll();

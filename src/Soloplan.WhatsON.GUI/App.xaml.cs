@@ -55,7 +55,7 @@
     /// <param name="e">Event args.</param>
     protected override void OnExit(ExitEventArgs e)
     {
-      this.scheduler.Stop();
+      this.scheduler.Stop(true);
       this.handler.Dispose();
       base.OnExit(e);
     }

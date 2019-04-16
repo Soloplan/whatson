@@ -47,9 +47,9 @@
       }
     }
 
-    public void Stop()
+    public void Stop(bool force)
     {
-      this.Terminate();
+      this.Terminate(force);
     }
 
     public void Observe(Subject subject, int interval = DefaultPollInterval)
@@ -97,7 +97,7 @@
         try
         {
           var remainingOfInterval = subject.Interval - (DateTime.Now - subject.LastPoll);
-          if (remainingOfInterval.TotalMilliseconds > 0)
+          if (remainingOfInterval.TotalMilliseconds > 0 && subject.Running)
           {
             int milisecondsToWait = remainingOfInterval.TotalMilliseconds < int.MaxValue ? (int)remainingOfInterval.TotalMilliseconds : int.MaxValue;
             await Task.Delay(milisecondsToWait, token);
@@ -114,10 +114,13 @@
     {
       await subject.Subject.QueryStatus(token);
       subject.LastPoll = DateTime.Now;
-      this.StatusQueried?.Invoke(this, subject.Subject);
+      if (subject.Running)
+      {
+        this.StatusQueried?.Invoke(this, subject.Subject);
+      }
     }
 
-    private void Terminate()
+    private void Terminate(bool force)
     {
       if (!this.Running)
       {
@@ -132,7 +135,10 @@
           observationSubject.Running = false;
         }
 
-        this.cancellationTokenSource.Cancel();
+        if (force)
+        {
+          this.cancellationTokenSource.Cancel();
+        }
       }
       finally
       {

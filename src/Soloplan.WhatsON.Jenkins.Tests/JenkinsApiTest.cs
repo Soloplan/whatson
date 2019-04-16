@@ -30,7 +30,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
          else
          {
            e.Result = ApiHelper.GetProject(ObservationState.Running, 12, 7);
-           scheduler.Stop();
+           scheduler.Stop(false);
          }
        };
 
