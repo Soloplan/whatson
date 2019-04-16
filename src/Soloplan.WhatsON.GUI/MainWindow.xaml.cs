@@ -70,6 +70,10 @@ namespace Soloplan.WhatsON.GUI
       {
         this.settings.MainWindowDimensions.Apply(this);
       }
+      else
+      {
+        this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+      }
 
       this.mainTreeView.ApplyTreeListSettings(this.settings.TreeListSettings);
     }
@@ -98,6 +102,10 @@ namespace Soloplan.WhatsON.GUI
       if (this.settings.ConfigDialogSettings != null)
       {
         this.settings.ConfigDialogSettings.Apply(configWindow);
+      }
+      else
+      {
+        configWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
       }
 
       configWindow.Closing += (s, ev) =>
