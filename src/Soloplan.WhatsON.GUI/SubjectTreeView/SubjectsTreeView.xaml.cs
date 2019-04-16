@@ -67,7 +67,7 @@
 
     private void SetupDataContext()
     {
-      if (this.model.OneGroup && string.IsNullOrEmpty(this.model.FirstGroup.GroupName))
+      if (this.model.OneGroup && string.IsNullOrWhiteSpace(this.model.FirstGroup.GroupName))
       {
         Binding myBinding = new Binding();
         myBinding.Source = this.model.FirstGroup;
