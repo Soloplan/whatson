@@ -102,6 +102,7 @@ namespace Soloplan.WhatsON.GUI.Config.View
     {
       base.OnContentRendered(e);
 
+      this.Owner.Closing += this.OwnerClosing;
       if (this.windowShown)
       {
         return;
@@ -242,6 +243,16 @@ namespace Soloplan.WhatsON.GUI.Config.View
       {
         this.configurationViewModel.Export(saveFileDialog.FileName);
       }
+    }
+
+    /// <summary>
+    /// Prevents parent from closing when configuration is modified.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">Event args.</param>
+    private void OwnerClosing(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+      e.Cancel = this.configurationViewModel.ConfigurationIsModified;
     }
   }
 }
