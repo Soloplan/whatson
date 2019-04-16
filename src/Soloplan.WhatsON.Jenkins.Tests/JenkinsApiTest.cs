@@ -19,17 +19,17 @@ namespace Soloplan.WhatsON.Jenkins.Tests
        {
          if (state == 0)
          {
-           e.Result = ApiHelper.GetProject(ObservationState.Running, 10);
+           e.Result = ApiHelper.GetProject(ObservationState.Running, 10, 7);
            state++;
          }
          else if (state == 1)
          {
-           e.Result = ApiHelper.GetProject(ObservationState.Running, 11);
+           e.Result = ApiHelper.GetProject(ObservationState.Running, 11, 7);
            state++;
          }
          else
          {
-           e.Result = ApiHelper.GetProject(ObservationState.Running, 12);
+           e.Result = ApiHelper.GetProject(ObservationState.Running, 12, 7);
            scheduler.Stop();
          }
        };
@@ -79,7 +79,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var jenkinsStatuses = subj.Snapshots.Select(snap => snap.Status).OfType<JenkinsStatus>().ToList();
       Assert.That(jenkinsStatuses.Count, Is.EqualTo(5));
 
-      var expectedBuilds = new []
+      var expectedBuilds = new[]
       {
         new Tuple<int, ObservationState>(11, ObservationState.Failure),
         new Tuple<int, ObservationState>(10, ObservationState.Success),

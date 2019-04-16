@@ -20,11 +20,12 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       };
     }
 
-    public static JenkinsJob GetProject(ObservationState state, int number)
+    public static JenkinsJob GetProject(ObservationState state, int lastBuildNumber, int firstBuildNumber)
     {
       return new JenkinsJob
       {
-        LastBuild = GetBuild(state, number),
+        LastBuild = GetBuild(state, lastBuildNumber),
+        FirstBuild = GetBuild(state, firstBuildNumber),
       };
     }
   }
