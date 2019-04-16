@@ -18,7 +18,7 @@ namespace Soloplan.WhatsON.Jenkins
       var port = subject.GetPort();
       var projectName = subject.GetProject();
 
-      var jobRequest = $"{address}:{port}/job/{projectName}/api/json?tree={JenkinsJob.RequestProperties}";
+      var jobRequest = $"{address.Trim('/')}:{port}/job/{projectName.Trim('/')}/api/json?tree={JenkinsJob.RequestProperties}";
       return await GetJenkinsModel<JenkinsJob>(subject, jobRequest, token);
     }
 
@@ -28,17 +28,18 @@ namespace Soloplan.WhatsON.Jenkins
       var port = subject.GetPort();
       var projectName = subject.GetProject();
 
-      var buildRequest = $"{address}:{port}/job/{projectName}/{buildNumber}/api/json?tree={JenkinsBuild.RequestProperties}";
+      var buildRequest = $"{address.Trim('/')}:{port}/job/{projectName.Trim('/')}/{buildNumber}/api/json?tree={JenkinsBuild.RequestProperties}";
       return await GetJenkinsModel<JenkinsBuild>(subject, buildRequest, token);
     }
 
     private static async Task<TModel> GetJenkinsModel<TModel>(JenkinsProject subject, string requestUrl, CancellationToken token)
+    where TModel : class
     {
       var request = WebRequest.Create(requestUrl);
-      using (token.Register(() => request.Abort(), false))
-      using (var response = await request.GetResponseAsync())
+      try
       {
-        try
+        using (token.Register(() => request.Abort(), false))
+        using (var response = await request.GetResponseAsync())
         {
           // Get the stream containing content returned by the server
           // Open the stream using a StreamReader for easy access
@@ -49,15 +50,15 @@ namespace Soloplan.WhatsON.Jenkins
             return JsonConvert.DeserializeObject<TModel>(responseFromServer);
           }
         }
-        catch (WebException ex)
+      }
+      catch (WebException ex)
+      {
+        if (token.IsCancellationRequested)
         {
-          if (token.IsCancellationRequested)
-          {
-            throw new OperationCanceledException(ex.Message, ex, token);
-          }
-
-          throw;
+          throw new OperationCanceledException(ex.Message, ex, token);
         }
+
+        throw;
       }
     }
   }
