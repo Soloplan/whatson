@@ -187,6 +187,7 @@ namespace Soloplan.WhatsON.GUI.Config.View
         return;
       }
 
+      this.Owner.Closing -= this.OwnerClosing;
       this.configurationViewModel.ApplyToSourceAndSave();
     }
 
