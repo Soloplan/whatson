@@ -137,9 +137,9 @@ namespace Soloplan.WhatsON.GUI.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon whatsONx16 {
+        public static System.Drawing.Icon Whatson {
             get {
-                object obj = ResourceManager.GetObject("whatsONx16", resourceCulture);
+                object obj = ResourceManager.GetObject("Whatson", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }

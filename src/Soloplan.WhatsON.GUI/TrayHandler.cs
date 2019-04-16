@@ -4,7 +4,6 @@
   using System.Drawing;
   using System.IO;
   using System.Linq;
-  using System.Reflection;
   using System.Windows.Forms;
   using Soloplan.WhatsON.GUI.SubjectTreeView;
   using Soloplan.WhatsON.GUI.VisualConfig;
@@ -47,7 +46,7 @@
     public TrayHandler(ObservationScheduler scheduler, ApplicationConfiguration configuration)
     {
       this.icon = new System.Windows.Forms.NotifyIcon();
-      this.icon.Icon = Properties.Resources.whatsONx16;
+      this.icon.Icon = new Icon(Properties.Resources.Whatson, new Size(16,16));
       this.icon.Visible = true;
       this.scheduler = scheduler;
       this.configuration = configuration;
