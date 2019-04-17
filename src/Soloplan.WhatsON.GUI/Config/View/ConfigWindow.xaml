@@ -9,7 +9,7 @@
         xmlns:properties="clr-namespace:Soloplan.WhatsON.GUI.Properties"
         x:Class="Soloplan.WhatsON.GUI.Config.View.ConfigWindow"
         mc:Ignorable="d"
-        Title="ConfigWindow" Height="524.051" Width="852.251" MinWidth="550"
+        Title="Configuration" Height="524.051" Width="852.251" MinWidth="550"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.FontWeight="Medium"
