@@ -126,21 +126,27 @@ namespace Soloplan.WhatsON
     {
       while (subject.Running)
       {
-        if (DateTime.Now - subject.LastPoll > subject.Interval)
+        try
         {
-          await subject.Subject.QueryStatus(token);
-          subject.LastPoll = DateTime.Now;
-          if (subject.Running)
+          if (DateTime.Now - subject.LastPoll > subject.Interval)
           {
-            this.StatusQueried?.Invoke(this, subject.Subject);
+            await subject.Subject.QueryStatus(token);
+            subject.LastPoll = DateTime.Now;
+            if (subject.Running)
+            {
+              this.StatusQueried?.Invoke(this, subject.Subject);
+            }
+          }
+
+          var remainingOfInterval = subject.Interval - (DateTime.Now - subject.LastPoll);
+          if (remainingOfInterval.TotalMilliseconds > 0 && subject.Running)
+          {
+            int milisecondsToWait = remainingOfInterval.TotalMilliseconds < int.MaxValue ? (int)remainingOfInterval.TotalMilliseconds : int.MaxValue;
+            await Task.Delay(milisecondsToWait, token);
           }
         }
-
-        var remainingOfInterval = subject.Interval - (DateTime.Now - subject.LastPoll);
-        if (remainingOfInterval.TotalMilliseconds > 0 && subject.Running)
+        catch (Exception e)
         {
-          int milisecondsToWait = remainingOfInterval.TotalMilliseconds < int.MaxValue ? (int)remainingOfInterval.TotalMilliseconds : int.MaxValue;
-          await Task.Delay(milisecondsToWait, token);
         }
       }
     }
