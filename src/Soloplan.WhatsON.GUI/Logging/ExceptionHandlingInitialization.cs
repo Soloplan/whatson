@@ -3,15 +3,15 @@
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 
-namespace Soloplan.WhatsON.GUI
+namespace Soloplan.WhatsON.GUI.Logging
 {
   using System;
   using System.Windows;
-  using log4net;
+  using NLog;
 
   public static class ExceptionHandlingInitialization
   {
-    private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
     public static void Initialize()
     {
@@ -20,11 +20,11 @@ namespace Soloplan.WhatsON.GUI
         var exception = args.ExceptionObject as Exception;
         if (exception != null)
         {
-          log.Fatal("An unhandled exception occurred in a non-main thread.", exception);
+          log.Fatal(exception, "An unhandled exception occurred in a non-main thread.");
         }
         else
         {
-          log.FatalFormat("An unhandled exception occurred in a non-main thread. No exception object available. Only this thing: {0}", args.ExceptionObject);
+          log.Fatal($"An unhandled exception occurred in a non-main thread. No exception object available. Only this thing: {args.ExceptionObject}", args.ExceptionObject);
         }
       };
 

@@ -2,6 +2,7 @@
 {
   using System.Windows;
   using System.Windows.Interop;
+  using Soloplan.WhatsON.GUI.Logging;
   using Soloplan.WhatsON.Serialization;
 
   /// <summary>

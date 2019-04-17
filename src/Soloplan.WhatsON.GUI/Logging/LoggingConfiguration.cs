@@ -3,15 +3,13 @@
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 
-namespace Soloplan.WhatsON.GUI
+namespace Soloplan.WhatsON.GUI.Logging
 {
   using System;
   using System.IO;
-  using System.Linq;
   using System.Text;
-  using System.Windows;
-  using log4net;
-  using log4net.Config;
+  using NLog;
+  using NLog.Config;
   using Soloplan.WhatsON.GUI.Properties;
   using Soloplan.WhatsON.Serialization;
 
@@ -20,47 +18,87 @@ namespace Soloplan.WhatsON.GUI
   /// </summary>
   public class LoggingConfiguration
   {
+    /// <summary>
+    /// The default file extension of a log4net config file.
+    /// </summary>
+    private const string NLogExtension = ".nlog.xml";
+
+    /// <summary>
+    /// Gets a value indicating whether log is initialized.
+    /// If is false after call to <see cref="Initialize"/> this means that logging initialization failed.
+    /// </summary>
+    public bool LogInitialized { get; private set; }
+
+    /// <summary>
+    /// Gets a list of supported log4net configuration file names. The first one found will be used.
+    /// </summary>
+    private static string ConfigFileName
+    {
+      get
+      {
+        var executableFileName = Path.GetFileName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+        return executableFileName + NLogExtension;
+      }
+    }
+
     public void Initialize()
     {
-      var file = Path.Combine(SerializationHelper.ConfigFolder, "loggingConfiguration.xml");
-      if (!File.Exists(file))
+      var rootDir = SerializationHelper.ConfigFolder;
+      var file = GetConfigFilePath(rootDir);
+      if (string.IsNullOrEmpty(file))
       {
-        try
+        return;
+      }
+
+      LogManager.Configuration = new XmlLoggingConfiguration(file);
+
+      LogManager.Configuration.Variables["rootDir"] = rootDir;
+      LogManager.Configuration.Variables["logFileDir"] = GetOrCreateLogFiledirectory(rootDir) ?? rootDir;
+      this.LogInitialized = true;
+    }
+
+    private static string GetOrCreateLogFiledirectory(string rootDir)
+    {
+      var logsPath = Path.Combine(rootDir, "Log");
+      try
+      {
+        if (!Directory.Exists(logsPath))
         {
-          if (!Directory.Exists(SerializationHelper.ConfigFolder))
+          Directory.CreateDirectory(logsPath);
+        }
+
+        return logsPath;
+      }
+      catch (Exception)
+      {
+        return null;
+      }
+    }
+
+    private static string GetConfigFilePath(string configDir)
+    {
+      try
+      {
+        if (Directory.Exists(configDir))
+        {
+          var checkedFilePath = Path.Combine(configDir, ConfigFileName);
+          if (File.Exists(checkedFilePath))
           {
-            Directory.CreateDirectory(SerializationHelper.ConfigFolder);
+            return checkedFilePath;
           }
-
-          File.WriteAllLines(file, new[] { Resources.loggingConfiguration }, Encoding.UTF8);
         }
-        catch (Exception e)
+        else
         {
-          MessageBox.Show($"Failed to create logging configuration file {file}. Error: {e}", "Failed to initialize Log4Net", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-      }
-
-      GlobalContext.Properties["LogFilePath"] = Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), "Soloplan GmbH", "WhatsOn");
-      XmlConfigurator.ConfigureAndWatch(new FileInfo(file));
-      var error = string.Empty;
-
-      if (!log4net.LogManager.GetRepository().Configured)
-      {
-        var builder = new StringBuilder();
-
-        // log4net not configured
-        foreach (log4net.Util.LogLog message in log4net.LogManager.GetRepository().ConfigurationMessages.Cast<log4net.Util.LogLog>())
-        {
-          // evaluate configuration message
-          builder.AppendLine(message.Message);
+          Directory.CreateDirectory(configDir);
         }
 
-        error = builder.ToString();
+        var filePath = Path.Combine(configDir, ConfigFileName);
+        File.WriteAllLines(filePath, new[] { Resources.LogConfig }, Encoding.UTF8);
+        return filePath;
       }
-
-      if (!string.IsNullOrEmpty(error))
+      catch (Exception)
       {
-        MessageBox.Show(error, "Failed to initialize Log4Net", MessageBoxButton.OK, MessageBoxImage.Error);
+        return null;
       }
     }
   }
