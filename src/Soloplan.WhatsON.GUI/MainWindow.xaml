@@ -6,6 +6,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:treeListControl="clr-namespace:Soloplan.WhatsON.GUI.SubjectTreeView"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
         Title="MainWindow"
         Width="800"
         Height="450"
@@ -14,21 +15,37 @@
         TextElement.FontSize="14"
         TextElement.FontWeight="Medium"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-        mc:Ignorable="d">
+        mc:Ignorable="d" WindowStyle="None"
+        >
+  <Window.Resources>
+    <BooleanToVisibilityConverter x:Key="BoolToVis" />
+  </Window.Resources>
   <StackPanel>
     <materialDesign:ColorZone Padding="6"
                               materialDesign:ShadowAssist.ShadowDepth="Depth2"
                               DockPanel.Dock="Top"
-                              Mode="PrimaryMid">
+                              Mode="PrimaryMid" Margin="0" MouseDown="MainWindowBarMouseDown">
       <DockPanel>
+
         <materialDesign:PackIcon Kind="SettingsOutline" VerticalAlignment="Center" HorizontalAlignment="Center"
-                                 Width="30" Height="30" MouseUp="OpenConfig" DockPanel.Dock="Right" Cursor="Hand" Background="Transparent"
-        />
-          <TextBlock HorizontalAlignment="Center"
+                                 Width="30" Height="30" MouseDown="OpenConfig" DockPanel.Dock="Left" Cursor="Hand" Background="Transparent" />
+
+        <Button Width="30" Height="30" DockPanel.Dock="Right" Cursor="Hand" Padding="0" Margin="1" IsTabStop="False" Click="CloseButtonClick">
+          <materialDesign:PackIcon Kind="WindowClose" Width="30" Height="30"/>
+        </Button>
+
+        <Button Width="30" Height="30" DockPanel.Dock="Right" Cursor="Hand" Padding="0 6 0 0" Margin="1" IsTabStop="False" Click="MinimizeButonClick"
+                Visibility="{Binding Path=ShowInTaskbar, Converter={StaticResource BoolToVis}}" x:Name="MinimizeButton">
+          <materialDesign:PackIcon Kind="WindowMinimize" Width="30" Height="30" />  
+        </Button>
+
+        <TextBlock HorizontalAlignment="Center"
                    VerticalAlignment="Center"
-                   FontSize="18" Name="appName">
+                   FontSize="18" Name="appName"
+                   DockPanel.Dock="Right">
           Soloplan WhatsON
         </TextBlock>
+
       </DockPanel>
     </materialDesign:ColorZone>
     <treeListControl:SubjectsTreeView x:Name="mainTreeView" />

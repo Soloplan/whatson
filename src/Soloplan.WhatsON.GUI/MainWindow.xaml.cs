@@ -9,6 +9,7 @@ namespace Soloplan.WhatsON.GUI
   using System;
   using System.Collections.Generic;
   using System.Windows;
+  using System.Windows.Input;
   using Soloplan.WhatsON.GUI.Config.View;
   using Soloplan.WhatsON.GUI.VisualConfig;
   using Soloplan.WhatsON.Serialization;
@@ -21,7 +22,7 @@ namespace Soloplan.WhatsON.GUI
     /// <summary>
     /// The configuration.
     /// </summary>
-    private ApplicationConfiguration config;
+    public ApplicationConfiguration config { get; set; }
 
     /// <summary>
     /// The scheduler used for observing subjects.
@@ -76,6 +77,7 @@ namespace Soloplan.WhatsON.GUI
       }
 
       this.mainTreeView.ApplyTreeListSettings(this.settings.TreeListSettings);
+      this.MinimizeButton.Visibility = this.ShowInTaskbar ? Visibility.Visible : Visibility.Hidden;
     }
 
     /// <summary>
@@ -88,6 +90,7 @@ namespace Soloplan.WhatsON.GUI
       this.mainTreeView.Update(this.config);
       this.ShowInTaskbar = this.config.ShowInTaskbar;
       this.Topmost = this.config.AlwaysOnTop;
+      this.MinimizeButton.Visibility = this.ShowInTaskbar ? Visibility.Visible : Visibility.Hidden;
     }
 
     private void OpenConfig(object sender, RoutedEventArgs e)
@@ -114,6 +117,48 @@ namespace Soloplan.WhatsON.GUI
       };
 
       configWindow.ShowDialog();
+    }
+
+    /// <summary>
+    /// Main window bar mouse down.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.Windows.Input.MouseButtonEventArgs"/> instance containing the event data.</param>
+    private void MainWindowBarMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+      if (e.ChangedButton != MouseButton.Left || e.Handled || e.ButtonState == MouseButtonState.Released)
+      {
+        return;
+      }
+
+      if (e.ClickCount == 2)
+      {
+        this.WindowState = this.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+      }
+      else
+      {
+        this.DragMove();
+      }
+    }
+
+    /// <summary>
+    /// Minimizes the mouse down.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="MouseButtonEventArgs"/> instance containing the event data.</param>
+    private void MinimizeButonClick(object sender, RoutedEventArgs e)
+    {
+      this.WindowState = WindowState.Minimized;
+    }
+
+    /// <summary>
+    /// Closes the mouse down.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+    private void CloseButtonClick(object sender, RoutedEventArgs e)
+    {
+      this.Close();
     }
   }
 }
