@@ -1,6 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Subject.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -10,6 +11,7 @@ namespace Soloplan.WhatsON
   using System.Text;
   using System.Threading;
   using System.Threading.Tasks;
+  using NLog;
 
   /// <summary>
   /// The subject - represent an executable job defined by the plugin.
@@ -22,7 +24,15 @@ namespace Soloplan.WhatsON
     /// </summary>
     public const string Category = "Category";
 
+    /// <summary>
+    /// Default value for max nubmer of snapshots.
+    /// </summary>
     private const int MaxSnapshotsDefault = 5;
+
+    /// <summary>
+    /// Logger instance used by this class.
+    /// </summary>
+    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Subject"/> class.
@@ -56,10 +66,13 @@ namespace Soloplan.WhatsON
 
     public async Task QueryStatus(CancellationToken cancellationToken, params string[] args)
     {
+      log.Trace("Querying status for subject {subject}.", new { Name = this.SubjectConfiguration.Name, CurrentStatus = this.CurrentStatus });
       await this.ExecuteQuery(cancellationToken, args);
+      log.Trace("Status for subject {subject} queried.", new { Name = this.SubjectConfiguration.Name, CurrentStatus = this.CurrentStatus });
 
       if (this.CurrentStatus != null && this.ShouldTakeSnapshot(this.CurrentStatus))
       {
+        log.Debug("Adding snapshot for subject {subject}", new { Name = this.SubjectConfiguration.Name, CurrentStatus = this.CurrentStatus });
         this.AddSnapshot(this.CurrentStatus);
       }
     }
@@ -68,6 +81,7 @@ namespace Soloplan.WhatsON
     {
       while (this.Snapshots.Count >= this.MaxSnapshots)
       {
+        log.Debug("Max number of snapshots exceeded. Dequeuing snapshot.", new { Name = this.SubjectConfiguration.Name, CurrentStatus = this.CurrentStatus });
         this.Snapshots.Dequeue();
       }
 

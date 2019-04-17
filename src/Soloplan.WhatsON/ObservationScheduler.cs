@@ -12,6 +12,7 @@ namespace Soloplan.WhatsON
   using System.Linq;
   using System.Threading;
   using System.Threading.Tasks;
+  using NLog;
 
   /// <summary>
   /// Main class of application. Executes specialized plugins in desired intervals.
@@ -22,6 +23,8 @@ namespace Soloplan.WhatsON
     /// Default interval for polling subjects for status.
     /// </summary>
     private const int DefaultPollInterval = 5;
+
+    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
     /// <summary>
     /// List of currently observed subjects.
@@ -43,6 +46,7 @@ namespace Soloplan.WhatsON
     /// </summary>
     public ObservationScheduler()
     {
+      log.Debug("Creating ObservationScheduler.");
       this.observedSubjects = new List<ObservationSubject>();
     }
 
@@ -58,8 +62,10 @@ namespace Soloplan.WhatsON
 
     public void Start()
     {
+      log.Debug("Start of observation requested.");
       if (!this.Running && !this.stopping)
       {
+        log.Debug("Starting observation...");
         foreach (var observationSubject in this.observedSubjects)
         {
           observationSubject.Running = true;
@@ -67,13 +73,17 @@ namespace Soloplan.WhatsON
 
         if (this.cancellationTokenSource == null || this.cancellationTokenSource.IsCancellationRequested)
         {
+          log.Debug("Creating new CancelationToken.");
           this.cancellationTokenSource = new CancellationTokenSource();
         }
 
         foreach (var observationSubject in this.observedSubjects)
         {
+          LogObservationSubject(LogLevel.Debug, "Starting observation for {subject}.", observationSubject);
           this.StartObserveSingle(observationSubject, this.cancellationTokenSource.Token);
         }
+
+        log.Debug("Observation started.");
       }
     }
 
@@ -96,10 +106,13 @@ namespace Soloplan.WhatsON
       if (this.observedSubjects.Any(s => s.Subject.Equals(subject)))
       {
         // subject is already being observed
+        log.Warn("Subject {subject} is already being observed, skip adding.", new { Interval = interval, Name = subject.SubjectConfiguration.Name, CurrentStatus = subject.CurrentStatus });
         return;
       }
 
-      this.observedSubjects.Add(new ObservationSubject(subject, interval));
+      var observationSubject = new ObservationSubject(subject, interval);
+      this.observedSubjects.Add(observationSubject);
+      LogObservationSubject(LogLevel.Debug, "Observation subject {subject} added.", observationSubject);
     }
 
     /// <summary>
@@ -126,29 +139,39 @@ namespace Soloplan.WhatsON
     {
       while (subject.Running)
       {
-        try
+        if (DateTime.Now - subject.LastPoll > subject.Interval)
         {
-          if (DateTime.Now - subject.LastPoll > subject.Interval)
+          LogObservationSubject(LogLevel.Trace, "Observation of {subject} started.", subject);
+          await subject.Subject.QueryStatus(token);
+          subject.LastPoll = DateTime.Now;
+          if (subject.Running)
           {
-            await subject.Subject.QueryStatus(token);
-            subject.LastPoll = DateTime.Now;
-            if (subject.Running)
-            {
-              this.StatusQueried?.Invoke(this, subject.Subject);
-            }
+            this.StatusQueried?.Invoke(this, subject.Subject);
           }
 
-          var remainingOfInterval = subject.Interval - (DateTime.Now - subject.LastPoll);
-          if (remainingOfInterval.TotalMilliseconds > 0 && subject.Running)
-          {
-            int milisecondsToWait = remainingOfInterval.TotalMilliseconds < int.MaxValue ? (int)remainingOfInterval.TotalMilliseconds : int.MaxValue;
-            await Task.Delay(milisecondsToWait, token);
-          }
+          LogObservationSubject(LogLevel.Trace, "Observation of {subject} ended.", subject);
         }
-        catch (Exception e)
+
+        var remainingOfInterval = subject.Interval - (DateTime.Now - subject.LastPoll);
+        if (remainingOfInterval.TotalMilliseconds > 0 && subject.Running)
         {
+          int milisecondsToWait = remainingOfInterval.TotalMilliseconds < int.MaxValue ? (int)remainingOfInterval.TotalMilliseconds : int.MaxValue;
+          await Task.Delay(milisecondsToWait, token);
         }
       }
+
+      LogObservationSubject(LogLevel.Debug, "Exiting observation loop for {subject}.", subject);
+    }
+
+    /// <summary>
+    /// Logs <see cref="ObservationSubject"/>.
+    /// </summary>
+    /// <param name="level">Log level.</param>
+    /// <param name="text">The text which should be long along with value, should contain {subject}.</param>
+    /// <param name="subject">The subject being logged.</param>
+    private static void LogObservationSubject(LogLevel level, string text, ObservationSubject subject)
+    {
+      log.Log(level, text, new { Interval = subject.Interval, Name = subject.Subject.SubjectConfiguration.Name, CurrentStatus = subject.Subject.CurrentStatus });
     }
 
     /// <summary>
@@ -165,16 +188,22 @@ namespace Soloplan.WhatsON
 
       try
       {
+        log.Debug("Stopping observation. force = {force}.", force);
         this.stopping = true;
         foreach (var observationSubject in this.observedSubjects)
         {
+          LogObservationSubject(LogLevel.Debug, "Stopping observation of subject {subject}.", observationSubject);
           observationSubject.Running = false;
         }
 
         if (force)
         {
+          log.Warn("Canceling any still running tasks.");
           this.cancellationTokenSource.Cancel();
+          log.Warn("Task canceled.");
         }
+
+        log.Debug("Scheduler stopped.");
       }
       finally
       {
