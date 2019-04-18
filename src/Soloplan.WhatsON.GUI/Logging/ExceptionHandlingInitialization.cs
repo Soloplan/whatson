@@ -33,18 +33,18 @@ namespace Soloplan.WhatsON.GUI.Logging
         }
         else
         {
-          log.Fatal($"An unhandled exception occurred in a non-main thread. No exception object available. Only this thing: {args.ExceptionObject}", args.ExceptionObject);
+          log.Fatal("An unhandled exception occurred in a non-main thread. No exception object available. Only this thing: {@exceptionObj}", args.ExceptionObject);
         }
       };
 
       Application.Current.DispatcherUnhandledException += (sender, e) =>
       {
-        log.Fatal("An unhandled asynchronous exception occurred in the main thread:", e.Exception);
+        log.Fatal(e.Exception, "An unhandled asynchronous exception occurred in the main thread:");
       };
 
       AppDomain.CurrentDomain.FirstChanceException += (sender, args) =>
       {
-        log.Error("A first-chance exception occurred", args.Exception);
+        log.Error(args.Exception, "A first-chance exception occurred");
       };
     }
   }
