@@ -246,7 +246,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     }
 
     /// <summary>
-    /// Applies to source and saves changes.
+    /// Applies to source configuration and saves changes.
     /// </summary>
     public void ApplyToSourceAndSave()
     {
@@ -258,7 +258,31 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       this.ConfigurationApplying?.Invoke(this, new EventArgs());
       try
       {
-        this.ApplyToConfigurationAndSave(this.Configuration, SubjectViewModel.ApplyToSourceSubjectConfiguration);
+        IList<SubjectConfiguration> subjectsToRemove = new List<SubjectConfiguration>();
+        foreach (var sourceSubject in this.Configuration.SubjectsConfiguration)
+        {
+          if (this.Subjects.All(s => s.SourceSubjectConfiguration != sourceSubject))
+          {
+            subjectsToRemove.Add(sourceSubject);
+          }
+        }
+
+        foreach (var subjectToRemove in subjectsToRemove)
+        {
+          this.Configuration.SubjectsConfiguration.Remove(subjectToRemove);
+        }
+
+        foreach (var subject in this.Subjects)
+        {
+          var subjectConfiguration = subject.ApplyToSourceSubjectConfiguration(out bool newSubjectConfigurationCreated);
+          if (newSubjectConfigurationCreated)
+          {
+            this.Configuration.SubjectsConfiguration.Add(subjectConfiguration);
+          }
+        }
+
+        this.ApplyMainSettingsToConfiguration(this.Configuration);
+        SerializationHelper.SaveConfiguration(this.Configuration);
       }
       finally
       {
@@ -267,41 +291,19 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       }
     }
 
-    public delegate SubjectConfiguration ApplySubjectConfigurationDelegate(SubjectViewModel viewModel, out bool newSubjectConfigurationCreated);
-
     /// <summary>
-    /// Applies chages to specified configuration instance and saves changes.
+    /// Applies to configuration.
     /// </summary>
-    public void ApplyToConfigurationAndSave(ApplicationConfiguration configuration, ApplySubjectConfigurationDelegate applySubjectConfigurationDelegate, string filePath = null)
+    /// <param name="configuration">The configuration.</param>
+    public void ApplyToConfiguration(ApplicationConfiguration configuration)
     {
-      IList<SubjectConfiguration> subjectsToRemove = new List<SubjectConfiguration>();
-      foreach (var sourceSubject in configuration.SubjectsConfiguration)
-      {
-        if (this.Subjects.All(s => s.SourceSubjectConfiguration != sourceSubject))
-        {
-          subjectsToRemove.Add(sourceSubject);
-        }
-      }
-
-      foreach (var subjectToRemove in subjectsToRemove)
-      {
-        configuration.SubjectsConfiguration.Remove(subjectToRemove);
-      }
-
       foreach (var subject in this.Subjects)
       {
-        var subjectConfiguration = applySubjectConfigurationDelegate(subject, out bool newSubjectConfigurationCreated);
-        if (newSubjectConfigurationCreated)
-        {
-          configuration.SubjectsConfiguration.Add(subjectConfiguration);
-        }
+        var subjectConfiguration = subject.CreateNewSubjectConfiguration();
+        configuration.SubjectsConfiguration.Add(subjectConfiguration);
       }
 
-      configuration.DarkThemeEnabled = this.DarkThemeEnabled;
-      configuration.ShowInTaskbar = this.ShowInTaskbar;
-      configuration.AlwaysOnTop = this.AlwaysOnTop;
-      configuration.OpenMinimized = this.OpenMinimized;
-      SerializationHelper.SaveConfiguration(configuration, filePath);
+      this.ApplyMainSettingsToConfiguration(configuration);
     }
 
     /// <summary>
@@ -311,7 +313,8 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     public void Export(string filePath)
     {
       var tempConfig = new ApplicationConfiguration();
-      this.ApplyToConfigurationAndSave(tempConfig, SubjectViewModel.ApplyToNewSubjectConfiguration, filePath);
+      this.ApplyToConfiguration(tempConfig);
+      SerializationHelper.SaveConfiguration(tempConfig, filePath);
     }
 
     /// <summary>
@@ -349,6 +352,18 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       }
 
       base.OnPropertyChanged(propertyName);
+    }
+
+    /// <summary>
+    /// Applies the main settings to configuration.
+    /// </summary>
+    /// <param name="configuration">The configuration.</param>
+    private void ApplyMainSettingsToConfiguration(ApplicationConfiguration configuration)
+    {
+      configuration.DarkThemeEnabled = this.DarkThemeEnabled;
+      configuration.ShowInTaskbar = this.ShowInTaskbar;
+      configuration.AlwaysOnTop = this.AlwaysOnTop;
+      configuration.OpenMinimized = this.OpenMinimized;
     }
 
     /// <summary>

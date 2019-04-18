@@ -3,9 +3,15 @@
   using System;
   using System.Collections.ObjectModel;
   using System.Windows.Input;
+  using NLog;
 
   public class SubjectViewModel : NotifyPropertyChanged, IHandleDoubleClick
   {
+    /// <summary>
+    /// The logger.
+    /// </summary>
+    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+
     private ObservableCollection<StatusViewModel> subjectSnapshots;
 
     private string name;
@@ -64,6 +70,7 @@
       this.Identifier = configuration.Identifier;
       this.Name = configuration.Name;
       this.CurrentStatus = this.GetViewModelForStatus();
+      log.Debug("Initializing {type}, {instance}.", this.GetType(), new { Name = this.Name, Identifier = this.Identifier });
     }
 
     public virtual void OnDoubleClick(object sender, MouseButtonEventArgs e)
@@ -72,6 +79,8 @@
 
     public virtual void Update(Subject changedSubject)
     {
+      log.Trace("Updating model {model}", new { Name = this.Name, Identifier = this.Identifier });
+
       if (this.Subject == null)
       {
         this.Subject = changedSubject;
@@ -86,6 +95,7 @@
       {
         if (i >= this.SubjectSnapshots.Count || this.SubjectSnapshots[i].Time.ToUniversalTime() != changedSubjectSnapshot.Status.Time)
         {
+          log.Debug("Rebuilding list of history builds for model {type}, {instance}.", this.GetType(), new { Name = this.Name, Identifier = this.Identifier });
           clearList = true;
           break;
         }

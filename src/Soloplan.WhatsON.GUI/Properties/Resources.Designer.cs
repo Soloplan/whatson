@@ -97,22 +97,22 @@ namespace Soloplan.WhatsON.GUI.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot;?&gt;
-        ///&lt;log4net&gt;
-        ///  &lt;appender name=&quot;RootLogFileAppender&quot; type=&quot;log4net.Appender.RollingFileAppender&quot;&gt;
-        ///    &lt;lockingModel type=&quot;log4net.Appender.FileAppender+MinimalLock&quot; /&gt;
-        ///    &lt;file type=&quot;log4net.Util.PatternString&quot;&gt;
-        ///      &lt;conversionPattern value=&quot;%property{LogFilePath}\whatsON.log4net.log&quot; /&gt;
-        ///    &lt;/file&gt;
-        ///    &lt;!-- Set append to &quot;false&quot; for debugging --&gt;
-        ///    &lt;appendToFile value=&quot;true&quot; /&gt;
-        ///    &lt;rollingStyle value=&quot;Size&quot; /&gt;
-        ///    &lt;maxSizeRollBackups value=&quot;3&quot; /&gt;
-        ///    &lt;maximumFileSize valu [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;nlog xmlns=&quot;http://www.nlog-project.org/schemas/NLog.xsd&quot;
+        ///      xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+        ///      autoReload=&quot;true&quot;
+        ///      throwExceptions=&quot;true&quot;&gt;
+        ///
+        ///  &lt;targets&gt;
+        ///    &lt;target name=&quot;testTarget&quot; xsi:type=&quot;File&quot; fileName=&quot;C:\Users\Public\Documents\Soloplan GmbH\WhatsOn\test.txt&quot;  keepFileOpen=&quot;false&quot; layout=&quot;${longdate} ${callsite} ${level} ${message}&quot; /&gt;
+        ///  &lt;/targets&gt;
+        ///
+        ///  &lt;rules&gt;
+        ///    &lt;logger name=&quot;*&quot; minlevel=&quot;Trace&quot; maxlevel=&quot;Fatal&quot; writ [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string loggingConfiguration {
+        public static string LogConfig {
             get {
-                return ResourceManager.GetString("loggingConfiguration", resourceCulture);
+                return ResourceManager.GetString("LogConfig", resourceCulture);
             }
         }
         

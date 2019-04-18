@@ -1,6 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="PlugInsManager.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -11,6 +12,7 @@ namespace Soloplan.WhatsON
   using System.IO;
   using System.Linq;
   using System.Runtime.CompilerServices;
+  using NLog;
   using Soloplan.WhatsON.Composition;
 
   /// <summary>
@@ -19,16 +21,14 @@ namespace Soloplan.WhatsON
   public sealed class PluginsManager
   {
     /// <summary>
+    /// Logger instance used by this class.
+    /// </summary>
+    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+
+    /// <summary>
     /// Singleton instance.
     /// </summary>
     private static volatile PluginsManager instance;
-
-    /// <summary>
-    /// The subject plugins list.
-    /// </summary>
-    private List<ISubjectPlugin> subjectPlugins;
-
-    private List<IPlugIn> plugIns = new List<IPlugIn>();
 
     /// <summary>
     /// The subjects.
@@ -36,9 +36,19 @@ namespace Soloplan.WhatsON
     private readonly IList<Subject> subjects = new List<Subject>();
 
     /// <summary>
+    /// The subject plugins list.
+    /// </summary>
+    private List<ISubjectPlugin> subjectPlugins;
+
+    /// <summary>
+    /// Registered plugins.
+    /// </summary>
+    private List<IPlugIn> plugIns = new List<IPlugIn>();
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="PluginsManager"/> class.
     /// </summary>
-    public PluginsManager()
+    private PluginsManager()
     {
       this.InitializePlugInTypes();
     }
@@ -62,7 +72,7 @@ namespace Soloplan.WhatsON
     {
       get
       {
-        if(this.subjectPlugins != null)
+        if (this.subjectPlugins != null)
         {
           return this.subjectPlugins.AsReadOnly();
         }
@@ -157,17 +167,25 @@ namespace Soloplan.WhatsON
     /// </summary>
     private void InitializePlugInTypes()
     {
+      log.Debug("Initializing {PluginsManager}", nameof(PluginsManager));
       var path = System.IO.Path.GetDirectoryName(System.AppContext.BaseDirectory);
-      var plugInPath = Path.Combine(path, "PlugIns");
+      var plugInPath = Path.Combine(path, "Plugins");
+      log.Debug("Paths used {}", new { AppDirectory = path, PluginDirectory = plugInPath });
       if (Directory.Exists(plugInPath))
       {
-        var found = PluginFinder.FindAllPlugins(Directory.EnumerateFiles(plugInPath,"*.dll").ToArray());
+        var found = PluginFinder.FindAllPlugins(Directory.EnumerateFiles(plugInPath, "*.dll").ToArray());
         this.plugIns = new List<IPlugIn>();
         foreach (var plugin in found)
         {
           this.plugIns.Add(plugin);
         }
       }
+      else
+      {
+        log.Warn("Plugins directory not found");
+      }
+
+      log.Debug("PluginsManager initialized.");
     }
   }
 }

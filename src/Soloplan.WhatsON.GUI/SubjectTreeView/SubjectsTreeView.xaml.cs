@@ -2,6 +2,7 @@
 {
   using System.Collections.Generic;
   using System.ComponentModel;
+  using System.Linq;
   using System.Windows;
   using System.Windows.Controls;
   using System.Windows.Data;
@@ -67,7 +68,7 @@
 
     private void SetupDataContext()
     {
-      if (this.model.OneGroup && string.IsNullOrWhiteSpace(this.model.FirstGroup.GroupName))
+      if (this.model.OneGroup && string.IsNullOrWhiteSpace(this.model.SubjectGroups.FirstOrDefault().GroupName))
       {
         Binding myBinding = new Binding();
         myBinding.Source = this.model.FirstGroup;

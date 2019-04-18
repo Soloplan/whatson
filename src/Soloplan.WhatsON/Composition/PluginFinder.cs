@@ -1,12 +1,25 @@
-﻿namespace Soloplan.WhatsON.Composition
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="PluginFinder.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Soloplan.WhatsON.Composition
 {
   using System;
   using System.Collections.Generic;
   using System.IO;
   using System.Reflection;
+  using NLog;
 
   public static class PluginFinder
   {
+    /// <summary>
+    /// Logger instance used by this class.
+    /// </summary>
+    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+
     /// <summary>
     /// Finds all the <see cref="T:Soloplan.WhatsON.ISubjectPlugin"/>s that are provided by the specified assemblies.
     /// Note that this method only supports assemblies from the applications root directory,
@@ -21,17 +34,22 @@
         var absoluteName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, assemblyName);
         if (!File.Exists(absoluteName))
         {
+          log.Warn("Assembly {absoluteName} doesn't exist.", absoluteName);
           continue;
         }
 
+        log.Debug("Scanning assembly {absoluteName} for plugins.", absoluteName);
         var assembly = Assembly.LoadFile(absoluteName);
         foreach (var type in assembly.GetExportedTypes())
         {
           if (typeof(IPlugIn).IsAssignableFrom(type))
           {
+            log.Debug("Found plugin {plugin}", new { Assembly = absoluteName, PluginType = type });
             yield return Activator.CreateInstance(type) as IPlugIn;
           }
         }
+
+        log.Debug("Assembly {absoluteName} scanned for plugins.", absoluteName);
       }
     }
   }

@@ -98,11 +98,14 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       }
     }
 
-    public static ConfigurationItem CreateNewConfigurationItem(ConfigurationItemViewModel configurationItemViewModel, out bool newItemCreated)
+    /// <summary>
+    /// Creates the new configuration item with applied value.
+    /// </summary>
+    /// <returns>New instance of <see cref="ConfigurationItem"/>.</returns>
+    public ConfigurationItem CreateNewConfigurationItem()
     {
-      newItemCreated = true;
-      var result = new ConfigurationItem(configurationItemViewModel.key);
-      result.Value = configurationItemViewModel.value;
+      var result = new ConfigurationItem(this.key);
+      result.Value = this.value;
       return result;
     }
 
@@ -110,17 +113,21 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// Applies modifications to source.
     /// </summary>
     /// <param name="newItemCreated">if set to <c>true</c> a new item was created.</param>
-    public static ConfigurationItem ApplyToSource(ConfigurationItemViewModel configurationItemViewModel,  out bool newItemCreated)
+    /// <returns>New instance of <see cref="ConfigurationItem"/> if it not esist; otherwise existing item.</returns>
+    public ConfigurationItem ApplyToSource(out bool newItemCreated)
     {
       newItemCreated = false;
-      if (configurationItemViewModel.ConfigurationItem == null)
+      if (this.ConfigurationItem == null)
       {
-        configurationItemViewModel.ConfigurationItem = new ConfigurationItem(configurationItemViewModel.key);
+        this.ConfigurationItem = this.CreateNewConfigurationItem();
         newItemCreated = true;
       }
+      else
+      {
+        this.ConfigurationItem.Value = this.value;
+      }
 
-      configurationItemViewModel.ConfigurationItem.Value = configurationItemViewModel.value;
-      return configurationItemViewModel.ConfigurationItem;
+      return this.ConfigurationItem;
     }
   }
 }

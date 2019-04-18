@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      autoReload="true"
+      throwExceptions="true"
+      keepVariablesOnReload="true">
+
+  <targets>
+    <target name="whatsONMainLog"
+            xsi:type="File"
+            fileName="${var:logFileDir}/whatsON.log"
+            archiveFileName="${var:logFileDir}/archives/{#####}.zip"
+            layout="${longdate} ${level} ${callsite}:${callsite-linenumber}  - ${message}"
+            keepFileOpen="false" 
+            archiveAboveSize="20971520"
+            enableArchiveFileCompression="true"
+            archiveNumbering="Sequence"
+            maxArchiveFiles="10"/>
+  </targets>
+
+  <rules>
+    <logger name="*" minlevel="Debug" maxlevel="Fatal" writeTo="whatsONMainLog"/>
+  </rules>
+</nlog>

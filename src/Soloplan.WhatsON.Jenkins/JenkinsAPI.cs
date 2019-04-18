@@ -1,4 +1,10 @@
-﻿// // --------------------------------------------------------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="JenkinsApi.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//    Licensed under the MIT License. See License-file in the project root for license information.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
 namespace Soloplan.WhatsON.Jenkins
 {
   using System;
@@ -7,11 +13,17 @@ namespace Soloplan.WhatsON.Jenkins
   using System.Threading;
   using System.Threading.Tasks;
   using Newtonsoft.Json;
+  using NLog;
   using Soloplan.WhatsON.Jenkins.Model;
   using Soloplan.WhatsON.ServerBase;
 
   public class JenkinsApi : IJenkinsApi
   {
+    /// <summary>
+    /// Logger instance used by this class.
+    /// </summary>
+    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+
     public async Task<JenkinsJob> GetJenkinsJob(JenkinsProject subject, CancellationToken token)
     {
       var address = subject.GetAddress();
@@ -19,6 +31,7 @@ namespace Soloplan.WhatsON.Jenkins
       var projectName = subject.GetProject();
 
       var jobRequest = $"{address.Trim('/')}:{port}/job/{projectName.Trim('/')}/api/json?tree={JenkinsJob.RequestProperties}";
+      log.Trace("Querying job: {jobRequest}", jobRequest);
       return await GetJenkinsModel<JenkinsJob>(subject, jobRequest, token);
     }
 
@@ -29,6 +42,7 @@ namespace Soloplan.WhatsON.Jenkins
       var projectName = subject.GetProject();
 
       var buildRequest = $"{address.Trim('/')}:{port}/job/{projectName.Trim('/')}/{buildNumber}/api/json?tree={JenkinsBuild.RequestProperties}";
+      log.Trace("Querying build: {jobRequest}", buildRequest);
       return await GetJenkinsModel<JenkinsBuild>(subject, buildRequest, token);
     }
 

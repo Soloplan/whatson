@@ -130,8 +130,8 @@
     <value>Json files</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="loggingConfiguration" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\loggingConfiguration.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  <data name="LogConfig" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\logging\logconfig.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="NotInstalled" xml:space="preserve">
     <value>not installed</value>

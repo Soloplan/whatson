@@ -9,7 +9,6 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
   using System;
   using System.Collections.Generic;
   using System.Linq;
-  using Soloplan.WhatsON.Serialization;
 
   /// <summary>
   /// The view model for see <see cref="Subject"/>.
@@ -151,49 +150,50 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       return configItem;
     }
 
-    public delegate ConfigurationItem ApplyToDelegate(ConfigurationItemViewModel configurationItemViewModel, out bool newItemCreated);
-
-    public void ApplyToSubjectConfiguration(SubjectConfiguration sourceSubjectConfig, ApplyToDelegate applyToDelegate)
-    {
-      foreach (var configurationItem in this.ConfigurationItems)
-      {
-        var appliedConfigurationItem = applyToDelegate(configurationItem, out bool newItemCreated);
-        if (newItemCreated)
-        {
-          sourceSubjectConfig.ConfigurationItems.Add(appliedConfigurationItem);
-        }
-      }
-    }
-
-    public static SubjectConfiguration ApplyToSourceSubjectConfiguration(SubjectViewModel viewModel, out bool newSubjectConfigurationCreated)
+    /// <summary>
+    /// Applies changes to source subject configuration.
+    /// </summary>
+    /// <param name="newSubjectConfigurationCreated">if set to <c>true</c> [new subject configuration created].</param>
+    /// <returns>New instance of <see cref="SubjectConfiguration"/> if it was created; otherwise the existing instance.</returns>
+    public SubjectConfiguration ApplyToSourceSubjectConfiguration(out bool newSubjectConfigurationCreated)
     {
       newSubjectConfigurationCreated = false;
-      if (viewModel.SourceSubjectConfiguration == null)
+
+      if (this.SourceSubjectConfiguration == null)
       {
         newSubjectConfigurationCreated = true;
-        viewModel.SourceSubjectConfiguration = CreateNewSubjectConfiguration(viewModel);
+        this.SourceSubjectConfiguration = this.CreateNewSubjectConfiguration();
       }
       else
       {
-        viewModel.SourceSubjectConfiguration.Name = viewModel.name;
-        viewModel.ApplyToSubjectConfiguration(viewModel.SourceSubjectConfiguration, ConfigurationItemViewModel.ApplyToSource);
+        this.SourceSubjectConfiguration.Name = this.name;
+        foreach (var configurationItem in this.ConfigurationItems)
+        {
+          var appliedConfigurationItem = configurationItem.ApplyToSource(out bool newItemCreated);
+          if (newItemCreated)
+          {
+            this.SourceSubjectConfiguration.ConfigurationItems.Add(appliedConfigurationItem);
+          }
+        }
       }
 
-      return viewModel.SourceSubjectConfiguration;
+      return this.SourceSubjectConfiguration;
     }
 
-    public static SubjectConfiguration ApplyToNewSubjectConfiguration(SubjectViewModel viewModel, out bool newSubjectConfigurationCreated)
+    /// <summary>
+    /// Creates the new subject configuration with applied changes.
+    /// </summary>
+    /// <returns>New instance of <see cref="SubjectConfiguration"/></returns>
+    public SubjectConfiguration CreateNewSubjectConfiguration()
     {
-      newSubjectConfigurationCreated = true;
-      var sourceSubjectConfig = CreateNewSubjectConfiguration(viewModel);
-      return sourceSubjectConfig;
-    }
+      var sourceSubjectConfig = new SubjectConfiguration(this.SourceSubjectPlugin.GetType().FullName);
+      sourceSubjectConfig.Name = this.name;
+      foreach (var configurationItem in this.ConfigurationItems)
+      {
+        var newConfigurationItem = configurationItem.CreateNewConfigurationItem();
+        sourceSubjectConfig.ConfigurationItems.Add(newConfigurationItem);
+      }
 
-    public static SubjectConfiguration CreateNewSubjectConfiguration(SubjectViewModel viewModel)
-    {
-      var sourceSubjectConfig = new SubjectConfiguration(viewModel.SourceSubjectPlugin.GetType().FullName);
-      sourceSubjectConfig.Name = viewModel.name;
-      viewModel.ApplyToSubjectConfiguration(sourceSubjectConfig, ConfigurationItemViewModel.CreateNewConfigurationItem);
       return sourceSubjectConfig;
     }
 
@@ -221,6 +221,11 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       }
 
       return configItemViewModel;
+    }
+
+    public void UpdateViewModelDependencies()
+    {
+      
     }
   }
 }

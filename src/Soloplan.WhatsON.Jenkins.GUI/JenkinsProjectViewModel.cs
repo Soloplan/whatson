@@ -1,7 +1,15 @@
-﻿namespace Soloplan.WhatsON.Jenkins.GUI
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="JenkinsProjectViewModel.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Soloplan.WhatsON.Jenkins.GUI
 {
   using System.Windows.Controls;
   using System.Windows.Input;
+  using NLog;
   using Soloplan.WhatsON.GUI.SubjectTreeView;
   using Soloplan.WhatsON.ServerBase;
 
