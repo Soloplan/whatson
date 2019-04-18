@@ -82,7 +82,7 @@ namespace Soloplan.WhatsON
 
         foreach (var observationSubject in this.observedSubjects)
         {
-          LogObservationSubject(LogLevel.Debug, "Starting observation for {subject}.", observationSubject);
+          log.Log(LogLevel.Debug, "Starting observation for {@subject}.", observationSubject);
           this.StartObserveSingle(observationSubject, this.cancellationTokenSource.Token);
         }
 
@@ -115,7 +115,7 @@ namespace Soloplan.WhatsON
 
       var observationSubject = new ObservationSubject(subject, interval);
       this.observedSubjects.Add(observationSubject);
-      LogObservationSubject(LogLevel.Debug, "Observation subject {subject} added.", observationSubject);
+      log.Log(LogLevel.Debug, "Observation subject {@subject} added.", observationSubject);
     }
 
     /// <summary>
@@ -146,7 +146,7 @@ namespace Soloplan.WhatsON
         {
           if (DateTime.Now - subject.LastPoll > subject.Interval)
           {
-            LogObservationSubject(LogLevel.Trace, "Observation of {@subject} started.", subject);
+            log.Log(LogLevel.Trace, "Observation of {@subject} started.", subject);
             await subject.Subject.QueryStatus(token);
             subject.LastPoll = DateTime.Now;
             if (subject.Running)
@@ -154,7 +154,7 @@ namespace Soloplan.WhatsON
               this.StatusQueried?.Invoke(this, subject.Subject);
             }
 
-            LogObservationSubject(LogLevel.Trace, "Observation of {@subject} ended.", subject);
+            log.Log(LogLevel.Trace, "Observation of {@subject} ended.", subject);
           }
 
           var remainingOfInterval = subject.Interval - (DateTime.Now - subject.LastPoll);
@@ -170,21 +170,7 @@ namespace Soloplan.WhatsON
         }
       }
 
-      LogObservationSubject(LogLevel.Debug, "Exiting observation loop for {subject}.", subject);
-    }
-
-    /// <summary>
-    /// Logs <see cref="ObservationSubject"/>.
-    /// </summary>
-    /// <param name="level">Log level.</param>
-    /// <param name="text">The text which should be long along with value, should contain {subject}.</param>
-    /// <param name="subject">The subject being logged.</param>
-    private static void LogObservationSubject(LogLevel level, string text, ObservationSubject subject)
-    {
-      if (log.IsEnabled(level))
-      {
-        log.Log(level, text, new { Interval = subject.Interval, Name = subject.Subject.SubjectConfiguration.Name, CurrentStatus = subject.Subject.CurrentStatus });
-      }
+      log.Log(LogLevel.Debug, "Exiting observation loop for {@subject}.", subject);
     }
 
     /// <summary>
@@ -205,7 +191,7 @@ namespace Soloplan.WhatsON
         this.stopping = true;
         foreach (var observationSubject in this.observedSubjects)
         {
-          LogObservationSubject(LogLevel.Debug, "Stopping observation of subject {subject}.", observationSubject);
+          log.Log(LogLevel.Debug, "Stopping observation of subject {@subject}.", observationSubject);
           observationSubject.Running = false;
         }
 
