@@ -24,6 +24,9 @@ namespace Soloplan.WhatsON
     /// </summary>
     private const int DefaultPollInterval = 5;
 
+    /// <summary>
+    /// Logger instance used by this class.
+    /// </summary>
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
     /// <summary>
@@ -139,24 +142,31 @@ namespace Soloplan.WhatsON
     {
       while (subject.Running)
       {
-        if (DateTime.Now - subject.LastPoll > subject.Interval)
+        try
         {
-          LogObservationSubject(LogLevel.Trace, "Observation of {subject} started.", subject);
-          await subject.Subject.QueryStatus(token);
-          subject.LastPoll = DateTime.Now;
-          if (subject.Running)
+          if (DateTime.Now - subject.LastPoll > subject.Interval)
           {
-            this.StatusQueried?.Invoke(this, subject.Subject);
+            LogObservationSubject(LogLevel.Trace, "Observation of {@subject} started.", subject);
+            await subject.Subject.QueryStatus(token);
+            subject.LastPoll = DateTime.Now;
+            if (subject.Running)
+            {
+              this.StatusQueried?.Invoke(this, subject.Subject);
+            }
+
+            LogObservationSubject(LogLevel.Trace, "Observation of {@subject} ended.", subject);
           }
 
-          LogObservationSubject(LogLevel.Trace, "Observation of {subject} ended.", subject);
+          var remainingOfInterval = subject.Interval - (DateTime.Now - subject.LastPoll);
+          if (remainingOfInterval.TotalMilliseconds > 0 && subject.Running)
+          {
+            int milisecondsToWait = remainingOfInterval.TotalMilliseconds < int.MaxValue ? (int)remainingOfInterval.TotalMilliseconds : int.MaxValue;
+            await Task.Delay(milisecondsToWait, token);
+          }
         }
-
-        var remainingOfInterval = subject.Interval - (DateTime.Now - subject.LastPoll);
-        if (remainingOfInterval.TotalMilliseconds > 0 && subject.Running)
+        catch (Exception e)
         {
-          int milisecondsToWait = remainingOfInterval.TotalMilliseconds < int.MaxValue ? (int)remainingOfInterval.TotalMilliseconds : int.MaxValue;
-          await Task.Delay(milisecondsToWait, token);
+          log.Error("Exception occurred when observing subject {subject}, exception {e}", new { Interval = subject.Interval, Name = subject.Subject.SubjectConfiguration.Name, CurrentStatus = subject.Subject.CurrentStatus }, e);
         }
       }
 
@@ -171,7 +181,10 @@ namespace Soloplan.WhatsON
     /// <param name="subject">The subject being logged.</param>
     private static void LogObservationSubject(LogLevel level, string text, ObservationSubject subject)
     {
-      log.Log(level, text, new { Interval = subject.Interval, Name = subject.Subject.SubjectConfiguration.Name, CurrentStatus = subject.Subject.CurrentStatus });
+      if (log.IsEnabled(level))
+      {
+        log.Log(level, text, new { Interval = subject.Interval, Name = subject.Subject.SubjectConfiguration.Name, CurrentStatus = subject.Subject.CurrentStatus });
+      }
     }
 
     /// <summary>

@@ -15,6 +15,10 @@
   <Import Project="..\..\config\Soloplan.WhatsON.targets" />
 
   <ItemGroup>
+    <PackageReference Include="NLog" Version="4.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Soloplan.WhatsON.ServerBase\Soloplan.WhatsON.ServerBase.csproj">
       <Private>false</Private>
     </ProjectReference>

@@ -1,11 +1,25 @@
-﻿namespace Soloplan.WhatsON.GUI.SubjectTreeView
+﻿// <copyright file="SubjectGroupViewModel.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
+// </copyright>
+
+namespace Soloplan.WhatsON.GUI.SubjectTreeView
 {
   using System.Collections.ObjectModel;
   using System.Linq;
   using System.Windows.Input;
+  using NLog;
 
+  /// <summary>
+  /// Viewmodel representing group of subjects shown as single node in <see cref="SubjectTreeView"/>.
+  /// </summary>
   public class SubjectGroupViewModel : NotifyPropertyChanged, IHandleDoubleClick
   {
+    /// <summary>
+    /// The logger.
+    /// </summary>
+    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+
     private string groupName;
 
     ObservableCollection<SubjectViewModel> statusViewModels;
@@ -69,22 +83,26 @@
     public void Init(IGrouping<string, SubjectConfiguration> subjectGroup)
     {
       this.GroupName = subjectGroup.Key ?? string.Empty;
+      log.Debug("Initializing group {GroupName}", this.GroupName);
 
       var subjectsNoLongerPresent = this.SubjectViewModels.Where(model => subjectGroup.All(configurationSubject => configurationSubject.Identifier != model.Identifier)).ToList();
       var newSubjects = subjectGroup.Where(configurationSubject => this.SubjectViewModels.All(viewModel => configurationSubject.Identifier != viewModel.Identifier));
       foreach (var noLongerPresentSubjectViewModel in subjectsNoLongerPresent)
       {
+        log.Debug("Remove no longer present subject {noLongerPresentSubjectViewModel}", new { Identifier = noLongerPresentSubjectViewModel.Identifier, Name = noLongerPresentSubjectViewModel.Name });
         this.SubjectViewModels.Remove(noLongerPresentSubjectViewModel);
       }
 
       foreach (var subjectViewModel in this.SubjectViewModels)
       {
+        log.Debug("Updating viewmodel for {subjectConfiguration}", new { Identifier = subjectViewModel.Identifier, Name = subjectViewModel.Name });
         var config = subjectGroup.FirstOrDefault(configurationSubject => subjectViewModel.Identifier == configurationSubject.Identifier);
         subjectViewModel.Init(config);
       }
 
       foreach (var newSubject in newSubjects)
       {
+        log.Debug("Adding new subject {subjectConfiguration}", new { Identifier = newSubject.Identifier, Name = newSubject.Name });
         this.CreateViewModelForSubjectConfiguration(newSubject);
       }
     }

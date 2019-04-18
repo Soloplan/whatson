@@ -1,8 +1,16 @@
-﻿namespace Soloplan.WhatsON.Jenkins
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="JenkinsProject.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//    Licensed under the MIT License. See License-file in the project root for license information.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Soloplan.WhatsON.Jenkins
 {
   using System;
   using System.Threading;
   using System.Threading.Tasks;
+  using NLog;
   using Soloplan.WhatsON.Jenkins.Model;
   using Soloplan.WhatsON.ServerBase;
 
@@ -23,6 +31,11 @@
     /// The server port.
     /// </summary>
     public const string ServerPort = "Port";
+
+    /// <summary>
+    /// Logger instance used by this class.
+    /// </summary>
+    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
     /// <summary>
     /// API class for accessing Jenkins.
@@ -89,10 +102,13 @@
         var startBuildNumber = latestBuild.Building ? latestBuild.Number - 1 : latestBuild.Number;
         var lastHistoryBuild = Math.Max(startBuildNumber - this.MaxSnapshots + 1, 0);
         lastHistoryBuild = Math.Max(lastHistoryBuild, job.FirstBuild.Number);
+        log.Debug("Retrieving history from the server for builds {builds}", new { StartBuild = lastHistoryBuild, EndBuild = startBuildNumber - 1 });
+
         JenkinsStatus buildStatus = null;
         for (int i = lastHistoryBuild; i <= startBuildNumber; i++)
         {
           buildStatus = CreateStatus(await this.api.GetJenkinsBuild(this, i, cancellationToken));
+          log.Debug("Retrieved status {buildStatus}", buildStatus);
           this.AddSnapshot(buildStatus);
         }
 
@@ -118,12 +134,14 @@
 
     protected override bool ShouldTakeSnapshot(Status status)
     {
+      log.Trace("Checking if snapshot should be taken...");
       if (status is JenkinsStatus currentStatus)
       {
         if (this.PreviousCheckStatus != null)
         {
           if (status.State != ObservationState.Running && (status.State != this.PreviousCheckStatus.State || this.PreviousCheckStatus.BuildNumber != currentStatus.BuildNumber))
           {
+            log.Debug("Snapshot should be taken. {stat}", new { PreviousCheckStatus = this.PreviousCheckStatus, CurrentStatus = currentStatus });
             this.PreviousCheckStatus = currentStatus;
             return true;
           }

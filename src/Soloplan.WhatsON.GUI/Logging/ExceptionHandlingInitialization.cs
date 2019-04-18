@@ -9,10 +9,19 @@ namespace Soloplan.WhatsON.GUI.Logging
   using System.Windows;
   using NLog;
 
+  /// <summary>
+  /// Class used to log all exceptions thrown by application.
+  /// </summary>
   public static class ExceptionHandlingInitialization
   {
+    /// <summary>
+    /// The logger.
+    /// </summary>
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
+    /// <summary>
+    /// Initializes logging exception.
+    /// </summary>
     public static void Initialize()
     {
       AppDomain.CurrentDomain.UnhandledException += (sender, args) =>

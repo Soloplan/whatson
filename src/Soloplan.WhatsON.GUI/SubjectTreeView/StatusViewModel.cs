@@ -1,12 +1,23 @@
-﻿namespace Soloplan.WhatsON.GUI.SubjectTreeView
+﻿// <copyright file="StatusViewModel.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
+// </copyright>
+
+namespace Soloplan.WhatsON.GUI.SubjectTreeView
 {
   using System;
+  using NLog;
 
   /// <summary>
   /// Base ViewModel used for any kind of <see cref="Subject"/>;
   /// </summary>
   public class StatusViewModel : NotifyPropertyChanged
   {
+    /// <summary>
+    /// The logger.
+    /// </summary>
+    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+
     public StatusViewModel(SubjectViewModel subject)
     {
       this.Parent = subject;
@@ -89,6 +100,7 @@
 
     public virtual void Update(Status newStatus)
     {
+      log.Trace("Updating status model {model}", new { Name = this.Name, Details = this.Details });
       if (newStatus == null)
       {
         this.Name = "Loading...";
