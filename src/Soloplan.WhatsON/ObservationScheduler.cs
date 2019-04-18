@@ -147,8 +147,8 @@ namespace Soloplan.WhatsON
           if (DateTime.Now - subject.LastPoll > subject.Interval)
           {
             log.Log(LogLevel.Trace, "Observation of {@subject} started.", subject);
-            await subject.Subject.QueryStatus(token);
             subject.LastPoll = DateTime.Now;
+            await subject.Subject.QueryStatus(token);
             if (subject.Running)
             {
               this.StatusQueried?.Invoke(this, subject.Subject);
