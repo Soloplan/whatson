@@ -61,16 +61,20 @@ namespace Soloplan.WhatsON.Serialization
     /// Saves the configuration.
     /// </summary>
     /// <param name="configuration">The configuration.</param>
-    public static void SaveConfiguration(ApplicationConfiguration configuration)
+    public static void SaveConfiguration(ApplicationConfiguration configuration, string configFilePath = null)
     {
-      var configFilePath = Path.GetDirectoryName(ConfigFile);
       if (configFilePath == null)
       {
-        throw new InvalidOperationException("Couldn't get the directory for configuration file.");
+        var configFileDirecory = Path.GetDirectoryName(ConfigFile);
+        if (configFileDirecory == null)
+        {
+          throw new InvalidOperationException("Couldn't get the directory for configuration file.");
+        }
+
+        Directory.CreateDirectory(configFileDirecory);
       }
 
-      Directory.CreateDirectory(configFilePath);
-      Save(configuration, ConfigFile);
+      Save(configuration, configFilePath ?? ConfigFile);
     }
   }
 }

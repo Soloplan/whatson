@@ -41,7 +41,7 @@ namespace Soloplan.WhatsON.GUI.Config.View
     /// <summary>
     /// The configuration source.
     /// </summary>
-    private readonly ApplicationConfiguration configurationSource;
+    private ApplicationConfiguration configurationSource;
 
     /// <summary>
     /// The subject page.
@@ -80,7 +80,11 @@ namespace Soloplan.WhatsON.GUI.Config.View
       GlobalConfigDataViewModel.Instance.UseConfiguration(this.configurationViewModel);
       this.InitializeComponent();
       this.ConfigTopicsListBox.SelectedIndex = 0;
-      this.configurationViewModel.ConfigurationApplied += (s, e) => this.ConfigurationApplied?.Invoke(s, e);
+      this.configurationViewModel.ConfigurationApplied += (s, e) =>
+      {
+        this.configurationSource = this.configurationViewModel.Configuration;
+        this.ConfigurationApplied?.Invoke(s, e);
+      };
       this.configurationViewModel.ConfigurationApplying += (s, e) => this.ConfigurationApplying?.Invoke(s, e);
     }
 

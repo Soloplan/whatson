@@ -45,7 +45,7 @@
           </materialDesign:PopupBox.ToggleContent>
           <StackPanel>
             <Button Content="{x:Static properties:Resources.Import}" Click="ImportButtonClick" Width="166"/>
-            <Button Content="{x:Static properties:Resources.Export}" Click="ExportButtonClick" Width="166" IsEnabled="{Binding ConfigurationIsNotModified}" />
+            <Button Content="{x:Static properties:Resources.Export}" Click="ExportButtonClick" Width="166" />
           </StackPanel>
         </materialDesign:PopupBox>
       </DockPanel>

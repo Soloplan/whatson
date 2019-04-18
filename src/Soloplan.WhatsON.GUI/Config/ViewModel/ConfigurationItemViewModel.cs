@@ -98,20 +98,29 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       }
     }
 
+    public static ConfigurationItem CreateNewConfigurationItem(ConfigurationItemViewModel configurationItemViewModel, out bool newItemCreated)
+    {
+      newItemCreated = true;
+      var result = new ConfigurationItem(configurationItemViewModel.key);
+      result.Value = configurationItemViewModel.value;
+      return result;
+    }
+
     /// <summary>
     /// Applies modifications to source.
     /// </summary>
     /// <param name="newItemCreated">if set to <c>true</c> a new item was created.</param>
-    public void ApplyToSource(out bool newItemCreated)
+    public static ConfigurationItem ApplyToSource(ConfigurationItemViewModel configurationItemViewModel,  out bool newItemCreated)
     {
       newItemCreated = false;
-      if (this.ConfigurationItem == null)
+      if (configurationItemViewModel.ConfigurationItem == null)
       {
-        this.ConfigurationItem = new ConfigurationItem(this.key);
+        configurationItemViewModel.ConfigurationItem = new ConfigurationItem(configurationItemViewModel.key);
         newItemCreated = true;
       }
 
-      this.ConfigurationItem.Value = this.value;
+      configurationItemViewModel.ConfigurationItem.Value = configurationItemViewModel.value;
+      return configurationItemViewModel.ConfigurationItem;
     }
   }
 }

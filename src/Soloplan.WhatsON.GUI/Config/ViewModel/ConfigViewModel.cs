@@ -258,40 +258,50 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       this.ConfigurationApplying?.Invoke(this, new EventArgs());
       try
       {
-        IList<SubjectConfiguration> subjectsToRemove = new List<SubjectConfiguration>();
-        foreach (var sourceSubject in this.Configuration.SubjectsConfiguration)
-        {
-          if (this.Subjects.All(s => s.SourceSubjectConfiguration != sourceSubject))
-          {
-            subjectsToRemove.Add(sourceSubject);
-          }
-        }
-
-        foreach (var subjectToRemove in subjectsToRemove)
-        {
-          this.Configuration.SubjectsConfiguration.Remove(subjectToRemove);
-        }
-
-        foreach (var subject in this.Subjects)
-        {
-          subject.ApplyToSource(out bool newSubjectConfigurationCreated);
-          if (newSubjectConfigurationCreated)
-          {
-            this.Configuration.SubjectsConfiguration.Add(subject.SourceSubjectConfiguration);
-          }
-        }
-
-        this.Configuration.DarkThemeEnabled = this.DarkThemeEnabled;
-        this.Configuration.ShowInTaskbar = this.ShowInTaskbar;
-        this.Configuration.AlwaysOnTop = this.AlwaysOnTop;
-        this.Configuration.OpenMinimized = this.OpenMinimized;
-        this.ApplyRunWithWindowsOption();
-        SerializationHelper.SaveConfiguration(this.Configuration);
+        this.ApplyToConfigurationAndSave(this.Configuration, SubjectViewModel.ApplyToSourceSubjectConfiguration);
       }
       finally
       {
+        this.ApplyRunWithWindowsOption();
         this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.Configuration));
       }
+    }
+
+    public delegate SubjectConfiguration ApplySubjectConfigurationDelegate(SubjectViewModel viewModel, out bool newSubjectConfigurationCreated);
+
+    /// <summary>
+    /// Applies chages to specified configuration instance and saves changes.
+    /// </summary>
+    public void ApplyToConfigurationAndSave(ApplicationConfiguration configuration, ApplySubjectConfigurationDelegate applySubjectConfigurationDelegate, string filePath = null)
+    {
+      IList<SubjectConfiguration> subjectsToRemove = new List<SubjectConfiguration>();
+      foreach (var sourceSubject in configuration.SubjectsConfiguration)
+      {
+        if (this.Subjects.All(s => s.SourceSubjectConfiguration != sourceSubject))
+        {
+          subjectsToRemove.Add(sourceSubject);
+        }
+      }
+
+      foreach (var subjectToRemove in subjectsToRemove)
+      {
+        configuration.SubjectsConfiguration.Remove(subjectToRemove);
+      }
+
+      foreach (var subject in this.Subjects)
+      {
+        var subjectConfiguration = applySubjectConfigurationDelegate(subject, out bool newSubjectConfigurationCreated);
+        if (newSubjectConfigurationCreated)
+        {
+          configuration.SubjectsConfiguration.Add(subjectConfiguration);
+        }
+      }
+
+      configuration.DarkThemeEnabled = this.DarkThemeEnabled;
+      configuration.ShowInTaskbar = this.ShowInTaskbar;
+      configuration.AlwaysOnTop = this.AlwaysOnTop;
+      configuration.OpenMinimized = this.OpenMinimized;
+      SerializationHelper.SaveConfiguration(configuration, filePath);
     }
 
     /// <summary>
@@ -300,7 +310,8 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// <param name="filePath">The file path.</param>
     public void Export(string filePath)
     {
-      SerializationHelper.Save(this.Configuration, filePath);
+      var tempConfig = new ApplicationConfiguration();
+      this.ApplyToConfigurationAndSave(tempConfig, SubjectViewModel.ApplyToNewSubjectConfiguration, filePath);
     }
 
     /// <summary>
@@ -319,6 +330,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       {
         this.ConfigurationIsModified = true;
         this.ApplyToSourceAndSave();
+        this.ConfigurationIsModified = false;
         this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.Configuration));
       }
     }
@@ -331,7 +343,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     {
       if (!this.ConfigurationIsModified && propertyName != nameof(this.ConfigurationIsModified) && propertyName != nameof(this.ConfigurationIsNotModified) && this.IsLoaded)
       {
-        this.ConfigurationIsModified = true;
+       this.ConfigurationIsModified = true;
         this.OnPropertyChanged(nameof(this.ConfigurationIsModified));
         this.OnPropertyChanged(nameof(this.ConfigurationIsNotModified));
       }

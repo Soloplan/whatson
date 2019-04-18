@@ -9,6 +9,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
   using System;
   using System.Collections.Generic;
   using System.Linq;
+  using Soloplan.WhatsON.Serialization;
 
   /// <summary>
   /// The view model for see <see cref="Subject"/>.
@@ -150,29 +151,50 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       return configItem;
     }
 
-    /// <summary>
-    /// Applies modifications to source.
-    /// </summary>
-    /// <param name="newSubjectConfigurationCreated">if set to <c>true</c> new subject was created.</param>
-    public void ApplyToSource(out bool newSubjectConfigurationCreated)
+    public delegate ConfigurationItem ApplyToDelegate(ConfigurationItemViewModel configurationItemViewModel, out bool newItemCreated);
+
+    public void ApplyToSubjectConfiguration(SubjectConfiguration sourceSubjectConfig, ApplyToDelegate applyToDelegate)
     {
-      newSubjectConfigurationCreated = false;
-      if (this.sourceSubjectConfiguration == null)
-      {
-        newSubjectConfigurationCreated = true;
-        this.sourceSubjectConfiguration = new SubjectConfiguration(this.SourceSubjectPlugin.GetType().FullName);
-      }
-
-      this.sourceSubjectConfiguration.Name = this.name;
-
       foreach (var configurationItem in this.ConfigurationItems)
       {
-        configurationItem.ApplyToSource(out bool newItemCreated);
+        var appliedConfigurationItem = applyToDelegate(configurationItem, out bool newItemCreated);
         if (newItemCreated)
         {
-          this.sourceSubjectConfiguration.ConfigurationItems.Add(configurationItem.ConfigurationItem);
+          sourceSubjectConfig.ConfigurationItems.Add(appliedConfigurationItem);
         }
       }
+    }
+
+    public static SubjectConfiguration ApplyToSourceSubjectConfiguration(SubjectViewModel viewModel, out bool newSubjectConfigurationCreated)
+    {
+      newSubjectConfigurationCreated = false;
+      if (viewModel.SourceSubjectConfiguration == null)
+      {
+        newSubjectConfigurationCreated = true;
+        viewModel.SourceSubjectConfiguration = CreateNewSubjectConfiguration(viewModel);
+      }
+      else
+      {
+        viewModel.SourceSubjectConfiguration.Name = viewModel.name;
+        viewModel.ApplyToSubjectConfiguration(viewModel.SourceSubjectConfiguration, ConfigurationItemViewModel.ApplyToSource);
+      }
+
+      return viewModel.SourceSubjectConfiguration;
+    }
+
+    public static SubjectConfiguration ApplyToNewSubjectConfiguration(SubjectViewModel viewModel, out bool newSubjectConfigurationCreated)
+    {
+      newSubjectConfigurationCreated = true;
+      var sourceSubjectConfig = CreateNewSubjectConfiguration(viewModel);
+      return sourceSubjectConfig;
+    }
+
+    public static SubjectConfiguration CreateNewSubjectConfiguration(SubjectViewModel viewModel)
+    {
+      var sourceSubjectConfig = new SubjectConfiguration(viewModel.SourceSubjectPlugin.GetType().FullName);
+      sourceSubjectConfig.Name = viewModel.name;
+      viewModel.ApplyToSubjectConfiguration(sourceSubjectConfig, ConfigurationItemViewModel.CreateNewConfigurationItem);
+      return sourceSubjectConfig;
     }
 
     /// <summary>
