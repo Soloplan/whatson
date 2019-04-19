@@ -1,0 +1,22 @@
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="CruiseControlProjectPlugin.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Soloplan.WhatsON.CruiseControl
+{
+  public class CruiseControlProjectPlugin : SubjectPlugin
+  {
+    public CruiseControlProjectPlugin()
+      : base(typeof(CruiseControlProject))
+    {
+    }
+
+    public override Subject CreateNew(SubjectConfiguration configuration)
+    {
+      return new CruiseControlProject(configuration);
+    }
+  }
+}
