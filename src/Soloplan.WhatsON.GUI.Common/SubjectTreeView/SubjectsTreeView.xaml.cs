@@ -27,6 +27,11 @@
         {
           using (var resourceXml = treeViewPresentationPlugIn.GetDataTempletXaml())
           {
+            if (resourceXml == null)
+            {
+              continue;
+            }
+
             var dictionary = XamlReader.Load(resourceXml) as ResourceDictionary;
             this.Resources.MergedDictionaries.Add(dictionary);
           }

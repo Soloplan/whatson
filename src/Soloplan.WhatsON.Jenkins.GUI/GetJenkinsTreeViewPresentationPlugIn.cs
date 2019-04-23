@@ -18,10 +18,7 @@
 
     public XmlReader GetDataTempletXaml()
     {
-      string codeBase = Assembly.GetExecutingAssembly().CodeBase;
-      UriBuilder uri = new UriBuilder(codeBase);
-      string path = Path.GetDirectoryName(Uri.UnescapeDataString(uri.Path));
-      return XmlReader.Create(new MemoryStream(Encoding.UTF8.GetBytes(Properties.Resources.JenkinsProjectDataTemplate)));
+      return null;
     }
   }
 }

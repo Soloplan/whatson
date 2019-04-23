@@ -59,19 +59,5 @@ namespace Soloplan.WhatsON.Jenkins.GUI.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;ResourceDictionary xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;
-        ///                    xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;
-        ///                    xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot; 
-        ///                    xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot; 
-        ///                    xmlns:i=&quot;clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity&quot;
-        ///                    xmlns:materialDesign=&quot;http://materialdesi [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string JenkinsProjectDataTemplate {
-            get {
-                return ResourceManager.GetString("JenkinsProjectDataTemplate", resourceCulture);
-            }
-        }
     }
 }

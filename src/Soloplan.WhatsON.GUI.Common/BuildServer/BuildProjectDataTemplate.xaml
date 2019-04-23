@@ -1,11 +1,11 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:buildServer="clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-                    xmlns:jenkins="clr-namespace:Soloplan.WhatsON.Jenkins.GUI;assembly=Soloplan.WhatsON.Jenkins.GUI"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                    xmlns:subjectTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.SubjectTreeView;assembly=Soloplan.WhatsON.GUI.Common">
+                    xmlns:subjectTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.SubjectTreeView">
 
   <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
   <subjectTreeView:StatusToColorConverter x:Key="StatusToColorConverter" />
@@ -29,7 +29,7 @@
               Command="{Binding OpenBuildPage}" />
   </ContextMenu>
 
-  <DataTemplate DataType="{x:Type jenkins:JenkinsProjectViewModel}">
+  <DataTemplate DataType="{x:Type buildServer:BuildServerProjectStatusViewModel}">
     <StackPanel ContextMenu="{StaticResource contextMenuJenkins}" Orientation="Vertical">
       <StackPanel Orientation="Horizontal">
         <StackPanel Orientation="Horizontal">
@@ -113,7 +113,7 @@
           <ListView ItemsSource="{Binding SubjectSnapshots, Mode=OneWay}">
             <!--  History builds  -->
             <ListView.Resources>
-              <DataTemplate DataType="{x:Type jenkins:JenkinsStatusViewModel}">
+              <DataTemplate DataType="{x:Type buildServer:BuildStatusViewModel}">
                 <StackPanel ContextMenu="{StaticResource contextMenuBuild}">
                   <StackPanel.ToolTip>
                     <StackPanel>

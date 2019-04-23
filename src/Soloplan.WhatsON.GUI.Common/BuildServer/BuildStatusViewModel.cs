@@ -1,17 +1,18 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="JenkinsStatusViewModel.cs" company="Soloplan GmbH">
+// <copyright file="BuildStatusViewModel.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Soloplan.WhatsON.Jenkins.GUI
+namespace Soloplan.WhatsON.GUI.Common.BuildServer
 {
   using System;
   using System.Collections.ObjectModel;
+  using System.Windows.Input;
   using Soloplan.WhatsON.GUI.Common.SubjectTreeView;
 
-  class JenkinsStatusViewModel : StatusViewModel
+  public abstract class BuildStatusViewModel : StatusViewModel
   {
     private TimeSpan estimatedDuration;
     private TimeSpan duration;
@@ -19,6 +20,8 @@ namespace Soloplan.WhatsON.Jenkins.GUI
     private int? buildNumber;
 
     private int progres;
+
+    private int rawProgres;
 
     private bool buildingNoLongerThenExpected;
 
@@ -28,10 +31,6 @@ namespace Soloplan.WhatsON.Jenkins.GUI
 
     private TimeSpan buildTimeExcedingEstimation;
 
-    private OpenWebPageCommandData parentCommandData;
-
-    private ObservableCollection<CulpritViewModel> culprits;
-
     private bool failure;
 
     private bool unknown;
@@ -40,9 +39,9 @@ namespace Soloplan.WhatsON.Jenkins.GUI
 
     private bool unstable;
 
-    private int rawProgres;
+    private ObservableCollection<CulpritViewModel> culprits;
 
-    public JenkinsStatusViewModel(JenkinsProjectViewModel model)
+    public BuildStatusViewModel(SubjectViewModel model)
       : base(model)
     {
     }
@@ -50,24 +49,11 @@ namespace Soloplan.WhatsON.Jenkins.GUI
     /// <summary>
     /// Command for opening builds webPage.
     /// </summary>
-    public OpenWebPageCommand OpenBuildPage { get; } = new OpenWebPageCommand();
+    public abstract ICommand OpenBuildPage { get; }
 
-    public OpenWebPageCommandData OpenBuildPageCommandData
-    {
-      get
-      {
-        if (this.parentCommandData == null)
-        {
-          return null;
-        }
+    public abstract object OpenBuildPageCommandData { get; }
 
-        return new OpenWebPageCommandData
-        {
-          Address = this.parentCommandData.Address + "/" + this.BuildNumber,
-          Redirect = this.parentCommandData.Redirect
-        };
-      }
-    }
+    public ObservableCollection<CulpritViewModel> Culprits => this.culprits ?? (this.culprits = new ObservableCollection<CulpritViewModel>());
 
     public int? BuildNumber
     {
@@ -219,7 +205,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
         return this.progres;
       }
 
-      private set
+      protected set
       {
         if (this.progres != value)
         {
@@ -235,7 +221,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
     public int RawProgres
     {
       get => this.rawProgres;
-      private set
+      protected set
       {
         this.rawProgres = value;
         this.OnPropertyChanged();
@@ -268,51 +254,11 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       }
     }
 
-    public ObservableCollection<CulpritViewModel> Culprits => this.culprits ?? (this.culprits = new ObservableCollection<CulpritViewModel>());
-
-    public override void Update(Status newStatus)
+    protected void UpdateCalculatedFields()
     {
-      base.Update(newStatus);
-      var jenkinsStatus = newStatus as JenkinsStatus;
-      if (jenkinsStatus == null)
-      {
-        this.BuildNumber = null;
-        return;
-      }
-
-      this.BuildNumber = jenkinsStatus.BuildNumber;
-      this.Building = jenkinsStatus.Building;
-      this.Duration = jenkinsStatus.Duration;
-      this.EstimatedDuration = jenkinsStatus.EstimatedDuration;
-
-      if (this.State == ObservationState.Running)
-      {
-        var elapsedSinceStart = (DateTime.Now - this.Time).TotalSeconds;
-        this.RawProgres = (int)((100 * elapsedSinceStart) / this.EstimatedDuration.TotalSeconds);
-        this.Duration = DateTime.Now - this.Time;
-      }
-      else
-      {
-        this.RawProgres = 0;
-      }
-
-      this.Culprits.Clear();
-      foreach (var culprit in jenkinsStatus.Culprits)
-      {
-        var culpritModle = new CulpritViewModel();
-        culpritModle.Init(culprit);
-        this.Culprits.Add(culpritModle);
-      }
-
       this.UpdateStateFlags();
       this.UpdateEstimatedRemaining();
       this.UpdateProgres();
-    }
-
-    public void SetJobAddress(OpenWebPageCommandData parentData)
-    {
-      this.parentCommandData = parentData;
-      this.OnPropertyChanged(nameof(this.OpenBuildPageCommandData));
     }
 
     /// <summary>

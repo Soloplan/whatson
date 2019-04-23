@@ -29,6 +29,7 @@
 
       <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="SubjectMissingDataTemplate.xaml" />
+        <ResourceDictionary Source="../BuildServer/BuildProjectDataTemplate.xaml" />
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
   </UserControl.Resources>
