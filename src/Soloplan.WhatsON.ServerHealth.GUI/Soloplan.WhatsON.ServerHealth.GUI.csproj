@@ -60,6 +60,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Soloplan.WhatsON.GUI.Common\Soloplan.WhatsON.GUI.Common.csproj">
+      <Project>{8659027c-e4da-40d3-b081-fff37bdfd73f}</Project>
+      <Name>Soloplan.WhatsON.GUI.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Soloplan.WhatsON.GUI\Soloplan.WhatsON.GUI.csproj">
       <Project>{bb65378f-518e-43e4-a374-592a9fe88e51}</Project>
       <Name>Soloplan.WhatsON.GUI</Name>
