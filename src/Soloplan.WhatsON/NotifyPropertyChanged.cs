@@ -1,4 +1,4 @@
-﻿namespace Soloplan.WhatsON.GUI
+﻿namespace Soloplan.WhatsON
 {
   using System.ComponentModel;
   using System.Runtime.CompilerServices;

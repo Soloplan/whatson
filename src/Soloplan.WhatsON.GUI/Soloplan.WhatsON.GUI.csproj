@@ -94,7 +94,6 @@
     <Compile Include="VisualConfig\GroupExpansionSettings.cs" />
     <Compile Include="VisualConfig\MainWindowSettigns.cs" />
     <Compile Include="NotificationsModel.cs" />
-    <Compile Include="NotifyPropertyChanged.cs" />
     <Compile Include="Properties\ConfigurationItems.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
