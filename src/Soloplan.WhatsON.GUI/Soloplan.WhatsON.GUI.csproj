@@ -232,6 +232,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Soloplan.WhatsON.GUI.Common\Soloplan.WhatsON.GUI.Common.csproj">
+      <Project>{8659027c-e4da-40d3-b081-fff37bdfd73f}</Project>
+      <Name>Soloplan.WhatsON.GUI.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Soloplan.WhatsON\Soloplan.WhatsON.csproj">
       <Project>{C5EEC17B-E8A9-4CD2-BE0B-491E70D9F511}</Project>
       <Name>Soloplan.WhatsON</Name>
