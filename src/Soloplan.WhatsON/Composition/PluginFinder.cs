@@ -42,7 +42,7 @@ namespace Soloplan.WhatsON.Composition
         var assembly = Assembly.LoadFile(absoluteName);
         foreach (var type in assembly.GetExportedTypes())
         {
-          if (typeof(IPlugIn).IsAssignableFrom(type))
+          if (typeof(IPlugIn).IsAssignableFrom(type) && !type.IsAbstract)
           {
             log.Debug("Found plugin {plugin}", new { Assembly = absoluteName, PluginType = type });
             yield return Activator.CreateInstance(type) as IPlugIn;
