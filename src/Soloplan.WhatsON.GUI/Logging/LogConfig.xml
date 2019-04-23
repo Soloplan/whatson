@@ -10,7 +10,8 @@
             xsi:type="File"
             fileName="${var:logFileDir}/whatsON.log"
             archiveFileName="${var:logFileDir}/archives/{#####}.zip"
-            layout="${longdate} ${level} ${callsite}:${callsite-linenumber}  - ${message}"
+            layout="${longdate} ${level} ${callsite}:${callsite-linenumber}  - ${message}
+                    ${exception:format=Type, Message,ToString,StackTrace:maxInnerExceptionLevel=10:separator=\r\n}"
             keepFileOpen="false" 
             archiveAboveSize="20971520"
             enableArchiveFileCompression="true"

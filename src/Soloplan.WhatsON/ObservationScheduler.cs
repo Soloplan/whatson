@@ -166,7 +166,7 @@ namespace Soloplan.WhatsON
         }
         catch (Exception e)
         {
-          log.Error("Exception occurred when observing subject {subject}, exception {e}", new { Interval = subject.Interval, Name = subject.Subject.SubjectConfiguration.Name, CurrentStatus = subject.Subject.CurrentStatus }, e);
+          log.Error(e, "Exception occurred when observing subject {subject}", new { Interval = subject.Interval, Name = subject.Subject.SubjectConfiguration.Name, CurrentStatus = subject.Subject.CurrentStatus });
         }
       }
 
