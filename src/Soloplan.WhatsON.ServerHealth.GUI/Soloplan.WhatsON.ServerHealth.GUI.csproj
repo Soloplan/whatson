@@ -64,11 +64,6 @@
       <Project>{8659027c-e4da-40d3-b081-fff37bdfd73f}</Project>
       <Name>Soloplan.WhatsON.GUI.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Soloplan.WhatsON.GUI\Soloplan.WhatsON.GUI.csproj">
-      <Project>{bb65378f-518e-43e4-a374-592a9fe88e51}</Project>
-      <Name>Soloplan.WhatsON.GUI</Name>
-      <Private>False</Private>
-    </ProjectReference>
     <ProjectReference Include="..\Soloplan.WhatsON.ServerHealth\Soloplan.WhatsON.ServerHealth.csproj">
       <Project>{1efdf62c-568c-49ba-8d1d-3b0b05945271}</Project>
       <Name>Soloplan.WhatsON.ServerHealth</Name>
