@@ -26,6 +26,10 @@
                      Fill="{Binding CurrentStatus.State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}" />
         </StackPanel>
       </DataTemplate>
+
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="SubjectMissingDataTemplate.xaml" />
+      </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
   </UserControl.Resources>
 

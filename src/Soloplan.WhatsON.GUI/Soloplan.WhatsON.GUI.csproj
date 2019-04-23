@@ -90,6 +90,7 @@
     <Compile Include="Config\ConfigResourcesHelper.cs" />
     <Compile Include="Logging\ExceptionHandlingInitialization.cs" />
     <Compile Include="Logging\LoggingConfiguration.cs" />
+    <Compile Include="SubjectTreeView\SubjectMissingViewModel.cs" />
     <Compile Include="VisualConfig\GroupExpansionSettings.cs" />
     <Compile Include="VisualConfig\MainWindowSettigns.cs" />
     <Compile Include="NotificationsModel.cs" />
@@ -188,6 +189,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="SubjectTreeView\SubjectMissingDataTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="SubjectTreeView\SubjectsTreeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

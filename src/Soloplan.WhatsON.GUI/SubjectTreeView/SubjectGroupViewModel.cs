@@ -126,6 +126,11 @@ namespace Soloplan.WhatsON.GUI.SubjectTreeView
 
     private SubjectViewModel GetSubjectViewModel(Subject subject)
     {
+      if (subject == null)
+      {
+        return new SubjectMissingViewModel();
+      }
+
       var presentationPlugIn = PluginsManager.Instance.GetPresentationPlugIn(subject.GetType());
       if (presentationPlugIn != null)
       {

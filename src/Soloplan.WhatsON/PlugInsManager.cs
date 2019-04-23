@@ -131,7 +131,8 @@ namespace Soloplan.WhatsON
       var plugin = this.SubjectPlugins.FirstOrDefault(p => p.GetType().FullName == subjectConfiguration.PluginTypeName);
       if (plugin == null)
       {
-        throw new InvalidOperationException($"Couldn't find plugin for a type: {subjectConfiguration.PluginTypeName}");
+        log.Error("Couldn't find plugin for a type: {pluginType}", subjectConfiguration.PluginTypeName);
+        return null;
       }
 
       var subject = plugin.CreateNew(subjectConfiguration);
@@ -156,7 +157,8 @@ namespace Soloplan.WhatsON
       var plugin = this.SubjectPlugins.FirstOrDefault(p => p.GetType().FullName == subjectConfiguration.PluginTypeName);
       if (plugin == null)
       {
-        throw new InvalidOperationException($"Couldn't find plugin for a type: {subjectConfiguration.PluginTypeName}");
+        log.Error("Couldn't find plugin for a type: {pluginType}", subjectConfiguration.PluginTypeName);
+        return null;
       }
 
       return plugin.CreateNew(subjectConfiguration);
