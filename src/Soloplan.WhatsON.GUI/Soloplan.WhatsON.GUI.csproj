@@ -90,29 +90,17 @@
     <Compile Include="Config\ConfigResourcesHelper.cs" />
     <Compile Include="Logging\ExceptionHandlingInitialization.cs" />
     <Compile Include="Logging\LoggingConfiguration.cs" />
-    <Compile Include="SubjectTreeView\SubjectMissingViewModel.cs" />
-    <Compile Include="VisualConfig\GroupExpansionSettings.cs" />
-    <Compile Include="VisualConfig\MainWindowSettigns.cs" />
     <Compile Include="NotificationsModel.cs" />
     <Compile Include="Properties\ConfigurationItems.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ConfigurationItems.resx</DependentUpon>
     </Compile>
-    <Compile Include="SubjectTreeView\IHandleDoubleClick.cs" />
-    <Compile Include="SubjectTreeView\ITreeViewPresentationPlugIn.cs" />
-    <Compile Include="SubjectTreeView\StatusToColorConverter.cs" />
-    <Compile Include="SubjectTreeView\SubjectTreeViewModel.cs" />
-    <Compile Include="SubjectTreeView\SubjectViewModel.cs" />
-    <Compile Include="SubjectTreeView\PluginsManagerExtension.cs" />
-    <Compile Include="SubjectTreeView\TimeToAproximateTimeConverter.cs" />
     <Compile Include="Config\ConfigControlBuilder.cs" />
     <Compile Include="Config\NotEmptyValidationRule.cs" />
     <Compile Include="Config\View\Validation.cs" />
     <Compile Include="ThemeHelper.cs" />
     <Compile Include="TrayHandler.cs" />
-    <Compile Include="VisualConfig\TreeListSettings.cs" />
-    <Compile Include="VisualConfig\WindowSettings.cs" />
     <Page Include="Config\AboutPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -141,11 +129,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Compile Include="SubjectTreeView\StatusViewModel.cs" />
-    <Compile Include="SubjectTreeView\SubjectsTreeView.xaml.cs">
-      <DependentUpon>SubjectsTreeView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="SubjectTreeView\SubjectGroupViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -188,14 +171,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="SubjectTreeView\SubjectMissingDataTemplate.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="SubjectTreeView\SubjectsTreeView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

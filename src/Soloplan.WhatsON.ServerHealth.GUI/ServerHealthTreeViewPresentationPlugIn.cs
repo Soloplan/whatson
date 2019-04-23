@@ -5,7 +5,7 @@
   using System.Reflection;
   using System.Text;
   using System.Xml;
-  using Soloplan.WhatsON.GUI.SubjectTreeView;
+  using Soloplan.WhatsON.GUI.Common.SubjectTreeView;
 
   public class ServerHealthTreeViewPresentationPlugIn : ITreeViewPresentationPlugIn
   {

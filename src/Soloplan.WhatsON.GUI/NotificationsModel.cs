@@ -9,7 +9,7 @@ namespace Soloplan.WhatsON.GUI
 {
   using System.Collections.ObjectModel;
   using System.Linq;
-  using Soloplan.WhatsON.GUI.SubjectTreeView;
+  using Soloplan.WhatsON.GUI.Common.SubjectTreeView;
 
   public class NotificationsModel : NotifyPropertyChanged
   {

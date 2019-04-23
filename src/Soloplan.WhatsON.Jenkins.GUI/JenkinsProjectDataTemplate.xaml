@@ -5,7 +5,7 @@
                     xmlns:jenkins="clr-namespace:Soloplan.WhatsON.Jenkins.GUI;assembly=Soloplan.WhatsON.Jenkins.GUI"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                    xmlns:subjectTreeView="clr-namespace:Soloplan.WhatsON.GUI.SubjectTreeView;assembly=Soloplan.WhatsON.GUI">
+                    xmlns:subjectTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.SubjectTreeView;assembly=Soloplan.WhatsON.GUI.Common">
 
   <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
   <subjectTreeView:StatusToColorConverter x:Key="StatusToColorConverter" />

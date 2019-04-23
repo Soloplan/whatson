@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Soloplan.WhatsON.GUI.VisualConfig
+namespace Soloplan.WhatsON.GUI.Common.VisualConfig
 {
   public class GroupExpansionSettings
   {

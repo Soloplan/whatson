@@ -5,8 +5,8 @@
   using System.IO;
   using System.Linq;
   using System.Windows.Forms;
-  using Soloplan.WhatsON.GUI.SubjectTreeView;
-  using Soloplan.WhatsON.GUI.VisualConfig;
+  using Soloplan.WhatsON.GUI.Common.SubjectTreeView;
+  using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.Serialization;
   using Application = System.Windows.Application;
 

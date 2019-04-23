@@ -1,4 +1,4 @@
-﻿namespace Soloplan.WhatsON.GUI.SubjectTreeView
+﻿namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
 {
   using System.Collections.Generic;
   using System.ComponentModel;
@@ -8,7 +8,7 @@
   using System.Windows.Data;
   using System.Windows.Input;
   using System.Windows.Markup;
-  using Soloplan.WhatsON.GUI.VisualConfig;
+  using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.Serialization;
 
   /// <summary>

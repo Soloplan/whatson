@@ -1,4 +1,4 @@
-﻿namespace Soloplan.WhatsON.GUI.SubjectTreeView
+﻿namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
 {
   using System;
   using System.Windows.Input;

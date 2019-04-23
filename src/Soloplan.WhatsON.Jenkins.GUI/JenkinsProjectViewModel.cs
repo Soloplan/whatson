@@ -10,7 +10,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
   using System.Windows.Controls;
   using System.Windows.Input;
   using NLog;
-  using Soloplan.WhatsON.GUI.SubjectTreeView;
+  using Soloplan.WhatsON.GUI.Common.SubjectTreeView;
   using Soloplan.WhatsON.ServerBase;
 
   public class JenkinsProjectViewModel : SubjectViewModel

@@ -3,14 +3,14 @@
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 
-namespace Soloplan.WhatsON.GUI.SubjectTreeView
+namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
 {
   using System.Collections.Generic;
   using System.Collections.ObjectModel;
   using System.Linq;
   using System.Windows.Input;
   using NLog;
-  using Soloplan.WhatsON.GUI.VisualConfig;
+  using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.Serialization;
 
   /// <summary>

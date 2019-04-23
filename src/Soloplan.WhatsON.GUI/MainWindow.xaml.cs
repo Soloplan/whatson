@@ -10,8 +10,8 @@ namespace Soloplan.WhatsON.GUI
   using System.Collections.Generic;
   using System.Windows;
   using System.Windows.Input;
+  using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.GUI.Config.View;
-  using Soloplan.WhatsON.GUI.VisualConfig;
   using Soloplan.WhatsON.Serialization;
 
   /// <summary>

@@ -9,7 +9,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
 {
   using System;
   using System.Collections.ObjectModel;
-  using Soloplan.WhatsON.GUI.SubjectTreeView;
+  using Soloplan.WhatsON.GUI.Common.SubjectTreeView;
 
   class JenkinsStatusViewModel : StatusViewModel
   {
