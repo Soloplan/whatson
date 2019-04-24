@@ -33,7 +33,14 @@ namespace Soloplan.WhatsON.CruiseControl
       var pollInterval = new TimeSpan(0, 0, 0, interval, 0);
       if (DateTime.Now - this.lastPoolled > pollInterval)
       {
-        this.cache = await this.GetStatusAsync<CruiseControlJobs>(cancellationToken, this.address);
+        try
+        {
+          this.cache = await this.GetStatusAsync<CruiseControlJobs>(cancellationToken, this.address);
+        }
+        finally
+        {
+          this.lastPoolled = DateTime.Now;
+        }
       }
 
       return this.cache.CruiseControlProject.FirstOrDefault(job => job.Name == projectName);
