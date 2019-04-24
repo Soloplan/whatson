@@ -8,10 +8,10 @@
 namespace Soloplan.WhatsON.CruiseControl
 {
   using System;
-  using System.Globalization;
   using System.Linq;
   using System.Threading;
   using System.Threading.Tasks;
+  using NLog;
   using Soloplan.WhatsON;
   using Soloplan.WhatsON.CruiseControl.Model;
   using Soloplan.WhatsON.ServerBase;
@@ -21,6 +21,8 @@ namespace Soloplan.WhatsON.CruiseControl
   public class CruiseControlProject : ServerSubject
   {
     private const string ProjectName = "ProjectName";
+
+    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
     private TimeSpan estimatedDuration = default(TimeSpan);
 
@@ -53,30 +55,26 @@ namespace Soloplan.WhatsON.CruiseControl
 
     private CruiseControlStatus PreviousCheckStatus { get; set; }
 
-    /// <summary>
-    /// Gets the project.
-    /// </summary>
-    /// <returns>Project name.</returns>
-    public string GetProject()
-    {
-      return this.SubjectConfiguration.GetConfigurationByKey(CruiseControlProject.ProjectName).Value;
-    }
-
     protected override async Task ExecuteQuery(CancellationToken cancellationToken, params string[] args)
     {
       var server = this.ServerManager.GetServer(this.Address);
       var projectData = await server.GetProjectStatus(cancellationToken, this.Project, 5);
-      var status = CreateStatus(projectData);
+      log.Trace("Retrieved status for cruise control project {project}: {@projectData}", this.Project, projectData);
+      var status = this.CreateStatus(projectData);
+      log.Trace("Converted status for cruise control project {project}: {@status}", this.Project, status);
       this.CurrentStatus = status;
 
-      if (this.PreviousCheckStatus != null && this.PreviousCheckStatus.BuildNumber < status.BuildNumber)
+      if (this.PreviousCheckStatus != null && this.PreviousCheckStatus.State == ObservationState.Running && this.PreviousCheckStatus.BuildNumber < status.BuildNumber)
       {
+        log.Debug("Changing previous build status.");
         if (projectData.LastBuildStatus == "Success")
         {
+          log.Debug("Changing status to Success");
           this.PreviousCheckStatus.State = ObservationState.Success;
         }
         else if (projectData.LastBuildStatus == "Failure")
         {
+          log.Debug("Changing status to Failure");
           this.PreviousCheckStatus.State = ObservationState.Failure;
         }
       }
@@ -92,6 +90,7 @@ namespace Soloplan.WhatsON.CruiseControl
           {
             if (status.State != this.PreviousCheckStatus.State || this.PreviousCheckStatus.BuildNumber != currentStatus.BuildNumber)
             {
+              log.Debug("Shoud take snapshot, build not running. {@status}, {@PreviousCheckStatus}", status, this.PreviousCheckStatus);
               this.estimatedDuration = this.PreviousCheckStatus.Duration;
               this.PreviousCheckStatus = currentStatus;
               return true;
@@ -101,6 +100,7 @@ namespace Soloplan.WhatsON.CruiseControl
           {
             if (this.PreviousCheckStatus.BuildNumber != currentStatus.BuildNumber)
             {
+              log.Debug("Shoud take snapshot, build running. {@status}, {@PreviousCheckStatus}", status, this.PreviousCheckStatus);
               this.AddSnapshot(this.PreviousCheckStatus);
               this.estimatedDuration = this.PreviousCheckStatus.Duration;
               this.PreviousCheckStatus = currentStatus;
@@ -110,6 +110,7 @@ namespace Soloplan.WhatsON.CruiseControl
         }
         else
         {
+          log.Debug("Initialize previous check status: {@status}", currentStatus);
           this.PreviousCheckStatus = currentStatus;
         }
       }

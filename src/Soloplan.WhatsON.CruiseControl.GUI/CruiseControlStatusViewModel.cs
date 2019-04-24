@@ -42,7 +42,6 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
       {
         var elapsedSinceStart = (DateTime.Now - this.Time).TotalSeconds;
         this.RawProgres = (int)((100 * elapsedSinceStart) / this.EstimatedDuration.TotalSeconds);
-        this.Duration = DateTime.Now - this.Time;
       }
       else
       {
