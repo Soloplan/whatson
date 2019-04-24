@@ -20,14 +20,14 @@
   <Window.Resources>
     <BooleanToVisibilityConverter x:Key="BoolToVis" />
   </Window.Resources>
-  <StackPanel>
+  <DockPanel>
     <materialDesign:ColorZone Margin="0"
                               Padding="6"
                               materialDesign:ShadowAssist.ShadowDepth="Depth2"
                               DockPanel.Dock="Top"
                               Mode="PrimaryMid"
                               MouseDown="MainWindowBarMouseDown">
-      <DockPanel>
+      <DockPanel DockPanel.Dock="Top">
 
         <materialDesign:PackIcon Width="30"
                                  Height="30"
@@ -77,6 +77,6 @@
 
       </DockPanel>
     </materialDesign:ColorZone>
-    <subjectTreeView:SubjectsTreeView x:Name="mainTreeView" />
-  </StackPanel>
+    <subjectTreeView:SubjectsTreeView DockPanel.Dock="Bottom"  x:Name="mainTreeView" />
+  </DockPanel>
 </Window>
