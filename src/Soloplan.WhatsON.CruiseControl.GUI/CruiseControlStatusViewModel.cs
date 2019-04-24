@@ -8,20 +8,20 @@
 namespace Soloplan.WhatsON.CruiseControl.GUI
 {
   using System;
-  using System.Windows.Input;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.GUI.Common.SubjectTreeView;
+  using Soloplan.WhatsON.Jenkins.GUI;
 
   public class CruiseControlStatusViewModel : BuildStatusViewModel
   {
+    private OpenWebPageCommandData openBuildPageCommandData;
+
     public CruiseControlStatusViewModel(SubjectViewModel model)
       : base(model)
     {
     }
 
-    public override ICommand OpenBuildPage => null;
-
-    public override object OpenBuildPageCommandData => null;
+    public override OpenWebPageCommandData OpenBuildPageCommandData => this.openBuildPageCommandData;
 
     public override void Update(Status newStatus)
     {
@@ -52,11 +52,13 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
       this.Culprits.Clear();
       foreach (var culprit in ccStatus.Culprits)
       {
-        var culpritModel = new CruiseControlCulpritViewModel();
+        var culpritModel = new CulpritViewModel();
         culpritModel.FullName = culprit.Name;
         this.Culprits.Add(culpritModel);
       }
 
+      this.openBuildPageCommandData = new OpenWebPageCommandData();
+      this.OpenBuildPageCommandData.Address = ccStatus.JobUrl;
       this.UpdateCalculatedFields();
     }
   }

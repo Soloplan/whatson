@@ -7,26 +7,20 @@
 
 namespace Soloplan.WhatsON.Jenkins.GUI
 {
-  using System.Windows.Input;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.GUI.Common.SubjectTreeView;
   using Soloplan.WhatsON.ServerBase;
 
   public class JenkinsProjectViewModel : BuildServerProjectStatusViewModel
   {
-    private OpenWebPageCommandData openWebPageParam;
+    private OpenJenkinsWebPageCommandData openWebPageParam;
 
-    /// <summary>
-    /// Gets command for opening builds webPage.
-    /// </summary>
-    public override ICommand OpenWebPage { get; } = new OpenWebPageCommand();
-
-    public override object OpenWebPageParam
+    public override OpenWebPageCommandData OpenWebPageParam
     {
       get => this.openWebPageParam;
       set
       {
-        this.openWebPageParam = value as OpenWebPageCommandData;
+        this.openWebPageParam = value as OpenJenkinsWebPageCommandData;
         this.OnPropertyChanged(nameof(this.OpenWebPageParam));
       }
     }
@@ -40,7 +34,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
         (status.OpenBuildPage as OpenWebPageCommand).CanExecuteExternal += (s, e) => e.Cancel = this.CurrentStatus is JenkinsStatusViewModel model && !model.Building;
       }
 
-      OpenWebPageCommandData param = new OpenWebPageCommandData();
+      OpenJenkinsWebPageCommandData param = new OpenJenkinsWebPageCommandData();
       if (bool.TryParse(configuration.GetConfigurationByKey(JenkinsProject.RedirectPlugin)?.Value, out var redirect) && redirect)
       {
         param.Redirect = true;
@@ -50,7 +44,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
         param.Redirect = false;
       }
 
-      param.Address = configuration.GetConfigurationByKey(ServerSubject.ServerAddress).Value + "/job/" + configuration.GetConfigurationByKey(JenkinsProject.ProjectName).Value;
+      param.Address = configuration.GetConfigurationByKey(ServerSubject.ServerAddress).Value.Trim('/') + "/job/" + configuration.GetConfigurationByKey(JenkinsProject.ProjectName).Value.Trim('/');
 
       this.OpenWebPageParam = param;
 

@@ -7,18 +7,30 @@
 
 namespace Soloplan.WhatsON.CruiseControl.GUI
 {
-  using System.Windows.Input;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.GUI.Common.SubjectTreeView;
+  using Soloplan.WhatsON.Jenkins.GUI;
 
   public class CruiseControlProjectViewModel : BuildServerProjectStatusViewModel
   {
-    public override ICommand OpenWebPage => null;
-
-    public override object OpenWebPageParam
+    public override OpenWebPageCommandData OpenWebPageParam
     {
-      get => null;
-      set { }
+      get
+      {
+        if (this.CurrentStatus is CruiseControlStatusViewModel ccModel && !string.IsNullOrEmpty(ccModel.OpenBuildPageCommandData?.Address))
+        {
+          return new OpenWebPageCommandData
+          {
+            Address = ccModel.OpenBuildPageCommandData.Address.Replace("ViewLatestBuildReport.aspx", "ViewProjectReport.aspx")
+          };
+        }
+
+        return null;
+      }
+
+      set
+      {
+      }
     }
 
     protected override StatusViewModel GetViewModelForStatus()

@@ -10,15 +10,16 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
   using System.Windows.Controls;
   using System.Windows.Input;
   using Soloplan.WhatsON.GUI.Common.SubjectTreeView;
+  using Soloplan.WhatsON.Jenkins.GUI;
 
   public abstract class BuildServerProjectStatusViewModel : SubjectViewModel
   {
     /// <summary>
     /// Gets command for opening builds webPage.
     /// </summary>
-    public abstract ICommand OpenWebPage { get; }
+    public virtual OpenWebPageCommand OpenWebPage { get; } = new OpenWebPageCommand();
 
-    public abstract object OpenWebPageParam { get; set; }
+    public abstract OpenWebPageCommandData OpenWebPageParam { get; set; }
 
     public override void OnDoubleClick(object sender, MouseButtonEventArgs e)
     {

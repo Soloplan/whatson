@@ -8,24 +8,18 @@
 namespace Soloplan.WhatsON.Jenkins.GUI
 {
   using System;
-  using System.Windows.Input;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
 
   class JenkinsStatusViewModel : BuildStatusViewModel
   {
-    private OpenWebPageCommandData parentCommandData;
+    private OpenJenkinsWebPageCommandData parentCommandData;
 
     public JenkinsStatusViewModel(JenkinsProjectViewModel model)
       : base(model)
     {
     }
 
-    /// <summary>
-    /// Command for opening builds webPage.
-    /// </summary>
-    public override ICommand OpenBuildPage { get; } = new OpenWebPageCommand();
-
-    public override object OpenBuildPageCommandData
+    public override OpenWebPageCommandData OpenBuildPageCommandData
     {
       get
       {
@@ -34,7 +28,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
           return null;
         }
 
-        return new OpenWebPageCommandData
+        return new OpenJenkinsWebPageCommandData
         {
           Address = this.parentCommandData.Address + "/" + this.BuildNumber,
           Redirect = this.parentCommandData.Redirect
@@ -79,7 +73,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       this.UpdateCalculatedFields();
     }
 
-    public void SetJobAddress(OpenWebPageCommandData parentData)
+    public void SetJobAddress(OpenJenkinsWebPageCommandData parentData)
     {
       this.parentCommandData = parentData;
       this.OnPropertyChanged(nameof(this.OpenBuildPageCommandData));

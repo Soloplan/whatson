@@ -53,10 +53,8 @@ namespace Soloplan.WhatsON.Jenkins.GUI
 
   public class OpenWebPageCommandData
   {
-    public string FullAddress => this.Address.TrimEnd('/') + (this.Redirect ? "/display/redirect" : string.Empty);
+    public virtual string FullAddress => this.Address;
 
     public string Address { get; set; }
-
-    public bool Redirect { get; set; }
   }
 }

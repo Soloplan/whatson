@@ -9,8 +9,8 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 {
   using System;
   using System.Collections.ObjectModel;
-  using System.Windows.Input;
   using Soloplan.WhatsON.GUI.Common.SubjectTreeView;
+  using Soloplan.WhatsON.Jenkins.GUI;
 
   public abstract class BuildStatusViewModel : StatusViewModel
   {
@@ -49,9 +49,9 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     /// <summary>
     /// Command for opening builds webPage.
     /// </summary>
-    public abstract ICommand OpenBuildPage { get; }
+    public virtual OpenWebPageCommand OpenBuildPage { get; } = new OpenWebPageCommand();
 
-    public abstract object OpenBuildPageCommandData { get; }
+    public abstract OpenWebPageCommandData OpenBuildPageCommandData { get; }
 
     public ObservableCollection<CulpritViewModel> Culprits => this.culprits ?? (this.culprits = new ObservableCollection<CulpritViewModel>());
 

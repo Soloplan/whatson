@@ -53,7 +53,6 @@ namespace Soloplan.WhatsON.CruiseControl
 
     private CruiseControlStatus PreviousCheckStatus { get; set; }
 
-
     /// <summary>
     /// Gets the project.
     /// </summary>

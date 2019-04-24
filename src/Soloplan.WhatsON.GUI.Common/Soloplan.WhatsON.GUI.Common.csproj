@@ -48,6 +48,7 @@
     <Compile Include="BuildServer\BuildServerProjectStatusViewModel.cs" />
     <Compile Include="BuildServer\BuildStatusViewModel.cs" />
     <Compile Include="BuildServer\CulpritViewModel.cs" />
+    <Compile Include="OpenWebPageCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SubjectTreeView\IHandleDoubleClick.cs" />
     <Compile Include="SubjectTreeView\ITreeViewPresentationPlugIn.cs" />

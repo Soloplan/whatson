@@ -44,7 +44,6 @@
     <Compile Include="CruiseControlProjectViewModel.cs" />
     <Compile Include="CruiseControlStatusViewModel.cs" />
     <Compile Include="CruiseControlTreViewPresentationPlugIn.cs" />
-    <Compile Include="JenkinsCulpritViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
