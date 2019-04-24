@@ -154,14 +154,7 @@ namespace Soloplan.WhatsON
         return subject;
       }
 
-      var plugin = this.SubjectPlugins.FirstOrDefault(p => p.GetType().FullName == subjectConfiguration.PluginTypeName);
-      if (plugin == null)
-      {
-        log.Error("Couldn't find plugin for a type: {pluginType}", subjectConfiguration.PluginTypeName);
-        return null;
-      }
-
-      return plugin.CreateNew(subjectConfiguration);
+      return this.CreateNewSubject(subjectConfiguration);
     }
 
     /// <summary>
