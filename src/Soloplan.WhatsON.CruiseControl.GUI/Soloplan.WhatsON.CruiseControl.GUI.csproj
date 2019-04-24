@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5343A313-4D8D-4B14-8DF4-B575F8E06E74}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Soloplan.WhatsON.CruiseControl.GUI</RootNamespace>
+    <AssemblyName>Soloplan.WhatsON.CruiseControl.GUI</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CruiseControlProjectViewModel.cs" />
+    <Compile Include="CruiseControlStatusViewModel.cs" />
+    <Compile Include="CruiseControlTreViewPresentationPlugIn.cs" />
+    <Compile Include="JenkinsCulpritViewModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Soloplan.WhatsON.CruiseControl\Soloplan.WhatsON.CruiseControl.csproj">
+      <Project>{9072c11e-ed76-4cf8-83a2-fd87e8d43381}</Project>
+      <Name>Soloplan.WhatsON.CruiseControl</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Soloplan.WhatsON.GUI.Common\Soloplan.WhatsON.GUI.Common.csproj">
+      <Project>{8659027c-e4da-40d3-b081-fff37bdfd73f}</Project>
+      <Name>Soloplan.WhatsON.GUI.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Soloplan.WhatsON.ServerBase\Soloplan.WhatsON.ServerBase.csproj">
+      <Project>{4ff2c930-a740-4323-b63f-0d7b773e4355}</Project>
+      <Name>Soloplan.WhatsON.ServerBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Soloplan.WhatsON\Soloplan.WhatsON.csproj">
+      <Project>{c5eec17b-e8a9-4cd2-be0b-491e70d9f511}</Project>
+      <Name>Soloplan.WhatsON</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\..\config\Soloplan.WhatsON.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>move $(TargetDir)$(ProjectName).* plugins\</PostBuildEvent>
+  </PropertyGroup>
+</Project>

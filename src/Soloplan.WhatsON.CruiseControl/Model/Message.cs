@@ -18,6 +18,16 @@ namespace Soloplan.WhatsON.CruiseControl.Model
     public string Text { get; set; }
 
     [XmlAttributeAttribute("kind")]
-    public string Kind { get; set; }
+    public MessageKind Kind { get; set; }
+  }
+
+  public enum MessageKind
+  {
+    NotDefined = 0,
+    Breakers = 1,
+    Fixer = 2,
+    FailingTasks = 3,
+    BuildStatus = 4,
+    BuildAbortedBy = 5,
   }
 }

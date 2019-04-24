@@ -8,6 +8,10 @@
     <OutputPath>..\bin\Debug\plugins</OutputPath>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>..\bin\Release\plugins</OutputPath>
+  </PropertyGroup>
+
   <Import Project="..\..\config\Soloplan.WhatsON.targets" />
   
   <ItemGroup>

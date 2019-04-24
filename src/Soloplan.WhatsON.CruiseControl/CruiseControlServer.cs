@@ -25,7 +25,7 @@ namespace Soloplan.WhatsON.CruiseControl
 
     public CruiseControlServer(string address)
     {
-      this.address = address;
+      this.address = address.Trim('/') + "/XmlStatusReport.aspx";
     }
 
     public async Task<CruiseControlJob> GetProjectStatus(CancellationToken cancellationToken, string projectName, int interval)
