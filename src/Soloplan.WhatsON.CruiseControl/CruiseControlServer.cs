@@ -13,15 +13,17 @@ namespace Soloplan.WhatsON.CruiseControl
   using System.Threading;
   using System.Threading.Tasks;
   using System.Xml.Serialization;
+  using NLog;
   using Soloplan.WhatsON.CruiseControl.Model;
 
   public class CruiseControlServer
   {
+    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
     private string address;
 
     private DateTime lastPoolled;
 
-    private CruiseControlJobs cache;
+    private Task<CruiseControlJobs> cache;
 
     public CruiseControlServer(string address)
     {
@@ -33,10 +35,20 @@ namespace Soloplan.WhatsON.CruiseControl
       var pollInterval = new TimeSpan(0, 0, 0, interval, 0);
       if (DateTime.Now - this.lastPoolled > pollInterval)
       {
-        this.cache = await this.GetStatusAsync<CruiseControlJobs>(cancellationToken, this.address);
+        try
+        {
+          log.Trace("Polling server {@server}", new { Address = this.address, LastPolled = this.lastPoolled, CallingProject = projectName});
+          this.lastPoolled = DateTime.Now;
+          this.cache = this.GetStatusAsync<CruiseControlJobs>(cancellationToken, this.address);
+        }
+        finally
+        {
+          this.lastPoolled = DateTime.Now;
+        }
       }
 
-      return this.cache.CruiseControlProject.FirstOrDefault(job => job.Name == projectName);
+      log.Trace("Retrieving value from cache for project {projectName}", projectName);
+      return (await this.cache).CruiseControlProject.FirstOrDefault(job => job.Name == projectName);
     }
 
     private async Task<TModel> GetStatusAsync<TModel>(CancellationToken cancellationToken, string requestUrl)
