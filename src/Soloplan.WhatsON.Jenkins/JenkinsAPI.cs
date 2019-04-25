@@ -27,10 +27,9 @@ namespace Soloplan.WhatsON.Jenkins
     public async Task<JenkinsJob> GetJenkinsJob(JenkinsProject subject, CancellationToken token)
     {
       var address = subject.GetAddress();
-      var port = subject.GetPort();
       var projectName = subject.GetProject();
 
-      var jobRequest = $"{address.Trim('/')}:{port}/job/{projectName.Trim('/')}/api/json?tree={JenkinsJob.RequestProperties}";
+      var jobRequest = $"{address.Trim('/')}/job/{projectName.Trim('/')}/api/json?tree={JenkinsJob.RequestProperties}";
       log.Trace("Querying job: {jobRequest}", jobRequest);
       return await GetJenkinsModel<JenkinsJob>(subject, jobRequest, token);
     }
@@ -38,10 +37,9 @@ namespace Soloplan.WhatsON.Jenkins
     public async Task<JenkinsBuild> GetJenkinsBuild(JenkinsProject subject, int buildNumber, CancellationToken token)
     {
       var address = subject.GetAddress();
-      var port = subject.GetPort();
       var projectName = subject.GetProject();
 
-      var buildRequest = $"{address.Trim('/')}:{port}/job/{projectName.Trim('/')}/{buildNumber}/api/json?tree={JenkinsBuild.RequestProperties}";
+      var buildRequest = $"{address.Trim('/')}/job/{projectName.Trim('/')}/{buildNumber}/api/json?tree={JenkinsBuild.RequestProperties}";
       log.Trace("Querying build: {jobRequest}", buildRequest);
       return await GetJenkinsModel<JenkinsBuild>(subject, buildRequest, token);
     }

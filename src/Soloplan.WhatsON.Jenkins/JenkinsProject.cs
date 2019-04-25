@@ -17,7 +17,6 @@ namespace Soloplan.WhatsON.Jenkins
   [SubjectType("Jenkins Project Status", Description = "Retrieve the current status of a Jenkins project.")]
   [ConfigurationItem(ProjectName, typeof(string), Optional = false, Priority = 300)]
   [ConfigurationItem(RedirectPlugin, typeof(bool), Priority = 400)] // defines use of Display URL API Plugin https://wiki.jenkins.io/display/JENKINS/Display+URL+API+Plugin
-  [ConfigurationItem(ServerPort, typeof(int), Priority = 200)]
   public class JenkinsProject : ServerSubject
   {
     public const string ProjectName = "ProjectName";
@@ -26,11 +25,6 @@ namespace Soloplan.WhatsON.Jenkins
     /// The redirect plugin tag.
     /// </summary>
     public const string RedirectPlugin = "RedirectPlugin";
-
-    /// <summary>
-    /// The server port.
-    /// </summary>
-    public const string ServerPort = "Port";
 
     /// <summary>
     /// Logger instance used by this class.
@@ -55,23 +49,6 @@ namespace Soloplan.WhatsON.Jenkins
 
     public string Project => this.GetProject();
 
-    /// <summary>
-    /// Gets the port number.
-    /// </summary>
-    public int Port
-    {
-      get
-      {
-        var configItem = this.SubjectConfiguration.GetConfigurationByKey(ServerPort);
-        if (configItem != null)
-        {
-          return int.TryParse(configItem.Value, out var port) ? port : GetDefaultPort(this.Address);
-        }
-
-        return 80;
-      }
-    }
-
     private JenkinsStatus PreviousCheckStatus { get; set; }
 
     /// <summary>
@@ -81,15 +58,6 @@ namespace Soloplan.WhatsON.Jenkins
     public string GetProject()
     {
       return this.SubjectConfiguration.GetConfigurationByKey(JenkinsProject.ProjectName).Value;
-    }
-
-    /// <summary>
-    /// Gets the port.
-    /// </summary>
-    /// <returns>The port number.</returns>
-    public string GetPort()
-    {
-      return this.SubjectConfiguration.GetConfigurationByKey(ServerPort).Value;
     }
 
     protected override async Task ExecuteQuery(CancellationToken cancellationToken, params string[] args)
