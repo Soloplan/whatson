@@ -137,7 +137,7 @@ namespace Soloplan.WhatsON.CruiseControl
       result.NextBuildTime = job.NextBuildTime;
       result.LastBuildTime = job.LastBuildTime;
 
-      if (result.Building || result.CheckingModifications || result.Pending)
+      if (result.Building)
       {
         result.State = ObservationState.Running;
       }
