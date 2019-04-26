@@ -8,8 +8,10 @@
 namespace Soloplan.WhatsON.Jenkins
 {
   using System;
+  using System.Collections.Generic;
   using System.IO;
   using System.Net;
+  using System.Net.Http;
   using System.Threading;
   using System.Threading.Tasks;
   using Newtonsoft.Json;
@@ -32,6 +34,19 @@ namespace Soloplan.WhatsON.Jenkins
       var jobRequest = $"{address.Trim('/')}/job/{projectName.Trim('/')}/api/json?tree={JenkinsJob.RequestProperties}";
       log.Trace("Querying job: {jobRequest}", jobRequest);
       return await GetJenkinsModel<JenkinsJob>(subject, jobRequest, token);
+    }
+
+    /// <summary>
+    /// Gets the Jenkins jobs.
+    /// </summary>
+    /// <param name="address">The address.</param>
+    /// <param name="token">The token.</param>
+    /// <returns>The task with a result representing the <see cref="JenkinsJobs"/>.</returns>
+    public async Task<JenkinsJobs> GetJenkinsJobs(string address, CancellationToken token)
+    {
+      var jobsRequest = $"{address.Trim('/')}/api/json?tree={JenkinsJobs.RequestProperties}";
+      log.Trace("Querying jobs: {jobsRequest}", jobsRequest);
+      return await GetJenkinsModel<JenkinsJobs>(null, jobsRequest, token);
     }
 
     public async Task<JenkinsBuild> GetJenkinsBuild(JenkinsProject subject, int buildNumber, CancellationToken token)

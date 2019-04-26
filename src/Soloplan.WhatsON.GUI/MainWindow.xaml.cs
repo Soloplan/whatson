@@ -20,9 +20,9 @@ namespace Soloplan.WhatsON.GUI
   public partial class MainWindow
   {
     /// <summary>
-    /// The configuration.
+    /// Gets or sets the configuration.
     /// </summary>
-    public ApplicationConfiguration config { get; set; }
+    public ApplicationConfiguration Config { get; set; }
 
     /// <summary>
     /// The scheduler used for observing subjects.
@@ -35,11 +35,6 @@ namespace Soloplan.WhatsON.GUI
     private MainWindowSettigns settings;
 
     /// <summary>
-    /// Occurs when configuration was applied.
-    /// </summary>
-    public event EventHandler<ValueEventArgs<ApplicationConfiguration>> ConfigurationApplied;
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="MainWindow"/> class.
     /// </summary>
     /// <param name="scheduler">The scheduler observing build servers.</param>
@@ -49,11 +44,16 @@ namespace Soloplan.WhatsON.GUI
     {
       this.InitializeComponent();
       this.scheduler = scheduler;
-      this.config = configuration;
-      this.mainTreeView.Init(this.scheduler, this.config, initialSubjectState);
-      this.ShowInTaskbar = this.config.ShowInTaskbar;
-      this.Topmost = this.config.AlwaysOnTop;
+      this.Config = configuration;
+      this.mainTreeView.Init(this.scheduler, this.Config, initialSubjectState);
+      this.ShowInTaskbar = this.Config.ShowInTaskbar;
+      this.Topmost = this.Config.AlwaysOnTop;
     }
+
+    /// <summary>
+    /// Occurs when configuration was applied.
+    /// </summary>
+    public event EventHandler<ValueEventArgs<ApplicationConfiguration>> ConfigurationApplied;
 
     public MainWindowSettigns GetVisualSettigns()
     {
@@ -86,16 +86,16 @@ namespace Soloplan.WhatsON.GUI
     /// <param name="configuration">New configuration.</param>
     public void ApplyConfiguration(ApplicationConfiguration configuration)
     {
-      this.config = configuration;
-      this.mainTreeView.Update(this.config);
-      this.ShowInTaskbar = this.config.ShowInTaskbar;
-      this.Topmost = this.config.AlwaysOnTop;
+      this.Config = configuration;
+      this.mainTreeView.Update(this.Config);
+      this.ShowInTaskbar = this.Config.ShowInTaskbar;
+      this.Topmost = this.Config.AlwaysOnTop;
       this.MinimizeButton.Visibility = this.ShowInTaskbar ? Visibility.Visible : Visibility.Hidden;
     }
 
     private void OpenConfig(object sender, RoutedEventArgs e)
     {
-      var configWindow = new ConfigWindow(this.config);
+      var configWindow = new ConfigWindow(this.Config);
       configWindow.Owner = this;
       configWindow.ConfigurationApplied += (s, ev) =>
       {

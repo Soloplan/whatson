@@ -9,7 +9,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
   /// <summary>
   /// The view model for see <see cref="ConfigurationItem"/>.
   /// </summary>
-  public class ConfigurationItemViewModel : ViewModelBase
+  public class ConfigurationItemViewModel : ViewModelBase, IConfigurationItem
   {
     /// <summary>
     /// The key.

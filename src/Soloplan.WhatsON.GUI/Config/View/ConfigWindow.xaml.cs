@@ -152,7 +152,7 @@ namespace Soloplan.WhatsON.GUI.Config.View
           this.ConfigFrame.Content = this.mainPage;
           return;
         case SubjectsListItemTag:
-          this.subjectPage = this.subjectPage ?? new SubjectsPage(this.configurationViewModel.Subjects);
+          this.subjectPage = this.subjectPage ?? new SubjectsPage(this.configurationViewModel.Subjects, this);
           this.ConfigFrame.Content = this.subjectPage;
           return;
         case AboutListItemTag:

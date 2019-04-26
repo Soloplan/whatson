@@ -1,0 +1,29 @@
+﻿<Window x:Class="Soloplan.WhatsON.GUI.Config.Wizard.WizardWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Config.Wizard"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        
+        mc:Ignorable="d"
+        Title="Wizard" Height="711.897" Width="548.232" ShowInTaskbar="False">
+  <materialDesign:DialogHost Identifier="WizardWaitDialogHostId" Name="WizardWaitDialogHost">
+    <materialDesign:DialogHost.DialogContent>
+      <ProgressBar
+        Style="{StaticResource MaterialDesignCircularProgressBar}"
+        Value="0"
+        IsIndeterminate="True" Width="50" Height="50" Margin="10" />
+    </materialDesign:DialogHost.DialogContent>
+
+    <DockPanel LastChildFill="True" Margin="6">
+      <TextBlock x:Name="StepDescription" TextWrapping="Wrap" Text="Wizard step description" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,0,0,10" FontSize="24" FontFamily="Arial" FontWeight="SemiBold"/>
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" DockPanel.Dock="Bottom" Margin="0,15,0,6">
+        <Button Margin="0,0,10,0" Click="PrevClick" IsEnabled="{Binding Path=IsNotFirstStep}" Width="90">Previous</Button>
+        <Button Click="NextClick" Visibility="{Binding Path=IsNotLastStep, Converter={StaticResource BoolToVis}}" Width="90">Next</Button>
+        <Button Click="FinishClick" Visibility="{Binding Path=IsLastStep, Converter={StaticResource BoolToVis}}" IsEnabled="{Binding Path=IsAnyProjectChecked}" Width="90">Finish</Button>
+      </StackPanel>
+      <Frame x:Name="Frame" Content="Frame" NavigationUIVisibility="Hidden"/>
+    </DockPanel>
+  </materialDesign:DialogHost>
+</Window>

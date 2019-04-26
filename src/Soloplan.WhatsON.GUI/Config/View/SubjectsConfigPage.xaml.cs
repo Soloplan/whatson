@@ -6,32 +6,55 @@
 
 namespace Soloplan.WhatsON.GUI.Config.View
 {
+  using System;
+  using System.ComponentModel;
+  using System.Linq;
+  using System.Runtime.CompilerServices;
+  using System.Windows;
   using System.Windows.Controls;
   using MaterialDesignThemes.Wpf;
   using Soloplan.WhatsON.GUI.Config.ViewModel;
+  using Soloplan.WhatsON.GUI.Config.Wizard;
 
   /// <summary>
   /// Interaction logic for SubjectsPage.xaml
   /// </summary>
-  public partial class SubjectsPage : Page
+  public partial class SubjectsPage : Page, INotifyPropertyChanged
   {
+    /// <summary>
+    /// The owner window.
+    /// </summary>
+    private readonly Window ownerWindow;
+
     /// <summary>
     /// The current subject.
     /// </summary>
     private SubjectViewModel currentSubject;
 
     /// <summary>
+    /// The active subject supports wizard.
+    /// </summary>
+    private bool activeSubjectSupportsWizard;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="SubjectsPage"/> class.
     /// </summary>
     /// <param name="subjects">The subjects.</param>
-    public SubjectsPage(SubjectViewModelCollection subjects)
+    /// <param name="ownerWindow">The owner <see cref="Window"/>.</param>
+    public SubjectsPage(SubjectViewModelCollection subjects, Window ownerWindow)
     {
+      this.ownerWindow = ownerWindow;
       this.Subjects = subjects;
       this.DataContext = this;
       this.InitializeComponent();
       this.Subjects.Loaded -= this.SubjectsLoaded;
       this.Subjects.Loaded += this.SubjectsLoaded;
     }
+
+    /// <summary>
+    /// Occurs when a property was changed.
+    /// </summary>
+    public event PropertyChangedEventHandler PropertyChanged;
 
     /// <summary>
     /// Gets the subjects.
@@ -42,6 +65,28 @@ namespace Soloplan.WhatsON.GUI.Config.View
     /// Gets the current subject.
     /// </summary>
     public SubjectViewModel CurrentSubject => this.currentSubject ?? (SubjectViewModel)this.uxSubjects.SelectedItem;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether active subject supports wizard.
+    /// </summary>
+    public bool ActiveSubjectSupportsWizard
+    {
+      get => this.activeSubjectSupportsWizard;
+      set
+      {
+        this.activeSubjectSupportsWizard = value;
+        this.OnPropertyChanged(nameof(this.ActiveSubjectSupportsWizard));
+      }
+    }
+
+    /// <summary>
+    /// Called when property was changed.
+    /// </summary>
+    /// <param name="propertyName">Name of the property.</param>
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+      this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 
     /// <summary>
     /// Handles the Loaded event of the Subjects control.
@@ -75,6 +120,7 @@ namespace Soloplan.WhatsON.GUI.Config.View
         finally
         {
           this.uxSubjects.SelectionChanged += this.UxSubjectsSelectionChanged;
+          this.currentSubject = null; // just mark that the backing field  should be initialized.
         }
       }
 
@@ -103,6 +149,7 @@ namespace Soloplan.WhatsON.GUI.Config.View
     private void SetSubjectFrameContent(SubjectViewModel subject)
     {
       this.uxSubjectFrame.Content = new SubjectConfigPage(subject);
+      this.ActiveSubjectSupportsWizard = this.CurrentSubject?.SourceSubjectPlugin?.SupportsWizard ?? false;
     }
 
     /// <summary>
@@ -156,6 +203,32 @@ namespace Soloplan.WhatsON.GUI.Config.View
         this.currentSubject.Load(null);
         this.Subjects.Add(this.currentSubject);
         this.uxSubjects.SelectedItem = this.currentSubject;
+      }
+    }
+
+    /// <summary>
+    /// Handles the start wizard button click.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
+    private void StartWizardClick(object sender, System.Windows.RoutedEventArgs e)
+    {
+      var wizardController = new WizardController(this.ownerWindow);
+      if (wizardController.Start(this.CurrentSubject.SourceSubjectPlugin))
+      {
+        var selectedProjects = wizardController.GetSelectedProjects();
+        if (selectedProjects.Count != 1)
+        {
+          throw new InvalidOperationException("One selected project is required.");
+        }
+
+        var currentSubjectAsAssignable = this.CurrentSubject.SourceSubjectPlugin as IAssignServerProject;
+        if (currentSubjectAsAssignable == null)
+        {
+          throw new InvalidOperationException("Subject does not support assign from server project.");
+        }
+
+        currentSubjectAsAssignable.AssignServerProject(selectedProjects[0], this.CurrentSubject.ConfigurationItems.Cast<IConfigurationItem>().ToList(), wizardController.ProposedServerAddress);
       }
     }
   }

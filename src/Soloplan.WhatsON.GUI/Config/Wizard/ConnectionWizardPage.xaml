@@ -1,0 +1,20 @@
+﻿<Page x:Class="Soloplan.WhatsON.GUI.Config.Wizard.ConnectionWizardPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Config.Wizard"
+      mc:Ignorable="d" 
+      d:DesignHeight="640.997" d:DesignWidth="619.132"
+      Title="ConnectionWizardPage">
+
+  <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="6">
+    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch" Orientation="Vertical">
+      <TextBlock Text="Enter the server address:" Margin="0,0,0,10"/>
+      <materialDesign:ColorZone Mode="Light">
+        <ComboBox  IsEditable="True" Text="{Binding Path=ProposedServerAddress}"/>
+      </materialDesign:ColorZone>
+    </StackPanel>
+  </StackPanel>
+</Page>

@@ -11,7 +11,7 @@ namespace Soloplan.WhatsON
   /// <summary>
   /// The configuration item.
   /// </summary>
-  public class ConfigurationItem
+  public class ConfigurationItem : IConfigurationItem
   {
     /// <summary>
     /// Initializes a new instance of the <see cref="ConfigurationItem"/> class.

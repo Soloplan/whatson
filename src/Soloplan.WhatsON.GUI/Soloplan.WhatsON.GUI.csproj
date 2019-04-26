@@ -88,6 +88,21 @@
     </Compile>
     <Compile Include="Config\CheckBoxConfigControlBuilder.cs" />
     <Compile Include="Config\ConfigResourcesHelper.cs" />
+    <Compile Include="Config\Wizard\ProjectSelectionWizardPage.xaml.cs">
+      <DependentUpon>ProjectSelectionWizardPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Config\Wizard\ConnectionWizardPage.xaml.cs">
+      <DependentUpon>ConnectionWizardPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Config\Wizard\ProjectsTreeView.xaml.cs">
+      <DependentUpon>ProjectsTreeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Config\Wizard\ProjectViewModel.cs" />
+    <Compile Include="Config\Wizard\ProjectViewModelList.cs" />
+    <Compile Include="Config\Wizard\WizardController.cs" />
+    <Compile Include="Config\Wizard\WizardWindow.xaml.cs">
+      <DependentUpon>WizardWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Logging\ExceptionHandlingInitialization.cs" />
     <Compile Include="Logging\LoggingConfiguration.cs" />
     <Compile Include="NotificationsModel.cs" />
@@ -113,6 +128,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Config\Wizard\ProjectSelectionWizardPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Config\View\SubjectConfigPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -126,6 +145,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Config\View\CreateEditSubjectDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Config\Wizard\ConnectionWizardPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Config\Wizard\ProjectsTreeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Config\Wizard\WizardWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

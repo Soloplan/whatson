@@ -15,6 +15,11 @@
 
     public SubjectTypeAttribute SubjectTypeAttribute { get; }
 
+    /// <summary>
+    /// Gets a value indicating whether this plugin supports wizards.
+    /// </summary>
+    public virtual bool SupportsWizard { get; }
+
     public abstract Subject CreateNew(SubjectConfiguration configuration);
   }
 }

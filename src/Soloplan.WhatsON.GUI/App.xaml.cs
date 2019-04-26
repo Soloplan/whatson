@@ -1,5 +1,6 @@
 ﻿namespace Soloplan.WhatsON.GUI
 {
+  using System.Net;
   using System.Windows;
   using System.Windows.Interop;
   using Soloplan.WhatsON.GUI.Logging;
@@ -19,6 +20,8 @@
     protected override void OnStartup(StartupEventArgs e)
     {
       base.OnStartup(e);
+
+      ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
       var logConfiguration = new LoggingConfiguration();
       logConfiguration.Initialize();

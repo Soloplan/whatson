@@ -45,15 +45,17 @@
         </StackPanel>
     </materialDesign:PopupBox>
 
-    <DockPanel>
+    <DockPanel LastChildFill="true">
       <materialDesign:ColorZone Mode="Standard" DockPanel.Dock="Top" Padding="8 4 8 4" CornerRadius="3" Background="DarkGray">
         <ComboBox x:Name="uxSubjects" Height="28" SelectionChanged="UxSubjectsSelectionChanged" Cursor="Hand" 
-                  ItemsSource="{Binding Subjects}" DisplayMemberPath="Name" IsSynchronizedWithCurrentItem="true"
-                  />
+                ItemsSource="{Binding Subjects}" DisplayMemberPath="Name" IsSynchronizedWithCurrentItem="true"
+                />
       </materialDesign:ColorZone>
-
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" Visibility="{Binding Path=ActiveSubjectSupportsWizard, Converter={StaticResource BoolToVis}}">
+        <Button Click="StartWizardClick">Use wizard</Button>
+      </StackPanel>
       <Frame x:Name="uxSubjectFrame" Content="Frame" />
-    </DockPanel>
+      </DockPanel>
   </Grid>
   </materialDesign:DialogHost>
 </Page>
