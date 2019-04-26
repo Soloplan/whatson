@@ -10,7 +10,17 @@
         <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
         <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.Indigo.xaml" />
         <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Pink.xaml" />
+        <ResourceDictionary>
+          <Style  x:Key="BorderLessWindowStyle" TargetType="{x:Type Window}">
+            <Setter Property="WindowChrome.WindowChrome">
+              <Setter.Value>
+                <WindowChrome CaptionHeight="0" GlassFrameThickness="10" NonClientFrameEdges="None" ResizeBorderThickness="5" />
+              </Setter.Value>
+            </Setter>
+          </Style>
+        </ResourceDictionary>
       </ResourceDictionary.MergedDictionaries>
+      <BooleanToVisibilityConverter x:Key="BoolToVis"/>
     </ResourceDictionary>
   </Application.Resources>
 </Application>

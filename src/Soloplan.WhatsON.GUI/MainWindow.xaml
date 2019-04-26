@@ -15,11 +15,8 @@
         TextElement.FontSize="14"
         TextElement.FontWeight="Medium"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-        WindowStyle="None"
-        mc:Ignorable="d">
-  <Window.Resources>
-    <BooleanToVisibilityConverter x:Key="BoolToVis" />
-  </Window.Resources>
+        mc:Ignorable="d"
+        Style="{StaticResource BorderLessWindowStyle}">
   <DockPanel>
     <materialDesign:ColorZone Margin="0"
                               Padding="6"
