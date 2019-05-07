@@ -43,7 +43,11 @@ namespace Soloplan.WhatsON.GUI.Logging
 
     public void Initialize()
     {
+#if DEBUG
+      var rootDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+#else
       var rootDir = SerializationHelper.ConfigFolder;
+#endif
       var file = GetConfigFilePath(rootDir);
       if (string.IsNullOrEmpty(file))
       {
