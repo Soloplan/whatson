@@ -186,6 +186,8 @@
         Application.Current.MainWindow = this.MainWindow;
         this.MainWindow.Show();
         this.MainWindow.Activate();
+        this.MainWindow.FinishDrawing();
+        this.MainWindow.IsTreeInitialized = true;
       }
     }
 

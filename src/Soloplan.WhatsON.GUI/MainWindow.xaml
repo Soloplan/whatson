@@ -12,11 +12,14 @@
         Height="450"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
+        Style="{StaticResource BorderLessWindowStyle}"
         TextElement.FontSize="14"
         TextElement.FontWeight="Medium"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-        mc:Ignorable="d"
-        Style="{StaticResource BorderLessWindowStyle}">
+        mc:Ignorable="d">
+  <Window.Resources>
+    <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+  </Window.Resources>
   <DockPanel>
     <materialDesign:ColorZone Margin="0"
                               Padding="6"
@@ -74,6 +77,14 @@
 
       </DockPanel>
     </materialDesign:ColorZone>
-    <subjectTreeView:SubjectsTreeView DockPanel.Dock="Bottom"  x:Name="mainTreeView" />
+    <Grid DockPanel.Dock="Bottom">
+      <subjectTreeView:SubjectsTreeView x:Name="mainTreeView" Visibility="{Binding IsTreeInitialized, Converter={StaticResource BoolToVisibility}}" />
+      <TextBlock HorizontalAlignment="Center"
+                 VerticalAlignment="Center"
+                 FontSize="18"
+                 FontWeight="Bold"
+                 Text="Loading..."
+                 Visibility="{Binding IsTreeNotInitialized, Converter={StaticResource BoolToVisibility}}" />
+    </Grid>
   </DockPanel>
 </Window>

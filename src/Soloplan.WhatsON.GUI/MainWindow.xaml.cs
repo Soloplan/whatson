@@ -8,6 +8,7 @@ namespace Soloplan.WhatsON.GUI
 {
   using System;
   using System.Collections.Generic;
+  using System.ComponentModel;
   using System.Windows;
   using System.Windows.Input;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
@@ -17,12 +18,14 @@ namespace Soloplan.WhatsON.GUI
   /// <summary>
   /// Interaction logic for MainWindow.xaml
   /// </summary>
-  public partial class MainWindow
+  public partial class MainWindow : INotifyPropertyChanged
   {
+    private readonly IList<Subject> initialSubjectState;
+
     /// <summary>
     /// Gets or sets the configuration.
     /// </summary>
-    public ApplicationConfiguration Config { get; set; }
+    private ApplicationConfiguration config;
 
     /// <summary>
     /// The scheduler used for observing subjects.
@@ -34,6 +37,15 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     private MainWindowSettigns settings;
 
+    private bool initialized;
+
+    /// <summary>
+    /// Occurs when configuration was applied.
+    /// </summary>
+    public event EventHandler<ValueEventArgs<ApplicationConfiguration>> ConfigurationApplied;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="MainWindow"/> class.
     /// </summary>
@@ -44,16 +56,28 @@ namespace Soloplan.WhatsON.GUI
     {
       this.InitializeComponent();
       this.scheduler = scheduler;
-      this.Config = configuration;
-      this.mainTreeView.Init(this.scheduler, this.Config, initialSubjectState);
-      this.ShowInTaskbar = this.Config.ShowInTaskbar;
-      this.Topmost = this.Config.AlwaysOnTop;
+      this.config = configuration;
+      this.initialSubjectState = initialSubjectState;
+      this.ShowInTaskbar = this.config.ShowInTaskbar;
+      this.Topmost = this.config.AlwaysOnTop;
+      this.DataContext = this;
     }
 
-    /// <summary>
-    /// Occurs when configuration was applied.
-    /// </summary>
-    public event EventHandler<ValueEventArgs<ApplicationConfiguration>> ConfigurationApplied;
+    public bool IsTreeInitialized
+    {
+      get => this.initialized;
+      set
+      {
+        this.initialized = value;
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsTreeInitialized)));
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsTreeNotInitialized)));
+      }
+    }
+
+    public bool IsTreeNotInitialized
+    {
+      get => !this.IsTreeInitialized;
+    }
 
     public MainWindowSettigns GetVisualSettigns()
     {
@@ -76,7 +100,6 @@ namespace Soloplan.WhatsON.GUI
         this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
       }
 
-      this.mainTreeView.ApplyTreeListSettings(this.settings.TreeListSettings);
       this.MinimizeButton.Visibility = this.ShowInTaskbar ? Visibility.Visible : Visibility.Hidden;
     }
 
@@ -86,16 +109,22 @@ namespace Soloplan.WhatsON.GUI
     /// <param name="configuration">New configuration.</param>
     public void ApplyConfiguration(ApplicationConfiguration configuration)
     {
-      this.Config = configuration;
-      this.mainTreeView.Update(this.Config);
-      this.ShowInTaskbar = this.Config.ShowInTaskbar;
-      this.Topmost = this.Config.AlwaysOnTop;
+      this.config = configuration;
+      this.mainTreeView.Update(this.config);
+      this.ShowInTaskbar = this.config.ShowInTaskbar;
+      this.Topmost = this.config.AlwaysOnTop;
       this.MinimizeButton.Visibility = this.ShowInTaskbar ? Visibility.Visible : Visibility.Hidden;
+    }
+
+    public void FinishDrawing()
+    {
+      this.mainTreeView.Init(this.scheduler, this.config, this.initialSubjectState);
+      this.mainTreeView.ApplyTreeListSettings(this.settings.TreeListSettings);
     }
 
     private void OpenConfig(object sender, RoutedEventArgs e)
     {
-      var configWindow = new ConfigWindow(this.Config);
+      var configWindow = new ConfigWindow(this.config);
       configWindow.Owner = this;
       configWindow.ConfigurationApplied += (s, ev) =>
       {
