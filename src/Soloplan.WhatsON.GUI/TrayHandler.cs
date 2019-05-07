@@ -5,6 +5,7 @@
   using System.IO;
   using System.Linq;
   using System.Windows.Forms;
+  using NLog;
   using Soloplan.WhatsON.GUI.Common.SubjectTreeView;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.Serialization;
@@ -16,6 +17,8 @@
   public class TrayHandler : IDisposable
   {
     private const string VisualSettingsFile = "VisualSettingsFile.json";
+
+    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
     /// <summary>
     /// Scheduler instance.
@@ -116,6 +119,8 @@
     public void ShowBaloon(string title, string tipText, ToolTipIcon icon)
     {
       tipText = string.IsNullOrEmpty(tipText) ? " " : tipText;
+
+      log.Info("Showing notification: {notification},", new { Title = title, Text = tipText, Icon = icon });
       this.icon.ShowBalloonTip(1000, title, tipText, icon);
     }
 

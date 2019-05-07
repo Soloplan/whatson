@@ -51,11 +51,11 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
     /// <param name="initialSubjectState">List of currently observed subjects - provide start data for model.</param>
     public void Init(ObservationScheduler scheduler, ApplicationConfiguration configuration, IList<Subject> initialSubjectState)
     {
-      log.Debug("Initializing {name}", nameof(SubjectTreeViewModel));
+      log.Trace("Initializing {name}", nameof(SubjectTreeViewModel));
       this.Update(configuration);
       foreach (var subject in initialSubjectState)
       {
-        log.Debug("Applying status for subject {@subject}", subject);
+        log.Trace("Applying status for subject {@subject}", subject);
         this.SchedulerStatusQueried(this, subject);
       }
 
