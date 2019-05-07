@@ -35,16 +35,9 @@ namespace Soloplan.WhatsON.CruiseControl
       var pollInterval = new TimeSpan(0, 0, 0, interval, 0);
       if (DateTime.Now - this.lastPoolled > pollInterval)
       {
-        try
-        {
-          log.Trace("Polling server {@server}", new { Address = this.address, LastPolled = this.lastPoolled, CallingProject = projectName});
-          this.lastPoolled = DateTime.Now;
-          this.cache = this.GetStatusAsync<CruiseControlJobs>(cancellationToken, this.address);
-        }
-        finally
-        {
-          this.lastPoolled = DateTime.Now;
-        }
+        log.Trace("Polling server {@server}", new { Address = this.address, LastPolled = this.lastPoolled, CallingProject = projectName });
+        this.lastPoolled = DateTime.Now;
+        this.cache = this.GetStatusAsync<CruiseControlJobs>(cancellationToken, this.address);
       }
 
       log.Trace("Retrieving value from cache for project {projectName}", projectName);

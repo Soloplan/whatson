@@ -20,11 +20,13 @@ namespace Soloplan.WhatsON.CruiseControl
   [ConfigurationItem(ProjectName, typeof(string), Optional = false, Priority = 300)]
   public class CruiseControlProject : ServerSubject
   {
-    private const string ProjectName = "ProjectName";
+    public const string ProjectName = "ProjectName";
 
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
     private TimeSpan estimatedDuration = default(TimeSpan);
+
+    private TimeSpan cachedDuration = default(TimeSpan);
 
     public CruiseControlProject(SubjectConfiguration configuration)
       : base(configuration)
@@ -64,58 +66,86 @@ namespace Soloplan.WhatsON.CruiseControl
       log.Trace("Converted status for cruise control project {project}: {@status}", this.Project, status);
       this.CurrentStatus = status;
 
-      if (this.PreviousCheckStatus != null && this.PreviousCheckStatus.State == ObservationState.Running && this.PreviousCheckStatus.BuildNumber < status.BuildNumber)
+      if (status.Duration.TotalSeconds > 0)
       {
-        log.Debug("Changing previous build status.");
-        if (projectData.LastBuildStatus == "Success")
-        {
-          log.Debug("Changing status to Success");
-          this.PreviousCheckStatus.State = ObservationState.Success;
-        }
-        else if (projectData.LastBuildStatus == "Failure")
-        {
-          log.Debug("Changing status to Failure");
-          this.PreviousCheckStatus.State = ObservationState.Failure;
-        }
+        this.cachedDuration = status.Duration;
       }
-    }
 
-    protected override bool ShouldTakeSnapshot(Status status)
-    {
-      if (status is CruiseControlStatus currentStatus)
+      if (this.PreviousCheckStatus != null)
       {
-        if (this.PreviousCheckStatus != null)
+        if (status.State != ObservationState.Running)
         {
-          if (status.State != ObservationState.Running)
+          if (status.State != this.PreviousCheckStatus.State || this.PreviousCheckStatus.BuildNumber != status.BuildNumber)
           {
-            if (status.State != this.PreviousCheckStatus.State || this.PreviousCheckStatus.BuildNumber != currentStatus.BuildNumber)
-            {
-              log.Debug("Shoud take snapshot, build not running. {@status}, {@PreviousCheckStatus}", status, this.PreviousCheckStatus);
-              this.estimatedDuration = this.PreviousCheckStatus.Duration;
-              this.PreviousCheckStatus = currentStatus;
-              return true;
-            }
-          }
-          else
-          {
-            if (this.PreviousCheckStatus.BuildNumber != currentStatus.BuildNumber)
-            {
-              log.Debug("Shoud take snapshot, build running. {@status}, {@PreviousCheckStatus}", status, this.PreviousCheckStatus);
-              this.AddSnapshot(this.PreviousCheckStatus);
-              this.estimatedDuration = this.PreviousCheckStatus.Duration;
-              this.PreviousCheckStatus = currentStatus;
-              return false;
-            }
+            log.Debug("Shoud take snapshot, build not running. {@status}, {@PreviousCheckStatus}", status, this.PreviousCheckStatus);
+            log.Debug("Changing estimated duration {proj}", new { ProjectName = this.Project, PrevEstimatedDurtion = this.estimatedDuration, NewEstimatedDuration = this.cachedDuration });
+            this.estimatedDuration = this.cachedDuration;
+            this.PreviousCheckStatus = status;
+            this.PreviousCheckStatus.Duration = this.cachedDuration;
+            this.AddOrUpdateSnapshot(this.PreviousCheckStatus);
           }
         }
         else
         {
-          log.Debug("Initialize previous check status: {@status}", currentStatus);
-          this.PreviousCheckStatus = currentStatus;
+          if (this.PreviousCheckStatus.BuildNumber < status.BuildNumber)
+          {
+            log.Debug("Shoud take snapshot, build running. {@status}, {@PreviousCheckStatus}", status, this.PreviousCheckStatus);
+            this.PreviousCheckStatus.State = CcStatusToObservationStatus(projectData);
+            log.Debug("Changing estimated duration {proj}", new { ProjectName = this.Project, PrevEstimatedDurtion = this.estimatedDuration, NewEstimatedDuration = this.cachedDuration });
+            this.estimatedDuration = this.cachedDuration;
+            this.PreviousCheckStatus.Duration = this.cachedDuration;
+            this.AddOrUpdateSnapshot(this.PreviousCheckStatus);
+          }
         }
       }
+      else
+      {
+        log.Debug("Initialize previous check status: {@status}", status);
+        this.PreviousCheckStatus = status;
+        if (!this.PreviousCheckStatus.Building)
+        {
+          this.AddSnapshot(this.PreviousCheckStatus);
+        }
+      }
+    }
 
-      return false;
+    /// <summary>
+    /// Creates statuses other then <see cref="ObservationState.Running"/> based on <paramref name="projectData"/>. Running build must be handled separately.
+    /// </summary>
+    /// <param name="projectData">Data retrieved from server.</param>
+    /// <returns>Appropriate <see cref="ObservationState"/>.</returns>
+    private static ObservationState CcStatusToObservationStatus(CruiseControlJob projectData)
+    {
+      if (projectData.LastBuildStatus == CcBuildStatus.Success && projectData.Messages.All(msg => msg.Kind != MessageKind.FailingTasks && msg.Kind != MessageKind.Breakers && msg.Kind != MessageKind.BuildAbortedBy))
+      {
+        return ObservationState.Success;
+      }
+
+      if (projectData.LastBuildStatus == CcBuildStatus.Failure || projectData.LastBuildStatus == CcBuildStatus.Exception || projectData.Messages.Any(msg => msg.Kind != MessageKind.FailingTasks && msg.Kind != MessageKind.Breakers))
+      {
+        return ObservationState.Failure;
+      }
+
+      return ObservationState.Unknown;
+    }
+
+    /// <summary>
+    /// Adds or updates snapshot based on <paramref name="status"/>. Update is done when build with the same number is already present.
+    /// </summary>
+    /// <param name="status">Status which should be added/updated.</param>
+    private void AddOrUpdateSnapshot(CruiseControlStatus status)
+    {
+      var existingStatusIndex = this.Snapshots.IndexOf(this.Snapshots.FirstOrDefault(snap => (snap.Status as CruiseControlStatus)?.BuildNumber == status.BuildNumber));
+      if (existingStatusIndex >= 0)
+      {
+        log.Debug("Changes exist for build cruise control project {proj}", new { ProjectName = this.Project, Build = status.BuildNumber });
+        this.Snapshots.RemoveAt(existingStatusIndex);
+        this.Snapshots.Insert(existingStatusIndex, new Snapshot(status));
+      }
+      else
+      {
+        this.AddSnapshot(status);
+      }
     }
 
     private CruiseControlStatus CreateStatus(CruiseControlJob job)
@@ -141,23 +171,23 @@ namespace Soloplan.WhatsON.CruiseControl
       {
         result.State = ObservationState.Running;
       }
-      else if (job.LastBuildStatus == "Success")
+      else
       {
-        result.State = ObservationState.Success;
-      }
-      else if (job.LastBuildStatus == "Failure")
-      {
-        result.State = ObservationState.Failure;
+        result.State = CcStatusToObservationStatus(job);
       }
 
       if (result.Building)
       {
         result.Duration = DateTime.Now - job.NextBuildTime;
+        result.Time = job.NextBuildTime.ToUniversalTime();
+      }
+      else
+      {
+        result.Time = DateTime.UtcNow;
       }
 
       result.EstimatedDuration = this.estimatedDuration;
 
-      result.Time = DateTime.Now;
       return result;
     }
 

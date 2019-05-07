@@ -40,7 +40,7 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
 
       if (this.State == ObservationState.Running && this.EstimatedDuration.TotalSeconds > 0)
       {
-        var elapsedSinceStart = (DateTime.Now - this.Time).TotalSeconds;
+        var elapsedSinceStart = (DateTime.Now - ccStatus.NextBuildTime).TotalSeconds;
         this.RawProgres = (int)((100 * elapsedSinceStart) / this.EstimatedDuration.TotalSeconds);
       }
       else

@@ -6,7 +6,17 @@
 
 namespace Soloplan.WhatsON.CruiseControl.Model
 {
+  using System.Collections.Generic;
   using System.Xml.Serialization;
+
+  public enum CcBuildStatus
+  {
+    Success,
+    Failure,
+    Exception,
+    Unknown,
+    Cancelled,
+  }
 
   [System.SerializableAttribute]
   [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -14,7 +24,7 @@ namespace Soloplan.WhatsON.CruiseControl.Model
   public class CruiseControlJob
   {
     [XmlArrayItem("message", IsNullable = false)]
-    public Message[] Messages { get; set; }
+    public List<Message> Messages { get; set; }
 
     [XmlAttribute("name")]
     public string Name { get; set; }
@@ -26,7 +36,7 @@ namespace Soloplan.WhatsON.CruiseControl.Model
     public string Activity { get; set; }
 
     [XmlAttribute("lastBuildStatus")]
-    public string LastBuildStatus { get; set; }
+    public CcBuildStatus LastBuildStatus { get; set; }
 
     [XmlAttribute("lastBuildLabel")]
     public string LastBuildLabel { get; set; }

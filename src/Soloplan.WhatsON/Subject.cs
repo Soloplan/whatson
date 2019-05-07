@@ -40,7 +40,7 @@ namespace Soloplan.WhatsON
     /// <param name="configuration">The configuration.</param>
     protected Subject(SubjectConfiguration configuration)
     {
-      this.Snapshots = new Queue<Snapshot>();
+      this.Snapshots = new List<Snapshot>();
       this.MaxSnapshots = MaxSnapshotsDefault;
       if (configuration == null)
       {
@@ -57,7 +57,7 @@ namespace Soloplan.WhatsON
 
     public int MaxSnapshots { get; set; }
 
-    public Queue<Snapshot> Snapshots { get; set; }
+    public IList<Snapshot> Snapshots { get; set; }
 
     /// <summary>
     /// Gets a value indicating whether this subject supports wizard.
@@ -94,10 +94,10 @@ namespace Soloplan.WhatsON
       while (this.Snapshots.Count >= this.MaxSnapshots)
       {
         log.Debug("Max number of snapshots exceeded. Dequeuing snapshot.", new { Name = this.SubjectConfiguration.Name, CurrentStatus = this.CurrentStatus });
-        this.Snapshots.Dequeue();
+        this.Snapshots.RemoveAt(0);
       }
 
-      this.Snapshots.Enqueue(new Snapshot(status));
+      this.Snapshots.Add(new Snapshot(status));
     }
 
     public override string ToString()
