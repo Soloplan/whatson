@@ -1,0 +1,28 @@
+﻿<UserControl x:Class="Soloplan.WhatsON.GUI.Common.BuildServer.CulpritsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DataContext="{d:DesignInstance local:BuildStatusViewModel}"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             mc:Ignorable="d">
+  <UserControl.Resources>
+    <local:CountToVisibilityConvrter x:Key="CountToVisibility" />
+  </UserControl.Resources>
+
+  <StackPanel Visibility="{Binding Culprits, Mode=OneWay, Converter={StaticResource CountToVisibility}}">
+    <TextBlock Text="---------------------------" />
+    <TextBlock Text="Changes by:" />
+    <ItemsControl ItemsSource="{Binding Culprits}">
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding FullName}" />
+          </StackPanel>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+  </StackPanel>
+</UserControl>

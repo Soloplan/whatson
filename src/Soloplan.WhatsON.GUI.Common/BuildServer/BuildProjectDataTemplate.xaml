@@ -12,175 +12,39 @@
   <subjectTreeView:TimeToAproximateTimeConverter x:Key="TimeToAproximateTimeConverter" />
   <!--  ToDo DGO: this should be separate control for displaying status. This way it will be easier to reuse.  -->
 
-  <ContextMenu x:Key="contextMenuJenkins">
+  <ContextMenu x:Key="BuildServerProjectContextMenu">
     <!--  CommandParameter must be declared before Command or else value from previous opening of context menu will be passed. WTF?!  -->
     <MenuItem Header="Open project web page"
               CommandParameter="{Binding OpenWebPageParam}"
               Command="{Binding OpenWebPage}" />
-    <MenuItem Header="Open current build page"
-              Visibility="{Binding Path=IsEnabled, RelativeSource={RelativeSource Self}, Mode=OneWay, Converter={StaticResource BoolToVisibility}}"
-              CommandParameter="{Binding CurrentStatus.OpenBuildPageCommandData}"
-              Command="{Binding CurrentStatus.OpenBuildPage}" />
   </ContextMenu>
-
-  <ContextMenu x:Key="contextMenuBuild">
-    <MenuItem Header="Open build web page"
-              CommandParameter="{Binding OpenBuildPageCommandData}"
-              Command="{Binding OpenBuildPage}" />
-  </ContextMenu>
+  <DataTemplate DataType="{x:Type buildServer:BuildStatusViewModel}">
+    <buildServer:HistoryBuildControl DataContext="{Binding}">
+      <buildServer:HistoryBuildControl.ToolTip>
+        <StackPanel>
+          <buildServer:HistoryBuildTooltipControl DataContext="{Binding}" />
+          <buildServer:CulpritsControl DataContext="{Binding}" />
+        </StackPanel>
+      </buildServer:HistoryBuildControl.ToolTip>
+    </buildServer:HistoryBuildControl>
+  </DataTemplate>
 
   <DataTemplate DataType="{x:Type buildServer:BuildServerProjectStatusViewModel}">
-    <StackPanel ContextMenu="{StaticResource contextMenuJenkins}" Orientation="Vertical">
-      <StackPanel Orientation="Horizontal">
-        <StackPanel Orientation="Horizontal">
-          <Path Data="M12,2L1,21H23M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16"
-                Fill="{Binding CurrentStatus.State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
-                Stretch="Fill"
-                Visibility="{Binding CurrentStatus.Unstable, Converter={StaticResource BoolToVisibility}}" />
-          <Path Data="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"
-                Fill="{Binding CurrentStatus.State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
-                Stretch="Fill"
-                Visibility="{Binding CurrentStatus.Succees, Converter={StaticResource BoolToVisibility}}" />
-          <Path Data="M17,13H7V11H17M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"
-                Fill="{Binding CurrentStatus.State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
-                Stretch="Fill"
-                Visibility="{Binding CurrentStatus.Unknown, Converter={StaticResource BoolToVisibility}}" />
-          <Path Data="M13,13H11V7H13M13,17H11V15H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"
-                Fill="{Binding CurrentStatus.State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
-                Stretch="Fill"
-                Visibility="{Binding CurrentStatus.Failure, Converter={StaticResource BoolToVisibility}}" />
-          <StackPanel Orientation="Horizontal">
-            <ProgressBar IsIndeterminate="True"
-                         Style="{StaticResource MaterialDesignCircularProgressBar}"
-                         Visibility="{Binding CurrentStatus.Building, Converter={StaticResource BoolToVisibility}}"
-                         Value="{Binding CurrentStatus.Progres, Mode=OneWay}">
-              <ProgressBar.ToolTip>
-                <StackPanel Orientation="Vertical">
-                  <StackPanel Orientation="Vertical" Visibility="{Binding CurrentStatus.BuildingNoLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
-                    <StackPanel Orientation="Horizontal">
-                      <TextBlock Text="Completion: " />
-                      <TextBlock Text="{Binding CurrentStatus.Progres}" />
-                      <TextBlock Text="% " />
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                      <TextBlock>
-                        <TextBlock.Text>
-                          <MultiBinding StringFormat="{}{0:00}:{1:00}:{2:00}">
-                            <Binding Path="CurrentStatus.EstimatedRemaining.Hours" />
-                            <Binding Path="CurrentStatus.EstimatedRemaining.Minutes" />
-                            <Binding Path="CurrentStatus.EstimatedRemaining.Seconds" />
-                          </MultiBinding>
-                        </TextBlock.Text>
-                      </TextBlock>
-                      <TextBlock Text=" estimated remaining" />
-                    </StackPanel>
-                  </StackPanel>
-                  <StackPanel Visibility="{Binding CurrentStatus.BuildingLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
-                    <TextBlock FontSize="10" Text=" Taking " />
-                    <TextBlock FontSize="10">
-                      <TextBlock.Text>
-                        <MultiBinding StringFormat="{}{0:00}:{1:00}:{2:00}">
-                          <Binding Path="CurrentStatus.BuildTimeExcedingEstimation.Hours" />
-                          <Binding Path="CurrentStatus.BuildTimeExcedingEstimation.Minutes" />
-                          <Binding Path="CurrentStatus.BuildTimeExcedingEstimation.Seconds" />
-                        </MultiBinding>
-                      </TextBlock.Text>
-                    </TextBlock>
-                    <TextBlock FontSize="10" Text=" longer then estimated." />
-                  </StackPanel>
-                  <TextBlock Text="---------------------------" />
-                  <TextBlock Text="Changes by:" />
-                  <ItemsControl ItemsSource="{Binding CurrentStatus.Culprits}">
-                    <ItemsControl.ItemTemplate>
-                      <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                          <TextBlock Text="{Binding FullName}" />
-                        </StackPanel>
-                      </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                  </ItemsControl>
-                </StackPanel>
-              </ProgressBar.ToolTip>
-            </ProgressBar>
+    <StackPanel ContextMenu="{StaticResource BuildServerProjectContextMenu}" Orientation="Horizontal">
+      <buildServer:BuildInformationIconControl DataContext="{Binding CurrentStatus}">
+        <buildServer:BuildInformationIconControl.ToolTip>
+          <StackPanel>
+            <buildServer:ProgressBarTooltipControl DataContext="{Binding}" />
+            <buildServer:CulpritsControl DataContext="{Binding}" />
           </StackPanel>
-          <TextBlock Text=" " />
-          <TextBlock FontWeight="Black" Text="{Binding Name}" />
-          <TextBlock Text=" #" />
-          <TextBlock Text="{Binding CurrentStatus.BuildNumber}" />
-          <TextBlock Text=" " />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-          <ListView ItemsSource="{Binding SubjectSnapshots, Mode=OneWay}">
-            <!--  History builds  -->
-            <ListView.Resources>
-              <DataTemplate DataType="{x:Type buildServer:BuildStatusViewModel}">
-                <StackPanel ContextMenu="{StaticResource contextMenuBuild}">
-                  <StackPanel.ToolTip>
-                    <StackPanel>
-                      <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="#" />
-                        <TextBlock Text="{Binding BuildNumber}" />
-                        <TextBlock Text=", build " />
-                        <TextBlock Text="{Binding Time, Converter={StaticResource TimeToAproximateTimeConverter}}" />
-                      </StackPanel>
-                      <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Duration: " />
-                        <TextBlock>
-                          <TextBlock.Text>
-                            <MultiBinding StringFormat="{}{0:00}:{1:00}:{2:00}">
-                              <Binding Path="Duration.Hours" />
-                              <Binding Path="Duration.Minutes" />
-                              <Binding Path="Duration.Seconds" />
-                            </MultiBinding>
-                          </TextBlock.Text>
-                        </TextBlock>
-                      </StackPanel>
-                      <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Build date: " />
-                        <TextBlock Text="{Binding Time}" />
-                      </StackPanel>
-                      <TextBlock Text="---------------------------" />
-                      <TextBlock Text="Changes by:" />
-                      <ItemsControl ItemsSource="{Binding Culprits}">
-                        <ItemsControl.ItemTemplate>
-                          <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                              <TextBlock Text="{Binding FullName}" />
-                            </StackPanel>
-                          </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                      </ItemsControl>
-                    </StackPanel>
-                  </StackPanel.ToolTip>
-                  <Button Width="10"
-                          Height="10"
-                          Background="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
-                          BorderBrush="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}">
-                    <i:Interaction.Triggers>
-                      <!--  Handle clicking on history builds.  -->
-                      <i:EventTrigger EventName="Click">
-                        <i:InvokeCommandAction CommandParameter="{Binding OpenBuildPageCommandData}" Command="{Binding OpenBuildPage}" />
-                      </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                    <Style TargetType="{x:Type Button}" />
-                  </Button>
-                </StackPanel>
-              </DataTemplate>
-            </ListView.Resources>
-            <ListView.ItemContainerStyle>
-              <Style BasedOn="{StaticResource {x:Type ListViewItem}}" TargetType="{x:Type ListViewItem}">
-                <Setter Property="Focusable" Value="false" />
-                <Setter Property="Padding" Value="2" />
-              </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.ItemsPanel>
-              <ItemsPanelTemplate>
-                <StackPanel Orientation="Horizontal" />
-              </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-          </ListView>
-        </StackPanel>
-      </StackPanel>
+        </buildServer:BuildInformationIconControl.ToolTip>
+      </buildServer:BuildInformationIconControl>
+      <TextBlock Text=" " />
+      <TextBlock FontWeight="Black" Text="{Binding Name}" />
+      <TextBlock Text=" #" />
+      <TextBlock Text="{Binding CurrentStatus.BuildNumber}" />
+      <TextBlock Text=" " />
+      <buildServer:HistoryBuildList DataContext="{Binding SubjectSnapshots, Mode=OneWay}" />
     </StackPanel>
   </DataTemplate>
 </ResourceDictionary>
