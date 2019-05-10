@@ -13,7 +13,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
   /// <summary>
   /// The view model for see <see cref="Subject"/>.
   /// </summary>
-  public class SubjectViewModel : ViewModelBase
+  public class SubjectViewModel : ViewModelBase, IConfigurationItemsSupport
   {
     /// <summary>
     /// The name of the subject.
@@ -143,7 +143,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// </summary>
     /// <param name="key">The key.</param>
     /// <returns>The configuration view model.</returns>
-    public ConfigurationItemViewModel GetConfigurationByKey(string key)
+    public IConfigurationItem GetConfigurationByKey(string key)
     {
       var configItem = this.GetConfigurationItemViewModel(key);
       configItem.Load(key);
@@ -221,11 +221,6 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       }
 
       return configItemViewModel;
-    }
-
-    public void UpdateViewModelDependencies()
-    {
-      
     }
   }
 }

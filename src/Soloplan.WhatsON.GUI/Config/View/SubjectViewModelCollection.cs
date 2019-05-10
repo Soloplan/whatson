@@ -7,6 +7,7 @@
 namespace Soloplan.WhatsON.GUI.Config.View
 {
   using System;
+  using System.Collections.Generic;
   using System.Collections.ObjectModel;
   using System.ComponentModel;
   using System.Linq;
@@ -75,6 +76,36 @@ namespace Soloplan.WhatsON.GUI.Config.View
       finally
       {
         this.Loaded?.Invoke(this, new EventArgs());
+      }
+    }
+
+    /// <summary>
+    /// Applies subjects collection to configuration.
+    /// </summary>
+    /// <param name="configuration">The configuration.</param>
+    public void ApplyToConfiguration(ApplicationConfiguration configuration)
+    {
+      IList<SubjectConfiguration> subjectsToRemove = new List<SubjectConfiguration>();
+      foreach (var sourceSubject in configuration.SubjectsConfiguration)
+      {
+        if (this.All(s => s.SourceSubjectConfiguration != sourceSubject))
+        {
+          subjectsToRemove.Add(sourceSubject);
+        }
+      }
+
+      foreach (var subjectToRemove in subjectsToRemove)
+      {
+        configuration.SubjectsConfiguration.Remove(subjectToRemove);
+      }
+
+      foreach (var subject in this)
+      {
+        var subjectConfiguration = subject.ApplyToSourceSubjectConfiguration(out bool newSubjectConfigurationCreated);
+        if (newSubjectConfigurationCreated)
+        {
+          configuration.SubjectsConfiguration.Add(subjectConfiguration);
+        }
       }
     }
 

@@ -17,8 +17,8 @@ namespace Soloplan.WhatsON
     /// Assigns the <see cref="ServerProject"/> to <see cref="ConfigurationItem"/>.
     /// </summary>
     /// <param name="serverProject">The server project.</param>
-    /// <param name="configurationItems">The configuration items.</param>
+    /// <param name="configurationItemsSupport">The configuration items provider.</param>
     /// <param name="serverAddress">The server address.</param>
-    void AssignServerProject(ServerProject serverProject, IList<IConfigurationItem> configurationItems, string serverAddress);
+    void AssignServerProject(ServerProject serverProject, IConfigurationItemsSupport configurationItemsSupport, string serverAddress);
   }
 }

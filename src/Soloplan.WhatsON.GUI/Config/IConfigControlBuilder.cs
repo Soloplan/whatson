@@ -7,8 +7,6 @@
 namespace Soloplan.WhatsON.GUI.Config
 {
   using System.Windows;
-  using System.Windows.Controls;
-  using Soloplan.WhatsON.GUI.Config.ViewModel;
 
   /// <summary>
   /// The interface for every configuration control builder.
@@ -28,6 +26,6 @@ namespace Soloplan.WhatsON.GUI.Config
     /// <returns>
     /// Returns the <see cref="FrameworkElement" /> for the <see cref="configItem" />.
     /// </returns>
-    FrameworkElement GetControl(ConfigurationItemViewModel configItem, ConfigurationItemAttribute configItemAttribute);
+    FrameworkElement GetControl(IConfigurationItem configItem, ConfigurationItemAttribute configItemAttribute);
   }
 }

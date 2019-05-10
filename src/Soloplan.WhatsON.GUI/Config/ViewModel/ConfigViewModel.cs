@@ -258,29 +258,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       this.ConfigurationApplying?.Invoke(this, new EventArgs());
       try
       {
-        IList<SubjectConfiguration> subjectsToRemove = new List<SubjectConfiguration>();
-        foreach (var sourceSubject in this.Configuration.SubjectsConfiguration)
-        {
-          if (this.Subjects.All(s => s.SourceSubjectConfiguration != sourceSubject))
-          {
-            subjectsToRemove.Add(sourceSubject);
-          }
-        }
-
-        foreach (var subjectToRemove in subjectsToRemove)
-        {
-          this.Configuration.SubjectsConfiguration.Remove(subjectToRemove);
-        }
-
-        foreach (var subject in this.Subjects)
-        {
-          var subjectConfiguration = subject.ApplyToSourceSubjectConfiguration(out bool newSubjectConfigurationCreated);
-          if (newSubjectConfigurationCreated)
-          {
-            this.Configuration.SubjectsConfiguration.Add(subjectConfiguration);
-          }
-        }
-
+        this.Subjects.ApplyToConfiguration(this.Configuration);
         this.ApplyMainSettingsToConfiguration(this.Configuration);
         SerializationHelper.SaveConfiguration(this.Configuration);
       }

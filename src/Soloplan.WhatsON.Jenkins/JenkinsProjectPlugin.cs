@@ -57,9 +57,9 @@ namespace Soloplan.WhatsON.Jenkins
     /// Assigns a server project to given configuration items.
     /// </summary>
     /// <param name="serverProject">The server project.</param>
-    /// <param name="configurationItems">The list of configuration items.</param>
+    /// <param name="configurationItemsSupport">The configuration items provider.</param>
     /// <param name="serverAddress">The server address.</param>
-    public void AssignServerProject(ServerProject serverProject, IList<IConfigurationItem> configurationItems, string serverAddress)
+    public void AssignServerProject(ServerProject serverProject, IConfigurationItemsSupport configurationItemsSupport, string serverAddress)
     {
       // for now, we extract the prject name from the address
       var projectNameWithoutAddress = serverProject.Address.Substring(serverAddress.Length, serverProject.Address.Length - serverAddress.Length - 1).Trim('/');
@@ -68,8 +68,8 @@ namespace Soloplan.WhatsON.Jenkins
         projectNameWithoutAddress = projectNameWithoutAddress.Substring(3, projectNameWithoutAddress.Length - 3).TrimStart('/');
       }
 
-      configurationItems.Single(c => c.Key == JenkinsProject.ProjectName).Value = projectNameWithoutAddress;
-      configurationItems.Single(c => c.Key == JenkinsProject.ServerAddress).Value = serverAddress;
+      configurationItemsSupport.GetConfigurationByKey(JenkinsProject.ProjectName).Value = projectNameWithoutAddress;
+      configurationItemsSupport.GetConfigurationByKey(JenkinsProject.ServerAddress).Value = serverAddress;
     }
 
     /// <summary>

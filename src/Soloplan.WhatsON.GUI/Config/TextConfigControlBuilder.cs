@@ -32,7 +32,7 @@ namespace Soloplan.WhatsON.GUI.Config
     /// <returns>
     /// Returns the <see cref="FrameworkElement" /> for the <see cref="configItem" />.
     /// </returns>
-    public override FrameworkElement GetControlInternal(ConfigurationItemViewModel configItem, ConfigurationItemAttribute configItemAttribute)
+    public override FrameworkElement GetControlInternal(IConfigurationItem configItem, ConfigurationItemAttribute configItemAttribute)
     {
       var textBox = new TextBox();
       textBox.DataContext = configItem;

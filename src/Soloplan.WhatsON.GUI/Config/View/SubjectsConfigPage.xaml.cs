@@ -228,7 +228,7 @@ namespace Soloplan.WhatsON.GUI.Config.View
           throw new InvalidOperationException("Subject does not support assign from server project.");
         }
 
-        currentSubjectAsAssignable.AssignServerProject(selectedProjects[0], this.CurrentSubject.ConfigurationItems.Cast<IConfigurationItem>().ToList(), wizardController.ProposedServerAddress);
+        currentSubjectAsAssignable.AssignServerProject(selectedProjects[0], this.CurrentSubject, wizardController.ProposedServerAddress);
       }
     }
   }

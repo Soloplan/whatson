@@ -22,6 +22,11 @@ namespace Soloplan.WhatsON
     /// Gets or sets the address of the project.
     /// </summary>
     public string Address { get; set; }
+
+    /// <summary>
+    /// Gets or sets the plugin.
+    /// </summary>
+    public ISubjectPlugin Plugin { get; set; }
   }
 
   /// <summary>

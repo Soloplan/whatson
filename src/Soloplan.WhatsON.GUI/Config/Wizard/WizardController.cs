@@ -16,6 +16,8 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
   using System.Windows.Controls;
   using MaterialDesignThemes.Wpf;
   using NLog;
+  using Soloplan.WhatsON.GUI.Config.ViewModel;
+  using Soloplan.WhatsON.Serialization;
 
   /// <summary>
   /// Controls the execution of a wizard which allows to create or edit a project connection.
@@ -120,6 +122,12 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether finish button should be enabled.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if this the finish button should be enabled; otherwise, <c>false</c>.
+    /// </value>
     public bool IsFinishEnabled
     {
       get => this.isFinishEnabled;
@@ -145,14 +153,25 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
     /// </summary>
     /// <param name="plugin">The subject plugin.</param>
     /// <returns>True if the wizard was finished correctly and not canceled in any way.</returns>
-    public bool Start(ISubjectPlugin plugin = null)
+    public bool Start(ISubjectPlugin plugin)
     {
       this.subjectPlugin = plugin;
-      this.wizardWindow = new WizardWindow(this);
-      this.wizardWindow.Owner = this.ownerWindow;
-      this.GoToConnectionStep();
-      if (this.wizardWindow.ShowDialog() == true)
+      return this.Start();
+    }
+
+    /// <summary>
+    /// Starts the wizard and applies the results to given configuration.
+    /// Multiple, new connectors might be created.
+    /// </summary>
+    /// <param name="configuration">The configuration.</param>
+    /// <returns>
+    /// True if the wizard was finished correctly and not canceled in any way.
+    /// </returns>
+    public bool Start(ApplicationConfiguration configuration)
+    {
+      if (this.Start())
       {
+        this.ApplyToConfiguration(configuration);
         return true;
       }
 
@@ -177,6 +196,7 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
         var newServerProject = new ServerProject();
         newServerProject.Address = checkedProject.Address;
         newServerProject.Name = checkedProject.Name;
+        newServerProject.Plugin = this.Projects.PlugIn;
         serverProjects.Add(newServerProject);
       }
 
@@ -232,6 +252,62 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
     }
 
     /// <summary>
+    /// Applies the results of the wizard to configuration.
+    /// </summary>
+    /// <param name="configuration">The configuration.</param>
+    private void ApplyToConfiguration(ApplicationConfiguration configuration)
+    {
+      var selectedProjects = this.GetSelectedProjects();
+      if (selectedProjects.Count < 1)
+      {
+        throw new InvalidOperationException("At least one selected project is required.");
+      }
+
+      var configurationViewModel = new ConfigViewModel();
+      configurationViewModel.Load(configuration);
+
+      foreach (var selectedProject in selectedProjects)
+      {
+        var newConnector = new SubjectViewModel();
+        newConnector.SourceSubjectPlugin = selectedProject.Plugin;
+        newConnector.Name = selectedProject.Name;
+        newConnector.Load(null);
+        configurationViewModel.Subjects.Add(newConnector);
+
+        var assignanbleServerProject = selectedProject.Plugin as IAssignServerProject;
+        if (assignanbleServerProject == null)
+        {
+          throw new InvalidOperationException("Subject does not support assign from server project.");
+        }
+
+        assignanbleServerProject.AssignServerProject(selectedProjects[0], newConnector, this.ProposedServerAddress);
+      }
+
+      if (configurationViewModel.ConfigurationIsModified)
+      {
+        configurationViewModel.Subjects.ApplyToConfiguration(configuration);
+        SerializationHelper.SaveConfiguration(configuration);
+      }
+    }
+
+    /// <summary>
+    /// Starts this wizard.
+    /// </summary>
+    /// <returns>Tree if wizard was finished successfully.</returns>
+    private bool Start()
+    {
+      this.wizardWindow = new WizardWindow(this);
+      this.wizardWindow.Owner = this.ownerWindow;
+      this.GoToConnectionStep();
+      if (this.wizardWindow.ShowDialog() == true)
+      {
+        return true;
+      }
+
+      return false;
+    }
+
+    /// <summary>
     /// Called when page was changed.
     /// </summary>
     private void OnPageChanged()
@@ -273,17 +349,15 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
       var pluginsToQueryWithModel = new Dictionary<IProjectsListQuerying, ProjectViewModelList>();
       if (this.subjectPlugin != null)
       {
-        this.Projects.MultiSelectionMode = false;
-        pluginsToQueryWithModel.Add((IProjectsListQuerying)this.subjectPlugin, new ProjectViewModelList());
+        pluginsToQueryWithModel.Add((IProjectsListQuerying)this.subjectPlugin, new ProjectViewModelList { MultiSelectionMode = false, PlugIn = this.subjectPlugin });
       }
       else
       {
-        this.Projects.MultiSelectionMode = true;
-        foreach (var plugin in PluginsManager.Instance.PlugIns)
+        foreach (var plugin in PluginsManager.Instance.PlugIns.OfType<ISubjectPlugin>())
         {
           if (plugin is IProjectsListQuerying projectsListQueryingPlugin)
           {
-            pluginsToQueryWithModel.Add(projectsListQueryingPlugin, new ProjectViewModelList());
+            pluginsToQueryWithModel.Add(projectsListQueryingPlugin, new ProjectViewModelList { MultiSelectionMode = true, PlugIn = plugin});
           }
         }
       }
@@ -291,10 +365,10 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
       var taskList = new Dictionary<Task, ProjectViewModelList>();
       var timeoutTask = Task.Delay(25000);
       taskList.Add(timeoutTask, null);
-      foreach (var plugin in pluginsToQueryWithModel)
+      foreach (var pluginToQueryWithModel in pluginsToQueryWithModel)
       {
-        var task = this.LoadProjectsFromPlugin(plugin);
-        taskList.Add(task, plugin.Value);
+        var task = this.LoadProjectsFromPlugin(pluginToQueryWithModel);
+        taskList.Add(task, pluginToQueryWithModel.Value);
       }
 
       while (taskList.Count > 0)

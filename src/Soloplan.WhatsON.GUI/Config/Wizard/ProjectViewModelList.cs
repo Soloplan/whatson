@@ -34,6 +34,11 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
     }
 
     /// <summary>
+    /// Gets or sets the plug in used to retrieve the projects list.
+    /// </summary>
+    public ISubjectPlugin PlugIn { get; set; }
+
+    /// <summary>
     /// Gets or sets a value indicating whether multi selection mode is active.
     /// </summary>
     public bool MultiSelectionMode { get; set; }

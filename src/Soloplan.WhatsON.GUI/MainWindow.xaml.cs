@@ -9,10 +9,13 @@ namespace Soloplan.WhatsON.GUI
   using System;
   using System.Collections.Generic;
   using System.ComponentModel;
+  using System.Linq;
   using System.Windows;
   using System.Windows.Input;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.GUI.Config.View;
+  using Soloplan.WhatsON.GUI.Config.ViewModel;
+  using Soloplan.WhatsON.GUI.Config.Wizard;
   using Soloplan.WhatsON.Serialization;
 
   /// <summary>
@@ -188,6 +191,28 @@ namespace Soloplan.WhatsON.GUI
     private void CloseButtonClick(object sender, RoutedEventArgs e)
     {
       this.Close();
+    }
+
+    /// <summary>
+    /// Handles the Click event of the add new connector button control.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+    private void NewConnectorClick(object sender, RoutedEventArgs e)
+    {
+      var wizardController = new WizardController(this);
+      var result = false;
+      try
+      {
+        result = wizardController.Start(this.config);
+      }
+      finally
+      {
+        if (result)
+        {
+          this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.config));
+        }
+      }
     }
   }
 }

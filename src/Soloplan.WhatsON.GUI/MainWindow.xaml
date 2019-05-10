@@ -21,6 +21,7 @@
     <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
   </Window.Resources>
   <DockPanel>
+
     <materialDesign:ColorZone Margin="0"
                               Padding="6"
                               materialDesign:ShadowAssist.ShadowDepth="Depth2"
@@ -78,6 +79,18 @@
       </DockPanel>
     </materialDesign:ColorZone>
     <Grid DockPanel.Dock="Bottom">
+
+      <Button
+        Click="NewConnectorClick"
+        Style="{StaticResource MaterialDesignFloatingActionButton}"
+        ToolTip="Add new connector(s)"
+        Panel.ZIndex="2" Margin="0,0,20,20" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="56">
+        <materialDesign:PackIcon
+          Kind="Add"
+          Height="24"
+          Width="24" />
+      </Button>
+
       <subjectTreeView:SubjectsTreeView x:Name="mainTreeView" Visibility="{Binding IsTreeInitialized, Converter={StaticResource BoolToVisibility}}" />
       <TextBlock HorizontalAlignment="Center"
                  VerticalAlignment="Center"
