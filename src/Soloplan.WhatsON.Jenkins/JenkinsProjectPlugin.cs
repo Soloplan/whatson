@@ -39,13 +39,13 @@ namespace Soloplan.WhatsON.Jenkins
     }
 
     /// <summary>
-    /// Gets the projects lists.
+    /// Gets the projects.
     /// </summary>
     /// <param name="address">The address.</param>
     /// <returns>
     /// The projects list from the server.
     /// </returns>
-    public async Task<IList<ServerProjectTreeItem>> GetProjectsLists(string address)
+    public async Task<IList<ServerProjectTreeItem>> GetProjects(string address)
     {
       var api = new JenkinsApi();
       var serverProjects = new List<ServerProjectTreeItem>();

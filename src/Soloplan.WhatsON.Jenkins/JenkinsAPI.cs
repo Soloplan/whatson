@@ -74,7 +74,16 @@ namespace Soloplan.WhatsON.Jenkins
           using (var reader = new StreamReader(dataStream))
           {
             var responseFromServer = reader.ReadToEnd();
-            return JsonConvert.DeserializeObject<TModel>(responseFromServer);
+            var settings = new JsonSerializerSettings
+            {
+              Error = (s, e) =>
+              {
+                e.ErrorContext.Handled = true;
+                throw new InvalidPlugInApiResponseException("Error while potential Jenkins response deserialization");
+              }
+            };
+
+            return JsonConvert.DeserializeObject<TModel>(responseFromServer, settings);
           }
         }
       }

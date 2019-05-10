@@ -15,6 +15,7 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
   using System.Windows;
   using System.Windows.Controls;
   using MaterialDesignThemes.Wpf;
+  using NLog;
 
   /// <summary>
   /// Controls the execution of a wizard which allows to create or edit a project connection.
@@ -22,6 +23,11 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
   /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
   public class WizardController : INotifyPropertyChanged
   {
+    /// <summary>
+    /// Logger instance used by this class.
+    /// </summary>
+    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+
     /// <summary>
     /// The owner window.
     /// </summary>
@@ -138,6 +144,7 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
     /// Starts the wizard.
     /// </summary>
     /// <param name="plugin">The subject plugin.</param>
+    /// <returns>True if the wizard was finished correctly and not canceled in any way.</returns>
     public bool Start(ISubjectPlugin plugin = null)
     {
       this.subjectPlugin = plugin;
@@ -255,18 +262,79 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
     /// <returns>The task.</returns>
     private async Task PrepareProjectsList()
     {
-      // TODO first,try to detect pluginType if it's not set
+      var pluginsToQueryWithModel = new Dictionary<IProjectsListQuerying, ProjectViewModelList>();
+      if (this.subjectPlugin != null)
+      {
+        this.Projects.MultiSelectionMode = false;
+        pluginsToQueryWithModel.Add((IProjectsListQuerying)this.subjectPlugin, new ProjectViewModelList());
+      }
+      else
+      {
+        this.Projects.MultiSelectionMode = true;
+        foreach (var plugin in PluginsManager.Instance.PlugIns)
+        {
+          if (plugin is IProjectsListQuerying projectsListQueryingPlugin)
+          {
+            pluginsToQueryWithModel.Add(projectsListQueryingPlugin, new ProjectViewModelList());
+          }
+        }
+      }
 
-      this.Projects.MultiSelectionMode = false;
-      var listQueringPlugin = (IProjectsListQuerying)this.subjectPlugin;
-      var serverProjects = await listQueringPlugin.GetProjectsLists(this.ProposedServerAddress);
+      var taskList = new Dictionary<Task, ProjectViewModelList>();
+      var timeoutTask = Task.Delay(25000);
+      taskList.Add(timeoutTask, null);
+      foreach (var plugin in pluginsToQueryWithModel)
+      {
+        var task = this.LoadProjectsFromPlugin(plugin);
+        taskList.Add(task, plugin.Value);
+      }
+
+      while (taskList.Count > 0)
+      {
+        var completedTask = await Task.WhenAny(taskList.Keys.ToArray());
+        if (completedTask == timeoutTask)
+        {
+          throw new Exception("Discovery of suitable plugin or server query timed out");
+        }
+
+        if (completedTask.Status == TaskStatus.RanToCompletion)
+        {
+          this.projects = taskList.First(tkv => tkv.Key == completedTask).Value;
+          this.AttachToProjectsPropertyChanged();
+          break;
+        }
+
+        log.Debug($"Projects discovery for a plugin task completed not successfully. Status:{completedTask.Status}; Exception: {completedTask.Exception}");
+        taskList.Remove(completedTask);
+      }
+
+      if (taskList.Count == 0)
+      {
+        throw new Exception("Couldn't find suitable plugin or the address is invalid");
+      }
+    }
+
+    /// <summary>
+    /// Loads the projects from plugin.
+    /// </summary>
+    /// <param name="listQueryingPlugin">The list querying plugin.</param>
+    /// <returns>The task.</returns>
+    private async Task LoadProjectsFromPlugin(KeyValuePair<IProjectsListQuerying, ProjectViewModelList> listQueryingPlugin)
+    {
+      var serverProjects = await listQueryingPlugin.Key.GetProjects(this.ProposedServerAddress);
       foreach (var serverProject in serverProjects)
       {
-        var newProject = this.Projects.AddProject(serverProject.Name);
+        var newProject = listQueryingPlugin.Value.AddProject(serverProject.Name);
         newProject.Address = serverProject.Address;
         this.ProcessServerSubProjects(serverProject.ServerProjects, newProject);
       }
+    }
 
+    /// <summary>
+    /// Attaches action to each project PropertyChanged event.
+    /// </summary>
+    private void AttachToProjectsPropertyChanged()
+    {
       var projectCheckedChangedAction = new Action(() => this.IsAnyProjectChecked = this.Projects.Any(p => p.IsAnyChecked()));
       foreach (var project in this.Projects)
       {
@@ -275,7 +343,7 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
     }
 
     /// <summary>
-    /// Attaches action to each project PropertyChanged event.
+    /// Attaches action to each project PropertyChanged event. Applies the same action tosub projects.
     /// </summary>
     /// <param name="project">The project.</param>
     /// <param name="action">The action.</param>
@@ -316,7 +384,7 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
         this.WizardFrame.Content = this.currentPage;
         this.OnPageChanged();
       }
-      else
+      else if (this.wizardWindow.IsVisible)
       {
         System.Windows.MessageBox.Show(this.wizardWindow, errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
       }

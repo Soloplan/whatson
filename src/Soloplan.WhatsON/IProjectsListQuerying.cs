@@ -15,10 +15,10 @@ namespace Soloplan.WhatsON
   public interface IProjectsListQuerying
   {
     /// <summary>
-    /// Gets the projects lists.
+    /// Gets the projects.
     /// </summary>
     /// <param name="address">The address.</param>
-    /// <returns>The projects list from the server.</returns>
-    Task<IList<ServerProjectTreeItem>> GetProjectsLists(string address);
+    /// <returns>The projects from the server.</returns>
+    Task<IList<ServerProjectTreeItem>> GetProjects(string address);
   }
 }
