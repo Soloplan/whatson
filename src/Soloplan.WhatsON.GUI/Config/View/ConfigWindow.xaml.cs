@@ -12,6 +12,7 @@ namespace Soloplan.WhatsON.GUI.Config.View
   using System.Windows.Forms;
   using Soloplan.WhatsON.GUI.Config.ViewModel;
   using Soloplan.WhatsON.Serialization;
+  using Application = System.Windows.Application;
 
   /// <summary>
   /// Interaction logic for ConfigWindow.xaml
@@ -57,11 +58,6 @@ namespace Soloplan.WhatsON.GUI.Config.View
     /// The about page.
     /// </summary>
     private AboutPage aboutPage;
-
-    /// <summary>
-    /// The Theme helper.
-    /// </summary>
-    private ThemeHelper themeHelper;
 
     /// <summary>
     /// The window shown flag.
@@ -113,8 +109,7 @@ namespace Soloplan.WhatsON.GUI.Config.View
       }
 
       this.windowShown = true;
-
-      this.GetThemeHelper().ApplyLightDarkMode(this.configurationSource.DarkThemeEnabled);
+      ((App)Application.Current).ApplyTheme(this.configurationSource.DarkThemeEnabled);
     }
 
     /// <summary>
@@ -148,7 +143,7 @@ namespace Soloplan.WhatsON.GUI.Config.View
       switch (selectedItemTag)
       {
         case MainListItemTag:
-          this.mainPage = this.mainPage ?? new MainConfigPage(this.configurationViewModel, this.GetThemeHelper());
+          this.mainPage = this.mainPage ?? new MainConfigPage(this.configurationViewModel);
           this.ConfigFrame.Content = this.mainPage;
           return;
         case SubjectsListItemTag:
@@ -160,22 +155,6 @@ namespace Soloplan.WhatsON.GUI.Config.View
           this.ConfigFrame.Content = this.aboutPage;
           return;
       }
-    }
-
-    /// <summary>
-    /// Gets the theme helper.
-    /// </summary>
-    /// <returns>The Theme helper.</returns>
-    private ThemeHelper GetThemeHelper()
-    {
-      if (this.themeHelper != null)
-      {
-        return this.themeHelper;
-      }
-
-      this.themeHelper = new ThemeHelper();
-      this.themeHelper.Initialize();
-      return this.themeHelper;
     }
 
     /// <summary>

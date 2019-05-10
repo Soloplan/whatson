@@ -18,7 +18,7 @@ namespace Soloplan.WhatsON.GUI
   /// <summary>
   /// Helper class for managing themes and color adjustments to the UI.
   /// </summary>
-  public class ThemeHelper
+  internal class ThemeHelper
   {
     /// <summary>
     /// Initializes this instance.

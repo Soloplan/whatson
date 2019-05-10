@@ -293,7 +293,9 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
     /// <summary>
     /// Starts this wizard.
     /// </summary>
-    /// <returns>Tree if wizard was finished successfully.</returns>
+    /// <returns>
+    /// True if wizard was finished successfully.
+    /// </returns>
     private bool Start()
     {
       this.wizardWindow = new WizardWindow(this);

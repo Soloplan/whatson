@@ -16,14 +16,8 @@ namespace Soloplan.WhatsON.GUI.Config
   /// </summary>
   public partial class MainConfigPage : Page
   {
-    /// <summary>
-    /// The Theme helper.
-    /// </summary>
-    private readonly ThemeHelper themeHelper;
-
-    public MainConfigPage(ConfigViewModel configurationViewModel, ThemeHelper themeHelper)
+    public MainConfigPage(ConfigViewModel configurationViewModel)
     {
-      this.themeHelper = themeHelper;
       this.DataContext = configurationViewModel;
       this.InitializeComponent();
     }
@@ -55,7 +49,7 @@ namespace Soloplan.WhatsON.GUI.Config
     private void SwitchLightDarkMode(ToggleButton lightDarkToggleButton)
     {
       var isDark = lightDarkToggleButton.IsChecked ?? false;
-      this.themeHelper.ApplyLightDarkMode(isDark);
+      ((App)Application.Current).ApplyTheme(isDark);
     }
   }
 }

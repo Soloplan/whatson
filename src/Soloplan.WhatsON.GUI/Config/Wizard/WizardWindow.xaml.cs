@@ -4,6 +4,7 @@
 
 namespace Soloplan.WhatsON.GUI.Config.Wizard
 {
+  using System;
   using System.Windows;
 
   /// <summary>
@@ -17,7 +18,12 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
     private readonly WizardController wizardController;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="WizardWindow"/> class.
+    /// The window shown flag.
+    /// </summary>
+    private bool windowShown;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WizardWindow" /> class.
     /// </summary>
     /// <param name="wizardController">The wizard controller.</param>
     public WizardWindow(WizardController wizardController)
@@ -25,6 +31,24 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
       this.wizardController = wizardController;
       this.DataContext = wizardController;
       this.InitializeComponent();
+    }
+
+    /// <summary>
+    /// Raises the <see cref="E:ContentRendered" /> event.
+    /// </summary>
+    /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+    protected override void OnContentRendered(EventArgs e)
+    {
+      base.OnContentRendered(e);
+
+      if (this.windowShown)
+      {
+        return;
+      }
+
+      this.windowShown = true;
+      var app = (App)Application.Current;
+      app.ApplyTheme(app.IsDarkThemeEnabled);
     }
 
     /// <summary>
