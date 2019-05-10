@@ -1,0 +1,48 @@
+﻿<UserControl x:Class="Soloplan.WhatsON.GUI.Common.BuildServer.ProgressBarTooltipControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DataContext="{d:DesignInstance local:BuildStatusViewModel}"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             mc:Ignorable="d">
+  <UserControl.Resources>
+    <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+  </UserControl.Resources>
+  <StackPanel Orientation="Vertical">
+    <StackPanel Orientation="Vertical" Visibility="{Binding BuildingNoLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
+      <StackPanel Orientation="Horizontal">
+        <TextBlock Text="Completion: " />
+        <TextBlock Text="{Binding Progres}" />
+        <TextBlock Text="% " />
+      </StackPanel>
+      <StackPanel Orientation="Horizontal">
+        <TextBlock>
+          <TextBlock.Text>
+            <MultiBinding StringFormat="{}{0:00}:{1:00}:{2:00}">
+              <Binding Path="EstimatedRemaining.Hours" />
+              <Binding Path="EstimatedRemaining.Minutes" />
+              <Binding Path="EstimatedRemaining.Seconds" />
+            </MultiBinding>
+          </TextBlock.Text>
+        </TextBlock>
+        <TextBlock Text=" estimated remaining" />
+      </StackPanel>
+    </StackPanel>
+    <StackPanel Visibility="{Binding BuildingLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
+      <TextBlock FontSize="10" Text=" Taking " />
+      <TextBlock FontSize="10">
+        <TextBlock.Text>
+          <MultiBinding StringFormat="{}{0:00}:{1:00}:{2:00}">
+            <Binding Path="BuildTimeExcedingEstimation.Hours" />
+            <Binding Path="BuildTimeExcedingEstimation.Minutes" />
+            <Binding Path="BuildTimeExcedingEstimation.Seconds" />
+          </MultiBinding>
+        </TextBlock.Text>
+      </TextBlock>
+      <TextBlock FontSize="10" Text=" longer then estimated." />
+    </StackPanel>
+  </StackPanel>
+</UserControl>
