@@ -31,5 +31,23 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
     {
       e.Handled = true;
     }
+
+    /// <summary>
+    /// Handles the PreviewKeyUp event of the TreeViewItem control.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="System.Windows.Input.KeyEventArgs"/> instance containing the event data.</param>
+    private void TreeViewItemPreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+    {
+      if (e.Key == System.Windows.Input.Key.Space)
+      {
+        var item = (ProjectViewModel)this.mainTreeView.SelectedItem;
+        if (item.IsCheckable)
+        {
+          item.IsChecked = !item.IsChecked;
+          e.Handled = true;
+        }
+      }
+    }
   }
 }

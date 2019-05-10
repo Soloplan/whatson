@@ -13,7 +13,7 @@
     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch" Orientation="Vertical">
       <TextBlock Text="Enter the server address:" Margin="0,0,0,10"/>
       <materialDesign:ColorZone Mode="Light">
-        <ComboBox  IsEditable="True" Text="{Binding Path=ProposedServerAddress}"/>
+        <ComboBox  IsEditable="True" Text="{Binding Path=ProposedServerAddress}" KeyUp="ConnectionAdressKeyUp" Name="AddressComboBox"/>
       </materialDesign:ColorZone>
     </StackPanel>
   </StackPanel>

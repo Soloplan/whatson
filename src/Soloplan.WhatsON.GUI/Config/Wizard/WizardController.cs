@@ -192,6 +192,11 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
       {
         this.GoToProjectSelectionStep();
       }
+
+      if (this.WizardFrame.Content is ProjectSelectionWizardPage)
+      {
+        this.Finish();
+      }
     }
 
     /// <summary>
@@ -210,8 +215,11 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
     /// </summary>
     public void Finish()
     {
-      this.wizardWindow.DialogResult = true;
-      this.wizardWindow.Close();
+      if (this.IsAnyProjectChecked)
+      {
+        this.wizardWindow.DialogResult = true;
+        this.wizardWindow.Close();
+      }
     }
 
     /// <summary>
@@ -240,7 +248,7 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
     private void GoToConnectionStep()
     {
       this.StepDescriptionTextBlock.Text = "Connection"; // TODO load from resources
-      this.currentPage = new ConnectionWizardPage();
+      this.currentPage = new ConnectionWizardPage(this);
       this.currentPage.DataContext = this;
       this.WizardFrame.Content = this.currentPage;
       this.OnPageChanged();
@@ -379,7 +387,7 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
       if (!error)
       {
         this.StepDescriptionTextBlock.Text = "Project selection"; // TODO load from resources
-        this.currentPage = new ProjectSelectionWizardPage();
+        this.currentPage = new ProjectSelectionWizardPage(this);
         this.currentPage.DataContext = this;
         this.WizardFrame.Content = this.currentPage;
         this.OnPageChanged();

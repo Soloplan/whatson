@@ -11,8 +11,8 @@
     <ResourceDictionary>
       <HierarchicalDataTemplate DataType="{x:Type local:ProjectViewModel}" ItemsSource="{Binding Path=Projects}">
         <StackPanel Orientation="Horizontal">
-          <CheckBox IsChecked="{Binding IsChecked}" Visibility="{Binding Path=IsCheckable, Converter={StaticResource BoolToVis}}"></CheckBox>
-          <TextBlock Text="{Binding Name}" />
+          <CheckBox IsChecked="{Binding IsChecked}" Visibility="{Binding Path=IsCheckable, Converter={StaticResource BoolToVis}}" Focusable="False" />
+          <TextBlock Text="{Binding Name}" Focusable="False" />
         </StackPanel>
       </HierarchicalDataTemplate>
     </ResourceDictionary>
@@ -23,6 +23,7 @@
       <Style BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="{x:Type TreeViewItem}">
         <Setter Property="IsExpanded" Value="True" />
         <EventSetter Event="RequestBringIntoView" Handler="NullHandler"/>
+        <EventSetter Event="PreviewKeyUp" Handler="TreeViewItemPreviewKeyUp"/>
       </Style>
     </TreeView.ItemContainerStyle>
   </TreeView>

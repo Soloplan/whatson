@@ -10,7 +10,7 @@
       Title="ProjectSelectionWizardPage">
 
   <Grid>
-    <wizard:ProjectsTreeView  x:Name="projectsTreeView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DataContext="{Binding Path=Projects}"
+    <wizard:ProjectsTreeView  x:Name="projectsTreeView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DataContext="{Binding Path=Projects}" PreviewKeyUp="MainTreeViewPreviewKeyUp"
           ScrollViewer.VerticalScrollBarVisibility="Auto"
           ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
   </Grid>
