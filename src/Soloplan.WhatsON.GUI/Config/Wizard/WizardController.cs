@@ -73,7 +73,7 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
     /// <summary>
     /// Is proposed address empty flag.
     /// </summary>
-    private bool isProposedAddressEmpty;
+    private bool isProposedAddressEmpty = true;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WizardController"/> class.
