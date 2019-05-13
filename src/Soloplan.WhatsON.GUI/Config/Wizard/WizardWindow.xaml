@@ -20,7 +20,7 @@
       <TextBlock x:Name="StepDescription" TextWrapping="Wrap" Text="Wizard step description" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,0,0,10" FontSize="24" FontFamily="Arial" FontWeight="SemiBold"/>
       <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" DockPanel.Dock="Bottom" Margin="0,15,0,6">
         <Button Margin="0,0,10,0" Click="PrevClick" IsEnabled="{Binding Path=IsNotFirstStep}" Width="90">Previous</Button>
-        <Button Click="NextClick" Visibility="{Binding Path=IsNotLastStep, Converter={StaticResource BoolToVis}}" Width="90">Next</Button>
+        <Button Click="NextClick" Visibility="{Binding Path=IsNotLastStep, Converter={StaticResource BoolToVis}}" IsEnabled="{Binding Path=IsNextStepEnabled}" Width="90">Next</Button>
         <Button Click="FinishClick" Visibility="{Binding Path=IsLastStep, Converter={StaticResource BoolToVis}}" IsEnabled="{Binding Path=IsAnyProjectChecked}" Width="90">Finish</Button>
       </StackPanel>
       <Frame x:Name="Frame" Content="Frame" NavigationUIVisibility="Hidden"/>

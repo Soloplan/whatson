@@ -66,6 +66,16 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
     private ISubjectPlugin subjectPlugin;
 
     /// <summary>
+    /// The proposed server address.
+    /// </summary>
+    private string proposedServerAddress;
+
+    /// <summary>
+    /// Is proposed address empty flag.
+    /// </summary>
+    private bool isProposedAddressEmpty;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="WizardController"/> class.
     /// </summary>
     /// <param name="ownerWindow">The owner window.</param>
@@ -100,6 +110,30 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
     public bool IsNotLastStep => !this.IsLastStep;
 
     /// <summary>
+    /// Gets a value indicating whether this the next step button is enabled.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if the next step button is enabled; otherwise, <c>false</c>.
+    /// </value>
+    public bool IsNextStepEnabled => this.IsNotLastStep && !this.IsProposedAddressEmpty;
+
+    /// <summary>
+    /// Gets a value indicating whether the proposed address is empty.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if the proposed address is empty; otherwise, <c>false</c>.
+    /// </value>
+    public bool IsProposedAddressEmpty
+    {
+      get => this.isProposedAddressEmpty;
+      private set
+      {
+        this.isProposedAddressEmpty = value;
+        this.OnPropertyChanged(nameof(this.IsNextStepEnabled));
+      }
+    }
+
+    /// <summary>
     /// Gets or sets a value indicating whether multi selection mode is active.
     /// </summary>
     public bool MultiSelectionMode { get; set; }
@@ -107,7 +141,16 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
     /// <summary>
     /// Gets or sets the proposed server address.
     /// </summary>
-    public string ProposedServerAddress { get; set; }
+    public string ProposedServerAddress
+    {
+      get => this.proposedServerAddress;
+      set
+      {
+        this.proposedServerAddress = value;
+        this.IsProposedAddressEmpty = string.IsNullOrWhiteSpace(value);
+        this.OnPropertyChanged(nameof(this.IsProposedAddressEmpty));
+      }
+    }
 
     /// <summary>
     /// Gets a value indicating whether any project is checked.
@@ -318,6 +361,7 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
       this.OnPropertyChanged(nameof(this.IsLastStep));
       this.OnPropertyChanged(nameof(this.IsNotLastStep));
       this.OnPropertyChanged(nameof(this.IsFinishEnabled));
+      this.OnPropertyChanged(nameof(this.IsNextStepEnabled));
     }
 
     /// <summary>
