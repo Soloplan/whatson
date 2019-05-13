@@ -5,9 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Config.Wizard"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Medium"
+        TextElement.FontSize="14"
+        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto" 
         mc:Ignorable="d"
-        Title="Wizard" Height="711.897" Width="548.232" ShowInTaskbar="False">
+        Title="Wizard" Height="711.897" Width="548.232" ShowInTaskbar="False" MinHeight="400">
+
   <materialDesign:DialogHost Identifier="WizardWaitDialogHostId" Name="WizardWaitDialogHost">
     <materialDesign:DialogHost.DialogContent>
       <ProgressBar
