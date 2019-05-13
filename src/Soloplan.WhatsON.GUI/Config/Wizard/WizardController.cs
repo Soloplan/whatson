@@ -191,7 +191,7 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
 
       var serverProjects = new List<ServerProject>();
       var checkedProjects = this.Projects.GetChecked();
-      foreach (var checkedProject in checkedProjects)
+      foreach (var checkedProject in checkedProjects.Where(p => p.Projects.Count == 0))
       {
         var newServerProject = new ServerProject();
         newServerProject.Address = checkedProject.Address;
@@ -280,7 +280,7 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
           throw new InvalidOperationException("Subject does not support assign from server project.");
         }
 
-        assignanbleServerProject.AssignServerProject(selectedProjects[0], newConnector, this.ProposedServerAddress);
+        assignanbleServerProject.AssignServerProject(selectedProject, newConnector, this.ProposedServerAddress);
       }
 
       if (configurationViewModel.ConfigurationIsModified)
