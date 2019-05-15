@@ -14,7 +14,7 @@ namespace Soloplan.WhatsON.CruiseControl
   {
     private IDictionary<Uri, CruiseControlServer> servers = new Dictionary<Uri, CruiseControlServer>();
 
-    public CruiseControlServer GetServer(string address)
+    public CruiseControlServer GetServer(string address, bool addToCache = true)
     {
       var uri = new Uri(address);
       CruiseControlServer server;
@@ -24,7 +24,11 @@ namespace Soloplan.WhatsON.CruiseControl
       }
 
       server = new CruiseControlServer(uri.AbsoluteUri);
-      this.servers[uri] = server;
+      if (addToCache)
+      {
+        this.servers[uri] = server;
+      }
+
       return server;
     }
   }

@@ -9,7 +9,6 @@ namespace Soloplan.WhatsON.Jenkins
 {
   using System;
   using System.Collections.Generic;
-  using System.Linq;
   using System.Threading.Tasks;
   using NLog;
   using Soloplan.WhatsON.Jenkins.Model;
@@ -61,7 +60,7 @@ namespace Soloplan.WhatsON.Jenkins
     /// <param name="serverAddress">The server address.</param>
     public void AssignServerProject(ServerProject serverProject, IConfigurationItemsSupport configurationItemsSupport, string serverAddress)
     {
-      // for now, we extract the prject name from the address
+      // for now, we extract the project name from the address
       var projectNameWithoutAddress = serverProject.Address.Substring(serverAddress.Length, serverProject.Address.Length - serverAddress.Length - 1).Trim('/');
       if (projectNameWithoutAddress.StartsWith("job", StringComparison.CurrentCultureIgnoreCase))
       {

@@ -44,6 +44,15 @@ namespace Soloplan.WhatsON.CruiseControl
       return (await this.cache).CruiseControlProject.FirstOrDefault(job => job.Name == projectName);
     }
 
+    /// <summary>
+    /// Gets all projects from the CC server.
+    /// </summary>
+    /// <returns>The list of all projects.</returns>
+    public async Task<CruiseControlJobs> GetAllProjects()
+    {
+      return await this.GetStatusAsync<CruiseControlJobs>(default(CancellationToken), this.address);
+    }
+
     private async Task<TModel> GetStatusAsync<TModel>(CancellationToken cancellationToken, string requestUrl)
     where TModel : class
     {

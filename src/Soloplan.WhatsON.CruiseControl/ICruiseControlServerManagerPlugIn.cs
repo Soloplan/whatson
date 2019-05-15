@@ -9,6 +9,6 @@ namespace Soloplan.WhatsON.CruiseControl
 {
   public interface ICruiseControlServerManagerPlugIn : IPlugIn
   {
-    CruiseControlServer GetServer(string address);
+    CruiseControlServer GetServer(string address, bool addToCache = true);
   }
 }
