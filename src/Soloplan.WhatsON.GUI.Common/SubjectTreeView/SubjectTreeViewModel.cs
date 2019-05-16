@@ -5,10 +5,14 @@
 
 namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
 {
+  using System;
+  using System.Collections;
   using System.Collections.Generic;
   using System.Collections.ObjectModel;
   using System.Linq;
+  using System.Windows;
   using System.Windows.Input;
+  using GongSolutions.Wpf.DragDrop;
   using NLog;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.Serialization;
@@ -16,7 +20,7 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
   /// <summary>
   /// Top level viewmodel used to bind to <see cref="SubjectTreeView"/>.
   /// </summary>
-  public class SubjectTreeViewModel : IHandleDoubleClick
+  public class SubjectTreeViewModel : IHandleDoubleClick, IDropTarget
   {
     /// <summary>
     /// The logger.
@@ -27,6 +31,8 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
     /// Backing field for <see cref="SubjectGroups"/>.
     /// </summary>
     private ObservableCollection<SubjectGroupViewModel> subjectGroups;
+
+    public event EventHandler ConfigurationChanged;
 
     /// <summary>
     /// Gets observable collection of subject groups, the top level object in tree view binding.
@@ -42,6 +48,65 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
     /// Gets a value indicating whether there is only one group.
     /// </summary>
     public bool OneGroup => this.SubjectGroups.Count == 1;
+
+    /// <summary>Updates the current drag state.</summary>
+    /// <param name="dropInfo">Information about the drag.</param>
+    /// <remarks>
+    /// To allow a drop at the current drag position, the <see cref="P:GongSolutions.Wpf.DragDrop.DropInfo.Effects" /> property on
+    /// <paramref name="dropInfo" /> should be set to a value other than <see cref="F:System.Windows.DragDropEffects.None" />
+    /// and <see cref="P:GongSolutions.Wpf.DragDrop.DropInfo.Data" /> should be set to a non-null value.
+    /// </remarks>
+    public void DragOver(IDropInfo dropInfo)
+    {
+      if (object.ReferenceEquals(dropInfo.TargetItem, dropInfo.Data))
+      {
+        return;
+      }
+
+      if (dropInfo.Data is SubjectViewModel)
+      {
+        if (dropInfo.TargetItem is SubjectGroupViewModel)
+        {
+          dropInfo.DropTargetAdorner = DropTargetAdorners.Highlight;
+          dropInfo.Effects = DragDropEffects.Move;
+        }
+        else if (dropInfo.TargetItem is SubjectViewModel)
+        {
+          dropInfo.Effects = DragDropEffects.Move;
+          dropInfo.DropTargetAdorner = (dropInfo.InsertPosition & RelativeInsertPosition.TargetItemCenter) != 0 ? DropTargetAdorners.Highlight : DropTargetAdorners.Insert;
+        }
+      }
+      else if (dropInfo.Data is SubjectGroupViewModel)
+      {
+        if (dropInfo.TargetItem is SubjectGroupViewModel)
+        {
+          dropInfo.Effects = DragDropEffects.Move;
+          dropInfo.DropTargetAdorner = (dropInfo.InsertPosition & RelativeInsertPosition.TargetItemCenter) != 0 ? DropTargetAdorners.Highlight : DropTargetAdorners.Insert;
+        }
+      }
+    }
+
+    /// <summary>Performs a drop.</summary>
+    /// <param name="dropInfo">Information about the drop.</param>
+    public void Drop(IDropInfo dropInfo)
+    {
+      if (dropInfo.Effects != DragDropEffects.Move)
+      {
+        log.Warn("Unexpected drop operation. {data}", new { Effect = dropInfo.Effects, dropInfo.Data, Target = dropInfo.TargetItem });
+        return;
+      }
+
+      if (dropInfo.Data is SubjectGroupViewModel drggedGroup)
+      {
+        this.DropGrup(dropInfo, drggedGroup);
+      }
+      else if (dropInfo.Data is SubjectViewModel draggedSubject)
+      {
+        this.DropSubject(dropInfo, draggedSubject);
+      }
+
+      this.ConfigurationChanged?.Invoke(this, EventArgs.Empty);
+    }
 
     /// <summary>
     /// Initializes the model.
@@ -93,6 +158,29 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
       }
     }
 
+    /// <summary>
+    /// Writes model settings to <paramref name="configuration"/>.
+    /// </summary>
+    /// <param name="configuration">Application configuration.</param>
+    public void WriteToConfiguration(ApplicationConfiguration configuration)
+    {
+      var subjectConfigurations = configuration.SubjectsConfiguration.ToList();
+      configuration.SubjectsConfiguration.Clear();
+      foreach (var subjectGroupViewModel in this.SubjectGroups)
+      {
+        foreach (var subjectViewModel in subjectGroupViewModel.SubjectViewModels)
+        {
+          var config = subjectConfigurations.FirstOrDefault(cfg => cfg.Identifier == subjectViewModel.Identifier);
+          if (config != null)
+          {
+            config.GetConfigurationByKey(Subject.Category).Value = subjectGroupViewModel.GroupName;
+          }
+
+          configuration.SubjectsConfiguration.Add(config);
+        }
+      }
+    }
+
     public void OnDoubleClick(object sender, MouseButtonEventArgs e)
     {
       foreach (var subjectGroupViewModel in this.SubjectGroups)
@@ -137,9 +225,108 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
       }
     }
 
+    /// <summary>
+    /// Moves object given by <paramref name="source"/> to <paramref name="target"/>
+    /// </summary>
+    /// <param name="source">Information about source location of moved object.</param>
+    /// <param name="target">Information about desired location of moved object.</param>
+    /// <param name="insertPosition">Additional information about where in relation to <paramref name="target"/> the object should be placed.</param>
+    private static void MoveObject(MovedObjectLocation source, MovedObjectLocation target, RelativeInsertPosition insertPosition)
+    {
+      var insertPositionInternal = insertPosition;
+      if ((insertPositionInternal & RelativeInsertPosition.TargetItemCenter) != 0)
+      {
+        insertPositionInternal = RelativeInsertPosition.AfterTargetItem;
+      }
+
+      var targetIndex = target.Index;
+      if ((insertPositionInternal & RelativeInsertPosition.AfterTargetItem) != 0)
+      {
+        targetIndex = targetIndex + 1;
+      }
+
+      if (object.ReferenceEquals(target.List, source.List))
+      {
+        if (targetIndex > source.Index)
+        {
+          targetIndex = targetIndex - 1;
+        }
+
+        if (source.Index == targetIndex)
+        {
+          return;
+        }
+      }
+
+      var obj = source.List[source.Index];
+      source.List.RemoveAt(source.Index);
+      target.List.Insert(targetIndex, obj);
+    }
+
     private IEnumerable<IGrouping<string, SubjectConfiguration>> ParseConfiguration(ApplicationConfiguration configuration)
     {
       return configuration.SubjectsConfiguration.GroupBy(config => config.GetConfigurationByKey(Subject.Category)?.Value?.Trim() ?? string.Empty);
+    }
+
+    /// <summary>
+    /// Handles dropping of <see cref="SubjectViewModel"/>.
+    /// </summary>
+    /// <param name="dropInfo">All drop information.</param>
+    /// <param name="droppedSubject">The dropped subject.</param>
+    private void DropSubject(IDropInfo dropInfo, SubjectViewModel droppedSubject)
+    {
+      var currentSubjectGroupModel = this.GetSubjectGroup(droppedSubject);
+      if (dropInfo.TargetItem is SubjectGroupViewModel model)
+      {
+        if (object.ReferenceEquals(currentSubjectGroupModel.List, model.SubjectViewModels))
+        {
+          return;
+        }
+
+        MoveObject(currentSubjectGroupModel, new MovedObjectLocation(model.SubjectViewModels, model.SubjectViewModels.Count - 1), RelativeInsertPosition.AfterTargetItem);
+      }
+
+      if (dropInfo.TargetItem is SubjectViewModel targetModel)
+      {
+        var targetGroup = this.GetSubjectGroup(targetModel);
+        MoveObject(currentSubjectGroupModel, targetGroup, dropInfo.InsertPosition);
+      }
+    }
+
+    /// <summary>
+    /// Handles dropping of <see cref="SubjectGroupViewModel"/>.
+    /// </summary>
+    /// <param name="dropInfo">All drop information.</param>.
+    /// <param name="droppedGroup">The dropped group.</param>
+    private void DropGrup(IDropInfo dropInfo, SubjectGroupViewModel droppedGroup)
+    {
+      if (dropInfo.TargetItem is SubjectGroupViewModel targetModel)
+      {
+        var index = this.SubjectGroups.IndexOf(droppedGroup);
+        var targetIndex = this.SubjectGroups.IndexOf(targetModel);
+        MoveObject(new MovedObjectLocation(this.SubjectGroups, index), new MovedObjectLocation(this.SubjectGroups, targetIndex), dropInfo.InsertPosition);
+      }
+    }
+
+    /// <summary>
+    /// Gets information about location in parent collection.
+    /// </summary>
+    /// <param name="subjectViewModel">The subject view model.</param>
+    /// <returns>The information about location in target collection.</returns>
+    private MovedObjectLocation GetSubjectGroup(SubjectViewModel subjectViewModel)
+    {
+      foreach (var subjectGroupViewModel in this.SubjectGroups)
+      {
+        var index = subjectGroupViewModel.SubjectViewModels.IndexOf(subjectViewModel);
+        if (index < 0)
+        {
+          continue;
+        }
+
+        return new MovedObjectLocation(subjectGroupViewModel.SubjectViewModels, index);
+      }
+
+      return null;
     }
 
     private void SchedulerStatusQueried(object sender, Subject e)
@@ -159,6 +346,28 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
     {
       var subject = new ObservableCollection<SubjectGroupViewModel>();
       return subject;
+    }
+
+    /// <summary>
+    /// Helper class with information about where the moved object is or should be in <see cref="List"/>.
+    /// </summary>
+    private class MovedObjectLocation
+    {
+      public MovedObjectLocation(IList list, int index)
+      {
+        this.List = list;
+        this.Index = index;
+      }
+
+      /// <summary>
+      /// Gets the source/target list.
+      /// </summary>
+      public IList List { get; }
+
+      /// <summary>
+      /// Gets the actual/desired location of object.
+      /// </summary>
+      public int Index { get; }
     }
   }
 }

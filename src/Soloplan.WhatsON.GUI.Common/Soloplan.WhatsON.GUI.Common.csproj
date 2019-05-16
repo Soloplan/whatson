@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -88,6 +88,9 @@
     <Compile Include="VisualConfig\WindowSettings.cs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="gong-wpf-dragdrop">
+      <Version>2.0.1</Version>
+    </PackageReference>
     <PackageReference Include="Humanizer.Core">
       <Version>2.6.2</Version>
     </PackageReference>

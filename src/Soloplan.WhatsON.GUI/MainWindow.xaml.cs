@@ -62,6 +62,7 @@ namespace Soloplan.WhatsON.GUI
       this.ShowInTaskbar = this.config.ShowInTaskbar;
       this.Topmost = this.config.AlwaysOnTop;
       this.DataContext = this;
+      this.mainTreeView.ConfigurationChanged += this.MainTreeViewOnConfigurationChanged;
     }
 
     public bool IsTreeInitialized
@@ -211,6 +212,13 @@ namespace Soloplan.WhatsON.GUI
           this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.config));
         }
       }
+    }
+
+    private void MainTreeViewOnConfigurationChanged(object sender, EventArgs e)
+    {
+      this.mainTreeView.WriteToConfiguration(this.config);
+      SerializationHelper.SaveConfiguration(this.config);
+      this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.config));
     }
   }
 }

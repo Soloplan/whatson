@@ -1,5 +1,6 @@
 ﻿namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
 {
+  using System;
   using System.Collections.Generic;
   using System.ComponentModel;
   using System.Linq;
@@ -39,9 +40,15 @@
       }
     }
 
+    /// <summary>
+    /// Event fired when configuration is changed by user interaction with <see cref="SubjectTreeView"/>.
+    /// </summary>
+    public event EventHandler ConfigurationChanged;
+
     public void Init(ObservationScheduler scheduler, ApplicationConfiguration configuration, IList<Subject> initialSubjectState)
     {
       this.model = new SubjectTreeViewModel();
+      this.model.ConfigurationChanged += (s, e) => this.ConfigurationChanged?.Invoke(this, EventArgs.Empty);
       this.model.Init(scheduler, configuration, initialSubjectState);
       this.DataContext = this.model;
       this.SetupDataContext();
@@ -51,6 +58,15 @@
     {
       this.model.Update(configuration);
       this.SetupDataContext();
+    }
+
+    /// <summary>
+    /// Writes current settings from <see cref="SubjectsTreeView"/> to <paramref name="configuration"/>.
+    /// </summary>
+    /// <param name="configuration">Configuration to which data should be written.</param>
+    public void WriteToConfiguration(ApplicationConfiguration configuration)
+    {
+      this.model.WriteToConfiguration(configuration);
     }
 
     public TreeListSettings GetTreeListSettings()
