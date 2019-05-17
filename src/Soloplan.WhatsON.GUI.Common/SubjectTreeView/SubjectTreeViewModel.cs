@@ -32,6 +32,11 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
     /// </summary>
     private ObservableCollection<SubjectGroupViewModel> subjectGroups;
 
+    /// <summary>
+    /// Flag indicating that <see cref="ConfigurationChanged"/> event is triggered - used to ignore updates of model.
+    /// </summary>
+    private bool configurationChanging;
+
     public event EventHandler ConfigurationChanged;
 
     /// <summary>
@@ -105,7 +110,7 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
         this.DropSubject(dropInfo, draggedSubject);
       }
 
-      this.ConfigurationChanged?.Invoke(this, EventArgs.Empty);
+      this.OnConfigurationChanged(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -134,6 +139,11 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
     /// <param name="configuration">Changed configuration.</param>
     public void Update(ApplicationConfiguration configuration)
     {
+      if (this.configurationChanging)
+      {
+        return;
+      }
+
       log.Debug("Initializing {name}", nameof(SubjectTreeViewModel));
       var grouping = this.ParseConfiguration(configuration).ToList();
       foreach (var group in grouping)
@@ -222,6 +232,24 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
         }
 
         log.Debug("Parsing expansion state for non-existing group {@GroupExpansion}", expansion);
+      }
+    }
+
+    /// <summary>
+    /// Calls <see cref="ConfigurationChanged"/> event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="args">Event args.</param>
+    protected void OnConfigurationChanged(object sender, EventArgs args)
+    {
+      try
+      {
+        this.configurationChanging = true;
+        this.ConfigurationChanged?.Invoke(sender, args);
+      }
+      finally
+      {
+        this.configurationChanging = false;
       }
     }
 
