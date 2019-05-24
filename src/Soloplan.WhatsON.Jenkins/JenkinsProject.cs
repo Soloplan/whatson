@@ -63,6 +63,11 @@ namespace Soloplan.WhatsON.Jenkins
     protected override async Task ExecuteQuery(CancellationToken cancellationToken, params string[] args)
     {
       var job = await this.api.GetJenkinsJob(this, cancellationToken);
+      if (job?.LastBuild?.Number == null)
+      {
+        return;
+      }
+
       var latestBuild = await this.api.GetJenkinsBuild(this, job.LastBuild.Number, cancellationToken);
       this.CurrentStatus = CreateStatus(latestBuild);
       if (this.Snapshots.Count == 0 && this.MaxSnapshots > 0 && job.FirstBuild.Number < job.LastBuild.Number)
