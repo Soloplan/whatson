@@ -10,6 +10,8 @@
         Title="MainWindow"
         Width="800"
         Height="450"
+        MinWidth="300"
+        MinHeight="200"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
         Style="{StaticResource BorderLessWindowStyle}"
@@ -80,15 +82,17 @@
     </materialDesign:ColorZone>
     <Grid DockPanel.Dock="Bottom">
 
-      <Button
-        Click="NewConnectorClick"
-        Style="{StaticResource MaterialDesignFloatingActionButton}"
-        ToolTip="Add new connector(s)"
-        Panel.ZIndex="2" Margin="0,0,20,20" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="56">
-        <materialDesign:PackIcon
-          Kind="Add"
-          Height="24"
-          Width="24" />
+      <Button Width="56"
+              Margin="0,0,20,20"
+              HorizontalAlignment="Right"
+              VerticalAlignment="Bottom"
+              Panel.ZIndex="2"
+              Click="NewConnectorClick"
+              Style="{StaticResource MaterialDesignFloatingActionButton}"
+              ToolTip="Add new connector(s)">
+        <materialDesign:PackIcon Width="24"
+                                 Height="24"
+                                 Kind="Add" />
       </Button>
 
       <subjectTreeView:SubjectsTreeView x:Name="mainTreeView" Visibility="{Binding IsTreeInitialized, Converter={StaticResource BoolToVisibility}}" />
