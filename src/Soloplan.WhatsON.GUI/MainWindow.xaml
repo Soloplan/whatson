@@ -6,8 +6,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:subjectTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.SubjectTreeView;assembly=Soloplan.WhatsON.GUI.Common"
-        xmlns:system="clr-namespace:System;assembly=mscorlib"
-        Title="MainWindow"
+        Title="Soloplan WhatsON"
         Width="800"
         Height="450"
         MinWidth="300"
@@ -20,63 +19,12 @@
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         mc:Ignorable="d">
   <DockPanel>
-
-    <materialDesign:ColorZone Margin="0"
-                              Padding="6"
-                              materialDesign:ShadowAssist.ShadowDepth="Depth2"
-                              DockPanel.Dock="Top"
-                              Mode="PrimaryMid"
-                              MouseDown="MainWindowBarMouseDown">
-      <DockPanel DockPanel.Dock="Top">
-
-        <materialDesign:PackIcon Width="30"
-                                 Height="30"
-                                 HorizontalAlignment="Center"
-                                 VerticalAlignment="Center"
-                                 Background="Transparent"
-                                 Cursor="Hand"
-                                 DockPanel.Dock="Left"
-                                 Kind="SettingsOutline"
-                                 MouseDown="OpenConfig" />
-
-        <Button Width="30"
-                Height="30"
-                Margin="1"
-                Padding="0"
-                Click="CloseButtonClick"
-                Cursor="Hand"
-                DockPanel.Dock="Right"
-                IsTabStop="False">
-          <materialDesign:PackIcon Width="30"
-                                   Height="30"
-                                   Kind="WindowClose" />
-        </Button>
-
-        <Button x:Name="MinimizeButton"
-                Width="30"
-                Height="30"
-                Margin="1"
-                Padding="0,6,0,0"
-                Click="MinimizeButonClick"
-                Cursor="Hand"
-                DockPanel.Dock="Right"
-                IsTabStop="False"
-                Visibility="{Binding Path=ShowInTaskbar, Converter={StaticResource BoolToVis}}">
-          <materialDesign:PackIcon Width="30"
-                                   Height="30"
-                                   Kind="WindowMinimize" />
-        </Button>
-
-        <TextBlock Name="appName"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   DockPanel.Dock="Right"
-                   FontSize="18">
-          Soloplan WhatsON
-        </TextBlock>
-
-      </DockPanel>
-    </materialDesign:ColorZone>
+    <local:CustomTitleBar ButtonClicked="OpenConfig"
+                          CustomButtonIcon="SettingsOutline"
+                          CustomButtonVisible="True"
+                          DockPanel.Dock="Top"
+                          ShowMinimizeButton="{Binding Path=ShowInTaskbar, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}"
+                          Window="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" />
     <Grid DockPanel.Dock="Bottom">
 
       <Button Width="56"

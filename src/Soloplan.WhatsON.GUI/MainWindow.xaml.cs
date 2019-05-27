@@ -60,6 +60,7 @@ namespace Soloplan.WhatsON.GUI
       this.config = configuration;
       this.initialSubjectState = initialSubjectState;
       this.ShowInTaskbar = this.config.ShowInTaskbar;
+      this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.ShowInTaskbar)));
       this.Topmost = this.config.AlwaysOnTop;
       this.DataContext = this;
       this.mainTreeView.ConfigurationChanged += this.MainTreeViewOnConfigurationChanged;
@@ -101,8 +102,6 @@ namespace Soloplan.WhatsON.GUI
       {
         this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
       }
-
-      this.MinimizeButton.Visibility = this.ShowInTaskbar ? Visibility.Visible : Visibility.Hidden;
     }
 
     /// <summary>
@@ -114,8 +113,8 @@ namespace Soloplan.WhatsON.GUI
       this.config = configuration;
       this.mainTreeView.Update(this.config);
       this.ShowInTaskbar = this.config.ShowInTaskbar;
+      this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.ShowInTaskbar)));
       this.Topmost = this.config.AlwaysOnTop;
-      this.MinimizeButton.Visibility = this.ShowInTaskbar ? Visibility.Visible : Visibility.Hidden;
     }
 
     public void FinishDrawing()
@@ -124,7 +123,7 @@ namespace Soloplan.WhatsON.GUI
       this.mainTreeView.ApplyTreeListSettings(this.settings.TreeListSettings);
     }
 
-    private void OpenConfig(object sender, RoutedEventArgs e)
+    private void OpenConfig(object sender, EventArgs e)
     {
       var configWindow = new ConfigWindow(this.config);
       configWindow.Owner = this;
