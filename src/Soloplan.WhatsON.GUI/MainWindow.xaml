@@ -19,9 +19,6 @@
         TextElement.FontWeight="Medium"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         mc:Ignorable="d">
-  <Window.Resources>
-    <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
-  </Window.Resources>
   <DockPanel>
 
     <materialDesign:ColorZone Margin="0"
@@ -95,13 +92,13 @@
                                  Kind="Add" />
       </Button>
 
-      <subjectTreeView:SubjectsTreeView x:Name="mainTreeView" Visibility="{Binding IsTreeInitialized, Converter={StaticResource BoolToVisibility}}" />
+      <subjectTreeView:SubjectsTreeView x:Name="mainTreeView" Visibility="{Binding IsTreeInitialized, Converter={StaticResource BoolToVis}}" />
       <TextBlock HorizontalAlignment="Center"
                  VerticalAlignment="Center"
                  FontSize="18"
                  FontWeight="Bold"
                  Text="Loading..."
-                 Visibility="{Binding IsTreeNotInitialized, Converter={StaticResource BoolToVisibility}}" />
+                 Visibility="{Binding IsTreeNotInitialized, Converter={StaticResource BoolToVis}}" />
     </Grid>
   </DockPanel>
 </Window>
