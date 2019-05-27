@@ -6,6 +6,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:s="clr-namespace:System;assembly=mscorlib"
              xmlns:subjectTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.SubjectTreeView"
+             MaxHeight="16"
+             MaxWidth="16"
              d:DataContext="{d:DesignInstance local:BuildStatusViewModel}"
              ToolTipService.ShowDuration="{x:Static s:Int32.MaxValue}"
              mc:Ignorable="d">
@@ -13,28 +15,33 @@
     <subjectTreeView:StatusToColorConverter x:Key="StatusToColorConverter" />
     <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
   </UserControl.Resources>
-  <StackPanel Orientation="Horizontal">
+  <DockPanel>
     <Path Data="M12,2L1,21H23M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16"
+          DockPanel.Dock="Left"
           Fill="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
           Stretch="Fill"
           Visibility="{Binding Unstable, Converter={StaticResource BoolToVisibility}}" />
     <Path Data="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"
+          DockPanel.Dock="Left"
           Fill="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
           Stretch="Fill"
           Visibility="{Binding Succees, Converter={StaticResource BoolToVisibility}}" />
     <Path Data="M17,13H7V11H17M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"
+          DockPanel.Dock="Left"
           Fill="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
           Stretch="Fill"
           Visibility="{Binding Unknown, Converter={StaticResource BoolToVisibility}}" />
     <Path Data="M13,13H11V7H13M13,17H11V15H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"
+          DockPanel.Dock="Left"
           Fill="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
           Stretch="Fill"
           Visibility="{Binding Failure, Converter={StaticResource BoolToVisibility}}" />
-    <StackPanel Orientation="Horizontal">
-      <ProgressBar IsIndeterminate="True"
-                   Style="{StaticResource MaterialDesignCircularProgressBar}"
-                   Visibility="{Binding Building, Converter={StaticResource BoolToVisibility}}"
-                   Value="{Binding Progres, Mode=OneWay}" />
-    </StackPanel>
-  </StackPanel>
+    <ProgressBar DockPanel.Dock="Left"
+                 IsIndeterminate="True"
+                 Width="16"
+                 Height="16"
+                 Style="{StaticResource MaterialDesignCircularProgressBar}"
+                 Visibility="{Binding Building, Converter={StaticResource BoolToVisibility}}"
+                 Value="{Binding Progres, Mode=OneWay}" />
+  </DockPanel>
 </UserControl>

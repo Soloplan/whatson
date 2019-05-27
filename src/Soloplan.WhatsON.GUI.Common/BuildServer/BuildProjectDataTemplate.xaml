@@ -17,6 +17,11 @@
     <MenuItem Header="Open project web page"
               CommandParameter="{Binding OpenWebPageParam}"
               Command="{Binding OpenWebPage}" />
+    <MenuItem Header="Open current build page"
+              Visibility="{Binding CurrentStatus.Building, Converter={StaticResource BoolToVisibility}}"
+              CommandParameter="{Binding CurrentStatus.OpenBuildPageCommandData}"
+              Command="{Binding CurrentStatus.OpenBuildPage}" />
+
   </ContextMenu>
   <DataTemplate DataType="{x:Type buildServer:BuildStatusViewModel}">
     <buildServer:HistoryBuildControl DataContext="{Binding}">
@@ -40,7 +45,7 @@
         </buildServer:BuildInformationIconControl.ToolTip>
       </buildServer:BuildInformationIconControl>
       <TextBlock Text=" " />
-      <TextBlock FontWeight="Black" Text="{Binding Name}" />
+      <TextBlock Text="{Binding Name}" />
       <TextBlock Text=" #" />
       <TextBlock Text="{Binding CurrentStatus.BuildNumber}" />
       <TextBlock Text=" " />
