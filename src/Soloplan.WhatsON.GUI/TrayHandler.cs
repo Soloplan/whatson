@@ -249,15 +249,15 @@
         }
         else if (statusViewModel.State == ObservationState.Failure)
         {
-          this.ShowBaloon("Build Failed.", description, System.Windows.Forms.ToolTipIcon.Error);
+          this.ShowBaloon("Build failed.", description, System.Windows.Forms.ToolTipIcon.Error);
         }
         else if (statusViewModel.State == ObservationState.Success)
         {
-          this.ShowBaloon("Build succeed", description, System.Windows.Forms.ToolTipIcon.Info);
+          this.ShowBaloon("Build successful", description, System.Windows.Forms.ToolTipIcon.Info);
         }
         else if (statusViewModel.State == ObservationState.Unstable)
         {
-          this.ShowBaloon("Build succeed (Unstable)", description, System.Windows.Forms.ToolTipIcon.Warning);
+          this.ShowBaloon("Build successful (Unstable)", description, System.Windows.Forms.ToolTipIcon.Warning);
         }
         else if (statusViewModel.State == ObservationState.Unknown)
         {
