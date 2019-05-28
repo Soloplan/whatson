@@ -20,7 +20,7 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
   /// <summary>
   /// Top level viewmodel used to bind to <see cref="SubjectTreeView"/>.
   /// </summary>
-  public class SubjectTreeViewModel : IHandleDoubleClick, IDropTarget
+  public class SubjectTreeViewModel : NotifyPropertyChanged, IHandleDoubleClick, IDropTarget
   {
     /// <summary>
     /// The logger.
@@ -36,6 +36,11 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
     /// Flag indicating that <see cref="ConfigurationChanged"/> event is triggered - used to ignore updates of model.
     /// </summary>
     private bool configurationChanging;
+
+    /// <summary>
+    /// Backing field for <see cref="ItemPadding"/>.
+    /// </summary>
+    private int itemPadding;
 
     public event EventHandler ConfigurationChanged;
 
@@ -53,6 +58,22 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
     /// Gets a value indicating whether there is only one group.
     /// </summary>
     public bool OneGroup => this.SubjectGroups.Count == 1;
+
+    /// <summary>
+    /// Gets or sets the padding of tree view items.
+    /// </summary>
+    public int ItemPadding
+    {
+      get => this.itemPadding;
+      set
+      {
+        if (this.itemPadding != value)
+        {
+          this.itemPadding = value;
+          this.OnPropertyChanged();
+        }
+      }
+    }
 
     /// <summary>Updates the current drag state.</summary>
     /// <param name="dropInfo">Information about the drag.</param>
@@ -165,6 +186,19 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
       {
         log.Debug("Removing group no longer present in configuration: {subjectGroupViewModelName}", subjectGroupViewModel.GroupName);
         this.SubjectGroups.Remove(subjectGroupViewModel);
+      }
+
+      switch (configuration.ViewStyle)
+      {
+        case ViewStyle.Normal:
+          this.ItemPadding = 8;
+          break;
+        case ViewStyle.Compact:
+          this.ItemPadding = 4;
+          break;
+        case ViewStyle.Pcked:
+          this.ItemPadding = 0;
+          break;
       }
     }
 

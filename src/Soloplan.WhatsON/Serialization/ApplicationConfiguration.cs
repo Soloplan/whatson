@@ -42,6 +42,11 @@ namespace Soloplan.WhatsON.Serialization
     public bool OpenMinimized { get; set; }
 
     /// <summary>
+    /// Gets or sets a view style, for now normal/compact are available and they only control the spacing of items.
+    /// </summary>
+    public ViewStyle ViewStyle { get; set; }
+
+    /// <summary>
     /// Gets the subjects configuration.
     /// </summary>
     public IList<SubjectConfiguration> SubjectsConfiguration { get; } = new List<SubjectConfiguration>();

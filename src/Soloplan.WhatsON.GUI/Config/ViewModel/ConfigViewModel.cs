@@ -6,8 +6,6 @@
 namespace Soloplan.WhatsON.GUI.Config.ViewModel
 {
   using System;
-  using System.Collections.Generic;
-  using System.Linq;
   using System.Runtime.CompilerServices;
   using Microsoft.Win32;
   using Soloplan.WhatsON.GUI.Config.View;
@@ -52,6 +50,11 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// Backing field for <see cref="OpenMinimized"/>.
     /// </summary>
     private bool openMinimized;
+
+    /// <summary>
+    /// Backing field for <see cref="ViewStyle"/>.
+    /// </summary>
+    private ViewStyle viewStyle;
 
     /// <summary>
     /// Occurs when configuration was applied.
@@ -178,6 +181,19 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     }
 
     /// <summary>
+    /// Gets or sets view style.
+    /// </summary>
+    public int ViewStyle
+    {
+      get => (int)this.viewStyle;
+      set
+      {
+        this.viewStyle = (ViewStyle)value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    /// <summary>
     /// Gets the original configuration.
     /// </summary>
     public ApplicationConfiguration Configuration { get; private set; }
@@ -218,6 +234,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
         this.ShowInTaskbar = configurationSource.ShowInTaskbar;
         this.AlwaysOnTop = configurationSource.AlwaysOnTop;
         this.OpenMinimized = configurationSource.OpenMinimized;
+        this.ViewStyle = (int)configurationSource.ViewStyle;
         this.openOnSystemStart = null; // as this option is not really saved, we reset the private variable value.
         this.OnPropertyChanged(nameof(this.OpenOnSystemStart));
 
@@ -324,7 +341,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     {
       if (!this.ConfigurationIsModified && propertyName != nameof(this.ConfigurationIsModified) && propertyName != nameof(this.ConfigurationIsNotModified) && this.IsLoaded)
       {
-       this.ConfigurationIsModified = true;
+        this.ConfigurationIsModified = true;
         this.OnPropertyChanged(nameof(this.ConfigurationIsModified));
         this.OnPropertyChanged(nameof(this.ConfigurationIsNotModified));
       }
@@ -342,6 +359,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       configuration.ShowInTaskbar = this.ShowInTaskbar;
       configuration.AlwaysOnTop = this.AlwaysOnTop;
       configuration.OpenMinimized = this.OpenMinimized;
+      configuration.ViewStyle = (ViewStyle)this.ViewStyle;
     }
 
     /// <summary>

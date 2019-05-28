@@ -43,6 +43,7 @@
       <Style BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="{x:Type TreeViewItem}">
         <EventSetter Event="MouseDoubleClick" Handler="OnTreeItemDoubleClick" />
         <Setter Property="IsExpanded" Value="{Binding IsNodeExpanded, Mode=TwoWay}" />
+        <Setter Property="Padding" Value="{Binding DataContext.ItemPadding, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:SubjectsTreeView}}"/>
       </Style>
     </TreeView.ItemContainerStyle>
   </TreeView>
