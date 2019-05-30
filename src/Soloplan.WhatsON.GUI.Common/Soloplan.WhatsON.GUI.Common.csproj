@@ -82,6 +82,7 @@
     <Compile Include="SubjectTreeView\SubjectTreeViewModel.cs" />
     <Compile Include="SubjectTreeView\SubjectViewModel.cs" />
     <Compile Include="SubjectTreeView\TimeToAproximateTimeConverter.cs" />
+    <Compile Include="SubjectTreeView\TreeItemViewModel.cs" />
     <Compile Include="VisualConfig\GroupExpansionSettings.cs" />
     <Compile Include="VisualConfig\MainWindowSettigns.cs" />
     <Compile Include="VisualConfig\TreeListSettings.cs" />
