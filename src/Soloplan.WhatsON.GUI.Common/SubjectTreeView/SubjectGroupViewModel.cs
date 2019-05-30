@@ -13,7 +13,7 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
   /// <summary>
   /// Viewmodel representing group of subjects shown as single node in <see cref="SubjectTreeView"/>.
   /// </summary>
-  public class SubjectGroupViewModel : NotifyPropertyChanged, IHandleDoubleClick
+  public class SubjectGroupViewModel : TreeItemViewModel
   {
     /// <summary>
     /// The logger.
@@ -24,27 +24,12 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
 
     ObservableCollection<SubjectViewModel> statusViewModels;
 
-    private bool isNodeExpanded;
-
     public SubjectGroupViewModel()
     {
       this.IsNodeExpanded = true;
     }
 
     public ObservableCollection<SubjectViewModel> SubjectViewModels => this.statusViewModels ?? (this.statusViewModels = new ObservableCollection<SubjectViewModel>());
-
-    public bool IsNodeExpanded
-    {
-      get => this.isNodeExpanded;
-      set
-      {
-        if (this.isNodeExpanded != value)
-        {
-          this.isNodeExpanded = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
 
     public string GroupName
     {
@@ -116,7 +101,7 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
       this.SubjectViewModels.Add(subjectViewModel);
     }
 
-    public void OnDoubleClick(object sender, MouseButtonEventArgs e)
+    public override void OnDoubleClick(object sender, MouseButtonEventArgs e)
     {
       foreach (var subjectViewModel in this.SubjectViewModels)
       {
