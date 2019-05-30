@@ -123,6 +123,15 @@ namespace Soloplan.WhatsON.GUI
       this.mainTreeView.ApplyTreeListSettings(this.settings.TreeListSettings);
     }
 
+    /// <summary>
+    /// Focuses the node connected with <paramref name="subject"/>.
+    /// </summary>
+    /// <param name="subject">Subject which should be focused.</param>
+    public void FocusSubject(Subject subject)
+    {
+      this.mainTreeView.FocusItem(subject);
+    }
+
     private void OpenConfig(object sender, EventArgs e)
     {
       var configWindow = new ConfigWindow(this.config);
