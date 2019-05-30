@@ -10,6 +10,7 @@ namespace Soloplan.WhatsON.GUI
   using System.Collections.Generic;
   using System.ComponentModel;
   using System.Windows;
+  using System.Windows.Media.Animation;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.GUI.Config.View;
   using Soloplan.WhatsON.GUI.Config.Wizard;
@@ -38,6 +39,11 @@ namespace Soloplan.WhatsON.GUI
     private MainWindowSettigns settings;
 
     private bool initialized;
+
+    /// <summary>
+    /// Backing field for <see cref="ConfigurationModifiedFromTree"/>.
+    /// </summary>
+    private bool configurationModifiedFromTree;
 
     /// <summary>
     /// Occurs when configuration was applied.
@@ -79,6 +85,19 @@ namespace Soloplan.WhatsON.GUI
     public bool IsTreeNotInitialized
     {
       get => !this.IsTreeInitialized;
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether configuration was modified from tree view.
+    /// </summary>
+    public bool ConfigurationModifiedFromTree
+    {
+      get => this.configurationModifiedFromTree;
+      set
+      {
+        this.configurationModifiedFromTree = value;
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.ConfigurationModifiedFromTree)));
+      }
     }
 
     public MainWindowSettigns GetVisualSettigns()
@@ -181,9 +200,46 @@ namespace Soloplan.WhatsON.GUI
 
     private void MainTreeViewOnConfigurationChanged(object sender, EventArgs e)
     {
+      this.ConfigurationModifiedFromTree = true;
+      if (this.FindResource("showStoryBoard") is Storyboard sb)
+      {
+        this.BeginStoryboard(sb);
+      }
+    }
+
+    private void ResetClick(object sender, RoutedEventArgs e)
+    {
+      this.HideChangesPanel();
+      this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.config));
+    }
+
+    private void SaveClick(object sender, RoutedEventArgs e)
+    {
+      this.HideChangesPanel();
+
       this.mainTreeView.WriteToConfiguration(this.config);
       SerializationHelper.SaveConfiguration(this.config);
       this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.config));
+    }
+
+    private void HideChangesPanel()
+    {
+      if (this.FindResource("hideStorBoard") is Storyboard sb)
+      {
+        void ChangePanelVisibility(object sender, EventArgs eventArgs)
+        {
+          this.ConfigurationModifiedFromTree = false;
+          sb.Completed -= ChangePanelVisibility;
+        }
+
+        sb.Completed += ChangePanelVisibility;
+
+        this.BeginStoryboard(sb);
+      }
+      else
+      {
+        this.ConfigurationModifiedFromTree = false;
+      }
     }
   }
 }
