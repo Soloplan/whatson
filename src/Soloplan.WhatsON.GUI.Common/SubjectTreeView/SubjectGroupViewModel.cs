@@ -5,6 +5,8 @@
 
 namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
 {
+  using System;
+  using System.Collections.Generic;
   using System.Collections.ObjectModel;
   using System.Linq;
   using System.Windows.Input;
@@ -78,17 +80,31 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
         this.SubjectViewModels.Remove(noLongerPresentSubjectViewModel);
       }
 
-      foreach (var subjectViewModel in this.SubjectViewModels)
-      {
-        log.Debug("Updating viewmodel for {subjectConfiguration}", new { Identifier = subjectViewModel.Identifier, Name = subjectViewModel.Name });
-        var config = subjectGroup.FirstOrDefault(configurationSubject => subjectViewModel.Identifier == configurationSubject.Identifier);
-        subjectViewModel.Init(config);
-      }
-
+      var addedIds = new List<Guid>();
       foreach (var newSubject in newSubjects)
       {
         log.Debug("Adding new subject {subjectConfiguration}", new { Identifier = newSubject.Identifier, Name = newSubject.Name });
+        addedIds.Add(newSubject.Identifier);
         this.CreateViewModelForSubjectConfiguration(newSubject);
+      }
+
+      int index = 0;
+      foreach (var config in subjectGroup)
+      {
+        log.Debug("Updating viewmodel for {subjectConfiguration}", new { Identifier = config.Identifier, Name = config.Name });
+        var subjectViewModel = this.SubjectViewModels.FirstOrDefault(model => model.Identifier == config.Identifier);
+        if (!addedIds.Contains(config.Identifier))
+        {
+          subjectViewModel.Init(config);
+        }
+
+        var oldIndex = this.SubjectViewModels.IndexOf(subjectViewModel);
+        if (oldIndex != index)
+        {
+          this.SubjectViewModels.Move(oldIndex, index);
+        }
+
+        index++;
       }
     }
 

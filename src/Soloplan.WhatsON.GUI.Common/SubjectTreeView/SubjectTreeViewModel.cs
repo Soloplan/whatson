@@ -167,6 +167,7 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
 
       log.Debug("Initializing {name}", nameof(SubjectTreeViewModel));
       var grouping = this.ParseConfiguration(configuration).ToList();
+      int index = 0;
       foreach (var group in grouping)
       {
         log.Debug("Applying settings for group {group}", group.Key);
@@ -175,9 +176,18 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
         {
           log.Debug("{model} doesn't exist, creating...", nameof(SubjectGroupViewModel));
           subjectGroupViewModel = new SubjectGroupViewModel();
-          this.SubjectGroups.Add(subjectGroupViewModel);
+          this.SubjectGroups.Insert(index, subjectGroupViewModel);
+        }
+        else
+        {
+          var oldIndex = this.SubjectGroups.IndexOf(subjectGroupViewModel);
+          if (oldIndex != index)
+          {
+            this.SubjectGroups.Move(oldIndex, index);
+          }
         }
 
+        index++;
         subjectGroupViewModel.Init(group);
       }
 
