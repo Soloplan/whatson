@@ -67,6 +67,8 @@
     <Compile Include="BuildServer\ProgressBarTooltipControl.xaml.cs">
       <DependentUpon>ProgressBarTooltipControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="InvertBooleanConverter.cs" />
+    <Compile Include="InvertBoolToVisibleConverter.cs" />
     <Compile Include="OpenWebPageCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SubjectTreeView\IHandleDoubleClick.cs" />
