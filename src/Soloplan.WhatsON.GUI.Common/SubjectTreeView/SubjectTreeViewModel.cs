@@ -122,16 +122,20 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
         return;
       }
 
+      var changesExist = false;
       if (dropInfo.Data is SubjectGroupViewModel drggedGroup)
       {
-        this.DropGrup(dropInfo, drggedGroup);
+        changesExist = this.DropGrup(dropInfo, drggedGroup);
       }
       else if (dropInfo.Data is SubjectViewModel draggedSubject)
       {
-        this.DropSubject(dropInfo, draggedSubject);
+        changesExist = this.DropSubject(dropInfo, draggedSubject);
       }
 
-      this.OnConfigurationChanged(this, EventArgs.Empty);
+      if (changesExist)
+      {
+        this.OnConfigurationChanged(this, EventArgs.Empty);
+      }
     }
 
     /// <summary>
@@ -303,7 +307,8 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
     /// <param name="source">Information about source location of moved object.</param>
     /// <param name="target">Information about desired location of moved object.</param>
     /// <param name="insertPosition">Additional information about where in relation to <paramref name="target"/> the object should be placed.</param>
-    private static void MoveObject(MovedObjectLocation source, MovedObjectLocation target, RelativeInsertPosition insertPosition)
+    /// <returns>True if operation caused changes; false otherwise.</returns>
+    private static bool MoveObject(MovedObjectLocation source, MovedObjectLocation target, RelativeInsertPosition insertPosition)
     {
       var insertPositionInternal = insertPosition;
       if ((insertPositionInternal & RelativeInsertPosition.TargetItemCenter) != 0)
@@ -326,13 +331,15 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
 
         if (source.Index == targetIndex)
         {
-          return;
+          return false;
         }
       }
 
       var obj = source.List[source.Index];
       source.List.RemoveAt(source.Index);
       target.List.Insert(targetIndex, obj);
+
+      return true;
     }
 
     private IEnumerable<IGrouping<string, SubjectConfiguration>> ParseConfiguration(ApplicationConfiguration configuration)
@@ -345,24 +352,27 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
     /// </summary>
     /// <param name="dropInfo">All drop information.</param>
     /// <param name="droppedSubject">The dropped subject.</param>
-    private void DropSubject(IDropInfo dropInfo, SubjectViewModel droppedSubject)
+    /// <returns>True if operation caused changes; false otherwise.</returns>
+    private bool DropSubject(IDropInfo dropInfo, SubjectViewModel droppedSubject)
     {
       var currentSubjectGroupModel = this.GetSubjectGroup(droppedSubject);
       if (dropInfo.TargetItem is SubjectGroupViewModel model)
       {
         if (object.ReferenceEquals(currentSubjectGroupModel.List, model.SubjectViewModels))
         {
-          return;
+          return false;
         }
 
-        MoveObject(currentSubjectGroupModel, new MovedObjectLocation(model.SubjectViewModels, model.SubjectViewModels.Count - 1), RelativeInsertPosition.AfterTargetItem);
+        return MoveObject(currentSubjectGroupModel, new MovedObjectLocation(model.SubjectViewModels, model.SubjectViewModels.Count - 1), RelativeInsertPosition.AfterTargetItem);
       }
 
       if (dropInfo.TargetItem is SubjectViewModel targetModel)
       {
         var targetGroup = this.GetSubjectGroup(targetModel);
-        MoveObject(currentSubjectGroupModel, targetGroup, dropInfo.InsertPosition);
+        return MoveObject(currentSubjectGroupModel, targetGroup, dropInfo.InsertPosition);
       }
+
+      return false;
     }
 
     /// <summary>
@@ -370,14 +380,17 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
     /// </summary>
     /// <param name="dropInfo">All drop information.</param>.
     /// <param name="droppedGroup">The dropped group.</param>
-    private void DropGrup(IDropInfo dropInfo, SubjectGroupViewModel droppedGroup)
+    /// <returns>True if operation caused changes; false otherwise.</returns>
+    private bool DropGrup(IDropInfo dropInfo, SubjectGroupViewModel droppedGroup)
     {
       if (dropInfo.TargetItem is SubjectGroupViewModel targetModel)
       {
         var index = this.SubjectGroups.IndexOf(droppedGroup);
         var targetIndex = this.SubjectGroups.IndexOf(targetModel);
-        MoveObject(new MovedObjectLocation(this.SubjectGroups, index), new MovedObjectLocation(this.SubjectGroups, targetIndex), dropInfo.InsertPosition);
+        return MoveObject(new MovedObjectLocation(this.SubjectGroups, index), new MovedObjectLocation(this.SubjectGroups, targetIndex), dropInfo.InsertPosition);
       }
+
+      return false;
     }
 
     /// <summary>
