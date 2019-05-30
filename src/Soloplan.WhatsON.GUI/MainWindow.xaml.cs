@@ -78,13 +78,7 @@ namespace Soloplan.WhatsON.GUI
       {
         this.initialized = value;
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsTreeInitialized)));
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsTreeNotInitialized)));
       }
-    }
-
-    public bool IsTreeNotInitialized
-    {
-      get => !this.IsTreeInitialized;
     }
 
     /// <summary>
@@ -152,6 +146,11 @@ namespace Soloplan.WhatsON.GUI
 
     private void OpenConfig(object sender, EventArgs e)
     {
+      if (this.ConfigurationModifiedFromTree)
+      {
+        return;
+      }
+
       var configWindow = new ConfigWindow(this.config);
       configWindow.Owner = this;
       configWindow.ConfigurationApplied += (s, ev) =>
@@ -200,10 +199,14 @@ namespace Soloplan.WhatsON.GUI
 
     private void MainTreeViewOnConfigurationChanged(object sender, EventArgs e)
     {
+      var showAnimation = !this.ConfigurationModifiedFromTree;
       this.ConfigurationModifiedFromTree = true;
-      if (this.FindResource("showStoryBoard") is Storyboard sb)
+      if (showAnimation)
       {
-        this.BeginStoryboard(sb);
+        if (this.FindResource("showStoryBoard") is Storyboard sb)
+        {
+          this.BeginStoryboard(sb);
+        }
       }
     }
 

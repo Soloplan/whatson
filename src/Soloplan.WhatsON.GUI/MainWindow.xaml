@@ -39,7 +39,7 @@
   <DockPanel>
     <local:CustomTitleBar ButtonClicked="OpenConfig"
                           CustomButtonIcon="SettingsOutline"
-                          CustomButtonVisible="True"
+                          CustomButtonVisible="{Binding ConfigurationModifiedFromTree, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Converter={StaticResource InvertBoolConverter}}"
                           DockPanel.Dock="Top"
                           ShowMinimizeButton="{Binding Path=ShowInTaskbar, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}"
                           Window="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" />
@@ -95,7 +95,7 @@
                  FontSize="18"
                  FontWeight="Bold"
                  Text="Loading..."
-                 Visibility="{Binding IsTreeNotInitialized, Converter={StaticResource BoolToVis}}" />
+                 Visibility="{Binding IsTreeInitialized, Converter={StaticResource InvertBoolToVis}}" />
     </Grid>
   </DockPanel>
 </Window>

@@ -26,6 +26,7 @@
                                Kind="{Binding CustomButtonIcon}"
                                Visibility="{Binding CustomButtonVisible, Converter={StaticResource BoolToVis}}"
                                MouseDown="OnButtonClicked" />
+      <ContentControl Width="30" Height="30" Visibility="{Binding CustomButtonVisible, Converter={StaticResource InvertBoolToVis}}"/>
 
       <Button Width="30"
               Height="30"
