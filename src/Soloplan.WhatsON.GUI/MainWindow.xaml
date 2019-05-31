@@ -18,13 +18,62 @@
         TextElement.FontWeight="Medium"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         mc:Ignorable="d">
+  <Window.Resources>
+    <Storyboard x:Key="hideStorBoard">
+      <DoubleAnimation Storyboard.TargetName="HideableStackPanel"
+                       Storyboard.TargetProperty="RenderTransform.Y"
+                       From="0"
+                       To="100"
+                       Duration="0:00:.300" />
+    </Storyboard>
+
+    <Storyboard x:Key="showStoryBoard">
+      <DoubleAnimation Storyboard.TargetName="HideableStackPanel"
+                       Storyboard.TargetProperty="RenderTransform.Y"
+                       From="100"
+                       To="0"
+                       Duration="0:00:.300" />
+    </Storyboard>
+
+  </Window.Resources>
   <DockPanel>
     <local:CustomTitleBar ButtonClicked="OpenConfig"
                           CustomButtonIcon="SettingsOutline"
-                          CustomButtonVisible="True"
+                          CustomButtonVisible="{Binding ConfigurationModifiedFromTree, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Converter={StaticResource InvertBoolConverter}}"
                           DockPanel.Dock="Top"
                           ShowMinimizeButton="{Binding Path=ShowInTaskbar, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}"
                           Window="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" />
+
+    <Border x:Name="HideableStackPanel"
+            Padding="8,8,30,8"
+            DockPanel.Dock="Bottom">
+      <DockPanel Background="{DynamicResource MaterialDesignBody}"
+                 LastChildFill="False"
+                 Visibility="{Binding ConfigurationModifiedFromTree, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Converter={StaticResource BoolToVis}}">
+        <TextBlock Padding="5"
+                   VerticalAlignment="Center"
+                   Foreground="{DynamicResource MaterialDesignBackground}"
+                   Text="Configuration is modified" />
+        <DockPanel DockPanel.Dock="Right">
+          <Button Margin="5"
+                  Padding="5"
+                  Click="SaveClick"
+                  Style="{StaticResource MaterialDesignFlatButton}">
+            Save
+          </Button>
+          <Button Margin="5"
+                  Padding="5"
+                  Click="ResetClick"
+                  Style="{StaticResource MaterialDesignFlatButton}">
+            Reset
+          </Button>
+        </DockPanel>
+      </DockPanel>
+      <Border.RenderTransform>
+        <TranslateTransform Y="0" />
+      </Border.RenderTransform>
+    </Border>
+
     <Grid DockPanel.Dock="Bottom">
 
       <Button Width="56"
@@ -46,7 +95,7 @@
                  FontSize="18"
                  FontWeight="Bold"
                  Text="Loading..."
-                 Visibility="{Binding IsTreeNotInitialized, Converter={StaticResource BoolToVis}}" />
+                 Visibility="{Binding IsTreeInitialized, Converter={StaticResource InvertBoolToVis}}" />
     </Grid>
   </DockPanel>
 </Window>

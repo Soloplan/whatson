@@ -2,10 +2,9 @@
 {
   using System;
   using System.Collections.ObjectModel;
-  using System.Windows.Input;
   using NLog;
 
-  public class SubjectViewModel : NotifyPropertyChanged, IHandleDoubleClick
+  public class SubjectViewModel : TreeItemViewModel
   {
     /// <summary>
     /// The logger.
@@ -71,10 +70,6 @@
       this.Name = configuration.Name;
       this.CurrentStatus = this.GetViewModelForStatus();
       log.Debug("Initializing {type}, {instance}.", this.GetType(), new { Name = this.Name, Identifier = this.Identifier });
-    }
-
-    public virtual void OnDoubleClick(object sender, MouseButtonEventArgs e)
-    {
     }
 
     public virtual void Update(Subject changedSubject)

@@ -87,6 +87,32 @@
       this.model.ApplyGroupExpansionState(treeListSettings.GroupExpansions);
     }
 
+    /// <summary>
+    /// Focuses the node connected with <paramref name="subject"/>.
+    /// </summary>
+    /// <param name="subject">Subject which should be focused.</param>
+    public void FocusItem(Subject subject)
+    {
+      foreach (var groupViewModel in this.model.SubjectGroups)
+      {
+        foreach (var subjectViewModel in groupViewModel.SubjectViewModels)
+        {
+          if (subjectViewModel.Subject.SubjectConfiguration.Identifier == subject.SubjectConfiguration.Identifier)
+          {
+            TreeViewItem groupViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(groupViewModel);
+            var treeViewItem = (TreeViewItem)groupViewItem?.ItemContainerGenerator.ContainerFromItem(subjectViewModel)
+              ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(subjectViewModel);
+            if (treeViewItem != null)
+            {
+              groupViewModel.IsNodeExpanded = true;
+              treeViewItem.IsSelected = true;
+              treeViewItem.BringIntoView(new Rect(100, 100, 100, 100));
+            }
+          }
+        }
+      }
+    }
+
     private void SetupDataContext()
     {
       if (this.model.OneGroup && string.IsNullOrWhiteSpace(this.model.SubjectGroups.FirstOrDefault().GroupName))

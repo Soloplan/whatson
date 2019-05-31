@@ -10,7 +10,7 @@ namespace Soloplan.WhatsON.GUI
   using System.Collections.Generic;
   using System.ComponentModel;
   using System.Windows;
-  using System.Windows.Input;
+  using System.Windows.Media.Animation;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.GUI.Config.View;
   using Soloplan.WhatsON.GUI.Config.Wizard;
@@ -39,6 +39,11 @@ namespace Soloplan.WhatsON.GUI
     private MainWindowSettigns settings;
 
     private bool initialized;
+
+    /// <summary>
+    /// Backing field for <see cref="ConfigurationModifiedFromTree"/>.
+    /// </summary>
+    private bool configurationModifiedFromTree;
 
     /// <summary>
     /// Occurs when configuration was applied.
@@ -73,13 +78,20 @@ namespace Soloplan.WhatsON.GUI
       {
         this.initialized = value;
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsTreeInitialized)));
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsTreeNotInitialized)));
       }
     }
 
-    public bool IsTreeNotInitialized
+    /// <summary>
+    /// Gets or sets a value indicating whether configuration was modified from tree view.
+    /// </summary>
+    public bool ConfigurationModifiedFromTree
     {
-      get => !this.IsTreeInitialized;
+      get => this.configurationModifiedFromTree;
+      set
+      {
+        this.configurationModifiedFromTree = value;
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.ConfigurationModifiedFromTree)));
+      }
     }
 
     public MainWindowSettigns GetVisualSettigns()
@@ -123,8 +135,22 @@ namespace Soloplan.WhatsON.GUI
       this.mainTreeView.ApplyTreeListSettings(this.settings.TreeListSettings);
     }
 
+    /// <summary>
+    /// Focuses the node connected with <paramref name="subject"/>.
+    /// </summary>
+    /// <param name="subject">Subject which should be focused.</param>
+    public void FocusSubject(Subject subject)
+    {
+      this.mainTreeView.FocusItem(subject);
+    }
+
     private void OpenConfig(object sender, EventArgs e)
     {
+      if (this.ConfigurationModifiedFromTree)
+      {
+        return;
+      }
+
       var configWindow = new ConfigWindow(this.config);
       configWindow.Owner = this;
       configWindow.ConfigurationApplied += (s, ev) =>
@@ -147,48 +173,6 @@ namespace Soloplan.WhatsON.GUI
       };
 
       configWindow.ShowDialog();
-    }
-
-    /// <summary>
-    /// Main window bar mouse down.
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="System.Windows.Input.MouseButtonEventArgs"/> instance containing the event data.</param>
-    private void MainWindowBarMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-    {
-      if (e.ChangedButton != MouseButton.Left || e.Handled || e.ButtonState == MouseButtonState.Released)
-      {
-        return;
-      }
-
-      if (e.ClickCount == 2)
-      {
-        this.WindowState = this.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
-      }
-      else
-      {
-        this.DragMove();
-      }
-    }
-
-    /// <summary>
-    /// Minimizes the mouse down.
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="MouseButtonEventArgs"/> instance containing the event data.</param>
-    private void MinimizeButonClick(object sender, RoutedEventArgs e)
-    {
-      this.WindowState = WindowState.Minimized;
-    }
-
-    /// <summary>
-    /// Closes the mouse down.
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-    private void CloseButtonClick(object sender, RoutedEventArgs e)
-    {
-      this.Close();
     }
 
     /// <summary>
@@ -215,9 +199,50 @@ namespace Soloplan.WhatsON.GUI
 
     private void MainTreeViewOnConfigurationChanged(object sender, EventArgs e)
     {
+      var showAnimation = !this.ConfigurationModifiedFromTree;
+      this.ConfigurationModifiedFromTree = true;
+      if (showAnimation)
+      {
+        if (this.FindResource("showStoryBoard") is Storyboard sb)
+        {
+          this.BeginStoryboard(sb);
+        }
+      }
+    }
+
+    private void ResetClick(object sender, RoutedEventArgs e)
+    {
+      this.HideChangesPanel();
+      this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.config));
+    }
+
+    private void SaveClick(object sender, RoutedEventArgs e)
+    {
+      this.HideChangesPanel();
+
       this.mainTreeView.WriteToConfiguration(this.config);
       SerializationHelper.SaveConfiguration(this.config);
       this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.config));
+    }
+
+    private void HideChangesPanel()
+    {
+      if (this.FindResource("hideStorBoard") is Storyboard sb)
+      {
+        void ChangePanelVisibility(object sender, EventArgs eventArgs)
+        {
+          this.ConfigurationModifiedFromTree = false;
+          sb.Completed -= ChangePanelVisibility;
+        }
+
+        sb.Completed += ChangePanelVisibility;
+
+        this.BeginStoryboard(sb);
+      }
+      else
+      {
+        this.ConfigurationModifiedFromTree = false;
+      }
     }
   }
 }

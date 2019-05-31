@@ -67,6 +67,8 @@
     <Compile Include="BuildServer\ProgressBarTooltipControl.xaml.cs">
       <DependentUpon>ProgressBarTooltipControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="InvertBooleanConverter.cs" />
+    <Compile Include="InvertBoolToVisibleConverter.cs" />
     <Compile Include="OpenWebPageCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SubjectTreeView\IHandleDoubleClick.cs" />
@@ -82,6 +84,7 @@
     <Compile Include="SubjectTreeView\SubjectTreeViewModel.cs" />
     <Compile Include="SubjectTreeView\SubjectViewModel.cs" />
     <Compile Include="SubjectTreeView\TimeToAproximateTimeConverter.cs" />
+    <Compile Include="SubjectTreeView\TreeItemViewModel.cs" />
     <Compile Include="VisualConfig\GroupExpansionSettings.cs" />
     <Compile Include="VisualConfig\MainWindowSettigns.cs" />
     <Compile Include="VisualConfig\TreeListSettings.cs" />
