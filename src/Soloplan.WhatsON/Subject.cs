@@ -16,9 +16,14 @@ namespace Soloplan.WhatsON
   /// <summary>
   /// The subject - represent an executable job defined by the plugin.
   /// </summary>
-  [ConfigurationItem(Category, typeof(string), Priority = 2147483500)]
+  [ConfigurationItem(Category, typeof(string), Priority = 1000000000)]
   public abstract class Subject
   {
+    /// <summary>
+    /// The redirect plugin tag.
+    /// </summary>
+    public const string NotificationsVisbility = "NotificationsVisbility";
+
     /// <summary>
     /// The category tag.
     /// </summary>
@@ -51,6 +56,9 @@ namespace Soloplan.WhatsON
       this.SubjectConfiguration = configuration;
     }
 
+    /// <summary>
+    /// Gets or sets the description of the connector.
+    /// </summary>
     public string Description { get; set; }
 
     public Status CurrentStatus { get; set; }

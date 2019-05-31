@@ -57,6 +57,26 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     private ViewStyle viewStyle;
 
     /// <summary>
+    /// The unstable observation state.
+    /// </summary>
+    private bool unstableObservationState;
+
+    /// <summary>
+    /// The failure observation state.
+    /// </summary>
+    private bool failureObservationState;
+
+    /// <summary>
+    /// The success observation state.
+    /// </summary>
+    private bool successObservationState;
+
+    /// <summary>
+    /// The running observation state.
+    /// </summary>
+    private bool runningObservationState;
+
+    /// <summary>
     /// Occurs when configuration was applied.
     /// </summary>
     public event EventHandler<ValueEventArgs<ApplicationConfiguration>> ConfigurationApplied;
@@ -93,6 +113,58 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       set
       {
         this.showInTaskbar = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether unstable observation state is active.
+    /// </summary>
+    public bool UnstableObservationState
+    {
+      get => this.unstableObservationState;
+      set
+      {
+        this.unstableObservationState = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether failure observation state is active.
+    /// </summary>
+    public bool FailureObservationState
+    {
+      get => this.failureObservationState;
+      set
+      {
+        this.failureObservationState = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether success observation state is active.
+    /// </summary>
+    public bool SuccessObservationState
+    {
+      get => this.successObservationState;
+      set
+      {
+        this.successObservationState = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether running observation state is active.
+    /// </summary>
+    public bool RunningObservationState
+    {
+      get => this.runningObservationState;
+      set
+      {
+        this.runningObservationState = value;
         this.OnPropertyChanged();
       }
     }
@@ -232,6 +304,10 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
 
         this.DarkThemeEnabled = configurationSource.DarkThemeEnabled;
         this.ShowInTaskbar = configurationSource.ShowInTaskbar;
+        this.UnstableObservationState = configurationSource.NotificationConfiguration.UnstableNotificationEnabled;
+        this.RunningObservationState = configurationSource.NotificationConfiguration.RunningNotificationEnabled;
+        this.FailureObservationState = configurationSource.NotificationConfiguration.FailureNotificationEnabled;
+        this.SuccessObservationState = configurationSource.NotificationConfiguration.SuccessNotificationEnabled;
         this.AlwaysOnTop = configurationSource.AlwaysOnTop;
         this.OpenMinimized = configurationSource.OpenMinimized;
         this.ViewStyle = (int)configurationSource.ViewStyle;
@@ -360,6 +436,10 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       configuration.AlwaysOnTop = this.AlwaysOnTop;
       configuration.OpenMinimized = this.OpenMinimized;
       configuration.ViewStyle = (ViewStyle)this.ViewStyle;
+      configuration.NotificationConfiguration.FailureNotificationEnabled = this.FailureObservationState;
+      configuration.NotificationConfiguration.RunningNotificationEnabled = this.RunningObservationState;
+      configuration.NotificationConfiguration.SuccessNotificationEnabled = this.SuccessObservationState;
+      configuration.NotificationConfiguration.UnstableNotificationEnabled = this.UnstableObservationState;
     }
 
     /// <summary>

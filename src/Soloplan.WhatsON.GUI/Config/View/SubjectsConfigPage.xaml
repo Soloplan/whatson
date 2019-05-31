@@ -27,7 +27,7 @@
       Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}"
       PlacementMode="TopAndAlignCentres"
       ToolTip="Add new subject"
-      Panel.ZIndex="2" Margin="0,0,10,10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="56">
+      Panel.ZIndex="2" Margin="0,0,25,10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="56">
       <StackPanel>
 
         <Button ToolTip="Delete subject" Click="DeleteSubjectClick">

@@ -9,7 +9,6 @@ namespace Soloplan.WhatsON.GUI.Config
   using System.Windows;
   using System.Windows.Controls;
   using MaterialDesignThemes.Wpf;
-  using Soloplan.WhatsON.GUI.Config.ViewModel;
 
   /// <summary>
   /// The control builder for a text edit control.

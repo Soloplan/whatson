@@ -79,6 +79,7 @@ namespace Soloplan.WhatsON.GUI.Config
       this.RegisterControlBuilder(typeof(int), new NumericConfigControlBuilder());
       this.RegisterControlBuilder(typeof(string), new CategoryComboBoxConfigControlBuilder());
       this.RegisterControlBuilder(typeof(bool), new CheckBoxConfigControlBuilder());
+      this.RegisterControlBuilder(typeof(ConnectorNotificationConfiguration), new NotificationSettingsControlBuilder());
     }
 
     /// <summary>

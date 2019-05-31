@@ -8,6 +8,7 @@
   using Soloplan.WhatsON.ServerBase;
 
   [SubjectType("Server Health Check", Description = "Ping a server and return the state depending on the reply.")]
+  [NotificationConfigurationItem(NotificationsVisbility, typeof(ConnectorNotificationConfiguration), SupportsRunningNotify = false, SupportsUnstableNotify = false, Priority = 1600000000)]
   public class ServerHealth : ServerSubject
   {
     /// <summary>

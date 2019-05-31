@@ -50,5 +50,10 @@ namespace Soloplan.WhatsON.Serialization
     /// Gets the subjects configuration.
     /// </summary>
     public IList<SubjectConfiguration> SubjectsConfiguration { get; } = new List<SubjectConfiguration>();
+
+    /// <summary>
+    /// Gets the notification configuration.
+    /// </summary>
+    public NotificationConfiguration NotificationConfiguration { get; } = new NotificationConfiguration();
   }
 }

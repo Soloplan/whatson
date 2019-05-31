@@ -17,7 +17,9 @@
 
   <Grid x:Name="MainGrid">
     <materialDesign:ColorZone Mode="Standard" CornerRadius="5" Margin="5">
-      <StackPanel x:Name="StackPanel" MinWidth="300"/>
+      <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel x:Name="StackPanel" MinWidth="300"/>
+      </ScrollViewer>
     </materialDesign:ColorZone>
   </Grid>
 </Page>
