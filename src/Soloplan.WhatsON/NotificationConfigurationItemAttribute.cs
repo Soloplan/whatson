@@ -43,5 +43,10 @@ namespace Soloplan.WhatsON
     /// Gets or sets a value indicating whether connector supports running notifications.
     /// </summary>
     public bool SupportsRunningNotify { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether connector supports unknown notifications.
+    /// </summary>
+    public bool SupportsUnknownNotify { get; set; } = true;
   }
 }

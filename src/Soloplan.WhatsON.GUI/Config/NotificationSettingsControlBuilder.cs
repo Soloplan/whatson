@@ -104,29 +104,7 @@ namespace Soloplan.WhatsON.GUI.Config
       this.RemoveNotSupportedObservationState(observationStates, ObservationState.Success, () => attribute.SupportsSuccessNotify);
       this.RemoveNotSupportedObservationState(observationStates, ObservationState.Running, () => attribute.SupportsRunningNotify);
       this.RemoveNotSupportedObservationState(observationStates, ObservationState.Unstable, () => attribute.SupportsUnstableNotify);
-    }
-
-    /// <summary>
-    /// Gets the <see cref="ConnectorNotificationConfiguration"/> based on <see cref="IConfigurationItem"/> using deserialization.
-    /// </summary>
-    /// <param name="configItem">The configuration item.</param>
-    /// <returns>The deserialized instance of <see cref="ConnectorNotificationConfiguration"/> or a new instance if it does not exists.</returns>
-    private ConnectorNotificationConfiguration GetConnectorNotificationConfiguration(IConfigurationItem configItem)
-    {
-      if (string.IsNullOrWhiteSpace(configItem.Value))
-      {
-        return new ConnectorNotificationConfiguration();
-      }
-
-      try
-      {
-        var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
-        return JsonConvert.DeserializeObject<ConnectorNotificationConfiguration>(configItem.Value, settings);
-      }
-      catch
-      {
-        return new ConnectorNotificationConfiguration();
-      }
+      this.RemoveNotSupportedObservationState(observationStates, ObservationState.Unknown, () => attribute.SupportsUnknownNotify);
     }
 
     /// <summary>
@@ -138,9 +116,8 @@ namespace Soloplan.WhatsON.GUI.Config
     /// <param name="expander">The expander control.</param>
     private void ApplyConfigurationItemToNotificationStateList(IList<NotificationState> notificationStates, IConfigurationItem configItem, ConfigurationItemAttribute configItemAttribute, Expander expander)
     {
-      var configItemValue = this.GetConnectorNotificationConfiguration(configItem);
+      var configItemValue = configItem.GetOrCreateConnectorNotificationConfiguration();
       var observationStates = Enum.GetValues(typeof(ObservationState)).Cast<ObservationState>().ToList();
-      observationStates.Remove(observationStates.First(i => i == ObservationState.Unknown));
       if (configItemAttribute is NotificationConfigurationItemAttribute notificationConfigurationItemAttribute)
       {
         this.RemoveNotSupportedObservationStates(observationStates, notificationConfigurationItemAttribute);
@@ -158,7 +135,11 @@ namespace Soloplan.WhatsON.GUI.Config
       }
       else
       {
-        useGlobalNotificationState.IsActive = configItemValue.UseGlobalNotificationSettings;
+        var newActiveState = configItemValue.UseGlobalNotificationSettings;
+        if (useGlobalNotificationState.IsActive != newActiveState)
+        {
+          useGlobalNotificationState.IsActive = configItemValue.UseGlobalNotificationSettings;
+        }
       }
 
       foreach (var observationState in observationStates)
@@ -176,7 +157,11 @@ namespace Soloplan.WhatsON.GUI.Config
         }
         else
         {
-          notificationState.IsActive = configItemValue.AsObservationStateFlag(observationState);
+          var newActiveState = configItemValue.UseGlobalNotificationSettings;
+          if (notificationState.IsActive != newActiveState)
+          {
+            notificationState.IsActive = configItemValue.AsObservationStateFlag(observationState);
+          }
         }
       }
     }

@@ -34,6 +34,11 @@ namespace Soloplan.WhatsON
     public bool SuccessNotificationEnabled { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether unstable notifications are enabled.
+    /// </summary>
+    public bool UnknownNotificationEnabled { get; set; } = true;
+
+    /// <summary>
     /// RTeturns flag of <see cref="ObservationState"/> enabled state in the configuration.
     /// </summary>
     /// <param name="observationState">State of the observation.</param>
@@ -42,8 +47,6 @@ namespace Soloplan.WhatsON
     {
       switch (observationState)
       {
-        case ObservationState.Unknown:
-          return false;
         case ObservationState.Unstable:
           return this.UnstableNotificationEnabled;
         case ObservationState.Failure:
@@ -52,6 +55,8 @@ namespace Soloplan.WhatsON
           return this.SuccessNotificationEnabled;
         case ObservationState.Running:
           return this.RunningNotificationEnabled;
+        case ObservationState.Unknown:
+          return this.UnknownNotificationEnabled;
         default:
           throw new ArgumentOutOfRangeException(nameof(observationState), observationState, null);
       }
@@ -79,6 +84,7 @@ namespace Soloplan.WhatsON
           this.UnstableNotificationEnabled = isEnabled;
           break;
         case ObservationState.Unknown:
+          this.UnknownNotificationEnabled = isEnabled;
           break;
         default:
           throw new ArgumentOutOfRangeException(nameof(observationState), observationState, null);

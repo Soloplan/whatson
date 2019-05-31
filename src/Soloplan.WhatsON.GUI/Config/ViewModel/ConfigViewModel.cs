@@ -77,6 +77,11 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     private bool runningObservationState;
 
     /// <summary>
+    /// The unknown observation state.
+    /// </summary>
+    private bool unknownObservationState;
+
+    /// <summary>
     /// Occurs when configuration was applied.
     /// </summary>
     public event EventHandler<ValueEventArgs<ApplicationConfiguration>> ConfigurationApplied;
@@ -165,6 +170,19 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       set
       {
         this.runningObservationState = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether unknown observation state is active.
+    /// </summary>
+    public bool UnknownObservationState
+    {
+      get => this.unknownObservationState;
+      set
+      {
+        this.unknownObservationState = value;
         this.OnPropertyChanged();
       }
     }
@@ -308,6 +326,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
         this.RunningObservationState = configurationSource.NotificationConfiguration.RunningNotificationEnabled;
         this.FailureObservationState = configurationSource.NotificationConfiguration.FailureNotificationEnabled;
         this.SuccessObservationState = configurationSource.NotificationConfiguration.SuccessNotificationEnabled;
+        this.UnknownObservationState = configurationSource.NotificationConfiguration.UnknownNotificationEnabled;
         this.AlwaysOnTop = configurationSource.AlwaysOnTop;
         this.OpenMinimized = configurationSource.OpenMinimized;
         this.ViewStyle = (int)configurationSource.ViewStyle;
@@ -440,6 +459,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       configuration.NotificationConfiguration.RunningNotificationEnabled = this.RunningObservationState;
       configuration.NotificationConfiguration.SuccessNotificationEnabled = this.SuccessObservationState;
       configuration.NotificationConfiguration.UnstableNotificationEnabled = this.UnstableObservationState;
+      configuration.NotificationConfiguration.UnknownNotificationEnabled = this.UnknownObservationState;
     }
 
     /// <summary>

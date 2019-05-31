@@ -242,24 +242,27 @@
     {
       if (sender is StatusViewModel statusViewModel && e.PropertyName == nameof(StatusViewModel.State))
       {
+        var subjectConfiguration = this.configuration.SubjectsConfiguration.FirstOrDefault(s => s.Identifier == statusViewModel.Parent.Identifier);
+        var notificationConfiguration = this.configuration.GetNotificationConfiguration(subjectConfiguration);
+
         var description = $"Project name: {statusViewModel.Parent.Name}.";
-        if (statusViewModel.State == ObservationState.Running)
+        if (statusViewModel.State == ObservationState.Running && notificationConfiguration.RunningNotificationEnabled)
         {
           this.ShowBaloon("Build started.", description, System.Windows.Forms.ToolTipIcon.None);
         }
-        else if (statusViewModel.State == ObservationState.Failure)
+        else if (statusViewModel.State == ObservationState.Failure && notificationConfiguration.FailureNotificationEnabled)
         {
           this.ShowBaloon("Build failed.", description, System.Windows.Forms.ToolTipIcon.Error);
         }
-        else if (statusViewModel.State == ObservationState.Success)
+        else if (statusViewModel.State == ObservationState.Success && notificationConfiguration.SuccessNotificationEnabled)
         {
           this.ShowBaloon("Build successful", description, System.Windows.Forms.ToolTipIcon.Info);
         }
-        else if (statusViewModel.State == ObservationState.Unstable)
+        else if (statusViewModel.State == ObservationState.Unstable && notificationConfiguration.UnstableNotificationEnabled)
         {
           this.ShowBaloon("Build successful (Unstable)", description, System.Windows.Forms.ToolTipIcon.Warning);
         }
-        else if (statusViewModel.State == ObservationState.Unknown)
+        else if (statusViewModel.State == ObservationState.Unknown && notificationConfiguration.UnknownNotificationEnabled)
         {
           this.ShowBaloon("Build interrupted", description, System.Windows.Forms.ToolTipIcon.Warning);
         }

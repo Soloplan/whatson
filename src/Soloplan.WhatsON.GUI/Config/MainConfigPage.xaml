@@ -83,6 +83,10 @@
               <ToggleButton IsChecked="{Binding RunningObservationState}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
               <Label>Running</Label>
             </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="2,6,2,0">
+              <ToggleButton IsChecked="{Binding UnknownObservationState}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
+              <Label>Unknown</Label>
+            </StackPanel>
           </StackPanel>
         </Expander>
       </StackPanel>
