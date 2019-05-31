@@ -18,7 +18,7 @@
 
     public XmlReader GetDataTempletXaml()
     {
-      return null;
+      return XmlReader.Create(new MemoryStream(Encoding.UTF8.GetBytes(Properties.Resources.JenkinsProjectDataTemplate)));
     }
   }
 }

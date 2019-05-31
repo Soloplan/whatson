@@ -5,7 +5,7 @@
 
   public class JenkinsBuild
   {
-    public const string RequestProperties = "number,displayName,description,building,duration,estimatedDuration,result,timestamp,culprits[fullName,absoluteUrl]";
+    public const string RequestProperties = "number,displayName,description,building,duration,estimatedDuration,result,timestamp,culprits[fullName,absoluteUrl],changeSets[items[author[fullName,absoluteUrl]]]";
 
     public int Number { get; set; }
 
@@ -24,5 +24,7 @@
     public long Timestamp { get; set; }
 
     public IList<Culprit> Culprits { get; set; }
+
+    public IList<ChangeSet> ChangeSets { get; set; }
   }
 }

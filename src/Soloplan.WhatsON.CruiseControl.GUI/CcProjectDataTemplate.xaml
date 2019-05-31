@@ -9,7 +9,7 @@
         <buildServer:BuildInformationIconControl.ToolTip>
           <StackPanel>
             <local:CCProgressBarTooltipControl DataContext="{Binding}" />
-            <buildServer:CulpritsControl DataContext="{Binding}" />
+            <buildServer:CulpritsControl Caption="Changes by:" CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
           </StackPanel>
         </buildServer:BuildInformationIconControl.ToolTip>
       </buildServer:BuildInformationIconControl>

@@ -106,6 +106,8 @@ namespace Soloplan.WhatsON.Jenkins
       }
     }
 
+    public IList<Culprit> CommittedToThisBuild { get; set; }
+
     public IList<Culprit> Culprits
     {
       get
