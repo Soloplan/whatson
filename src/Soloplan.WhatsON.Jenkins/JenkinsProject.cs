@@ -8,6 +8,7 @@
 namespace Soloplan.WhatsON.Jenkins
 {
   using System;
+  using System.Linq;
   using System.Threading;
   using System.Threading.Tasks;
   using NLog;
@@ -143,6 +144,12 @@ namespace Soloplan.WhatsON.Jenkins
       newStatus.DurationInMs = latestBuild.Duration;
       newStatus.EstimatedDurationInMs = latestBuild.EstimatedDuration;
       newStatus.Culprits = latestBuild.Culprits;
+
+      newStatus.CommittedToThisBuild = latestBuild.ChangeSets.SelectMany(p => p.ChangeSetItems)
+        .Select(p => p.Author)
+        .GroupBy(p => p.FullName)
+        .Select(p => p.FirstOrDefault())
+        .ToList();
 
       return newStatus;
     }
