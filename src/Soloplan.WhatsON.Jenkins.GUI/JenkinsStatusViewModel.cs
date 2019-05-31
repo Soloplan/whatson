@@ -8,11 +8,18 @@
 namespace Soloplan.WhatsON.Jenkins.GUI
 {
   using System;
+  using System.Collections.ObjectModel;
+  using System.Linq;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
+  using Soloplan.WhatsON.Jenkins.Model;
 
-  class JenkinsStatusViewModel : BuildStatusViewModel
+  public class JenkinsStatusViewModel : BuildStatusViewModel
   {
     private OpenJenkinsWebPageCommandData parentCommandData;
+
+    private ObservableCollection<JenkinsCulpritViewModel> committedToThisBuild;
+
+    private bool culpritsAndLastCommittedDifferent;
 
     public JenkinsStatusViewModel(JenkinsProjectViewModel model)
       : base(model)
@@ -35,6 +42,21 @@ namespace Soloplan.WhatsON.Jenkins.GUI
         };
       }
     }
+
+    public bool CulpritsAndLastCommittedDifferent
+    {
+      get => this.culpritsAndLastCommittedDifferent;
+      set
+      {
+        if (this.culpritsAndLastCommittedDifferent != value)
+        {
+          this.culpritsAndLastCommittedDifferent = value;
+          this.OnPropertyChanged();
+        }
+      }
+    }
+
+    public ObservableCollection<JenkinsCulpritViewModel> CommittedToThisBuild => this.committedToThisBuild ?? (this.committedToThisBuild = new ObservableCollection<JenkinsCulpritViewModel>());
 
     public override void Update(Status newStatus)
     {
@@ -62,13 +84,22 @@ namespace Soloplan.WhatsON.Jenkins.GUI
         this.RawProgres = 0;
       }
 
-      this.Culprits.Clear();
+      this.CommittedToThisBuild.Clear();
       foreach (var culprit in jenkinsStatus.Culprits)
       {
         var culpritModle = new JenkinsCulpritViewModel();
         culpritModle.Init(culprit);
         this.Culprits.Add(culpritModle);
       }
+
+      foreach (var culprit in jenkinsStatus.CommittedToThisBuild ?? Enumerable.Empty<Culprit>())
+      {
+        var culpritModle = new JenkinsCulpritViewModel();
+        culpritModle.Init(culprit);
+        this.CommittedToThisBuild.Add(culpritModle);
+      }
+
+      this.CulpritsAndLastCommittedDifferent = this.Culprits.Count != this.CommittedToThisBuild.Count || this.Culprits.Any(culprit => this.CommittedToThisBuild.All(committer => committer.FullName != culprit.FullName));
 
       this.UpdateCalculatedFields();
     }

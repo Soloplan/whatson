@@ -145,7 +145,7 @@ namespace Soloplan.WhatsON.Jenkins
       newStatus.EstimatedDurationInMs = latestBuild.EstimatedDuration;
       newStatus.Culprits = latestBuild.Culprits;
 
-      newStatus.CommittedToThisBuild = latestBuild.ChangeSets.SelectMany(p => p.ChangeSetItems)
+      newStatus.CommittedToThisBuild = latestBuild.ChangeSets?.SelectMany(p => p.ChangeSetItems)
         .Select(p => p.Author)
         .GroupBy(p => p.FullName)
         .Select(p => p.FirstOrDefault())
