@@ -59,10 +59,10 @@
       this.config = SerializationHelper.LoadOrCreateConfiguration();
       this.scheduler = new ObservationScheduler();
 
-      foreach (var subjectConfiguration in this.config.SubjectsConfiguration)
+      foreach (var connectorConfiguration in this.config.ConnectorsConfiguration)
       {
-        var subject = PluginsManager.Instance.GetSubject(subjectConfiguration);
-        this.scheduler.Observe(subject);
+        var connector = PluginsManager.Instance.GetConnector(connectorConfiguration);
+        this.scheduler.Observe(connector);
       }
 
       this.themeHelper.Initialize();

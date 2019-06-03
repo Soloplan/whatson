@@ -18,14 +18,14 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
     public event EventHandler<BuildEventArgs> BuildRequest;
 
-    public async Task<JenkinsJob> GetJenkinsJob(JenkinsProject subject, CancellationToken token)
+    public async Task<JenkinsJob> GetJenkinsJob(JenkinsProject connector, CancellationToken token)
     {
       if (this.JobRequest == null)
       {
         throw new InvalidOperationException($"{nameof(this.JobRequest)} must be handled for {nameof(FakeJenkinsApi)} to work.");
       }
 
-      var eventArgs = new JobEventArgs(subject);
+      var eventArgs = new JobEventArgs(connector);
       this.JobRequest(this, eventArgs);
       if (eventArgs.ResponseDelay > 0)
       {
@@ -35,14 +35,14 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       return eventArgs.Result;
     }
 
-    public async Task<JenkinsBuild> GetJenkinsBuild(JenkinsProject subject, int buildNumber, CancellationToken token)
+    public async Task<JenkinsBuild> GetJenkinsBuild(JenkinsProject connector, int buildNumber, CancellationToken token)
     {
       if (this.BuildRequest == null)
       {
         throw new InvalidOperationException($"{nameof(this.JobRequest)} must be handled for {nameof(FakeJenkinsApi)} to work.");
       }
 
-      var eventArgs = new BuildEventArgs(subject, buildNumber);
+      var eventArgs = new BuildEventArgs(connector, buildNumber);
       this.BuildRequest(this, eventArgs);
       if (eventArgs.ResponseDelay > 0)
       {
@@ -55,20 +55,20 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
   public class FakeApiEventArgs : EventArgs
   {
-    public FakeApiEventArgs(JenkinsProject subject)
+    public FakeApiEventArgs(JenkinsProject connector)
     {
-      this.Subject = subject;
+      this.Connector = connector;
     }
 
-    public JenkinsProject Subject { get; }
+    public JenkinsProject Connector { get; }
 
     public int ResponseDelay { get; set; }
   }
 
   public class JobEventArgs : FakeApiEventArgs
   {
-    public JobEventArgs(JenkinsProject subject)
-      : base(subject)
+    public JobEventArgs(JenkinsProject connector)
+      : base(connector)
     {
     }
 
@@ -77,8 +77,8 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
   public class BuildEventArgs : FakeApiEventArgs
   {
-    public BuildEventArgs(JenkinsProject subject, int buildNumber)
-      : base(subject)
+    public BuildEventArgs(JenkinsProject connector, int buildNumber)
+      : base(connector)
     {
       this.BuildNumber = buildNumber;
     }

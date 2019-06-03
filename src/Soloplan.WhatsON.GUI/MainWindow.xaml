@@ -5,7 +5,7 @@
         xmlns:local="clr-namespace:Soloplan.WhatsON.GUI"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:subjectTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.SubjectTreeView;assembly=Soloplan.WhatsON.GUI.Common"
+        xmlns:connectorTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.SubjectTreeView;assembly=Soloplan.WhatsON.GUI.Common"
         Title="Soloplan WhatsON"
         Width="800"
         Height="450"
@@ -89,7 +89,7 @@
                                  Kind="Add" />
       </Button>
 
-      <subjectTreeView:SubjectsTreeView x:Name="mainTreeView" Visibility="{Binding IsTreeInitialized, Converter={StaticResource BoolToVis}}" />
+      <connectorTreeView:ConnectorsTreeView x:Name="mainTreeView" Visibility="{Binding IsTreeInitialized, Converter={StaticResource BoolToVis}}" />
       <TextBlock HorizontalAlignment="Center"
                  VerticalAlignment="Center"
                  FontSize="18"

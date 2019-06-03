@@ -9,7 +9,7 @@ namespace Soloplan.WhatsON
   using System;
 
   /// <summary>
-  /// Used for marking configuration items for subjects.
+  /// Used for marking configuration items for connectors.
   /// </summary>
   /// <seealso cref="System.Attribute" />
   [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]

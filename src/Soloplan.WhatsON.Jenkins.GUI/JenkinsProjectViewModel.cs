@@ -25,7 +25,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       }
     }
 
-    public override void Init(SubjectConfiguration configuration)
+    public override void Init(ConnectorConfiguration configuration)
     {
       base.Init(configuration);
 
@@ -44,15 +44,15 @@ namespace Soloplan.WhatsON.Jenkins.GUI
         param.Redirect = false;
       }
 
-      param.Address = configuration.GetConfigurationByKey(ServerSubject.ServerAddress).Value.Trim('/') + "/job/" + configuration.GetConfigurationByKey(JenkinsProject.ProjectName).Value.Trim('/');
+      param.Address = configuration.GetConfigurationByKey(ServerConnector.ServerAddress).Value.Trim('/') + "/job/" + configuration.GetConfigurationByKey(JenkinsProject.ProjectName).Value.Trim('/');
 
       this.OpenWebPageParam = param;
 
       this.SetAddressForState(this.CurrentStatus);
 
-      foreach (var subjectSnapshot in this.SubjectSnapshots)
+      foreach (var connectorSnapshot in this.ConnectorSnapshots)
       {
-        this.SetAddressForState(subjectSnapshot);
+        this.SetAddressForState(connectorSnapshot);
       }
     }
 

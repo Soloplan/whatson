@@ -1,4 +1,4 @@
-﻿<Page x:Class="Soloplan.WhatsON.GUI.Config.View.SubjectsPage"
+﻿<Page x:Class="Soloplan.WhatsON.GUI.Config.View.ConnectorsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -7,7 +7,7 @@
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       mc:Ignorable="d" 
       d:DesignHeight="450"
-      Title="SubjectsPage" MinWidth="300"
+      Title="ConnectorsPage" MinWidth="300"
       TextElement.Foreground="{DynamicResource MaterialDesignBody}"
       Background="{DynamicResource MaterialDesignPaper}"
       TextElement.FontWeight="Medium"
@@ -21,25 +21,24 @@
     </ResourceDictionary>
   </Page.Resources>
 
-  <materialDesign:DialogHost Identifier="SubjectsConfigPageHost">
+  <materialDesign:DialogHost Identifier="ConnectorsConfigPageHost">
     <Grid Margin="0">
       <materialDesign:PopupBox
       Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}"
       PopupMode="MouseOver"
       PlacementMode="TopAndAlignCentres"
-      ToolTip="Add new subject"
+      ToolTip="Add new connector"
       Panel.ZIndex="2" Margin="0,0,25,10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="56">
-      <StackPanel>
-
-        <Button ToolTip="Delete subject" Click="DeleteSubjectClick">
+        <StackPanel>
+          <Button ToolTip="Delete connector" Click="DeleteConnectorClick">
           <materialDesign:PackIcon Kind="RemoveCircle" Width="24" Height="24" />
         </Button>
 
-        <Button ToolTip="Rename subject" Click="RenameSubjectClick">
+        <Button ToolTip="Rename connector" Click="RenameConnectorClick">
           <materialDesign:PackIcon Kind="Edit" Width="24" Height="24" />
         </Button>
 
-        <Button ToolTip="Add subject" Click="AddSubjectClick">
+        <Button ToolTip="Add connector" Click="AddConnectorClick">
           <materialDesign:PackIcon Kind="Add" Width="24" Height="24" />
         </Button>
 
@@ -48,14 +47,14 @@
 
     <DockPanel LastChildFill="true">
       <materialDesign:ColorZone Mode="Standard" DockPanel.Dock="Top" Padding="8 4 8 4" CornerRadius="3" Background="DarkGray">
-        <ComboBox x:Name="uxSubjects" Height="28" SelectionChanged="UxSubjectsSelectionChanged" Cursor="Hand" 
-                ItemsSource="{Binding Subjects}" DisplayMemberPath="Name" IsSynchronizedWithCurrentItem="true"
+        <ComboBox x:Name="uxConnectors" Height="28" SelectionChanged="ConnectorsSelectionChanged" Cursor="Hand" 
+                ItemsSource="{Binding Connectors}" DisplayMemberPath="Name" IsSynchronizedWithCurrentItem="true"
                 />
       </materialDesign:ColorZone>
-        <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" Visibility="{Binding Path=ActiveSubjectSupportsWizard, Converter={StaticResource BoolToVis}}">
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" Visibility="{Binding Path=ActiveConnectorSupportsWizard, Converter={StaticResource BoolToVis}}">
         <Button Click="StartWizardClick">Use wizard</Button>
       </StackPanel>
-      <Frame x:Name="uxSubjectFrame" Content="Frame" />
+        <Frame x:Name="uxConnectorFrame" Content="Frame" />
       </DockPanel>
   </Grid>
   </materialDesign:DialogHost>

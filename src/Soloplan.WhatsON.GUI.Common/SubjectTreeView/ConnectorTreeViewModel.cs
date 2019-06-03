@@ -1,4 +1,4 @@
-﻿// <copyright file="SubjectTreeViewModel.cs" company="Soloplan GmbH">
+﻿// <copyright file="ConnectorTreeViewModel.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
@@ -18,9 +18,9 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
   using Soloplan.WhatsON.Serialization;
 
   /// <summary>
-  /// Top level viewmodel used to bind to <see cref="SubjectTreeView"/>.
+  /// Top level viewmodel used to bind to <see cref="ConnectorTreeView"/>.
   /// </summary>
-  public class SubjectTreeViewModel : NotifyPropertyChanged, IHandleDoubleClick, IDropTarget
+  public class ConnectorTreeViewModel : NotifyPropertyChanged, IHandleDoubleClick, IDropTarget
   {
     /// <summary>
     /// The logger.
@@ -28,9 +28,9 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
     /// <summary>
-    /// Backing field for <see cref="SubjectGroups"/>.
+    /// Backing field for <see cref="ConnectorGroups"/>.
     /// </summary>
-    private ObservableCollection<SubjectGroupViewModel> subjectGroups;
+    private ObservableCollection<ConnectorGroupViewModel> connectorGroups;
 
     /// <summary>
     /// Flag indicating that <see cref="ConfigurationChanged"/> event is triggered - used to ignore updates of model.
@@ -45,19 +45,19 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
     public event EventHandler ConfigurationChanged;
 
     /// <summary>
-    /// Gets observable collection of subject groups, the top level object in tree view binding.
+    /// Gets observable collection of connector groups, the top level object in tree view binding.
     /// </summary>
-    public ObservableCollection<SubjectGroupViewModel> SubjectGroups => this.subjectGroups ?? (this.subjectGroups = this.CreateSubjectGroupViewModelCollection());
+    public ObservableCollection<ConnectorGroupViewModel> ConnectorGroups => this.connectorGroups ?? (this.connectorGroups = this.CreateConnectorGroupViewModelCollection());
 
     /// <summary>
-    /// Gets first group from <see cref="SubjectGroups"/>, used for binding when there is just one group <see cref="OneGroup"/>.
+    /// Gets first group from <see cref="ConnectorGroups"/>, used for binding when there is just one group <see cref="OneGroup"/>.
     /// </summary>
-    public SubjectGroupViewModel FirstGroup => this.SubjectGroups.FirstOrDefault();
+    public ConnectorGroupViewModel FirstGroup => this.ConnectorGroups.FirstOrDefault();
 
     /// <summary>
     /// Gets a value indicating whether there is only one group.
     /// </summary>
-    public bool OneGroup => this.SubjectGroups.Count == 1;
+    public bool OneGroup => this.ConnectorGroups.Count == 1;
 
     /// <summary>
     /// Gets or sets the padding of tree view items.
@@ -89,22 +89,22 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
         return;
       }
 
-      if (dropInfo.Data is SubjectViewModel)
+      if (dropInfo.Data is ConnectorViewModel)
       {
-        if (dropInfo.TargetItem is SubjectGroupViewModel)
+        if (dropInfo.TargetItem is ConnectorGroupViewModel)
         {
           dropInfo.DropTargetAdorner = DropTargetAdorners.Highlight;
           dropInfo.Effects = DragDropEffects.Move;
         }
-        else if (dropInfo.TargetItem is SubjectViewModel)
+        else if (dropInfo.TargetItem is ConnectorViewModel)
         {
           dropInfo.Effects = DragDropEffects.Move;
           dropInfo.DropTargetAdorner = (dropInfo.InsertPosition & RelativeInsertPosition.TargetItemCenter) != 0 ? DropTargetAdorners.Highlight : DropTargetAdorners.Insert;
         }
       }
-      else if (dropInfo.Data is SubjectGroupViewModel)
+      else if (dropInfo.Data is ConnectorGroupViewModel)
       {
-        if (dropInfo.TargetItem is SubjectGroupViewModel)
+        if (dropInfo.TargetItem is ConnectorGroupViewModel)
         {
           dropInfo.Effects = DragDropEffects.Move;
           dropInfo.DropTargetAdorner = (dropInfo.InsertPosition & RelativeInsertPosition.TargetItemCenter) != 0 ? DropTargetAdorners.Highlight : DropTargetAdorners.Insert;
@@ -123,13 +123,13 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
       }
 
       var changesExist = false;
-      if (dropInfo.Data is SubjectGroupViewModel drggedGroup)
+      if (dropInfo.Data is ConnectorGroupViewModel drggedGroup)
       {
         changesExist = this.DropGrup(dropInfo, drggedGroup);
       }
-      else if (dropInfo.Data is SubjectViewModel draggedSubject)
+      else if (dropInfo.Data is ConnectorViewModel draggedConnector)
       {
-        changesExist = this.DropSubject(dropInfo, draggedSubject);
+        changesExist = this.DropConnector(dropInfo, draggedConnector);
       }
 
       if (changesExist)
@@ -143,15 +143,15 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
     /// </summary>
     /// <param name="scheduler">Scheduler used for observation.</param>
     /// <param name="configuration">Configuration.</param>
-    /// <param name="initialSubjectState">List of currently observed subjects - provide start data for model.</param>
-    public void Init(ObservationScheduler scheduler, ApplicationConfiguration configuration, IList<Subject> initialSubjectState)
+    /// <param name="initialConnectorState">List of currently observed connectors - provide start data for model.</param>
+    public void Init(ObservationScheduler scheduler, ApplicationConfiguration configuration, IList<Connector> initialConnectorState)
     {
-      log.Trace("Initializing {name}", nameof(SubjectTreeViewModel));
+      log.Trace("Initializing {name}", nameof(ConnectorTreeViewModel));
       this.Update(configuration);
-      foreach (var subject in initialSubjectState)
+      foreach (var connector in initialConnectorState)
       {
-        log.Trace("Applying status for subject {@subject}", subject);
-        this.SchedulerStatusQueried(this, subject);
+        log.Trace("Applying status for connector {@connector}", connector);
+        this.SchedulerStatusQueried(this, connector);
       }
 
       scheduler.StatusQueried -= this.SchedulerStatusQueried;
@@ -169,37 +169,37 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
         return;
       }
 
-      log.Debug("Initializing {name}", nameof(SubjectTreeViewModel));
+      log.Debug("Initializing {name}", nameof(ConnectorTreeViewModel));
       var grouping = this.ParseConfiguration(configuration).ToList();
       int index = 0;
       foreach (var group in grouping)
       {
         log.Debug("Applying settings for group {group}", group.Key);
-        var subjectGroupViewModel = this.SubjectGroups.FirstOrDefault(grp => grp.GroupName == group.Key);
-        if (subjectGroupViewModel == null)
+        var connectorGroupViewModel = this.ConnectorGroups.FirstOrDefault(grp => grp.GroupName == group.Key);
+        if (connectorGroupViewModel == null)
         {
-          log.Debug("{model} doesn't exist, creating...", nameof(SubjectGroupViewModel));
-          subjectGroupViewModel = new SubjectGroupViewModel();
-          this.SubjectGroups.Insert(index, subjectGroupViewModel);
+          log.Debug("{model} doesn't exist, creating...", nameof(ConnectorGroupViewModel));
+          connectorGroupViewModel = new ConnectorGroupViewModel();
+          this.ConnectorGroups.Insert(index, connectorGroupViewModel);
         }
         else
         {
-          var oldIndex = this.SubjectGroups.IndexOf(subjectGroupViewModel);
+          var oldIndex = this.ConnectorGroups.IndexOf(connectorGroupViewModel);
           if (oldIndex != index)
           {
-            this.SubjectGroups.Move(oldIndex, index);
+            this.ConnectorGroups.Move(oldIndex, index);
           }
         }
 
         index++;
-        subjectGroupViewModel.Init(group);
+        connectorGroupViewModel.Init(group);
       }
 
-      var noLongerAvailable = this.SubjectGroups.Where(grp => grouping.All(group => group.Key != grp.GroupName)).ToList();
-      foreach (var subjectGroupViewModel in noLongerAvailable)
+      var noLongerAvailable = this.ConnectorGroups.Where(grp => grouping.All(group => group.Key != grp.GroupName)).ToList();
+      foreach (var connectorGroupViewModel in noLongerAvailable)
       {
-        log.Debug("Removing group no longer present in configuration: {subjectGroupViewModelName}", subjectGroupViewModel.GroupName);
-        this.SubjectGroups.Remove(subjectGroupViewModel);
+        log.Debug("Removing group no longer present in configuration: {connectorGroupViewModel}", connectorGroupViewModel.GroupName);
+        this.ConnectorGroups.Remove(connectorGroupViewModel);
       }
 
       switch (configuration.ViewStyle)
@@ -222,28 +222,28 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
     /// <param name="configuration">Application configuration.</param>
     public void WriteToConfiguration(ApplicationConfiguration configuration)
     {
-      var subjectConfigurations = configuration.SubjectsConfiguration.ToList();
-      configuration.SubjectsConfiguration.Clear();
-      foreach (var subjectGroupViewModel in this.SubjectGroups)
+      var connectorConfigurations = configuration.ConnectorsConfiguration.ToList();
+      configuration.ConnectorsConfiguration.Clear();
+      foreach (var connectorGroupViewModel in this.ConnectorGroups)
       {
-        foreach (var subjectViewModel in subjectGroupViewModel.SubjectViewModels)
+        foreach (var connectorViewModel in connectorGroupViewModel.ConnectorViewModels)
         {
-          var config = subjectConfigurations.FirstOrDefault(cfg => cfg.Identifier == subjectViewModel.Identifier);
+          var config = connectorConfigurations.FirstOrDefault(cfg => cfg.Identifier == connectorViewModel.Identifier);
           if (config != null)
           {
-            config.GetConfigurationByKey(Subject.Category).Value = subjectGroupViewModel.GroupName;
+            config.GetConfigurationByKey(Connector.Category).Value = connectorGroupViewModel.GroupName;
           }
 
-          configuration.SubjectsConfiguration.Add(config);
+          configuration.ConnectorsConfiguration.Add(config);
         }
       }
     }
 
     public void OnDoubleClick(object sender, MouseButtonEventArgs e)
     {
-      foreach (var subjectGroupViewModel in this.SubjectGroups)
+      foreach (var connectorGroupViewModel in this.ConnectorGroups)
       {
-        subjectGroupViewModel.OnDoubleClick(sender, e);
+        connectorGroupViewModel.OnDoubleClick(sender, e);
       }
     }
 
@@ -253,7 +253,7 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
     /// <returns>List of <see cref="GroupExpansionSettings"/>.</returns>
     public IList<GroupExpansionSettings> GetGroupExpansionState()
     {
-      return this.SubjectGroups.Select(group => new GroupExpansionSettings
+      return this.ConnectorGroups.Select(group => new GroupExpansionSettings
       {
         GroupName = group.GroupName,
         Expanded = group.IsNodeExpanded,
@@ -273,7 +273,7 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
 
       foreach (var expansion in groupExpansion)
       {
-        var targetGroup = this.SubjectGroups.FirstOrDefault(group => group.GroupName == expansion.GroupName);
+        var targetGroup = this.ConnectorGroups.FirstOrDefault(group => group.GroupName == expansion.GroupName);
         if (targetGroup != null)
         {
           targetGroup.IsNodeExpanded = expansion.Expanded;
@@ -342,52 +342,52 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
       return true;
     }
 
-    private IEnumerable<IGrouping<string, SubjectConfiguration>> ParseConfiguration(ApplicationConfiguration configuration)
+    private IEnumerable<IGrouping<string, ConnectorConfiguration>> ParseConfiguration(ApplicationConfiguration configuration)
     {
-      return configuration.SubjectsConfiguration.GroupBy(config => config.GetConfigurationByKey(Subject.Category)?.Value?.Trim() ?? string.Empty);
+      return configuration.ConnectorsConfiguration.GroupBy(config => config.GetConfigurationByKey(Connector.Category)?.Value?.Trim() ?? string.Empty);
     }
 
     /// <summary>
-    /// Handles dropping of <see cref="SubjectViewModel"/>.
+    /// Handles dropping of <see cref="ConnectorViewModel"/>.
     /// </summary>
     /// <param name="dropInfo">All drop information.</param>
-    /// <param name="droppedSubject">The dropped subject.</param>
+    /// <param name="droppedConnector">The dropped connector.</param>
     /// <returns>True if operation caused changes; false otherwise.</returns>
-    private bool DropSubject(IDropInfo dropInfo, SubjectViewModel droppedSubject)
+    private bool DropConnector(IDropInfo dropInfo, ConnectorViewModel droppedConnector)
     {
-      var currentSubjectGroupModel = this.GetSubjectGroup(droppedSubject);
-      if (dropInfo.TargetItem is SubjectGroupViewModel model)
+      var currentConnectorGroupModel = this.GetConnectorGroup(droppedConnector);
+      if (dropInfo.TargetItem is ConnectorGroupViewModel model)
       {
-        if (object.ReferenceEquals(currentSubjectGroupModel.List, model.SubjectViewModels))
+        if (object.ReferenceEquals(currentConnectorGroupModel.List, model.ConnectorViewModels))
         {
           return false;
         }
 
-        return MoveObject(currentSubjectGroupModel, new MovedObjectLocation(model.SubjectViewModels, model.SubjectViewModels.Count - 1), RelativeInsertPosition.AfterTargetItem);
+        return MoveObject(currentConnectorGroupModel, new MovedObjectLocation(model.ConnectorViewModels, model.ConnectorViewModels.Count - 1), RelativeInsertPosition.AfterTargetItem);
       }
 
-      if (dropInfo.TargetItem is SubjectViewModel targetModel)
+      if (dropInfo.TargetItem is ConnectorViewModel targetModel)
       {
-        var targetGroup = this.GetSubjectGroup(targetModel);
-        return MoveObject(currentSubjectGroupModel, targetGroup, dropInfo.InsertPosition);
+        var targetGroup = this.GetConnectorGroup(targetModel);
+        return MoveObject(currentConnectorGroupModel, targetGroup, dropInfo.InsertPosition);
       }
 
       return false;
     }
 
     /// <summary>
-    /// Handles dropping of <see cref="SubjectGroupViewModel"/>.
+    /// Handles dropping of <see cref="ConnectorGroupViewModel"/>.
     /// </summary>
     /// <param name="dropInfo">All drop information.</param>.
     /// <param name="droppedGroup">The dropped group.</param>
     /// <returns>True if operation caused changes; false otherwise.</returns>
-    private bool DropGrup(IDropInfo dropInfo, SubjectGroupViewModel droppedGroup)
+    private bool DropGrup(IDropInfo dropInfo, ConnectorGroupViewModel droppedGroup)
     {
-      if (dropInfo.TargetItem is SubjectGroupViewModel targetModel)
+      if (dropInfo.TargetItem is ConnectorGroupViewModel targetModel)
       {
-        var index = this.SubjectGroups.IndexOf(droppedGroup);
-        var targetIndex = this.SubjectGroups.IndexOf(targetModel);
-        return MoveObject(new MovedObjectLocation(this.SubjectGroups, index), new MovedObjectLocation(this.SubjectGroups, targetIndex), dropInfo.InsertPosition);
+        var index = this.ConnectorGroups.IndexOf(droppedGroup);
+        var targetIndex = this.ConnectorGroups.IndexOf(targetModel);
+        return MoveObject(new MovedObjectLocation(this.ConnectorGroups, index), new MovedObjectLocation(this.ConnectorGroups, targetIndex), dropInfo.InsertPosition);
       }
 
       return false;
@@ -396,41 +396,40 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
     /// <summary>
     /// Gets information about location in parent collection.
     /// </summary>
-    /// <param name="subjectViewModel">The subject view model.</param>
+    /// <param name="connectorViewModel">The connector view model.</param>
     /// <returns>The information about location in target collection.</returns>
-    private MovedObjectLocation GetSubjectGroup(SubjectViewModel subjectViewModel)
+    private MovedObjectLocation GetConnectorGroup(ConnectorViewModel connectorViewModel)
     {
-      foreach (var subjectGroupViewModel in this.SubjectGroups)
+      foreach (var connectorGroupViewModel in this.ConnectorGroups)
       {
-        var index = subjectGroupViewModel.SubjectViewModels.IndexOf(subjectViewModel);
+        var index = connectorGroupViewModel.ConnectorViewModels.IndexOf(connectorViewModel);
         if (index < 0)
         {
           continue;
         }
 
-        return new MovedObjectLocation(subjectGroupViewModel.SubjectViewModels, index);
+        return new MovedObjectLocation(connectorGroupViewModel.ConnectorViewModels, index);
       }
 
       return null;
     }
 
-    private void SchedulerStatusQueried(object sender, Subject e)
+    private void SchedulerStatusQueried(object sender, Connector e)
     {
-      foreach (var subjectGroupViewModel in this.SubjectGroups)
+      foreach (var connectorGroupViewModel in this.ConnectorGroups)
       {
-        if (subjectGroupViewModel.Update(e))
+        if (connectorGroupViewModel.Update(e))
         {
           return;
         }
       }
 
-      log.Warn("No viewmodel found for subject {@Subject}", e);
+      log.Warn("No viewmodel found for connector {@Connector}", e);
     }
 
-    private ObservableCollection<SubjectGroupViewModel> CreateSubjectGroupViewModelCollection()
+    private ObservableCollection<ConnectorGroupViewModel> CreateConnectorGroupViewModelCollection()
     {
-      var subject = new ObservableCollection<SubjectGroupViewModel>();
-      return subject;
+      return new ObservableCollection<ConnectorGroupViewModel>();
     }
 
     /// <summary>

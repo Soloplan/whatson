@@ -1,6 +1,6 @@
 ﻿namespace Soloplan.WhatsON.ServerHealth
 {
-  public class ServerHealthPlugin : SubjectPlugin
+  public class ServerHealthPlugin : ConnectorPlugin
   {
     public ServerHealthPlugin()
       : base(typeof(ServerHealth))
@@ -12,7 +12,7 @@
     /// </summary>
     /// <param name="configuration">The configuration.</param>
     /// <returns>The new plugin.</returns>
-    public override Subject CreateNew(SubjectConfiguration configuration)
+    public override Connector CreateNew(ConnectorConfiguration configuration)
     {
       return new ServerHealth(configuration);
     }

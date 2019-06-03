@@ -15,11 +15,11 @@ namespace Soloplan.WhatsON.Jenkins
   using Soloplan.WhatsON.Jenkins.Model;
   using Soloplan.WhatsON.ServerBase;
 
-  [SubjectType("Jenkins Project Status", Description = "Retrieve the current status of a Jenkins project.")]
+  [ConnectorType("Jenkins Project Status", Description = "Retrieve the current status of a Jenkins project.")]
   [ConfigurationItem(ProjectName, typeof(string), Optional = false, Priority = 300)]
   [ConfigurationItem(RedirectPlugin, typeof(bool), Priority = 400)] // defines use of Display URL API Plugin https://wiki.jenkins.io/display/JENKINS/Display+URL+API+Plugin
   [NotificationConfigurationItem(NotificationsVisbility, typeof(ConnectorNotificationConfiguration), Priority = 1600000000)]
-  public class JenkinsProject : ServerSubject
+  public class JenkinsProject : ServerConnector
   {
     public const string ProjectName = "ProjectName";
 
@@ -43,7 +43,7 @@ namespace Soloplan.WhatsON.Jenkins
     /// </summary>
     /// <param name="configuration">The configuration.</param>
     /// <param name="api">API for Jenkins.</param>
-    public JenkinsProject(SubjectConfiguration configuration, IJenkinsApi api)
+    public JenkinsProject(ConnectorConfiguration configuration, IJenkinsApi api)
       : base(configuration)
     {
       this.api = api;
@@ -59,7 +59,7 @@ namespace Soloplan.WhatsON.Jenkins
     /// <returns>Project name.</returns>
     public string GetProject()
     {
-      return this.SubjectConfiguration.GetConfigurationByKey(JenkinsProject.ProjectName).Value;
+      return this.ConnectorConfiguration.GetConfigurationByKey(JenkinsProject.ProjectName).Value;
     }
 
     protected override async Task ExecuteQuery(CancellationToken cancellationToken, params string[] args)

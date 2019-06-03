@@ -13,7 +13,7 @@ namespace Soloplan.WhatsON.CruiseControl
   using System.Threading.Tasks;
   using Soloplan.WhatsON.ServerBase;
 
-  public class CruiseControlProjectPlugin : SubjectPlugin, IProjectsListQuerying, IAssignServerProject
+  public class CruiseControlProjectPlugin : ConnectorPlugin, IProjectsListQuerying, IAssignServerProject
   {
     public CruiseControlProjectPlugin()
       : base(typeof(CruiseControlProject))
@@ -25,7 +25,7 @@ namespace Soloplan.WhatsON.CruiseControl
     /// </summary>
     public override bool SupportsWizard => true;
 
-    public override Subject CreateNew(SubjectConfiguration configuration)
+    public override Connector CreateNew(ConnectorConfiguration configuration)
     {
       return new CruiseControlProject(configuration);
     }
@@ -80,7 +80,7 @@ namespace Soloplan.WhatsON.CruiseControl
     public void AssignServerProject(ServerProject serverProject, IConfigurationItemsSupport configurationItemsSupport, string serverAddress)
     {
       configurationItemsSupport.GetConfigurationByKey(CruiseControlProject.ProjectName).Value = serverProject.Name;
-      configurationItemsSupport.GetConfigurationByKey(ServerSubject.ServerAddress).Value = serverAddress;
+      configurationItemsSupport.GetConfigurationByKey(ServerConnector.ServerAddress).Value = serverAddress;
     }
 
     /// <summary>

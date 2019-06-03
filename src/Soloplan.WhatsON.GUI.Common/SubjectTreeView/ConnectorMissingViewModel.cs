@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SubjectMissingViewModel.cs" company="Soloplan GmbH">
+// <copyright file="ConnectorMissingViewModel.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
@@ -12,9 +12,9 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
   using System.Windows.Input;
   using Microsoft.Expression.Interactivity.Core;
 
-  public class SubjectMissingViewModel : SubjectViewModel
+  public class ConnectorMissingViewModel : ConnectorViewModel
   {
-    public SubjectMissingViewModel()
+    public ConnectorMissingViewModel()
     {
       void Act()
       {
@@ -42,18 +42,18 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
     /// <summary>
     /// Initializes viewmodel based on <paramref name="configuration"/>.
     /// </summary>
-    /// <param name="configuration">Configuration of this subject.</param>
-    public override void Init(SubjectConfiguration configuration)
+    /// <param name="configuration">Configuration of this connector.</param>
+    public override void Init(ConnectorConfiguration configuration)
     {
       this.ExpectedPluginType = configuration.PluginTypeName;
       base.Init(configuration);
     }
 
     /// <summary>
-    /// Doesn't do anything since <paramref name="changedSubject"/> is null.
+    /// Doesn't do anything since <paramref name="changedConnector> is null.
     /// </summary>
-    /// <param name="changedSubject">Subject which has changed - always null.</param>
-    public override void Update(Subject changedSubject)
+    /// <param name="changedConnector">Connector which has changed - always null.</param>
+    public override void Update(Connector changedConnector)
     {
       return;
     }

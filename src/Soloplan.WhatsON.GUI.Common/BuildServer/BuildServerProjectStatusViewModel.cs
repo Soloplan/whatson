@@ -12,7 +12,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
   using Soloplan.WhatsON.GUI.Common.SubjectTreeView;
   using Soloplan.WhatsON.Jenkins.GUI;
 
-  public abstract class BuildServerProjectStatusViewModel : SubjectViewModel
+  public abstract class BuildServerProjectStatusViewModel : ConnectorViewModel
   {
     /// <summary>
     /// Gets command for opening builds webPage.

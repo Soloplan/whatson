@@ -21,7 +21,7 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
     /// </summary>
     private bool buildTimeUnknown;
 
-    public CruiseControlStatusViewModel(SubjectViewModel model)
+    public CruiseControlStatusViewModel(ConnectorViewModel model)
       : base(model)
     {
     }

@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="CreateEditSubjectDialog.xaml.cs" company="Soloplan GmbH">
+// <copyright file="CreateEditConnectorDialog.xaml.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -14,14 +14,14 @@ namespace Soloplan.WhatsON.GUI.Config.View
   /// <summary>
   /// Interaction logic for UserControl1.xaml
   /// </summary>
-  public partial class CreateEditSubjectDialog : UserControl
+  public partial class CreateEditConnectorDialog : UserControl
   {
     /// <summary>
-    /// Initializes a new instance of the <see cref="CreateEditSubjectDialog" /> class.
+    /// Initializes a new instance of the <see cref="CreateEditConnectorDialog" /> class.
     /// </summary>
-    /// <param name="selectedSubject">The selected subject.</param>
-    /// <param name="isNew">if set to <c>true</c> the subject is new.</param>
-    public CreateEditSubjectDialog(SubjectViewModel selectedSubject, bool isNew)
+    /// <param name="selectedConnector">The selected connector.</param>
+    /// <param name="isNew">if set to <c>true</c> the connector is new.</param>
+    public CreateEditConnectorDialog(ConnectorViewModel selectedConnector, bool isNew)
     {
       this.InitializeComponent();
       if (isNew && this.uxPluginType.Items.Count > 0)
@@ -30,7 +30,7 @@ namespace Soloplan.WhatsON.GUI.Config.View
       }
       else
       {
-        this.uxPluginType.SelectedItem = selectedSubject.SourceSubjectPlugin;
+        this.uxPluginType.SelectedItem = selectedConnector.SourceConnectorPlugin;
       }
 
       this.uxPluginType.IsEnabled = isNew;

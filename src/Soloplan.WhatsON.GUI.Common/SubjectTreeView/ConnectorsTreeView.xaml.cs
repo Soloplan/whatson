@@ -13,13 +13,13 @@
   using Soloplan.WhatsON.Serialization;
 
   /// <summary>
-  /// Interaction logic for SubjectsTreeView.xaml
+  /// Interaction logic for ConnectorsTreeView.xaml
   /// </summary>
-  public partial class SubjectsTreeView : UserControl
+  public partial class ConnectorsTreeView : UserControl
   {
-    public SubjectTreeViewModel model;
+    public ConnectorTreeViewModel model;
 
-    public SubjectsTreeView()
+    public ConnectorsTreeView()
     {
       this.InitializeComponent();
       if (!DesignerProperties.GetIsInDesignMode(this))
@@ -41,15 +41,15 @@
     }
 
     /// <summary>
-    /// Event fired when configuration is changed by user interaction with <see cref="SubjectTreeView"/>.
+    /// Event fired when configuration is changed by user interaction with <see cref="ConnectorsTreeView"/>.
     /// </summary>
     public event EventHandler ConfigurationChanged;
 
-    public void Init(ObservationScheduler scheduler, ApplicationConfiguration configuration, IList<Subject> initialSubjectState)
+    public void Init(ObservationScheduler scheduler, ApplicationConfiguration configuration, IList<Connector> initialConnectorState)
     {
-      this.model = new SubjectTreeViewModel();
+      this.model = new ConnectorTreeViewModel();
       this.model.ConfigurationChanged += (s, e) => this.ConfigurationChanged?.Invoke(this, EventArgs.Empty);
-      this.model.Init(scheduler, configuration, initialSubjectState);
+      this.model.Init(scheduler, configuration, initialConnectorState);
       this.DataContext = this.model;
       this.SetupDataContext();
     }
@@ -61,7 +61,7 @@
     }
 
     /// <summary>
-    /// Writes current settings from <see cref="SubjectsTreeView"/> to <paramref name="configuration"/>.
+    /// Writes current settings from <see cref="ConnectorsTreeView"/> to <paramref name="configuration"/>.
     /// </summary>
     /// <param name="configuration">Configuration to which data should be written.</param>
     public void WriteToConfiguration(ApplicationConfiguration configuration)
@@ -88,20 +88,20 @@
     }
 
     /// <summary>
-    /// Focuses the node connected with <paramref name="subject"/>.
+    /// Focuses the node connected with <paramref name="connector>.
     /// </summary>
-    /// <param name="subject">Subject which should be focused.</param>
-    public void FocusItem(Subject subject)
+    /// <param name="connector">Connector which should be focused.</param>
+    public void FocusItem(Connector connector)
     {
-      foreach (var groupViewModel in this.model.SubjectGroups)
+      foreach (var groupViewModel in this.model.ConnectorGroups)
       {
-        foreach (var subjectViewModel in groupViewModel.SubjectViewModels)
+        foreach (var connectorViewModel in groupViewModel.ConnectorViewModels)
         {
-          if (subjectViewModel.Subject.SubjectConfiguration.Identifier == subject.SubjectConfiguration.Identifier)
+          if (connectorViewModel.Connector.ConnectorConfiguration.Identifier == connector.ConnectorConfiguration.Identifier)
           {
             TreeViewItem groupViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(groupViewModel);
-            var treeViewItem = (TreeViewItem)groupViewItem?.ItemContainerGenerator.ContainerFromItem(subjectViewModel)
-              ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(subjectViewModel);
+            var treeViewItem = (TreeViewItem)groupViewItem?.ItemContainerGenerator.ContainerFromItem(connectorViewModel)
+              ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorViewModel);
             if (treeViewItem != null)
             {
               groupViewModel.IsNodeExpanded = true;
@@ -115,11 +115,11 @@
 
     private void SetupDataContext()
     {
-      if (this.model.OneGroup && string.IsNullOrWhiteSpace(this.model.SubjectGroups.FirstOrDefault().GroupName))
+      if (this.model.OneGroup && string.IsNullOrWhiteSpace(this.model.ConnectorGroups.FirstOrDefault().GroupName))
       {
         Binding myBinding = new Binding();
         myBinding.Source = this.model.FirstGroup;
-        myBinding.Path = new PropertyPath("SubjectViewModels");
+        myBinding.Path = new PropertyPath("ConnectorViewModels");
         myBinding.Mode = BindingMode.OneWay;
         myBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
         BindingOperations.SetBinding(this.mainTreeView, TreeView.ItemsSourceProperty, myBinding);
@@ -128,7 +128,7 @@
       {
         Binding myBinding = new Binding();
         myBinding.Source = this.model;
-        myBinding.Path = new PropertyPath("SubjectGroups");
+        myBinding.Path = new PropertyPath("ConnectorGroups");
         myBinding.Mode = BindingMode.OneWay;
         myBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
         BindingOperations.SetBinding(this.mainTreeView, TreeView.ItemsSourceProperty, myBinding);

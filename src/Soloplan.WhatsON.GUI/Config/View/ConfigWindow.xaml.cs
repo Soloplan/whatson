@@ -25,9 +25,9 @@ namespace Soloplan.WhatsON.GUI.Config.View
     public const string MainListItemTag = "Main";
 
     /// <summary>
-    /// The settings Subjects item tag.
+    /// The settings Connectors item tag.
     /// </summary>
-    public const string SubjectsListItemTag = "Subjects";
+    public const string ConnectorsListItemTag = "Connectors";
 
     /// <summary>
     /// The settings About item tag.
@@ -45,9 +45,9 @@ namespace Soloplan.WhatsON.GUI.Config.View
     private ApplicationConfiguration configurationSource;
 
     /// <summary>
-    /// The subject page.
+    /// The connector page.
     /// </summary>
-    private Page subjectPage;
+    private Page connectorPage;
 
     /// <summary>
     /// The main page.
@@ -146,9 +146,9 @@ namespace Soloplan.WhatsON.GUI.Config.View
           this.mainPage = this.mainPage ?? new MainConfigPage(this.configurationViewModel);
           this.ConfigFrame.Content = this.mainPage;
           return;
-        case SubjectsListItemTag:
-          this.subjectPage = this.subjectPage ?? new SubjectsPage(this.configurationViewModel.Subjects, this);
-          this.ConfigFrame.Content = this.subjectPage;
+        case ConnectorsListItemTag:
+          this.connectorPage = this.connectorPage ?? new ConnectorsPage(this.configurationViewModel.Connectors, this);
+          this.ConfigFrame.Content = this.connectorPage;
           return;
         case AboutListItemTag:
           this.aboutPage = this.aboutPage ?? new AboutPage();

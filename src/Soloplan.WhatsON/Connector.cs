@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Subject.cs" company="Soloplan GmbH">
+// <copyright file="Connector.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
@@ -14,10 +14,10 @@ namespace Soloplan.WhatsON
   using NLog;
 
   /// <summary>
-  /// The subject - represent an executable job defined by the plugin.
+  /// The connector - represent an executable job defined by the plugin.
   /// </summary>
   [ConfigurationItem(Category, typeof(string), Priority = 1000000000)]
-  public abstract class Subject
+  public abstract class Connector
   {
     /// <summary>
     /// The redirect plugin tag.
@@ -40,20 +40,20 @@ namespace Soloplan.WhatsON
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Subject"/> class.
+    /// Initializes a new instance of the <see cref="Connector"/> class.
     /// </summary>
     /// <param name="configuration">The configuration.</param>
-    protected Subject(SubjectConfiguration configuration)
+    protected Connector(ConnectorConfiguration configuration)
     {
       this.Snapshots = new List<Snapshot>();
       this.MaxSnapshots = MaxSnapshotsDefault;
       if (configuration == null)
       {
         var plugin = PluginsManager.Instance.GetPlugin(this);
-        configuration = new SubjectConfiguration(plugin.GetType().FullName);
+        configuration = new ConnectorConfiguration(plugin.GetType().FullName);
       }
 
-      this.SubjectConfiguration = configuration;
+      this.ConnectorConfiguration = configuration;
     }
 
     /// <summary>
@@ -68,7 +68,7 @@ namespace Soloplan.WhatsON
     public IList<Snapshot> Snapshots { get; set; }
 
     /// <summary>
-    /// Gets a value indicating whether this subject supports wizard.
+    /// Gets a value indicating whether this connector supports wizard.
     /// </summary>
     public bool SupportsWizard
     {
@@ -80,19 +80,19 @@ namespace Soloplan.WhatsON
     }
 
     /// <summary>
-    /// Gets or sets the configuration of a subject.
+    /// Gets or sets the configuration of a connector.
     /// </summary>
-    public SubjectConfiguration SubjectConfiguration { get; set; }
+    public ConnectorConfiguration ConnectorConfiguration { get; set; }
 
     public async Task QueryStatus(CancellationToken cancellationToken, params string[] args)
     {
-      log.Trace("Querying status for subject {subject}.", new { Name = this.SubjectConfiguration.Name, CurrentStatus = this.CurrentStatus });
+      log.Trace("Querying status for connector {connector}.", new { Name = this.ConnectorConfiguration.Name, CurrentStatus = this.CurrentStatus });
       await this.ExecuteQuery(cancellationToken, args);
-      log.Trace("Status for subject {subject} queried.", new { Name = this.SubjectConfiguration.Name, CurrentStatus = this.CurrentStatus });
+      log.Trace("Status for connector {connector} queried.", new { Name = this.ConnectorConfiguration.Name, CurrentStatus = this.CurrentStatus });
 
       if (this.CurrentStatus != null && this.ShouldTakeSnapshot(this.CurrentStatus))
       {
-        log.Debug("Adding snapshot for subject {subject}", new { Name = this.SubjectConfiguration.Name, CurrentStatus = this.CurrentStatus });
+        log.Debug("Adding snapshot for connector {connector}", new { Name = this.ConnectorConfiguration.Name, CurrentStatus = this.CurrentStatus });
         this.AddSnapshot(this.CurrentStatus);
       }
     }
@@ -101,7 +101,7 @@ namespace Soloplan.WhatsON
     {
       while (this.Snapshots.Count >= this.MaxSnapshots)
       {
-        log.Debug("Max number of snapshots exceeded. Dequeuing snapshot.", new { Name = this.SubjectConfiguration.Name, CurrentStatus = this.CurrentStatus });
+        log.Debug("Max number of snapshots exceeded. Dequeuing snapshot.", new { Name = this.ConnectorConfiguration.Name, CurrentStatus = this.CurrentStatus });
         this.Snapshots.RemoveAt(0);
       }
 
@@ -110,7 +110,7 @@ namespace Soloplan.WhatsON
 
     public override string ToString()
     {
-      var sb = new StringBuilder(this.SubjectConfiguration.Name);
+      var sb = new StringBuilder(this.ConnectorConfiguration.Name);
       if (!string.IsNullOrWhiteSpace(this.Description))
       {
         sb.Append(" - ");

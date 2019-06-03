@@ -51,9 +51,9 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       get
       {
         var result = new List<string>();
-        foreach (var subject in this.configuration.Subjects)
+        foreach (var connector in this.configuration.Connectors)
         {
-          var configItemViewModel = subject.GetConfigurationByKey(Subject.Category);
+          var configItemViewModel = connector.GetConfigurationByKey(Connector.Category);
           if (configItemViewModel != null && !string.IsNullOrWhiteSpace(configItemViewModel.Value) && !result.Contains(configItemViewModel.Value))
           {
             result.Add(configItemViewModel.Value);

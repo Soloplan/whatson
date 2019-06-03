@@ -136,11 +136,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Config\View\SubjectConfigPage.xaml">
+    <Page Include="Config\View\ConnectorConfigPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Config\View\SubjectsConfigPage.xaml">
+    <Page Include="Config\View\ConnectorsConfigPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -148,7 +148,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Config\View\CreateEditSubjectDialog.xaml">
+    <Page Include="Config\View\CreateEditConnectorDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -182,7 +182,7 @@
     <Compile Include="Config\ViewModel\ConfigurationItemViewModel.cs" />
     <Compile Include="Config\ViewModel\ConfigViewModel.cs" />
     <Compile Include="Config\ViewModel\GlobalConfigDataViewModel.cs" />
-    <Compile Include="Config\ViewModel\SubjectViewModel.cs" />
+    <Compile Include="Config\ViewModel\ConnectorViewModel.cs" />
     <Compile Include="Config\ViewModel\ViewModelBase.cs" />
     <Compile Include="Config\View\ConfigWindow.xaml.cs">
       <DependentUpon>ConfigWindow.xaml</DependentUpon>
@@ -192,20 +192,20 @@
       <DependentUpon>MainConfigPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Config\NumericConfigControlBuilder.cs" />
-    <Compile Include="Config\View\SubjectConfigPage.xaml.cs">
-      <DependentUpon>SubjectConfigPage.xaml</DependentUpon>
+    <Compile Include="Config\View\ConnectorConfigPage.xaml.cs">
+      <DependentUpon>ConnectorConfigPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Config\View\SubjectsConfigPage.xaml.cs">
-      <DependentUpon>SubjectsConfigPage.xaml</DependentUpon>
+    <Compile Include="Config\View\ConnectorsConfigPage.xaml.cs">
+      <DependentUpon>ConnectorsConfigPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Config\TextConfigControlBuilder.cs" />
     <Compile Include="Config\View\OkCancelDialog.xaml.cs">
       <DependentUpon>OkCancelDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Config\View\CreateEditSubjectDialog.xaml.cs">
-      <DependentUpon>CreateEditSubjectDialog.xaml</DependentUpon>
+    <Compile Include="Config\View\CreateEditConnectorDialog.xaml.cs">
+      <DependentUpon>CreateEditConnectorDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Config\View\SubjectViewModelCollection.cs" />
+    <Compile Include="Config\View\ConnectorViewModelCollection.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

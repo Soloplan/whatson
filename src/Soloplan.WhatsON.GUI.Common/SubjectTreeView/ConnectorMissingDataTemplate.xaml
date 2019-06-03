@@ -6,7 +6,7 @@
     <MenuItem Header="Copy data" Command="{Binding CopyData}" />
   </ContextMenu>
 
-  <DataTemplate DataType="{x:Type local:SubjectMissingViewModel}">
+  <DataTemplate DataType="{x:Type local:ConnectorMissingViewModel}">
     <StackPanel ContextMenu="{StaticResource copyData}" Orientation="Horizontal">
       <StackPanel.ToolTip>
         <StackPanel>

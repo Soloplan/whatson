@@ -15,9 +15,9 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
 
   public class CruiseControlTreViewPresentationPlugIn : ITreeViewPresentationPlugIn
   {
-    public Type SubjectType => typeof(CruiseControlProject);
+    public Type ConnectorType => typeof(CruiseControlProject);
 
-    public SubjectViewModel CreateViewModel()
+    public ConnectorViewModel CreateViewModel()
     {
       return new CruiseControlProjectViewModel();
     }

@@ -16,7 +16,7 @@ namespace Soloplan.WhatsON
   using Soloplan.WhatsON.Composition;
 
   /// <summary>
-  /// The Manager for Subject Plugins.
+  /// The Manager for Connector Plugins.
   /// </summary>
   public sealed class PluginsManager
   {
@@ -31,14 +31,14 @@ namespace Soloplan.WhatsON
     private static volatile PluginsManager instance;
 
     /// <summary>
-    /// The subjects.
+    /// The connectors.
     /// </summary>
-    private readonly IList<Subject> subjects = new List<Subject>();
+    private readonly IList<Connector> connectors = new List<Connector>();
 
     /// <summary>
-    /// The subject plugins list.
+    /// The connector plugins list.
     /// </summary>
-    private List<ISubjectPlugin> subjectPlugins;
+    private List<IConnectorPlugin> connectorPlugins;
 
     /// <summary>
     /// Registered plugins.
@@ -66,95 +66,95 @@ namespace Soloplan.WhatsON
     }
 
     /// <summary>
-    /// Gets the read only list of Subject Plugins.
+    /// Gets the read only list of Connector Plugins.
     /// </summary>
-    public IReadOnlyList<ISubjectPlugin> SubjectPlugins
+    public IReadOnlyList<IConnectorPlugin> ConnectorPlugins
     {
       get
       {
-        if (this.subjectPlugins != null)
+        if (this.connectorPlugins != null)
         {
-          return this.subjectPlugins.AsReadOnly();
+          return this.connectorPlugins.AsReadOnly();
         }
 
-        this.subjectPlugins = new List<ISubjectPlugin>();
-        foreach (var plugIn in this.plugIns.OfType<ISubjectPlugin>())
+        this.connectorPlugins = new List<IConnectorPlugin>();
+        foreach (var plugIn in this.plugIns.OfType<IConnectorPlugin>())
         {
-          if (plugIn.SubjectType == null)
+          if (plugIn.ConnectorType == null)
           {
             continue;
           }
 
-          var typeDesc = plugIn.SubjectTypeAttribute;
+          var typeDesc = plugIn.ConnectorTypeAttribute;
           if (typeDesc == null)
           {
             continue;
           }
 
-          this.subjectPlugins.Add(plugIn);
+          this.connectorPlugins.Add(plugIn);
         }
 
-        return this.subjectPlugins.AsReadOnly();
+        return this.connectorPlugins.AsReadOnly();
       }
     }
 
     public IReadOnlyList<IPlugIn> PlugIns => this.plugIns.AsReadOnly();
 
     /// <summary>
-    /// Gets the Plugin instance of a Subject Plugin.
+    /// Gets the Plugin instance of a Connector Plugin.
     /// </summary>
-    /// <param name="subject">The subject.</param>
+    /// <param name="connector">The connector.</param>
     /// <returns>The Plugin instance.</returns>
-    public ISubjectPlugin GetPlugin(Subject subject)
+    public IConnectorPlugin GetPlugin(Connector connector)
     {
-      return this.SubjectPlugins.FirstOrDefault(sp => sp.SubjectType == subject.GetType());
+      return this.ConnectorPlugins.FirstOrDefault(sp => sp.ConnectorType == connector.GetType());
     }
 
     /// <summary>
-    /// Gets the Plugin instance of a Subject Configuration.
+    /// Gets the Plugin instance of a Connector Configuration.
     /// </summary>
-    /// <param name="subjectConfiguration">The subject configuration.</param>
+    /// <param name="connectorConfiguration">The connector configuration.</param>
     /// <returns>The Plugin instance.</returns>
-    public ISubjectPlugin GetPlugin(SubjectConfiguration subjectConfiguration)
+    public IConnectorPlugin GetPlugin(ConnectorConfiguration connectorConfiguration)
     {
-      return this.SubjectPlugins.FirstOrDefault(sp => sp.GetType().FullName == subjectConfiguration.PluginTypeName);
+      return this.ConnectorPlugins.FirstOrDefault(sp => sp.GetType().FullName == connectorConfiguration.PluginTypeName);
     }
 
     /// <summary>
-    /// Creates the new subject.
+    /// Creates the new connector.
     /// </summary>
-    /// <param name="subjectConfiguration">The subject configuration.</param>
-    /// <returns>Creates new subject with given configuration.</returns>
-    /// <exception cref="InvalidOperationException">Couldn't find plugin for a type: {subjectConfiguration.TypeName}</exception>
-    public Subject CreateNewSubject(SubjectConfiguration subjectConfiguration)
+    /// <param name="connectorConfiguration">The connector configuration.</param>
+    /// <returns>Creates new connector with given configuration.</returns>
+    /// <exception cref="InvalidOperationException">Couldn't find plugin for a type: {connectorConfiguration.TypeName}</exception>
+    public Connector CreateNewConnector(ConnectorConfiguration connectorConfiguration)
     {
-      var plugin = this.SubjectPlugins.FirstOrDefault(p => p.GetType().FullName == subjectConfiguration.PluginTypeName);
+      var plugin = this.ConnectorPlugins.FirstOrDefault(p => p.GetType().FullName == connectorConfiguration.PluginTypeName);
       if (plugin == null)
       {
-        log.Error("Couldn't find plugin for a type: {pluginType}", subjectConfiguration.PluginTypeName);
+        log.Error("Couldn't find plugin for a type: {pluginType}", connectorConfiguration.PluginTypeName);
         return null;
       }
 
-      var subject = plugin.CreateNew(subjectConfiguration);
-      this.subjects.Add(subject);
-      return subject;
+      var connector = plugin.CreateNew(connectorConfiguration);
+      this.connectors.Add(connector);
+      return connector;
     }
 
     /// <summary>
-    /// Gets the subject.
+    /// Gets the connector.
     /// </summary>
-    /// <param name="subjectConfiguration">The subject configuration.</param>
-    /// <returns>A new subject with given configuration.</returns>
-    /// <exception cref="InvalidOperationException">Couldn't find plugin for a type: {subjectConfiguration.TypeName}</exception>
-    public Subject GetSubject(SubjectConfiguration subjectConfiguration)
+    /// <param name="connectorConfiguration">The connector configuration.</param>
+    /// <returns>A new connector with given configuration.</returns>
+    /// <exception cref="InvalidOperationException">Couldn't find plugin for a type: {connectorConfiguration.TypeName}</exception>
+    public Connector GetConnector(ConnectorConfiguration connectorConfiguration)
     {
-      var subject = this.subjects.FirstOrDefault(s => s.SubjectConfiguration.Identifier == subjectConfiguration.Identifier);
-      if (subject != null)
+      var connector = this.connectors.FirstOrDefault(s => s.ConnectorConfiguration.Identifier == connectorConfiguration.Identifier);
+      if (connector != null)
       {
-        return subject;
+        return connector;
       }
 
-      return this.CreateNewSubject(subjectConfiguration);
+      return this.CreateNewConnector(connectorConfiguration);
     }
 
     /// <summary>

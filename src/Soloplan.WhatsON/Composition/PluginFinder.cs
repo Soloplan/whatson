@@ -21,7 +21,7 @@ namespace Soloplan.WhatsON.Composition
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
     /// <summary>
-    /// Finds all the <see cref="T:Soloplan.WhatsON.ISubjectPlugin"/>s that are provided by the specified assemblies.
+    /// Finds all the <see cref="T:Soloplan.WhatsON.IConnectorPlugin"/>s that are provided by the specified assemblies.
     /// Note that this method only supports assemblies from the applications root directory,
     /// i.e. the plugin assembly must be located next to the application's executable
     /// </summary>

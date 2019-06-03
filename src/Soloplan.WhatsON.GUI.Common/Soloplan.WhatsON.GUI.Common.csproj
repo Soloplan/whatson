@@ -76,13 +76,13 @@
     <Compile Include="SubjectTreeView\PluginsManagerExtension.cs" />
     <Compile Include="SubjectTreeView\StatusToColorConverter.cs" />
     <Compile Include="SubjectTreeView\StatusViewModel.cs" />
-    <Compile Include="SubjectTreeView\SubjectGroupViewModel.cs" />
-    <Compile Include="SubjectTreeView\SubjectMissingViewModel.cs" />
-    <Compile Include="SubjectTreeView\SubjectsTreeView.xaml.cs">
-      <DependentUpon>SubjectsTreeView.xaml</DependentUpon>
+    <Compile Include="SubjectTreeView\ConnectorGroupViewModel.cs" />
+    <Compile Include="SubjectTreeView\ConnectorMissingViewModel.cs" />
+    <Compile Include="SubjectTreeView\ConnectorsTreeView.xaml.cs">
+      <DependentUpon>ConnectorsTreeView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SubjectTreeView\SubjectTreeViewModel.cs" />
-    <Compile Include="SubjectTreeView\SubjectViewModel.cs" />
+    <Compile Include="SubjectTreeView\ConnectorTreeViewModel.cs" />
+    <Compile Include="SubjectTreeView\ConnectorViewModel.cs" />
     <Compile Include="SubjectTreeView\TimeToAproximateTimeConverter.cs" />
     <Compile Include="SubjectTreeView\TreeItemViewModel.cs" />
     <Compile Include="VisualConfig\GroupExpansionSettings.cs" />
@@ -143,11 +143,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SubjectTreeView\SubjectMissingDataTemplate.xaml">
+    <Page Include="SubjectTreeView\ConnectorMissingDataTemplate.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="SubjectTreeView\SubjectsTreeView.xaml">
+    <Page Include="SubjectTreeView\ConnectorsTreeView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

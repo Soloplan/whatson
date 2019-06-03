@@ -20,21 +20,21 @@
     }
 
     /// <summary>
-    /// Gets plugIn for appropriate for presenting <paramref name="subjectType"/>.
+    /// Gets plugIn for appropriate for presenting <paramref name="connectorType"/>.
     /// </summary>
     /// <param name="manager">Plugin manager.</param>
-    /// <param name="subjectType">Type of subject.</param>
+    /// <param name="connectorType">Type of connector.</param>
     /// <returns>Appropriate <see cref="ITreeViewPresentationPlugIn"/>.</returns>
-    public static ITreeViewPresentationPlugIn GetPresentationPlugIn(this PluginsManager manager, Type subjectType)
+    public static ITreeViewPresentationPlugIn GetPresentationPlugIn(this PluginsManager manager, Type connectorType)
     {
       var allPlugins = manager.GetPresentationPlugIns().ToList();
-      var result = allPlugins.FirstOrDefault(plugIn => plugIn.SubjectType.ToString() == subjectType.ToString());
+      var result = allPlugins.FirstOrDefault(plugIn => plugIn.ConnectorType.ToString() == connectorType.ToString());
       if (result != null)
       {
         return result;
       }
 
-      return allPlugins.FirstOrDefault(plugIn => plugIn.SubjectType.IsAssignableFrom(subjectType));
+      return allPlugins.FirstOrDefault(plugIn => plugIn.ConnectorType.IsAssignableFrom(connectorType));
     }
   }
 }

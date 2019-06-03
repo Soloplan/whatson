@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SubjectConfigurationExtensions.cs" company="Soloplan GmbH">
+// <copyright file="ConnectorConfigurationExtensions.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -10,20 +10,20 @@ namespace Soloplan.WhatsON
   using Soloplan.WhatsON.Serialization;
 
   /// <summary>
-  /// The extensions for <see cref="SubjectConfiguration"/> class.
+  /// The extensions for <see cref="ConnectorConfiguration"/> class.
   /// </summary>
-  public static class SubjectConfigurationExtensions
+  public static class ConnectorConfigurationExtensions
   {
     /// <summary>
     /// Gets the notification configuration from the per connector settings or the global settings..
     /// </summary>
     /// <param name="applicationConfiguration">The application configuration.</param>
-    /// <param name="subjectConfiguration">The subject configuration.</param>
+    /// <param name="connectorConfiguration">The connector configuration.</param>
     /// <returns>The notification configuration.</returns>
-    public static NotificationConfiguration GetNotificationConfiguration(this ApplicationConfiguration applicationConfiguration, SubjectConfiguration subjectConfiguration)
+    public static NotificationConfiguration GetNotificationConfiguration(this ApplicationConfiguration applicationConfiguration, ConnectorConfiguration connectorConfiguration)
     {
       // firstly check if the config item exists to prevent creation it "on access".
-      var notificationVisibilityConfigItem = subjectConfiguration.ConfigurationItems.FirstOrDefault(ci => ci.Key == Subject.NotificationsVisbility);
+      var notificationVisibilityConfigItem = connectorConfiguration.ConfigurationItems.FirstOrDefault(ci => ci.Key == Connector.NotificationsVisbility);
       if (notificationVisibilityConfigItem == null)
       {
         return applicationConfiguration.NotificationConfiguration;

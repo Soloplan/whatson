@@ -18,7 +18,7 @@
       <TextBlock Text=" #" />
       <TextBlock Text="{Binding CurrentStatus.BuildNumber}" />
       <TextBlock Text=" " />
-      <buildServer:HistoryBuildList DataContext="{Binding SubjectSnapshots, Mode=OneWay}" />
+      <buildServer:HistoryBuildList DataContext="{Binding ConnectorSnapshots, Mode=OneWay}" />
     </StackPanel>
   </DataTemplate>
 </ResourceDictionary>

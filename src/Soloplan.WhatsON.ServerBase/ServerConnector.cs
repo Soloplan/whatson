@@ -1,15 +1,15 @@
 ﻿namespace Soloplan.WhatsON.ServerBase
 {
   [ConfigurationItem(ServerAddress, typeof(string), Optional = false, Priority = 100)]
-  public abstract class ServerSubject : Subject
+  public abstract class ServerConnector : Connector
   {
     public const string ServerAddress = "Address";
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ServerSubject"/> class.
+    /// Initializes a new instance of the <see cref="ServerConnector"/> class.
     /// </summary>
     /// <param name="configuration">The configuration.</param>
-    protected ServerSubject(SubjectConfiguration configuration)
+    protected ServerConnector(ConnectorConfiguration configuration)
       : base(configuration)
     {
     }
@@ -19,8 +19,8 @@
     /// </summary>
     public string Address
     {
-      get => this.SubjectConfiguration.GetConfigurationByKey(ServerAddress).Value;
-      set => this.SubjectConfiguration.GetConfigurationByKey(ServerAddress).Value = value;
+      get => this.ConnectorConfiguration.GetConfigurationByKey(ServerAddress).Value;
+      set => this.ConnectorConfiguration.GetConfigurationByKey(ServerAddress).Value = value;
     }
   }
 }

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Soloplan.WhatsON.GUI.Common.SubjectTreeView.SubjectsTreeView"
+﻿<UserControl x:Class="Soloplan.WhatsON.GUI.Common.SubjectTreeView.ConnectorsTreeView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -13,13 +13,13 @@
     <ResourceDictionary>
       <local:StatusToColorConverter x:Key="StatusToColorConverter" />
 
-      <HierarchicalDataTemplate DataType="{x:Type local:SubjectGroupViewModel}" ItemsSource="{Binding Path=SubjectViewModels}">
+      <HierarchicalDataTemplate DataType="{x:Type local:ConnectorGroupViewModel}" ItemsSource="{Binding Path=ConnectorViewModels}">
         <TextBlock Text="{Binding GroupName}" />
       </HierarchicalDataTemplate>
 
-      <DataTemplate DataType="{x:Type local:SubjectViewModel}">
+      <DataTemplate DataType="{x:Type local:ConnectorViewModel}">
         <StackPanel Orientation="Horizontal">
-          <TextBlock Text="Subject name: " />
+          <TextBlock Text="Connector name: " />
           <TextBlock Text="{Binding Name}" />
           <TextBlock Text="Status: " />
           <Rectangle Width="10"
@@ -29,7 +29,7 @@
       </DataTemplate>
 
       <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="SubjectMissingDataTemplate.xaml" />
+        <ResourceDictionary Source="ConnectorMissingDataTemplate.xaml" />
         <ResourceDictionary Source="../BuildServer/BuildProjectDataTemplate.xaml" />
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
@@ -43,7 +43,7 @@
       <Style BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="{x:Type TreeViewItem}">
         <EventSetter Event="MouseDoubleClick" Handler="OnTreeItemDoubleClick" />
         <Setter Property="IsExpanded" Value="{Binding IsNodeExpanded, Mode=TwoWay}" />
-        <Setter Property="Padding" Value="{Binding DataContext.ItemPadding, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:SubjectsTreeView}}"/>
+        <Setter Property="Padding" Value="{Binding DataContext.ItemPadding, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}"/>
       </Style>
     </TreeView.ItemContainerStyle>
   </TreeView>

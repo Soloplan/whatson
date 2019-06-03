@@ -61,9 +61,9 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
     private bool isFinishEnabled;
 
     /// <summary>
-    /// The subject plugin.
+    /// The connector plugin.
     /// </summary>
-    private ISubjectPlugin subjectPlugin;
+    private IConnectorPlugin connectorPlugin;
 
     /// <summary>
     /// The proposed server address.
@@ -194,11 +194,11 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
     /// <summary>
     /// Starts the wizard.
     /// </summary>
-    /// <param name="plugin">The subject plugin.</param>
+    /// <param name="plugin">The connector plugin.</param>
     /// <returns>True if the wizard was finished correctly and not canceled in any way.</returns>
-    public bool Start(ISubjectPlugin plugin)
+    public bool Start(IConnectorPlugin plugin)
     {
-      this.subjectPlugin = plugin;
+      this.connectorPlugin = plugin;
       return this.Start();
     }
 
@@ -311,16 +311,16 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
 
       foreach (var selectedProject in selectedProjects)
       {
-        var newConnector = new SubjectViewModel();
-        newConnector.SourceSubjectPlugin = selectedProject.Plugin;
+        var newConnector = new ConnectorViewModel();
+        newConnector.SourceConnectorPlugin = selectedProject.Plugin;
         newConnector.Name = selectedProject.Name;
         newConnector.Load(null);
-        configurationViewModel.Subjects.Add(newConnector);
+        configurationViewModel.Connectors.Add(newConnector);
 
         var assignanbleServerProject = selectedProject.Plugin as IAssignServerProject;
         if (assignanbleServerProject == null)
         {
-          throw new InvalidOperationException("Subject does not support assign from server project.");
+          throw new InvalidOperationException("Connector does not support assign from server project.");
         }
 
         assignanbleServerProject.AssignServerProject(selectedProject, newConnector, this.ProposedServerAddress);
@@ -328,7 +328,7 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
 
       if (configurationViewModel.ConfigurationIsModified)
       {
-        configurationViewModel.Subjects.ApplyToConfiguration(configuration);
+        configurationViewModel.Connectors.ApplyToConfiguration(configuration);
         SerializationHelper.SaveConfiguration(configuration);
       }
     }
@@ -393,13 +393,13 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
     private async Task PrepareProjectsList()
     {
       var pluginsToQueryWithModel = new Dictionary<IProjectsListQuerying, ProjectViewModelList>();
-      if (this.subjectPlugin != null)
+      if (this.connectorPlugin != null)
       {
-        pluginsToQueryWithModel.Add((IProjectsListQuerying)this.subjectPlugin, new ProjectViewModelList { MultiSelectionMode = false, PlugIn = this.subjectPlugin });
+        pluginsToQueryWithModel.Add((IProjectsListQuerying)this.connectorPlugin, new ProjectViewModelList { MultiSelectionMode = false, PlugIn = this.connectorPlugin });
       }
       else
       {
-        foreach (var plugin in PluginsManager.Instance.PlugIns.OfType<ISubjectPlugin>())
+        foreach (var plugin in PluginsManager.Instance.PlugIns.OfType<IConnectorPlugin>())
         {
           if (plugin is IProjectsListQuerying projectsListQueryingPlugin)
           {

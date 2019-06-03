@@ -32,18 +32,18 @@ namespace Soloplan.WhatsON.GUI.Config
     /// Applies the configuration resources.
     /// </summary>
     /// <param name="configurationItemAttribute">The configuration item attribute.</param>
-    /// <param name="subjectType">Type of the subject.</param>
-    public static void ApplyConfigResourses(ConfigurationItemAttribute configurationItemAttribute, Type subjectType)
+    /// <param name="connectorType">Type of the connector.</param>
+    public static void ApplyConfigResourses(ConfigurationItemAttribute configurationItemAttribute, Type connectorType)
     {
-      ApplyCaptionConfigResources(configurationItemAttribute, subjectType);
+      ApplyCaptionConfigResources(configurationItemAttribute, connectorType);
     }
 
     /// <summary>
     /// Applies the caption configuration resources.
     /// </summary>
     /// <param name="configurationItemAttribute">The configuration item attribute.</param>
-    /// <param name="subjectType">Type of the subject.</param>
-    private static void ApplyCaptionConfigResources(ConfigurationItemAttribute configurationItemAttribute, Type subjectType)
+    /// <param name="connectorType">Type of the connector.</param>
+    private static void ApplyCaptionConfigResources(ConfigurationItemAttribute configurationItemAttribute, Type connectorType)
     {
       if (captionsCache == null)
       {
@@ -59,7 +59,7 @@ namespace Soloplan.WhatsON.GUI.Config
       IList<Assembly> scannedAssembliesCache = new List<Assembly>();
 
       // firstly search in current assembly
-      var currentAsemblyResourceResult = GetConfigResourceByName(configurationItemAttribute.Key, typeof(SubjectViewModel).Assembly);
+      var currentAsemblyResourceResult = GetConfigResourceByName(configurationItemAttribute.Key, typeof(ConnectorViewModel).Assembly);
       if (currentAsemblyResourceResult != null)
       {
         captionsCache[configurationItemAttribute.Key] = currentAsemblyResourceResult;
@@ -67,23 +67,23 @@ namespace Soloplan.WhatsON.GUI.Config
         return;
       }
 
-      scannedAssembliesCache.Add(typeof(SubjectViewModel).Assembly);
+      scannedAssembliesCache.Add(typeof(ConnectorViewModel).Assembly);
 
-      // search in current subject assembly
-      var currentSubjectAssembly = subjectType.Assembly;
-      if (!scannedAssembliesCache.Contains(currentSubjectAssembly))
+      // search in current connector assembly
+      var currentConnectorAssembly = connectorType.Assembly;
+      if (!scannedAssembliesCache.Contains(currentConnectorAssembly))
       {
-        var subjecttAsemblyResourceResult = GetConfigResourceByName(configurationItemAttribute.Key, currentSubjectAssembly);
-        if (subjecttAsemblyResourceResult != null)
+        var connectorsAssemblyResourceResult = GetConfigResourceByName(configurationItemAttribute.Key, currentConnectorAssembly);
+        if (connectorsAssemblyResourceResult != null)
         {
-          configurationItemAttribute.Caption = subjecttAsemblyResourceResult;
-          captionsCache[configurationItemAttribute.Key] = subjecttAsemblyResourceResult;
+          configurationItemAttribute.Caption = connectorsAssemblyResourceResult;
+          captionsCache[configurationItemAttribute.Key] = connectorsAssemblyResourceResult;
           return;
         }
       }
 
       // search parent assemblies
-      var parentTypes = subjectType.GetParentTypes();
+      var parentTypes = connectorType.GetParentTypes();
       foreach (var parentType in parentTypes)
       {
         var parentTypeAssembly = parentType.Assembly;

@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SubjectViewModelCollection.cs" company="Soloplan GmbH">
+// <copyright file="ConnectorViewModelCollection.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -15,13 +15,13 @@ namespace Soloplan.WhatsON.GUI.Config.View
   using Soloplan.WhatsON.Serialization;
 
   /// <summary>
-  /// The <see cref="ObservableCollection{T}"/> implementation for subjects with some additional events.
+  /// The <see cref="ObservableCollection{T}"/> implementation for connectors with some additional events.
   /// </summary>
-  /// <seealso cref="SubjectViewModel" />
-  public class SubjectViewModelCollection : ObservableCollection<SubjectViewModel>
+  /// <seealso cref="ConnectorViewModel" />
+  public class ConnectorViewModelCollection : ObservableCollection<ConnectorViewModel>
   {
     /// <summary>
-    /// Occurs when subjects were loaded.
+    /// Occurs when connectors were loaded.
     /// </summary>
     public event EventHandler<EventArgs> Loaded;
 
@@ -31,7 +31,7 @@ namespace Soloplan.WhatsON.GUI.Config.View
     public event EventHandler<PropertyChangedEventArgs> CollectionItemPropertyChanged;
 
     /// <summary>
-    /// Should be called when subjects were loaded by external code.
+    /// Should be called when connectors were loaded by external code.
     /// </summary>
     public void LoadCompleted()
     {
@@ -39,34 +39,34 @@ namespace Soloplan.WhatsON.GUI.Config.View
     }
 
     /// <summary>
-    /// Loads the subjects from the source configuration.
+    /// Loads the connectors from the source configuration.
     /// </summary>
     /// <param name="configurationSource">The source configuration.</param>
     public void Load(ApplicationConfiguration configurationSource)
     {
       try
       {
-        var subjectsToRemove = this.Where(svm => configurationSource.SubjectsConfiguration.All(s => s.Identifier != svm.Identifier)).ToList();
-        foreach (var subjectToRemove in subjectsToRemove)
+        var connectorsToRemove = this.Where(svm => configurationSource.ConnectorsConfiguration.All(s => s.Identifier != svm.Identifier)).ToList();
+        foreach (var connectorToRemove in connectorsToRemove)
         {
-          this.Remove(subjectToRemove);
+          this.Remove(connectorToRemove);
         }
 
-        foreach (var subjectConfiguration in configurationSource.SubjectsConfiguration)
+        foreach (var connectorConfiguration in configurationSource.ConnectorsConfiguration)
         {
-          var subjectViewModel = this.FirstOrDefault(x => x.Identifier == subjectConfiguration.Identifier);
-          if (subjectViewModel != null)
+          var connectorViewModel = this.FirstOrDefault(x => x.Identifier == connectorConfiguration.Identifier);
+          if (connectorViewModel != null)
           {
-            subjectViewModel.Load(subjectConfiguration);
+            connectorViewModel.Load(connectorConfiguration);
             continue;
           }
 
-          subjectViewModel = new SubjectViewModel();
-          subjectViewModel.Load(subjectConfiguration);
-          this.Add(subjectViewModel);
-          subjectViewModel.PropertyChanged += (s, e) =>
+          connectorViewModel = new ConnectorViewModel();
+          connectorViewModel.Load(connectorConfiguration);
+          this.Add(connectorViewModel);
+          connectorViewModel.PropertyChanged += (s, e) =>
           {
-            if (subjectViewModel.IsLoaded)
+            if (connectorViewModel.IsLoaded)
             {
               this.OnCollectionItemPropertyChanged(e);
             }
@@ -80,31 +80,31 @@ namespace Soloplan.WhatsON.GUI.Config.View
     }
 
     /// <summary>
-    /// Applies subjects collection to configuration.
+    /// Applies connectors collection to configuration.
     /// </summary>
     /// <param name="configuration">The configuration.</param>
     public void ApplyToConfiguration(ApplicationConfiguration configuration)
     {
-      IList<SubjectConfiguration> subjectsToRemove = new List<SubjectConfiguration>();
-      foreach (var sourceSubject in configuration.SubjectsConfiguration)
+      IList<ConnectorConfiguration> connectorsToRemove = new List<ConnectorConfiguration>();
+      foreach (var sourceConnector in configuration.ConnectorsConfiguration)
       {
-        if (this.All(s => s.SourceSubjectConfiguration != sourceSubject))
+        if (this.All(s => s.SourceConnectorConfiguration != sourceConnector))
         {
-          subjectsToRemove.Add(sourceSubject);
+          connectorsToRemove.Add(sourceConnector);
         }
       }
 
-      foreach (var subjectToRemove in subjectsToRemove)
+      foreach (var connectorToRemove in connectorsToRemove)
       {
-        configuration.SubjectsConfiguration.Remove(subjectToRemove);
+        configuration.ConnectorsConfiguration.Remove(connectorToRemove);
       }
 
-      foreach (var subject in this)
+      foreach (var connector in this)
       {
-        var subjectConfiguration = subject.ApplyToSourceSubjectConfiguration(out bool newSubjectConfigurationCreated);
-        if (newSubjectConfigurationCreated)
+        var connectorConfiguration = connector.ApplyToSourceConnectorConfiguration(out bool newConnectorConfigurationCreated);
+        if (newConnectorConfigurationCreated)
         {
-          configuration.SubjectsConfiguration.Add(subjectConfiguration);
+          configuration.ConnectorsConfiguration.Add(connectorConfiguration);
         }
       }
     }

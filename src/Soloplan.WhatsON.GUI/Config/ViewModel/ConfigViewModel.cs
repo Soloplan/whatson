@@ -92,9 +92,9 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     public event EventHandler<EventArgs> ConfigurationApplying;
 
     /// <summary>
-    /// Gets the subjects list.
+    /// Gets the connectors list.
     /// </summary>
-    public SubjectViewModelCollection Subjects { get; private set; }
+    public ConnectorViewModelCollection Connectors { get; private set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether dark theme is enabled.
@@ -315,9 +315,9 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       try
       {
         this.Configuration = configurationSource;
-        if (this.Subjects == null)
+        if (this.Connectors == null)
         {
-          this.Subjects = new SubjectViewModelCollection();
+          this.Connectors = new ConnectorViewModelCollection();
         }
 
         this.DarkThemeEnabled = configurationSource.DarkThemeEnabled;
@@ -335,18 +335,18 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
 
         this.ConfigurationIsModified = false;
 
-        this.Subjects.CollectionChanged -= this.SubjectsCollectionChanged;
-        this.Subjects.CollectionItemPropertyChanged -= this.SubjectsCollectionItemPropertyChanged;
+        this.Connectors.CollectionChanged -= this.ConnectorsCollectionChanged;
+        this.Connectors.CollectionItemPropertyChanged -= this.ConnectorsCollectionItemPropertyChanged;
 
-        this.Subjects.Load(configurationSource);
+        this.Connectors.Load(configurationSource);
       }
       finally
       {
         this.IsLoaded = true;
-        if (this.Subjects != null)
+        if (this.Connectors != null)
         {
-          this.Subjects.CollectionChanged += this.SubjectsCollectionChanged;
-          this.Subjects.CollectionItemPropertyChanged += this.SubjectsCollectionItemPropertyChanged;
+          this.Connectors.CollectionChanged += this.ConnectorsCollectionChanged;
+          this.Connectors.CollectionItemPropertyChanged += this.ConnectorsCollectionItemPropertyChanged;
         }
       }
 
@@ -370,7 +370,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       this.ConfigurationApplying?.Invoke(this, new EventArgs());
       try
       {
-        this.Subjects.ApplyToConfiguration(this.Configuration);
+        this.Connectors.ApplyToConfiguration(this.Configuration);
         this.ApplyMainSettingsToConfiguration(this.Configuration);
         SerializationHelper.SaveConfiguration(this.Configuration);
       }
@@ -387,10 +387,10 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// <param name="configuration">The configuration.</param>
     public void ApplyToConfiguration(ApplicationConfiguration configuration)
     {
-      foreach (var subject in this.Subjects)
+      foreach (var connector in this.Connectors)
       {
-        var subjectConfiguration = subject.CreateNewSubjectConfiguration();
-        configuration.SubjectsConfiguration.Add(subjectConfiguration);
+        var connectorConfiguration = connector.CreateNewConnectorConfiguration();
+        configuration.ConnectorsConfiguration.Add(connectorConfiguration);
       }
 
       this.ApplyMainSettingsToConfiguration(configuration);
@@ -463,21 +463,21 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     }
 
     /// <summary>
-    /// Handles the CollectionItemPropertyChanged event of the Subjects object.
+    /// Handles the CollectionItemPropertyChanged event of the Connectors object.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="System.ComponentModel.PropertyChangedEventArgs"/> instance containing the event data.</param>
-    private void SubjectsCollectionItemPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    private void ConnectorsCollectionItemPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-      this.OnPropertyChanged(nameof(this.Subjects));
+      this.OnPropertyChanged(nameof(this.Connectors));
     }
 
     /// <summary>
-    /// Handles the changes of <see cref="Subjects"/> collection.
+    /// Handles the changes of <see cref="Connectors"/> collection.
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.Collections.Specialized.NotifyCollectionChangedEventArgs"/> instance containing the event data.</param>
-    private void SubjectsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    private void ConnectorsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
       this.ConfigurationIsModified = true;
       this.OnPropertyChanged(nameof(this.ConfigurationIsModified));

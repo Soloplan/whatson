@@ -9,7 +9,7 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
   using NLog;
 
   /// <summary>
-  /// Base ViewModel used for any kind of <see cref="Subject"/>;
+  /// Base ViewModel used for any kind of <see cref="Soloplan.WhatsON.Connector"/>;
   /// </summary>
   public class StatusViewModel : NotifyPropertyChanged
   {
@@ -18,9 +18,9 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
     /// </summary>
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
-    public StatusViewModel(SubjectViewModel subject)
+    public StatusViewModel(ConnectorViewModel connector)
     {
-      this.Parent = subject;
+      this.Parent = connector;
     }
 
     private string name;
@@ -96,7 +96,7 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
       }
     }
 
-    public SubjectViewModel Parent { get; }
+    public ConnectorViewModel Parent { get; }
 
     public virtual void Update(Status newStatus)
     {

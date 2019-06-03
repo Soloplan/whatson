@@ -24,14 +24,14 @@ namespace Soloplan.WhatsON.Jenkins
     /// </summary>
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
-    public async Task<JenkinsJob> GetJenkinsJob(JenkinsProject subject, CancellationToken token)
+    public async Task<JenkinsJob> GetJenkinsJob(JenkinsProject connector, CancellationToken token)
     {
-      var address = subject.GetAddress();
-      var projectName = subject.GetProject();
+      var address = connector.GetAddress();
+      var projectName = connector.GetProject();
 
       var jobRequest = $"{address.Trim('/')}/job/{projectName.Trim('/')}/api/json?tree={JenkinsJob.RequestProperties}";
       log.Trace("Querying job: {jobRequest}", jobRequest);
-      return await GetJenkinsModel<JenkinsJob>(subject, jobRequest, token);
+      return await GetJenkinsModel<JenkinsJob>(connector, jobRequest, token);
     }
 
     /// <summary>
@@ -47,17 +47,17 @@ namespace Soloplan.WhatsON.Jenkins
       return await GetJenkinsModel<JenkinsJobs>(null, jobsRequest, token);
     }
 
-    public async Task<JenkinsBuild> GetJenkinsBuild(JenkinsProject subject, int buildNumber, CancellationToken token)
+    public async Task<JenkinsBuild> GetJenkinsBuild(JenkinsProject connector, int buildNumber, CancellationToken token)
     {
-      var address = subject.GetAddress();
-      var projectName = subject.GetProject();
+      var address = connector.GetAddress();
+      var projectName = connector.GetProject();
 
       var buildRequest = $"{address.Trim('/')}/job/{projectName.Trim('/')}/{buildNumber}/api/json?tree={JenkinsBuild.RequestProperties}";
       log.Trace("Querying build: {jobRequest}", buildRequest);
-      return await GetJenkinsModel<JenkinsBuild>(subject, buildRequest, token);
+      return await GetJenkinsModel<JenkinsBuild>(connector, buildRequest, token);
     }
 
-    private static async Task<TModel> GetJenkinsModel<TModel>(JenkinsProject subject, string requestUrl, CancellationToken token)
+    private static async Task<TModel> GetJenkinsModel<TModel>(JenkinsProject connector, string requestUrl, CancellationToken token)
     where TModel : class
     {
       var request = WebRequest.Create(requestUrl);

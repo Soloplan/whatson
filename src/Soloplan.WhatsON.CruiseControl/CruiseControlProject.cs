@@ -16,10 +16,10 @@ namespace Soloplan.WhatsON.CruiseControl
   using Soloplan.WhatsON.CruiseControl.Model;
   using Soloplan.WhatsON.ServerBase;
 
-  [SubjectType("Cruise Control Project Status", Description = "Retrieve the current status of a Cruise Control project.")]
+  [ConnectorType("Cruise Control Project Status", Description = "Retrieve the current status of a Cruise Control project.")]
   [ConfigurationItem(ProjectName, typeof(string), Optional = false, Priority = 300)]
   [NotificationConfigurationItem(NotificationsVisbility, typeof(ConnectorNotificationConfiguration), SupportsUnstableNotify = false, Priority = 1600000000)]
-  public class CruiseControlProject : ServerSubject
+  public class CruiseControlProject : ServerConnector
   {
     public const string ProjectName = "ProjectName";
 
@@ -29,12 +29,12 @@ namespace Soloplan.WhatsON.CruiseControl
 
     private TimeSpan cachedDuration = default(TimeSpan);
 
-    public CruiseControlProject(SubjectConfiguration configuration)
+    public CruiseControlProject(ConnectorConfiguration configuration)
       : base(configuration)
     {
     }
 
-    public string Project => this.SubjectConfiguration.GetConfigurationByKey(CruiseControlProject.ProjectName).Value;
+    public string Project => this.ConnectorConfiguration.GetConfigurationByKey(CruiseControlProject.ProjectName).Value;
 
     private ICruiseControlServerManagerPlugIn ServerManager
     {

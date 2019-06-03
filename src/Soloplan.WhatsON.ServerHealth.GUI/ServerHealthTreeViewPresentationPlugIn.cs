@@ -9,9 +9,9 @@
 
   public class ServerHealthTreeViewPresentationPlugIn : ITreeViewPresentationPlugIn
   {
-    public Type SubjectType => typeof(ServerHealth);
+    public Type ConnectorType => typeof(ServerHealth);
 
-    public SubjectViewModel CreateViewModel()
+    public ConnectorViewModel CreateViewModel()
     {
       return new ServerHealthViewModel();
     }

@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SubjectViewModel.cs" company="Soloplan GmbH">
+// <copyright file="ConnectorViewModel.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -11,55 +11,55 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
   using System.Linq;
 
   /// <summary>
-  /// The view model for see <see cref="Subject"/>.
+  /// The view model for see <see cref="Soloplan.WhatsON.Connector"/>.
   /// </summary>
-  public class SubjectViewModel : ViewModelBase, IConfigurationItemsSupport
+  public class ConnectorViewModel : ViewModelBase, IConfigurationItemsSupport
   {
     /// <summary>
-    /// The name of the subject.
+    /// The name of the connector.
     /// </summary>
     private string name;
 
     /// <summary>
-    /// The source subject.
+    /// The source connector.
     /// </summary>
-    private SubjectConfiguration sourceSubjectConfiguration;
+    private ConnectorConfiguration sourceConnectorConfiguration;
 
     /// <summary>
-    /// The source subject Plugin.
+    /// The source connector Plugin.
     /// </summary>
-    private ISubjectPlugin sourceSubjectPlugin;
+    private IConnectorPlugin sourceConnectorPlugin;
 
     /// <summary>
-    /// Gets the subject source configuration.
+    /// Gets the connector source configuration.
     /// </summary>
-    public SubjectConfiguration SourceSubjectConfiguration
+    public ConnectorConfiguration SourceConnectorConfiguration
     {
-      get => this.sourceSubjectConfiguration;
+      get => this.sourceConnectorConfiguration;
       private set
       {
-        this.sourceSubjectConfiguration = value;
+        this.sourceConnectorConfiguration = value;
         this.OnPropertyChanged();
-        this.OnPropertyChanged(nameof(this.SourceSubjectPlugin));
+        this.OnPropertyChanged(nameof(this.SourceConnectorPlugin));
       }
     }
 
     /// <summary>
-    /// Gets or sets the source subject plugin.
+    /// Gets or sets the source connector plugin.
     /// </summary>
-    public ISubjectPlugin SourceSubjectPlugin
+    public IConnectorPlugin SourceConnectorPlugin
     {
       get
       {
-        if (this.sourceSubjectPlugin == null && this.SourceSubjectConfiguration != null)
+        if (this.sourceConnectorPlugin == null && this.SourceConnectorConfiguration != null)
         {
-          this.sourceSubjectPlugin = PluginsManager.Instance.GetPlugin(this.SourceSubjectConfiguration);
+          this.sourceConnectorPlugin = PluginsManager.Instance.GetPlugin(this.SourceConnectorConfiguration);
         }
 
-        return this.sourceSubjectPlugin;
+        return this.sourceConnectorPlugin;
       }
 
-      set => this.sourceSubjectPlugin = value;
+      set => this.sourceConnectorPlugin = value;
     }
 
     /// <summary>
@@ -68,7 +68,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     public Guid Identifier { get; private set; }
 
     /// <summary>
-    /// Gets or sets the name of the subject.
+    /// Gets or sets the name of the connector.
     /// </summary>
     public string Name
     {
@@ -86,31 +86,31 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     public List<ConfigurationItemViewModel> ConfigurationItems { get; private set; }
 
     /// <summary>
-    /// Loads the subject view model from the source object.
+    /// Loads the connector view model from the source object.
     /// </summary>
-    /// <param name="subjectSource">The subject source.</param>
-    public void Load(SubjectConfiguration subjectSource)
+    /// <param name="connectorSource">The connector source.</param>
+    public void Load(ConnectorConfiguration connectorSource)
     {
       this.IsLoaded = false;
       try
       {
-        this.SourceSubjectConfiguration = subjectSource;
+        this.SourceConnectorConfiguration = connectorSource;
         if (this.ConfigurationItems == null)
         {
           this.ConfigurationItems = new List<ConfigurationItemViewModel>();
         }
 
-        if (subjectSource != null)
+        if (connectorSource != null)
         {
-          this.Name = subjectSource.Name;
-          this.Identifier = subjectSource.Identifier;
-          var configurationItemsToNull = this.ConfigurationItems.Where(cvm => this.SourceSubjectConfiguration.ConfigurationItems.All(c => c.Key != cvm.Key));
+          this.Name = connectorSource.Name;
+          this.Identifier = connectorSource.Identifier;
+          var configurationItemsToNull = this.ConfigurationItems.Where(cvm => this.SourceConnectorConfiguration.ConfigurationItems.All(c => c.Key != cvm.Key));
           foreach (var configurationItemToNull in configurationItemsToNull)
           {
             configurationItemToNull.Value = null;
           }
 
-          foreach (var configItem in subjectSource.ConfigurationItems)
+          foreach (var configItem in connectorSource.ConfigurationItems)
           {
             var configItemViewModel = this.GetConfigurationItemViewModel(configItem.Key);
             configItemViewModel.Load(configItem);
@@ -124,15 +124,15 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     }
 
     /// <summary>
-    /// Gets the subject configuration attributes.
+    /// Gets the connector configuration attributes.
     /// </summary>
-    /// <returns>The subject attributes.</returns>
-    public IList<ConfigurationItemAttribute> GetSubjectConfigAttributes()
+    /// <returns>The connector attributes.</returns>
+    public IList<ConfigurationItemAttribute> GetConnectorConfigAttributes()
     {
-      var configurationItemAttributes = this.SourceSubjectPlugin.SubjectType.GetCustomAttributes(typeof(ConfigurationItemAttribute), true).Cast<ConfigurationItemAttribute>().ToList();
+      var configurationItemAttributes = this.SourceConnectorPlugin.ConnectorType.GetCustomAttributes(typeof(ConfigurationItemAttribute), true).Cast<ConfigurationItemAttribute>().ToList();
       foreach (var configurationItemAttribute in configurationItemAttributes)
       {
-        ConfigResourcesHelper.ApplyConfigResourses(configurationItemAttribute, this.SourceSubjectPlugin.SubjectType);
+        ConfigResourcesHelper.ApplyConfigResourses(configurationItemAttribute, this.SourceConnectorPlugin.ConnectorType);
       }
 
       return configurationItemAttributes;
@@ -151,50 +151,50 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     }
 
     /// <summary>
-    /// Applies changes to source subject configuration.
+    /// Applies changes to source connector configuration.
     /// </summary>
-    /// <param name="newSubjectConfigurationCreated">if set to <c>true</c> [new subject configuration created].</param>
-    /// <returns>New instance of <see cref="SubjectConfiguration"/> if it was created; otherwise the existing instance.</returns>
-    public SubjectConfiguration ApplyToSourceSubjectConfiguration(out bool newSubjectConfigurationCreated)
+    /// <param name="newConnectorConfigurationCreated">if set to <c>true</c> [new connector configuration created].</param>
+    /// <returns>New instance of <see cref="Soloplan.WhatsON.ConnectorConfiguration"/> if it was created; otherwise the existing instance.</returns>
+    public ConnectorConfiguration ApplyToSourceConnectorConfiguration(out bool newConnectorConfigurationCreated)
     {
-      newSubjectConfigurationCreated = false;
+      newConnectorConfigurationCreated = false;
 
-      if (this.SourceSubjectConfiguration == null)
+      if (this.SourceConnectorConfiguration == null)
       {
-        newSubjectConfigurationCreated = true;
-        this.SourceSubjectConfiguration = this.CreateNewSubjectConfiguration();
+        newConnectorConfigurationCreated = true;
+        this.SourceConnectorConfiguration = this.CreateNewConnectorConfiguration();
       }
       else
       {
-        this.SourceSubjectConfiguration.Name = this.name;
+        this.SourceConnectorConfiguration.Name = this.name;
         foreach (var configurationItem in this.ConfigurationItems)
         {
           var appliedConfigurationItem = configurationItem.ApplyToSource(out bool newItemCreated);
           if (newItemCreated)
           {
-            this.SourceSubjectConfiguration.ConfigurationItems.Add(appliedConfigurationItem);
+            this.SourceConnectorConfiguration.ConfigurationItems.Add(appliedConfigurationItem);
           }
         }
       }
 
-      return this.SourceSubjectConfiguration;
+      return this.SourceConnectorConfiguration;
     }
 
     /// <summary>
-    /// Creates the new subject configuration with applied changes.
+    /// Creates the new connector configuration with applied changes.
     /// </summary>
-    /// <returns>New instance of <see cref="SubjectConfiguration"/></returns>
-    public SubjectConfiguration CreateNewSubjectConfiguration()
+    /// <returns>New instance of <see cref="Soloplan.WhatsON.ConnectorConfiguration"/></returns>
+    public ConnectorConfiguration CreateNewConnectorConfiguration()
     {
-      var sourceSubjectConfig = new SubjectConfiguration(this.SourceSubjectPlugin.GetType().FullName);
-      sourceSubjectConfig.Name = this.name;
+      var sourceConnectorConfig = new ConnectorConfiguration(this.SourceConnectorPlugin.GetType().FullName);
+      sourceConnectorConfig.Name = this.name;
       foreach (var configurationItem in this.ConfigurationItems)
       {
         var newConfigurationItem = configurationItem.CreateNewConfigurationItem();
-        sourceSubjectConfig.ConfigurationItems.Add(newConfigurationItem);
+        sourceConnectorConfig.ConfigurationItems.Add(newConfigurationItem);
       }
 
-      return sourceSubjectConfig;
+      return sourceConnectorConfig;
     }
 
     /// <summary>

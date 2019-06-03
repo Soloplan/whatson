@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SubjectConfiguration.cs" company="Soloplan GmbH">
+// <copyright file="ConnectorConfiguration.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -12,24 +12,24 @@ namespace Soloplan.WhatsON
   using Newtonsoft.Json;
 
   /// <summary>
-  /// Represents the configuration of a subject.
+  /// Represents the configuration of a connector.
   /// </summary>
-  public class SubjectConfiguration
+  public class ConnectorConfiguration
   {
     /// <summary>
-    /// Initializes a new instance of the <see cref="SubjectConfiguration"/> class.
+    /// Initializes a new instance of the <see cref="ConnectorConfiguration"/> class.
     /// </summary>
     /// <param name="pluginTypeName">Name of the type.</param>
     /// <param name="name">The name.</param>
     /// <param name="configurationItems">The configuration items.</param>
-    public SubjectConfiguration(string pluginTypeName, string name, List<ConfigurationItem> configurationItems)
+    public ConnectorConfiguration(string pluginTypeName, string name, List<ConfigurationItem> configurationItems)
       : this(pluginTypeName, name)
     {
       this.ConfigurationItems = configurationItems;
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SubjectConfiguration"/> class.
+    /// Initializes a new instance of the <see cref="ConnectorConfiguration"/> class.
     /// </summary>
     /// <param name="pluginTypeName">Name of the type.</param>
     /// <param name="name">The name.</param>
@@ -39,7 +39,7 @@ namespace Soloplan.WhatsON
     /// <param name="value2">The value2.</param>
     /// <param name="key3">The key3.</param>
     /// <param name="value3">The value3.</param>
-    public SubjectConfiguration(string pluginTypeName, string name, string key1, string value1, string key2 = null, string value2 = null, string key3 = null, string value3 = null)
+    public ConnectorConfiguration(string pluginTypeName, string name, string key1, string value1, string key2 = null, string value2 = null, string key3 = null, string value3 = null)
     : this(pluginTypeName, name)
     {
       this.Name = name;
@@ -57,22 +57,22 @@ namespace Soloplan.WhatsON
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SubjectConfiguration"/> class.
+    /// Initializes a new instance of the <see cref="ConnectorConfiguration"/> class.
     /// </summary>
     /// <param name="pluginTypeName">Name of the type.</param>
     /// <param name="name">The name.</param>
-    public SubjectConfiguration(string pluginTypeName, string name)
+    public ConnectorConfiguration(string pluginTypeName, string name)
      : this(pluginTypeName)
     {
       this.Name = name;
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SubjectConfiguration"/> class.
+    /// Initializes a new instance of the <see cref="ConnectorConfiguration"/> class.
     /// </summary>
     /// <param name="pluginTypeName">Name of the plugin type.</param>
     [JsonConstructor]
-    public SubjectConfiguration(string pluginTypeName)
+    public ConnectorConfiguration(string pluginTypeName)
     {
       this.PluginTypeName = pluginTypeName;
       this.Identifier = Guid.NewGuid();
@@ -84,7 +84,7 @@ namespace Soloplan.WhatsON
     public Guid Identifier { get; set; }
 
     /// <summary>
-    /// Gets or sets the name of the subject.
+    /// Gets or sets the name of the connector.
     /// </summary>
     public string Name { get; set; }
 

@@ -21,7 +21,7 @@ namespace Soloplan.WhatsON.GUI
   /// </summary>
   public partial class MainWindow : INotifyPropertyChanged
   {
-    private readonly IList<Subject> initialSubjectState;
+    private readonly IList<Connector> initialConnectorState;
 
     /// <summary>
     /// Gets or sets the configuration.
@@ -29,7 +29,7 @@ namespace Soloplan.WhatsON.GUI
     private ApplicationConfiguration config;
 
     /// <summary>
-    /// The scheduler used for observing subjects.
+    /// The scheduler used for observing connectors.
     /// </summary>
     private ObservationScheduler scheduler;
 
@@ -57,13 +57,13 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="scheduler">The scheduler observing build servers.</param>
     /// <param name="configuration">App configuration.</param>
-    /// <param name="initialSubjectState">The initial state of observed subjects.</param>
-    public MainWindow(ObservationScheduler scheduler, ApplicationConfiguration configuration, IList<Subject> initialSubjectState)
+    /// <param name="initialConnectorState">The initial state of observed connectors.</param>
+    public MainWindow(ObservationScheduler scheduler, ApplicationConfiguration configuration, IList<Connector> initialConnectorState)
     {
       this.InitializeComponent();
       this.scheduler = scheduler;
       this.config = configuration;
-      this.initialSubjectState = initialSubjectState;
+      this.initialConnectorState = initialConnectorState;
       this.ShowInTaskbar = this.config.ShowInTaskbar;
       this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.ShowInTaskbar)));
       this.Topmost = this.config.AlwaysOnTop;
@@ -131,17 +131,17 @@ namespace Soloplan.WhatsON.GUI
 
     public void FinishDrawing()
     {
-      this.mainTreeView.Init(this.scheduler, this.config, this.initialSubjectState);
+      this.mainTreeView.Init(this.scheduler, this.config, this.initialConnectorState);
       this.mainTreeView.ApplyTreeListSettings(this.settings.TreeListSettings);
     }
 
     /// <summary>
-    /// Focuses the node connected with <paramref name="subject"/>.
+    /// Focuses the node connected with <paramref name="connector>.
     /// </summary>
-    /// <param name="subject">Subject which should be focused.</param>
-    public void FocusSubject(Subject subject)
+    /// <param name="connector">Connector which should be focused.</param>
+    public void FocusConnector(Connector connector)
     {
-      this.mainTreeView.FocusItem(subject);
+      this.mainTreeView.FocusItem(connector);
     }
 
     private void OpenConfig(object sender, EventArgs e)

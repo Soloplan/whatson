@@ -20,12 +20,12 @@ namespace Soloplan.WhatsON.GUI.Config
     /// <summary>
     /// Gets the supported configuration items key.
     /// </summary>
-    public override string SupportedConfigurationItemsKey => Subject.Category;
+    public override string SupportedConfigurationItemsKey => Connector.Category;
 
     /// <summary>
     /// Creates a new control and returns it.
     /// </summary>
-    /// <param name="configItem">The configuration item of the subject.</param>
+    /// <param name="configItem">The configuration item of the connector.</param>
     /// <param name="configItemAttribute">The configuration item attribute.</param>
     /// <returns>
     /// Returns the <see cref="FrameworkElement" /> for the <see cref="configItem" />.

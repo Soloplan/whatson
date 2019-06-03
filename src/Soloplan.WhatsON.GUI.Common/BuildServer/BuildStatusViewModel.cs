@@ -41,7 +41,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
     private ObservableCollection<CulpritViewModel> culprits;
 
-    public BuildStatusViewModel(SubjectViewModel model)
+    public BuildStatusViewModel(ConnectorViewModel model)
       : base(model)
     {
     }

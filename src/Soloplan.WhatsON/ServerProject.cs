@@ -26,7 +26,7 @@ namespace Soloplan.WhatsON
     /// <summary>
     /// Gets or sets the plugin.
     /// </summary>
-    public ISubjectPlugin Plugin { get; set; }
+    public IConnectorPlugin Plugin { get; set; }
   }
 
   /// <summary>

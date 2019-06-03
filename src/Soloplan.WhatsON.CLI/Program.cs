@@ -29,10 +29,10 @@ namespace Soloplan.WhatsON.CLI
           break;
 #endif
         case "ls":
-          ListConfiguredSubjects();
+          ListConfiguredConnectors();
           break;
         case "observe":
-          ObserveConfiguredSubjects();
+          ObserveConfiguredConnectors();
           break;
       }
 
@@ -40,28 +40,28 @@ namespace Soloplan.WhatsON.CLI
       System.Environment.Exit(0);
     }
 
-    private static void ObserveConfiguredSubjects()
+    private static void ObserveConfiguredConnectors()
     {
-      var config = ListConfiguredSubjects();
+      var config = ListConfiguredConnectors();
       var scheduler = PrepareScheduler();
-      foreach (var subjectConfiguration in config.SubjectsConfiguration)
+      foreach (var connectorConfiguration in config.ConnectorsConfiguration)
       {
-        var subject = PluginsManager.Instance.GetSubject(subjectConfiguration);
-        scheduler.Observe(subject);
+        var connector = PluginsManager.Instance.GetConnector(connectorConfiguration);
+        scheduler.Observe(connector);
       }
 
       scheduler.Start();
     }
 
-    private static ApplicationConfiguration ListConfiguredSubjects()
+    private static ApplicationConfiguration ListConfiguredConnectors()
     {
       var config = SerializationHelper.LoadConfiguration();
 
-      Console.WriteLine("Configured observation subjects:");
+      Console.WriteLine("Configured observation connectors:");
       Console.ForegroundColor = ConsoleColor.DarkGray;
-      foreach (var subject in config.SubjectsConfiguration)
+      foreach (var connector in config.ConnectorsConfiguration)
       {
-        Console.WriteLine($"  {subject.Name}");
+        Console.WriteLine($"  {connector.Name}");
       }
 
       Console.ForegroundColor = ConsoleColor.Gray;
@@ -72,9 +72,9 @@ namespace Soloplan.WhatsON.CLI
     private static void CreateDummyData()
     {
       // create some dummy data for the configuration
-      var subject = PluginsManager.Instance.CreateNewSubject(new SubjectConfiguration("Soloplan.WhatsON.ServerHealth.ServerHealthPlugin", "Google", "Address", "google.com"));
-      var subject2 = PluginsManager.Instance.CreateNewSubject(new SubjectConfiguration("Soloplan.WhatsON.ServerHealth.ServerHealthPlugin", "Soloplan", "Address", "soloplan.de"));
-      var subject3 = PluginsManager.Instance.CreateNewSubject(new SubjectConfiguration("Soloplan.WhatsON.ServerHealth.ServerHealthPlugin", "GitHub", "Address", "github.com"));
+      var connector = PluginsManager.Instance.CreateNewConnector(new ConnectorConfiguration("Soloplan.WhatsON.ServerHealth.ServerHealthPlugin", "Google", "Address", "google.com"));
+      var connector2 = PluginsManager.Instance.CreateNewConnector(new ConnectorConfiguration("Soloplan.WhatsON.ServerHealth.ServerHealthPlugin", "Soloplan", "Address", "soloplan.de"));
+      var connector3 = PluginsManager.Instance.CreateNewConnector(new ConnectorConfiguration("Soloplan.WhatsON.ServerHealth.ServerHealthPlugin", "GitHub", "Address", "github.com"));
 
       var jenkinsParameters = new List<ConfigurationItem>
       {
@@ -83,27 +83,27 @@ namespace Soloplan.WhatsON.CLI
       };
 
       // test jenkins api of publically available jenkins
-      var subjectJenkins = PluginsManager.Instance.CreateNewSubject(new SubjectConfiguration("Soloplan.WhatsON.Jenkins.JenkinsProjectPlugin", "Test Mono Pipeline", jenkinsParameters));
+      var connectorJenkins = PluginsManager.Instance.CreateNewConnector(new ConnectorConfiguration("Soloplan.WhatsON.Jenkins.JenkinsProjectPlugin", "Test Mono Pipeline", jenkinsParameters));
 
       var scheduler = PrepareScheduler();
-      if (subject != null)
+      if (connector != null)
       {
-        scheduler.Observe(subject);
-        scheduler.Observe(subject2);
-        scheduler.Observe(subject3);
-        scheduler.Observe(subjectJenkins, 10);
+        scheduler.Observe(connector);
+        scheduler.Observe(connector2);
+        scheduler.Observe(connector3);
+        scheduler.Observe(connectorJenkins, 10);
       }
 
       scheduler.Start();
 
-      // make sure to wait a bit so that we get the first status for each subject
+      // make sure to wait a bit so that we get the first status for each connector
       Thread.Sleep(10000);
 
       var config = new ApplicationConfiguration();
-      config.SubjectsConfiguration.Add(subject.SubjectConfiguration);
-      config.SubjectsConfiguration.Add(subject2.SubjectConfiguration);
-      config.SubjectsConfiguration.Add(subject3.SubjectConfiguration);
-      config.SubjectsConfiguration.Add(subjectJenkins.SubjectConfiguration);
+      config.ConnectorsConfiguration.Add(connector.ConnectorConfiguration);
+      config.ConnectorsConfiguration.Add(connector2.ConnectorConfiguration);
+      config.ConnectorsConfiguration.Add(connector3.ConnectorConfiguration);
+      config.ConnectorsConfiguration.Add(connectorJenkins.ConnectorConfiguration);
       SerializationHelper.SaveConfiguration(config);
     }
 
@@ -117,7 +117,7 @@ namespace Soloplan.WhatsON.CLI
         {
           if (sub.CurrentStatus != null)
           {
-            Console.Write($"{sub.SubjectConfiguration.Name} [{sub.CurrentStatus.Time}]: {sub.CurrentStatus.Name} - ");
+            Console.Write($"{sub.ConnectorConfiguration.Name} [{sub.CurrentStatus.Time}]: {sub.CurrentStatus.Name} - ");
             var stateColor = ConsoleColor.DarkMagenta;
             switch (sub.CurrentStatus.State)
             {

@@ -3,9 +3,9 @@
   using System;
 
   [AttributeUsage(AttributeTargets.Class)]
-  public class SubjectTypeAttribute : Attribute
+  public class ConnectorTypeAttribute : Attribute
   {
-    public SubjectTypeAttribute(string name)
+    public ConnectorTypeAttribute(string name)
     {
       this.Name = name;
     }

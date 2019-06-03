@@ -4,14 +4,14 @@
   using System.Collections.ObjectModel;
   using NLog;
 
-  public class SubjectViewModel : TreeItemViewModel
+  public class ConnectorViewModel : TreeItemViewModel
   {
     /// <summary>
     /// The logger.
     /// </summary>
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
-    private ObservableCollection<StatusViewModel> subjectSnapshots;
+    private ObservableCollection<StatusViewModel> connectorSnapshots;
 
     private string name;
 
@@ -60,11 +60,11 @@
 
     public Guid Identifier { get; private set; }
 
-    public ObservableCollection<StatusViewModel> SubjectSnapshots => this.subjectSnapshots ?? (this.subjectSnapshots = new ObservableCollection<StatusViewModel>());
+    public ObservableCollection<StatusViewModel> ConnectorSnapshots => this.connectorSnapshots ?? (this.connectorSnapshots = new ObservableCollection<StatusViewModel>());
 
-    public Subject Subject { get; private set; }
+    public Connector Connector { get; private set; }
 
-    public virtual void Init(SubjectConfiguration configuration)
+    public virtual void Init(ConnectorConfiguration configuration)
     {
       this.Identifier = configuration.Identifier;
       this.Name = configuration.Name;
@@ -72,23 +72,23 @@
       log.Debug("Initializing {type}, {instance}.", this.GetType(), new { Name = this.Name, Identifier = this.Identifier });
     }
 
-    public virtual void Update(Subject changedSubject)
+    public virtual void Update(Connector changedConnector)
     {
       log.Trace("Updating model {model}", new { Name = this.Name, Identifier = this.Identifier });
 
-      if (this.Subject == null)
+      if (this.Connector == null)
       {
-        this.Subject = changedSubject;
+        this.Connector = changedConnector;
       }
 
-      this.Description = changedSubject.Description;
-      this.CurrentStatus.Update(changedSubject.CurrentStatus);
+      this.Description = changedConnector.Description;
+      this.CurrentStatus.Update(changedConnector.CurrentStatus);
 
       int i = 0;
       bool clearList = false;
-      foreach (var changedSubjectSnapshot in changedSubject.Snapshots)
+      foreach (var changedConnectorSnapshot in changedConnector.Snapshots)
       {
-        if (i >= this.SubjectSnapshots.Count || this.SubjectSnapshots[i].Time.ToUniversalTime() != changedSubjectSnapshot.Status.Time)
+        if (i >= this.ConnectorSnapshots.Count || this.ConnectorSnapshots[i].Time.ToUniversalTime() != changedConnectorSnapshot.Status.Time)
         {
           log.Debug("Rebuilding list of history builds for model {type}, {instance}.", this.GetType(), new { Name = this.Name, Identifier = this.Identifier });
           clearList = true;
@@ -100,12 +100,12 @@
 
       if (clearList)
       {
-        this.SubjectSnapshots.Clear();
-        foreach (var subjectSnapshot in changedSubject.Snapshots)
+        this.ConnectorSnapshots.Clear();
+        foreach (var connectorSnapshot in changedConnector.Snapshots)
         {
-          var subjectSnapshotViewModel = this.GetViewModelForStatus();
-          subjectSnapshotViewModel.Update(subjectSnapshot.Status);
-          this.SubjectSnapshots.Add(subjectSnapshotViewModel);
+          var connectorSnapshotViewModel = this.GetViewModelForStatus();
+          connectorSnapshotViewModel.Update(connectorSnapshot.Status);
+          this.ConnectorSnapshots.Add(connectorSnapshotViewModel);
         }
       }
     }

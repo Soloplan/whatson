@@ -89,7 +89,7 @@
       {
         if (this.mainWindow == null)
         {
-          this.mainWindow = new MainWindow(this.scheduler, this.configuration, this.model.Subjects.Select(sub => sub.Subject).ToList());
+          this.mainWindow = new MainWindow(this.scheduler, this.configuration, this.model.Connectors.Select(sub => sub.Connector).ToList());
 
           this.mainWindow.ApplyVisualSettings(this.visualSettings);
 
@@ -221,10 +221,10 @@
       }
 
       this.scheduler.UnobserveAll();
-      foreach (var subjectConfiguration in this.configuration.SubjectsConfiguration)
+      foreach (var connectorConfiguration in this.configuration.ConnectorsConfiguration)
       {
-        var subject = PluginsManager.Instance.GetSubject(subjectConfiguration);
-        this.scheduler.Observe(subject);
+        var connector = PluginsManager.Instance.GetConnector(connectorConfiguration);
+        this.scheduler.Observe(connector);
       }
 
       this.mainWindow?.ApplyConfiguration(this.configuration);
@@ -242,8 +242,8 @@
     {
       if (sender is StatusViewModel statusViewModel && e.PropertyName == nameof(StatusViewModel.State))
       {
-        var subjectConfiguration = this.configuration.SubjectsConfiguration.FirstOrDefault(s => s.Identifier == statusViewModel.Parent.Identifier);
-        var notificationConfiguration = this.configuration.GetNotificationConfiguration(subjectConfiguration);
+        var connectorConfiguration = this.configuration.ConnectorsConfiguration.FirstOrDefault(s => s.Identifier == statusViewModel.Parent.Identifier);
+        var notificationConfiguration = this.configuration.GetNotificationConfiguration(connectorConfiguration);
 
         var description = $"Project name: {statusViewModel.Parent.Name}.";
         if (statusViewModel.State == ObservationState.Running && notificationConfiguration.RunningNotificationEnabled)

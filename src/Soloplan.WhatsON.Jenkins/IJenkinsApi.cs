@@ -19,18 +19,18 @@ namespace Soloplan.WhatsON.Jenkins
     /// <summary>
     /// Gets information about Jenkins Job.
     /// </summary>
-    /// <param name="subject">Job for which informations are retrieved.</param>
+    /// <param name="connector">Job for which informations are retrieved.</param>
     /// <param name="token">Cancellation token.</param>
     /// <returns>Information about Jenkins job. <seealso cref="JenkinsJob"/>.</returns>
-    Task<JenkinsJob> GetJenkinsJob(JenkinsProject subject, CancellationToken token);
+    Task<JenkinsJob> GetJenkinsJob(JenkinsProject connector, CancellationToken token);
 
     /// <summary>
     /// Gets information about Jenkins build.
     /// </summary>
-    /// <param name="subject">Job for which informations are retrieved.</param>
+    /// <param name="connector">Job for which informations are retrieved.</param>
     /// <param name="buildNumber">Build number.</param>
     /// <param name="token">Cancellation token.</param>
     /// <returns>Information about specific build. <seealso cref="JenkinsBuild"/>.</returns>
-    Task<JenkinsBuild> GetJenkinsBuild(JenkinsProject subject, int buildNumber, CancellationToken token);
+    Task<JenkinsBuild> GetJenkinsBuild(JenkinsProject connector, int buildNumber, CancellationToken token);
   }
 }

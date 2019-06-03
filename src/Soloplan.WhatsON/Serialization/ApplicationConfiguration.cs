@@ -47,9 +47,9 @@ namespace Soloplan.WhatsON.Serialization
     public ViewStyle ViewStyle { get; set; }
 
     /// <summary>
-    /// Gets the subjects configuration.
+    /// Gets the connectors configuration.
     /// </summary>
-    public IList<SubjectConfiguration> SubjectsConfiguration { get; } = new List<SubjectConfiguration>();
+    public IList<ConnectorConfiguration> ConnectorsConfiguration { get; } = new List<ConnectorConfiguration>();
 
     /// <summary>
     /// Gets the notification configuration.

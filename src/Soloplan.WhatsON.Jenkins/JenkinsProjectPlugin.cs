@@ -13,7 +13,7 @@ namespace Soloplan.WhatsON.Jenkins
   using NLog;
   using Soloplan.WhatsON.Jenkins.Model;
 
-  public class JenkinsProjectPlugin : SubjectPlugin, IProjectsListQuerying, IAssignServerProject
+  public class JenkinsProjectPlugin : ConnectorPlugin, IProjectsListQuerying, IAssignServerProject
   {
     /// <summary>
     /// Gets a value indicating whether this plugin supports wizards.
@@ -30,7 +30,7 @@ namespace Soloplan.WhatsON.Jenkins
     {
     }
 
-    public override Subject CreateNew(SubjectConfiguration configuration)
+    public override Connector CreateNew(ConnectorConfiguration configuration)
     {
       log.Debug("Creating new JenkinsProject based on configuration {configuration}", new { Name = configuration.Name, Identifier = configuration.Identifier });
       var jenkinsProject = new JenkinsProject(configuration, new JenkinsApi());

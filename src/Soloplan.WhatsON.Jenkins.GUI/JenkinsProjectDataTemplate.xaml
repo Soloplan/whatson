@@ -2,11 +2,11 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:buildServer="clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer;assembly=Soloplan.WhatsON.GUI.Common"
                     xmlns:gui="clr-namespace:Soloplan.WhatsON.Jenkins.GUI;assembly=Soloplan.WhatsON.Jenkins.GUI"
-                    xmlns:subjectTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.SubjectTreeView;assembly=Soloplan.WhatsON.GUI.Common">
+                    xmlns:connectorTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.SubjectTreeView;assembly=Soloplan.WhatsON.GUI.Common">
 
   <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
-  <subjectTreeView:StatusToColorConverter x:Key="StatusToColorConverter" />
-  <subjectTreeView:TimeToAproximateTimeConverter x:Key="TimeToAproximateTimeConverter" />
+  <connectorTreeView:StatusToColorConverter x:Key="StatusToColorConverter" />
+  <connectorTreeView:TimeToAproximateTimeConverter x:Key="TimeToAproximateTimeConverter" />
   <!--  ToDo DGO: this should be separate control for displaying status. This way it will be easier to reuse.  -->
 
   <ContextMenu x:Key="BuildServerProjectContextMenu">
@@ -52,7 +52,7 @@
       <TextBlock Text=" #" />
       <TextBlock Text="{Binding CurrentStatus.BuildNumber}" />
       <TextBlock Text=" " />
-      <buildServer:HistoryBuildList DataContext="{Binding SubjectSnapshots, Mode=OneWay}" />
+      <buildServer:HistoryBuildList DataContext="{Binding ConnectorSnapshots, Mode=OneWay}" />
     </StackPanel>
   </DataTemplate>
 </ResourceDictionary>

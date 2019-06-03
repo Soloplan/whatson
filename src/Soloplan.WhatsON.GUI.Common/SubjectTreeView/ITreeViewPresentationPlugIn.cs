@@ -4,20 +4,20 @@
   using System.Xml;
 
   /// <summary>
-  /// PlugIn which provides presentation of <see cref="SubjectType"/> subjects.
+  /// PlugIn which provides presentation of <see cref="ConnectorType"/> connectors.
   /// </summary>
   public interface ITreeViewPresentationPlugIn : IPlugIn
   {
     /// <summary>
-    /// Gets type of subject for which this PlugIn provides presentation.
+    /// Gets type of connector for which this PlugIn provides presentation.
     /// </summary>
-    Type SubjectType { get; }
+    Type ConnectorType { get; }
 
     /// <summary>
-    /// Creates <see cref="SubjectViewModel"/> decedent.
+    /// Creates <see cref="ConnectorViewModel"/> decedent.
     /// </summary>
-    /// <returns><see cref="SubjectViewModel"/> decedent.</returns>
-    SubjectViewModel CreateViewModel();
+    /// <returns><see cref="ConnectorViewModel"/> decedent.</returns>
+    ConnectorViewModel CreateViewModel();
 
     /// <summary>
     /// Gets the XAML file defining DataTemplet for displaying view model created by <see cref="CreateViewModel"/>.

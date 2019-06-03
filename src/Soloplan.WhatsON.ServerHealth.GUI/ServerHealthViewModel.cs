@@ -2,7 +2,7 @@
 {
   using Soloplan.WhatsON.GUI.Common.SubjectTreeView;
 
-  public class ServerHealthViewModel : SubjectViewModel
+  public class ServerHealthViewModel : ConnectorViewModel
   {
   }
 }

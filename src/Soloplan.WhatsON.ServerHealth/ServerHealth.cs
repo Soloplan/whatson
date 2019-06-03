@@ -7,15 +7,15 @@
   using System.Threading.Tasks;
   using Soloplan.WhatsON.ServerBase;
 
-  [SubjectType("Server Health Check", Description = "Ping a server and return the state depending on the reply.")]
+  [ConnectorType("Server Health Check", Description = "Ping a server and return the state depending on the reply.")]
   [NotificationConfigurationItem(NotificationsVisbility, typeof(ConnectorNotificationConfiguration), SupportsRunningNotify = false, SupportsUnstableNotify = false, SupportsUnknownNotify = false, Priority = 1600000000)]
-  public class ServerHealth : ServerSubject
+  public class ServerHealth : ServerConnector
   {
     /// <summary>
     /// Initializes a new instance of the <see cref="ServerHealth"/> class.
     /// </summary>
     /// <param name="configuration">The configuration.</param>
-    public ServerHealth(SubjectConfiguration configuration)
+    public ServerHealth(ConnectorConfiguration configuration)
       : base(configuration)
     {
     }
