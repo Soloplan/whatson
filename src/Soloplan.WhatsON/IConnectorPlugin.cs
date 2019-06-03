@@ -2,17 +2,17 @@
 {
   using System;
 
-  public interface ISubjectPlugin : IPlugIn
+  public interface IConnectorPlugin : IPlugIn
   {
-    Type SubjectType { get; }
+    Type ConnectorType { get; }
 
-    SubjectTypeAttribute SubjectTypeAttribute { get; }
+    ConnectorTypeAttribute ConnectorTypeAttribute { get; }
 
     /// <summary>
     /// Gets a value indicating whether this plugin supports wizards.
     /// </summary>
     bool SupportsWizard { get; }
 
-    Subject CreateNew(SubjectConfiguration configuration);
+    Connector CreateNew(ConnectorConfiguration configuration);
   }
 }

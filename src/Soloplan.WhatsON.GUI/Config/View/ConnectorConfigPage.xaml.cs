@@ -5,44 +5,44 @@
   using Soloplan.WhatsON.GUI.Config.ViewModel;
 
   /// <summary>
-  /// Interaction logic for SubjectConfigPage.xaml
+  /// Interaction logic for ConnectorConfigPage.xaml
   /// </summary>
-  public partial class SubjectConfigPage : Page
+  public partial class ConnectorConfigPage : Page
   {
     /// <summary>
-    /// Initializes a new instance of the <see cref="SubjectConfigPage"/> class.
+    /// Initializes a new instance of the <see cref="ConnectorConfigPage"/> class.
     /// </summary>
-    /// <param name="subject">The subject.</param>
-    public SubjectConfigPage(SubjectViewModel subject)
+    /// <param name="connector">The connector.</param>
+    public ConnectorConfigPage(ConnectorViewModel connector)
     {
-      this.DataContext = subject;
+      this.DataContext = connector;
       this.InitializeComponent();
-      this.CreateConfigurationControls(subject);
+      this.CreateConfigurationControls(connector);
     }
 
     /// <summary>
     /// Dynamically creates the configuration controls.
     /// </summary>
-    /// <param name="subject">The subject view model.</param>
-    private void CreateConfigurationControls(SubjectViewModel subject)
+    /// <param name="connector">The connector view model.</param>
+    private void CreateConfigurationControls(ConnectorViewModel connector)
     {
-      if (subject == null)
+      if (connector == null)
       {
         this.StackPanel.Children.Clear();
         return;
       }
 
-      var subjectConfigAttributes = subject.GetSubjectConfigAttributes().OrderBy(s => s.Priority).ToList();
+      var connectorConfigAttributes = connector.GetConnectorConfigAttributes().OrderBy(s => s.Priority).ToList();
 
-      // move 0 priority subjects to the end of the list
-      var zeroPrioritySubjects = subjectConfigAttributes.Where(s => s.Priority == 0).ToList();
-      subjectConfigAttributes.RemoveAll(s => s.Priority == 0);
-      subjectConfigAttributes.AddRange(zeroPrioritySubjects);
+      // move 0 priority connectors to the end of the list
+      var zeroPriorityConnectors = connectorConfigAttributes.Where(s => s.Priority == 0).ToList();
+      connectorConfigAttributes.RemoveAll(s => s.Priority == 0);
+      connectorConfigAttributes.AddRange(zeroPriorityConnectors);
 
       // create controls
-      foreach (var configAttribute in subjectConfigAttributes)
+      foreach (var configAttribute in connectorConfigAttributes)
       {
-        var configItem = subject.GetConfigurationByKey(configAttribute.Key);
+        var configItem = connector.GetConfigurationByKey(configAttribute.Key);
         var builder = ConfigControlBuilderFactory.Instance.GetControlBuilder(configAttribute.Type, configAttribute.Key);
         if (builder == null)
         {

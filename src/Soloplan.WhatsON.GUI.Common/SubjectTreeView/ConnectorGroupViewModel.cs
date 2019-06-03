@@ -1,4 +1,4 @@
-﻿// <copyright file="SubjectGroupViewModel.cs" company="Soloplan GmbH">
+﻿// <copyright file="ConnectorGroupViewModel.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
@@ -13,9 +13,9 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
   using NLog;
 
   /// <summary>
-  /// Viewmodel representing group of subjects shown as single node in <see cref="SubjectTreeView"/>.
+  /// Viewmodel representing group of connectors shown as single node in <see cref="ConnectorTreeView"/>.
   /// </summary>
-  public class SubjectGroupViewModel : TreeItemViewModel
+  public class ConnectorGroupViewModel : TreeItemViewModel
   {
     /// <summary>
     /// The logger.
@@ -24,14 +24,14 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
 
     private string groupName;
 
-    ObservableCollection<SubjectViewModel> statusViewModels;
+    ObservableCollection<ConnectorViewModel> statusViewModels;
 
-    public SubjectGroupViewModel()
+    public ConnectorGroupViewModel()
     {
       this.IsNodeExpanded = true;
     }
 
-    public ObservableCollection<SubjectViewModel> SubjectViewModels => this.statusViewModels ?? (this.statusViewModels = new ObservableCollection<SubjectViewModel>());
+    public ObservableCollection<ConnectorViewModel> ConnectorViewModels => this.statusViewModels ?? (this.statusViewModels = new ObservableCollection<ConnectorViewModel>());
 
     public string GroupName
     {
@@ -47,16 +47,16 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
     }
 
     /// <summary>
-    /// Called when subject changes, ex new status.
+    /// Called when connector changes, ex new status.
     /// </summary>
-    /// <param name="changedSubject">The subject which changed.</param>
+    /// <param name="changedConnector">The connector which changed.</param>
     /// <returns>True if something was changed; false otherwise.</returns>
-    public bool Update(Subject changedSubject)
+    public bool Update(Connector changedConnector)
     {
-      var changedViewModel = this.SubjectViewModels.FirstOrDefault(subject => subject.Identifier == changedSubject.SubjectConfiguration.Identifier);
+      var changedViewModel = this.ConnectorViewModels.FirstOrDefault(connector => connector.Identifier == changedConnector.ConnectorConfiguration.Identifier);
       if (changedViewModel != null)
       {
-        changedViewModel.Update(changedSubject);
+        changedViewModel.Update(changedConnector);
         return true;
       }
 
@@ -66,79 +66,79 @@ namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
     /// <summary>
     /// Should be called when configuration changed.
     /// </summary>
-    /// <param name="subjectGroup">Grouping of subjects by group name.</param>
-    public void Init(IGrouping<string, SubjectConfiguration> subjectGroup)
+    /// <param name="connectorGroup">Grouping of connectors by group name.</param>
+    public void Init(IGrouping<string, ConnectorConfiguration> connectorGroup)
     {
-      this.GroupName = subjectGroup.Key ?? string.Empty;
+      this.GroupName = connectorGroup.Key ?? string.Empty;
       log.Debug("Initializing group {GroupName}", this.GroupName);
 
-      var subjectsNoLongerPresent = this.SubjectViewModels.Where(model => subjectGroup.All(configurationSubject => configurationSubject.Identifier != model.Identifier)).ToList();
-      var newSubjects = subjectGroup.Where(configurationSubject => this.SubjectViewModels.All(viewModel => configurationSubject.Identifier != viewModel.Identifier));
-      foreach (var noLongerPresentSubjectViewModel in subjectsNoLongerPresent)
+      var connectorsNoLongerPresent = this.ConnectorViewModels.Where(model => connectorGroup.All(configurationSubject => configurationSubject.Identifier != model.Identifier)).ToList();
+      var newConnectors = connectorGroup.Where(configurationSubject => this.ConnectorViewModels.All(viewModel => configurationSubject.Identifier != viewModel.Identifier));
+      foreach (var noLongerPresentConnectorViewModel in connectorsNoLongerPresent)
       {
-        log.Debug("Remove no longer present subject {noLongerPresentSubjectViewModel}", new { Identifier = noLongerPresentSubjectViewModel.Identifier, Name = noLongerPresentSubjectViewModel.Name });
-        this.SubjectViewModels.Remove(noLongerPresentSubjectViewModel);
+        log.Debug("Remove no longer present connector {noLongerPresentConnectorViewModel}", new { Identifier = noLongerPresentConnectorViewModel.Identifier, Name = noLongerPresentConnectorViewModel.Name });
+        this.ConnectorViewModels.Remove(noLongerPresentConnectorViewModel);
       }
 
       var addedIds = new List<Guid>();
-      foreach (var newSubject in newSubjects)
+      foreach (var newConnector in newConnectors)
       {
-        log.Debug("Adding new subject {subjectConfiguration}", new { Identifier = newSubject.Identifier, Name = newSubject.Name });
-        addedIds.Add(newSubject.Identifier);
-        this.CreateViewModelForSubjectConfiguration(newSubject);
+        log.Debug("Adding new connector {connectorConfiguration}", new { Identifier = newConnector.Identifier, Name = newConnector.Name });
+        addedIds.Add(newConnector.Identifier);
+        this.CreateViewModelForConnectorConfiguration(newConnector);
       }
 
       int index = 0;
-      foreach (var config in subjectGroup)
+      foreach (var config in connectorGroup)
       {
-        log.Debug("Updating viewmodel for {subjectConfiguration}", new { Identifier = config.Identifier, Name = config.Name });
-        var subjectViewModel = this.SubjectViewModels.FirstOrDefault(model => model.Identifier == config.Identifier);
+        log.Debug("Updating viewmodel for {connectorConfiguration}", new { Identifier = config.Identifier, Name = config.Name });
+        var connectorViewModel = this.ConnectorViewModels.FirstOrDefault(model => model.Identifier == config.Identifier);
         if (!addedIds.Contains(config.Identifier))
         {
-          subjectViewModel.Init(config);
+          connectorViewModel.Init(config);
         }
 
-        var oldIndex = this.SubjectViewModels.IndexOf(subjectViewModel);
+        var oldIndex = this.ConnectorViewModels.IndexOf(connectorViewModel);
         if (oldIndex != index)
         {
-          this.SubjectViewModels.Move(oldIndex, index);
+          this.ConnectorViewModels.Move(oldIndex, index);
         }
 
         index++;
       }
     }
 
-    private void CreateViewModelForSubjectConfiguration(SubjectConfiguration subjectConfiguration)
+    private void CreateViewModelForConnectorConfiguration(ConnectorConfiguration connectorConfiguration)
     {
-      var subject = PluginsManager.Instance.GetSubject(subjectConfiguration);
-      SubjectViewModel subjectViewModel = this.GetSubjectViewModel(subject);
-      subjectViewModel.Init(subjectConfiguration);
-      subjectViewModel.Update(subject);
-      this.SubjectViewModels.Add(subjectViewModel);
+      var connector = PluginsManager.Instance.GetConnector(connectorConfiguration);
+      ConnectorViewModel connectorViewModel = this.GetConnectorViewModel(connector);
+      connectorViewModel.Init(connectorConfiguration);
+      connectorViewModel.Update(connector);
+      this.ConnectorViewModels.Add(connectorViewModel);
     }
 
     public override void OnDoubleClick(object sender, MouseButtonEventArgs e)
     {
-      foreach (var subjectViewModel in this.SubjectViewModels)
+      foreach (var connectorViewModel in this.ConnectorViewModels)
       {
-        subjectViewModel.OnDoubleClick(sender, e);
+        connectorViewModel.OnDoubleClick(sender, e);
       }
     }
 
-    private SubjectViewModel GetSubjectViewModel(Subject subject)
+    private ConnectorViewModel GetConnectorViewModel(Connector connector)
     {
-      if (subject == null)
+      if (connector == null)
       {
-        return new SubjectMissingViewModel();
+        return new ConnectorMissingViewModel();
       }
 
-      var presentationPlugIn = PluginsManager.Instance.GetPresentationPlugIn(subject.GetType());
+      var presentationPlugIn = PluginsManager.Instance.GetPresentationPlugIn(connector.GetType());
       if (presentationPlugIn != null)
       {
         return presentationPlugIn.CreateViewModel();
       }
 
-      return new SubjectViewModel();
+      return new ConnectorViewModel();
     }
   }
 }

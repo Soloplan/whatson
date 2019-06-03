@@ -3,23 +3,23 @@
   using System;
   using System.Reflection;
 
-  public abstract class SubjectPlugin : ISubjectPlugin
+  public abstract class ConnectorPlugin : IConnectorPlugin
   {
-    protected SubjectPlugin(Type subjectType)
+    protected ConnectorPlugin(Type connectorType)
     {
-      this.SubjectType = subjectType;
-      this.SubjectTypeAttribute = this.SubjectType.GetCustomAttribute<SubjectTypeAttribute>();
+      this.ConnectorType = connectorType;
+      this.ConnectorTypeAttribute = this.ConnectorType.GetCustomAttribute<ConnectorTypeAttribute>();
     }
 
-    public Type SubjectType { get; }
+    public Type ConnectorType { get; }
 
-    public SubjectTypeAttribute SubjectTypeAttribute { get; }
+    public ConnectorTypeAttribute ConnectorTypeAttribute { get; }
 
     /// <summary>
     /// Gets a value indicating whether this plugin supports wizards.
     /// </summary>
     public virtual bool SupportsWizard { get; }
 
-    public abstract Subject CreateNew(SubjectConfiguration configuration);
+    public abstract Connector CreateNew(ConnectorConfiguration configuration);
   }
 }

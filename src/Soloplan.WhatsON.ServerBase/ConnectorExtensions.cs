@@ -1,10 +1,10 @@
 ﻿namespace Soloplan.WhatsON.ServerBase
 {
-  public static class SubjectExtensions
+  public static class ConnectorExtensions
   {
-    public static string GetAddress(this ServerSubject subject)
+    public static string GetAddress(this ServerConnector connector)
     {
-      return subject.SubjectConfiguration.GetConfigurationByKey(ServerSubject.ServerAddress).Value;
+      return connector.ConnectorConfiguration.GetConfigurationByKey(ServerConnector.ServerAddress).Value;
     }
   }
 }
