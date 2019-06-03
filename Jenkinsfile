@@ -1,5 +1,5 @@
 #!groovy​
-@Library('SoloPipeline@1.0-rc4')
+@Library('SoloPipeline@1.0-rc5')
 import com.soloplan.*
 
 pipeline {
