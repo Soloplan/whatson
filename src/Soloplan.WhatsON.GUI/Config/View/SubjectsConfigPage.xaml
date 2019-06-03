@@ -25,6 +25,7 @@
     <Grid Margin="0">
       <materialDesign:PopupBox
       Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}"
+      PopupMode="MouseOver"
       PlacementMode="TopAndAlignCentres"
       ToolTip="Add new subject"
       Panel.ZIndex="2" Margin="0,0,25,10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="56">
