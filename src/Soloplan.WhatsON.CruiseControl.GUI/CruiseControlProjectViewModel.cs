@@ -8,7 +8,7 @@
 namespace Soloplan.WhatsON.CruiseControl.GUI
 {
   using Soloplan.WhatsON.GUI.Common.BuildServer;
-  using Soloplan.WhatsON.GUI.Common.SubjectTreeView;
+  using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Jenkins.GUI;
 
   public class CruiseControlProjectViewModel : BuildServerProjectStatusViewModel

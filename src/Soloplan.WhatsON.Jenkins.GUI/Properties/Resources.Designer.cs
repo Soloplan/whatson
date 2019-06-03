@@ -64,7 +64,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI.Properties {
     ///   Looks up a localized string similar to &lt;ResourceDictionary xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;
     ///                    xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;
     ///                    xmlns:buildServer=&quot;clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer;assembly=Soloplan.WhatsON.GUI.Common&quot;
-    ///                    xmlns:connectorTreeView=&quot;clr-namespace:Soloplan.WhatsON.GUI.Common.SubjectTreeView;assembly=Soloplan.WhatsON.GUI.Common&quot;
+    ///                    xmlns:connectorTreeView=&quot;clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView;assembly=Soloplan.WhatsON.GUI.Common&quot;
     ///                    xmlns:gui=&quot;clr-namespace:Soloplan.WhatsON.Jenkins.GUI&quot;&gt;
     /// [rest of string was truncated]&quot;;.
     /// </summary>

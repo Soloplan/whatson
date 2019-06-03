@@ -5,7 +5,7 @@
              xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:s="clr-namespace:System;assembly=mscorlib"
-             xmlns:connectorTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.SubjectTreeView"
+             xmlns:connectorTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView"
              MaxHeight="16"
              MaxWidth="16"
              d:DataContext="{d:DesignInstance local:BuildStatusViewModel}"

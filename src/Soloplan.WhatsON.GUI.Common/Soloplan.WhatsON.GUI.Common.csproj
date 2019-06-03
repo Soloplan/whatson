@@ -71,20 +71,20 @@
     <Compile Include="InvertBoolToVisibleConverter.cs" />
     <Compile Include="OpenWebPageCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SubjectTreeView\IHandleDoubleClick.cs" />
-    <Compile Include="SubjectTreeView\ITreeViewPresentationPlugIn.cs" />
-    <Compile Include="SubjectTreeView\PluginsManagerExtension.cs" />
-    <Compile Include="SubjectTreeView\StatusToColorConverter.cs" />
-    <Compile Include="SubjectTreeView\StatusViewModel.cs" />
-    <Compile Include="SubjectTreeView\ConnectorGroupViewModel.cs" />
-    <Compile Include="SubjectTreeView\ConnectorMissingViewModel.cs" />
-    <Compile Include="SubjectTreeView\ConnectorsTreeView.xaml.cs">
+    <Compile Include="ConnectorTreeView\IHandleDoubleClick.cs" />
+    <Compile Include="ConnectorTreeView\ITreeViewPresentationPlugIn.cs" />
+    <Compile Include="ConnectorTreeView\PluginsManagerExtension.cs" />
+    <Compile Include="ConnectorTreeView\StatusToColorConverter.cs" />
+    <Compile Include="ConnectorTreeView\StatusViewModel.cs" />
+    <Compile Include="ConnectorTreeView\ConnectorGroupViewModel.cs" />
+    <Compile Include="ConnectorTreeView\ConnectorMissingViewModel.cs" />
+    <Compile Include="ConnectorTreeView\ConnectorsTreeView.xaml.cs">
       <DependentUpon>ConnectorsTreeView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SubjectTreeView\ConnectorTreeViewModel.cs" />
-    <Compile Include="SubjectTreeView\ConnectorViewModel.cs" />
-    <Compile Include="SubjectTreeView\TimeToAproximateTimeConverter.cs" />
-    <Compile Include="SubjectTreeView\TreeItemViewModel.cs" />
+    <Compile Include="ConnectorTreeView\ConnectorTreeViewModel.cs" />
+    <Compile Include="ConnectorTreeView\ConnectorViewModel.cs" />
+    <Compile Include="ConnectorTreeView\TimeToAproximateTimeConverter.cs" />
+    <Compile Include="ConnectorTreeView\TreeItemViewModel.cs" />
     <Compile Include="VisualConfig\GroupExpansionSettings.cs" />
     <Compile Include="VisualConfig\MainWindowSettigns.cs" />
     <Compile Include="VisualConfig\TreeListSettings.cs" />
@@ -143,11 +143,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SubjectTreeView\ConnectorMissingDataTemplate.xaml">
+    <Page Include="ConnectorTreeView\ConnectorMissingDataTemplate.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="SubjectTreeView\ConnectorsTreeView.xaml">
+    <Page Include="ConnectorTreeView\ConnectorsTreeView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

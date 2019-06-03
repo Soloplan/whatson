@@ -11,7 +11,7 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
   using System.IO;
   using System.Text;
   using System.Xml;
-  using Soloplan.WhatsON.GUI.Common.SubjectTreeView;
+  using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
 
   public class CruiseControlTreViewPresentationPlugIn : ITreeViewPresentationPlugIn
   {

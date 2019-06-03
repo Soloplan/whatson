@@ -1,4 +1,4 @@
-﻿namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
+﻿namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
   using System;
   using System.Collections.ObjectModel;

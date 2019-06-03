@@ -9,7 +9,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 {
   using System.Windows.Controls;
   using System.Windows.Input;
-  using Soloplan.WhatsON.GUI.Common.SubjectTreeView;
+  using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Jenkins.GUI;
 
   public abstract class BuildServerProjectStatusViewModel : ConnectorViewModel

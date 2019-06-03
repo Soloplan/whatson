@@ -3,7 +3,7 @@
   using System;
   using System.IO;  using System.Text;
   using System.Xml;
-  using Soloplan.WhatsON.GUI.Common.SubjectTreeView;
+  using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
 
   public class GetJenkinsTreeViewPresentationPlugIn : ITreeViewPresentationPlugIn
   {

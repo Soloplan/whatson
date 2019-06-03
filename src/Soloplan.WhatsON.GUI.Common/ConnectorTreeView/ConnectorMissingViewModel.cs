@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Soloplan.WhatsON.GUI.Common.SubjectTreeView
+namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
   using System.Text;
   using System.Windows;

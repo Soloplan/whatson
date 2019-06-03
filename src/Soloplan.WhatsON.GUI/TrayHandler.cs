@@ -6,7 +6,7 @@
   using System.Linq;
   using System.Windows.Forms;
   using NLog;
-  using Soloplan.WhatsON.GUI.Common.SubjectTreeView;
+  using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.Serialization;
   using Application = System.Windows.Application;
