@@ -26,7 +26,7 @@ pipeline {
       }
       
       steps {
-        stepPublishArtifacts(folder: "src/bin/Release", bucket: "whatson", exclude: [], subfolders: true)
+        stepPublishArtifacts(folder: "src/bin/Release", bucket: "whatson", exclude: [], excludeSubfolders: false)
       }
     }
 
@@ -36,7 +36,7 @@ pipeline {
       }
       
       steps {
-        stepPublishArtifacts(folder: "src/bin/Release", bucket: "whatson-${env.TAG_NAME}", exclude: [], subfolders: true)
+        stepPublishArtifacts(folder: "src/bin/Release", bucket: "whatson-${env.TAG_NAME}", exclude: [], excludeSubfolders: false)
       }
     }
   }
