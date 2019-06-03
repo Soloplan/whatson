@@ -6,6 +6,7 @@
 
 namespace Soloplan.WhatsON.Serialization
 {
+  using System;
   using System.Collections.Generic;
 
   /// <summary>
@@ -50,6 +51,18 @@ namespace Soloplan.WhatsON.Serialization
     /// Gets the connectors configuration.
     /// </summary>
     public IList<ConnectorConfiguration> ConnectorsConfiguration { get; } = new List<ConnectorConfiguration>();
+
+    [Obsolete("SubjectsConfiguration was changed to ConnectorsConfiguration. This property will be deserialized to support old type configuration but will not be serialized.")]
+    public IList<ConnectorConfiguration> SubjectsConfiguration
+    {
+      set
+      {
+        foreach (var item in value)
+        {
+          this.ConnectorsConfiguration.Add(item);
+        }
+      }
+    }
 
     /// <summary>
     /// Gets the notification configuration.
