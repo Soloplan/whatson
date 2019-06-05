@@ -14,5 +14,8 @@ namespace Soloplan.WhatsON.CruiseControl.Model
   {
     [XmlElement("message")]
     public Message[] Messages { get; set; }
+
+    [XmlIgnore]
+    public Message[] MessagesSafe => this.Messages ?? new Message[0];
   }
 }
