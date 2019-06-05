@@ -85,6 +85,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       }
 
       this.CommittedToThisBuild.Clear();
+      this.Culprits.Clear();
       foreach (var culprit in jenkinsStatus.Culprits)
       {
         var culpritModle = new JenkinsCulpritViewModel();
