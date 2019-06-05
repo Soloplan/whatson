@@ -117,12 +117,12 @@ namespace Soloplan.WhatsON.CruiseControl
     /// <returns>Appropriate <see cref="ObservationState"/>.</returns>
     private static ObservationState CcStatusToObservationStatus(CruiseControlJob projectData)
     {
-      if (projectData.LastBuildStatus == CcBuildStatus.Success && projectData.Messages.All(msg => msg.Kind != MessageKind.FailingTasks && msg.Kind != MessageKind.Breakers && msg.Kind != MessageKind.BuildAbortedBy))
+      if (projectData.LastBuildStatus == CcBuildStatus.Success && projectData.MessageList.Messages.All(msg => msg.Kind != MessageKind.FailingTasks && msg.Kind != MessageKind.Breakers && msg.Kind != MessageKind.BuildAbortedBy))
       {
         return ObservationState.Success;
       }
 
-      if (projectData.LastBuildStatus == CcBuildStatus.Failure || projectData.LastBuildStatus == CcBuildStatus.Exception || projectData.Messages.Any(msg => msg.Kind != MessageKind.FailingTasks && msg.Kind != MessageKind.Breakers))
+      if (projectData.LastBuildStatus == CcBuildStatus.Failure || projectData.LastBuildStatus == CcBuildStatus.Exception || projectData.MessageList.Messages.Any(msg => msg.Kind != MessageKind.FailingTasks && msg.Kind != MessageKind.Breakers))
       {
         return ObservationState.Failure;
       }
@@ -194,9 +194,9 @@ namespace Soloplan.WhatsON.CruiseControl
 
     private static void SetCulprits(CruiseControlJob job, CruiseControlStatus result)
     {
-      if (job.Messages != null)
+      if (job.MessageList?.Messages != null)
       {
-        var breakers = job.Messages.Where(msg => msg.Kind == MessageKind.Breakers);
+        var breakers = job.MessageList.Messages.Where(msg => msg.Kind == MessageKind.Breakers);
         foreach (var breakersLine in breakers)
         {
           foreach (var breaker in breakersLine.Text.Split(',').Select(brk => brk.Trim()).Where(brk => !string.IsNullOrEmpty(brk)))

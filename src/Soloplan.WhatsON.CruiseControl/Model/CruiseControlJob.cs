@@ -23,8 +23,8 @@ namespace Soloplan.WhatsON.CruiseControl.Model
   [XmlType(AnonymousType = true)]
   public class CruiseControlJob
   {
-    [XmlArrayItem("message", IsNullable = false)]
-    public List<Message> Messages { get; set; }
+    [XmlElement("messages", IsNullable = false)]
+    public MessageList MessageList { get; set; }
 
     [XmlAttribute("name")]
     public string Name { get; set; }

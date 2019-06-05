@@ -11,7 +11,7 @@ namespace Soloplan.WhatsON.CruiseControl.Model
 
   [System.SerializableAttribute]
   [System.ComponentModel.DesignerCategoryAttribute("code")]
-  [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+  [XmlType("message")]
   public class Message
   {
     [XmlAttributeAttribute("text")]
@@ -23,11 +23,22 @@ namespace Soloplan.WhatsON.CruiseControl.Model
 
   public enum MessageKind
   {
+    [XmlEnum("NotDefined")]
     NotDefined = 0,
+
+    [XmlEnum("Breakers")]
     Breakers = 1,
+
+    [XmlEnum("Fixer")]
     Fixer = 2,
+
+    [XmlEnum("FailingTasks")]
     FailingTasks = 3,
+
+    [XmlEnum("BuildStatus")]
     BuildStatus = 4,
+
+    [XmlEnum("BuildAbortedBy")]
     BuildAbortedBy = 5,
   }
 }
