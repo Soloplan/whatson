@@ -11,6 +11,7 @@ namespace Soloplan.WhatsON.GUI.Logging
   using NLog;
   using NLog.Config;
   using Soloplan.WhatsON.GUI.Properties;
+  using Soloplan.WhatsON.Serialization;
 
   /// <summary>
   /// Class for configuring logging.
