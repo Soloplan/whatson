@@ -15,14 +15,6 @@ namespace Soloplan.WhatsON.Serialization
   public class ApplicationConfiguration
   {
     /// <summary>
-    /// Initializes a new instance of the <see cref="ApplicationConfiguration"/> class.
-    /// </summary>
-    public ApplicationConfiguration()
-    {
-      this.OpenMinimized = true;
-    }
-
-    /// <summary>
     /// Gets or sets a value indicating whether dark theme is enabled.
     /// </summary>
     public bool DarkThemeEnabled { get; set; }
