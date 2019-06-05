@@ -20,6 +20,6 @@
   </targets>
 
   <rules>
-    <logger name="*" minlevel="Debug" maxlevel="Fatal" writeTo="whatsONMainLog"/>
+    <logger name="*" minlevel="Warn" maxlevel="Fatal" writeTo="whatsONMainLog"/>
   </rules>
 </nlog>
