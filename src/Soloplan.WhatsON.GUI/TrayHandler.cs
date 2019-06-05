@@ -49,7 +49,7 @@
     public TrayHandler(ObservationScheduler scheduler, ApplicationConfiguration configuration)
     {
       this.icon = new System.Windows.Forms.NotifyIcon();
-      this.icon.Icon = new Icon(Properties.Resources.Whatson, new Size(16,16));
+      this.icon.Icon = new Icon(Properties.Resources.Whatson, new Size(16, 16));
       this.icon.Visible = true;
       this.scheduler = scheduler;
       this.configuration = configuration;
@@ -214,7 +214,6 @@
     private void MainWindowConfigurationApplied(object sender, ValueEventArgs<ApplicationConfiguration> e)
     {
       this.configuration = e.Value;
-      var schedulerRunning = this.scheduler.Running;
       if (this.scheduler.Running)
       {
         this.scheduler.Stop(false);
@@ -232,10 +231,7 @@
       this.model = new NotificationsModel(this.scheduler);
       this.model.PropertyChanged += this.CurrentStatusPropertyChanged;
 
-      if (schedulerRunning)
-      {
-        this.scheduler.Start();
-      }
+      this.scheduler.Start();
     }
 
     private void CurrentStatusPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
