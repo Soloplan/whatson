@@ -9,10 +9,16 @@ namespace Soloplan.WhatsON.GUI
   using System;
   using System.Collections.Generic;
   using System.ComponentModel;
+  using System.Linq;
+  using System.Threading.Tasks;
   using System.Windows;
+  using System.Windows.Controls;
   using System.Windows.Media.Animation;
+  using MaterialDesignThemes.Wpf;
+  using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.GUI.Config.View;
+  using Soloplan.WhatsON.GUI.Config.ViewModel;
   using Soloplan.WhatsON.GUI.Config.Wizard;
   using Soloplan.WhatsON.Serialization;
 
@@ -69,6 +75,7 @@ namespace Soloplan.WhatsON.GUI
       this.Topmost = this.config.AlwaysOnTop;
       this.DataContext = this;
       this.mainTreeView.ConfigurationChanged += this.MainTreeViewOnConfigurationChanged;
+      this.mainTreeView.EditItem += this.EditTreeItem;
     }
 
     public bool IsTreeInitialized
@@ -243,6 +250,61 @@ namespace Soloplan.WhatsON.GUI
       {
         this.ConfigurationModifiedFromTree = false;
       }
+    }
+
+    /// <summary>
+    /// Handles creation of new group.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">Event args.</param>
+    private async void NewGroupClick(object sender, RoutedEventArgs e)
+    {
+      var model = new GroupViewModel
+      {
+        AlreadyUsedNames = this.mainTreeView.GetGroupNames(),
+      };
+
+      var editGroupDialog = new EditGroupNameDialog(model);
+      var result = await this.ShowDialogOnPageHost(editGroupDialog);
+      if (result)
+      {
+        this.mainTreeView.CreateGroup(model.Name);
+      }
+    }
+
+    /// <summary>
+    /// Handles editing of tree item.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">Event args.</param>
+    private async void EditTreeItem(object sender, ValueEventArgs<Common.ConnectorTreeView.TreeItemViewModel> e)
+    {
+      if (e.Value is ConnectorGroupViewModel groupTreeViewModel)
+      {
+        var model = new GroupViewModel
+        {
+          Name = groupTreeViewModel.GroupName,
+          AlreadyUsedNames = this.mainTreeView.GetGroupNames().Where(grpName => grpName != groupTreeViewModel.GroupName).ToList(),
+        };
+        var editGroupDialog = new EditGroupNameDialog(model);
+        var result = await this.ShowDialogOnPageHost(editGroupDialog);
+        if (result && groupTreeViewModel.GroupName != model.Name)
+        {
+          groupTreeViewModel.GroupName = model.Name;
+          this.ConfigurationModifiedFromTree = true;
+        }
+      }
+    }
+
+    private async Task<bool> ShowDialogOnPageHost(UserControl dialog)
+    {
+      var tmpResult = await DialogHost.Show(dialog, "MainWindowPageHost");
+      if (tmpResult is bool result)
+      {
+        return result;
+      }
+
+      return false;
     }
   }
 }

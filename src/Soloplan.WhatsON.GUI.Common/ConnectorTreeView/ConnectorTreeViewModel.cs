@@ -45,6 +45,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     public event EventHandler ConfigurationChanged;
 
     /// <summary>
+    /// Event fired when user requested editing of tree view item in context menu.
+    /// </summary>
+    public event EventHandler<ValueEventArgs<TreeItemViewModel>> EditItem;
+
+    /// <summary>
     /// Gets observable collection of connector groups, the top level object in tree view binding.
     /// </summary>
     public ObservableCollection<ConnectorGroupViewModel> ConnectorGroups => this.connectorGroups ?? (this.connectorGroups = this.CreateConnectorGroupViewModelCollection());
@@ -180,6 +185,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         {
           log.Debug("{model} doesn't exist, creating...", nameof(ConnectorGroupViewModel));
           connectorGroupViewModel = new ConnectorGroupViewModel();
+          connectorGroupViewModel.EditItem += (s, e) => this.EditItem?.Invoke(s, e);
           this.ConnectorGroups.Insert(index, connectorGroupViewModel);
         }
         else
@@ -281,6 +287,15 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
         log.Debug("Parsing expansion state for non-existing group {@GroupExpansion}", expansion);
       }
+    }
+
+    public ConnectorGroupViewModel CreateGroup(string groupName)
+    {
+      var model = new ConnectorGroupViewModel { GroupName = groupName };
+      model.EditItem += (s, e) => this.EditItem?.Invoke(s, e);
+      this.ConnectorGroups.Add(model);
+      this.OnConfigurationChanged(this, EventArgs.Empty);
+      return model;
     }
 
     /// <summary>

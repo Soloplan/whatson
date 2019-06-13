@@ -7,38 +7,29 @@
 
 namespace Soloplan.WhatsON.Jenkins.GUI
 {
-  using System;
-  using System.ComponentModel;
-  using System.Windows.Input;
   using NLog;
+  using Soloplan.WhatsON.GUI.Common;
 
-  public class OpenWebPageCommand : ICommand
+  public class OpenWebPageCommand : ExternalEnabledStateCommand
   {
     /// <summary>
     /// The logger.
     /// </summary>
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
-    public event EventHandler CanExecuteChanged;
-
-    public event CancelEventHandler CanExecuteExternal;
-
-    public bool CanExecute(object parameter)
+    public override bool CanExecute(object parameter)
     {
       if (parameter is OpenWebPageCommandData webPageParam && !string.IsNullOrEmpty(webPageParam.Address))
       {
         log.Debug("Checking if command should be opened for {@param}", webPageParam);
-        var cancelEventArgs = new CancelEventArgs();
-        this.CanExecuteExternal?.Invoke(this, cancelEventArgs);
-        log.Debug("Command active = {value}", !cancelEventArgs.Cancel);
-        return !cancelEventArgs.Cancel;
+        return base.CanExecute(parameter);
       }
 
       log.Warn("Webpage opening parameters are invalid {parameter}", new { Type = parameter?.GetType() });
       return false;
     }
 
-    public void Execute(object parameter)
+    public override void Execute(object parameter)
     {
       if (parameter is OpenWebPageCommandData webPageParam)
       {

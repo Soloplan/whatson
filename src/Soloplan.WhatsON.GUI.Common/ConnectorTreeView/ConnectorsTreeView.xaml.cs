@@ -17,7 +17,7 @@
   /// </summary>
   public partial class ConnectorsTreeView : UserControl
   {
-    public ConnectorTreeViewModel model;
+    private ConnectorTreeViewModel model;
 
     public ConnectorsTreeView()
     {
@@ -45,9 +45,15 @@
     /// </summary>
     public event EventHandler ConfigurationChanged;
 
+    /// <summary>
+    /// Event fired when user requested editing of tree view item in context menu.
+    /// </summary>
+    public event EventHandler<ValueEventArgs<TreeItemViewModel>> EditItem;
+
     public void Init(ObservationScheduler scheduler, ApplicationConfiguration configuration, IList<Connector> initialConnectorState)
     {
       this.model = new ConnectorTreeViewModel();
+      this.model.EditItem += (s, e) => this.EditItem?.Invoke(s, e);
       this.model.ConfigurationChanged += (s, e) => this.ConfigurationChanged?.Invoke(this, EventArgs.Empty);
       this.model.Init(scheduler, configuration, initialConnectorState);
       this.DataContext = this.model;
@@ -111,6 +117,31 @@
           }
         }
       }
+    }
+
+    /// <summary>
+    /// Creates new group with <paramref name="groupName"/> and brings it into focus.
+    /// </summary>
+    /// <param name="groupName">Name for new group.</param>
+    public void CreateGroup(string groupName)
+    {
+      var onlyOneGroupBkp = this.model.OneGroup;
+      var groupModel = this.model.CreateGroup(groupName);
+      TreeViewItem groupViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(groupModel);
+      groupViewItem.BringIntoView(new Rect(100, 100, 100, 100));
+      if (onlyOneGroupBkp)
+      {
+        this.SetupDataContext();
+      }
+    }
+
+    /// <summary>
+    /// Gets list of group names currently in use.
+    /// </summary>
+    /// <returns>List of currently used group names.</returns>
+    public IList<string> GetGroupNames()
+    {
+      return this.model.ConnectorGroups.Select(grp => grp.GroupName).ToList();
     }
 
     private void SetupDataContext()

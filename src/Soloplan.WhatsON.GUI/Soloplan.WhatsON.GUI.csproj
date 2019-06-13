@@ -89,6 +89,10 @@
     <Compile Include="Config\CheckBoxConfigControlBuilder.cs" />
     <Compile Include="Config\ConfigResourcesHelper.cs" />
     <Compile Include="Config\NotificationSettingsControlBuilder.cs" />
+    <Compile Include="Config\ViewModel\GroupViewModel.cs" />
+    <Compile Include="Config\View\EditGroupNameDialog.xaml.cs">
+      <DependentUpon>EditGroupNameDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Config\Wizard\ProjectSelectionWizardPage.xaml.cs">
       <DependentUpon>ProjectSelectionWizardPage.xaml</DependentUpon>
     </Compile>
@@ -131,6 +135,10 @@
     <Page Include="Config\MainConfigPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Config\View\EditGroupNameDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Config\Wizard\ProjectSelectionWizardPage.xaml">
       <SubType>Designer</SubType>

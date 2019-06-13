@@ -1,11 +1,11 @@
 ﻿<Window x:Class="Soloplan.WhatsON.GUI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:connectorTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView;assembly=Soloplan.WhatsON.GUI.Common"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:Soloplan.WhatsON.GUI"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:connectorTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView;assembly=Soloplan.WhatsON.GUI.Common"
         Title="Soloplan WhatsON"
         Width="800"
         Height="450"
@@ -19,22 +19,27 @@
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         mc:Ignorable="d">
   <Window.Resources>
-    <Storyboard x:Key="hideStorBoard">
-      <DoubleAnimation Storyboard.TargetName="HideableStackPanel"
-                       Storyboard.TargetProperty="RenderTransform.Y"
-                       From="0"
-                       To="100"
-                       Duration="0:00:.300" />
-    </Storyboard>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
+      </ResourceDictionary.MergedDictionaries>
 
-    <Storyboard x:Key="showStoryBoard">
-      <DoubleAnimation Storyboard.TargetName="HideableStackPanel"
-                       Storyboard.TargetProperty="RenderTransform.Y"
-                       From="100"
-                       To="0"
-                       Duration="0:00:.300" />
-    </Storyboard>
+      <Storyboard x:Key="hideStorBoard">
+        <DoubleAnimation Storyboard.TargetName="HideableStackPanel"
+                         Storyboard.TargetProperty="RenderTransform.Y"
+                         From="0"
+                         To="100"
+                         Duration="0:00:.300" />
+      </Storyboard>
 
+      <Storyboard x:Key="showStoryBoard">
+        <DoubleAnimation Storyboard.TargetName="HideableStackPanel"
+                         Storyboard.TargetProperty="RenderTransform.Y"
+                         From="100"
+                         To="0"
+                         Duration="0:00:.300" />
+      </Storyboard>
+    </ResourceDictionary>
   </Window.Resources>
   <DockPanel>
     <local:CustomTitleBar ButtonClicked="OpenConfig"
@@ -46,10 +51,9 @@
 
     <Border x:Name="HideableStackPanel"
             Padding="8,8,30,8"
-            DockPanel.Dock="Bottom">
-      <DockPanel Background="{DynamicResource MaterialDesignBody}"
-                 LastChildFill="False"
-                 Visibility="{Binding ConfigurationModifiedFromTree, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Converter={StaticResource BoolToVis}}">
+            DockPanel.Dock="Bottom"
+            Visibility="{Binding ConfigurationModifiedFromTree, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Converter={StaticResource BoolToVis}}">
+      <DockPanel Background="{DynamicResource MaterialDesignBody}" LastChildFill="False">
         <TextBlock Padding="5"
                    VerticalAlignment="Center"
                    Foreground="{DynamicResource MaterialDesignBackground}"
@@ -74,28 +78,38 @@
       </Border.RenderTransform>
     </Border>
 
-    <Grid DockPanel.Dock="Bottom">
+    <materialDesign:DialogHost DockPanel.Dock="Bottom" Identifier="MainWindowPageHost">
+      <Grid>
+        <materialDesign:PopupBox Width="56"
+                                 Margin="0,0,20,20"
+                                 HorizontalAlignment="Right"
+                                 VerticalAlignment="Bottom"
+                                 Panel.ZIndex="2"
+                                 PlacementMode="TopAndAlignCentres"
+                                 PopupMode="MouseOver"
+                                 Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}">
+          <StackPanel>
+            <Button Click="NewGroupClick" ToolTip="Add new group">
+              <materialDesign:PackIcon Width="24"
+                                       Height="24"
+                                       Kind="LibraryAdd" />
+            </Button>
+            <Button Click="NewConnectorClick" ToolTip="Add new connector(s)">
+              <materialDesign:PackIcon Width="24"
+                                       Height="24"
+                                       Kind="ServerPlus" />
+            </Button>
+          </StackPanel>
+        </materialDesign:PopupBox>
 
-      <Button Width="56"
-              Margin="0,0,20,20"
-              HorizontalAlignment="Right"
-              VerticalAlignment="Bottom"
-              Panel.ZIndex="2"
-              Click="NewConnectorClick"
-              Style="{StaticResource MaterialDesignFloatingActionButton}"
-              ToolTip="Add new connector(s)">
-        <materialDesign:PackIcon Width="24"
-                                 Height="24"
-                                 Kind="Add" />
-      </Button>
-
-      <connectorTreeView:ConnectorsTreeView x:Name="mainTreeView" Visibility="{Binding IsTreeInitialized, Converter={StaticResource BoolToVis}}" />
-      <TextBlock HorizontalAlignment="Center"
-                 VerticalAlignment="Center"
-                 FontSize="18"
-                 FontWeight="Bold"
-                 Text="Loading..."
-                 Visibility="{Binding IsTreeInitialized, Converter={StaticResource InvertBoolToVis}}" />
-    </Grid>
+        <connectorTreeView:ConnectorsTreeView x:Name="mainTreeView" Visibility="{Binding IsTreeInitialized, Converter={StaticResource BoolToVis}}" />
+        <TextBlock HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   FontSize="18"
+                   FontWeight="Bold"
+                   Text="Loading..."
+                   Visibility="{Binding IsTreeInitialized, Converter={StaticResource InvertBoolToVis}}" />
+      </Grid>
+    </materialDesign:DialogHost>
   </DockPanel>
 </Window>

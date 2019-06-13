@@ -67,6 +67,8 @@
     <Compile Include="BuildServer\ProgressBarTooltipControl.xaml.cs">
       <DependentUpon>ProgressBarTooltipControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ConnectorTreeView\CustomCommand.cs" />
+    <Compile Include="ExternalEnabledStateCommand.cs" />
     <Compile Include="InvertBooleanConverter.cs" />
     <Compile Include="InvertBoolToVisibleConverter.cs" />
     <Compile Include="OpenWebPageCommand.cs" />

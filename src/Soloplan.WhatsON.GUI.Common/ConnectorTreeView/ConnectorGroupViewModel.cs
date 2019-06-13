@@ -77,6 +77,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       foreach (var noLongerPresentConnectorViewModel in connectorsNoLongerPresent)
       {
         log.Debug("Remove no longer present connector {noLongerPresentConnectorViewModel}", new { Identifier = noLongerPresentConnectorViewModel.Identifier, Name = noLongerPresentConnectorViewModel.Name });
+        noLongerPresentConnectorViewModel.EditItem -= this.OnSubItemEdit;
         this.ConnectorViewModels.Remove(noLongerPresentConnectorViewModel);
       }
 
@@ -112,6 +113,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       var connector = PluginsManager.Instance.GetConnector(connectorConfiguration);
       ConnectorViewModel connectorViewModel = this.GetConnectorViewModel(connector);
+      connectorViewModel.EditItem += this.OnSubItemEdit;
       connectorViewModel.Init(connectorConfiguration);
       connectorViewModel.Update(connector);
       this.ConnectorViewModels.Add(connectorViewModel);
@@ -139,6 +141,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
 
       return new ConnectorViewModel();
+    }
+
+    private void OnSubItemEdit(object sender, ValueEventArgs<TreeItemViewModel> e)
+    {
+      this.OnEditItem(sender, e);
     }
   }
 }
