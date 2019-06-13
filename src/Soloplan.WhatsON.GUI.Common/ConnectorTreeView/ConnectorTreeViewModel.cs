@@ -50,6 +50,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     public event EventHandler<ValueEventArgs<TreeItemViewModel>> EditItem;
 
     /// <summary>
+    /// Event fired when item should be deleted.
+    /// </summary>
+    public event EventHandler<DeleteTreeItemEventArgs> DeleteItem;
+
+    /// <summary>
     /// Gets observable collection of connector groups, the top level object in tree view binding.
     /// </summary>
     public ObservableCollection<ConnectorGroupViewModel> ConnectorGroups => this.connectorGroups ?? (this.connectorGroups = this.CreateConnectorGroupViewModelCollection());
@@ -184,8 +189,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         if (connectorGroupViewModel == null)
         {
           log.Debug("{model} doesn't exist, creating...", nameof(ConnectorGroupViewModel));
-          connectorGroupViewModel = new ConnectorGroupViewModel();
-          connectorGroupViewModel.EditItem += (s, e) => this.EditItem?.Invoke(s, e);
+          connectorGroupViewModel = this.CreateNewGroupModel();
           this.ConnectorGroups.Insert(index, connectorGroupViewModel);
         }
         else
@@ -291,8 +295,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     public ConnectorGroupViewModel CreateGroup(string groupName)
     {
-      var model = new ConnectorGroupViewModel { GroupName = groupName };
-      model.EditItem += (s, e) => this.EditItem?.Invoke(s, e);
+      var model = this.CreateNewGroupModel();
+      model.GroupName = groupName;
       this.ConnectorGroups.Add(model);
       this.OnConfigurationChanged(this, EventArgs.Empty);
       return model;
@@ -445,6 +449,28 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private ObservableCollection<ConnectorGroupViewModel> CreateConnectorGroupViewModelCollection()
     {
       return new ObservableCollection<ConnectorGroupViewModel>();
+    }
+
+    private ConnectorGroupViewModel CreateNewGroupModel()
+    {
+      var model = new ConnectorGroupViewModel();
+      model.EditItem += (s, e) => this.EditItem?.Invoke(s, e);
+      model.DeleteItem += this.DeleteGroup;
+      model.ConfigurationChanged += (s, e) => this.OnConfigurationChanged(this, EventArgs.Empty);
+      return model;
+    }
+
+    private async void DeleteGroup(object sender, DeleteTreeItemEventArgs e)
+    {
+      this.DeleteItem?.Invoke(sender, e);
+      if (e.DeleteItem is ConnectorGroupViewModel group)
+      {
+        var canceled = await e.CheckCanceled();
+        if (!canceled && this.ConnectorGroups.Remove(group))
+        {
+          this.OnConfigurationChanged(this, EventArgs.Empty);
+        }
+      }
     }
 
     /// <summary>

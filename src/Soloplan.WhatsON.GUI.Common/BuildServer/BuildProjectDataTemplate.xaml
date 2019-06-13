@@ -10,6 +10,7 @@
   <ContextMenu x:Key="BuildServerProjectContextMenu">
     <!--  CommandParameter must be declared before Command or else value from previous opening of context menu will be passed. WTF?!  -->
     <MenuItem Header="Edit" Command="{Binding EditCommand}" />
+    <MenuItem Header="Delete" Command="{Binding DeleteCommand}" />
     <Separator />
     <MenuItem Header="Open project web page"
               CommandParameter="{Binding OpenWebPageParam}"

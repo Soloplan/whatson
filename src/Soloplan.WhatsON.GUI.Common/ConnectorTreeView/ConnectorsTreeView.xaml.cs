@@ -19,6 +19,11 @@
   {
     private ConnectorTreeViewModel model;
 
+    /// <summary>
+    /// Backing field for <see cref="DeleteSelectedObject"/>.
+    /// </summary>
+    private CustomCommand deleteFocusedObject;
+
     public ConnectorsTreeView()
     {
       this.InitializeComponent();
@@ -50,14 +55,34 @@
     /// </summary>
     public event EventHandler<ValueEventArgs<TreeItemViewModel>> EditItem;
 
+    /// <summary>
+    /// Event fired when user wants to delete item.
+    /// </summary>
+    public event EventHandler<DeleteTreeItemEventArgs> DeleteItem;
+
+    /// <summary>
+    /// Gets command for deleting selected item.
+    /// </summary>
+    public CustomCommand DeleteSelectedObject => this.deleteFocusedObject ?? (this.deleteFocusedObject = this.CreateDeleteFocusedObjectCommand());
+
     public void Init(ObservationScheduler scheduler, ApplicationConfiguration configuration, IList<Connector> initialConnectorState)
     {
       this.model = new ConnectorTreeViewModel();
+      this.model.PropertyChanged += this.ModelPropertyChanged;
       this.model.EditItem += (s, e) => this.EditItem?.Invoke(s, e);
+      this.model.DeleteItem += (s, e) => this.DeleteItem?.Invoke(s, e);
       this.model.ConfigurationChanged += (s, e) => this.ConfigurationChanged?.Invoke(this, EventArgs.Empty);
       this.model.Init(scheduler, configuration, initialConnectorState);
       this.DataContext = this.model;
       this.SetupDataContext();
+    }
+
+    private void ModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+      if (e.PropertyName == nameof(ConnectorTreeViewModel.OneGroup))
+      {
+        this.SetupDataContext();
+      }
     }
 
     public void Update(ApplicationConfiguration configuration)
@@ -169,6 +194,20 @@
     private void OnTreeItemDoubleClick(object sender, MouseButtonEventArgs e)
     {
       this.model.OnDoubleClick(sender, e);
+    }
+
+    private CustomCommand CreateDeleteFocusedObjectCommand()
+    {
+      var command = new CustomCommand();
+      command.OnExecute += (s, e) =>
+      {
+        if (this.mainTreeView.SelectedItem is TreeItemViewModel model)
+        {
+          model.DeleteCommand.Execute(null);
+        }
+      };
+
+      return command;
     }
   }
 }

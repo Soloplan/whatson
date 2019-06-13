@@ -26,6 +26,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     ObservableCollection<ConnectorViewModel> statusViewModels;
 
+    public event EventHandler ConfigurationChanged;
+
     public ConnectorGroupViewModel()
     {
       this.IsNodeExpanded = true;
@@ -114,6 +116,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       var connector = PluginsManager.Instance.GetConnector(connectorConfiguration);
       ConnectorViewModel connectorViewModel = this.GetConnectorViewModel(connector);
       connectorViewModel.EditItem += this.OnSubItemEdit;
+      connectorViewModel.DeleteItem += this.DeleteConnector;
       connectorViewModel.Init(connectorConfiguration);
       connectorViewModel.Update(connector);
       this.ConnectorViewModels.Add(connectorViewModel);
@@ -146,6 +149,19 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private void OnSubItemEdit(object sender, ValueEventArgs<TreeItemViewModel> e)
     {
       this.OnEditItem(sender, e);
+    }
+
+    private async void DeleteConnector(object sender, DeleteTreeItemEventArgs e)
+    {
+      if (e.DeleteItem is ConnectorViewModel model)
+      {
+        this.OnDeleteItem(this, e);
+        var canceled = await e.CheckCanceled();
+        if (!canceled && this.ConnectorViewModels.Remove(model))
+        {
+          this.ConfigurationChanged?.Invoke(this, EventArgs.Empty);
+        }
+      }
     }
   }
 }

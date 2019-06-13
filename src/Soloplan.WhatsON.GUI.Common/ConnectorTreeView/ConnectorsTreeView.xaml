@@ -12,6 +12,7 @@
     <ResourceDictionary>
       <ContextMenu x:Key="BaseTreeMenuImpl">
         <MenuItem Header="Rename" Command="{Binding EditCommand}" />
+        <MenuItem Header="Delete" Command="{Binding DeleteCommand}" />
       </ContextMenu>
 
       <HierarchicalDataTemplate DataType="{x:Type local:ConnectorGroupViewModel}" ItemsSource="{Binding Path=ConnectorViewModels}">
@@ -42,6 +43,9 @@
             dd:DragDrop.DropHandler="{Binding}"
             dd:DragDrop.IsDragSource="True"
             dd:DragDrop.IsDropTarget="True">
+    <TreeView.InputBindings>
+      <KeyBinding Key="Delete" Command="{Binding DeleteSelectedObject, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}" />
+    </TreeView.InputBindings>
     <TreeView.ItemContainerStyle>
       <Style BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="{x:Type TreeViewItem}">
         <EventSetter Event="MouseDoubleClick" Handler="OnTreeItemDoubleClick" />

@@ -76,6 +76,7 @@ namespace Soloplan.WhatsON.GUI
       this.DataContext = this;
       this.mainTreeView.ConfigurationChanged += this.MainTreeViewOnConfigurationChanged;
       this.mainTreeView.EditItem += this.EditTreeItem;
+      this.mainTreeView.DeleteItem += this.OnItemDeleted;
     }
 
     public bool IsTreeInitialized
@@ -296,6 +297,36 @@ namespace Soloplan.WhatsON.GUI
       }
     }
 
+    /// <summary>
+    /// Called for confirming item deletion.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">Event args containing object which should be deleted.</param>
+    private void OnItemDeleted(object sender, DeleteTreeItemEventArgs e)
+    {
+      string message;
+      if (e.DeleteItem is ConnectorGroupViewModel group)
+      {
+        message = $"Are you sure you want to delete group '{group.GroupName}' and all its items?";
+      }
+      else if (e.DeleteItem is Soloplan.WhatsON.GUI.Common.ConnectorTreeView.ConnectorViewModel connector)
+      {
+        message = $"Are you sure you want to delete connector '{connector.Name}'?";
+      }
+      else
+      {
+        message = $"Are you sure you want to delete connector '{e.DeleteItem}'";
+      }
+
+      var dialog = new OkCancelDialog(message);
+      e.AddAsyncCancelCheckAction(async () => !await this.ShowDialogOnPageHost(dialog));
+    }
+
+    /// <summary>
+    /// Shows <paramref name="dialog"/> in DialogHost "MainWindowPageHost". Works only with dialogs returning true/false;
+    /// </summary>
+    /// <param name="dialog">Dialog to show.</param>
+    /// <returns>True or false depending on what option user selected.</returns>
     private async Task<bool> ShowDialogOnPageHost(UserControl dialog)
     {
       var tmpResult = await DialogHost.Show(dialog, "MainWindowPageHost");
