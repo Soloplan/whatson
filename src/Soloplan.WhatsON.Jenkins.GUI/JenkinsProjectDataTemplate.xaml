@@ -7,19 +7,7 @@
   <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
   <connectorTreeView:StatusToColorConverter x:Key="StatusToColorConverter" />
   <connectorTreeView:TimeToAproximateTimeConverter x:Key="TimeToAproximateTimeConverter" />
-  <!--  ToDo DGO: this should be separate control for displaying status. This way it will be easier to reuse.  -->
 
-  <ContextMenu x:Key="BuildServerProjectContextMenu">
-    <!--  CommandParameter must be declared before Command or else value from previous opening of context menu will be passed. WTF?!  -->
-    <MenuItem Header="Open project web page"
-              CommandParameter="{Binding OpenWebPageParam}"
-              Command="{Binding OpenWebPage}" />
-    <MenuItem Header="Open current build page"
-              Visibility="{Binding CurrentStatus.Building, Converter={StaticResource BoolToVisibility}}"
-              CommandParameter="{Binding CurrentStatus.OpenBuildPageCommandData}"
-              Command="{Binding CurrentStatus.OpenBuildPage}" />
-
-  </ContextMenu>
   <DataTemplate DataType="{x:Type gui:JenkinsStatusViewModel}">
     <buildServer:HistoryBuildControl DataContext="{Binding}">
       <buildServer:HistoryBuildControl.ToolTip>
@@ -35,7 +23,7 @@
   </DataTemplate>
 
   <DataTemplate DataType="{x:Type gui:JenkinsProjectViewModel}">
-    <StackPanel ContextMenu="{StaticResource BuildServerProjectContextMenu}" Orientation="Horizontal">
+    <StackPanel ContextMenu="{DynamicResource BuildServerProjectContextMenu}" Orientation="Horizontal">
       <buildServer:BuildInformationIconControl DataContext="{Binding CurrentStatus}">
         <buildServer:BuildInformationIconControl.ToolTip>
           <StackPanel>
