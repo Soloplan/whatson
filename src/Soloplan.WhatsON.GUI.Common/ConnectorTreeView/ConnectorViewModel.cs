@@ -19,6 +19,11 @@
 
     private StatusViewModel currentStatus;
 
+    public ConnectorViewModel()
+    {
+      this.EditCommand.CanExecuteExternal += (s, e) => e.Cancel = true;
+    }
+
     public string Name
     {
       get => this.name;

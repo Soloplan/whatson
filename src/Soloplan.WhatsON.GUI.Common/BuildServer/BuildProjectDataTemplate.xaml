@@ -1,7 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:buildServer="clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer"
-                    xmlns:connectorTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView">
+                    xmlns:connectorTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView"
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
 
   <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
   <connectorTreeView:StatusToColorConverter x:Key="StatusToColorConverter" />
@@ -9,16 +10,41 @@
 
   <ContextMenu x:Key="BuildServerProjectContextMenu">
     <!--  CommandParameter must be declared before Command or else value from previous opening of context menu will be passed. WTF?!  -->
-    <MenuItem Header="Edit" Command="{Binding EditCommand}" />
-    <MenuItem Header="Delete" Command="{Binding DeleteCommand}" />
+    <MenuItem Command="{Binding EditCommand}">
+      <MenuItem.Header>
+        <StackPanel Orientation="Horizontal">
+          <materialDesign:PackIcon Kind="Edit" />
+          <TextBlock Padding="5,0,0,0" Text="Edit" />
+        </StackPanel>
+      </MenuItem.Header>
+    </MenuItem>
+    <MenuItem Command="{Binding DeleteCommand}">
+      <MenuItem.Header>
+        <StackPanel Orientation="Horizontal">
+          <materialDesign:PackIcon Kind="RemoveCircle" />
+          <TextBlock Padding="5,0,0,0" Text="Delete" />
+        </StackPanel>
+      </MenuItem.Header>
+    </MenuItem>
     <Separator />
-    <MenuItem Header="Open project web page"
-              CommandParameter="{Binding OpenWebPageParam}"
-              Command="{Binding OpenWebPage}" />
-    <MenuItem Header="Open current build page"
-              Visibility="{Binding CurrentStatus.Building, Converter={StaticResource BoolToVisibility}}"
+    <MenuItem CommandParameter="{Binding OpenWebPageParam}" Command="{Binding OpenWebPage}">
+      <MenuItem.Header>
+        <StackPanel Orientation="Horizontal">
+          <materialDesign:PackIcon Kind="Link" />
+          <TextBlock Padding="5,0,0,0" Text="Open project web page" />
+        </StackPanel>
+      </MenuItem.Header>
+    </MenuItem>
+    <MenuItem Visibility="{Binding CurrentStatus.Building, Converter={StaticResource BoolToVisibility}}"
               CommandParameter="{Binding CurrentStatus.OpenBuildPageCommandData}"
-              Command="{Binding CurrentStatus.OpenBuildPage}" />
+              Command="{Binding CurrentStatus.OpenBuildPage}">
+      <MenuItem.Header>
+        <StackPanel Orientation="Horizontal">
+          <materialDesign:PackIcon Kind="Link" />
+          <TextBlock Padding="5,0,0,0" Text="Open current build page" />
+        </StackPanel>
+      </MenuItem.Header>
+    </MenuItem>
   </ContextMenu>
 
   <DataTemplate DataType="{x:Type buildServer:BuildStatusViewModel}">

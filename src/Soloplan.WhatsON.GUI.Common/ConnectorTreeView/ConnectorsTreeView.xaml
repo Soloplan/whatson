@@ -5,14 +5,30 @@
              xmlns:dd="urn:gong-wpf-dragdrop"
              xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
   <UserControl.Resources>
     <ResourceDictionary>
+
       <ContextMenu x:Key="BaseTreeMenuImpl">
-        <MenuItem Header="Rename" Command="{Binding EditCommand}" />
-        <MenuItem Header="Delete" Command="{Binding DeleteCommand}" />
+        <MenuItem Command="{Binding EditCommand}">
+          <MenuItem.Header>
+            <StackPanel Orientation="Horizontal">
+              <materialDesign:PackIcon Kind="Edit"/>
+              <TextBlock Padding="5,0,0,0" Text="Rename" />
+            </StackPanel>
+          </MenuItem.Header>
+        </MenuItem>
+        <MenuItem Command="{Binding DeleteCommand}" >
+          <MenuItem.Header>
+            <StackPanel Orientation="Horizontal">
+              <materialDesign:PackIcon Kind="RemoveCircle"/>
+              <TextBlock Padding="5,0,0,0" Text="Delete" />
+            </StackPanel>
+          </MenuItem.Header>
+        </MenuItem>
       </ContextMenu>
 
       <HierarchicalDataTemplate DataType="{x:Type local:ConnectorGroupViewModel}" ItemsSource="{Binding Path=ConnectorViewModels}">
@@ -33,6 +49,7 @@
       </DataTemplate>
 
       <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
         <ResourceDictionary Source="ConnectorMissingDataTemplate.xaml" />
         <ResourceDictionary Source="../BuildServer/BuildProjectDataTemplate.xaml" />
       </ResourceDictionary.MergedDictionaries>
