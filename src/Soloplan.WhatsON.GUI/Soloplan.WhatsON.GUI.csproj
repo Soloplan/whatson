@@ -88,6 +88,9 @@
     </Compile>
     <Compile Include="Config\CheckBoxConfigControlBuilder.cs" />
     <Compile Include="Config\ConfigResourcesHelper.cs" />
+    <Compile Include="Config\MessageControl.xaml.cs">
+      <DependentUpon>MessageControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Config\NotificationSettingsControlBuilder.cs" />
     <Compile Include="Config\ViewModel\GroupViewModel.cs" />
     <Compile Include="Config\View\EditGroupNameDialog.xaml.cs">
@@ -125,6 +128,10 @@
     <Compile Include="ThemeHelper.cs" />
     <Compile Include="TrayHandler.cs" />
     <Page Include="Config\AboutPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Config\MessageControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

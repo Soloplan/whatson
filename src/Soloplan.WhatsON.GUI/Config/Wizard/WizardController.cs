@@ -514,7 +514,8 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
       }
       else if (this.wizardWindow.IsVisible)
       {
-        System.Windows.MessageBox.Show(this.wizardWindow, errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        var errorDialog = new MessageControl(errorMessage);
+        await DialogHost.Show(errorDialog, "WizardWaitDialogHostId");
       }
     }
   }
