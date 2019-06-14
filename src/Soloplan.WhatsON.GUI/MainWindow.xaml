@@ -94,7 +94,9 @@
                                        Height="24"
                                        Kind="LibraryAdd" />
             </Button>
-            <Button Click="NewConnectorClick" ToolTip="Add new connector(s)">
+            <Button Click="NewConnectorClick"
+                    IsEnabled="{Binding ConfigurationModifiedFromTree, Converter={StaticResource InvertBoolConverter}}"
+                    ToolTip="Add new connector(s)">
               <materialDesign:PackIcon Width="24"
                                        Height="24"
                                        Kind="ServerPlus" />
