@@ -77,14 +77,6 @@
       this.SetupDataContext();
     }
 
-    private void ModelPropertyChanged(object sender, PropertyChangedEventArgs e)
-    {
-      if (e.PropertyName == nameof(ConnectorTreeViewModel.OneGroup))
-      {
-        this.SetupDataContext();
-      }
-    }
-
     public void Update(ApplicationConfiguration configuration)
     {
       this.model.Update(configuration);
@@ -119,7 +111,7 @@
     }
 
     /// <summary>
-    /// Focuses the node connected with <paramref name="connector>.
+    /// Focuses the node connected with <paramref name="connector" />.
     /// </summary>
     /// <param name="connector">Connector which should be focused.</param>
     public void FocusItem(Connector connector)
@@ -150,14 +142,9 @@
     /// <param name="groupName">Name for new group.</param>
     public void CreateGroup(string groupName)
     {
-      var onlyOneGroupBkp = this.model.OneGroup;
       var groupModel = this.model.CreateGroup(groupName);
       TreeViewItem groupViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(groupModel);
       groupViewItem.BringIntoView(new Rect(100, 100, 100, 100));
-      if (onlyOneGroupBkp)
-      {
-        this.SetupDataContext();
-      }
     }
 
     /// <summary>
@@ -208,6 +195,14 @@
       };
 
       return command;
+    }
+
+    private void ModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+      if (e.PropertyName == nameof(ConnectorTreeViewModel.OneGroup))
+      {
+        this.SetupDataContext();
+      }
     }
   }
 }

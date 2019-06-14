@@ -42,6 +42,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     private int itemPadding;
 
+    /// <summary>
+    /// Previous value of <see cref="OneGroup"/>.
+    /// </summary>
+    private bool prevOneGroupValue;
+
+    /// <summary>
+    /// Called when configuration has changed due to user input.
+    /// </summary>
     public event EventHandler ConfigurationChanged;
 
     /// <summary>
@@ -212,6 +220,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         this.ConnectorGroups.Remove(connectorGroupViewModel);
       }
 
+      this.FireOneGroupChanged();
       switch (configuration.ViewStyle)
       {
         case ViewStyle.Normal:
@@ -298,6 +307,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       var model = this.CreateNewGroupModel();
       model.GroupName = groupName;
       this.ConnectorGroups.Add(model);
+      this.FireOneGroupChanged();
       this.OnConfigurationChanged(this, EventArgs.Empty);
       return model;
     }
@@ -469,7 +479,17 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         if (!canceled && this.ConnectorGroups.Remove(group))
         {
           this.OnConfigurationChanged(this, EventArgs.Empty);
+          this.FireOneGroupChanged();
         }
+      }
+    }
+
+    private void FireOneGroupChanged()
+    {
+      if (this.OneGroup != this.prevOneGroupValue)
+      {
+        this.OnPropertyChanged(nameof(this.OneGroup));
+        this.prevOneGroupValue = this.OneGroup;
       }
     }
 
