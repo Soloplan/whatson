@@ -88,7 +88,7 @@
                                  PlacementMode="TopAndAlignCentres"
                                  PopupMode="MouseOver"
                                  Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}">
-          <StackPanel>
+          <StackPanel Name="uxPopupBoxItemPanel">
             <Button Click="NewGroupClick" ToolTip="Add new group">
               <materialDesign:PackIcon Width="24"
                                        Height="24"
@@ -99,7 +99,7 @@
                     ToolTip="Add new connector(s)">
               <materialDesign:PackIcon Width="24"
                                        Height="24"
-                                       Kind="ServerPlus" />
+                                       Kind="Rocket" />
             </Button>
           </StackPanel>
         </materialDesign:PopupBox>

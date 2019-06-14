@@ -13,6 +13,7 @@ namespace Soloplan.WhatsON.GUI
   using System.Threading.Tasks;
   using System.Windows;
   using System.Windows.Controls;
+  using System.Windows.Data;
   using System.Windows.Media.Animation;
   using MaterialDesignThemes.Wpf;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
@@ -67,6 +68,7 @@ namespace Soloplan.WhatsON.GUI
     public MainWindow(ObservationScheduler scheduler, ApplicationConfiguration configuration, IList<Connector> initialConnectorState)
     {
       this.InitializeComponent();
+      this.AddPluginsNotSupportingWizard();
       this.scheduler = scheduler;
       this.config = configuration;
       this.initialConnectorState = initialConnectorState;
@@ -320,6 +322,40 @@ namespace Soloplan.WhatsON.GUI
 
       var dialog = new OkCancelDialog(message);
       e.AddAsyncCancelCheckAction(async () => !await this.ShowDialogOnPageHost(dialog));
+    }
+
+    /// <summary>
+    /// Adds buttons for creating plugins which aren't supported by the wizard.
+    /// </summary>
+    private void AddPluginsNotSupportingWizard()
+    {
+      var enabledBinding = new Binding(nameof(this.ConfigurationModifiedFromTree));
+      enabledBinding.Converter = Application.Current.FindResource("InvertBoolConverter") as IValueConverter;
+      enabledBinding.Source = this;
+      enabledBinding.Mode = BindingMode.OneWay;
+      enabledBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+
+      foreach (var plugIn in PluginsManager.Instance.PlugIns.OfType<IConnectorPlugin>().Where(plugin => !plugin.SupportsWizard))
+      {
+        var button = new Button();
+        button.Content = new PackIcon
+        {
+          Kind = PackIconKind.ServerPlus,
+          Width = 24,
+          Height = 24,
+        };
+
+        var tip = new ToolTip();
+        tip.Content = new TextBlock() { Text = $"Add {plugIn.ConnectorTypeAttribute.Name}" };
+        button.ToolTip = tip;
+        button.Tag = plugIn.ConnectorType;
+        button.Click += (s, e) =>
+        {
+        };
+
+        BindingOperations.SetBinding(button, Button.IsEnabledProperty, enabledBinding);
+        this.uxPopupBoxItemPanel.Children.Add(button);
+      }
     }
 
     /// <summary>
