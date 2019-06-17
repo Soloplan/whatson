@@ -7,6 +7,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
 {
   using System;
   using System.Runtime.CompilerServices;
+  using System.Windows.Controls;
   using Microsoft.Win32;
   using Soloplan.WhatsON.GUI.Config.View;
   using Soloplan.WhatsON.Serialization;
@@ -82,6 +83,16 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     private bool unknownObservationState;
 
     /// <summary>
+    /// The initial focused configuration <see cref="ListBoxItem"/>.
+    /// </summary>
+    private ListBoxItem initialFocusedConfigurationListBoxItem;
+
+    /// <summary>
+    /// The single connector mode flag.
+    /// </summary>
+    private bool singleConnectorMode;
+
+    /// <summary>
     /// Occurs when configuration was applied.
     /// </summary>
     public event EventHandler<ValueEventArgs<ApplicationConfiguration>> ConfigurationApplied;
@@ -107,6 +118,19 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
         this.darkThemeEnabled = value;
         this.OnPropertyChanged();
       }
+    }
+
+    /// <summary>
+    /// Gets the snackbar action caption.
+    /// </summary>
+    public string SnackbarActionCaption => this.SingleNewConnectorMode ? "Cancel" : "Reset"; // TODO resources
+
+    /// <summary>
+    /// Gets or sets a value indicating whether a single new connector configuration mode is active.
+    /// </summary>
+    public bool SingleNewConnectorMode
+    {
+      get; set;
     }
 
     /// <summary>
@@ -284,6 +308,32 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     }
 
     /// <summary>
+    /// Gets or sets the initial focused configuration <see cref="ListBoxItem"/>.
+    /// </summary>
+    public ListBoxItem InitialFocusedConfigurationListBoxItem
+    {
+      get => this.initialFocusedConfigurationListBoxItem;
+      set
+      {
+        this.initialFocusedConfigurationListBoxItem = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether single connector mode is active.
+    /// </summary>
+    public bool SingleConnectorMode
+    {
+      get => this.singleConnectorMode;
+      set
+      {
+        this.singleConnectorMode = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    /// <summary>
     /// Gets the original configuration.
     /// </summary>
     public ApplicationConfiguration Configuration { get; private set; }
@@ -434,7 +484,10 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     /// <param name="propertyName">Name of the property.</param>
     protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
-      if (!this.ConfigurationIsModified && propertyName != nameof(this.ConfigurationIsModified) && propertyName != nameof(this.ConfigurationIsNotModified) && this.IsLoaded)
+      if (!this.ConfigurationIsModified && propertyName != nameof(this.ConfigurationIsModified) &&
+          propertyName != nameof(this.ConfigurationIsNotModified) && this.IsLoaded &&
+          propertyName != nameof(this.InitialFocusedConfigurationListBoxItem) &&
+          propertyName != nameof(this.SingleConnectorMode))
       {
         this.ConfigurationIsModified = true;
         this.OnPropertyChanged(nameof(this.ConfigurationIsModified));

@@ -80,8 +80,6 @@ namespace Soloplan.WhatsON.GUI.Config
       if (!configItemAttribute.Optional)
       {
         var notEmptyValidationRule = new NotEmptyValidationRule();
-        notEmptyValidationRule.ValidatesOnTargetUpdated = true;
-        notEmptyValidationRule.ValidationStep = ValidationStep.CommittedValue;
         valueBinding.ValidationRules.Add(notEmptyValidationRule);
       }
 

@@ -156,33 +156,8 @@ namespace Soloplan.WhatsON.GUI
 
     private void OpenConfig(object sender, EventArgs e)
     {
-      if (this.ConfigurationModifiedFromTree)
-      {
-        return;
-      }
-
       var configWindow = new ConfigWindow(this.config);
-      configWindow.Owner = this;
-      configWindow.ConfigurationApplied += (s, ev) =>
-      {
-        this.ConfigurationApplied?.Invoke(this, ev);
-      };
-
-      if (this.settings.ConfigDialogSettings != null)
-      {
-        this.settings.ConfigDialogSettings.Apply(configWindow);
-      }
-      else
-      {
-        configWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-      }
-
-      configWindow.Closing += (s, ev) =>
-      {
-        this.settings.ConfigDialogSettings = new WindowSettings().Parse(configWindow);
-      };
-
-      configWindow.ShowDialog();
+      this.OpenConfig(configWindow);
     }
 
     /// <summary>
@@ -276,6 +251,59 @@ namespace Soloplan.WhatsON.GUI
     }
 
     /// <summary>
+    /// Opens the configuration.
+    /// </summary>
+    private void OpenConfig(ConfigWindow configWindow)
+    {
+      if (this.ConfigurationModifiedFromTree)
+      {
+        return;
+      }
+
+      configWindow.Owner = this;
+      configWindow.ConfigurationApplied += (s, ev) =>
+      {
+        this.ConfigurationApplied?.Invoke(this, ev);
+      };
+
+      if (this.settings.ConfigDialogSettings != null)
+      {
+        this.settings.ConfigDialogSettings.Apply(configWindow);
+      }
+      else
+      {
+        configWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+      }
+
+      configWindow.Closing += (s, ev) =>
+      {
+        this.settings.ConfigDialogSettings = new WindowSettings().Parse(configWindow);
+      };
+
+      configWindow.ShowDialog();
+    }
+
+    /// <summary>
+    /// Opens the configuration.
+    /// </summary>
+    /// <param name="connector">The connector.</param>
+    private void OpenConfig(Connector connector)
+    {
+      var configWindow = new ConfigWindow(this.config, connector);
+      this.OpenConfig(configWindow);
+    }
+
+    /// <summary>
+    /// Opens the configuration.
+    /// </summary>
+    /// <param name="newConnectorPlugin">The new connector plugin.</param>
+    private void OpenConfig(IConnectorPlugin newConnectorPlugin)
+    {
+      var configWindow = new ConfigWindow(this.config, newConnectorPlugin);
+      this.OpenConfig(configWindow);
+    }
+
+    /// <summary>
     /// Handles editing of tree item.
     /// </summary>
     /// <param name="sender">The sender.</param>
@@ -296,6 +324,11 @@ namespace Soloplan.WhatsON.GUI
           groupTreeViewModel.GroupName = model.Name;
           this.ConfigurationModifiedFromTree = true;
         }
+      }
+
+      if (e.Value is Common.ConnectorTreeView.ConnectorViewModel connectorViewModel)
+      {
+        this.OpenConfig(connectorViewModel.Connector);
       }
     }
 
@@ -348,9 +381,9 @@ namespace Soloplan.WhatsON.GUI
         var tip = new ToolTip();
         tip.Content = new TextBlock() { Text = $"Add {plugIn.ConnectorTypeAttribute.Name}" };
         button.ToolTip = tip;
-        button.Tag = plugIn.ConnectorType;
         button.Click += (s, e) =>
         {
+          this.OpenConfig(plugIn);
         };
 
         BindingOperations.SetBinding(button, Button.IsEnabledProperty, enabledBinding);

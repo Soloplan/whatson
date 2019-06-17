@@ -8,9 +8,11 @@ namespace Soloplan.WhatsON.GUI.Config.View
 {
   using System;
   using System.ComponentModel;
+  using System.Linq;
   using System.Runtime.CompilerServices;
   using System.Windows;
   using System.Windows.Controls;
+  using System.Windows.Data;
   using MaterialDesignThemes.Wpf;
   using Soloplan.WhatsON.GUI.Config.ViewModel;
   using Soloplan.WhatsON.GUI.Config.Wizard;
@@ -36,10 +38,55 @@ namespace Soloplan.WhatsON.GUI.Config.View
     private bool activeConnectorSupportsWizard;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ConnectorsPage"/> class.
+    /// The single connector mode.
+    /// </summary>
+    private bool singleConnectorMode;
+
+    /// <summary>
+    /// The initially focused <see cref="ConnectorViewModel"/>.
+    /// </summary>
+    private ConnectorViewModel initialFocusedConnectorViewModel;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConnectorsPage" /> class.
     /// </summary>
     /// <param name="connectors">The connectors.</param>
-    /// <param name="ownerWindow">The owner <see cref="Window"/>.</param>
+    /// <param name="ownerWindow">The owner <see cref="Window" />.</param>
+    /// <param name="initialFocusedConnector">The initial focused connector.</param>
+    public ConnectorsPage(ConnectorViewModelCollection connectors, Window ownerWindow, Connector initialFocusedConnector)
+     : this(connectors, ownerWindow)
+    {
+      this.InitialFocusedConnectorViewModel = this.Connectors.FirstOrDefault(c => c.SourceConnectorConfiguration == initialFocusedConnector.ConnectorConfiguration);
+      this.InitilizeConnectorNameTextEditBinding();
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConnectorsPage" /> class.
+    /// Also, creates a new connector;
+    /// </summary>
+    /// <param name="connectors">The connectors.</param>
+    /// <param name="ownerWindow">The owner <see cref="Window" />.</param>
+    /// <param name="newConnectorPlugin">The new connector plugin.</param>
+    public ConnectorsPage(ConnectorViewModelCollection connectors, Window ownerWindow, IConnectorPlugin newConnectorPlugin)
+      : this(connectors, ownerWindow)
+    {
+      this.currentConnector = new ConnectorViewModel();
+
+      // TODO move to connector view model/model
+      this.currentConnector.SourceConnectorPlugin = newConnectorPlugin;
+      this.currentConnector.Name = string.Empty;
+      this.currentConnector.Load(null);
+      this.Connectors.Add(this.currentConnector);
+      this.InitialFocusedConnectorViewModel = this.currentConnector;
+
+      this.InitilizeConnectorNameTextEditBinding();
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConnectorsPage" /> class.
+    /// </summary>
+    /// <param name="connectors">The connectors.</param>
+    /// <param name="ownerWindow">The owner <see cref="Window" />.</param>
     public ConnectorsPage(ConnectorViewModelCollection connectors, Window ownerWindow)
     {
       this.ownerWindow = ownerWindow;
@@ -56,9 +103,35 @@ namespace Soloplan.WhatsON.GUI.Config.View
     public event PropertyChangedEventHandler PropertyChanged;
 
     /// <summary>
+    /// Gets or sets a value indicating whether a single connector mode is active.
+    /// </summary>
+    public bool SingleConnectorMode
+    {
+      get => this.singleConnectorMode;
+      set
+      {
+        this.singleConnectorMode = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets the initially focused <see cref="ConnectorViewModel"/>.
+    /// </summary>
+    public ConnectorViewModel InitialFocusedConnectorViewModel
+    {
+      get => this.initialFocusedConnectorViewModel;
+      set
+      {
+        this.initialFocusedConnectorViewModel = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    /// <summary>
     /// Gets the connectors.
     /// </summary>
-    public ConnectorViewModelCollection Connectors { get; private set; }
+    public ConnectorViewModelCollection Connectors { get; }
 
     /// <summary>
     /// Gets the current connector.
@@ -85,6 +158,18 @@ namespace Soloplan.WhatsON.GUI.Config.View
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
       this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    /// <summary>
+    /// Initilizes the connector name text edit binding.
+    /// </summary>
+    private void InitilizeConnectorNameTextEditBinding()
+    {
+      var connectorNameBinding = new Binding("SelectedItem.Name");
+      connectorNameBinding.ElementName = nameof(this.uxConnectors);
+      connectorNameBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+      connectorNameBinding.ValidationRules.Add(new NotEmptyValidationRule());
+      BindingOperations.SetBinding(this.uxName, TextBox.TextProperty, connectorNameBinding);
     }
 
     /// <summary>

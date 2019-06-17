@@ -34,16 +34,17 @@
                                DockPanel.Dock="Bottom"
                                IsActive="{Binding ConfigurationIsModified}">
         <materialDesign:SnackbarMessage ActionClick="SnackbarMessageActionClick"
-                                        ActionContent="Reset"
+                                        ActionContent="{Binding Path=SnackbarActionCaption}"
                                         Content="Configuration is modified" />
       </materialDesign:Snackbar>
-      <DockPanel DockPanel.Dock="Left">
+      <DockPanel DockPanel.Dock="Left" Visibility="{Binding Path=SingleConnectorMode, Converter={StaticResource InvertBoolToVis}}">
         <ListBox x:Name="ConfigTopicsListBox"
                  Width="158"
                  Padding="5"
                  Cursor="Hand"
                  DockPanel.Dock="Top"
-                 SelectionChanged="ListBoxSelectionChanged">
+                 SelectionChanged="ListBoxSelectionChanged"
+                 SelectedItem="{Binding Path=InitialFocusedConfigurationListBoxItem, Mode=OneWay}">
           <ListBoxItem Content="Main" Tag="{x:Static view:ConfigWindow.MainListItemTag}" />
           <ListBoxItem Content="Connectors" Tag="{x:Static view:ConfigWindow.ConnectorsListItemTag}" />
           <ListBoxItem Content="About" Tag="{x:Static view:ConfigWindow.AboutListItemTag}" />

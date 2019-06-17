@@ -18,6 +18,15 @@ namespace Soloplan.WhatsON.GUI.Config
   public class NotEmptyValidationRule : ValidationRule
   {
     /// <summary>
+    /// Initializes a new instance of the <see cref="NotEmptyValidationRule"/> class.
+    /// </summary>
+    public NotEmptyValidationRule()
+    {
+      this.ValidatesOnTargetUpdated = true;
+      this.ValidationStep = ValidationStep.CommittedValue;
+    }
+
+    /// <summary>
     /// Validates the specified value.
     /// </summary>
     /// <param name="value">The value.</param>
@@ -27,6 +36,11 @@ namespace Soloplan.WhatsON.GUI.Config
     {
       if (value is BindingExpression bindingExpression)
       {
+        if (bindingExpression.ResolvedSource == null)
+        {
+          return ValidationResult.ValidResult;
+        }
+
         // because property ValidationStep might be set to ValidationStep.CommittedValue we get BindingExpression as the value and we have to extract the actual value.
         var resolvedType = bindingExpression.ResolvedSource.GetType();
         var prop = resolvedType.GetProperty(bindingExpression.ResolvedSourcePropertyName);
