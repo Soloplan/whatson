@@ -31,14 +31,6 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
     private TimeSpan buildTimeExcedingEstimation;
 
-    private bool failure;
-
-    private bool unknown;
-
-    private bool succees;
-
-    private bool unstable;
-
     private ObservableCollection<CulpritViewModel> culprits;
 
     public BuildStatusViewModel(ConnectorViewModel model)
@@ -86,46 +78,6 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
           this.building = value;
           this.OnPropertyChanged();
         }
-      }
-    }
-
-    public bool Failure
-    {
-      get => this.failure;
-      set
-      {
-        this.failure = value;
-        this.OnPropertyChanged();
-      }
-    }
-
-    public bool Unknown
-    {
-      get => this.unknown;
-      set
-      {
-        this.unknown = value;
-        this.OnPropertyChanged();
-      }
-    }
-
-    public bool Succees
-    {
-      get => this.succees;
-      set
-      {
-        this.succees = value;
-        this.OnPropertyChanged();
-      }
-    }
-
-    public bool Unstable
-    {
-      get => this.unstable;
-      set
-      {
-        this.unstable = value;
-        this.OnPropertyChanged();
       }
     }
 
@@ -262,6 +214,21 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     }
 
     /// <summary>
+    /// Updates flags used to control visibility of controls based on <see cref="State"/>.
+    /// </summary>
+    protected override void UpdateStateFlags()
+    {
+      this.Succees = false;
+      this.Failure = false;
+      this.Unknown = false;
+      this.Unstable = false;
+      if (!this.Building)
+      {
+        base.UpdateStateFlags();
+      }
+    }
+
+    /// <summary>
     /// Updates flags controlling visibility of progress bar and the progress bar buttons.
     /// </summary>
     private void UpdateEstimatedRemaining()
@@ -285,35 +252,6 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
         {
           this.EstimatedRemaining = TimeSpan.Zero;
           this.BuildTimeExcedingEstimation = this.Duration - this.EstimatedDuration;
-        }
-      }
-    }
-
-    /// <summary>
-    /// Updates flags used to control visibility of controls based on <see cref="State"/>.
-    /// </summary>
-    private void UpdateStateFlags()
-    {
-      this.Succees = false;
-      this.Failure = false;
-      this.Unknown = false;
-      this.Unstable = false;
-      if (!this.Building)
-      {
-        switch (this.State)
-        {
-          case ObservationState.Unknown:
-            this.Unknown = true;
-            break;
-          case ObservationState.Unstable:
-            this.Unstable = true;
-            break;
-          case ObservationState.Failure:
-            this.Failure = true;
-            break;
-          case ObservationState.Success:
-            this.Succees = true;
-            break;
         }
       }
     }

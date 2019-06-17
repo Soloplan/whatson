@@ -31,6 +31,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private ObservationState state;
 
+    private bool failure;
+
+    private bool unknown;
+
+    private bool succees;
+
+    private bool unstable;
+
     public string Name
     {
       get
@@ -96,6 +104,47 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
+
+    public bool Failure
+    {
+      get => this.failure;
+      set
+      {
+        this.failure = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    public bool Unknown
+    {
+      get => this.unknown;
+      set
+      {
+        this.unknown = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    public bool Succees
+    {
+      get => this.succees;
+      set
+      {
+        this.succees = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    public bool Unstable
+    {
+      get => this.unstable;
+      set
+      {
+        this.unstable = value;
+        this.OnPropertyChanged();
+      }
+    }
+
     public ConnectorViewModel Parent { get; }
 
     public virtual void Update(Status newStatus)
@@ -113,6 +162,33 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.Details = newStatus.Detail;
       this.Time = newStatus.Time.ToLocalTime();
       this.State = newStatus.State;
+    }
+
+    /// <summary>
+    /// Updates flags used to control visibility of controls based on <see cref="State"/>.
+    /// </summary>
+    protected virtual void UpdateStateFlags()
+    {
+      this.Succees = false;
+      this.Failure = false;
+      this.Unknown = false;
+      this.Unstable = false;
+
+      switch (this.State)
+      {
+        case ObservationState.Unknown:
+          this.Unknown = true;
+          break;
+        case ObservationState.Unstable:
+          this.Unstable = true;
+          break;
+        case ObservationState.Failure:
+          this.Failure = true;
+          break;
+        case ObservationState.Success:
+          this.Succees = true;
+          break;
+      }
     }
   }
 }

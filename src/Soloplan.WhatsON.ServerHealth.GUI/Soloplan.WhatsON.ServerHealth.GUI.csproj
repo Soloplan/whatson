@@ -31,6 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
@@ -51,6 +53,7 @@
     <Compile Include="ServerHealthTreeViewPresentationPlugIn.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerHealthViewModel.cs" />
+    <Compile Include="ServerHealthStatusViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ServerHealthDataTemplate.xaml">

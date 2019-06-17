@@ -9,6 +9,11 @@
   {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
+      if (value == null)
+      {
+        return ((DateTime?)null).Humanize(false);
+      }
+
       if (value is DateTime date)
       {
         return date.Humanize(false);
