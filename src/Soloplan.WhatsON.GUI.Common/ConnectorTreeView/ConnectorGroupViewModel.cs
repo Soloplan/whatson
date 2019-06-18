@@ -26,12 +26,12 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     ObservableCollection<ConnectorViewModel> statusViewModels;
 
-    public event EventHandler ConfigurationChanged;
-
     public ConnectorGroupViewModel()
     {
       this.IsNodeExpanded = true;
     }
+
+    public event EventHandler ConfigurationChanged;
 
     public ObservableCollection<ConnectorViewModel> ConnectorViewModels => this.statusViewModels ?? (this.statusViewModels = new ObservableCollection<ConnectorViewModel>());
 
@@ -44,6 +44,23 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         {
           this.groupName = value;
           this.OnPropertyChanged();
+          this.OnConfigurationChanged(this, EventArgs.Empty);
+        }
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether configuration was modified from main window.
+    /// </summary>
+    public override bool ConfigurationModifiedInTree
+    {
+      get => base.ConfigurationModifiedInTree;
+      set
+      {
+        base.ConfigurationModifiedInTree = value;
+        foreach (var connector in this.ConnectorViewModels)
+        {
+          connector.ConfigurationModifiedInTree = value;
         }
       }
     }
@@ -130,6 +147,16 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
+    /// <summary>
+    /// Firest <see cref="ConfigurationChanged"/> event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="eventArgs">Event args.</param>
+    protected void OnConfigurationChanged(object sender, EventArgs eventArgs)
+    {
+      this.ConfigurationChanged?.Invoke(sender, eventArgs);
+    }
+
     private ConnectorViewModel GetConnectorViewModel(Connector connector)
     {
       if (connector == null)
@@ -159,7 +186,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         var canceled = await e.CheckCanceled();
         if (!canceled && this.ConnectorViewModels.Remove(model))
         {
-          this.ConfigurationChanged?.Invoke(this, EventArgs.Empty);
+          this.OnConfigurationChanged(this, EventArgs.Empty);
         }
       }
     }

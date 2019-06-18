@@ -17,18 +17,6 @@ namespace Soloplan.WhatsON.Jenkins.GUI
     /// </summary>
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
-    public override bool CanExecute(object parameter)
-    {
-      if (parameter is OpenWebPageCommandData webPageParam && !string.IsNullOrEmpty(webPageParam.Address))
-      {
-        log.Debug("Checking if command should be opened for {@param}", webPageParam);
-        return base.CanExecute(parameter);
-      }
-
-      log.Warn("Webpage opening parameters are invalid {parameter}", new { Type = parameter?.GetType() });
-      return false;
-    }
-
     public override void Execute(object parameter)
     {
       if (parameter is OpenWebPageCommandData webPageParam)
@@ -39,6 +27,18 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       }
 
       log.Warn("Can't open web page because the pram is of incorrect type {type}", new { Type = parameter?.GetType() });
+    }
+
+    protected override bool CanExecuteInternal(object parameter)
+    {
+      if (parameter is OpenWebPageCommandData webPageParam && !string.IsNullOrEmpty(webPageParam.Address))
+      {
+        log.Debug("Checking if command should be opened for {@param}", webPageParam);
+        return base.CanExecuteInternal(parameter);
+      }
+
+      log.Warn("Webpage opening parameters are invalid {parameter}", new { Type = parameter?.GetType() });
+      return false;
     }
   }
 
