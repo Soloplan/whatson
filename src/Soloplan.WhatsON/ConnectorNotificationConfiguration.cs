@@ -16,5 +16,10 @@ namespace Soloplan.WhatsON
     /// Gets or sets a value indicating whether global settings should be used.
     /// </summary>
     public bool UseGlobalNotificationSettings { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether notify only if status changed.
+    /// </summary>
+    public bool OnlyIfStatusChanged { get; set; } = false;
   }
 }

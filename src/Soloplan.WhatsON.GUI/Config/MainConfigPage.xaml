@@ -66,26 +66,34 @@
     <materialDesign:Card Background="{DynamicResource MaterialDesignBackground}" Margin="4,8,4,0">
       <StackPanel>
         <Expander HorizontalAlignment="Stretch" Header="Notifications (overridable by each connector settings)" Margin="4,0,4,0" IsExpanded="True">
-          <StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="2,6,2,0">
-              <ToggleButton IsChecked="{Binding UnstableObservationState}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
-              <Label>Unstable</Label>
+          <StackPanel Orientation="Horizontal">
+            <StackPanel Margin="0 0 50 0">
+              <StackPanel Orientation="Horizontal" Margin="2,6,2,0">
+                <ToggleButton IsChecked="{Binding UnstableObservationState}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
+                <Label>Unstable</Label>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Margin="2,6,2,0">
+                <ToggleButton IsChecked="{Binding FailureObservationState}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
+                <Label>Failure</Label>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Margin="2,6,2,0">
+                <ToggleButton IsChecked="{Binding SuccessObservationState}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
+                <Label>Success</Label>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Margin="2,6,2,0">
+                <ToggleButton IsChecked="{Binding RunningObservationState}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
+                <Label>Running</Label>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Margin="2,6,2,0">
+                <ToggleButton IsChecked="{Binding UnknownObservationState}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
+                <Label>Unknown</Label>
+              </StackPanel>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="2,6,2,0">
-              <ToggleButton IsChecked="{Binding FailureObservationState}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
-              <Label>Failure</Label>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="2,6,2,0">
-              <ToggleButton IsChecked="{Binding SuccessObservationState}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
-              <Label>Success</Label>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="2,6,2,0">
-              <ToggleButton IsChecked="{Binding RunningObservationState}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
-              <Label>Running</Label>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="2,6,2,0">
-              <ToggleButton IsChecked="{Binding UnknownObservationState}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
-              <Label>Unknown</Label>
+            <StackPanel>
+              <StackPanel Orientation="Horizontal" Margin="2,6,2,0">
+                <ToggleButton IsChecked="{Binding NotifyOnlyIfStatusChanged}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
+                <Label>Only if status changed</Label>
+              </StackPanel>
             </StackPanel>
           </StackPanel>
         </Expander>

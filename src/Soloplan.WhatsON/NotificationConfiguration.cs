@@ -39,6 +39,11 @@ namespace Soloplan.WhatsON
     public bool UnknownNotificationEnabled { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether the notification should be executed only if status is changed.
+    /// </summary>
+    public bool OnlyIfChanged { get; set; } = false;
+
+    /// <summary>
     /// RTeturns flag of <see cref="ObservationState"/> enabled state in the configuration.
     /// </summary>
     /// <param name="observationState">State of the observation.</param>

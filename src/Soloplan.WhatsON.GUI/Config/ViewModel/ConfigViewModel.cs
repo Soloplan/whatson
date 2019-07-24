@@ -83,6 +83,11 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
     private bool unknownObservationState;
 
     /// <summary>
+    /// Notify only if status changed.
+    /// </summary>
+    private bool notifyOnlyIfStatusChanged;
+
+    /// <summary>
     /// The initial focused configuration <see cref="ListBoxItem"/>.
     /// </summary>
     private ListBoxItem initialFocusedConfigurationListBoxItem;
@@ -207,6 +212,19 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       set
       {
         this.unknownObservationState = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether to notify only if status was changed.
+    /// </summary>
+    public bool NotifyOnlyIfStatusChanged
+    {
+      get => this.notifyOnlyIfStatusChanged;
+      set
+      {
+        this.notifyOnlyIfStatusChanged = value;
         this.OnPropertyChanged();
       }
     }
@@ -377,6 +395,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
         this.FailureObservationState = configurationSource.NotificationConfiguration.FailureNotificationEnabled;
         this.SuccessObservationState = configurationSource.NotificationConfiguration.SuccessNotificationEnabled;
         this.UnknownObservationState = configurationSource.NotificationConfiguration.UnknownNotificationEnabled;
+        this.NotifyOnlyIfStatusChanged = configurationSource.NotificationConfiguration.OnlyIfChanged;
         this.AlwaysOnTop = configurationSource.AlwaysOnTop;
         this.OpenMinimized = configurationSource.OpenMinimized;
         this.ViewStyle = (int)configurationSource.ViewStyle;
@@ -513,6 +532,7 @@ namespace Soloplan.WhatsON.GUI.Config.ViewModel
       configuration.NotificationConfiguration.SuccessNotificationEnabled = this.SuccessObservationState;
       configuration.NotificationConfiguration.UnstableNotificationEnabled = this.UnstableObservationState;
       configuration.NotificationConfiguration.UnknownNotificationEnabled = this.UnknownObservationState;
+      configuration.NotificationConfiguration.OnlyIfChanged = this.NotifyOnlyIfStatusChanged;
     }
 
     /// <summary>

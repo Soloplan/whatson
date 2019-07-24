@@ -46,41 +46,77 @@ namespace Soloplan.WhatsON.GUI.Config
       card.Content = expander;
       expander.HorizontalAlignment = HorizontalAlignment.Stretch;
       var itemsStackPanel = new StackPanel();
+      itemsStackPanel.Orientation = Orientation.Horizontal;
       expander.Content = itemsStackPanel;
+      var itemsStackPanelColumn1 = new StackPanel();
+      itemsStackPanelColumn1.Margin = new Thickness(0, 0, 50, 0);
+      var itemsStackPanelColumn2 = new StackPanel();
+      itemsStackPanel.Children.Add(itemsStackPanelColumn1);
+      itemsStackPanel.Children.Add(itemsStackPanelColumn2);
 
-      IList<NotificationState> notificationStates = new List<NotificationState>();
-      this.ApplyConfigurationItemToNotificationStateList(notificationStates, configItem, configItemAttribute, expander);
+      var notificationState = new NotificationsState();
+
+      this.ApplyConfigurationItemToNotificationState(notificationState, configItem, configItemAttribute, expander);
       var configItemPropertyChanged = (INotifyPropertyChanged)configItem;
-      configItemPropertyChanged.PropertyChanged += (s, e) => this.ApplyConfigurationItemToNotificationStateList(notificationStates, configItem, configItemAttribute, expander);
+      configItemPropertyChanged.PropertyChanged += (s, e) => this.ApplyConfigurationItemToNotificationState(notificationState, configItem, configItemAttribute, expander);
 
-      foreach (var notificationState in notificationStates)
+      foreach (var notificationStateItem in notificationState.ItemsState)
       {
-        var itemStackPanel = new StackPanel();
-        itemStackPanel.Orientation = Orientation.Horizontal;
-        itemStackPanel.Margin = new Thickness(2, 6, 2, 0);
-        var toggleButton = new ToggleButton();
-        var toogleButtonBinding = new Binding(nameof(NotificationState.IsActive));
-        toogleButtonBinding.Source = notificationState;
-        toogleButtonBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-        toggleButton.SetBinding(ToggleButton.IsCheckedProperty, toogleButtonBinding);
-        itemStackPanel.Children.Add(toggleButton);
-        var label = new Label();
-        label.Content = notificationState.Caption;
-
-        if (!notificationState.IsUseGlobalSettings)
-        {
-          var toogleButtonEnabledBinding = new Binding(nameof(NotificationState.IsNotUseGlobalSettingsForParentListActive));
-          toogleButtonEnabledBinding.Source = notificationState;
-          toogleButtonEnabledBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-          toggleButton.SetBinding(UIElement.IsEnabledProperty, toogleButtonEnabledBinding);
-        }
-
-        itemStackPanel.Children.Add(label);
-        itemsStackPanel.Children.Add(itemStackPanel);
+        var stackPanelForToggleButton = this.CreateControlForNotificationStateItem(notificationStateItem);
+        itemsStackPanelColumn1.Children.Add(stackPanelForToggleButton);
       }
 
-      this.UpdateExpanderHeader(expander, notificationStates);
+      var stackPanelForUseGlobalToggleButton = this.CreateControlForNotificationStateItem(notificationState.UseGlobalSettings, false);
+      itemsStackPanelColumn2.Children.Add(stackPanelForUseGlobalToggleButton);
+
+      var stackPanelForOnlyIfStateChangedToggleButton = this.CreateControlForNotificationStateItem(notificationState.OnlyIfStateChanged);
+      itemsStackPanelColumn2.Children.Add(stackPanelForOnlyIfStateChangedToggleButton);
+
+      this.AssignPropertyChangeOfStateItems(notificationState, configItem);
+      this.UpdateExpanderHeader(expander, notificationState);
       return card;
+    }
+
+    private void AssignPropertyChangeOfStateItems(NotificationsState notificationsState, IConfigurationItem configItem)
+    {
+      notificationsState.UseGlobalSettings.PropertyChanged += (s, e) => this.NotificationStateChanged(notificationsState.UseGlobalSettings, configItem, e.PropertyName);
+      notificationsState.OnlyIfStateChanged.PropertyChanged += (s, e) => this.NotificationStateChanged(notificationsState.OnlyIfStateChanged, configItem, e.PropertyName);
+      foreach (var notificationStateItem in notificationsState.ItemsState)
+      {
+        notificationStateItem.PropertyChanged += (s, e) => this.NotificationStateChanged(notificationStateItem, configItem, e.PropertyName);
+      }
+    }
+
+    /// <summary>
+    /// Creates the control for notification state item.
+    /// </summary>
+    /// <param name="notificationStateItem">The notification state item.</param>
+    /// <param name="assignGlobalSettingsEnabledDependency">if set to <c>true</c> [assign global settings enabled dependency].</param>
+    /// <returns>The <see cref="StackPanel"/> with the toggle button and caption.</returns>
+    private StackPanel CreateControlForNotificationStateItem(NotificationStateItem notificationStateItem, bool assignGlobalSettingsEnabledDependency = true)
+    {
+      var itemStackPanel = new StackPanel();
+      itemStackPanel.Orientation = Orientation.Horizontal;
+      itemStackPanel.Margin = new Thickness(2, 6, 2, 0);
+      var toggleButton = new ToggleButton();
+      var toogleButtonBinding = new Binding(nameof(NotificationStateItem.IsActive));
+      toogleButtonBinding.Source = notificationStateItem;
+      toogleButtonBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+      toggleButton.SetBinding(ToggleButton.IsCheckedProperty, toogleButtonBinding);
+      itemStackPanel.Children.Add(toggleButton);
+      var label = new Label();
+      label.Content = notificationStateItem.Caption;
+
+      if (assignGlobalSettingsEnabledDependency)
+      {
+        var toogleButtonEnabledBinding = new Binding(nameof(NotificationStateItem.IsNotUseGlobalSettingsForParentListActive));
+        toogleButtonEnabledBinding.Source = notificationStateItem;
+        toogleButtonEnabledBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+        toggleButton.SetBinding(UIElement.IsEnabledProperty, toogleButtonEnabledBinding);
+      }
+
+      itemStackPanel.Children.Add(label);
+      return itemStackPanel;
     }
 
     /// <summary>
@@ -108,13 +144,13 @@ namespace Soloplan.WhatsON.GUI.Config
     }
 
     /// <summary>
-    /// Applies the <see cref="IConfigurationItem" />to list of <see cref="NotificationState" />s.
+    /// Applies the <see cref="IConfigurationItem" />to <see cref="NotificationsState" />s.
     /// </summary>
-    /// <param name="notificationStates">The notification states.</param>
+    /// <param name="notificationsState">The notification state.</param>
     /// <param name="configItem">The configuration item.</param>
     /// <param name="configItemAttribute">The configuration item attribute.</param>
     /// <param name="expander">The expander control.</param>
-    private void ApplyConfigurationItemToNotificationStateList(IList<NotificationState> notificationStates, IConfigurationItem configItem, ConfigurationItemAttribute configItemAttribute, Expander expander)
+    private void ApplyConfigurationItemToNotificationState(NotificationsState notificationsState, IConfigurationItem configItem, ConfigurationItemAttribute configItemAttribute, Expander expander)
     {
       var configItemValue = configItem.GetOrCreateConnectorNotificationConfiguration();
       var observationStates = Enum.GetValues(typeof(ObservationState)).Cast<ObservationState>().ToList();
@@ -123,44 +159,37 @@ namespace Soloplan.WhatsON.GUI.Config
         this.RemoveNotSupportedObservationStates(observationStates, notificationConfigurationItemAttribute);
       }
 
-      var useGlobalNotificationState = notificationStates.FirstOrDefault(n => n.IsUseGlobalSettings);
-      if (useGlobalNotificationState == null)
+      var useGlobalSettingsNewState = configItemValue.UseGlobalNotificationSettings;
+      if (useGlobalSettingsNewState != notificationsState.UseGlobalSettings.IsActive)
       {
-        useGlobalNotificationState = new NotificationState(notificationStates);
-        useGlobalNotificationState.IsActive = configItemValue.UseGlobalNotificationSettings;
-        useGlobalNotificationState.Caption = "Use global configuration"; // TODO load from resources
-        useGlobalNotificationState.PropertyChanged += (s, e) => this.NotificationStateChanged(useGlobalNotificationState, configItem, e.PropertyName);
-        useGlobalNotificationState.IsUseGlobalSettings = true;
-        notificationStates.Add(useGlobalNotificationState);
+        notificationsState.UseGlobalSettings.IsActive = useGlobalSettingsNewState;
       }
-      else
+
+      var onlyIfStateChangedSettingsNewState = configItemValue.OnlyIfChanged;
+      if (onlyIfStateChangedSettingsNewState != notificationsState.OnlyIfStateChanged.IsActive)
       {
-        var newActiveState = configItemValue.UseGlobalNotificationSettings;
-        if (useGlobalNotificationState.IsActive != newActiveState)
-        {
-          useGlobalNotificationState.IsActive = configItemValue.UseGlobalNotificationSettings;
-        }
+        notificationsState.OnlyIfStateChanged.IsActive = onlyIfStateChangedSettingsNewState;
       }
 
       foreach (var observationState in observationStates)
       {
-        var notificationState = notificationStates.FirstOrDefault(n => n.ObservationState == observationState);
-        if (notificationState == null)
+        var notificationStateItem = notificationsState.ItemsState.FirstOrDefault(n => n.ObservationState == observationState);
+        if (notificationStateItem == null)
         {
-          notificationState = new NotificationState(notificationStates);
-          notificationState.IsActive = configItemValue.AsObservationStateFlag(observationState);
-          notificationState.ObservationState = observationState;
-          notificationState.Caption = observationState.ToString(); // TODO load from resources
-          notificationState.PropertyChanged += (s, e) => this.NotificationStateChanged(notificationState, configItem, e.PropertyName);
-          notificationState.PropertyChanged += (s, e) => this.UpdateExpanderHeader(expander, notificationStates);
-          notificationStates.Add(notificationState);
+          notificationStateItem = new NotificationStateItem(notificationsState);
+          notificationStateItem.IsActive = configItemValue.AsObservationStateFlag(observationState);
+          notificationStateItem.ObservationState = observationState;
+          notificationStateItem.Caption = observationState.ToString(); // TODO load from resources
+          notificationStateItem.PropertyChanged += (s, e) => this.NotificationStateChanged(notificationStateItem, configItem, e.PropertyName);
+          notificationStateItem.PropertyChanged += (s, e) => this.UpdateExpanderHeader(expander, notificationsState);
+          notificationsState.ItemsState.Add(notificationStateItem);
         }
         else
         {
           var newActiveState = configItemValue.UseGlobalNotificationSettings;
-          if (notificationState.IsActive != newActiveState)
+          if (notificationStateItem.IsActive != newActiveState)
           {
-            notificationState.IsActive = configItemValue.AsObservationStateFlag(observationState);
+            notificationStateItem.IsActive = configItemValue.AsObservationStateFlag(observationState);
           }
         }
       }
@@ -170,25 +199,35 @@ namespace Soloplan.WhatsON.GUI.Config
     /// Updates the expander header.
     /// </summary>
     /// <param name="expander">The expander.</param>
-    /// <param name="notificationStates">The notification states.</param>
-    private void UpdateExpanderHeader(Expander expander, IList<NotificationState> notificationStates)
+    /// <param name="notificationsState">The notification state.</param>
+    private void UpdateExpanderHeader(Expander expander, NotificationsState notificationsState)
     {
-      expander.Header = $"Notification settings ({this.GetNotificationsStateTextRepresentation(notificationStates)})"; // TODO resources
+      expander.Header = $"Notification settings ({this.GetNotificationsStateTextRepresentation(notificationsState)})"; // TODO resources
     }
 
     /// <summary>
     /// Gets the notifications state text representation.
     /// </summary>
-    /// <param name="notificationStates">The notification states.</param>
-    /// <returns>The text representation for list of <see cref="NotificationState"/>.</returns>
-    private string GetNotificationsStateTextRepresentation(IList<NotificationState> notificationStates)
+    /// <param name="notificationsState">The notification state.</param>
+    /// <returns>The text representation for list of <see cref="NotificationStateItem"/>.</returns>
+    private string GetNotificationsStateTextRepresentation(NotificationsState notificationsState)
     {
-      if (notificationStates.First(n => n.IsUseGlobalSettings).IsActive)
+      if (notificationsState.UseGlobalSettings.IsActive)
       {
-        return "use global settings"; // TODO resource
+        return "use main settings"; // TODO resource
       }
 
-      var result = string.Join(", ", notificationStates.Where(n => n.IsActive && !n.IsUseGlobalSettings).Select(n => n.Caption));
+      var result = string.Join(", ", notificationsState.ItemsState.Where(n => n.IsActive).Select(n => n.Caption));
+      if (notificationsState.OnlyIfStateChanged.IsActive)
+      {
+        if (!string.IsNullOrWhiteSpace(result))
+        {
+          result += ", ";
+        }
+
+        result += notificationsState.OnlyIfStateChanged.Caption;
+      }
+
       if (string.IsNullOrWhiteSpace(result))
       {
         return "none"; // TODO resource
@@ -198,28 +237,24 @@ namespace Soloplan.WhatsON.GUI.Config
     }
 
     /// <summary>
-    /// Handled the <see cref="NotificationState"/> changed.
+    /// Handled the <see cref="NotificationStateItem"/> changed.
     /// Updates the <see cref="IConfigurationItem"/>.
     /// </summary>
-    /// <param name="notificationState">State of the notification.</param>
+    /// <param name="notificationStateItem">State of the notification.</param>
     /// <param name="configItem">The configuration item.</param>
     /// <param name="propertyName">Name of the property.</param>
-    private void NotificationStateChanged(NotificationState notificationState, IConfigurationItem configItem, string propertyName)
+    private void NotificationStateChanged(NotificationStateItem notificationStateItem, IConfigurationItem configItem, string propertyName)
     {
-      if (propertyName == nameof(NotificationState.IsNotUseGlobalSettingsForParentListActive))
+      if (propertyName == nameof(NotificationStateItem.IsNotUseGlobalSettingsForParentListActive))
       {
         return;
       }
 
       var connectorNotificationConfiguration = new ConnectorNotificationConfiguration();
-      connectorNotificationConfiguration.UseGlobalNotificationSettings = notificationState.ParentList.First(i => i.IsUseGlobalSettings).IsActive;
-      foreach (var item in notificationState.ParentList)
+      connectorNotificationConfiguration.UseGlobalNotificationSettings = notificationStateItem.NotificationsState.UseGlobalSettings.IsActive;
+      connectorNotificationConfiguration.OnlyIfChanged = notificationStateItem.NotificationsState.OnlyIfStateChanged.IsActive;
+      foreach (var item in notificationStateItem.NotificationsState.ItemsState)
       {
-        if (item.IsUseGlobalSettings)
-        {
-          continue;
-        }
-
         connectorNotificationConfiguration.AssignFromObeservationStateActivity(item.ObservationState, item.IsActive);
       }
 
@@ -228,10 +263,58 @@ namespace Soloplan.WhatsON.GUI.Config
     }
 
     /// <summary>
+    /// The notifications state for all possible states plus additional settings.
+    /// </summary>
+    private class NotificationsState
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="NotificationsState"/> class.
+      /// </summary>
+      public NotificationsState()
+      {
+        this.UseGlobalSettings = new NotificationStateItem(this);
+        this.UseGlobalSettings.Caption = "Use main configuration"; // TODO load from resources
+        this.UseGlobalSettings.PropertyChanged += (s, e) =>
+          {
+            foreach (var listItem in this.ItemsState)
+            {
+              listItem.OnPropertyChanged(nameof(NotificationStateItem.IsNotUseGlobalSettingsForParentListActive));
+            }
+
+            this.OnlyIfStateChanged.OnPropertyChanged(nameof(NotificationStateItem.IsNotUseGlobalSettingsForParentListActive));
+          };
+
+        this.OnlyIfStateChanged = new NotificationStateItem(this);
+        this.OnlyIfStateChanged.Caption = "Only if status changed"; // TODO load from resources
+      }
+
+      /// <summary>
+      /// Gets the state items which represents all possible states.
+      /// </summary>
+      public IList<NotificationStateItem> ItemsState { get; } = new List<NotificationStateItem>();
+
+      /// <summary>
+      /// Gets the state item which represents the use global settings flag.
+      /// </summary>
+      public NotificationStateItem UseGlobalSettings
+      {
+        get;
+      }
+
+      /// <summary>
+      /// Gets the state item which represents the "Only if state changed" flag.
+      /// </summary>
+      public NotificationStateItem OnlyIfStateChanged
+      {
+        get;
+      }
+    }
+
+    /// <summary>
     /// The helper class for binding and keeping information about the active state of the notification setting.
     /// </summary>
     /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
-    private class NotificationState : INotifyPropertyChanged
+    private class NotificationStateItem : INotifyPropertyChanged
     {
       /// <summary>
       /// The is active flag.
@@ -239,12 +322,12 @@ namespace Soloplan.WhatsON.GUI.Config
       private bool isActive;
 
       /// <summary>
-      /// Initializes a new instance of the <see cref="NotificationState"/> class.
+      /// Initializes a new instance of the <see cref="NotificationStateItem"/> class.
       /// </summary>
-      /// <param name="parentList">The parent list.</param>
-      public NotificationState(IList<NotificationState> parentList)
+      /// <param name="notificationsState">The notification state.</param>
+      public NotificationStateItem(NotificationsState notificationsState)
       {
-        this.ParentList = parentList;
+        this.NotificationsState = notificationsState;
       }
 
       /// <summary>
@@ -253,9 +336,9 @@ namespace Soloplan.WhatsON.GUI.Config
       public event PropertyChangedEventHandler PropertyChanged;
 
       /// <summary>
-      /// Gets the parent <see cref="NotificationState"/> list.
+      /// Gets the notification state.
       /// </summary>
-      public IList<NotificationState> ParentList { get; }
+      public NotificationsState NotificationsState { get; }
 
       /// <summary>
       /// Gets or sets the <see cref="ObservationState"/> - the reference to the enum value.
@@ -265,7 +348,7 @@ namespace Soloplan.WhatsON.GUI.Config
       /// <summary>
       /// Gets a value indicating whether global settings for notifications are used..
       /// </summary>
-      public bool IsNotUseGlobalSettingsForParentListActive => !this.ParentList.First(i => i.IsUseGlobalSettings).isActive;
+      public bool IsNotUseGlobalSettingsForParentListActive => !this.NotificationsState.UseGlobalSettings.IsActive;
 
       /// <summary>
       /// Gets or sets a value indicating whether this notification setting is active.
@@ -277,17 +360,8 @@ namespace Soloplan.WhatsON.GUI.Config
         {
           this.isActive = value;
           this.OnPropertyChanged();
-          foreach (var listItem in this.ParentList)
-          {
-            listItem.OnPropertyChanged(nameof(this.IsNotUseGlobalSettingsForParentListActive));
-          }
         }
       }
-
-      /// <summary>
-      /// Gets or sets a value indicating whether this state is flag for use of notification settings from global configurations.
-      /// </summary>s
-      public bool IsUseGlobalSettings { get; set; }
 
       /// <summary>
       /// Gets or sets the caption.
@@ -298,7 +372,7 @@ namespace Soloplan.WhatsON.GUI.Config
       /// Called when property changed.
       /// </summary>
       /// <param name="propertyName">Name of the property.</param>
-      protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+      public void OnPropertyChanged([CallerMemberName] string propertyName = null)
       {
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
       }
