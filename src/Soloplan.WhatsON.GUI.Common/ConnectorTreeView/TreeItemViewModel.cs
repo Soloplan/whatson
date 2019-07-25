@@ -24,6 +24,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private CustomCommand deleteCommand;
 
     /// <summary>
+    /// Backing field for <see cref="ConfigurationModifiedInTree"/>.
+    /// </summary>
+    private bool configurationModifiedInTree;
+
+    /// <summary>
     /// Event fired when user requested editing of tree view item in context menu.
     /// </summary>
     public event EventHandler<ValueEventArgs<TreeItemViewModel>> EditItem;
@@ -52,6 +57,23 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     public virtual CustomCommand EditCommand => this.editCommand ?? (this.editCommand = this.CreateEditCommand());
 
     public virtual CustomCommand DeleteCommand => this.deleteCommand ?? (this.deleteCommand = this.CreateDeleteCommand());
+
+    /// <summary>
+    /// Gets or sets a value indicating whether configuration was modified from main window.
+    /// </summary>
+    public virtual bool ConfigurationModifiedInTree
+    {
+      get => this.configurationModifiedInTree;
+      set
+      {
+        if (this.ConfigurationModifiedInTree != value)
+        {
+          this.configurationModifiedInTree = value;
+          this.OnPropertyChanged();
+          this.EditCommand.CanExecute(null);
+        }
+      }
+    }
 
     /// <summary>
     /// Handles double click.

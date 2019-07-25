@@ -3,12 +3,31 @@
                     xmlns:buildServerCommon="clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer;assembly=Soloplan.WhatsON.GUI.Common"
                     xmlns:common="clr-namespace:Soloplan.WhatsON.GUI.Common;assembly=Soloplan.WhatsON.GUI.Common"
                     xmlns:connectorTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView;assembly=Soloplan.WhatsON.GUI.Common"
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:serverHealth="clr-namespace:Soloplan.WhatsON.ServerHealth.GUI;assembly=Soloplan.WhatsON.ServerHealth.GUI">
 
   <connectorTreeView:StatusToColorConverter x:Key="StatusToColorConverter" />
   <connectorTreeView:TimeToAproximateTimeConverter x:Key="TimeToAproximateTimeConverter" />
   <common:InvertBoolToVisibleConverter x:Key="InvertBoolToVis" />
   <BooleanToVisibilityConverter x:Key="BoolToVis" />
+  <ContextMenu x:Key="ServerHealthProjectContextMenu">
+    <MenuItem Command="{Binding EditCommand}">
+      <MenuItem.Header>
+        <StackPanel Orientation="Horizontal">
+          <materialDesign:PackIcon Kind="Edit" />
+          <TextBlock Padding="5,0,0,0" Text="Edit" />
+        </StackPanel>
+      </MenuItem.Header>
+    </MenuItem>
+    <MenuItem Command="{Binding DeleteCommand}">
+      <MenuItem.Header>
+        <StackPanel Orientation="Horizontal">
+          <materialDesign:PackIcon Kind="RemoveCircle" />
+          <TextBlock Padding="5,0,0,0" Text="Delete" />
+        </StackPanel>
+      </MenuItem.Header>
+    </MenuItem>
+  </ContextMenu>
 
   <DataTemplate DataType="{x:Type serverHealth:ServerHealthStatusViewModel}">
     <Button Width="10"
@@ -25,7 +44,7 @@
   </DataTemplate>
 
   <DataTemplate DataType="{x:Type serverHealth:ServerHealthViewModel}">
-    <StackPanel Orientation="Horizontal">
+    <StackPanel ContextMenu="{StaticResource ServerHealthProjectContextMenu}" Orientation="Horizontal">
       <buildServerCommon:BuildInformationIconControl DataContext="{Binding CurrentStatus}">
         <buildServerCommon:BuildInformationIconControl.ToolTip>
           <StackPanel>

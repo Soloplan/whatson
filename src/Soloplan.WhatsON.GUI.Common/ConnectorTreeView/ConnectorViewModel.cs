@@ -116,5 +116,16 @@
 
       return result;
     }
+
+    /// <summary>
+    /// Creates command used for editing this tree item.
+    /// </summary>
+    /// <returns>Command used to edit tree item.</returns>
+    protected override CustomCommand CreateEditCommand()
+    {
+      var command = base.CreateEditCommand();
+      command.CanExecuteExternal += (s, e) => e.Cancel = this.ConfigurationModifiedInTree;
+      return command;
+    }
   }
 }
