@@ -1,4 +1,7 @@
-﻿namespace Soloplan.WhatsON.GUI
+﻿ using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("Soloplan.WhatsON.GUI.Tests")]
+namespace Soloplan.WhatsON.GUI
 {
   using System;
   using System.Drawing;
@@ -125,6 +128,45 @@
     }
 
     /// <summary>
+    /// Checks if the notification should be shown.
+    /// </summary>
+    /// <param name="currentStatus">The current status.</param>
+    /// <param name="stateToCheck">The state to check.</param>
+    /// <param name="notificationConfiguration">The notification configuration.</param>
+    /// <returns>True if the notification should be shown, otherwise false.</returns>
+    internal bool CheckNotificationShow(StatusViewModel currentStatus, ObservationState stateToCheck, NotificationConfiguration notificationConfiguration)
+    {
+      var enabledCheck = this.GetEnabledStateCheck(stateToCheck, notificationConfiguration);
+      if (!enabledCheck())
+      {
+        return false;
+      }
+
+      var connectorSnapshots = currentStatus.Parent.ConnectorSnapshots;
+      if (connectorSnapshots == null || connectorSnapshots.Count == 1 || notificationConfiguration.OnlyIfChanged == false)
+      {
+        return currentStatus.State == stateToCheck;
+      }
+
+      var historicalOrderedConnectorSnapshots = connectorSnapshots.Reverse().Skip(1);
+      foreach (var historicalOrderedConnectorSnapshot in historicalOrderedConnectorSnapshots)
+      {
+        var snapshotEnabledCheck = this.GetEnabledStateCheck(historicalOrderedConnectorSnapshot.State, notificationConfiguration);
+        if (snapshotEnabledCheck() && currentStatus.State == stateToCheck)
+        {
+          if (historicalOrderedConnectorSnapshot.State != currentStatus.State)
+          {
+            return true;
+          }
+
+          return false;
+        }
+      }
+
+      return false;
+    }
+
+    /// <summary>
     /// Called when user attempts to close <see cref="MainWindow"/>. It prevents window being closed and hides it instead.
     /// </summary>
     /// <param name="sender">The sender.</param>
@@ -234,6 +276,44 @@
       this.scheduler.Start();
     }
 
+    /// <summary>
+    /// Gets the enabled state check method call.
+    /// </summary>
+    /// <param name="stateToCheck">The state to check.</param>
+    /// <param name="notificationConfiguration">The notification configuration.</param>
+    /// <returns>The enabled state check method call.</returns>
+    private Func<bool> GetEnabledStateCheck(ObservationState stateToCheck, NotificationConfiguration notificationConfiguration)
+    {
+      Func<bool> enabledCheck;
+      switch (stateToCheck)
+      {
+        case ObservationState.Unknown:
+          enabledCheck = () => notificationConfiguration.UnknownNotificationEnabled;
+          break;
+        case ObservationState.Unstable:
+          enabledCheck = () => notificationConfiguration.UnstableNotificationEnabled;
+          break;
+        case ObservationState.Failure:
+          enabledCheck = () => notificationConfiguration.FailureNotificationEnabled;
+          break;
+        case ObservationState.Success:
+          enabledCheck = () => notificationConfiguration.SuccessNotificationEnabled;
+          break;
+        case ObservationState.Running:
+          enabledCheck = () => notificationConfiguration.RunningNotificationEnabled;
+          break;
+        default:
+          throw new ArgumentOutOfRangeException(nameof(stateToCheck), stateToCheck, null);
+      }
+
+      return enabledCheck;
+    }
+
+    /// <summary>
+    /// Currents status changed.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.ComponentModel.PropertyChangedEventArgs"/> instance containing the event data.</param>
     private void CurrentStatusPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
       if (sender is StatusViewModel statusViewModel && e.PropertyName == nameof(StatusViewModel.State))
@@ -242,23 +322,23 @@
         var notificationConfiguration = this.configuration.GetNotificationConfiguration(connectorConfiguration);
 
         var description = $"Project name: {statusViewModel.Parent.Name}.";
-        if (statusViewModel.State == ObservationState.Running && notificationConfiguration.RunningNotificationEnabled)
+        if (this.CheckNotificationShow(statusViewModel, ObservationState.Running, notificationConfiguration))
         {
           this.ShowBaloon("Build started.", description, System.Windows.Forms.ToolTipIcon.None);
         }
-        else if (statusViewModel.State == ObservationState.Failure && notificationConfiguration.FailureNotificationEnabled)
+        else if (this.CheckNotificationShow(statusViewModel, ObservationState.Failure, notificationConfiguration))
         {
           this.ShowBaloon("Build failed.", description, System.Windows.Forms.ToolTipIcon.Error);
         }
-        else if (statusViewModel.State == ObservationState.Success && notificationConfiguration.SuccessNotificationEnabled)
+        else if (this.CheckNotificationShow(statusViewModel, ObservationState.Success, notificationConfiguration))
         {
           this.ShowBaloon("Build successful", description, System.Windows.Forms.ToolTipIcon.Info);
         }
-        else if (statusViewModel.State == ObservationState.Unstable && notificationConfiguration.UnstableNotificationEnabled)
+        else if (this.CheckNotificationShow(statusViewModel, ObservationState.Unstable, notificationConfiguration))
         {
           this.ShowBaloon("Build successful (Unstable)", description, System.Windows.Forms.ToolTipIcon.Warning);
         }
-        else if (statusViewModel.State == ObservationState.Unknown && notificationConfiguration.UnknownNotificationEnabled)
+        else if (this.CheckNotificationShow(statusViewModel, ObservationState.Unknown, notificationConfiguration))
         {
           this.ShowBaloon("Build interrupted", description, System.Windows.Forms.ToolTipIcon.Warning);
         }

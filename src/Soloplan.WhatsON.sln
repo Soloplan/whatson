@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.WhatsON.GUI.Common
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.WhatsON.CruiseControl.GUI", "Soloplan.WhatsON.CruiseControl.GUI\Soloplan.WhatsON.CruiseControl.GUI.csproj", "{5343A313-4D8D-4B14-8DF4-B575F8E06E74}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.WhatsON.GUI.Tests", "Soloplan.WhatsON.GUI\Tests\Soloplan.WhatsON.GUI.Tests.csproj", "{7A413D70-1B2A-4118-ADEE-09A86D6D5C34}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{5343A313-4D8D-4B14-8DF4-B575F8E06E74}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5343A313-4D8D-4B14-8DF4-B575F8E06E74}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5343A313-4D8D-4B14-8DF4-B575F8E06E74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A413D70-1B2A-4118-ADEE-09A86D6D5C34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A413D70-1B2A-4118-ADEE-09A86D6D5C34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A413D70-1B2A-4118-ADEE-09A86D6D5C34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A413D70-1B2A-4118-ADEE-09A86D6D5C34}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

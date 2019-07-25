@@ -81,9 +81,6 @@
         this.Connector = changedConnector;
       }
 
-      this.Description = changedConnector.Description;
-      this.CurrentStatus.Update(changedConnector.CurrentStatus);
-
       int i = 0;
       bool clearList = false;
       foreach (var changedConnectorSnapshot in changedConnector.Snapshots)
@@ -108,6 +105,9 @@
           this.ConnectorSnapshots.Add(connectorSnapshotViewModel);
         }
       }
+
+      this.Description = changedConnector.Description;
+      this.CurrentStatus.Update(changedConnector.CurrentStatus);
     }
 
     protected virtual StatusViewModel GetViewModelForStatus()
