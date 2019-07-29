@@ -1,69 +1,24 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7A413D70-1B2A-4118-ADEE-09A86D6D5C34}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>Soloplan.WhatsON.GUI.Tests</RootNamespace>
-    <AssemblyName>Soloplan.WhatsON.GUI.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Deterministic>true</Deterministic>
+    <TargetFramework>net472</TargetFramework>
+
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=3.5.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NUnit.3.5.0\lib\net45\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="nunit" Version="3.10.1" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />
   </ItemGroup>
+  
+  <Import Project="..\..\..\config\Soloplan.WhatsON.targets" />
+
+  
   <ItemGroup>
-    <Compile Include="TrayHandlerTests.cs" />
+    <ProjectReference Include="..\..\Soloplan.WhatsON.Jenkins\Soloplan.WhatsON.Jenkins.csproj" />
+    <ProjectReference Include="..\..\Soloplan.WhatsON\Soloplan.WhatsON.csproj" />
+    <ProjectReference Include="..\..\Soloplan.WhatsON.GUI\Soloplan.WhatsON.GUI.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Soloplan.WhatsON.GUI.Common\Soloplan.WhatsON.GUI.Common.csproj">
-      <Project>{8659027C-E4DA-40D3-B081-FFF37BDFD73F}</Project>
-      <Name>Soloplan.WhatsON.GUI.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Soloplan.WhatsON\Soloplan.WhatsON.csproj">
-      <Project>{c5eec17b-e8a9-4cd2-be0b-491e70d9f511}</Project>
-      <Name>Soloplan.WhatsON</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Soloplan.WhatsON.GUI.csproj">
-      <Project>{bb65378f-518e-43e4-a374-592a9fe88e51}</Project>
-      <Name>Soloplan.WhatsON.GUI</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>
