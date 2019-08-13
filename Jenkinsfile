@@ -1,7 +1,8 @@
 #!groovy​
-@Library('SoloPipeline@1.0-rc5')
+@Library('SoloPipeline@1.0-rc7')
 import com.soloplan.*
 
+def Bucket = "whatson"
 pipeline {
   agent {
     label 'dotnet-framework'
@@ -26,7 +27,7 @@ pipeline {
       }
       
       steps {
-        stepPublishArtifacts(folder: "src/bin/Release", bucket: "whatson", exclude: [], excludeSubfolders: false)
+        stepPublishArtifacts(bucket: Bucket, targetFolder: "master", folder: "src/bin/Release",  exclude: [], excludeSubfolders: false)
       }
     }
 
@@ -36,7 +37,7 @@ pipeline {
       }
       
       steps {
-        stepPublishArtifacts(folder: "src/bin/Release", bucket: "whatson-${env.TAG_NAME}", exclude: [], excludeSubfolders: false)
+        stepPublishArtifacts(bucket: Bucket, targetFolder: env.TAG_NAME, folder: "src/bin/Release", exclude: [], excludeSubfolders: false)
       }
     }
   }
