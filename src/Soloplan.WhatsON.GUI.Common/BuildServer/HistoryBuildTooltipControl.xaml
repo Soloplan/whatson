@@ -14,13 +14,11 @@
   </UserControl.Resources>
   <StackPanel>
     <StackPanel Orientation="Horizontal">
-      <TextBlock Text="#" />
-      <TextBlock Text="{Binding BuildNumber}" />
-      <TextBlock Text=", build " />
-      <TextBlock Text="{Binding Time, Converter={StaticResource TimeToAproximateTimeConverter}}" />
+      <TextBlock FontWeight="Bold" FontSize="14" Text="#" />
+      <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding BuildNumber}" />
     </StackPanel>
     <StackPanel Orientation="Horizontal">
-      <TextBlock Text="Duration: " />
+      <TextBlock Text="🕓 Duration: " />
       <TextBlock>
         <TextBlock.Text>
           <MultiBinding StringFormat="{}{0:00}:{1:00}:{2:00}">
@@ -32,8 +30,9 @@
       </TextBlock>
     </StackPanel>
     <StackPanel Orientation="Horizontal">
-      <TextBlock Text="Build date: " />
-      <TextBlock Text="{Binding Time}" />
-    </StackPanel>
+      <TextBlock Text="🏴󠁧󠁢󠁥󠁮󠁧󠁿 Finished: " />
+      <TextBlock Text="{Binding Time, Converter={StaticResource TimeToAproximateTimeConverter}}" />
+      <TextBlock Margin="5,0,0,0" VerticalAlignment="Bottom" FontSize="8" Text="{Binding Time}" />
+     </StackPanel>
   </StackPanel>
 </UserControl>

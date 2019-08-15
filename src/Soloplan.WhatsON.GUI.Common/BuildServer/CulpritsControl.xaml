@@ -12,12 +12,13 @@
   </UserControl.Resources>
 
   <StackPanel Visibility="{Binding CulpritsProp, Mode=OneWay, Converter={StaticResource CountToVisibility}}">
-    <TextBlock Text="---------------------------" />
+    <TextBlock Text="" />
     <TextBlock Text="{Binding Caption}" />
     <ItemsControl ItemsSource="{Binding CulpritsProp}">
       <ItemsControl.ItemTemplate>
         <DataTemplate>
           <StackPanel Orientation="Horizontal">
+            <TextBlock Text="👤 " />
             <TextBlock Text="{Binding FullName}" />
           </StackPanel>
         </DataTemplate>
