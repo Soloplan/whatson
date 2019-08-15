@@ -69,6 +69,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       }
 
       this.BuildNumber = jenkinsStatus.BuildNumber;
+      this.DisplayName = jenkinsStatus.DisplayName;
       this.Building = jenkinsStatus.Building;
       this.Duration = jenkinsStatus.Duration;
       this.EstimatedDuration = jenkinsStatus.EstimatedDuration;

@@ -40,6 +40,24 @@ namespace Soloplan.WhatsON.Jenkins
       }
     }
 
+    public string DisplayName
+    {
+      get
+      {
+        if (this.Properties.TryGetValue(BuildPropertyKeys.DisplayName, out var buildDisplayName))
+        {
+          return buildDisplayName;
+        }
+
+        return this.BuildNumber.ToString(CultureInfo.InvariantCulture);
+      }
+
+      set
+      {
+        this.Properties[BuildPropertyKeys.DisplayName] = value;
+      }
+    }
+
     public bool Building
     {
       get
@@ -130,6 +148,7 @@ namespace Soloplan.WhatsON.Jenkins
     private static class BuildPropertyKeys
     {
       public const string Number = "BuildNumber";
+      public const string DisplayName = "DisplayName";
       public const string Building = "Building";
       public const string Duration = "Duration";
       public const string EstimatedDuration = "EstimatedDuration";

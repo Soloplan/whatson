@@ -14,8 +14,11 @@
   </UserControl.Resources>
   <StackPanel>
     <StackPanel Orientation="Horizontal">
-      <TextBlock FontWeight="Bold" FontSize="14" Text="#" />
-      <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding BuildNumber}" />
+      <TextBlock Text="🏷️ " />
+      <TextBlock FontWeight="Bold" Text="{Binding DisplayName}" />
+      <TextBlock FontSize="10" VerticalAlignment="Center" Margin="5,0,0,0" Text="(#" />
+      <TextBlock FontSize="10" VerticalAlignment="Center" Text="{Binding BuildNumber}" />
+      <TextBlock FontSize="10" VerticalAlignment="Center" Text=")" />
     </StackPanel>
     <StackPanel Orientation="Horizontal">
       <TextBlock Text="🕓 Duration: " />

@@ -18,6 +18,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     private TimeSpan duration;
     private bool building;
     private int? buildNumber;
+    private string displayName;
 
     private int progress;
 
@@ -56,10 +57,26 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
       protected set
       {
-
         if (this.buildNumber != value)
         {
           this.buildNumber = value;
+          this.OnPropertyChanged();
+        }
+      }
+    }
+
+    public string DisplayName
+    {
+      get
+      {
+        return this.displayName;
+      }
+
+      protected set
+      {
+        if (this.displayName != value)
+        {
+          this.displayName = value;
           this.OnPropertyChanged();
         }
       }

@@ -140,6 +140,7 @@ namespace Soloplan.WhatsON.Jenkins
       };
 
       newStatus.BuildNumber = latestBuild.Number;
+      newStatus.DisplayName = latestBuild.DisplayName;
       newStatus.Building = latestBuild.Building;
       newStatus.DurationInMs = latestBuild.Duration;
       newStatus.EstimatedDurationInMs = latestBuild.EstimatedDuration;
