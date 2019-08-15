@@ -3,6 +3,7 @@
   using System.Net;
   using System.Windows;
   using System.Windows.Interop;
+  using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.GUI.Logging;
   using Soloplan.WhatsON.Serialization;
 
@@ -65,10 +66,10 @@
         this.scheduler.Observe(connector);
       }
 
-      this.themeHelper.Initialize();
+      this.handler = new TrayHandler(this.scheduler, this.config);
+      this.themeHelper.Initialize(this.handler.VisualSettings?.MainColorSettings);
       this.ApplyTheme();
 
-      this.handler = new TrayHandler(this.scheduler, this.config);
       this.scheduler.Start();
       ComponentDispatcher.ThreadPreprocessMessage += this.ComponentDispatcherThreadPreprocessMessage;
     }

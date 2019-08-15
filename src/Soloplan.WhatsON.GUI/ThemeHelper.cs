@@ -14,18 +14,26 @@ namespace Soloplan.WhatsON.GUI
   using System.Windows.Media;
   using MaterialDesignColors;
   using MaterialDesignThemes.Wpf;
+  using Soloplan.WhatsON.GUI.Common.VisualConfig;
 
   /// <summary>
   /// Helper class for managing themes and color adjustments to the UI.
   /// </summary>
   internal class ThemeHelper
   {
+    static ThemeHelper()
+    {
+      MainColor = Color.FromRgb(192, 0, 107);
+    }
+
+    public static Color MainColor { get; private set; }
+
     /// <summary>
     /// Initializes this instance.
     /// </summary>
-    public void Initialize()
+    public void Initialize(MainColorSettings settings)
     {
-      this.ApplySoloplanThemeColors();
+      this.ApplySoloplanThemeColors(settings);
     }
 
     /// <summary>
@@ -48,31 +56,56 @@ namespace Soloplan.WhatsON.GUI
     /// <summary>
     /// Applies our favorite colors to current palette.
     /// </summary>
-    private void ApplySoloplanThemeColors()
+    private void ApplySoloplanThemeColors(MainColorSettings settings)
     {
       var paletteHelper = new PaletteHelper();
 
       var newPrimaryHues = new List<Hue>();
-      newPrimaryHues.Add(new Hue("Primary50", Color.FromRgb(247, 224, 237), Color.FromRgb(255, 255, 255)));
-      newPrimaryHues.Add(new Hue("Primary100", Color.FromRgb(236, 179, 211), Color.FromRgb(255, 255, 255)));
-      newPrimaryHues.Add(new Hue("Primary200", Color.FromRgb(224, 128, 181), Color.FromRgb(255, 255, 255)));
-      newPrimaryHues.Add(new Hue("Primary300", Color.FromRgb(211, 77, 151), Color.FromRgb(255, 255, 255)));
-      newPrimaryHues.Add(new Hue("Primary400", Color.FromRgb(201, 38, 129), Color.FromRgb(255, 255, 255)));
-      newPrimaryHues.Add(new Hue("Primary500", Color.FromRgb(192, 0, 107), Color.FromRgb(255, 255, 255)));
-      newPrimaryHues.Add(new Hue("Primary600", Color.FromRgb(186, 0, 99), Color.FromRgb(255, 255, 255)));
-      newPrimaryHues.Add(new Hue("Primary700", Color.FromRgb(178, 0, 88), Color.FromRgb(255, 255, 255)));
-      newPrimaryHues.Add(new Hue("Primary800", Color.FromRgb(170, 0, 78), Color.FromRgb(255, 255, 255)));
-      newPrimaryHues.Add(new Hue("Primary900", Color.FromRgb(156, 0, 60), Color.FromRgb(255, 255, 255)));
+      MainColor = settings != null ? settings.GetColor() : Color.FromRgb(192, 0, 107);
+
+      newPrimaryHues.Add(new Hue("Primary50", ChangeColorBrightness(MainColor, 0.5f), Color.FromRgb(255, 255, 255)));
+      newPrimaryHues.Add(new Hue("Primary100", ChangeColorBrightness(MainColor, 0.4f), Color.FromRgb(255, 255, 255)));
+      newPrimaryHues.Add(new Hue("Primary200", ChangeColorBrightness(MainColor, 0.3f), Color.FromRgb(255, 255, 255)));
+      newPrimaryHues.Add(new Hue("Primary300", ChangeColorBrightness(MainColor, 0.2f), Color.FromRgb(255, 255, 255)));
+      newPrimaryHues.Add(new Hue("Primary400", ChangeColorBrightness(MainColor, 0.1f), Color.FromRgb(255, 255, 255)));
+      newPrimaryHues.Add(new Hue("Primary500", MainColor, Color.FromRgb(255, 255, 255)));
+      newPrimaryHues.Add(new Hue("Primary600", ChangeColorBrightness(MainColor, -0.1f), Color.FromRgb(255, 255, 255)));
+      newPrimaryHues.Add(new Hue("Primary700", ChangeColorBrightness(MainColor, -0.2f), Color.FromRgb(255, 255, 255)));
+      newPrimaryHues.Add(new Hue("Primary800", ChangeColorBrightness(MainColor, -0.3f), Color.FromRgb(255, 255, 255)));
+      newPrimaryHues.Add(new Hue("Primary900", ChangeColorBrightness(MainColor, -0.4f), Color.FromRgb(255, 255, 255)));
 
       var newAccentHues = new List<Hue>();
-      newAccentHues.Add(new Hue("Accent100", Color.FromRgb(255, 199, 216), Color.FromRgb(255, 255, 255)));
-      newAccentHues.Add(new Hue("Accent200", Color.FromRgb(255, 148, 181), Color.FromRgb(255, 255, 255)));
-      newAccentHues.Add(new Hue("Accent400", Color.FromRgb(255, 97, 145), Color.FromRgb(255, 255, 255)));
-      newAccentHues.Add(new Hue("Accent700", Color.FromRgb(255, 71, 127), Color.FromRgb(255, 255, 255)));
+      newAccentHues.Add(new Hue("Accent100", ChangeColorBrightness(MainColor, 0.85f), Color.FromRgb(255, 255, 255)));
+      newAccentHues.Add(new Hue("Accent200", ChangeColorBrightness(MainColor, 0.80f), Color.FromRgb(255, 255, 255)));
+      newAccentHues.Add(new Hue("Accent400", ChangeColorBrightness(MainColor, 0.75f), Color.FromRgb(255, 255, 255)));
+      newAccentHues.Add(new Hue("Accent700", ChangeColorBrightness(MainColor, 0.70f), Color.FromRgb(255, 255, 255)));
 
       var swatch = new Swatch("Soloplan WhatsOn", newPrimaryHues, newAccentHues);
       var palette = new Palette(swatch, swatch, 3, 5, 4, 2);
       paletteHelper.ReplacePalette(palette);
+    }
+
+    public static Color ChangeColorBrightness(Color color, float correctionFactor)
+    {
+      float red = (float)color.R;
+      float green = (float)color.G;
+      float blue = (float)color.B;
+
+      if (correctionFactor < 0)
+      {
+        correctionFactor = 1 + correctionFactor;
+        red *= correctionFactor;
+        green *= correctionFactor;
+        blue *= correctionFactor;
+      }
+      else
+      {
+        red = ((255 - red) * correctionFactor) + red;
+        green = ((255 - green) * correctionFactor) + green;
+        blue = ((255 - blue) * correctionFactor) + blue;
+      }
+
+      return Color.FromRgb((byte)red, (byte)green, (byte)blue);
     }
   }
 }

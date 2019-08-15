@@ -43,7 +43,7 @@ namespace Soloplan.WhatsON.GUI
     /// <summary>
     /// App settings.
     /// </summary>
-    private MainWindowSettigns settings;
+    private MainWindowSettings settings;
 
     private bool initialized;
 
@@ -104,17 +104,19 @@ namespace Soloplan.WhatsON.GUI
       }
     }
 
-    public MainWindowSettigns GetVisualSettigns()
+    public MainWindowSettings GetVisualSettings()
     {
       this.settings.TreeListSettings = this.mainTreeView.GetTreeListSettings();
       this.settings.MainWindowDimensions = new WindowSettings().Parse(this);
+      this.settings.MainColorSettings = new MainColorSettings();
+      this.settings.MainColorSettings.Apply(ThemeHelper.MainColor);
 
       return this.settings;
     }
 
-    public void ApplyVisualSettings(MainWindowSettigns visualSettings)
+    public void ApplyVisualSettings(MainWindowSettings visualSettings)
     {
-      this.settings = visualSettings ?? new MainWindowSettigns();
+      this.settings = visualSettings ?? new MainWindowSettings();
 
       if (this.settings.MainWindowDimensions != null)
       {

@@ -1,4 +1,4 @@
-﻿ using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Soloplan.WhatsON.GUI.Tests")]
 namespace Soloplan.WhatsON.GUI
@@ -19,7 +19,7 @@ namespace Soloplan.WhatsON.GUI
   /// </summary>
   public class TrayHandler : IDisposable
   {
-    private const string VisualSettingsFile = "VisualSettingsFile.json";
+    private const string VisualSettingsFile = "visualsettings.json";
 
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
@@ -47,8 +47,6 @@ namespace Soloplan.WhatsON.GUI
 
     private NotificationsModel model;
 
-    private MainWindowSettigns visualSettings;
-
     public TrayHandler(ObservationScheduler scheduler, ApplicationConfiguration configuration)
     {
       this.icon = new System.Windows.Forms.NotifyIcon();
@@ -69,7 +67,7 @@ namespace Soloplan.WhatsON.GUI
 
       if (File.Exists(Path.Combine(SerializationHelper.ConfigFolder, VisualSettingsFile)))
       {
-        this.visualSettings = SerializationHelper.Load<MainWindowSettigns>(Path.Combine(SerializationHelper.ConfigFolder, VisualSettingsFile));
+        this.VisualSettings = SerializationHelper.Load<MainWindowSettings>(Path.Combine(SerializationHelper.ConfigFolder, VisualSettingsFile));
       }
 
       if (!this.configuration.OpenMinimized)
@@ -77,6 +75,8 @@ namespace Soloplan.WhatsON.GUI
         this.ShowOrHideWindow();
       }
     }
+
+    public MainWindowSettings VisualSettings { get; private set; }
 
     /// <summary>
     /// Gets a value indicating whether the main window is visible.
@@ -94,7 +94,7 @@ namespace Soloplan.WhatsON.GUI
         {
           this.mainWindow = new MainWindow(this.scheduler, this.configuration, this.model.Connectors.Select(sub => sub.Connector).ToList());
 
-          this.mainWindow.ApplyVisualSettings(this.visualSettings);
+          this.mainWindow.ApplyVisualSettings(this.VisualSettings);
 
           this.mainWindow.Closing += this.MainWindowClosing;
           this.mainWindow.Closed += this.MainWindowClosed;
@@ -173,14 +173,14 @@ namespace Soloplan.WhatsON.GUI
     /// <param name="e">The event args.</param>
     private void MainWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
     {
-      this.visualSettings = this.mainWindow.GetVisualSettigns();
+      this.VisualSettings = this.mainWindow.GetVisualSettings();
     }
 
     private void MainWindowClosed(object sender, EventArgs e)
     {
-      if (this.visualSettings != null)
+      if (this.VisualSettings != null)
       {
-        SerializationHelper.Save(this.visualSettings, Path.Combine(SerializationHelper.ConfigFolder, VisualSettingsFile));
+        SerializationHelper.Save(this.VisualSettings, Path.Combine(SerializationHelper.ConfigFolder, VisualSettingsFile));
       }
 
       this.mainWindow.Closing -= this.MainWindowClosing;
