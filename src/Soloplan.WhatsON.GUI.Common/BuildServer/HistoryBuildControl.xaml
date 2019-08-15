@@ -21,8 +21,8 @@
     </ContextMenu>
   </UserControl.Resources>
   <StackPanel ContextMenu="{StaticResource ContextMenuBuild}">
-    <Button Width="10"
-            Height="10"
+    <Button Width="6"
+            Height="6"
             Background="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
             BorderBrush="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}">
       <i:Interaction.Triggers>

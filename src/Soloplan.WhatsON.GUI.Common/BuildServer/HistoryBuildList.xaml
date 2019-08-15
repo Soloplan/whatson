@@ -14,7 +14,7 @@
     <ListView.ItemContainerStyle>
       <Style BasedOn="{StaticResource {x:Type ListViewItem}}" TargetType="{x:Type ListViewItem}">
         <Setter Property="Focusable" Value="false" />
-        <Setter Property="Padding" Value="2" />
+        <Setter Property="Padding" Value="4" />
       </Style>
     </ListView.ItemContainerStyle>
     <ListView.ItemsPanel>

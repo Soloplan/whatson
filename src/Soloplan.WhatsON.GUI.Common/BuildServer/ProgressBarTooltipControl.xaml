@@ -15,7 +15,7 @@
     <StackPanel Orientation="Vertical" Visibility="{Binding BuildingNoLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
       <StackPanel Orientation="Horizontal">
         <TextBlock Text="Completion: " />
-        <TextBlock Text="{Binding Progres}" />
+        <TextBlock Text="{Binding Progress}" />
         <TextBlock Text="% " />
       </StackPanel>
       <StackPanel Orientation="Horizontal">
