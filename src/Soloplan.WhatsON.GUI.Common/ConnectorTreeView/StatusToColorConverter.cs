@@ -18,9 +18,9 @@
           case ObservationState.Unstable:
             return new SolidColorBrush(System.Windows.Media.Colors.Orange);
           case ObservationState.Failure:
-            return new SolidColorBrush(System.Windows.Media.Colors.DarkRed);
+            return new SolidColorBrush(Color.FromRgb(201, 42, 60));
           case ObservationState.Success:
-            return new SolidColorBrush(System.Windows.Media.Colors.DarkGreen);
+            return new SolidColorBrush(Color.FromRgb(66, 171, 20));
           case ObservationState.Running:
             return new SolidColorBrush(System.Windows.Media.Colors.DarkCyan);
         }

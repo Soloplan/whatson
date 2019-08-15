@@ -6,8 +6,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:s="clr-namespace:System;assembly=mscorlib"
              xmlns:connectorTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView"
-             MaxHeight="16"
-             MaxWidth="16"
+             MaxHeight="12"
+             MaxWidth="12"
              d:DataContext="{d:DesignInstance local:BuildStatusViewModel}"
              ToolTipService.ShowDuration="{x:Static s:Int32.MaxValue}"
              mc:Ignorable="d">
@@ -38,10 +38,10 @@
           Visibility="{Binding Failure, Converter={StaticResource BoolToVisibility}}" />
     <ProgressBar DockPanel.Dock="Left"
                  IsIndeterminate="True"
-                 Width="16"
-                 Height="16"
+                 Width="12"
+                 Height="12"
                  Style="{StaticResource MaterialDesignCircularProgressBar}"
                  Visibility="{Binding Building, Converter={StaticResource BoolToVisibility}}"
-                 Value="{Binding Progres, Mode=OneWay}" />
+                 Value="{Binding Progress, Mode=OneWay}" />
   </DockPanel>
 </UserControl>

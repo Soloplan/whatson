@@ -23,8 +23,8 @@
   </DataTemplate>
 
   <DataTemplate DataType="{x:Type gui:JenkinsProjectViewModel}">
-    <StackPanel ContextMenu="{DynamicResource BuildServerProjectContextMenu}" Orientation="Horizontal">
-      <buildServer:BuildInformationIconControl DataContext="{Binding CurrentStatus}">
+    <DockPanel ContextMenu="{DynamicResource BuildServerProjectContextMenu}" Width="Auto">
+      <buildServer:BuildInformationIconControl DockPanel.Dock="Left" DataContext="{Binding CurrentStatus}">
         <buildServer:BuildInformationIconControl.ToolTip>
           <StackPanel>
             <buildServer:ProgressBarTooltipControl DataContext="{Binding}" />
@@ -35,12 +35,10 @@
           </StackPanel>
         </buildServer:BuildInformationIconControl.ToolTip>
       </buildServer:BuildInformationIconControl>
-      <TextBlock Text=" " />
-      <TextBlock Text="{Binding Name}" />
-      <TextBlock Text=" #" />
-      <TextBlock Text="{Binding CurrentStatus.BuildNumber}" />
-      <TextBlock Text=" " />
-      <buildServer:HistoryBuildList DataContext="{Binding ConnectorSnapshots, Mode=OneWay}" />
-    </StackPanel>
+      <TextBlock Margin="5,0,0,0" Text="#" VerticalAlignment="Center" FontSize="11" FontWeight="Normal"/>
+      <TextBlock Margin="2,0,0,0" MinWidth="40" FontWeight="Light" HorizontalAlignment="Right" Text="{Binding CurrentStatus.BuildNumber}" />
+      <TextBlock Margin="5,0,0,0" FontWeight="Light" TextTrimming="CharacterEllipsis" Text="{Binding Name}" />
+      <buildServer:HistoryBuildList DockPanel.Dock="Right" DataContext="{Binding ConnectorSnapshots, Mode=OneWay}" />
+    </DockPanel>
   </DataTemplate>
 </ResourceDictionary>

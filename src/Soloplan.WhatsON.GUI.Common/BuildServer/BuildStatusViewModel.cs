@@ -19,9 +19,9 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     private bool building;
     private int? buildNumber;
 
-    private int progres;
+    private int progress;
 
-    private int rawProgres;
+    private int rawProgress;
 
     private bool buildingNoLongerThenExpected;
 
@@ -56,6 +56,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
       protected set
       {
+
         if (this.buildNumber != value)
         {
           this.buildNumber = value;
@@ -150,18 +151,18 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     /// <item>Otherwise the value from build server is shown.</item>
     /// </list>
     /// </summary>
-    public int Progres
+    public int Progress
     {
       get
       {
-        return this.progres;
+        return this.progress;
       }
 
       protected set
       {
-        if (this.progres != value)
+        if (this.progress != value)
         {
-          this.progres = value;
+          this.progress = value;
           this.OnPropertyChanged();
         }
       }
@@ -170,12 +171,12 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     /// <summary>
     /// Gets or sets the true value of progress. Can get above 100% if the build takes longer then expected.
     /// </summary>
-    public int RawProgres
+    public int RawProgress
     {
-      get => this.rawProgres;
+      get => this.rawProgress;
       protected set
       {
-        this.rawProgres = value;
+        this.rawProgress = value;
         this.OnPropertyChanged();
       }
     }
@@ -257,26 +258,26 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     }
 
     /// <summary>
-    /// Updates <see cref="Progres"/> based on other parameters.
+    /// Updates <see cref="Progress"/> based on other parameters.
     /// </summary>
     /// <remarks>
-    /// Must be called when <see cref="BuildingNoLongerThenExpected"/>, <see cref="BuildingLongerThenExpected"/> and <see cref="RawProgres"/> are calculated
+    /// Must be called when <see cref="BuildingNoLongerThenExpected"/>, <see cref="BuildingLongerThenExpected"/> and <see cref="RawProgress"/> are calculated
     /// and won't change. It is important not to change values when <see cref="BuildingLongerThenExpected"/> because it resets the indeterminate progress bar
     /// and the animation looks bad.
     /// </remarks>
     private void UpdateProgres()
     {
-      if (this.BuildingNoLongerThenExpected && this.RawProgres == 0)
+      if (this.BuildingNoLongerThenExpected && this.RawProgress == 0)
       {
-        this.Progres = 1;
+        this.Progress = 1;
       }
       else if (this.BuildingLongerThenExpected)
       {
-        this.Progres = 0;
+        this.Progress = 0;
       }
       else
       {
-        this.Progres = this.RawProgres;
+        this.Progress = this.RawProgress;
       }
     }
   }

@@ -70,7 +70,7 @@
       </buildServer:BuildInformationIconControl>
       <TextBlock Text=" " />
       <TextBlock Text="{Binding Name}" />
-      <TextBlock Text=" #" />
+      <TextBlock Text=" " />
       <TextBlock Text="{Binding CurrentStatus.BuildNumber}" />
       <TextBlock Text=" " />
       <buildServer:HistoryBuildList DataContext="{Binding ConnectorSnapshots, Mode=OneWay}" />

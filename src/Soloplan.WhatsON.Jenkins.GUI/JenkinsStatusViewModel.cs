@@ -76,12 +76,12 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       if (this.State == ObservationState.Running)
       {
         var elapsedSinceStart = (DateTime.Now - this.Time).TotalSeconds;
-        this.RawProgres = (int)((100 * elapsedSinceStart) / this.EstimatedDuration.TotalSeconds);
+        this.RawProgress = (int)((100 * elapsedSinceStart) / this.EstimatedDuration.TotalSeconds);
         this.Duration = DateTime.Now - this.Time;
       }
       else
       {
-        this.RawProgres = 0;
+        this.RawProgress = 0;
       }
 
       this.CommittedToThisBuild.Clear();

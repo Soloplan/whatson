@@ -46,6 +46,8 @@
                           CustomButtonIcon="SettingsOutline"
                           CustomButtonVisible="{Binding ConfigurationModifiedFromTree, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Converter={StaticResource InvertBoolConverter}}"
                           DockPanel.Dock="Top"
+                          FontSize="12"
+                          Height="32"
                           ShowMinimizeButton="{Binding Path=ShowInTaskbar, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}"
                           Window="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" />
 
@@ -104,7 +106,7 @@
           </StackPanel>
         </materialDesign:PopupBox>
 
-        <connectorTreeView:ConnectorsTreeView x:Name="mainTreeView" Visibility="{Binding IsTreeInitialized, Converter={StaticResource BoolToVis}}" />
+        <connectorTreeView:ConnectorsTreeView x:Name="mainTreeView" Visibility="{Binding IsTreeInitialized, Converter={StaticResource BoolToVis}}" HorizontalAlignment="Stretch" />
         <TextBlock HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    FontSize="18"

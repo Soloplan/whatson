@@ -16,8 +16,8 @@
                             MouseDown="MainWindowBarMouseDown">
     <DockPanel DockPanel.Dock="Top">
 
-      <materialDesign:PackIcon Width="30"
-                               Height="30"
+      <materialDesign:PackIcon Width="20"
+                               Height="20 "
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center"
                                Background="Transparent"
@@ -28,22 +28,22 @@
                                MouseDown="OnButtonClicked" />
       <ContentControl Width="30" Height="30" Visibility="{Binding CustomButtonVisible, Converter={StaticResource InvertBoolToVis}}"/>
 
-      <Button Width="30"
-              Height="30"
+      <Button Width="20"
+              Height="20"
               Margin="1"
               Padding="0"
               Click="CloseButtonClick"
               Cursor="Hand"
               DockPanel.Dock="Right"
               IsTabStop="False">
-        <materialDesign:PackIcon Width="30"
-                                 Height="30"
+        <materialDesign:PackIcon Width="20"
+                                 Height="20"
                                  Kind="WindowClose" />
       </Button>
 
       <Button x:Name="MinimizeButton"
-              Width="30"
-              Height="30"
+              Width="20"
+              Height="20"
               Margin="1"
               Padding="0,6,0,0"
               Click="MinimizeButonClick"
@@ -51,8 +51,8 @@
               DockPanel.Dock="Right"
               IsTabStop="False"
               Visibility="{Binding Path=ShowMinimizeButton, Converter={StaticResource BoolToVis}}">
-        <materialDesign:PackIcon Width="30"
-                                 Height="30"
+        <materialDesign:PackIcon Width="20"
+                                 Height="20"
                                  Kind="WindowMinimize" />
       </Button>
 
@@ -60,7 +60,7 @@
                  HorizontalAlignment="Center"
                  VerticalAlignment="Center"
                  DockPanel.Dock="Right"
-                 FontSize="18"
+                 FontSize="14"
                  Text="{Binding Path=Text}" />
 
     </DockPanel>
