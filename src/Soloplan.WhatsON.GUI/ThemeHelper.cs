@@ -80,7 +80,7 @@ namespace Soloplan.WhatsON.GUI
       newAccentHues.Add(new Hue("Accent400", ChangeColorBrightness(MainColor, 0.75f), Color.FromRgb(255, 255, 255)));
       newAccentHues.Add(new Hue("Accent700", ChangeColorBrightness(MainColor, 0.70f), Color.FromRgb(255, 255, 255)));
 
-      var swatch = new Swatch("Soloplan WhatsOn", newPrimaryHues, newAccentHues);
+      var swatch = new Swatch("WhatsON", newPrimaryHues, newAccentHues);
       var palette = new Palette(swatch, swatch, 3, 5, 4, 2);
       paletteHelper.ReplacePalette(palette);
     }

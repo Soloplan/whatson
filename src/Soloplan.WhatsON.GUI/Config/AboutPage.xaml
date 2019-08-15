@@ -10,7 +10,7 @@
 
   <DockPanel>
     <StackPanel DockPanel.Dock="Top">
-      <TextBlock TextWrapping="Wrap" Text="Soloplan WhatsON" FontSize="36" Margin="20,20,20,0"/>
+      <TextBlock TextWrapping="Wrap" Text="WhatsON" FontSize="36" Margin="20,20,20,0"/>
 
       <TextBlock Text="https://github.com/Soloplan/whatson" Margin="20,0,20,30" Foreground="#FF2B7AD2" AutomationProperties.Name="projectWebsiteLink" MouseUp="TextBlockLinkMouseUp" MouseEnter="TextBlockMouseEnter" MouseLeave="TextBlockMouseLeave"/>
       <TextBlock TextWrapping="Wrap" Text="Copyright (c) Soloplan GmbH. All rights reserved." HorizontalAlignment="Left" Margin="20,0,20,10"/>
@@ -18,7 +18,7 @@
         <TextBlock TextWrapping="Wrap" Text="MIT license:" Margin="0,2,5,0" Width="68"/>
         <TextBlock Width="562" RenderTransformOrigin="0.503,0.479" Text="https://github.com/Soloplan/whatson/blob/master/LICENSE" Margin="0" Foreground="#FF2B7AD2" MouseUp="TextBlockLinkMouseUp" MouseEnter="TextBlockMouseEnter" MouseLeave="TextBlockMouseLeave"/>
       </StackPanel>
-      <TextBlock TextWrapping="Wrap" Text="Authors: Christian Heidl, Steffen Wilke, Dominik Gołda, Krzysztof Lorenc" Margin="20,0,20,10"/>
+      <TextBlock TextWrapping="Wrap" Text="Authors: Krzysztof Lorenc, Dominik Gołda, Steffen Wilke, Christian Heidl" Margin="20,0,20,10"/>
       <StackPanel Height="22" Margin="20,0,20,10" Orientation="Horizontal">
         <TextBlock TextWrapping="Wrap" Text="Version:" Margin="0,0,3,0"/>
         <TextBlock x:Name="VersionLabel" TextWrapping="Wrap" Text="{}{Version}" Width="176"/>
