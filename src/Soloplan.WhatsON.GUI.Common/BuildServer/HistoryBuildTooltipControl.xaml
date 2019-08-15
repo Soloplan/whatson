@@ -35,7 +35,11 @@
     <StackPanel Orientation="Horizontal">
       <TextBlock Text="🏴󠁧󠁢󠁥󠁮󠁧󠁿 Finished: " />
       <TextBlock Text="{Binding Time, Converter={StaticResource TimeToAproximateTimeConverter}}" />
-      <TextBlock Margin="5,0,0,0" VerticalAlignment="Bottom" FontSize="8" Text="{Binding Time}" />
+
      </StackPanel>
+    <StackPanel Orientation="Horizontal">
+      <TextBlock Text="📆 " />
+      <TextBlock Text="{Binding Time}" />
+    </StackPanel>
   </StackPanel>
 </UserControl>
