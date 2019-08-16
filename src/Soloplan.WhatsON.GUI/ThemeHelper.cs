@@ -23,7 +23,7 @@ namespace Soloplan.WhatsON.GUI
   {
     static ThemeHelper()
     {
-      MainColor = Color.FromRgb(192, 0, 107);
+      MainColor = Color.FromRgb(79, 84, 89);
     }
 
     public static Color MainColor { get; private set; }
@@ -61,7 +61,10 @@ namespace Soloplan.WhatsON.GUI
       var paletteHelper = new PaletteHelper();
 
       var newPrimaryHues = new List<Hue>();
-      MainColor = settings != null ? settings.GetColor() : Color.FromRgb(192, 0, 107);
+      if (settings != null)
+      {
+        MainColor = settings.GetColor();
+      }
 
       newPrimaryHues.Add(new Hue("Primary50", ChangeColorBrightness(MainColor, 0.5f), Color.FromRgb(255, 255, 255)));
       newPrimaryHues.Add(new Hue("Primary100", ChangeColorBrightness(MainColor, 0.4f), Color.FromRgb(255, 255, 255)));
