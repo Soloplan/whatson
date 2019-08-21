@@ -1,23 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.329
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29209.62
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Soloplan.WhatsON", "Soloplan.WhatsON\Soloplan.WhatsON.csproj", "{C5EEC17B-E8A9-4CD2-BE0B-491E70D9F511}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.WhatsON.CLI", "Soloplan.WhatsON.CLI\Soloplan.WhatsON.CLI.csproj", "{26E4594D-FB62-44AF-AE11-7800A2C0789B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Soloplan.WhatsON.ServerHealth", "Soloplan.WhatsON.ServerHealth\Soloplan.WhatsON.ServerHealth.csproj", "{1EFDF62C-568C-49BA-8D1D-3B0B05945271}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Soloplan.WhatsON.Jenkins", "Soloplan.WhatsON.Jenkins\Soloplan.WhatsON.Jenkins.csproj", "{ED2AE201-2F23-44D3-A98A-CEDB0F2C6003}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Soloplan.WhatsON.ServerBase", "Soloplan.WhatsON.ServerBase\Soloplan.WhatsON.ServerBase.csproj", "{4FF2C930-A740-4323-B63F-0D7B773E4355}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.WhatsON.GUI", "Soloplan.WhatsON.GUI\Soloplan.WhatsON.GUI.csproj", "{BB65378F-518E-43E4-A374-592A9FE88E51}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.WhatsON.Jenkins.GUI", "Soloplan.WhatsON.Jenkins.GUI\Soloplan.WhatsON.Jenkins.GUI.csproj", "{D97A8094-EF1F-4CF7-8511-3619B2BAF31A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.WhatsON.ServerHealth.GUI", "Soloplan.WhatsON.ServerHealth.GUI\Soloplan.WhatsON.ServerHealth.GUI.csproj", "{20B706EB-A7B3-41A0-9102-9CA431FC2CAB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Soloplan.WhatsON.Jenkins.Tests", "Soloplan.WhatsON.Jenkins.Tests\Soloplan.WhatsON.Jenkins.Tests.csproj", "{09784F4C-4E89-4AF4-B913-9F05AD714090}"
 EndProject
@@ -29,7 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.WhatsON.GUI.Common
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.WhatsON.CruiseControl.GUI", "Soloplan.WhatsON.CruiseControl.GUI\Soloplan.WhatsON.CruiseControl.GUI.csproj", "{5343A313-4D8D-4B14-8DF4-B575F8E06E74}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.WhatsON.GUI.Tests", "Soloplan.WhatsON.GUI\Tests\Soloplan.WhatsON.GUI.Tests.csproj", "{7A413D70-1B2A-4118-ADEE-09A86D6D5C34}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Soloplan.WhatsON.GUI.Tests", "Soloplan.WhatsON.GUI\Tests\Soloplan.WhatsON.GUI.Tests.csproj", "{7A413D70-1B2A-4118-ADEE-09A86D6D5C34}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,22 +33,10 @@ Global
 		{C5EEC17B-E8A9-4CD2-BE0B-491E70D9F511}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C5EEC17B-E8A9-4CD2-BE0B-491E70D9F511}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C5EEC17B-E8A9-4CD2-BE0B-491E70D9F511}.Release|Any CPU.Build.0 = Release|Any CPU
-		{26E4594D-FB62-44AF-AE11-7800A2C0789B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{26E4594D-FB62-44AF-AE11-7800A2C0789B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{26E4594D-FB62-44AF-AE11-7800A2C0789B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{26E4594D-FB62-44AF-AE11-7800A2C0789B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1EFDF62C-568C-49BA-8D1D-3B0B05945271}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1EFDF62C-568C-49BA-8D1D-3B0B05945271}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1EFDF62C-568C-49BA-8D1D-3B0B05945271}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1EFDF62C-568C-49BA-8D1D-3B0B05945271}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ED2AE201-2F23-44D3-A98A-CEDB0F2C6003}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ED2AE201-2F23-44D3-A98A-CEDB0F2C6003}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED2AE201-2F23-44D3-A98A-CEDB0F2C6003}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED2AE201-2F23-44D3-A98A-CEDB0F2C6003}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4FF2C930-A740-4323-B63F-0D7B773E4355}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4FF2C930-A740-4323-B63F-0D7B773E4355}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4FF2C930-A740-4323-B63F-0D7B773E4355}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4FF2C930-A740-4323-B63F-0D7B773E4355}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BB65378F-518E-43E4-A374-592A9FE88E51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BB65378F-518E-43E4-A374-592A9FE88E51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB65378F-518E-43E4-A374-592A9FE88E51}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -65,10 +45,6 @@ Global
 		{D97A8094-EF1F-4CF7-8511-3619B2BAF31A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D97A8094-EF1F-4CF7-8511-3619B2BAF31A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D97A8094-EF1F-4CF7-8511-3619B2BAF31A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{20B706EB-A7B3-41A0-9102-9CA431FC2CAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{20B706EB-A7B3-41A0-9102-9CA431FC2CAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{20B706EB-A7B3-41A0-9102-9CA431FC2CAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{20B706EB-A7B3-41A0-9102-9CA431FC2CAB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{09784F4C-4E89-4AF4-B913-9F05AD714090}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{09784F4C-4E89-4AF4-B913-9F05AD714090}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09784F4C-4E89-4AF4-B913-9F05AD714090}.Release|Any CPU.ActiveCfg = Release|Any CPU

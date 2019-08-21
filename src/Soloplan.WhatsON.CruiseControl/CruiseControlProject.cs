@@ -14,7 +14,6 @@ namespace Soloplan.WhatsON.CruiseControl
   using NLog;
   using Soloplan.WhatsON;
   using Soloplan.WhatsON.CruiseControl.Model;
-  using Soloplan.WhatsON.ServerBase;
 
   [ConnectorType("Cruise Control Project Status", Description = "Retrieve the current status of a Cruise Control project.")]
   [ConfigurationItem(ProjectName, typeof(string), Optional = false, Priority = 300)]

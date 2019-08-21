@@ -15,7 +15,6 @@ namespace Soloplan.WhatsON.Jenkins
   using Newtonsoft.Json;
   using NLog;
   using Soloplan.WhatsON.Jenkins.Model;
-  using Soloplan.WhatsON.ServerBase;
 
   public class JenkinsApi : IJenkinsApi
   {

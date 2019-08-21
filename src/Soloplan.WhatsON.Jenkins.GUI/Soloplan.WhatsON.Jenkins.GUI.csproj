@@ -66,11 +66,6 @@
       <Name>Soloplan.WhatsON.Jenkins</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\Soloplan.WhatsON.ServerBase\Soloplan.WhatsON.ServerBase.csproj">
-      <Project>{4ff2c930-a740-4323-b63f-0d7b773e4355}</Project>
-      <Name>Soloplan.WhatsON.ServerBase</Name>
-      <Private>False</Private>
-    </ProjectReference>
     <ProjectReference Include="..\Soloplan.WhatsON\Soloplan.WhatsON.csproj">
       <Project>{c5eec17b-e8a9-4cd2-be0b-491e70d9f511}</Project>
       <Name>Soloplan.WhatsON</Name>

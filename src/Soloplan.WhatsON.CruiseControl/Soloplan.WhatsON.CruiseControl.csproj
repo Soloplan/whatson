@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -20,9 +20,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\Soloplan.WhatsON.ServerBase\Soloplan.WhatsON.ServerBase.csproj">
-          <Private>false</Private>
-    </ProjectReference>
     <ProjectReference Include="..\Soloplan.WhatsON\Soloplan.WhatsON.csproj">
           <Private>false</Private>
     </ProjectReference>

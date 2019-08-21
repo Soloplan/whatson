@@ -1,4 +1,4 @@
-﻿namespace Soloplan.WhatsON.ServerBase
+﻿namespace Soloplan.WhatsON
 {
   public static class ConnectorExtensions
   {
