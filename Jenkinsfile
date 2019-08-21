@@ -27,7 +27,7 @@ pipeline {
       }
       
       steps {
-        stepPublishArtifacts(bucket: Bucket, targetFolder: "master", folder: "src/bin/Release",  exclude: [], excludeSubfolders: false)
+        stepPublishArtifacts(bucket: Bucket, targetFolder: "master", folder: "src/bin/Release",  exclude: ['*.deps.json'], excludeSubfolders: false)
       }
     }
 
