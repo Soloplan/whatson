@@ -8,6 +8,11 @@ pipeline {
     label 'dotnet-framework'
   } 
 
+  environment {
+    // enables additional build functionality (like signing) in a Soloplan Build environment
+    UseSoloBuildNuget = 'True'
+  }
+
   stages {
     stage('Agent info') {
       steps {

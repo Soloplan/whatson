@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+  <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <UseSoloAnalyzers>False</UseSoloAnalyzers>
+    <UseSoloCompiler>False</UseSoloCompiler>
+    <ApplySoloNuGetVersions>False</ApplySoloNuGetVersions>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Soloplan.Build">
+      <Version>0.0.5</Version>
+    </PackageReference>
+  </ItemGroup>
+</Project>

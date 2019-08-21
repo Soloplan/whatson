@@ -1,7 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-[assembly: InternalsVisibleTo("Soloplan.WhatsON.GUI.Tests")]
-namespace Soloplan.WhatsON.GUI
+﻿namespace Soloplan.WhatsON.GUI
 {
   using System;
   using System.Drawing;
