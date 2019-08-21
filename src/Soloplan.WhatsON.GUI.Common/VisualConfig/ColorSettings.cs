@@ -8,7 +8,20 @@ namespace Soloplan.WhatsON.GUI.Common.VisualConfig
 {
   using System.Windows.Media;
 
-  public class MainColorSettings
+  public class ColorSettings
+  {
+    public ColorSettings()
+    {
+      this.Primary = new ColorSetting();
+      this.Secondary = new ColorSetting();
+    }
+
+    public ColorSetting Primary { get; set; }
+
+    public ColorSetting Secondary { get; set; }
+  }
+
+  public class ColorSetting
   {
     public byte Red { get; set; }
 

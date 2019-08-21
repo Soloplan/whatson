@@ -67,7 +67,7 @@
       }
 
       this.handler = new TrayHandler(this.scheduler, this.config);
-      this.themeHelper.Initialize(this.handler.VisualSettings?.MainColorSettings);
+      this.themeHelper.Initialize(this.handler.VisualSettings?.ColorSettings);
       this.ApplyTheme();
 
       this.scheduler.Start();

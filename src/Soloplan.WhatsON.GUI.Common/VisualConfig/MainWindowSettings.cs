@@ -15,6 +15,6 @@ namespace Soloplan.WhatsON.GUI.Common.VisualConfig
 
     public WindowSettings ConfigDialogSettings { get; set; }
 
-    public MainColorSettings MainColorSettings { get; set; }
+    public ColorSettings ColorSettings { get; set; }
   }
 }

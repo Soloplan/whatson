@@ -88,7 +88,7 @@
     <Compile Include="ConnectorTreeView\TimeToAproximateTimeConverter.cs" />
     <Compile Include="ConnectorTreeView\TreeItemViewModel.cs" />
     <Compile Include="VisualConfig\GroupExpansionSettings.cs" />
-    <Compile Include="VisualConfig\MainColorSettings.cs" />
+    <Compile Include="VisualConfig\ColorSettings.cs" />
     <Compile Include="VisualConfig\MainWindowSettings.cs" />
     <Compile Include="VisualConfig\TreeListSettings.cs" />
     <Compile Include="VisualConfig\WindowSettings.cs" />

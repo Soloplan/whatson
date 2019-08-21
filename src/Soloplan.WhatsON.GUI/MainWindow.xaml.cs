@@ -108,8 +108,9 @@ namespace Soloplan.WhatsON.GUI
     {
       this.settings.TreeListSettings = this.mainTreeView.GetTreeListSettings();
       this.settings.MainWindowDimensions = new WindowSettings().Parse(this);
-      this.settings.MainColorSettings = new MainColorSettings();
-      this.settings.MainColorSettings.Apply(ThemeHelper.MainColor);
+      this.settings.ColorSettings = new ColorSettings();
+      this.settings.ColorSettings.Primary.Apply(ThemeHelper.PrimaryColor);
+      this.settings.ColorSettings.Secondary.Apply(ThemeHelper.SecondaryColor);
 
       return this.settings;
     }
