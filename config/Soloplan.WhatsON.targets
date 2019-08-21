@@ -3,9 +3,6 @@
     <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)whatson.ruleset</CodeAnalysisRuleSet>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-
-    <!-- Only set this to true if you know what you're doing. This requires a configured NuGet feed and will cause the project to be uncompilable otherwise. -->
-    <UseSoloBuildNuget Condition="'$(UseSoloBuildNuget)' == ''">False</UseSoloBuildNuget>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,10 +20,4 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-
-  <PropertyGroup Condition=" $(UseSoloBuildNuget) == 'False'">
-    <DefineConstants>UNSIGNED</DefineConstants>
-  </PropertyGroup>
-
-  <Import Project="$(MSBuildThisFileDirectory)Soloplan.BuildPackage.targets" Condition="'$(UseSoloBuildNuget)'=='True'"/>
 </Project>
