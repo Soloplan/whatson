@@ -42,7 +42,7 @@ pipeline {
       }
       
       steps {
-        stepPublishArtifacts(bucket: Bucket, targetFolder: env.TAG_NAME, folder: "src/bin/Release", exclude: [], excludeSubfolders: false)
+        stepPublishArtifacts(bucket: Bucket, targetFolder: env.TAG_NAME, folder: "src/bin/Release", exclude: ['*.deps.json', '*.pdb'], excludeSubfolders: false)
       }
     }
   }
