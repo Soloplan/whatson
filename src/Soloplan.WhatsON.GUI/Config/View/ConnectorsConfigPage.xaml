@@ -28,19 +28,21 @@
       Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}"
       PopupMode="MouseOver"
       PlacementMode="TopAndAlignCentres"
-      ToolTip="Add new connector"
       Panel.ZIndex="2" Margin="0,0,25,10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="56"
       Visibility="{Binding Path=SingleConnectorMode, Converter={StaticResource InvertBoolToVis}}">
+        <materialDesign:PopupBox.ToggleContent>
+          <materialDesign:PackIcon Kind="DotsHorizontal" />
+        </materialDesign:PopupBox.ToggleContent>
         <StackPanel>
-          <Button ToolTip="Delete connector" Click="DeleteConnectorClick">
+          <Button ToolTip="Delete project" Click="DeleteConnectorClick">
             <materialDesign:PackIcon Kind="RemoveCircle" Width="24" Height="24" />
           </Button>
 
-          <Button ToolTip="Rename connector" Click="RenameConnectorClick">
+          <Button ToolTip="Rename project" Click="RenameConnectorClick">
             <materialDesign:PackIcon Kind="Edit" Width="24" Height="24" />
           </Button>
 
-          <Button ToolTip="Add connector" Click="AddConnectorClick">
+          <Button ToolTip="Add project" Click="AddConnectorClick">
             <materialDesign:PackIcon Kind="Add" Width="24" Height="24" />
           </Button>
 
