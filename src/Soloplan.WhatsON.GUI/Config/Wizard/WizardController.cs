@@ -343,6 +343,7 @@ namespace Soloplan.WhatsON.GUI.Config.Wizard
     {
       this.wizardWindow = new WizardWindow(this);
       this.wizardWindow.Owner = this.ownerWindow;
+      this.wizardWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
       this.GoToConnectionStep();
       if (this.wizardWindow.ShowDialog() == true)
       {

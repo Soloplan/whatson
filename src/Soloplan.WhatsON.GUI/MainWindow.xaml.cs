@@ -263,19 +263,13 @@ namespace Soloplan.WhatsON.GUI
       }
 
       configWindow.Owner = this;
+      configWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
       configWindow.ConfigurationApplied += (s, ev) =>
       {
         this.ConfigurationApplied?.Invoke(this, ev);
       };
 
-      if (this.settings.ConfigDialogSettings != null)
-      {
-        this.settings.ConfigDialogSettings.Apply(configWindow);
-      }
-      else
-      {
-        configWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-      }
+      this.settings.ConfigDialogSettings?.Apply(configWindow);
 
       configWindow.Closing += (s, ev) =>
       {
