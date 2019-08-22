@@ -5,10 +5,9 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Soloplan.WhatsON.Jenkins.GUI
+namespace Soloplan.WhatsON.GUI.Common
 {
   using NLog;
-  using Soloplan.WhatsON.GUI.Common;
 
   public class OpenWebPageCommand : ExternalEnabledStateCommand
   {

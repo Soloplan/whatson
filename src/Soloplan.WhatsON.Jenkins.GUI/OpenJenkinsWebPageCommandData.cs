@@ -7,6 +7,8 @@
 
 namespace Soloplan.WhatsON.Jenkins.GUI
 {
+  using Soloplan.WhatsON.GUI.Common;
+
   public class OpenJenkinsWebPageCommandData : OpenWebPageCommandData
   {
     public override string FullAddress => this.Address.TrimEnd('/') + (this.Redirect ? "/display/redirect" : string.Empty);

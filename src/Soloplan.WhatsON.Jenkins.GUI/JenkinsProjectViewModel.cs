@@ -7,6 +7,7 @@
 
 namespace Soloplan.WhatsON.Jenkins.GUI
 {
+  using Soloplan.WhatsON.GUI.Common;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
 
