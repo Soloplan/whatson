@@ -10,6 +10,14 @@
 
   <ContextMenu x:Key="BuildServerProjectContextMenu">
     <!--  CommandParameter must be declared before Command or else value from previous opening of context menu will be passed. WTF?!  -->
+    <MenuItem CommandParameter="{Binding CurrentStatus}" Command="{Binding CurrentStatus.CopyBuildLabel}">
+      <MenuItem.Header>
+        <StackPanel Orientation="Horizontal">
+          <materialDesign:PackIcon Kind="TagOutline" />
+          <TextBlock Padding="10,0,0,0" Text="Copy latest build label" />
+        </StackPanel>
+      </MenuItem.Header>
+    </MenuItem>
     <MenuItem Command="{Binding EditCommand}">
       <MenuItem.Header>
         <StackPanel Orientation="Horizontal">

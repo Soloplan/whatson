@@ -7,6 +7,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:s="clr-namespace:System;assembly=mscorlib"
              xmlns:connectorTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              d:DataContext="{d:DesignInstance local:BuildStatusViewModel}"
              d:DesignHeight="450"
              d:DesignWidth="800"
@@ -15,9 +16,22 @@
   <UserControl.Resources>
     <connectorTreeView:StatusToColorConverter x:Key="StatusToColorConverter" />
     <ContextMenu x:Key="ContextMenuBuild">
-      <MenuItem Header="Open build web page"
-                CommandParameter="{Binding OpenBuildPageCommandData}"
-                Command="{Binding OpenBuildPage}" />
+      <MenuItem CommandParameter="{Binding}" Command="{Binding CopyBuildLabel}">
+        <MenuItem.Header>
+          <StackPanel Orientation="Horizontal">
+            <materialDesign:PackIcon Kind="TagOutline" />
+            <TextBlock Padding="10,0,0,0" Text="Copy build label" />
+          </StackPanel>
+        </MenuItem.Header>
+      </MenuItem>
+      <MenuItem CommandParameter="{Binding OpenBuildPageCommandData}" Command="{Binding OpenBuildPage}">
+        <MenuItem.Header>
+          <StackPanel Orientation="Horizontal">
+            <materialDesign:PackIcon Kind="Link" />
+            <TextBlock Padding="10,0,0,0" Text="Open build web page" />
+          </StackPanel>
+        </MenuItem.Header>
+      </MenuItem>
     </ContextMenu>
   </UserControl.Resources>
   <StackPanel ContextMenu="{StaticResource ContextMenuBuild}">

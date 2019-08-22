@@ -43,6 +43,8 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     /// </summary>
     public virtual OpenWebPageCommand OpenBuildPage { get; } = new OpenWebPageCommand();
 
+    public virtual CopyBuildLabelCommand CopyBuildLabel { get; } = new CopyBuildLabelCommand();
+
     public abstract OpenWebPageCommandData OpenBuildPageCommandData { get; }
 
     public ObservableCollection<CulpritViewModel> Culprits => this.culprits ?? (this.culprits = new ObservableCollection<CulpritViewModel>());
