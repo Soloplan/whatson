@@ -61,6 +61,10 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     public event EventHandler ButtonClicked;
 
+    public event EventHandler AddConnectorClicked;
+
+    public event EventHandler AddGroupClicked;
+
     /// <summary>
     /// Gets or sets the window handled by this instance.
     /// </summary>
@@ -201,6 +205,16 @@ namespace Soloplan.WhatsON.GUI
     private void OnButtonClicked(object sender, MouseButtonEventArgs e)
     {
       this.ButtonClicked?.Invoke(sender, e);
+    }
+
+    private void NewGroupClick(object sender, RoutedEventArgs e)
+    {
+      this.AddGroupClicked?.Invoke(sender, e);
+    }
+
+    private void NewConnectorClick(object sender, RoutedEventArgs e)
+    {
+      this.AddConnectorClicked?.Invoke(sender, e);
     }
   }
 }

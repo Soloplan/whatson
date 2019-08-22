@@ -8,6 +8,9 @@
              d:DesignHeight="60"
              d:DesignWidth="300"
              mc:Ignorable="d">
+  <UserControl.Resources>
+    <Style x:Key="MaterialDesignMultiFloatingActionPopupBox" TargetType="materialDesign:PopupBox" />
+  </UserControl.Resources>
   <materialDesign:ColorZone Margin="0"
                             Padding="6"
                             materialDesign:ShadowAssist.ShadowDepth="Depth2"
@@ -16,8 +19,8 @@
                             MouseDown="MainWindowBarMouseDown">
     <DockPanel DockPanel.Dock="Top">
 
-      <materialDesign:PackIcon Width="20"
-                               Height="20 "
+      <materialDesign:PackIcon Width="16"
+                               Height="16"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center"
                                Background="Transparent"
@@ -26,6 +29,40 @@
                                Kind="{Binding CustomButtonIcon}"
                                Visibility="{Binding CustomButtonVisible, Converter={StaticResource BoolToVis}}"
                                MouseDown="OnButtonClicked" />
+
+      <materialDesign:PopupBox
+        Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}"
+        PlacementMode="BottomAndAlignLeftEdges"
+        ToolTipService.Placement="Right"
+        Padding="0,0,0,0"
+        Visibility="{Binding CustomButtonVisible, Converter={StaticResource BoolToVis}}">
+        <materialDesign:PopupBox.ToggleContent>
+          <materialDesign:PackIcon Width="20"
+                                    Height="20 "
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center" 
+                                    Kind="Add"
+                                    Cursor="Hand"
+                                    DockPanel.Dock="Left"
+                                    Margin="10,0,0,0"
+                                    Foreground="White"/>
+        </materialDesign:PopupBox.ToggleContent>
+        <StackPanel>
+          <Button Click="NewConnectorClick" IsEnabled="{Binding ConfigurationModifiedFromTree, Converter={StaticResource InvertBoolConverter}}">
+            <StackPanel Orientation="Horizontal">
+              <materialDesign:PackIcon Width="16" Height="16" Kind="EyeAddOutline" />
+              <TextBlock  Margin="10,0,0,0">Add project(s)</TextBlock>
+            </StackPanel>
+          </Button>
+          <Button Click="NewGroupClick" IsEnabled="{Binding ConfigurationModifiedFromTree, Converter={StaticResource InvertBoolConverter}}">
+            <StackPanel Orientation="Horizontal">
+              <materialDesign:PackIcon Width="16" Height="16" Kind="LibraryAdd" />
+              <TextBlock Margin="10,0,0,0">Add new group</TextBlock>
+            </StackPanel>
+          </Button>
+        </StackPanel>
+      </materialDesign:PopupBox>
+
       <ContentControl Width="30" Height="30" Visibility="{Binding CustomButtonVisible, Converter={StaticResource InvertBoolToVis}}"/>
 
       <Button Width="20"
@@ -56,13 +93,20 @@
                                  Kind="WindowMinimize" />
       </Button>
 
-      <TextBlock Name="appName"
-                 HorizontalAlignment="Center"
-                 VerticalAlignment="Center"
-                 DockPanel.Dock="Right"
-                 FontSize="14"
-                 Text="{Binding Path=Text}" />
+      <StackPanel Name="title" HorizontalAlignment="Center" VerticalAlignment="Center" DockPanel.Dock="Top" Orientation="Horizontal">
+        <StackPanel.Style>
+          <Style TargetType="StackPanel">
+            <Setter Property="Margin" Value="0 0 0 0"/>
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding CustomButtonVisible}" Value="True">
+                <Setter Property="Margin" Value="-32,0,0,0"/>
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </StackPanel.Style>
 
+        <TextBlock Name="appName" VerticalAlignment="Center" FontSize="13" FontWeight="Light" Text="{Binding Path=Text}" />
+      </StackPanel>
     </DockPanel>
   </materialDesign:ColorZone>
 </UserControl>

@@ -46,7 +46,7 @@
                  SelectionChanged="ListBoxSelectionChanged"
                  SelectedItem="{Binding Path=InitialFocusedConfigurationListBoxItem, Mode=OneWay}">
           <ListBoxItem Content="Main" Tag="{x:Static view:ConfigWindow.MainListItemTag}" />
-          <ListBoxItem Content="Connectors" Tag="{x:Static view:ConfigWindow.ConnectorsListItemTag}" />
+          <ListBoxItem Content="Projects" Tag="{x:Static view:ConfigWindow.ConnectorsListItemTag}" />
           <ListBoxItem Content="About" Tag="{x:Static view:ConfigWindow.AboutListItemTag}" />
         </ListBox>
 

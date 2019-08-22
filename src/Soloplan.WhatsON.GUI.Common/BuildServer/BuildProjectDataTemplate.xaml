@@ -14,7 +14,7 @@
       <MenuItem.Header>
         <StackPanel Orientation="Horizontal">
           <materialDesign:PackIcon Kind="Edit" />
-          <TextBlock Padding="5,0,0,0" Text="Edit" />
+          <TextBlock Padding="10,0,0,0" Text="Edit" />
         </StackPanel>
       </MenuItem.Header>
     </MenuItem>
@@ -22,7 +22,7 @@
       <MenuItem.Header>
         <StackPanel Orientation="Horizontal">
           <materialDesign:PackIcon Kind="RemoveCircle" />
-          <TextBlock Padding="5,0,0,0" Text="Delete" />
+          <TextBlock Padding="10,0,0,0" Text="Delete" />
         </StackPanel>
       </MenuItem.Header>
     </MenuItem>
@@ -31,7 +31,7 @@
       <MenuItem.Header>
         <StackPanel Orientation="Horizontal">
           <materialDesign:PackIcon Kind="Link" />
-          <TextBlock Padding="5,0,0,0" Text="Open project web page" />
+          <TextBlock Padding="10,0,0,0" Text="Open project web page" />
         </StackPanel>
       </MenuItem.Header>
     </MenuItem>
@@ -41,7 +41,7 @@
       <MenuItem.Header>
         <StackPanel Orientation="Horizontal">
           <materialDesign:PackIcon Kind="Link" />
-          <TextBlock Padding="5,0,0,0" Text="Open current build page" />
+          <TextBlock Padding="10,0,0,0" Text="Open current build page" />
         </StackPanel>
       </MenuItem.Header>
     </MenuItem>

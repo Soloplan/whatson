@@ -68,7 +68,6 @@ namespace Soloplan.WhatsON.GUI
     public MainWindow(ObservationScheduler scheduler, ApplicationConfiguration configuration, IList<Connector> initialConnectorState)
     {
       this.InitializeComponent();
-      this.AddPluginsNotSupportingWizard();
       this.scheduler = scheduler;
       this.config = configuration;
       this.initialConnectorState = initialConnectorState;
@@ -167,8 +166,8 @@ namespace Soloplan.WhatsON.GUI
     /// Handles the Click event of the add new connector button control.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-    private void NewConnectorClick(object sender, RoutedEventArgs e)
+    /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+    private void NewConnectorClick(object sender, EventArgs e)
     {
       var wizardController = new WizardController(this);
       var result = false;
@@ -238,7 +237,7 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">Event args.</param>
-    private async void NewGroupClick(object sender, RoutedEventArgs e)
+    private async void NewGroupClick(object sender, EventArgs e)
     {
       var model = new GroupViewModel
       {
@@ -358,40 +357,6 @@ namespace Soloplan.WhatsON.GUI
 
       var dialog = new OkCancelDialog(message);
       e.AddAsyncCancelCheckAction(async () => !await this.ShowDialogOnPageHost(dialog));
-    }
-
-    /// <summary>
-    /// Adds buttons for creating plugins which aren't supported by the wizard.
-    /// </summary>
-    private void AddPluginsNotSupportingWizard()
-    {
-      var enabledBinding = new Binding(nameof(this.ConfigurationModifiedFromTree));
-      enabledBinding.Converter = Application.Current.FindResource("InvertBoolConverter") as IValueConverter;
-      enabledBinding.Source = this;
-      enabledBinding.Mode = BindingMode.OneWay;
-      enabledBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-
-      foreach (var plugIn in PluginsManager.Instance.PlugIns.OfType<IConnectorPlugin>().Where(plugin => !plugin.SupportsWizard))
-      {
-        var button = new Button();
-        button.Content = new PackIcon
-        {
-          Kind = PackIconKind.ServerPlus,
-          Width = 24,
-          Height = 24,
-        };
-
-        var tip = new ToolTip();
-        tip.Content = new TextBlock() { Text = $"Add {plugIn.ConnectorTypeAttribute.Name}" };
-        button.ToolTip = tip;
-        button.Click += (s, e) =>
-        {
-          this.OpenConfig(plugIn);
-        };
-
-        BindingOperations.SetBinding(button, Button.IsEnabledProperty, enabledBinding);
-        this.uxPopupBoxItemPanel.Children.Add(button);
-      }
     }
 
     /// <summary>

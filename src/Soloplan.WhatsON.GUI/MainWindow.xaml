@@ -43,6 +43,8 @@
   </Window.Resources>
   <DockPanel>
     <local:CustomTitleBar ButtonClicked="OpenConfig"
+                          AddConnectorClicked="NewConnectorClick"
+                          AddGroupClicked="NewGroupClick"
                           CustomButtonIcon="SettingsOutline"
                           CustomButtonVisible="{Binding ConfigurationModifiedFromTree, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Converter={StaticResource InvertBoolConverter}}"
                           DockPanel.Dock="Top"
@@ -82,30 +84,6 @@
 
     <materialDesign:DialogHost DockPanel.Dock="Bottom" Identifier="MainWindowPageHost">
       <Grid>
-        <materialDesign:PopupBox Width="56"
-                                 Margin="0,0,20,20"
-                                 HorizontalAlignment="Right"
-                                 VerticalAlignment="Bottom"
-                                 Panel.ZIndex="2"
-                                 PlacementMode="TopAndAlignCentres"
-                                 PopupMode="MouseOver"
-                                 Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}">
-          <StackPanel Name="uxPopupBoxItemPanel">
-            <Button Click="NewGroupClick" ToolTip="Add new group">
-              <materialDesign:PackIcon Width="24"
-                                       Height="24"
-                                       Kind="LibraryAdd" />
-            </Button>
-            <Button Click="NewConnectorClick"
-                    IsEnabled="{Binding ConfigurationModifiedFromTree, Converter={StaticResource InvertBoolConverter}}"
-                    ToolTip="Add new connector(s)">
-              <materialDesign:PackIcon Width="24"
-                                       Height="24"
-                                       Kind="Rocket" />
-            </Button>
-          </StackPanel>
-        </materialDesign:PopupBox>
-
         <connectorTreeView:ConnectorsTreeView x:Name="mainTreeView" Visibility="{Binding IsTreeInitialized, Converter={StaticResource BoolToVis}}" HorizontalAlignment="Stretch" />
         <TextBlock HorizontalAlignment="Center"
                    VerticalAlignment="Center"
