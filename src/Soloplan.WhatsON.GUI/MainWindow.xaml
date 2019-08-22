@@ -55,7 +55,7 @@
             Padding="8,8,30,8"
             DockPanel.Dock="Bottom"
             Visibility="{Binding ConfigurationModifiedFromTree, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Converter={StaticResource BoolToVis}}">
-      <DockPanel Background="{DynamicResource MaterialDesignBody}" LastChildFill="False">
+      <DockPanel Background="{DynamicResource MaterialDesignBody}" LastChildFill="False" Margin="0,0,-20,0">
         <TextBlock Padding="5"
                    VerticalAlignment="Center"
                    Foreground="{DynamicResource MaterialDesignBackground}"
