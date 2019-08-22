@@ -84,7 +84,7 @@
 
     <materialDesign:DialogHost DockPanel.Dock="Bottom" Identifier="MainWindowPageHost">
       <Grid>
-        <connectorTreeView:ConnectorsTreeView x:Name="mainTreeView" Visibility="{Binding IsTreeInitialized, Converter={StaticResource BoolToVis}}" HorizontalAlignment="Stretch" />
+        <connectorTreeView:ConnectorsTreeView x:Name="mainTreeView" Margin="0,3,0,0" Visibility="{Binding IsTreeInitialized, Converter={StaticResource BoolToVis}}" HorizontalAlignment="Stretch" />
         <TextBlock HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    FontSize="18"

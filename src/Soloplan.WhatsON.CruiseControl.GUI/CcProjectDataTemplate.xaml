@@ -16,9 +16,9 @@
           </StackPanel>
         </buildServer:BuildInformationIconControl.ToolTip>
       </buildServer:BuildInformationIconControl>
-      <TextBlock Margin="5,0,0,0" Text="#" VerticalAlignment="Center" FontSize="11" FontWeight="Normal"/>
-      <TextBlock Margin="2,0,0,0" MinWidth="40" FontWeight="Light" HorizontalAlignment="Right" Text="{Binding CurrentStatus.BuildNumber}" />
-      <TextBlock Margin="5,0,0,0" FontWeight="Light" TextTrimming="CharacterEllipsis" MinWidth="150" MaxWidth="250" Text="{Binding Name}" />
+      <TextBlock Margin="5,0,0,0" Text="#" VerticalAlignment="Center" FontSize="10" FontWeight="Normal"/>
+      <TextBlock Margin="2,0,0,0" MinWidth="40" FontWeight="Light" HorizontalAlignment="Right" FontSize="12" Text="{Binding CurrentStatus.BuildNumber}" />
+      <TextBlock Margin="5,0,0,0" FontWeight="Light" TextTrimming="CharacterEllipsis" MinWidth="150" MaxWidth="250" FontSize="12" Text="{Binding Name}" />
       <buildServer:HistoryBuildList DockPanel.Dock="Right" DataContext="{Binding ConnectorSnapshots, Mode=OneWay}" />
       <TextBlock Margin="5,0,10,0" DockPanel.Dock="Right" FontWeight="Light" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="10" Text="{Binding CurrentStatus.Time, Converter={StaticResource TimeToAproximateTimeConverter}}" />
     </DockPanel>
