@@ -111,11 +111,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
       protected set
       {
-        if (this.time != value)
-        {
-          this.time = value;
-          this.OnPropertyChanged();
-        }
+        this.time = value;
+        this.OnPropertyChanged();
       }
     }
 
