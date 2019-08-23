@@ -45,6 +45,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BuildServer\BuildNumberControl.xaml.cs">
+      <DependentUpon>BuildNumberControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="BuildServer\CopyBuildLabelCommand.cs" />
     <Compile Include="BuildServer\CountToVisibilityConvrter.cs" />
     <Compile Include="BuildServer\CulpritsControl.xaml.cs">
@@ -118,6 +121,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="BuildServer\BuildNumberControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="BuildServer\CulpritsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
