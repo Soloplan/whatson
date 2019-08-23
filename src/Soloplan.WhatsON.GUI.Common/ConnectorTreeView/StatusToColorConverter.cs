@@ -12,12 +12,6 @@
       if (value is StatusViewModel status)
       {
         Color color = GetColor(status.State);
-        if (status.Age != 0)
-        {
-          var desaturation = (status.Age / (double)Connector.MaxSnapshots) * 0.7;
-          color = Desaturate(color, desaturation);
-        }
-
         return new SolidColorBrush(color);
       }
 
@@ -33,6 +27,7 @@
     {
       return null;
     }
+
     private static Color GetColor(ObservationState state)
     {
       switch (state)
@@ -53,17 +48,6 @@
           return Color.FromRgb(120, 144, 156);
           break;
       }
-    }
-
-    private static Color Desaturate(Color color, double percent)
-    {
-      // https://stackoverflow.com/questions/13328029/how-to-desaturate-a-color
-      var l = (0.3 * color.R) + (0.6 * color.G) + (0.1 * color.B);
-      var newRed = color.R + (percent * (l - color.R));
-      var newGreen = color.G + (percent * (l - color.G));
-      var newBlue = color.B + (percent * (l - color.B));
-
-      return Color.FromRgb((byte)newRed, (byte)newGreen, (byte)newBlue);
     }
   }
 }

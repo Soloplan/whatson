@@ -34,11 +34,12 @@
       </MenuItem>
     </ContextMenu>
   </UserControl.Resources>
-  <StackPanel ContextMenu="{StaticResource ContextMenuBuild}">
-    <Button Width="6"
-            Height="6"
+  <StackPanel ContextMenu="{StaticResource ContextMenuBuild}" VerticalAlignment="Center">
+    <Button Width="{Binding Size}"
+            Height="{Binding Size}"
             Background="{Binding Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
-            BorderBrush="{Binding Mode=OneWay, Converter={StaticResource StatusToColorConverter}}">
+            BorderBrush="{Binding Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
+            VerticalAlignment="Center">
       <i:Interaction.Triggers>
         <!--  Handle clicking on history builds.  -->
         <i:EventTrigger EventName="Click">

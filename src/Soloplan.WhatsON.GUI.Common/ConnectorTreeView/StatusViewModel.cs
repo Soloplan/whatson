@@ -54,6 +54,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
+    public int Size
+    {
+      get
+      {
+        return this.Age == 1 ? 6 : 4;
+      }
+    }
+
     public string Name
     {
       get
