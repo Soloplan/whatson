@@ -27,6 +27,8 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     public BuildNumberControl()
     {
       this.InitializeComponent();
+      this.ControlToolTip.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+      this.ControlToolTip.PlacementTarget = this;
       this.DataContext = this;
       this.PreviewMouseDoubleClick += this.OnPreviewMouseDoubleClick;
     }
@@ -49,8 +51,6 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     {
       Clipboard.SetText(this.BuildNumber.ToString());
       this.ToolTipText.Text = "Value copied.";
-      this.ControlToolTip.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
-      this.ControlToolTip.PlacementTarget = this;
       this.ControlToolTip.IsOpen = true;
       e.Handled = true;
       await Task.Delay(1000);

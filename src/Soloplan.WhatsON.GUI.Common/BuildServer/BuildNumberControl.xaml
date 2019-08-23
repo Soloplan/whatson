@@ -19,12 +19,11 @@
                FontSize="11"
                FontWeight="Normal"
                Text="#" />
-    <TextBox Margin="2,0,0,0"
+    <TextBlock Margin="2,0,0,0"
              HorizontalAlignment="Right"
-             BorderThickness="0"
-             FontSize="12"
+             VerticalAlignment="Center"
+             FontSize="11"
              FontWeight="Light"
-             IsReadOnly="True"
              Text="{Binding BuildNumber, Mode=OneWay}" />
   </StackPanel>
 </UserControl>

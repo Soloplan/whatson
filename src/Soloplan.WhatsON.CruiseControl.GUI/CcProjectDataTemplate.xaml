@@ -1,14 +1,14 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:buildServer="clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer;assembly=Soloplan.WhatsON.GUI.Common"
-                    xmlns:local="clr-namespace:Soloplan.WhatsON.CruiseControl.GUI;assembly=Soloplan.WhatsON.CruiseControl.GUI"
-                    xmlns:connectorTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView;assembly=Soloplan.WhatsON.GUI.Common">
+                    xmlns:connectorTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView;assembly=Soloplan.WhatsON.GUI.Common"
+                    xmlns:local="clr-namespace:Soloplan.WhatsON.CruiseControl.GUI;assembly=Soloplan.WhatsON.CruiseControl.GUI">
 
   <connectorTreeView:TimeToAproximateTimeConverter x:Key="TimeToAproximateTimeConverter" />
 
   <DataTemplate DataType="{x:Type local:CruiseControlProjectViewModel}">
-    <DockPanel ContextMenu="{DynamicResource BuildServerProjectContextMenu}" Width="Auto">
-      <buildServer:BuildInformationIconControl DockPanel.Dock="Left" DataContext="{Binding CurrentStatus}">
+    <DockPanel Width="Auto" ContextMenu="{DynamicResource BuildServerProjectContextMenu}">
+      <buildServer:BuildInformationIconControl DataContext="{Binding CurrentStatus}" DockPanel.Dock="Left">
         <buildServer:BuildInformationIconControl.ToolTip>
           <StackPanel>
             <local:CCProgressBarTooltipControl DataContext="{Binding}" />
@@ -16,10 +16,24 @@
           </StackPanel>
         </buildServer:BuildInformationIconControl.ToolTip>
       </buildServer:BuildInformationIconControl>
-      <buildServer:BuildNumberControl Margin="5,0,0,0" BuildNumber="{Binding DataContext.CurrentStatus.BuildNumber, RelativeSource={RelativeSource AncestorType=DockPanel}}"/>
-      <TextBlock Margin="5,0,0,0" FontWeight="Light" TextTrimming="CharacterEllipsis" MinWidth="150" MaxWidth="250" FontSize="12" Text="{Binding Name}" />
-      <buildServer:HistoryBuildList DockPanel.Dock="Right" DataContext="{Binding ConnectorSnapshots, Mode=OneWay}" />
-      <TextBlock Margin="5,0,10,0" DockPanel.Dock="Right" FontWeight="Light" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="10" Text="{Binding CurrentStatus.Time, Converter={StaticResource TimeToAproximateTimeConverter}}" />
+      <buildServer:BuildNumberControl Margin="5,0,0,0"
+                                      VerticalAlignment="Center"
+                                      BuildNumber="{Binding DataContext.CurrentStatus.BuildNumber, RelativeSource={RelativeSource AncestorType=DockPanel}}" />
+      <TextBlock MinWidth="150"
+                 MaxWidth="250"
+                 Margin="5,0,0,0"
+                 FontSize="12"
+                 FontWeight="Light"
+                 Text="{Binding Name}"
+                 TextTrimming="CharacterEllipsis" />
+      <buildServer:HistoryBuildList DataContext="{Binding ConnectorSnapshots, Mode=OneWay}" DockPanel.Dock="Right" />
+      <TextBlock Margin="5,0,10,0"
+                 HorizontalAlignment="Right"
+                 VerticalAlignment="Center"
+                 DockPanel.Dock="Right"
+                 FontSize="10"
+                 FontWeight="Light"
+                 Text="{Binding CurrentStatus.Time, Converter={StaticResource TimeToAproximateTimeConverter}}" />
     </DockPanel>
   </DataTemplate>
 </ResourceDictionary>
