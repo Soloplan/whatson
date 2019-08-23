@@ -23,7 +23,7 @@ namespace Soloplan.WhatsON.GUI
   {
     static ThemeHelper()
     {
-      PrimaryColor = Color.FromRgb(79, 84, 89);
+      PrimaryColor = Color.FromRgb(55, 71, 79);
       SecondaryColor = Color.FromRgb(196, 80, 143);
     }
 

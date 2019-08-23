@@ -104,8 +104,8 @@
             </Style.Triggers>
           </Style>
         </StackPanel.Style>
-
-        <TextBlock Name="appName" VerticalAlignment="Center" FontSize="13" FontWeight="Light" Text="{Binding Path=Text}" />
+        <Image Source="pack://application:,,,/Resources/whatsONx16.png" Width="16" Height="16"/>
+        <TextBlock Name="appName" VerticalAlignment="Center" FontSize="13" FontWeight="Light" Margin="5,0,0,0" Text="{Binding Path=Text}" />
       </StackPanel>
     </DockPanel>
   </materialDesign:ColorZone>

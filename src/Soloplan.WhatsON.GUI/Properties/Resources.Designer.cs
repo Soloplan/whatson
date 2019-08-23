@@ -19,7 +19,7 @@ namespace Soloplan.WhatsON.GUI.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -101,14 +101,15 @@ namespace Soloplan.WhatsON.GUI.Properties {
         ///&lt;nlog xmlns=&quot;http://www.nlog-project.org/schemas/NLog.xsd&quot;
         ///      xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
         ///      autoReload=&quot;true&quot;
-        ///      throwExceptions=&quot;true&quot;&gt;
+        ///      throwExceptions=&quot;true&quot;
+        ///      keepVariablesOnReload=&quot;true&quot;&gt;
         ///
         ///  &lt;targets&gt;
-        ///    &lt;target name=&quot;testTarget&quot; xsi:type=&quot;File&quot; fileName=&quot;C:\Users\Public\Documents\Soloplan GmbH\WhatsOn\test.txt&quot;  keepFileOpen=&quot;false&quot; layout=&quot;${longdate} ${callsite} ${level} ${message}&quot; /&gt;
-        ///  &lt;/targets&gt;
-        ///
-        ///  &lt;rules&gt;
-        ///    &lt;logger name=&quot;*&quot; minlevel=&quot;Trace&quot; maxlevel=&quot;Fatal&quot; writ [rest of string was truncated]&quot;;.
+        ///    &lt;target name=&quot;whatsONMainLog&quot;
+        ///            xsi:type=&quot;File&quot;
+        ///            fileName=&quot;${var:logFileDir}/whatsON.log&quot;
+        ///            archiveFileName=&quot;${var:logFileDir}/archives/{#####}.zip&quot;
+        ///            layout=&quot;${longdate} ${level} ${callsite}:${ [rest of string was truncated]&quot;;.
         /// </summary>
         public static string LogConfig {
             get {
@@ -141,6 +142,16 @@ namespace Soloplan.WhatsON.GUI.Properties {
             get {
                 object obj = ResourceManager.GetObject("Whatson", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap whatsONx16 {
+            get {
+                object obj = ResourceManager.GetObject("whatsONx16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }
