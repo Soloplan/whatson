@@ -15,10 +15,7 @@
   <StackPanel>
     <StackPanel Orientation="Horizontal">
       <TextBlock Text="🏷️ " />
-      <TextBlock FontWeight="Bold" Text="{Binding DisplayName}" />
-      <TextBlock FontSize="10" VerticalAlignment="Center" Margin="5,0,0,0" Text="(#" />
-      <TextBlock FontSize="10" VerticalAlignment="Center" Text="{Binding BuildNumber}" />
-      <TextBlock FontSize="10" VerticalAlignment="Center" Text=")" />
+      <TextBlock FontWeight="Bold" Text="{Binding BuildLabel}" />
     </StackPanel>
     <StackPanel Orientation="Horizontal">
       <TextBlock Text="🕓 Duration: " />

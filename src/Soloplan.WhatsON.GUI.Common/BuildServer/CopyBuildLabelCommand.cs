@@ -12,16 +12,9 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
   {
     public override void Execute(object parameter)
     {
-      if (parameter is BuildStatusViewModel buildStatus)
+      if (parameter is BuildStatusViewModel buildStatus && !string.IsNullOrEmpty(buildStatus.BuildLabel))
       {
-        if (!string.IsNullOrEmpty(buildStatus.DisplayName))
-        {
-          Clipboard.SetText(buildStatus.DisplayName);
-        }
-        else if (buildStatus.BuildNumber.HasValue)
-        {
-          Clipboard.SetText($"#{buildStatus.BuildNumber}");
-        }
+        Clipboard.SetText(buildStatus.BuildLabel);
       }
     }
   }

@@ -338,15 +338,15 @@ namespace Soloplan.WhatsON.GUI
       string message;
       if (e.DeleteItem is ConnectorGroupViewModel group)
       {
-        message = $"Are you sure you want to delete group '{group.GroupName}' and all its items?";
+        message = $"Are you sure you want to delete the group '{group.GroupName}' and all its items?";
       }
       else if (e.DeleteItem is Soloplan.WhatsON.GUI.Common.ConnectorTreeView.ConnectorViewModel connector)
       {
-        message = $"Are you sure you want to delete connector '{connector.Name}'?";
+        message = $"Are you sure you want to delete the project '{connector.Name}'?";
       }
       else
       {
-        message = $"Are you sure you want to delete connector '{e.DeleteItem}'";
+        message = $"Are you sure you want to delete the project '{e.DeleteItem}'";
       }
 
       var dialog = new OkCancelDialog(message);

@@ -9,6 +9,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 {
   using System;
   using System.Collections.ObjectModel;
+  using System.Windows;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
 
   public abstract class BuildStatusViewModel : StatusViewModel
@@ -80,6 +81,31 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
           this.displayName = value;
           this.OnPropertyChanged();
         }
+      }
+    }
+
+    public string BuildLabel
+    {
+      get
+      {
+        if (!string.IsNullOrEmpty(this.DisplayName))
+        {
+          // #123 some displayname
+          if (this.BuildNumber.HasValue && this.DisplayName.Contains($"#{this.BuildNumber.Value}"))
+          {
+            return this.DisplayName;
+          }
+
+          // another displayName without number (#123)
+          return $"{this.DisplayName} (#{this.BuildNumber})";
+        }
+        else if (this.BuildNumber.HasValue)
+        {
+          // #123
+          return $"#{this.BuildNumber.Value}";
+        }
+
+        return string.Empty;
       }
     }
 
