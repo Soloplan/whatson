@@ -32,7 +32,7 @@ namespace Soloplan.WhatsON
     /// <summary>
     /// Default value for max nubmer of snapshots.
     /// </summary>
-    private const int MaxSnapshotsDefault = 5;
+    public const int MaxSnapshots = 5;
 
     /// <summary>
     /// Logger instance used by this class.
@@ -46,7 +46,6 @@ namespace Soloplan.WhatsON
     protected Connector(ConnectorConfiguration configuration)
     {
       this.Snapshots = new List<Snapshot>();
-      this.MaxSnapshots = MaxSnapshotsDefault;
       if (configuration == null)
       {
         var plugin = PluginsManager.Instance.GetPlugin(this);
@@ -62,8 +61,6 @@ namespace Soloplan.WhatsON
     public string Description { get; set; }
 
     public Status CurrentStatus { get; set; }
-
-    public int MaxSnapshots { get; set; }
 
     public IList<Snapshot> Snapshots { get; set; }
 
@@ -99,13 +96,17 @@ namespace Soloplan.WhatsON
 
     public void AddSnapshot(Status status)
     {
-      while (this.Snapshots.Count >= this.MaxSnapshots)
+      while (this.Snapshots.Count >= MaxSnapshots)
       {
         log.Debug("Max number of snapshots exceeded. Dequeuing snapshot.", new { Name = this.ConnectorConfiguration.Name, CurrentStatus = this.CurrentStatus });
         this.Snapshots.RemoveAt(0);
       }
 
       this.Snapshots.Add(new Snapshot(status));
+      for (var i = 0; i < this.Snapshots.Count; i++)
+      {
+        this.Snapshots[i].Age = MaxSnapshots - i;
+      }
     }
 
     public override string ToString()

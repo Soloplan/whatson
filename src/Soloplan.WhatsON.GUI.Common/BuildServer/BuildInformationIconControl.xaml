@@ -41,6 +41,7 @@
                  Width="12"
                  Height="12"
                  Style="{StaticResource MaterialDesignCircularProgressBar}"
+                 Foreground="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
                  Visibility="{Binding Building, Converter={StaticResource BoolToVisibility}}"
                  Value="{Binding Progress, Mode=OneWay}" />
   </DockPanel>

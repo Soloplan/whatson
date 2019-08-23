@@ -10,5 +10,7 @@
     public string Name { get; set; }
 
     public Status Status { get; }
+
+    public int Age { get; set; }
   }
 }

@@ -102,6 +102,7 @@
         {
           var connectorSnapshotViewModel = this.GetViewModelForStatus();
           connectorSnapshotViewModel.Update(connectorSnapshot.Status);
+          connectorSnapshotViewModel.Age = connectorSnapshot.Age;
           this.ConnectorSnapshots.Add(connectorSnapshotViewModel);
         }
       }
@@ -113,7 +114,6 @@
     protected virtual StatusViewModel GetViewModelForStatus()
     {
       StatusViewModel result = new StatusViewModel(this);
-
       return result;
     }
 

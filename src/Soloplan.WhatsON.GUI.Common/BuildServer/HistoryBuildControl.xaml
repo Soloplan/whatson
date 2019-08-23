@@ -37,8 +37,8 @@
   <StackPanel ContextMenu="{StaticResource ContextMenuBuild}">
     <Button Width="6"
             Height="6"
-            Background="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
-            BorderBrush="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}">
+            Background="{Binding Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
+            BorderBrush="{Binding Mode=OneWay, Converter={StaticResource StatusToColorConverter}}">
       <i:Interaction.Triggers>
         <!--  Handle clicking on history builds.  -->
         <i:EventTrigger EventName="Click">

@@ -39,6 +39,21 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private bool unstable;
 
+    private int age;
+
+    public int Age
+    {
+      get => this.age;
+      set
+      {
+        if (this.age != value)
+        {
+          this.age = value;
+          this.OnPropertyChanged();
+        }
+      }
+    }
+
     public string Name
     {
       get
@@ -103,7 +118,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         }
       }
     }
-
 
     public bool Failure
     {

@@ -71,10 +71,10 @@ namespace Soloplan.WhatsON.Jenkins
 
       var latestBuild = await this.api.GetJenkinsBuild(this, job.LastBuild.Number, cancellationToken);
       this.CurrentStatus = CreateStatus(latestBuild);
-      if (this.Snapshots.Count == 0 && this.MaxSnapshots > 0 && job.FirstBuild.Number < job.LastBuild.Number)
+      if (this.Snapshots.Count == 0 && MaxSnapshots > 0 && job.FirstBuild.Number < job.LastBuild.Number)
       {
         var startBuildNumber = latestBuild.Building ? latestBuild.Number - 1 : latestBuild.Number;
-        var lastHistoryBuild = Math.Max(startBuildNumber - this.MaxSnapshots + 1, 0);
+        var lastHistoryBuild = Math.Max(startBuildNumber - MaxSnapshots + 1, 0);
         lastHistoryBuild = Math.Max(lastHistoryBuild, job.FirstBuild.Number);
         log.Debug("Retrieving history from the server for builds {builds}", new { StartBuild = lastHistoryBuild, EndBuild = startBuildNumber - 1 });
 
