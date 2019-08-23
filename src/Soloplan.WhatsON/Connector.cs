@@ -8,6 +8,7 @@
 namespace Soloplan.WhatsON
 {
   using System.Collections.Generic;
+  using System.Linq;
   using System.Text;
   using System.Threading;
   using System.Threading.Tasks;
@@ -62,7 +63,7 @@ namespace Soloplan.WhatsON
 
     public Status CurrentStatus { get; set; }
 
-    public IList<Snapshot> Snapshots { get; set; }
+    public List<Snapshot> Snapshots { get; set; }
 
     /// <summary>
     /// Gets a value indicating whether this connector supports wizard.
@@ -107,6 +108,8 @@ namespace Soloplan.WhatsON
       {
         this.Snapshots[i].Age = MaxSnapshots - i;
       }
+
+      this.Snapshots.Sort((x, y) => x.Age.CompareTo(y.Age));
     }
 
     public override string ToString()

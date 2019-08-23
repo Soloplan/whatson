@@ -50,7 +50,7 @@
           return System.Windows.Media.Colors.DarkCyan;
           break;
         default:
-          return System.Windows.Media.Colors.Gray;
+          return Color.FromRgb(120, 144, 156);
           break;
       }
     }
