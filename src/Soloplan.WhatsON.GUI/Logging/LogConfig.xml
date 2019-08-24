@@ -17,9 +17,14 @@
             enableArchiveFileCompression="true"
             archiveNumbering="Sequence"
             maxArchiveFiles="10"/>
+    <target name="whatsONConsoleLog"
+            xsi:type="Console"
+            layout="${longdate} ${level} ${callsite}:${callsite-linenumber}  - ${message}
+                    ${exception:format=Type, Message,ToString,StackTrace:maxInnerExceptionLevel=10:separator=\r\n}"/>
   </targets>
 
   <rules>
-    <logger name="*" minlevel="Warn" maxlevel="Fatal" writeTo="whatsONMainLog"/>
+    <logger name="*" minlevel="Info" maxlevel="Fatal" writeTo="whatsONMainLog"/>
+    <logger name="*" minlevel="Info" maxlevel="Fatal" writeTo="whatsONConsoleLog"/>
   </rules>
 </nlog>

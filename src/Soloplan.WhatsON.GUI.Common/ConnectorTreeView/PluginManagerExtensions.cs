@@ -8,6 +8,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System;
   using System.Collections.Generic;
   using System.Linq;
+  using NLog;
   using Soloplan.WhatsON.Composition;
 
   /// <summary>
@@ -15,6 +16,16 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   /// </summary>
   public static class PluginManagerExtensions
   {
+    /// <summary>
+    /// Logger instance used by this class.
+    /// </summary>
+    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+
+    /// <summary>
+    /// The presentation plugins.
+    /// </summary>
+    private static Dictionary<Type, IPresentationPlugin> presentationPlugins = new Dictionary<Type, IPresentationPlugin>();
+
     /// <summary>
     /// Gets all found plugIns.
     /// </summary>
@@ -33,10 +44,17 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <returns>Appropriate <see cref="ITreeViewPresentationPlugIn"/>.</returns>
     public static IPresentationPlugin GetPresentationPlugin(this PluginManager manager, Type connectorType)
     {
+      if (presentationPlugins.TryGetValue(connectorType, out var presentationPlugin))
+      {
+        return presentationPlugin;
+      }
+
       var allPlugins = manager.GetPresentationPlugins().ToList();
-      var result = allPlugins.FirstOrDefault(plugIn => plugIn.ConnectorType.ToString() == connectorType.ToString());
+      var result = allPlugins.FirstOrDefault(plugin => plugin.ConnectorType.ToString() == connectorType.ToString());
       if (result != null)
       {
+        log.Info($"Found presentation plugin {result.GetType().Name} for connector type {connectorType.Name}.");
+        presentationPlugins[connectorType] = result;
         return result;
       }
 

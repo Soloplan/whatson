@@ -15,13 +15,27 @@ namespace Soloplan.WhatsON.Composition
     protected ConnectorPlugin(Type connectorType)
     {
       this.ConnectorType = connectorType;
-      this.ConnectorTypeAttribute = this.ConnectorType.GetCustomAttribute<ConnectorTypeAttribute>();
+      var connectorTypeAttribute = this.ConnectorType.GetCustomAttribute<ConnectorTypeAttribute>();
+      if (connectorTypeAttribute == null)
+      {
+        throw new ArgumentException($"The connector type {this.ConnectorType} doesn't provide meta information. Make sure a ConnectorTypeAttribute is defined on the type.");
+      }
+
+      this.Name = connectorTypeAttribute.Name;
+      this.Description = connectorTypeAttribute.Description;
     }
 
     public Type ConnectorType { get; }
 
-    public ConnectorTypeAttribute ConnectorTypeAttribute { get; }
+    public string Name { get; }
+
+    public string Description { get; }
 
     public abstract Connector CreateNew(ConnectorConfiguration configuration);
+
+    public override string ToString()
+    {
+      return $"{this.GetType().Name} ({this.Name}: {this.Description}";
+    }
   }
 }

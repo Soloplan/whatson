@@ -87,13 +87,8 @@ namespace Soloplan.WhatsON.Composition
             continue;
           }
 
-          var typeDesc = plugIn.ConnectorTypeAttribute;
-          if (typeDesc == null)
-          {
-            continue;
-          }
-
           this.connectorPlugins.Add(plugIn);
+          log.Info($"Loaded connector plugin {plugIn}.");
         }
 
         return this.connectorPlugins.AsReadOnly();

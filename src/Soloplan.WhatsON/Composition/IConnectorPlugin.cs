@@ -13,7 +13,9 @@ namespace Soloplan.WhatsON.Composition
   {
     Type ConnectorType { get; }
 
-    ConnectorTypeAttribute ConnectorTypeAttribute { get; }
+    string Name { get; }
+
+    string Description { get; }
 
     Connector CreateNew(ConnectorConfiguration configuration);
   }
