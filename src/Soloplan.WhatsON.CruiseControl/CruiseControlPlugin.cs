@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="CruiseControlProjectPlugin.cs" company="Soloplan GmbH">
+// <copyright file="CruiseControlPlugin.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
@@ -20,13 +20,13 @@ namespace Soloplan.WhatsON.CruiseControl
   {
 
     public CruiseControlPlugin()
-      : base(typeof(CruiseControlProject))
+      : base(typeof(CruiseControlConnector))
     {
     }
 
     public override Connector CreateNew(ConnectorConfiguration configuration)
     {
-      return new CruiseControlProject(configuration);
+      return new CruiseControlConnector(configuration);
     }
 
     /// <summary>
@@ -74,7 +74,7 @@ namespace Soloplan.WhatsON.CruiseControl
     /// <param name="serverAddress">The server address.</param>
     public void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress)
     {
-      configurationItemsSupport.GetConfigurationByKey(CruiseControlProject.ProjectName).Value = project.Name;
+      configurationItemsSupport.GetConfigurationByKey(CruiseControlConnector.ProjectName).Value = project.Name;
       configurationItemsSupport.GetConfigurationByKey(Connector.ServerAddress).Value = serverAddress;
     }
   }

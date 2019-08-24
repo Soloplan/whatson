@@ -38,7 +38,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       }
 
       OpenJenkinsWebPageCommandData param = new OpenJenkinsWebPageCommandData();
-      if (bool.TryParse(configuration.GetConfigurationByKey(JenkinsProject.RedirectPlugin)?.Value, out var redirect) && redirect)
+      if (bool.TryParse(configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin)?.Value, out var redirect) && redirect)
       {
         param.Redirect = true;
       }
@@ -47,7 +47,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
         param.Redirect = false;
       }
 
-      param.Address = configuration.GetConfigurationByKey(Connector.ServerAddress).Value.Trim('/') + "/job/" + configuration.GetConfigurationByKey(JenkinsProject.ProjectName).Value.Trim('/');
+      param.Address = configuration.GetConfigurationByKey(Connector.ServerAddress).Value.Trim('/') + "/job/" + configuration.GetConfigurationByKey(JenkinsConnector.ProjectName).Value.Trim('/');
 
       this.OpenWebPageParam = param;
 

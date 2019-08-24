@@ -19,7 +19,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
     public event EventHandler<BuildEventArgs> BuildRequest;
 
-    public async Task<JenkinsJob> GetJenkinsJob(JenkinsProject connector, CancellationToken token)
+    public async Task<JenkinsJob> GetJenkinsJob(JenkinsConnector connector, CancellationToken token)
     {
       if (this.JobRequest == null)
       {
@@ -36,7 +36,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       return eventArgs.Result;
     }
 
-    public async Task<JenkinsBuild> GetJenkinsBuild(JenkinsProject connector, int buildNumber, CancellationToken token)
+    public async Task<JenkinsBuild> GetJenkinsBuild(JenkinsConnector connector, int buildNumber, CancellationToken token)
     {
       if (this.BuildRequest == null)
       {
@@ -56,19 +56,19 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
   public class FakeApiEventArgs : EventArgs
   {
-    public FakeApiEventArgs(JenkinsProject connector)
+    public FakeApiEventArgs(JenkinsConnector connector)
     {
       this.Connector = connector;
     }
 
-    public JenkinsProject Connector { get; }
+    public JenkinsConnector Connector { get; }
 
     public int ResponseDelay { get; set; }
   }
 
   public class JobEventArgs : FakeApiEventArgs
   {
-    public JobEventArgs(JenkinsProject connector)
+    public JobEventArgs(JenkinsConnector connector)
       : base(connector)
     {
     }
@@ -78,7 +78,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
   public class BuildEventArgs : FakeApiEventArgs
   {
-    public BuildEventArgs(JenkinsProject connector, int buildNumber)
+    public BuildEventArgs(JenkinsConnector connector, int buildNumber)
       : base(connector)
     {
       this.BuildNumber = buildNumber;

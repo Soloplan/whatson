@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="JenkinsProject.cs" company="Soloplan GmbH">
+// <copyright file="JenkinsConnector.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //    Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
@@ -21,7 +21,7 @@ namespace Soloplan.WhatsON.Jenkins.Model
   [ConfigurationItem(ProjectName, typeof(string), Optional = false, Priority = 300)]
   [ConfigurationItem(RedirectPlugin, typeof(bool), Priority = 400)] // defines use of Display URL API Plugin https://wiki.jenkins.io/display/JENKINS/Display+URL+API+Plugin
   [NotificationConfigurationItem(NotificationsVisbility, typeof(ConnectorNotificationConfiguration), Priority = 1600000000)]
-  public class JenkinsProject : Connector
+  public class JenkinsConnector : Connector
   {
     public const string ProjectName = "ProjectName";
 
@@ -41,11 +41,11 @@ namespace Soloplan.WhatsON.Jenkins.Model
     private readonly IJenkinsApi api;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="JenkinsProject"/> class.
+    /// Initializes a new instance of the <see cref="JenkinsConnector"/> class.
     /// </summary>
     /// <param name="configuration">The configuration.</param>
     /// <param name="api">API for Jenkins.</param>
-    public JenkinsProject(ConnectorConfiguration configuration, IJenkinsApi api)
+    public JenkinsConnector(ConnectorConfiguration configuration, IJenkinsApi api)
       : base(configuration)
     {
       this.api = api;
@@ -61,7 +61,7 @@ namespace Soloplan.WhatsON.Jenkins.Model
     /// <returns>Project name.</returns>
     public string GetProject()
     {
-      return this.ConnectorConfiguration.GetConfigurationByKey(JenkinsProject.ProjectName).Value;
+      return this.ConnectorConfiguration.GetConfigurationByKey(JenkinsConnector.ProjectName).Value;
     }
 
     protected override async Task ExecuteQuery(CancellationToken cancellationToken, params string[] args)

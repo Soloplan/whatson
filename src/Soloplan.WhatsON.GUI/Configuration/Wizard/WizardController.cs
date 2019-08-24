@@ -239,8 +239,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       var checkedProjects = this.Projects.GetChecked();
       foreach (var checkedProject in checkedProjects.Where(p => p.Projects.Count == 0))
       {
-        var newServerProject = new Project { Address = checkedProject.Address, Name = checkedProject.Name, Plugin = this.Projects.PlugIn };
-        serverProjects.Add(newServerProject);
+        var newProject = new Project { Address = checkedProject.Address, Name = checkedProject.Name, Plugin = this.Projects.PlugIn };
+        serverProjects.Add(newProject);
       }
 
       return serverProjects;
@@ -319,7 +319,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 
         if (!(selectedProject.Plugin is IProjectPlugin projectPlugin))
         {
-          throw new InvalidOperationException("Connector does not support assign from server project.");
+          throw new InvalidOperationException("Connector does not support assign from project.");
         }
 
         projectPlugin.Configure(selectedProject, newConnector, this.ProposedServerAddress);

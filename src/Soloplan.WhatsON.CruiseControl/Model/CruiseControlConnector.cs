@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="CruiseControlProject.cs" company="Soloplan GmbH">
+// <copyright file="CruiseControlConnector.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
@@ -21,7 +21,7 @@ namespace Soloplan.WhatsON.CruiseControl.Model
   [ConnectorType("Cruise Control Project Status", Description = "Retrieve the current status of a Cruise Control project.")]
   [ConfigurationItem(ProjectName, typeof(string), Optional = false, Priority = 300)]
   [NotificationConfigurationItem(NotificationsVisbility, typeof(ConnectorNotificationConfiguration), SupportsUnstableNotify = false, Priority = 1600000000)]
-  public class CruiseControlProject : Connector
+  public class CruiseControlConnector : Connector
   {
     public const string ProjectName = "ProjectName";
 
@@ -31,12 +31,12 @@ namespace Soloplan.WhatsON.CruiseControl.Model
 
     private TimeSpan cachedDuration = default;
 
-    public CruiseControlProject(ConnectorConfiguration configuration)
+    public CruiseControlConnector(ConnectorConfiguration configuration)
       : base(configuration)
     {
     }
 
-    public string Project => this.ConnectorConfiguration.GetConfigurationByKey(CruiseControlProject.ProjectName).Value;
+    public string Project => this.ConnectorConfiguration.GetConfigurationByKey(CruiseControlConnector.ProjectName).Value;
 
     private CruiseControlStatus PreviousCheckStatus { get; set; }
 

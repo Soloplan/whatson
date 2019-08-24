@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="CruiseControlTreViewPresentationPlugIn.cs" company="Soloplan GmbH">
+// <copyright file="CruiseControlPresentationPlugin.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
@@ -15,9 +15,9 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
   using Soloplan.WhatsON.GUI.Common;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
 
-  public class CruiseControlTreeViewPresentationPlugIn : IPresentationPlugin
+  public class CruiseControlPresentationPlugin : IPresentationPlugin
   {
-    public Type ConnectorType => typeof(CruiseControlProject);
+    public Type ConnectorType => typeof(CruiseControlConnector);
 
     public ConnectorViewModel CreateViewModel()
     {

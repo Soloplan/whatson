@@ -23,7 +23,7 @@ namespace Soloplan.WhatsON.Jenkins
     /// </summary>
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
-    public async Task<JenkinsJob> GetJenkinsJob(JenkinsProject connector, CancellationToken token)
+    public async Task<JenkinsJob> GetJenkinsJob(JenkinsConnector connector, CancellationToken token)
     {
       var address = connector.Address;
       var projectName = connector.GetProject();
@@ -46,7 +46,7 @@ namespace Soloplan.WhatsON.Jenkins
       return await GetJenkinsModel<JenkinsJobs>(jobsRequest, token);
     }
 
-    public async Task<JenkinsBuild> GetJenkinsBuild(JenkinsProject connector, int buildNumber, CancellationToken token)
+    public async Task<JenkinsBuild> GetJenkinsBuild(JenkinsConnector connector, int buildNumber, CancellationToken token)
     {
       var address = connector.Address;
       var projectName = connector.GetProject();

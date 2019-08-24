@@ -24,14 +24,14 @@ namespace Soloplan.WhatsON.Jenkins
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
     public JenkinsProjectPlugin()
-      : base(typeof(JenkinsProject))
+      : base(typeof(JenkinsConnector))
     {
     }
 
     public override Connector CreateNew(ConnectorConfiguration configuration)
     {
       log.Debug("Creating new JenkinsProject based on configuration {configuration}", new { configuration.Name, configuration.Identifier });
-      var jenkinsProject = new JenkinsProject(configuration, new JenkinsApi());
+      var jenkinsProject = new JenkinsConnector(configuration, new JenkinsApi());
       return jenkinsProject;
     }
 
@@ -65,23 +65,23 @@ namespace Soloplan.WhatsON.Jenkins
         projectNameWithoutAddress = projectNameWithoutAddress.Substring(3, projectNameWithoutAddress.Length - 3).TrimStart('/');
       }
 
-      configurationItemsSupport.GetConfigurationByKey(JenkinsProject.ProjectName).Value = projectNameWithoutAddress;
-      configurationItemsSupport.GetConfigurationByKey(JenkinsProject.ServerAddress).Value = serverAddress;
+      configurationItemsSupport.GetConfigurationByKey(JenkinsConnector.ProjectName).Value = projectNameWithoutAddress;
+      configurationItemsSupport.GetConfigurationByKey(JenkinsConnector.ServerAddress).Value = serverAddress;
     }
 
     /// <summary>
     /// Gets a project list from given jenkins server address.
     /// </summary>
     /// <param name="address">The server address.</param>
-    /// <param name="serverProjects">The list of projects to update.</param>
+    /// <param name="projects">The list of projects to update.</param>
     /// <param name="jenkinsApi">Jenkins Api instance.</param>
     /// <returns>A task representing the job.</returns>
-    private async Task GetProjectsLists(string address, List<Project> serverProjects, JenkinsApi jenkinsApi)
+    private async Task GetProjectsLists(string address, List<Project> projects, JenkinsApi jenkinsApi)
     {
       var jenkinsJobs = await jenkinsApi.GetJenkinsJobs(address, default);
       foreach (var jenkinsJob in jenkinsJobs.Jobs)
       {
-        var newServerProject = this.AddServerProject(serverProjects, jenkinsJob);
+        var newServerProject = this.AddProject(projects, jenkinsJob);
         if (string.Equals(jenkinsJob.ClassName.Trim(), "com.cloudbees.hudson.plugins.folder.Folder".Trim(), System.StringComparison.InvariantCultureIgnoreCase)
          || string.Equals(jenkinsJob.ClassName.Trim(), "org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject".Trim(), System.StringComparison.InvariantCultureIgnoreCase))
         {
@@ -96,7 +96,7 @@ namespace Soloplan.WhatsON.Jenkins
     /// <param name="parentList">The parent list.</param>
     /// <param name="jenkinsJobsItem">The new Jenkins Job Item.</param>
     /// <returns>The newly  created server projects tree item.</returns>
-    private Project AddServerProject(IList<Project> parentList, JenkinsJob jenkinsJobsItem)
+    private Project AddProject(IList<Project> parentList, JenkinsJob jenkinsJobsItem)
     {
       var newServerProject = new Project { Address = jenkinsJobsItem.Url, Name = jenkinsJobsItem.Name };
       parentList.Add(newServerProject);
