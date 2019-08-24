@@ -15,18 +15,16 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
   using Soloplan.WhatsON.GUI.Common;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
 
-  public class CruiseControlPresentationPlugin : IPresentationPlugin
+  public class CruiseControlPresentationPlugin : PresentationPlugin
   {
-    public Type ConnectorType => typeof(CruiseControlConnector);
-
-    public ConnectorViewModel CreateViewModel()
+    public CruiseControlPresentationPlugin()
+      : base(typeof(CruiseControlConnector), Properties.Resources.CcProjectDataTemplate)
     {
-      return new CruiseControlProjectViewModel();
     }
 
-    public XmlReader GetDataTempletXaml()
+    public override ConnectorViewModel CreateViewModel()
     {
-      return XmlReader.Create(new MemoryStream(Encoding.UTF8.GetBytes(Properties.Resources.CcProjectDataTemplate)));
+      return new CruiseControlProjectViewModel();
     }
   }
 }

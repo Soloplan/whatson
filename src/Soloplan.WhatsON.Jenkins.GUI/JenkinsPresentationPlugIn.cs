@@ -13,18 +13,16 @@ namespace Soloplan.WhatsON.Jenkins.GUI
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Jenkins.Model;
 
-  public class JenkinsPresentationPlugin : IPresentationPlugin
+  public class JenkinsPresentationPlugin : PresentationPlugin
   {
-    public Type ConnectorType => typeof(JenkinsConnector);
-
-    public ConnectorViewModel CreateViewModel()
+    public JenkinsPresentationPlugin()
+      : base(typeof(JenkinsConnector), Properties.Resources.JenkinsProjectDataTemplate)
     {
-      return new JenkinsProjectViewModel();
     }
 
-    public XmlReader GetDataTempletXaml()
+    public override ConnectorViewModel CreateViewModel()
     {
-      return XmlReader.Create(new MemoryStream(Encoding.UTF8.GetBytes(Properties.Resources.JenkinsProjectDataTemplate)));
+      return new JenkinsProjectViewModel();
     }
   }
 }

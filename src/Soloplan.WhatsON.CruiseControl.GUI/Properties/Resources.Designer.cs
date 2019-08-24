@@ -70,7 +70,7 @@ namespace Soloplan.WhatsON.CruiseControl.GUI.Properties {
         /// </summary>
         internal static string CcProjectDataTemplate {
             get {
-                return ResourceManager.GetString("CcProjectDataTemplate", resourceCulture);
+                return ResourceManager.GetString("CruiseControlProjectDataTemplate", resourceCulture);
             }
         }
     }

@@ -18,7 +18,6 @@ namespace Soloplan.WhatsON.CruiseControl
 
   public class CruiseControlPlugin : ConnectorPlugin
   {
-
     public CruiseControlPlugin()
       : base(typeof(CruiseControlConnector))
     {

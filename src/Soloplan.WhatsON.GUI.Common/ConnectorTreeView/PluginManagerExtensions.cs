@@ -1,4 +1,4 @@
-﻿// <copyright file="PluginsManagerExtension.cs" company="Soloplan GmbH">
+﻿// <copyright file="PluginManagerExtensions.cs" company="Soloplan GmbH">
 // Copyright (c) Soloplan GmbH. All rights reserved.
 // Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
@@ -24,16 +24,16 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// The presentation plugins.
     /// </summary>
-    private static Dictionary<Type, IPresentationPlugin> presentationPlugins = new Dictionary<Type, IPresentationPlugin>();
+    private static Dictionary<Type, PresentationPlugin> presentationPlugins = new Dictionary<Type, PresentationPlugin>();
 
     /// <summary>
     /// Gets all found plugIns.
     /// </summary>
     /// <param name="manager">Plugin manager.</param>
     /// <returns>List of all <see cref="ITreeViewPresentationPlugIn"/>.</returns>
-    public static IEnumerable<IPresentationPlugin> GetPresentationPlugins(this PluginManager manager)
+    public static IEnumerable<PresentationPlugin> GetPresentationPlugins(this PluginManager manager)
     {
-      return manager.PlugIns.OfType<IPresentationPlugin>();
+      return manager.PlugIns.OfType<PresentationPlugin>();
     }
 
     /// <summary>
@@ -42,7 +42,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <param name="manager">Plugin manager.</param>
     /// <param name="connectorType">Type of connector.</param>
     /// <returns>Appropriate <see cref="ITreeViewPresentationPlugIn"/>.</returns>
-    public static IPresentationPlugin GetPresentationPlugin(this PluginManager manager, Type connectorType)
+    public static PresentationPlugin GetPresentationPlugin(this PluginManager manager, Type connectorType)
     {
       if (presentationPlugins.TryGetValue(connectorType, out var presentationPlugin))
       {
