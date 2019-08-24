@@ -65,7 +65,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <param name="connectors">The connectors.</param>
     /// <param name="ownerWindow">The owner <see cref="Window" />.</param>
     /// <param name="newConnectorPlugin">The new connector plugin.</param>
-    public ConnectorsPage(ConnectorViewModelCollection connectors, Window ownerWindow, IConnectorPlugin newConnectorPlugin)
+    public ConnectorsPage(ConnectorViewModelCollection connectors, Window ownerWindow, ConnectorPlugin newConnectorPlugin)
       : this(connectors, ownerWindow)
     {
       this.currentConnector = new ConnectorViewModel();
@@ -267,7 +267,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
       if (result)
       {
         // TODO move to connector view model/model
-        this.currentConnector.SourceConnectorPlugin = (IConnectorPlugin)createEditDialod.uxPluginType.SelectedItem;
+        this.currentConnector.SourceConnectorPlugin = (ConnectorPlugin)createEditDialod.uxPluginType.SelectedItem;
         this.currentConnector.Load(null);
         this.Connectors.Add(this.currentConnector);
         this.uxConnectors.SelectedItem = this.currentConnector;

@@ -28,7 +28,7 @@ namespace Soloplan.WhatsON.Model
     /// <summary>
     /// Gets or sets the plugin.
     /// </summary>
-    public IConnectorPlugin Plugin { get; set; }
+    public ConnectorPlugin Plugin { get; set; }
 
     /// <summary>
     /// Gets the server projects.

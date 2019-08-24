@@ -40,7 +40,7 @@ namespace Soloplan.WhatsON.Composition
     /// <summary>
     /// The connector plugins list.
     /// </summary>
-    private List<IConnectorPlugin> connectorPlugins;
+    private List<ConnectorPlugin> connectorPlugins;
 
     /// <summary>
     /// Registered plugins.
@@ -70,7 +70,7 @@ namespace Soloplan.WhatsON.Composition
     /// <summary>
     /// Gets the read only list of Connector Plugins.
     /// </summary>
-    public IReadOnlyList<IConnectorPlugin> ConnectorPlugins
+    public IReadOnlyList<ConnectorPlugin> ConnectorPlugins
     {
       get
       {
@@ -79,8 +79,8 @@ namespace Soloplan.WhatsON.Composition
           return this.connectorPlugins.AsReadOnly();
         }
 
-        this.connectorPlugins = new List<IConnectorPlugin>();
-        foreach (var plugIn in this.plugIns.OfType<IConnectorPlugin>())
+        this.connectorPlugins = new List<ConnectorPlugin>();
+        foreach (var plugIn in this.plugIns.OfType<ConnectorPlugin>())
         {
           if (plugIn.ConnectorType == null)
           {
@@ -102,7 +102,7 @@ namespace Soloplan.WhatsON.Composition
     /// </summary>
     /// <param name="connector">The connector.</param>
     /// <returns>The Plugin instance.</returns>
-    public IConnectorPlugin GetPlugin(Connector connector)
+    public ConnectorPlugin GetPlugin(Connector connector)
     {
       return this.ConnectorPlugins.FirstOrDefault(sp => sp.ConnectorType == connector.GetType());
     }
@@ -112,9 +112,9 @@ namespace Soloplan.WhatsON.Composition
     /// </summary>
     /// <param name="connectorConfiguration">The connector configuration.</param>
     /// <returns>The Plugin instance.</returns>
-    public IConnectorPlugin GetPlugin(ConnectorConfiguration connectorConfiguration)
+    public ConnectorPlugin GetPlugin(ConnectorConfiguration connectorConfiguration)
     {
-      return this.ConnectorPlugins.FirstOrDefault(sp => sp.GetType().FullName == connectorConfiguration.PluginTypeName);
+      return this.ConnectorPlugins.FirstOrDefault(sp => sp.Name == connectorConfiguration.Type);
     }
 
     /// <summary>
@@ -125,10 +125,10 @@ namespace Soloplan.WhatsON.Composition
     /// <exception cref="InvalidOperationException">Couldn't find plugin for a type: {connectorConfiguration.TypeName}.</exception>
     public Connector CreateNewConnector(ConnectorConfiguration connectorConfiguration)
     {
-      var plugin = this.ConnectorPlugins.FirstOrDefault(p => p.GetType().FullName == connectorConfiguration.PluginTypeName);
+      var plugin = this.ConnectorPlugins.FirstOrDefault(p => p.Name == connectorConfiguration.Type);
       if (plugin == null)
       {
-        log.Error("Couldn't find plugin for a type: {pluginType}", connectorConfiguration.PluginTypeName);
+        log.Error("Couldn't find plugin for a type: {pluginType}", connectorConfiguration.Type);
         return null;
       }
 

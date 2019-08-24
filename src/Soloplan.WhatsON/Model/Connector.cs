@@ -55,7 +55,7 @@ namespace Soloplan.WhatsON.Model
       if (configuration == null)
       {
         var plugin = PluginManager.Instance.GetPlugin(this);
-        configuration = new ConnectorConfiguration(plugin.GetType().FullName);
+        configuration = new ConnectorConfiguration(plugin.Name);
       }
 
       this.ConnectorConfiguration = configuration;

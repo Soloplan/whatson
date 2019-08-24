@@ -77,7 +77,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         }
       };
 
-      var subj = new JenkinsConnector(new ConnectorConfiguration(nameof(JenkinsConnector)), api);
+      var subj = new JenkinsConnector(new ConnectorConfiguration("Jenkins"), api);
       scheduler.Observe(subj, 0);
       scheduler.Start();
       while (scheduler.Running)

@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="JenkinsProjectPlugin.cs" company="Soloplan GmbH">
+// <copyright file="JenkinsPlugin.cs" company="Soloplan GmbH">
 // Copyright (c) Soloplan GmbH. All rights reserved.
 // Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
@@ -16,14 +16,14 @@ namespace Soloplan.WhatsON.Jenkins
   using Soloplan.WhatsON.Jenkins.Model;
   using Soloplan.WhatsON.Model;
 
-  public class JenkinsProjectPlugin : ConnectorPlugin, IProjectPlugin
+  public class JenkinsPlugin : ConnectorPlugin
   {
     /// <summary>
     /// Logger instance used by this class.
     /// </summary>
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
-    public JenkinsProjectPlugin()
+    public JenkinsPlugin()
       : base(typeof(JenkinsConnector))
     {
     }
@@ -42,7 +42,7 @@ namespace Soloplan.WhatsON.Jenkins
     /// <returns>
     /// The projects list from the server.
     /// </returns>
-    public async Task<IList<Project>> GetProjects(string address)
+    public override async Task<IList<Project>> GetProjects(string address)
     {
       var api = new JenkinsApi();
       var serverProjects = new List<Project>();
@@ -56,7 +56,7 @@ namespace Soloplan.WhatsON.Jenkins
     /// <param name="project">The server project.</param>
     /// <param name="configurationItemsSupport">The configuration items provider.</param>
     /// <param name="serverAddress">The server address.</param>
-    public void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress)
+    public override void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress)
     {
       // for now, we extract the project name from the address
       var projectNameWithoutAddress = project.Address.Substring(serverAddress.Length, project.Address.Length - serverAddress.Length - 1).Trim('/');

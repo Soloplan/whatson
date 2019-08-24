@@ -296,7 +296,7 @@ namespace Soloplan.WhatsON.GUI
     /// Opens the configuration.
     /// </summary>
     /// <param name="newConnectorPlugin">The new connector plugin.</param>
-    private void OpenConfig(IConnectorPlugin newConnectorPlugin)
+    private void OpenConfig(ConnectorPlugin newConnectorPlugin)
     {
       var configWindow = new ConfigWindow(this.config, newConnectorPlugin);
       this.OpenConfig(configWindow);

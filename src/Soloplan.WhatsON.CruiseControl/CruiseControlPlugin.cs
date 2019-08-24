@@ -16,7 +16,7 @@ namespace Soloplan.WhatsON.CruiseControl
   using Soloplan.WhatsON.CruiseControl.Model;
   using Soloplan.WhatsON.Model;
 
-  public class CruiseControlPlugin : ConnectorPlugin, IProjectPlugin
+  public class CruiseControlPlugin : ConnectorPlugin
   {
 
     public CruiseControlPlugin()
@@ -36,7 +36,7 @@ namespace Soloplan.WhatsON.CruiseControl
     /// <returns>
     /// The projects from the server.
     /// </returns>
-    public async Task<IList<Project>> GetProjects(string address)
+    public override async Task<IList<Project>> GetProjects(string address)
     {
       var result = new List<Project>();
       var server = CruiseControlManager.GetServer(address, false);
@@ -72,7 +72,7 @@ namespace Soloplan.WhatsON.CruiseControl
     /// <param name="project">The server project.</param>
     /// <param name="configurationItemsSupport">The configuration items provider.</param>
     /// <param name="serverAddress">The server address.</param>
-    public void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress)
+    public override void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress)
     {
       configurationItemsSupport.GetConfigurationByKey(CruiseControlConnector.ProjectName).Value = project.Name;
       configurationItemsSupport.GetConfigurationByKey(Connector.ServerAddress).Value = serverAddress;

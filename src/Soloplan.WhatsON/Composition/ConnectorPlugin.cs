@@ -6,11 +6,16 @@
 namespace Soloplan.WhatsON.Composition
 {
   using System;
+  using System.Collections.Generic;
   using System.Reflection;
+  using System.Threading.Tasks;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.Model;
 
-  public abstract class ConnectorPlugin : IConnectorPlugin
+  /// <summary>
+  /// Base implementation for all plugins that provide connectors.
+  /// </summary>
+  public abstract class ConnectorPlugin : IPlugin, IProjectPlugin
   {
     protected ConnectorPlugin(Type connectorType)
     {
@@ -31,7 +36,11 @@ namespace Soloplan.WhatsON.Composition
 
     public string Description { get; }
 
+    public abstract void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress);
+
     public abstract Connector CreateNew(ConnectorConfiguration configuration);
+
+    public abstract Task<IList<Project>> GetProjects(string address);
 
     public override string ToString()
     {

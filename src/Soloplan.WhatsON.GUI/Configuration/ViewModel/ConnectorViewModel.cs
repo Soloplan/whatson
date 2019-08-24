@@ -31,7 +31,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// The source connector Plugin.
     /// </summary>
-    private IConnectorPlugin sourceConnectorPlugin;
+    private ConnectorPlugin sourceConnectorPlugin;
 
     /// <summary>
     /// Gets the connector source configuration.
@@ -50,7 +50,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// Gets or sets the source connector plugin.
     /// </summary>
-    public IConnectorPlugin SourceConnectorPlugin
+    public ConnectorPlugin SourceConnectorPlugin
     {
       get
       {
@@ -189,7 +189,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <returns>New instance of <see cref="Soloplan.WhatsON.ConnectorConfiguration"/>.</returns>
     public ConnectorConfiguration CreateNewConnectorConfiguration()
     {
-      var sourceConnectorConfig = new ConnectorConfiguration(this.SourceConnectorPlugin.GetType().FullName);
+      var sourceConnectorConfig = new ConnectorConfiguration(this.SourceConnectorPlugin.Name);
       sourceConnectorConfig.Name = this.name;
       foreach (var configurationItem in this.ConfigurationItems)
       {

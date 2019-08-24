@@ -24,7 +24,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         builder.AppendLine($"Identifier: {this.Identifier}");
         builder.AppendLine($"Name: {this.Name}");
         builder.AppendLine($"Description: {this.Description}");
-        builder.AppendLine($"Expected plugin type: {this.ExpectedPluginType}");
+        builder.AppendLine($"Expected connector type: {this.ExpectedConnectorType}");
         Clipboard.SetText(builder.ToString());
       }
 
@@ -39,7 +39,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// Gets plugin type which was expected.
     /// </summary>
-    public string ExpectedPluginType { get; private set; }
+    public string ExpectedConnectorType { get; private set; }
 
     /// <summary>
     /// Initializes viewmodel based on <paramref name="configuration"/>.
@@ -47,7 +47,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <param name="configuration">Configuration of this connector.</param>
     public override void Init(ConnectorConfiguration configuration)
     {
-      this.ExpectedPluginType = configuration.PluginTypeName;
+      this.ExpectedConnectorType = configuration.Type;
       base.Init(configuration);
     }
 

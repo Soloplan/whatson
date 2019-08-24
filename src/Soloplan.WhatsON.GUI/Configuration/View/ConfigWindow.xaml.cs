@@ -51,7 +51,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <summary>
     /// The plugin which should be used for immediate creation of new connector after initialization.
     /// </summary>
-    private readonly IConnectorPlugin newConnectorPlugin;
+    private readonly ConnectorPlugin newConnectorPlugin;
 
     /// <summary>
     /// The configuration source.
@@ -120,7 +120,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     /// <param name="configuration">The configuration.</param>
     /// <param name="newConnectorPlugin">The new connector plugin.</param>
-    public ConfigWindow(ApplicationConfiguration configuration, IConnectorPlugin newConnectorPlugin)
+    public ConfigWindow(ApplicationConfiguration configuration, ConnectorPlugin newConnectorPlugin)
       : this(configuration)
     {
       this.newConnectorPlugin = newConnectorPlugin;

@@ -66,7 +66,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// The connector plugin.
     /// </summary>
-    private IConnectorPlugin connectorPlugin;
+    private ConnectorPlugin connectorPlugin;
 
     /// <summary>
     /// The proposed server address.
@@ -199,7 +199,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     /// <param name="plugin">The connector plugin.</param>
     /// <returns>True if the wizard was finished correctly and not canceled in any way.</returns>
-    public bool Start(IConnectorPlugin plugin)
+    public bool Start(ConnectorPlugin plugin)
     {
       this.connectorPlugin = plugin;
       return this.Start();
@@ -399,7 +399,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       }
       else
       {
-        foreach (var plugin in PluginManager.Instance.PlugIns.OfType<IConnectorPlugin>())
+        foreach (var plugin in PluginManager.Instance.ConnectorPlugins)
         {
           if (plugin is IProjectPlugin projectsListQueryingPlugin)
           {
