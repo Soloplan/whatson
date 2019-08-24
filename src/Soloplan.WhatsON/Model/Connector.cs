@@ -68,18 +68,6 @@ namespace Soloplan.WhatsON.Model
     public List<Snapshot> Snapshots { get; set; }
 
     /// <summary>
-    /// Gets a value indicating whether this connector supports wizard.
-    /// </summary>
-    public bool SupportsWizard
-    {
-      get
-      {
-        var plugin = PluginsManager.Instance.GetPlugin(this);
-        return plugin != null && plugin.SupportsWizard;
-      }
-    }
-
-    /// <summary>
     /// Gets or sets the configuration of a connector.
     /// </summary>
     public ConnectorConfiguration ConnectorConfiguration { get; set; }

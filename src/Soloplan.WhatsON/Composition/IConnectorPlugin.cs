@@ -15,11 +15,6 @@ namespace Soloplan.WhatsON.Composition
 
     ConnectorTypeAttribute ConnectorTypeAttribute { get; }
 
-    /// <summary>
-    /// Gets a value indicating whether this plugin supports wizards.
-    /// </summary>
-    bool SupportsWizard { get; }
-
     Connector CreateNew(ConnectorConfiguration configuration);
   }
 }

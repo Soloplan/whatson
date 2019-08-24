@@ -36,11 +36,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     private ConnectorViewModel currentConnector;
 
     /// <summary>
-    /// The active connector supports wizard.
-    /// </summary>
-    private bool activeConnectorSupportsWizard;
-
-    /// <summary>
     /// The single connector mode.
     /// </summary>
     private bool singleConnectorMode;
@@ -142,19 +137,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     public ConnectorViewModel CurrentConnector => this.currentConnector ?? (ConnectorViewModel)this.uxConnectors.SelectedItem;
 
     /// <summary>
-    /// Gets or sets a value indicating whether active connector supports wizard.
-    /// </summary>
-    public bool ActiveConnectorSupportsWizard
-    {
-      get => this.activeConnectorSupportsWizard;
-      set
-      {
-        this.activeConnectorSupportsWizard = value;
-        this.OnPropertyChanged(nameof(this.ActiveConnectorSupportsWizard));
-      }
-    }
-
-    /// <summary>
     /// Called when property was changed.
     /// </summary>
     /// <param name="propertyName">Name of the property.</param>
@@ -236,7 +218,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     private void SetConnectorFrameContent(ConnectorViewModel connector)
     {
       this.uxConnectorFrame.Content = new ConnectorConfigPage(connector);
-      this.ActiveConnectorSupportsWizard = this.CurrentConnector?.SourceConnectorPlugin?.SupportsWizard ?? false;
     }
 
     /// <summary>

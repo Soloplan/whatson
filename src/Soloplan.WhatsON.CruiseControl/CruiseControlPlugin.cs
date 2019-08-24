@@ -16,10 +16,10 @@ namespace Soloplan.WhatsON.CruiseControl
   using Soloplan.WhatsON.CruiseControl.Model;
   using Soloplan.WhatsON.Model;
 
-  public class CruiseControlProjectPlugin : ConnectorPlugin, IProjectsListQuerying, IAssignServerProject
+  public class CruiseControlPlugin : ConnectorPlugin, IProjectsListQuerying, IAssignServerProject
   {
 
-    public CruiseControlProjectPlugin()
+    public CruiseControlPlugin()
       : base(typeof(CruiseControlProject))
     {
     }

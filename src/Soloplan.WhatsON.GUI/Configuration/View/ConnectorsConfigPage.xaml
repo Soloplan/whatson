@@ -83,7 +83,7 @@
           />
           </materialDesign:ColorZone>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" Visibility="{Binding Path=ActiveConnectorSupportsWizard, Converter={StaticResource BoolToVis}}">
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom">
         <Button Click="StartWizardClick">Use wizard</Button>
       </StackPanel>
         <Frame x:Name="uxConnectorFrame" Content="Frame" />

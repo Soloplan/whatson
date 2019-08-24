@@ -48,13 +48,13 @@
                                     Foreground="White"/>
         </materialDesign:PopupBox.ToggleContent>
         <StackPanel>
-          <Button Click="NewConnectorClick" IsEnabled="{Binding ConfigurationModifiedFromTree, Converter={StaticResource InvertBoolConverter}}">
+          <Button Click="NewConnectorClick" IsEnabled="{Binding CustomButtonVisible}">
             <StackPanel Orientation="Horizontal">
               <materialDesign:PackIcon Width="16" Height="16" Kind="EyeAddOutline" />
               <TextBlock  Margin="10,0,0,0">Add project(s)</TextBlock>
             </StackPanel>
           </Button>
-          <Button Click="NewGroupClick" IsEnabled="{Binding ConfigurationModifiedFromTree, Converter={StaticResource InvertBoolConverter}}">
+          <Button Click="NewGroupClick" IsEnabled="{Binding CustomButtonVisible}">
             <StackPanel Orientation="Horizontal">
               <materialDesign:PackIcon Width="16" Height="16" Kind="LibraryAdd" />
               <TextBlock Margin="10,0,0,0">Add new group</TextBlock>
