@@ -2,6 +2,7 @@
 {
   using System;
   using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.Model;
 
   public interface IConnectorPlugin : IPlugIn
   {

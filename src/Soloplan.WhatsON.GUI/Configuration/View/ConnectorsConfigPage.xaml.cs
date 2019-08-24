@@ -17,6 +17,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.GUI.Configuration.ViewModel;
   using Soloplan.WhatsON.GUI.Configuration.Wizard;
+  using Soloplan.WhatsON.Model;
 
   /// <summary>
   /// Interaction logic for ConnectorsPage.xaml

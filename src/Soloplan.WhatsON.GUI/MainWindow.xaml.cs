@@ -23,6 +23,7 @@ namespace Soloplan.WhatsON.GUI
   using Soloplan.WhatsON.GUI.Configuration.View;
   using Soloplan.WhatsON.GUI.Configuration.ViewModel;
   using Soloplan.WhatsON.GUI.Configuration.Wizard;
+  using Soloplan.WhatsON.Model;
   using Soloplan.WhatsON.Serialization;
 
   /// <summary>

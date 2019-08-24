@@ -11,6 +11,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
   using System.Windows.Data;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Configuration.ViewModel;
+  using Soloplan.WhatsON.Model;
 
   /// <summary>
   /// The control builder for editable combo box with provided suggested values.

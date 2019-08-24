@@ -3,6 +3,7 @@
   using System;
   using System.Reflection;
   using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.Model;
 
   public abstract class ConnectorPlugin : IConnectorPlugin
   {

@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Soloplan.WhatsON.CruiseControl
+namespace Soloplan.WhatsON.CruiseControl.Model
 {
   using System;
   using System.Linq;
@@ -16,6 +16,7 @@ namespace Soloplan.WhatsON.CruiseControl
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.CruiseControl.Model;
+  using Soloplan.WhatsON.Model;
 
   [ConnectorType("Cruise Control Project Status", Description = "Retrieve the current status of a Cruise Control project.")]
   [ConfigurationItem(ProjectName, typeof(string), Optional = false, Priority = 300)]

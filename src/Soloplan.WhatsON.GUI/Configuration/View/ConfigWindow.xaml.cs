@@ -14,6 +14,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Configuration.ViewModel;
+  using Soloplan.WhatsON.Model;
   using Soloplan.WhatsON.Serialization;
   using Application = System.Windows.Application;
 

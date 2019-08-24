@@ -5,10 +5,10 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-using Soloplan.WhatsON.Composition;
-
 namespace Soloplan.WhatsON.CruiseControl
 {
+  using Soloplan.WhatsON.Composition;
+
   public interface ICruiseControlServerManagerPlugIn : IPlugIn
   {
     CruiseControlServer GetServer(string address, bool addToCache = true);

@@ -4,13 +4,14 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Soloplan.WhatsON
+namespace Soloplan.WhatsON.Composition
 {
   using System.Collections.Generic;
   using System.Threading.Tasks;
+  using Soloplan.WhatsON.Model;
 
   /// <summary>
-  /// Adds possibility to query projects list froma plugin.
+  /// Adds possibility to query projects list from a plugin.
   /// </summary>
   public interface IProjectsListQuerying
   {

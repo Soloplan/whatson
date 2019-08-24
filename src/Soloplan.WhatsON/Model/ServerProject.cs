@@ -1,10 +1,10 @@
-﻿// // --------------------------------------------------------------------------------------------------------------------
-// // <copyright file="ServerProject.cs" company="Soloplan GmbH">
-// //   Copyright (c) Soloplan GmbH. All rights reserved.
-// // </copyright>
-// // --------------------------------------------------------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ServerProject.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
-namespace Soloplan.WhatsON
+namespace Soloplan.WhatsON.Model
 {
   using System.Collections.Generic;
   using Soloplan.WhatsON.Composition;

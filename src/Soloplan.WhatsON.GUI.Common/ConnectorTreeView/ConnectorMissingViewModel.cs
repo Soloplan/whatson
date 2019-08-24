@@ -12,6 +12,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Windows.Input;
   using Microsoft.Expression.Interactivity.Core;
   using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.Model;
 
   public class ConnectorMissingViewModel : ConnectorViewModel
   {

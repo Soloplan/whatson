@@ -13,6 +13,7 @@ namespace Soloplan.WhatsON
   using System.Threading;
   using System.Threading.Tasks;
   using NLog;
+  using Soloplan.WhatsON.Model;
 
   /// <summary>
   /// Main class of application. Executes specialized plugins in desired intervals.

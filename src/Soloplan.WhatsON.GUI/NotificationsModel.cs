@@ -11,6 +11,7 @@ namespace Soloplan.WhatsON.GUI
   using System.Linq;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
+  using Soloplan.WhatsON.Model;
 
   public class NotificationsModel : NotifyPropertyChanged
   {

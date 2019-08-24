@@ -18,6 +18,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
   using MaterialDesignThemes.Wpf;
   using Newtonsoft.Json;
   using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.Model;
 
   /// <summary>
   /// The control builder for the notification settings.

@@ -7,6 +7,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
   using System;
   using NLog;
+  using Soloplan.WhatsON.Model;
 
   /// <summary>
   /// Base ViewModel used for any kind of <see cref="Soloplan.WhatsON.Connector"/>;

@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Soloplan.WhatsON.CruiseControl
+namespace Soloplan.WhatsON.CruiseControl.Model
 {
   public class Culprit
   {

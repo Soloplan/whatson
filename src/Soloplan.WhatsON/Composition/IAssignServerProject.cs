@@ -4,10 +4,11 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Soloplan.WhatsON
+namespace Soloplan.WhatsON.Composition
 {
   using System.Collections.Generic;
   using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.Model;
 
   /// <summary>
   /// The interface used to assign <see cref="ServerProject"/> to <see cref="ConfigurationItem"/>.

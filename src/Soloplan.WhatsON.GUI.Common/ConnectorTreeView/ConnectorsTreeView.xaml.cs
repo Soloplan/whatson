@@ -12,6 +12,7 @@
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
+  using Soloplan.WhatsON.Model;
   using Soloplan.WhatsON.Serialization;
 
   /// <summary>

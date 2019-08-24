@@ -5,6 +5,7 @@
   using NUnit.Framework;
   using Soloplan.WhatsON;
   using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.Model;
 
   [TestFixture]
   public class JenkinsApiTest

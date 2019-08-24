@@ -9,6 +9,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
   using System.Collections.Generic;
   using System.ComponentModel;
   using System.Runtime.CompilerServices;
+  using Soloplan.WhatsON.Model;
 
   /// <summary>
   /// Some data of the configuration has to be globally accessible for binding purposes, otherwise configuration data structure would have to refer to it's parent object.

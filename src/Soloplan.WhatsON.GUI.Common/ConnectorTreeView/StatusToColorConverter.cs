@@ -4,6 +4,7 @@
   using System.Globalization;
   using System.Windows.Data;
   using System.Windows.Media;
+  using Soloplan.WhatsON.Model;
 
   public class StatusToColorConverter : IValueConverter
   {

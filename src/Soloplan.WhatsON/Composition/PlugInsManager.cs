@@ -15,6 +15,7 @@ namespace Soloplan.WhatsON.Composition
   using NLog;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.Model;
 
   /// <summary>
   /// The Manager for Connector Plugins.

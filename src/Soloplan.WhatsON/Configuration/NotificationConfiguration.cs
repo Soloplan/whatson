@@ -7,6 +7,7 @@
 namespace Soloplan.WhatsON.Configuration
 {
   using System;
+  using Soloplan.WhatsON.Model;
 
   /// <summary>
   /// The notification configuration used for global options and as base type for <see cref="ConnectorNotificationConfiguration"/>.

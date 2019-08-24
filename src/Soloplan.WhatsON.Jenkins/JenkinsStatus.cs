@@ -12,6 +12,7 @@ namespace Soloplan.WhatsON.Jenkins
   using System.Globalization;
   using Newtonsoft.Json;
   using Soloplan.WhatsON.Jenkins.Model;
+  using Soloplan.WhatsON.Model;
 
   public class JenkinsStatus : Status
   {

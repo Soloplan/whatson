@@ -1,4 +1,4 @@
-﻿namespace Soloplan.WhatsON
+﻿namespace Soloplan.WhatsON.Model
 {
   using Soloplan.WhatsON.Configuration;
 

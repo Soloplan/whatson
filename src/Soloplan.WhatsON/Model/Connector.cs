@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Soloplan.WhatsON
+namespace Soloplan.WhatsON.Model
 {
   using System.Collections.Generic;
   using System.Linq;

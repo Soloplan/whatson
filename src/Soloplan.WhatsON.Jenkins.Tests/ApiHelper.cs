@@ -7,6 +7,7 @@
 namespace Soloplan.WhatsON.Jenkins.Tests
 {
   using Soloplan.WhatsON.Jenkins.Model;
+  using Soloplan.WhatsON.Model;
 
   public static class ApiHelper
   {

@@ -10,6 +10,7 @@
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
+  using Soloplan.WhatsON.Model;
   using Soloplan.WhatsON.Serialization;
   using Application = System.Windows.Application;
 
