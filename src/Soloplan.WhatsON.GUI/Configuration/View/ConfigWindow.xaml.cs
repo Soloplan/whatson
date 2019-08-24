@@ -302,11 +302,13 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
     private void ImportButtonClick(object sender, RoutedEventArgs e)
     {
-      var openFileDialog = new OpenFileDialog();
-      openFileDialog.Filter = this.GetConfigFileFilter();
-      if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+      using (var openFileDialog = new OpenFileDialog())
       {
-        this.configurationViewModel.Import(openFileDialog.FileName);
+        openFileDialog.Filter = this.GetConfigFileFilter();
+        if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        {
+          this.configurationViewModel.Import(openFileDialog.FileName);
+        }
       }
     }
 
@@ -317,11 +319,13 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
     private void ExportButtonClick(object sender, RoutedEventArgs e)
     {
-      var saveFileDialog = new SaveFileDialog();
-      saveFileDialog.Filter = this.GetConfigFileFilter();
-      if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+      using (var saveFileDialog = new SaveFileDialog())
       {
-        this.configurationViewModel.Export(saveFileDialog.FileName);
+        saveFileDialog.Filter = this.GetConfigFileFilter();
+        if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        {
+          this.configurationViewModel.Export(saveFileDialog.FileName);
+        }
       }
     }
 
