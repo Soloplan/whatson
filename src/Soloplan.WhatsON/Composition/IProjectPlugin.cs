@@ -15,7 +15,7 @@ namespace Soloplan.WhatsON.Composition
   /// <summary>
   /// Adds possibility to query project list and configure projects.
   /// </summary>
-  public interface IProjectPlugin
+  public interface IProjectPlugin : IPlugin
   {
     /// <summary>
     /// Gets the projects.

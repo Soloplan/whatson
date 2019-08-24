@@ -399,7 +399,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       }
       else
       {
-        foreach (var plugin in PluginsManager.Instance.PlugIns.OfType<IConnectorPlugin>())
+        foreach (var plugin in PluginManager.Instance.PlugIns.OfType<IConnectorPlugin>())
         {
           if (plugin is IProjectPlugin projectsListQueryingPlugin)
           {

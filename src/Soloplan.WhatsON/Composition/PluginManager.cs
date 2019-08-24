@@ -20,7 +20,7 @@ namespace Soloplan.WhatsON.Composition
   /// <summary>
   /// The Manager for Connector Plugins.
   /// </summary>
-  public sealed class PluginsManager
+  public sealed class PluginManager
   {
     /// <summary>
     /// Logger instance used by this class.
@@ -30,7 +30,7 @@ namespace Soloplan.WhatsON.Composition
     /// <summary>
     /// Singleton instance.
     /// </summary>
-    private static volatile PluginsManager instance;
+    private static volatile PluginManager instance;
 
     /// <summary>
     /// The connectors.
@@ -45,12 +45,12 @@ namespace Soloplan.WhatsON.Composition
     /// <summary>
     /// Registered plugins.
     /// </summary>
-    private List<IPlugIn> plugIns = new List<IPlugIn>();
+    private List<IPlugin> plugIns = new List<IPlugin>();
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="PluginsManager"/> class.
+    /// Initializes a new instance of the <see cref="PluginManager"/> class.
     /// </summary>
-    private PluginsManager()
+    private PluginManager()
     {
       this.InitializePlugInTypes();
     }
@@ -61,10 +61,10 @@ namespace Soloplan.WhatsON.Composition
     /// <remarks>
     /// Getter of this property is thread-safe.
     /// </remarks>
-    public static PluginsManager Instance
+    public static PluginManager Instance
     {
       [MethodImpl(MethodImplOptions.Synchronized)]
-      get => instance ?? (instance = new PluginsManager());
+      get => instance ?? (instance = new PluginManager());
     }
 
     /// <summary>
@@ -100,7 +100,7 @@ namespace Soloplan.WhatsON.Composition
       }
     }
 
-    public IReadOnlyList<IPlugIn> PlugIns => this.plugIns.AsReadOnly();
+    public IReadOnlyList<IPlugin> PlugIns => this.plugIns.AsReadOnly();
 
     /// <summary>
     /// Gets the Plugin instance of a Connector Plugin.
@@ -164,14 +164,14 @@ namespace Soloplan.WhatsON.Composition
     /// </summary>
     private void InitializePlugInTypes()
     {
-      log.Debug("Initializing {PluginsManager}", nameof(PluginsManager));
+      log.Debug("Initializing {PluginsManager}", nameof(PluginManager));
       var path = System.IO.Path.GetDirectoryName(System.AppContext.BaseDirectory);
       var plugInPath = Path.Combine(path, "Plugins");
       log.Debug("Paths used {}", new { AppDirectory = path, PluginDirectory = plugInPath });
       if (Directory.Exists(plugInPath))
       {
         var found = PluginFinder.FindAllPlugins(Directory.EnumerateFiles(plugInPath, "*.dll").ToArray());
-        this.plugIns = new List<IPlugIn>();
+        this.plugIns = new List<IPlugin>();
         foreach (var plugin in found)
         {
           this.plugIns.Add(plugin);

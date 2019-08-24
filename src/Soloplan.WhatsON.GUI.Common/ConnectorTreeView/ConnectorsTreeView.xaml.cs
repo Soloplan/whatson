@@ -36,7 +36,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.InitializeComponent();
       if (!DesignerProperties.GetIsInDesignMode(this))
       {
-        foreach (var treeViewPresentationPlugIn in PluginsManager.Instance.GetPresentationPlugIns())
+        foreach (var treeViewPresentationPlugIn in PluginManager.Instance.GetPresentationPlugins())
         {
           using (var resourceXml = treeViewPresentationPlugIn.GetDataTempletXaml())
           {

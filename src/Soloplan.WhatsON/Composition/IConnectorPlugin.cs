@@ -9,7 +9,7 @@ namespace Soloplan.WhatsON.Composition
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.Model;
 
-  public interface IConnectorPlugin : IPlugIn
+  public interface IConnectorPlugin : IPlugin
   {
     Type ConnectorType { get; }
 

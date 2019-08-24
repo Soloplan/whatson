@@ -21,13 +21,13 @@ namespace Soloplan.WhatsON.Composition
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
     /// <summary>
-    /// Finds all the <see cref="T:Soloplan.WhatsON.IConnectorPlugin"/>s that are provided by the specified assemblies.
+    /// Finds all the <see cref="T:Soloplan.WhatsON.Composition.IPlugin"/>s that are provided by the specified assemblies.
     /// Note that this method only supports assemblies from the applications root directory,
     /// i.e. the plugin assembly must be located next to the application's executable
     /// </summary>
     /// <param name="assemblies">A list of assemblies that contain plugins.</param>
     /// <returns>An enumerator with all the found plugins.</returns>
-    public static IEnumerable<IPlugIn> FindAllPlugins(params string[] assemblies)
+    public static IEnumerable<IPlugin> FindAllPlugins(params string[] assemblies)
     {
       foreach (var assemblyName in assemblies)
       {
@@ -42,10 +42,10 @@ namespace Soloplan.WhatsON.Composition
         var assembly = Assembly.LoadFile(absoluteName);
         foreach (var type in assembly.GetExportedTypes())
         {
-          if (typeof(IPlugIn).IsAssignableFrom(type) && !type.IsAbstract)
+          if (typeof(IPlugin).IsAssignableFrom(type) && !type.IsAbstract)
           {
             log.Debug("Found plugin {plugin}", new { Assembly = absoluteName, PluginType = type });
-            yield return Activator.CreateInstance(type) as IPlugIn;
+            yield return Activator.CreateInstance(type) as IPlugin;
           }
         }
 

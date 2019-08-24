@@ -9,7 +9,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
   <StackPanel Margin="8" MinWidth="300">
-    <ComboBox x:Name="uxPluginType" Height="28" Cursor="Hand" ItemsSource="{Binding Path=ConnectorPlugins, Source={x:Static whatsOn:PluginsManager.Instance}}" DisplayMemberPath="ConnectorTypeAttribute.Name"  Margin="0 8 0 10"/>
+    <ComboBox x:Name="uxPluginType" Height="28" Cursor="Hand" ItemsSource="{Binding Path=ConnectorPlugins, Source={x:Static whatsOn:PluginManager.Instance}}" DisplayMemberPath="ConnectorTypeAttribute.Name"  Margin="0 8 0 10"/>
     <TextBox x:Name="uxEditConnectorName" materialDesign:HintAssist.Hint="Connector name" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="0 8 0 0" HorizontalAlignment="Stretch" Text="{Binding Path=CurrentConnector.Name, UpdateSourceTrigger=Explicit}"/>
 
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >

@@ -9,10 +9,11 @@ namespace Soloplan.WhatsON.Jenkins.GUI
   using System.IO;
   using System.Text;
   using System.Xml;
+  using Soloplan.WhatsON.GUI.Common;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Jenkins.Model;
 
-  public class JenkinsTreeViewPresentationPlugIn : ITreeViewPresentationPlugIn
+  public class JenkinsTreeViewPresentationPlugIn : IPresentationPlugin
   {
     public Type ConnectorType => typeof(JenkinsProject);
 

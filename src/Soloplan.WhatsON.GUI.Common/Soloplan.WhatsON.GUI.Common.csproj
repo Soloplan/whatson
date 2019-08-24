@@ -78,8 +78,8 @@
     <Compile Include="OpenWebPageCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ConnectorTreeView\IHandleDoubleClick.cs" />
-    <Compile Include="ConnectorTreeView\ITreeViewPresentationPlugIn.cs" />
-    <Compile Include="ConnectorTreeView\PluginsManagerExtension.cs" />
+    <Compile Include="IPresentationPlugin.cs" />
+    <Compile Include="ConnectorTreeView\PluginManagerExtensions.cs" />
     <Compile Include="ConnectorTreeView\StatusToColorConverter.cs" />
     <Compile Include="ConnectorTreeView\StatusViewModel.cs" />
     <Compile Include="ConnectorTreeView\ConnectorGroupViewModel.cs" />

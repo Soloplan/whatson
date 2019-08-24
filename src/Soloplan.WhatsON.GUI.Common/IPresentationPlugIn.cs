@@ -1,18 +1,19 @@
-﻿// <copyright file="ITreeViewPresentationPlugIn.cs" company="Soloplan GmbH">
+﻿// <copyright file="IPresentationPlugin.cs" company="Soloplan GmbH">
 // Copyright (c) Soloplan GmbH. All rights reserved.
 // Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 
-namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
+namespace Soloplan.WhatsON.GUI.Common
 {
   using System;
   using System.Xml;
   using Soloplan.WhatsON.Composition;
+  using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
 
   /// <summary>
   /// PlugIn which provides presentation of <see cref="ConnectorType"/> connectors.
   /// </summary>
-  public interface ITreeViewPresentationPlugIn : IPlugIn
+  public interface IPresentationPlugin : IPlugin
   {
     /// <summary>
     /// Gets type of connector for which this PlugIn provides presentation.

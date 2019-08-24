@@ -54,7 +54,7 @@ namespace Soloplan.WhatsON.Model
       this.Snapshots = new List<Snapshot>();
       if (configuration == null)
       {
-        var plugin = PluginsManager.Instance.GetPlugin(this);
+        var plugin = PluginManager.Instance.GetPlugin(this);
         configuration = new ConnectorConfiguration(plugin.GetType().FullName);
       }
 

@@ -56,7 +56,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
       {
         if (this.sourceConnectorPlugin == null && this.SourceConnectorConfiguration != null)
         {
-          this.sourceConnectorPlugin = PluginsManager.Instance.GetPlugin(this.SourceConnectorConfiguration);
+          this.sourceConnectorPlugin = PluginManager.Instance.GetPlugin(this.SourceConnectorConfiguration);
         }
 
         return this.sourceConnectorPlugin;

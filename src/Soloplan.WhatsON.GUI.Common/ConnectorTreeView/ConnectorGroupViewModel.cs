@@ -151,7 +151,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private void CreateViewModelForConnectorConfiguration(ConnectorConfiguration connectorConfiguration)
     {
-      var connector = PluginsManager.Instance.GetConnector(connectorConfiguration);
+      var connector = PluginManager.Instance.GetConnector(connectorConfiguration);
       ConnectorViewModel connectorViewModel = this.GetConnectorViewModel(connector);
       connectorViewModel.EditItem += this.OnSubItemEdit;
       connectorViewModel.DeleteItem += this.DeleteConnector;
@@ -167,7 +167,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         return new ConnectorMissingViewModel();
       }
 
-      var presentationPlugIn = PluginsManager.Instance.GetPresentationPlugIn(connector.GetType());
+      var presentationPlugIn = PluginManager.Instance.GetPresentationPlugin(connector.GetType());
       if (presentationPlugIn != null)
       {
         return presentationPlugIn.CreateViewModel();
