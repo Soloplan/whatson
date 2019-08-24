@@ -13,6 +13,8 @@ namespace Soloplan.WhatsON
   using System.Threading;
   using System.Threading.Tasks;
   using NLog;
+  using Soloplan.WhatsON.Composition;
+  using Soloplan.WhatsON.Configuration;
 
   /// <summary>
   /// The connector - represent an executable job defined by the plugin.

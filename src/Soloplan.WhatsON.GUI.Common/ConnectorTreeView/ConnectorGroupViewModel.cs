@@ -11,6 +11,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Linq;
   using System.Windows.Input;
   using NLog;
+  using Soloplan.WhatsON.Composition;
+  using Soloplan.WhatsON.Configuration;
 
   /// <summary>
   /// Viewmodel representing group of connectors shown as single node in <see cref="ConnectorTreeView"/>.

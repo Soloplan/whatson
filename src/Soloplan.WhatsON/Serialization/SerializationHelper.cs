@@ -11,6 +11,7 @@ namespace Soloplan.WhatsON.Serialization
   using System.IO;
   using Newtonsoft.Json;
   using NLog;
+  using Soloplan.WhatsON.Configuration;
 
   /// <summary>
   /// The serializer which is responsible for the for loading, saving or creating empty configuration.
@@ -37,7 +38,7 @@ namespace Soloplan.WhatsON.Serialization
     public static void Save<T>(T configuration, string file)
     {
       log.Debug("Saving configuration {configuration} to file {file}.", configuration, file);
-      var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto, NullValueHandling = NullValueHandling.Ignore,  Formatting = Formatting.Indented };
+      var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto, NullValueHandling = NullValueHandling.Ignore, Formatting = Formatting.Indented };
       var json = JsonConvert.SerializeObject(configuration, settings);
       File.WriteAllText(file, json);
       log.Debug("Configuration saved.");

@@ -5,6 +5,8 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using Soloplan.WhatsON.Composition;
+
 namespace Soloplan.WhatsON.CruiseControl
 {
   public interface ICruiseControlServerManagerPlugIn : IPlugIn

@@ -7,6 +7,7 @@
 namespace Soloplan.WhatsON
 {
   using System.Collections.Generic;
+  using Soloplan.WhatsON.Composition;
 
   /// <summary>
   /// Represents the metadata for a project on the server.

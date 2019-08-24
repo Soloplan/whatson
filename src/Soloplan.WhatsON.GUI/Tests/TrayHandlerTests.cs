@@ -7,6 +7,7 @@
 namespace Soloplan.WhatsON.GUI.Tests
 {
   using NUnit.Framework;
+  using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Serialization;
 

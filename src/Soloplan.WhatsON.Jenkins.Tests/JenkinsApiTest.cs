@@ -1,9 +1,10 @@
-namespace Soloplan.WhatsON.Jenkins.Tests
+﻿namespace Soloplan.WhatsON.Jenkins.Tests
 {
   using System;
   using System.Linq;
   using NUnit.Framework;
   using Soloplan.WhatsON;
+  using Soloplan.WhatsON.Configuration;
 
   [TestFixture]
   public class JenkinsApiTest

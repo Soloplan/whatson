@@ -25,7 +25,7 @@ namespace Soloplan.WhatsON.Jenkins
 
     public async Task<JenkinsJob> GetJenkinsJob(JenkinsProject connector, CancellationToken token)
     {
-      var address = connector.GetAddress();
+      var address = connector.Address;
       var projectName = connector.GetProject();
 
       var jobRequest = $"{address.Trim('/')}/job/{projectName.Trim('/')}/api/json?tree={JenkinsJob.RequestProperties}";
@@ -48,7 +48,7 @@ namespace Soloplan.WhatsON.Jenkins
 
     public async Task<JenkinsBuild> GetJenkinsBuild(JenkinsProject connector, int buildNumber, CancellationToken token)
     {
-      var address = connector.GetAddress();
+      var address = connector.Address;
       var projectName = connector.GetProject();
 
       var buildRequest = $"{address.Trim('/')}/job/{projectName.Trim('/')}/{buildNumber}/api/json?tree={JenkinsBuild.RequestProperties}";

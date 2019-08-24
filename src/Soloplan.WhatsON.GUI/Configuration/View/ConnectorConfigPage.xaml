@@ -1,0 +1,25 @@
+﻿<Page
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Configuration"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      x:Class="Soloplan.WhatsON.GUI.Configuration.View.ConnectorConfigPage"
+      mc:Ignorable="d" 
+      d:DesignHeight="450"
+      Title="ConnectorConfigPage"
+      TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+      Background="{DynamicResource MaterialDesignPaper}"
+      TextElement.FontWeight="Medium"
+      TextElement.FontSize="14"
+      FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
+
+  <Grid x:Name="MainGrid">
+    <materialDesign:ColorZone Mode="Standard" CornerRadius="5" Margin="5">
+      <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel x:Name="StackPanel" MinWidth="300"/>
+      </ScrollViewer>
+    </materialDesign:ColorZone>
+  </Grid>
+</Page>

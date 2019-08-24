@@ -3,6 +3,7 @@
   using System;
   using System.Collections.ObjectModel;
   using NLog;
+  using Soloplan.WhatsON.Configuration;
 
   public class ConnectorViewModel : TreeItemViewModel
   {

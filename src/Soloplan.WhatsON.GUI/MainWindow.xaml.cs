@@ -16,11 +16,13 @@ namespace Soloplan.WhatsON.GUI
   using System.Windows.Data;
   using System.Windows.Media.Animation;
   using MaterialDesignThemes.Wpf;
+  using Soloplan.WhatsON.Composition;
+  using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
-  using Soloplan.WhatsON.GUI.Config.View;
-  using Soloplan.WhatsON.GUI.Config.ViewModel;
-  using Soloplan.WhatsON.GUI.Config.Wizard;
+  using Soloplan.WhatsON.GUI.Configuration.View;
+  using Soloplan.WhatsON.GUI.Configuration.ViewModel;
+  using Soloplan.WhatsON.GUI.Configuration.Wizard;
   using Soloplan.WhatsON.Serialization;
 
   /// <summary>

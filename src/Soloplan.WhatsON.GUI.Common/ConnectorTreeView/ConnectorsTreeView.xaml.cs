@@ -9,6 +9,8 @@
   using System.Windows.Data;
   using System.Windows.Input;
   using System.Windows.Markup;
+  using Soloplan.WhatsON.Composition;
+  using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.Serialization;
 

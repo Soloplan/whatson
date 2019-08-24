@@ -12,6 +12,8 @@ namespace Soloplan.WhatsON.Jenkins
   using System.Threading;
   using System.Threading.Tasks;
   using NLog;
+  using Soloplan.WhatsON.Composition;
+  using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.Jenkins.Model;
 
   [ConnectorType("Jenkins Project Status", Description = "Retrieve the current status of a Jenkins project.")]

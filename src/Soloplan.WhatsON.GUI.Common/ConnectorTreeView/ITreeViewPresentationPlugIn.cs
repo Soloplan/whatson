@@ -2,6 +2,7 @@
 {
   using System;
   using System.Xml;
+  using Soloplan.WhatsON.Composition;
 
   /// <summary>
   /// PlugIn which provides presentation of <see cref="ConnectorType"/> connectors.

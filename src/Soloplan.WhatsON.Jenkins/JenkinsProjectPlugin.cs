@@ -11,6 +11,8 @@ namespace Soloplan.WhatsON.Jenkins
   using System.Collections.Generic;
   using System.Threading.Tasks;
   using NLog;
+  using Soloplan.WhatsON.Composition;
+  using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.Jenkins.Model;
 
   public class JenkinsProjectPlugin : ConnectorPlugin, IProjectsListQuerying, IAssignServerProject

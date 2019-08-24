@@ -14,6 +14,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Windows.Input;
   using GongSolutions.Wpf.DragDrop;
   using NLog;
+  using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.Serialization;
 

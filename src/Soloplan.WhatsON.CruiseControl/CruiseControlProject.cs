@@ -13,6 +13,8 @@ namespace Soloplan.WhatsON.CruiseControl
   using System.Threading.Tasks;
   using NLog;
   using Soloplan.WhatsON;
+  using Soloplan.WhatsON.Composition;
+  using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.CruiseControl.Model;
 
   [ConnectorType("Cruise Control Project Status", Description = "Retrieve the current status of a Cruise Control project.")]
@@ -129,6 +131,24 @@ namespace Soloplan.WhatsON.CruiseControl
       return ObservationState.Unknown;
     }
 
+    private static void SetCulprits(CruiseControlJob job, CruiseControlStatus result)
+    {
+      var breakers = job.MessageList.MessagesSafe.Where(msg => msg.Kind == MessageKind.Breakers);
+      foreach (var breakersLine in breakers)
+      {
+        foreach (var breaker in breakersLine.Text.Split(',').Select(brk => brk.Trim()).Where(brk => !string.IsNullOrEmpty(brk)))
+        {
+          if (result.Culprits.Any(brk => brk.Name == breaker))
+          {
+            continue;
+          }
+
+          var culprit = new Culprit { Name = breaker };
+          result.Culprits.Add(culprit);
+        }
+      }
+    }
+
     /// <summary>
     /// Adds or updates snapshot based on <paramref name="status"/>. Update is done when build with the same number is already present.
     /// </summary>
@@ -189,24 +209,6 @@ namespace Soloplan.WhatsON.CruiseControl
       result.EstimatedDuration = this.estimatedDuration;
 
       return result;
-    }
-
-    private static void SetCulprits(CruiseControlJob job, CruiseControlStatus result)
-    {
-      var breakers = job.MessageList.MessagesSafe.Where(msg => msg.Kind == MessageKind.Breakers);
-      foreach (var breakersLine in breakers)
-      {
-        foreach (var breaker in breakersLine.Text.Split(',').Select(brk => brk.Trim()).Where(brk => !string.IsNullOrEmpty(brk)))
-        {
-          if (result.Culprits.Any(brk => brk.Name == breaker))
-          {
-            continue;
-          }
-
-          var culprit = new Culprit { Name = breaker };
-          result.Culprits.Add(culprit);
-        }
-      }
     }
 
     private class ActivityConstants

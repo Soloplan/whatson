@@ -7,6 +7,7 @@
 namespace Soloplan.WhatsON
 {
   using System.Collections.Generic;
+  using Soloplan.WhatsON.Configuration;
 
   /// <summary>
   /// The interface used to assign <see cref="ServerProject"/> to <see cref="ConfigurationItem"/>.

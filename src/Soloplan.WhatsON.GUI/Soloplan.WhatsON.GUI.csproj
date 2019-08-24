@@ -65,32 +65,32 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Config\AboutPage.xaml.cs">
+    <Compile Include="Configuration\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Config\CheckBoxConfigControlBuilder.cs" />
-    <Compile Include="Config\ConfigResourcesHelper.cs" />
-    <Compile Include="Config\MessageControl.xaml.cs">
+    <Compile Include="Configuration\CheckBoxConfigControlBuilder.cs" />
+    <Compile Include="Configuration\ConfigResourcesHelper.cs" />
+    <Compile Include="Configuration\MessageControl.xaml.cs">
       <DependentUpon>MessageControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Config\NotificationSettingsControlBuilder.cs" />
-    <Compile Include="Config\ViewModel\GroupViewModel.cs" />
-    <Compile Include="Config\View\EditGroupNameDialog.xaml.cs">
+    <Compile Include="Configuration\NotificationSettingsControlBuilder.cs" />
+    <Compile Include="Configuration\ViewModel\GroupViewModel.cs" />
+    <Compile Include="Configuration\View\EditGroupNameDialog.xaml.cs">
       <DependentUpon>EditGroupNameDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Config\Wizard\ProjectSelectionWizardPage.xaml.cs">
+    <Compile Include="Configuration\Wizard\ProjectSelectionWizardPage.xaml.cs">
       <DependentUpon>ProjectSelectionWizardPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Config\Wizard\ConnectionWizardPage.xaml.cs">
+    <Compile Include="Configuration\Wizard\ConnectionWizardPage.xaml.cs">
       <DependentUpon>ConnectionWizardPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Config\Wizard\ProjectsTreeView.xaml.cs">
+    <Compile Include="Configuration\Wizard\ProjectsTreeView.xaml.cs">
       <DependentUpon>ProjectsTreeView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Config\Wizard\ProjectViewModel.cs" />
-    <Compile Include="Config\Wizard\ProjectViewModelList.cs" />
-    <Compile Include="Config\Wizard\WizardController.cs" />
-    <Compile Include="Config\Wizard\WizardWindow.xaml.cs">
+    <Compile Include="Configuration\Wizard\ProjectViewModel.cs" />
+    <Compile Include="Configuration\Wizard\ProjectViewModelList.cs" />
+    <Compile Include="Configuration\Wizard\WizardController.cs" />
+    <Compile Include="Configuration\Wizard\WizardWindow.xaml.cs">
       <DependentUpon>WizardWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="CustomTitleBar.xaml.cs">
@@ -104,60 +104,60 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ConfigurationItems.resx</DependentUpon>
     </Compile>
-    <Compile Include="Config\ConfigControlBuilder.cs" />
-    <Compile Include="Config\NotEmptyValidationRule.cs" />
-    <Compile Include="Config\View\Validation.cs" />
+    <Compile Include="Configuration\ConfigControlBuilder.cs" />
+    <Compile Include="Configuration\NotEmptyValidationRule.cs" />
+    <Compile Include="Configuration\View\Validation.cs" />
     <Compile Include="ThemeHelper.cs" />
     <Compile Include="TrayHandler.cs" />
-    <Page Include="Config\AboutPage.xaml">
+    <Page Include="Configuration\AboutPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Config\MessageControl.xaml">
+    <Page Include="Configuration\MessageControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Config\View\ConfigWindow.xaml">
+    <Page Include="Configuration\View\ConfigWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Config\MainConfigPage.xaml">
+    <Page Include="Configuration\MainConfigPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Config\View\EditGroupNameDialog.xaml">
+    <Page Include="Configuration\View\EditGroupNameDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Config\Wizard\ProjectSelectionWizardPage.xaml">
+    <Page Include="Configuration\Wizard\ProjectSelectionWizardPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Config\View\ConnectorConfigPage.xaml">
+    <Page Include="Configuration\View\ConnectorConfigPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Config\View\ConnectorsConfigPage.xaml">
+    <Page Include="Configuration\View\ConnectorsConfigPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Config\View\OkCancelDialog.xaml">
+    <Page Include="Configuration\View\OkCancelDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Config\View\CreateEditConnectorDialog.xaml">
+    <Page Include="Configuration\View\CreateEditConnectorDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Config\Wizard\ConnectionWizardPage.xaml">
+    <Page Include="Configuration\Wizard\ConnectionWizardPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Config\Wizard\ProjectsTreeView.xaml">
+    <Page Include="Configuration\Wizard\ProjectsTreeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Config\Wizard\WizardWindow.xaml">
+    <Page Include="Configuration\Wizard\WizardWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -173,36 +173,36 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Config\ComboBoxConfigControlBuilder.cs" />
-    <Compile Include="Config\ConfigControlBuilderFactory.cs" />
-    <Compile Include="Config\CategoryComboBoxConfigControlBuilder.cs" />
-    <Compile Include="Config\ViewModel\ConfigurationItemViewModel.cs" />
-    <Compile Include="Config\ViewModel\ConfigViewModel.cs" />
-    <Compile Include="Config\ViewModel\GlobalConfigDataViewModel.cs" />
-    <Compile Include="Config\ViewModel\ConnectorViewModel.cs" />
-    <Compile Include="Config\ViewModel\ViewModelBase.cs" />
-    <Compile Include="Config\View\ConfigWindow.xaml.cs">
+    <Compile Include="Configuration\ComboBoxConfigControlBuilder.cs" />
+    <Compile Include="Configuration\ConfigControlBuilderFactory.cs" />
+    <Compile Include="Configuration\CategoryComboBoxConfigControlBuilder.cs" />
+    <Compile Include="Configuration\ViewModel\ConfigurationItemViewModel.cs" />
+    <Compile Include="Configuration\ViewModel\ConfigViewModel.cs" />
+    <Compile Include="Configuration\ViewModel\GlobalConfigDataViewModel.cs" />
+    <Compile Include="Configuration\ViewModel\ConnectorViewModel.cs" />
+    <Compile Include="Configuration\ViewModel\ViewModelBase.cs" />
+    <Compile Include="Configuration\View\ConfigWindow.xaml.cs">
       <DependentUpon>ConfigWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Config\IConfigControlBuilder.cs" />
-    <Compile Include="Config\MainConfigPage.xaml.cs">
+    <Compile Include="Configuration\IConfigControlBuilder.cs" />
+    <Compile Include="Configuration\MainConfigPage.xaml.cs">
       <DependentUpon>MainConfigPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Config\NumericConfigControlBuilder.cs" />
-    <Compile Include="Config\View\ConnectorConfigPage.xaml.cs">
+    <Compile Include="Configuration\NumericConfigControlBuilder.cs" />
+    <Compile Include="Configuration\View\ConnectorConfigPage.xaml.cs">
       <DependentUpon>ConnectorConfigPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Config\View\ConnectorsConfigPage.xaml.cs">
+    <Compile Include="Configuration\View\ConnectorsConfigPage.xaml.cs">
       <DependentUpon>ConnectorsConfigPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Config\TextConfigControlBuilder.cs" />
-    <Compile Include="Config\View\OkCancelDialog.xaml.cs">
+    <Compile Include="Configuration\TextConfigControlBuilder.cs" />
+    <Compile Include="Configuration\View\OkCancelDialog.xaml.cs">
       <DependentUpon>OkCancelDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Config\View\CreateEditConnectorDialog.xaml.cs">
+    <Compile Include="Configuration\View\CreateEditConnectorDialog.xaml.cs">
       <DependentUpon>CreateEditConnectorDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Config\View\ConnectorViewModelCollection.cs" />
+    <Compile Include="Configuration\View\ConnectorViewModelCollection.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

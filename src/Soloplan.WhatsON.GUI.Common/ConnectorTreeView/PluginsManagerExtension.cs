@@ -1,5 +1,6 @@
 ﻿namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
+  using Soloplan.WhatsON.Composition;
   using System;
   using System.Collections.Generic;
   using System.Linq;

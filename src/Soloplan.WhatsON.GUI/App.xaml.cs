@@ -3,6 +3,8 @@
   using System.Net;
   using System.Windows;
   using System.Windows.Interop;
+  using Soloplan.WhatsON.Composition;
+  using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.GUI.Logging;
   using Soloplan.WhatsON.Serialization;

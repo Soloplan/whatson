@@ -1,5 +1,7 @@
 ﻿namespace Soloplan.WhatsON
 {
+  using Soloplan.WhatsON.Configuration;
+
   [ConfigurationItem(ServerAddress, typeof(string), Optional = false, Priority = 100)]
   public abstract class ServerConnector : Connector
   {
