@@ -1,4 +1,9 @@
-﻿namespace Soloplan.WhatsON.Jenkins.GUI
+﻿// <copyright file="GetJenkinsTreeViewPresentationPlugIn.cs" company="Soloplan GmbH">
+// Copyright (c) Soloplan GmbH. All rights reserved.
+// Licensed under the MIT License. See License-file in the project root for license information.
+// </copyright>
+
+namespace Soloplan.WhatsON.Jenkins.GUI
 {
   using System;
   using System.IO;  using System.Text;

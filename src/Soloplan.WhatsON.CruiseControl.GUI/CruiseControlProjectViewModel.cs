@@ -19,10 +19,7 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
       {
         if (this.CurrentStatus is CruiseControlStatusViewModel ccModel && !string.IsNullOrEmpty(ccModel.OpenBuildPageCommandData?.Address))
         {
-          return new OpenWebPageCommandData
-          {
-            Address = ccModel.OpenBuildPageCommandData.Address.Replace("ViewLatestBuildReport.aspx", "ViewProjectReport.aspx")
-          };
+          return new OpenWebPageCommandData { Address = ccModel.OpenBuildPageCommandData.Address.Replace("ViewLatestBuildReport.aspx", "ViewProjectReport.aspx") };
         }
 
         return null;

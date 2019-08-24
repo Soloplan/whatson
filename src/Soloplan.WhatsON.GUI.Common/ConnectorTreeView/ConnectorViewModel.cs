@@ -1,8 +1,15 @@
-﻿namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
+﻿// <copyright file="ConnectorViewModel.cs" company="Soloplan GmbH">
+// Copyright (c) Soloplan GmbH. All rights reserved.
+// Licensed under the MIT License. See License-file in the project root for license information.
+// </copyright>
+
+namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
   using System;
   using System.Collections.ObjectModel;
   using NLog;
+  using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.Model;
 
   public class ConnectorViewModel : TreeItemViewModel
   {

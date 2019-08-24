@@ -14,8 +14,9 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Windows.Input;
   using GongSolutions.Wpf.DragDrop;
   using NLog;
+  using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
-  using Soloplan.WhatsON.Serialization;
+  using Soloplan.WhatsON.Model;
 
   /// <summary>
   /// Top level viewmodel used to bind to <see cref="ConnectorTreeView"/>.
@@ -333,7 +334,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Moves object given by <paramref name="source"/> to <paramref name="target"/>
+    /// Moves object given by <paramref name="source"/> to <paramref name="target"/>.
     /// </summary>
     /// <param name="source">Information about source location of moved object.</param>
     /// <param name="target">Information about desired location of moved object.</param>
@@ -467,7 +468,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       var model = new ConnectorGroupViewModel
       {
-        GroupName = groupName
+        GroupName = groupName,
       };
 
       model.EditItem += (s, e) => this.EditItem?.Invoke(s, e);

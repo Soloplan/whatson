@@ -144,14 +144,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   public class DeleteTreeItemEventArgs : EventArgs
   {
     /// <summary>
-    /// Prevents re-using class for multiple event calls.
-    /// </summary>
-    private bool used;
-
-    /// <summary>
     /// List of event handlers.
     /// </summary>
     private readonly IList<Func<Task<bool>>> canceledCalculationFunctions = new List<Func<Task<bool>>>();
+
+    /// <summary>
+    /// Prevents re-using class for multiple event calls.
+    /// </summary>
+    private bool used;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DeleteTreeItemEventArgs"/> class.

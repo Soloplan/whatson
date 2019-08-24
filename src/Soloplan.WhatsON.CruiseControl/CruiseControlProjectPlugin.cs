@@ -11,6 +11,10 @@ namespace Soloplan.WhatsON.CruiseControl
   using System.Collections.Generic;
   using System.Linq;
   using System.Threading.Tasks;
+  using Soloplan.WhatsON.Composition;
+  using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.CruiseControl.Model;
+  using Soloplan.WhatsON.Model;
 
   public class CruiseControlProjectPlugin : ConnectorPlugin, IProjectsListQuerying, IAssignServerProject
   {

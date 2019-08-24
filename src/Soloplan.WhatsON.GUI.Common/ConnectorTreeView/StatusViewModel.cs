@@ -7,9 +7,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
   using System;
   using NLog;
+  using Soloplan.WhatsON.Model;
 
   /// <summary>
-  /// Base ViewModel used for any kind of <see cref="Soloplan.WhatsON.Connector"/>;
+  /// Base ViewModel used for any kind of <see cref="Soloplan.WhatsON.Connector"/>.
   /// </summary>
   public class StatusViewModel : NotifyPropertyChanged
   {
@@ -17,11 +18,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// The logger.
     /// </summary>
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
-
-    public StatusViewModel(ConnectorViewModel connector)
-    {
-      this.Parent = connector;
-    }
 
     private string name;
 
@@ -40,6 +36,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private bool unstable;
 
     private int age;
+
+    public StatusViewModel(ConnectorViewModel connector)
+    {
+      this.Parent = connector;
+    }
 
     public int Age
     {

@@ -24,6 +24,10 @@
         "y",
         "z"
       ]
+    },
+    "documentationRules": {
+      "companyName": "Soloplan GmbH",
+      "copyrightText": "Copyright (c) {companyName}. All rights reserved.\nLicensed under the MIT License. See License-file in the project root for license information."
     }
   }
 }

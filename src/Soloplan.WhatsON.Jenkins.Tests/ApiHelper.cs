@@ -1,12 +1,14 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ApiHelper.cs" company="Soloplan GmbH">
-//   Copyright (c) Soloplan GmbH. All rights reserved.
+// Copyright (c) Soloplan GmbH. All rights reserved.
+// Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.Jenkins.Tests
 {
   using Soloplan.WhatsON.Jenkins.Model;
+  using Soloplan.WhatsON.Model;
 
   public static class ApiHelper
   {

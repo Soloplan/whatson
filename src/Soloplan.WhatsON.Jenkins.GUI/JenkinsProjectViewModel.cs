@@ -7,9 +7,11 @@
 
 namespace Soloplan.WhatsON.Jenkins.GUI
 {
+  using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
+  using Soloplan.WhatsON.Model;
 
   public class JenkinsProjectViewModel : BuildServerProjectStatusViewModel
   {

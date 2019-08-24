@@ -11,6 +11,9 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Linq;
   using System.Windows.Input;
   using NLog;
+  using Soloplan.WhatsON.Composition;
+  using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.Model;
 
   /// <summary>
   /// Viewmodel representing group of connectors shown as single node in <see cref="ConnectorTreeView"/>.
@@ -24,7 +27,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private string groupName;
 
-    ObservableCollection<ConnectorViewModel> statusViewModels;
+    private ObservableCollection<ConnectorViewModel> statusViewModels;
 
     public ConnectorGroupViewModel()
     {
@@ -128,17 +131,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
-    private void CreateViewModelForConnectorConfiguration(ConnectorConfiguration connectorConfiguration)
-    {
-      var connector = PluginsManager.Instance.GetConnector(connectorConfiguration);
-      ConnectorViewModel connectorViewModel = this.GetConnectorViewModel(connector);
-      connectorViewModel.EditItem += this.OnSubItemEdit;
-      connectorViewModel.DeleteItem += this.DeleteConnector;
-      connectorViewModel.Init(connectorConfiguration);
-      connectorViewModel.Update(connector);
-      this.ConnectorViewModels.Add(connectorViewModel);
-    }
-
     public override void OnDoubleClick(object sender, MouseButtonEventArgs e)
     {
       foreach (var connectorViewModel in this.ConnectorViewModels)
@@ -155,6 +147,17 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     protected void OnConfigurationChanged(object sender, EventArgs eventArgs)
     {
       this.ConfigurationChanged?.Invoke(sender, eventArgs);
+    }
+
+    private void CreateViewModelForConnectorConfiguration(ConnectorConfiguration connectorConfiguration)
+    {
+      var connector = PluginsManager.Instance.GetConnector(connectorConfiguration);
+      ConnectorViewModel connectorViewModel = this.GetConnectorViewModel(connector);
+      connectorViewModel.EditItem += this.OnSubItemEdit;
+      connectorViewModel.DeleteItem += this.DeleteConnector;
+      connectorViewModel.Init(connectorConfiguration);
+      connectorViewModel.Update(connector);
+      this.ConnectorViewModels.Add(connectorViewModel);
     }
 
     private ConnectorViewModel GetConnectorViewModel(Connector connector)

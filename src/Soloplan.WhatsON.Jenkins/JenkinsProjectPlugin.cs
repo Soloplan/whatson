@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="JenkinsProjectPlugin.cs" company="Soloplan GmbH">
-//   Copyright (c) Soloplan GmbH. All rights reserved.
-//   Licensed under the MIT License.See License-file in the project root for license information.
+// Copyright (c) Soloplan GmbH. All rights reserved.
+// Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -11,15 +11,13 @@ namespace Soloplan.WhatsON.Jenkins
   using System.Collections.Generic;
   using System.Threading.Tasks;
   using NLog;
+  using Soloplan.WhatsON.Composition;
+  using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.Jenkins.Model;
+  using Soloplan.WhatsON.Model;
 
   public class JenkinsProjectPlugin : ConnectorPlugin, IProjectsListQuerying, IAssignServerProject
   {
-    /// <summary>
-    /// Gets a value indicating whether this plugin supports wizards.
-    /// </summary>
-    public override bool SupportsWizard => true;
-
     /// <summary>
     /// Logger instance used by this class.
     /// </summary>
@@ -29,6 +27,11 @@ namespace Soloplan.WhatsON.Jenkins
       : base(typeof(JenkinsProject))
     {
     }
+
+    /// <summary>
+    /// Gets a value indicating whether this plugin supports wizards.
+    /// </summary>
+    public override bool SupportsWizard => true;
 
     public override Connector CreateNew(ConnectorConfiguration configuration)
     {
