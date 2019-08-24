@@ -1,6 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="MainWindow.xaml.cs" company="Soloplan GmbH">
-//  Copyright (c) Soloplan GmbH. All rights reserved.
+// Copyright (c) Soloplan GmbH. All rights reserved.
+// Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -24,10 +25,9 @@ namespace Soloplan.WhatsON.GUI
   using Soloplan.WhatsON.GUI.Configuration.ViewModel;
   using Soloplan.WhatsON.GUI.Configuration.Wizard;
   using Soloplan.WhatsON.Model;
-  using Soloplan.WhatsON.Serialization;
 
   /// <summary>
-  /// Interaction logic for MainWindow.xaml
+  /// Interaction logic for MainWindow.xaml.
   /// </summary>
   public partial class MainWindow : INotifyPropertyChanged
   {
@@ -56,13 +56,6 @@ namespace Soloplan.WhatsON.GUI
     private bool configurationModifiedFromTree;
 
     /// <summary>
-    /// Occurs when configuration was applied.
-    /// </summary>
-    public event EventHandler<ValueEventArgs<ApplicationConfiguration>> ConfigurationApplied;
-
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="MainWindow"/> class.
     /// </summary>
     /// <param name="scheduler">The scheduler observing build servers.</param>
@@ -82,6 +75,13 @@ namespace Soloplan.WhatsON.GUI
       this.mainTreeView.EditItem += this.EditTreeItem;
       this.mainTreeView.DeleteItem += this.OnItemDeleted;
     }
+
+    /// <summary>
+    /// Occurs when configuration was applied.
+    /// </summary>
+    public event EventHandler<ValueEventArgs<ApplicationConfiguration>> ConfigurationApplied;
+
+    public event PropertyChangedEventHandler PropertyChanged;
 
     public bool IsTreeInitialized
     {
@@ -151,7 +151,7 @@ namespace Soloplan.WhatsON.GUI
     }
 
     /// <summary>
-    /// Focuses the node connected with <paramref name="connector>.
+    /// Focuses the node connected with <paramref name="connector"/>.
     /// </summary>
     /// <param name="connector">Connector which should be focused.</param>
     public void FocusConnector(Connector connector)
@@ -357,7 +357,7 @@ namespace Soloplan.WhatsON.GUI
     }
 
     /// <summary>
-    /// Shows <paramref name="dialog"/> in DialogHost "MainWindowPageHost". Works only with dialogs returning true/false;
+    /// Shows <paramref name="dialog"/> in DialogHost "MainWindowPageHost". Works only with dialogs returning true/false.
     /// </summary>
     /// <param name="dialog">Dialog to show.</param>
     /// <returns>True or false depending on what option user selected.</returns>

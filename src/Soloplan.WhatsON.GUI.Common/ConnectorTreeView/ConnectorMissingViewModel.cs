@@ -52,7 +52,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Doesn't do anything since <paramref name="changedConnector> is null.
+    /// Doesn't do anything since <paramref name="changedConnector"/> is null.
     /// </summary>
     /// <param name="changedConnector">Connector which has changed - always null.</param>
     public override void Update(Connector changedConnector)

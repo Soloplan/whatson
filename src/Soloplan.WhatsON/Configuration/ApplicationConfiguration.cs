@@ -1,6 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ApplicationConfiguration.cs" company="Soloplan GmbH">
-//   Copyright (c) Soloplan GmbH. All rights reserved.
+// Copyright (c) Soloplan GmbH. All rights reserved.
+// Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -50,7 +51,6 @@ namespace Soloplan.WhatsON.Configuration
     /// Gets the notification configuration.
     /// </summary>
     public NotificationConfiguration NotificationConfiguration { get; } = new NotificationConfiguration();
-
 
     /// <summary>
     /// Gets the notification configuration from the per connector settings or the global settings..

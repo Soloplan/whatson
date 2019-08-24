@@ -1,11 +1,16 @@
-﻿namespace Soloplan.WhatsON.GUI.Configuration.View
+﻿// <copyright file="EditGroupNameDialog.xaml.cs" company="Soloplan GmbH">
+// Copyright (c) Soloplan GmbH. All rights reserved.
+// Licensed under the MIT License. See License-file in the project root for license information.
+// </copyright>
+
+namespace Soloplan.WhatsON.GUI.Configuration.View
 {
   using System.Windows.Controls;
   using System.Windows.Data;
   using Soloplan.WhatsON.GUI.Configuration.ViewModel;
 
   /// <summary>
-  /// Interaction logic for EditGroupNameDialog.xaml
+  /// Interaction logic for EditGroupNameDialog.xaml.
   /// </summary>
   public partial class EditGroupNameDialog : UserControl
   {

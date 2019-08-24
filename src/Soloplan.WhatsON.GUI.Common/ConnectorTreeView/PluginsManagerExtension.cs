@@ -1,9 +1,14 @@
-﻿namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
+﻿// <copyright file="PluginsManagerExtension.cs" company="Soloplan GmbH">
+// Copyright (c) Soloplan GmbH. All rights reserved.
+// Licensed under the MIT License. See License-file in the project root for license information.
+// </copyright>
+
+namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
-  using Soloplan.WhatsON.Composition;
   using System;
   using System.Collections.Generic;
   using System.Linq;
+  using Soloplan.WhatsON.Composition;
 
   /// <summary>
   /// Extension class for accessing plugIns of <see cref="ITreeViewPresentationPlugIn"/> type.

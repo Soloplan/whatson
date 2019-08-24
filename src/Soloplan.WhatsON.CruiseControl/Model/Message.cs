@@ -9,18 +9,6 @@ namespace Soloplan.WhatsON.CruiseControl.Model
 {
   using System.Xml.Serialization;
 
-  [System.SerializableAttribute]
-  [System.ComponentModel.DesignerCategoryAttribute("code")]
-  [XmlType("message")]
-  public class Message
-  {
-    [XmlAttributeAttribute("text")]
-    public string Text { get; set; }
-
-    [XmlAttributeAttribute("kind")]
-    public MessageKind Kind { get; set; }
-  }
-
   public enum MessageKind
   {
     [XmlEnum("NotDefined")]
@@ -40,5 +28,17 @@ namespace Soloplan.WhatsON.CruiseControl.Model
 
     [XmlEnum("BuildAbortedBy")]
     BuildAbortedBy = 5,
+  }
+
+  [System.SerializableAttribute]
+  [System.ComponentModel.DesignerCategoryAttribute("code")]
+  [XmlType("message")]
+  public class Message
+  {
+    [XmlAttributeAttribute("text")]
+    public string Text { get; set; }
+
+    [XmlAttributeAttribute("kind")]
+    public MessageKind Kind { get; set; }
   }
 }

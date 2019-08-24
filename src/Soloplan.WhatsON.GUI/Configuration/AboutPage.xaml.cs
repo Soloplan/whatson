@@ -1,4 +1,9 @@
-﻿namespace Soloplan.WhatsON.GUI.Configuration
+﻿// <copyright file="AboutPage.xaml.cs" company="Soloplan GmbH">
+// Copyright (c) Soloplan GmbH. All rights reserved.
+// Licensed under the MIT License. See License-file in the project root for license information.
+// </copyright>
+
+namespace Soloplan.WhatsON.GUI.Configuration
 {
   using System;
   using System.Reflection;
@@ -7,7 +12,7 @@
   using System.Windows.Input;
 
   /// <summary>
-  /// Interaction logic for AboutPage.xaml
+  /// Interaction logic for AboutPage.xaml.
   /// </summary>
   public partial class AboutPage : Page
   {

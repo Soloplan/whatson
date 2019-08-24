@@ -1,6 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IConfigControlBuilder.cs" company="Soloplan GmbH">
+// <copyright file="ConnectorsConfigPage.xaml.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -20,7 +21,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
   using Soloplan.WhatsON.Model;
 
   /// <summary>
-  /// Interaction logic for ConnectorsPage.xaml
+  /// Interaction logic for ConnectorsPage.xaml.
   /// </summary>
   public partial class ConnectorsPage : Page, INotifyPropertyChanged
   {
@@ -64,7 +65,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ConnectorsPage" /> class.
-    /// Also, creates a new connector;
+    /// Also, creates a new connector.
     /// </summary>
     /// <param name="connectors">The connectors.</param>
     /// <param name="ownerWindow">The owner <see cref="Window" />.</param>

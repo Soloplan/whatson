@@ -1,6 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ProjectsTreeView.cs" company="Soloplan GmbH">
+// <copyright file="ProjectsTreeView.xaml.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -10,7 +11,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
   using System.Windows.Controls;
 
   /// <summary>
-  /// Interaction logic for ProjectsTreeView.xaml
+  /// Interaction logic for ProjectsTreeView.xaml.
   /// </summary>
   public partial class ProjectsTreeView : UserControl
   {

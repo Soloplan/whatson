@@ -1,6 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ConnectorViewModel.cs" company="Soloplan GmbH">
-//   Copyright (c) Soloplan GmbH. All rights reserved.
+// Copyright (c) Soloplan GmbH. All rights reserved.
+// Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -185,7 +186,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// Creates the new connector configuration with applied changes.
     /// </summary>
-    /// <returns>New instance of <see cref="Soloplan.WhatsON.ConnectorConfiguration"/></returns>
+    /// <returns>New instance of <see cref="Soloplan.WhatsON.ConnectorConfiguration"/>.</returns>
     public ConnectorConfiguration CreateNewConnectorConfiguration()
     {
       var sourceConnectorConfig = new ConnectorConfiguration(this.SourceConnectorPlugin.GetType().FullName);

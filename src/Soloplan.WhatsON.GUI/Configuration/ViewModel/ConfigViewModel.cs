@@ -1,7 +1,7 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ConfigViewModel.cs" company="Soloplan GmbH">
+﻿// <copyright file="ConfigViewModel.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
-// --------------------------------------------------------------------------------------------------------------------
+//   Licensed under the MIT License. See License-file in the project root for license information.
+// </copyright>
 
 namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
 {
@@ -11,7 +11,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
   using Microsoft.Win32;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Configuration.View;
-  using Soloplan.WhatsON.Serialization;
 
   /// <summary>
   /// The view model for see <see cref="Configuration"/>.

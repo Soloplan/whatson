@@ -1,4 +1,9 @@
-﻿namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
+﻿// <copyright file="ConnectorsTreeView.xaml.cs" company="Soloplan GmbH">
+// Copyright (c) Soloplan GmbH. All rights reserved.
+// Licensed under the MIT License. See License-file in the project root for license information.
+// </copyright>
+
+namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
   using System;
   using System.Collections.Generic;
@@ -13,10 +18,9 @@
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.Model;
-  using Soloplan.WhatsON.Serialization;
 
   /// <summary>
-  /// Interaction logic for ConnectorsTreeView.xaml
+  /// Interaction logic for ConnectorsTreeView.xaml.
   /// </summary>
   public partial class ConnectorsTreeView : UserControl
   {
@@ -97,10 +101,7 @@
 
     public TreeListSettings GetTreeListSettings()
     {
-      return new TreeListSettings
-      {
-        GroupExpansions = this.model.GetGroupExpansionState()
-      };
+      return new TreeListSettings { GroupExpansions = this.model.GetGroupExpansionState() };
     }
 
     public void ApplyTreeListSettings(TreeListSettings treeListSettings)

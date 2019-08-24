@@ -1,4 +1,9 @@
-﻿namespace Soloplan.WhatsON.GUI
+﻿// <copyright file="TrayHandler.cs" company="Soloplan GmbH">
+// Copyright (c) Soloplan GmbH. All rights reserved.
+// Licensed under the MIT License. See License-file in the project root for license information.
+// </copyright>
+
+namespace Soloplan.WhatsON.GUI
 {
   using System;
   using System.Drawing;
@@ -11,7 +16,6 @@
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.Model;
-  using Soloplan.WhatsON.Serialization;
   using Application = System.Windows.Application;
 
   /// <summary>

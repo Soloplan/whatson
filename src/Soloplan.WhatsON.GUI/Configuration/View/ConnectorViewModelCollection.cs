@@ -1,6 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ConnectorViewModelCollection.cs" company="Soloplan GmbH">
-//   Copyright (c) Soloplan GmbH. All rights reserved.
+// Copyright (c) Soloplan GmbH. All rights reserved.
+// Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -13,7 +14,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
   using System.Linq;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Configuration.ViewModel;
-  using Soloplan.WhatsON.Serialization;
 
   /// <summary>
   /// The <see cref="ObservableCollection{T}"/> implementation for connectors with some additional events.

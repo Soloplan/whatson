@@ -1,6 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ConfigWindow.xaml.cs" company="Soloplan GmbH">
-//   Copyright (c) Soloplan GmbH. All rights reserved.
+// Copyright (c) Soloplan GmbH. All rights reserved.
+// Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -15,11 +16,10 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Configuration.ViewModel;
   using Soloplan.WhatsON.Model;
-  using Soloplan.WhatsON.Serialization;
   using Application = System.Windows.Application;
 
   /// <summary>
-  /// Interaction logic for ConfigWindow.xaml
+  /// Interaction logic for ConfigWindow.xaml.
   /// </summary>
   public partial class ConfigWindow : Window
   {
@@ -77,6 +77,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// The window shown flag.
     /// </summary>
     private bool windowShown;
+
+    private bool skipSavingOnClose;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ConfigWindow"/> class.
@@ -262,8 +264,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
       this.Owner.Closing -= this.OwnerClosing;
       this.configurationViewModel.ApplyToSourceAndSave();
     }
-
-    private bool skipSavingOnClose;
 
     /// <summary>
     /// Handles the ActionClick event of the SnackbarMessage control.

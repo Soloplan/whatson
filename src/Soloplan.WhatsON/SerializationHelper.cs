@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Soloplan.WhatsON.Serialization
+namespace Soloplan.WhatsON
 {
   using System;
   using System.IO;

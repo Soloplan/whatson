@@ -1,5 +1,6 @@
-﻿// <copyright file="WizardWindow.xaml.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+﻿// <copyright file="WizardWindow.xaml.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 
 namespace Soloplan.WhatsON.GUI.Configuration.Wizard
@@ -8,7 +9,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
   using System.Windows;
 
   /// <summary>
-  /// Interaction logic for WizardWindow.xaml
+  /// Interaction logic for WizardWindow.xaml.
   /// </summary>
   public partial class WizardWindow : Window
   {

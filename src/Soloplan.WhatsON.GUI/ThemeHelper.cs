@@ -1,6 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ThemeHelper.cs" company="Soloplan GmbH">
-//   Copyright (c) Soloplan GmbH. All rights reserved.
+// Copyright (c) Soloplan GmbH. All rights reserved.
+// Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -30,6 +31,29 @@ namespace Soloplan.WhatsON.GUI
     public static Color PrimaryColor { get; private set; }
 
     public static Color SecondaryColor { get; private set; }
+
+    public static Color ChangeColorBrightness(Color color, float correctionFactor)
+    {
+      float red = (float)color.R;
+      float green = (float)color.G;
+      float blue = (float)color.B;
+
+      if (correctionFactor < 0)
+      {
+        correctionFactor = 1 + correctionFactor;
+        red *= correctionFactor;
+        green *= correctionFactor;
+        blue *= correctionFactor;
+      }
+      else
+      {
+        red = ((255 - red) * correctionFactor) + red;
+        green = ((255 - green) * correctionFactor) + green;
+        blue = ((255 - blue) * correctionFactor) + blue;
+      }
+
+      return Color.FromRgb((byte)red, (byte)green, (byte)blue);
+    }
 
     /// <summary>
     /// Initializes this instance.
@@ -90,29 +114,6 @@ namespace Soloplan.WhatsON.GUI
       var swatch = new Swatch("WhatsON", newPrimaryHues, newAccentHues);
       var palette = new Palette(swatch, swatch, 3, 5, 4, 2);
       paletteHelper.ReplacePalette(palette);
-    }
-
-    public static Color ChangeColorBrightness(Color color, float correctionFactor)
-    {
-      float red = (float)color.R;
-      float green = (float)color.G;
-      float blue = (float)color.B;
-
-      if (correctionFactor < 0)
-      {
-        correctionFactor = 1 + correctionFactor;
-        red *= correctionFactor;
-        green *= correctionFactor;
-        blue *= correctionFactor;
-      }
-      else
-      {
-        red = ((255 - red) * correctionFactor) + red;
-        green = ((255 - green) * correctionFactor) + green;
-        blue = ((255 - blue) * correctionFactor) + blue;
-      }
-
-      return Color.FromRgb((byte)red, (byte)green, (byte)blue);
     }
   }
 }

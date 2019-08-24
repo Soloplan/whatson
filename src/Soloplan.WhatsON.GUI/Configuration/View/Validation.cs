@@ -1,6 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Validator.cs" company="Soloplan GmbH">
+// <copyright file="Validation.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -88,7 +89,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// Gets the <see cref="DependencyProperty"/>s.
     /// </summary>
     /// <param name="type">The type.</param>
-    /// <returns>The list of <see cref="DependencyProperty"/>s</returns>
+    /// <returns>The list of <see cref="DependencyProperty"/>.</returns>
     private static IEnumerable<DependencyProperty> GetDepenedencyProperties(Type type)
     {
       if (propertiesReflectionCache.ContainsKey(type))

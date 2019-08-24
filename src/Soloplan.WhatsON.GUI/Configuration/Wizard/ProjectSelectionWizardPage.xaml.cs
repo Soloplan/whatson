@@ -1,6 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ProjectSelectionWizardPage.cs" company="Soloplan GmbH">
+// <copyright file="ProjectSelectionWizardPage.xaml.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -9,7 +10,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
   using System.Windows.Controls;
 
   /// <summary>
-  /// Interaction logic for ProjectSelectionWizardPage.xaml
+  /// Interaction logic for ProjectSelectionWizardPage.xaml.
   /// </summary>
   public partial class ProjectSelectionWizardPage : Page
   {

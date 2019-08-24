@@ -1,4 +1,9 @@
-﻿namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
+﻿// <copyright file="StatusToColorConverter.cs" company="Soloplan GmbH">
+// Copyright (c) Soloplan GmbH. All rights reserved.
+// Licensed under the MIT License. See License-file in the project root for license information.
+// </copyright>
+
+namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
   using System;
   using System.Globalization;

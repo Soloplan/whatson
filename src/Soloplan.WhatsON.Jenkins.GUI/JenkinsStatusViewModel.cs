@@ -40,7 +40,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
         return new OpenJenkinsWebPageCommandData
         {
           Address = this.parentCommandData.Address + "/" + this.BuildNumber,
-          Redirect = this.parentCommandData.Redirect
+          Redirect = this.parentCommandData.Redirect,
         };
       }
     }

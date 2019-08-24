@@ -1,4 +1,9 @@
-﻿namespace Soloplan.WhatsON.GUI
+﻿// <copyright file="App.xaml.cs" company="Soloplan GmbH">
+// Copyright (c) Soloplan GmbH. All rights reserved.
+// Licensed under the MIT License. See License-file in the project root for license information.
+// </copyright>
+
+namespace Soloplan.WhatsON.GUI
 {
   using System.Net;
   using System.Windows;
@@ -7,10 +12,9 @@
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.GUI.Logging;
-  using Soloplan.WhatsON.Serialization;
 
   /// <summary>
-  /// Interaction logic for App.xaml
+  /// Interaction logic for App.xaml.
   /// </summary>
   public partial class App : Application
   {
@@ -76,14 +80,6 @@
       ComponentDispatcher.ThreadPreprocessMessage += this.ComponentDispatcherThreadPreprocessMessage;
     }
 
-    private void ComponentDispatcherThreadPreprocessMessage(ref MSG msg, ref bool handled)
-    {
-      if (msg.message == 0x10)
-      {
-        System.Windows.Application.Current.Shutdown();
-      }
-    }
-
     /// <summary>
     /// Handle exiting application.
     /// </summary>
@@ -93,6 +89,14 @@
       this.scheduler.Stop(true);
       this.handler.Dispose();
       base.OnExit(e);
+    }
+
+    private void ComponentDispatcherThreadPreprocessMessage(ref MSG msg, ref bool handled)
+    {
+      if (msg.message == 0x10)
+      {
+        System.Windows.Application.Current.Shutdown();
+      }
     }
   }
 }

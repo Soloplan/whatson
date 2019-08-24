@@ -1,6 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="OkCancelDialog.xaml.cs" company="Soloplan GmbH">
-//   Copyright (c) Soloplan GmbH. All rights reserved.
+// Copyright (c) Soloplan GmbH. All rights reserved.
+// Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -9,7 +10,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
   using System.Windows.Controls;
 
   /// <summary>
-  ///   Interaction logic for UserControl1.xaml
+  /// Interaction logic for UserControl1.xaml.
   /// </summary>
   public partial class OkCancelDialog : UserControl
   {
