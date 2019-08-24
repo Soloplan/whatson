@@ -14,7 +14,7 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
   using Soloplan.WhatsON.CruiseControl.Model;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
 
-  public class CruiseControlTreViewPresentationPlugIn : ITreeViewPresentationPlugIn
+  public class CruiseControlTreeViewPresentationPlugIn : ITreeViewPresentationPlugIn
   {
     public Type ConnectorType => typeof(CruiseControlProject);
 

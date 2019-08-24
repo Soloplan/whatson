@@ -18,6 +18,7 @@ namespace Soloplan.WhatsON.CruiseControl
 
   public class CruiseControlProjectPlugin : ConnectorPlugin, IProjectsListQuerying, IAssignServerProject
   {
+
     public CruiseControlProjectPlugin()
       : base(typeof(CruiseControlProject))
     {
@@ -43,15 +44,12 @@ namespace Soloplan.WhatsON.CruiseControl
     public async Task<IList<ServerProjectTreeItem>> GetProjects(string address)
     {
       var result = new List<ServerProjectTreeItem>();
-      var server = this.GetServerManager().GetServer(address, false);
+      var server = CruiseControlManager.GetServer(address, false);
       var allProjects = await server.GetAllProjects();
       var serverProjects = new List<ServerProjectTreeItem>();
       foreach (var project in allProjects.CruiseControlProject)
       {
-        var serverProjectTreeItem = new ServerProjectTreeItem();
-        serverProjectTreeItem.Name = project.Name;
-        serverProjectTreeItem.Address = address;
-
+        var serverProjectTreeItem = new ServerProjectTreeItem { Name = project.Name, Address = address };
         if (string.IsNullOrWhiteSpace(project.ServerName))
         {
           result.Add(serverProjectTreeItem);
@@ -61,8 +59,7 @@ namespace Soloplan.WhatsON.CruiseControl
           var serverProject = serverProjects.FirstOrDefault(s => s.Name == project.ServerName);
           if (serverProject == null)
           {
-            serverProject = new ServerProjectTreeItem();
-            serverProject.Name = project.ServerName;
+            serverProject = new ServerProjectTreeItem { Name = project.ServerName };
             serverProjects.Add(serverProject);
             result.Add(serverProject);
           }
@@ -84,27 +81,6 @@ namespace Soloplan.WhatsON.CruiseControl
     {
       configurationItemsSupport.GetConfigurationByKey(CruiseControlProject.ProjectName).Value = serverProject.Name;
       configurationItemsSupport.GetConfigurationByKey(ServerConnector.ServerAddress).Value = serverAddress;
-    }
-
-    /// <summary>
-    /// Gets the server manager.
-    /// </summary>
-    /// <returns>The server manager.</returns>
-    private ICruiseControlServerManagerPlugIn GetServerManager()
-    {
-      var serverManager = PluginsManager.Instance.PlugIns.OfType<ICruiseControlServerManagerPlugIn>().ToList();
-      var pluginCount = serverManager.Count;
-      if (pluginCount != 1)
-      {
-        if (pluginCount < 1)
-        {
-          throw new InvalidOperationException($"No plugin of type {typeof(ICruiseControlServerManagerPlugIn)} found.");
-        }
-
-        throw new InvalidOperationException($"More then one plugins of type {typeof(ICruiseControlServerManagerPlugIn)} found.");
-      }
-
-      return serverManager.FirstOrDefault();
     }
   }
 }

@@ -63,8 +63,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
     public override void Update(Status newStatus)
     {
       base.Update(newStatus);
-      var jenkinsStatus = newStatus as JenkinsStatus;
-      if (jenkinsStatus == null)
+      if (!(newStatus is JenkinsStatus jenkinsStatus))
       {
         this.BuildNumber = null;
         return;

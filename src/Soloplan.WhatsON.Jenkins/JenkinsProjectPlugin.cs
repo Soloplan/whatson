@@ -35,7 +35,7 @@ namespace Soloplan.WhatsON.Jenkins
 
     public override Connector CreateNew(ConnectorConfiguration configuration)
     {
-      log.Debug("Creating new JenkinsProject based on configuration {configuration}", new { Name = configuration.Name, Identifier = configuration.Identifier });
+      log.Debug("Creating new JenkinsProject based on configuration {configuration}", new { configuration.Name, configuration.Identifier });
       var jenkinsProject = new JenkinsProject(configuration, new JenkinsApi());
       return jenkinsProject;
     }
@@ -83,7 +83,7 @@ namespace Soloplan.WhatsON.Jenkins
     /// <returns>A task representing the job.</returns>
     private async Task GetProjectsLists(string address, List<ServerProjectTreeItem> serverProjects, JenkinsApi jenkinsApi)
     {
-      var jenkinsJobs = await jenkinsApi.GetJenkinsJobs(address, default(System.Threading.CancellationToken));
+      var jenkinsJobs = await jenkinsApi.GetJenkinsJobs(address, default);
       foreach (var jenkinsJob in jenkinsJobs.Jobs)
       {
         var newServerProject = this.AddServerProject(serverProjects, jenkinsJob);
@@ -103,9 +103,7 @@ namespace Soloplan.WhatsON.Jenkins
     /// <returns>The newly  created server projects tree item.</returns>
     private ServerProjectTreeItem AddServerProject(IList<ServerProjectTreeItem> parentList, JenkinsJob jenkinsJobsItem)
     {
-      var newServerProject = new ServerProjectTreeItem();
-      newServerProject.Address = jenkinsJobsItem.Url;
-      newServerProject.Name = jenkinsJobsItem.Name;
+      var newServerProject = new ServerProjectTreeItem { Address = jenkinsJobsItem.Url, Name = jenkinsJobsItem.Name };
       parentList.Add(newServerProject);
       return newServerProject;
     }

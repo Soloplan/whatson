@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Soloplan.WhatsON.Jenkins
+namespace Soloplan.WhatsON.Jenkins.Model
 {
   using System;
   using System.Linq;
@@ -38,7 +38,7 @@ namespace Soloplan.WhatsON.Jenkins
     /// <summary>
     /// API class for accessing Jenkins.
     /// </summary>
-    private IJenkinsApi api;
+    private readonly IJenkinsApi api;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="JenkinsProject"/> class.
@@ -118,7 +118,7 @@ namespace Soloplan.WhatsON.Jenkins
         {
           if (status.State != ObservationState.Running && (status.State != this.PreviousCheckStatus.State || this.PreviousCheckStatus.BuildNumber != currentStatus.BuildNumber))
           {
-            log.Debug("Snapshot should be taken. {stat}", new { PreviousCheckStatus = this.PreviousCheckStatus, CurrentStatus = currentStatus });
+            log.Debug("Snapshot should be taken. {stat}", new { this.PreviousCheckStatus, CurrentStatus = currentStatus });
             this.PreviousCheckStatus = currentStatus;
             return true;
           }
@@ -170,16 +170,6 @@ namespace Soloplan.WhatsON.Jenkins
       }
 
       return ObservationState.Unknown;
-    }
-
-    private static int GetDefaultPort(string address)
-    {
-      if (!string.IsNullOrWhiteSpace(address) && address.StartsWith("https", StringComparison.InvariantCultureIgnoreCase))
-      {
-        return 443;
-      }
-
-      return 80;
     }
   }
 }

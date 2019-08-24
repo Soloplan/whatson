@@ -30,7 +30,7 @@ namespace Soloplan.WhatsON.Jenkins
 
       var jobRequest = $"{address.Trim('/')}/job/{projectName.Trim('/')}/api/json?tree={JenkinsJob.RequestProperties}";
       log.Trace("Querying job: {jobRequest}", jobRequest);
-      return await GetJenkinsModel<JenkinsJob>(connector, jobRequest, token);
+      return await GetJenkinsModel<JenkinsJob>(jobRequest, token);
     }
 
     /// <summary>
@@ -43,7 +43,7 @@ namespace Soloplan.WhatsON.Jenkins
     {
       var jobsRequest = $"{address.Trim('/')}/api/json?tree={JenkinsJobs.RequestProperties}";
       log.Trace("Querying jobs: {jobsRequest}", jobsRequest);
-      return await GetJenkinsModel<JenkinsJobs>(null, jobsRequest, token);
+      return await GetJenkinsModel<JenkinsJobs>(jobsRequest, token);
     }
 
     public async Task<JenkinsBuild> GetJenkinsBuild(JenkinsProject connector, int buildNumber, CancellationToken token)
@@ -53,10 +53,10 @@ namespace Soloplan.WhatsON.Jenkins
 
       var buildRequest = $"{address.Trim('/')}/job/{projectName.Trim('/')}/{buildNumber}/api/json?tree={JenkinsBuild.RequestProperties}";
       log.Trace("Querying build: {jobRequest}", buildRequest);
-      return await GetJenkinsModel<JenkinsBuild>(connector, buildRequest, token);
+      return await GetJenkinsModel<JenkinsBuild>(buildRequest, token);
     }
 
-    private static async Task<TModel> GetJenkinsModel<TModel>(JenkinsProject connector, string requestUrl, CancellationToken token)
+    private static async Task<TModel> GetJenkinsModel<TModel>(string requestUrl, CancellationToken token)
     where TModel : class
     {
       var request = WebRequest.Create(requestUrl);

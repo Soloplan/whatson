@@ -19,7 +19,7 @@ namespace Soloplan.WhatsON.CruiseControl
   public class CruiseControlServer
   {
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
-    private string address;
+    private readonly string address;
 
     private DateTime lastPoolled;
 
@@ -50,7 +50,7 @@ namespace Soloplan.WhatsON.CruiseControl
     /// <returns>The list of all projects.</returns>
     public async Task<CruiseControlJobs> GetAllProjects()
     {
-      return await this.GetStatusAsync<CruiseControlJobs>(default(CancellationToken), this.address);
+      return await this.GetStatusAsync<CruiseControlJobs>(default, this.address);
     }
 
     private async Task<TModel> GetStatusAsync<TModel>(CancellationToken cancellationToken, string requestUrl)

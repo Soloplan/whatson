@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Soloplan.WhatsON.Jenkins
+namespace Soloplan.WhatsON.Jenkins.Model
 {
   using System;
   using System.Collections.Generic;

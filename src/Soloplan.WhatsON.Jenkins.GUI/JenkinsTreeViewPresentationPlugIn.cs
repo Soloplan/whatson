@@ -1,4 +1,4 @@
-﻿// <copyright file="GetJenkinsTreeViewPresentationPlugIn.cs" company="Soloplan GmbH">
+﻿// <copyright file="JenkinsTreeViewPresentationPlugIn.cs" company="Soloplan GmbH">
 // Copyright (c) Soloplan GmbH. All rights reserved.
 // Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
@@ -6,11 +6,13 @@
 namespace Soloplan.WhatsON.Jenkins.GUI
 {
   using System;
-  using System.IO;  using System.Text;
+  using System.IO;
+  using System.Text;
   using System.Xml;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
+  using Soloplan.WhatsON.Jenkins.Model;
 
-  public class GetJenkinsTreeViewPresentationPlugIn : ITreeViewPresentationPlugIn
+  public class JenkinsTreeViewPresentationPlugIn : ITreeViewPresentationPlugIn
   {
     public Type ConnectorType => typeof(JenkinsProject);
 

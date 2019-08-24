@@ -27,9 +27,9 @@ namespace Soloplan.WhatsON.CruiseControl.Model
 
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
-    private TimeSpan estimatedDuration = default(TimeSpan);
+    private TimeSpan estimatedDuration = default;
 
-    private TimeSpan cachedDuration = default(TimeSpan);
+    private TimeSpan cachedDuration = default;
 
     public CruiseControlProject(ConnectorConfiguration configuration)
       : base(configuration)
@@ -38,31 +38,11 @@ namespace Soloplan.WhatsON.CruiseControl.Model
 
     public string Project => this.ConnectorConfiguration.GetConfigurationByKey(CruiseControlProject.ProjectName).Value;
 
-    private ICruiseControlServerManagerPlugIn ServerManager
-    {
-      get
-      {
-        var serverManager = PluginsManager.Instance.PlugIns.OfType<ICruiseControlServerManagerPlugIn>().ToList();
-        var pluginCount = serverManager.Count;
-        if (pluginCount != 1)
-        {
-          if (pluginCount < 1)
-          {
-            throw new InvalidOperationException($"No plugin of type {typeof(ICruiseControlServerManagerPlugIn)} found.");
-          }
-
-          throw new InvalidOperationException($"More then one plugins of type {typeof(ICruiseControlServerManagerPlugIn)} found.");
-        }
-
-        return serverManager.FirstOrDefault();
-      }
-    }
-
     private CruiseControlStatus PreviousCheckStatus { get; set; }
 
     protected override async Task ExecuteQuery(CancellationToken cancellationToken, params string[] args)
     {
-      var server = this.ServerManager.GetServer(this.Address);
+      var server = CruiseControlManager.GetServer(this.Address);
       var projectData = await server.GetProjectStatus(cancellationToken, this.Project, 5);
       log.Trace("Retrieved status for cruise control project {project}: {@projectData}", this.Project, projectData);
       var status = this.CreateStatus(projectData);
