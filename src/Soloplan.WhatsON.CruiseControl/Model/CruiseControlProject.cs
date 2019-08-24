@@ -21,7 +21,7 @@ namespace Soloplan.WhatsON.CruiseControl.Model
   [ConnectorType("Cruise Control Project Status", Description = "Retrieve the current status of a Cruise Control project.")]
   [ConfigurationItem(ProjectName, typeof(string), Optional = false, Priority = 300)]
   [NotificationConfigurationItem(NotificationsVisbility, typeof(ConnectorNotificationConfiguration), SupportsUnstableNotify = false, Priority = 1600000000)]
-  public class CruiseControlProject : ServerConnector
+  public class CruiseControlProject : Connector
   {
     public const string ProjectName = "ProjectName";
 

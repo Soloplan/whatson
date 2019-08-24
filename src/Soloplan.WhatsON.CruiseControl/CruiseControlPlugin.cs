@@ -16,18 +16,13 @@ namespace Soloplan.WhatsON.CruiseControl
   using Soloplan.WhatsON.CruiseControl.Model;
   using Soloplan.WhatsON.Model;
 
-  public class CruiseControlPlugin : ConnectorPlugin, IProjectsListQuerying, IAssignServerProject
+  public class CruiseControlPlugin : ConnectorPlugin, IProjectPlugin
   {
 
     public CruiseControlPlugin()
       : base(typeof(CruiseControlProject))
     {
     }
-
-    /// <summary>
-    /// Gets a value indicating whether this plugin supports wizards.
-    /// </summary>
-    public override bool SupportsWizard => true;
 
     public override Connector CreateNew(ConnectorConfiguration configuration)
     {
@@ -41,15 +36,15 @@ namespace Soloplan.WhatsON.CruiseControl
     /// <returns>
     /// The projects from the server.
     /// </returns>
-    public async Task<IList<ServerProjectTreeItem>> GetProjects(string address)
+    public async Task<IList<Project>> GetProjects(string address)
     {
-      var result = new List<ServerProjectTreeItem>();
+      var result = new List<Project>();
       var server = CruiseControlManager.GetServer(address, false);
       var allProjects = await server.GetAllProjects();
-      var serverProjects = new List<ServerProjectTreeItem>();
+      var serverProjects = new List<Project>();
       foreach (var project in allProjects.CruiseControlProject)
       {
-        var serverProjectTreeItem = new ServerProjectTreeItem { Name = project.Name, Address = address };
+        var serverProjectTreeItem = new Project { Name = project.Name, Address = address };
         if (string.IsNullOrWhiteSpace(project.ServerName))
         {
           result.Add(serverProjectTreeItem);
@@ -59,12 +54,12 @@ namespace Soloplan.WhatsON.CruiseControl
           var serverProject = serverProjects.FirstOrDefault(s => s.Name == project.ServerName);
           if (serverProject == null)
           {
-            serverProject = new ServerProjectTreeItem { Name = project.ServerName };
+            serverProject = new Project { Name = project.ServerName };
             serverProjects.Add(serverProject);
             result.Add(serverProject);
           }
 
-          serverProject.ServerProjects.Add(serverProjectTreeItem);
+          serverProject.Children.Add(serverProjectTreeItem);
         }
       }
 
@@ -74,13 +69,13 @@ namespace Soloplan.WhatsON.CruiseControl
     /// <summary>
     /// Assigns the <see cref="T:Soloplan.WhatsON.ServerProject" /> to <see cref="T:Soloplan.WhatsON.ConfigurationItem" />.
     /// </summary>
-    /// <param name="serverProject">The server project.</param>
+    /// <param name="project">The server project.</param>
     /// <param name="configurationItemsSupport">The configuration items provider.</param>
     /// <param name="serverAddress">The server address.</param>
-    public void AssignServerProject(ServerProject serverProject, IConfigurationItemsSupport configurationItemsSupport, string serverAddress)
+    public void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress)
     {
-      configurationItemsSupport.GetConfigurationByKey(CruiseControlProject.ProjectName).Value = serverProject.Name;
-      configurationItemsSupport.GetConfigurationByKey(ServerConnector.ServerAddress).Value = serverAddress;
+      configurationItemsSupport.GetConfigurationByKey(CruiseControlProject.ProjectName).Value = project.Name;
+      configurationItemsSupport.GetConfigurationByKey(Connector.ServerAddress).Value = serverAddress;
     }
   }
 }

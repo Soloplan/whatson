@@ -21,7 +21,7 @@ namespace Soloplan.WhatsON.Jenkins.Model
   [ConfigurationItem(ProjectName, typeof(string), Optional = false, Priority = 300)]
   [ConfigurationItem(RedirectPlugin, typeof(bool), Priority = 400)] // defines use of Display URL API Plugin https://wiki.jenkins.io/display/JENKINS/Display+URL+API+Plugin
   [NotificationConfigurationItem(NotificationsVisbility, typeof(ConnectorNotificationConfiguration), Priority = 1600000000)]
-  public class JenkinsProject : ServerConnector
+  public class JenkinsProject : Connector
   {
     public const string ProjectName = "ProjectName";
 

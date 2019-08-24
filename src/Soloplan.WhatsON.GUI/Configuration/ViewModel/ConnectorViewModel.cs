@@ -16,7 +16,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
   /// <summary>
   /// The view model for see <see cref="Soloplan.WhatsON.Connector"/>.
   /// </summary>
-  public class ConnectorViewModel : ViewModelBase, IConfigurationItemsSupport
+  public class ConnectorViewModel : ViewModelBase, IConfigurationItemProvider
   {
     /// <summary>
     /// The name of the connector.

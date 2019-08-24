@@ -47,7 +47,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
         param.Redirect = false;
       }
 
-      param.Address = configuration.GetConfigurationByKey(ServerConnector.ServerAddress).Value.Trim('/') + "/job/" + configuration.GetConfigurationByKey(JenkinsProject.ProjectName).Value.Trim('/');
+      param.Address = configuration.GetConfigurationByKey(Connector.ServerAddress).Value.Trim('/') + "/job/" + configuration.GetConfigurationByKey(JenkinsProject.ProjectName).Value.Trim('/');
 
       this.OpenWebPageParam = param;
 

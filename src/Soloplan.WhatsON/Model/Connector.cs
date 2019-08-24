@@ -20,6 +20,7 @@ namespace Soloplan.WhatsON.Model
   /// The connector - represent an executable job defined by the plugin.
   /// </summary>
   [ConfigurationItem(Category, typeof(string), Priority = 1000000000)]
+  [ConfigurationItem(ServerAddress, typeof(string), Optional = false, Priority = 100)]
   public abstract class Connector
   {
     /// <summary>
@@ -31,6 +32,8 @@ namespace Soloplan.WhatsON.Model
     /// The category tag.
     /// </summary>
     public const string Category = "Category";
+
+    public const string ServerAddress = "Address";
 
     /// <summary>
     /// Default value for max nubmer of snapshots.
@@ -66,6 +69,15 @@ namespace Soloplan.WhatsON.Model
     public Status CurrentStatus { get; set; }
 
     public List<Snapshot> Snapshots { get; set; }
+
+    /// <summary>
+    /// Gets or sets the address.
+    /// </summary>
+    public string Address
+    {
+      get => this.ConnectorConfiguration.GetConfigurationByKey(ServerAddress).Value;
+      set => this.ConnectorConfiguration.GetConfigurationByKey(ServerAddress).Value = value;
+    }
 
     /// <summary>
     /// Gets or sets the configuration of a connector.

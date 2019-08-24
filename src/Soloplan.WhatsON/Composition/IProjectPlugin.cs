@@ -9,18 +9,27 @@ namespace Soloplan.WhatsON.Composition
 {
   using System.Collections.Generic;
   using System.Threading.Tasks;
+  using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.Model;
 
   /// <summary>
-  /// Adds possibility to query projects list from a plugin.
+  /// Adds possibility to query project list and configure projects.
   /// </summary>
-  public interface IProjectsListQuerying
+  public interface IProjectPlugin
   {
     /// <summary>
     /// Gets the projects.
     /// </summary>
     /// <param name="address">The address.</param>
     /// <returns>The projects from the server.</returns>
-    Task<IList<ServerProjectTreeItem>> GetProjects(string address);
+    Task<IList<Project>> GetProjects(string address);
+
+    /// <summary>
+    /// Assigns the <see cref="Project"/> to <see cref="ConfigurationItem"/>.
+    /// </summary>
+    /// <param name="project">The server project.</param>
+    /// <param name="configurationItemsSupport">The configuration items provider.</param>
+    /// <param name="serverAddress">The server address.</param>
+    void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress);
   }
 }

@@ -22,11 +22,6 @@ namespace Soloplan.WhatsON.Composition
 
     public ConnectorTypeAttribute ConnectorTypeAttribute { get; }
 
-    /// <summary>
-    /// Gets a value indicating whether this plugin supports wizards.
-    /// </summary>
-    public virtual bool SupportsWizard { get; }
-
     public abstract Connector CreateNew(ConnectorConfiguration configuration);
   }
 }

@@ -16,7 +16,7 @@ namespace Soloplan.WhatsON.Jenkins
   using Soloplan.WhatsON.Jenkins.Model;
   using Soloplan.WhatsON.Model;
 
-  public class JenkinsProjectPlugin : ConnectorPlugin, IProjectsListQuerying, IAssignServerProject
+  public class JenkinsProjectPlugin : ConnectorPlugin, IProjectPlugin
   {
     /// <summary>
     /// Logger instance used by this class.
@@ -27,11 +27,6 @@ namespace Soloplan.WhatsON.Jenkins
       : base(typeof(JenkinsProject))
     {
     }
-
-    /// <summary>
-    /// Gets a value indicating whether this plugin supports wizards.
-    /// </summary>
-    public override bool SupportsWizard => true;
 
     public override Connector CreateNew(ConnectorConfiguration configuration)
     {
@@ -47,10 +42,10 @@ namespace Soloplan.WhatsON.Jenkins
     /// <returns>
     /// The projects list from the server.
     /// </returns>
-    public async Task<IList<ServerProjectTreeItem>> GetProjects(string address)
+    public async Task<IList<Project>> GetProjects(string address)
     {
       var api = new JenkinsApi();
-      var serverProjects = new List<ServerProjectTreeItem>();
+      var serverProjects = new List<Project>();
       await this.GetProjectsLists(address, serverProjects, api);
       return serverProjects;
     }
@@ -58,13 +53,13 @@ namespace Soloplan.WhatsON.Jenkins
     /// <summary>
     /// Assigns a server project to given configuration items.
     /// </summary>
-    /// <param name="serverProject">The server project.</param>
+    /// <param name="project">The server project.</param>
     /// <param name="configurationItemsSupport">The configuration items provider.</param>
     /// <param name="serverAddress">The server address.</param>
-    public void AssignServerProject(ServerProject serverProject, IConfigurationItemsSupport configurationItemsSupport, string serverAddress)
+    public void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress)
     {
       // for now, we extract the project name from the address
-      var projectNameWithoutAddress = serverProject.Address.Substring(serverAddress.Length, serverProject.Address.Length - serverAddress.Length - 1).Trim('/');
+      var projectNameWithoutAddress = project.Address.Substring(serverAddress.Length, project.Address.Length - serverAddress.Length - 1).Trim('/');
       if (projectNameWithoutAddress.StartsWith("job", StringComparison.CurrentCultureIgnoreCase))
       {
         projectNameWithoutAddress = projectNameWithoutAddress.Substring(3, projectNameWithoutAddress.Length - 3).TrimStart('/');
@@ -81,7 +76,7 @@ namespace Soloplan.WhatsON.Jenkins
     /// <param name="serverProjects">The list of projects to update.</param>
     /// <param name="jenkinsApi">Jenkins Api instance.</param>
     /// <returns>A task representing the job.</returns>
-    private async Task GetProjectsLists(string address, List<ServerProjectTreeItem> serverProjects, JenkinsApi jenkinsApi)
+    private async Task GetProjectsLists(string address, List<Project> serverProjects, JenkinsApi jenkinsApi)
     {
       var jenkinsJobs = await jenkinsApi.GetJenkinsJobs(address, default);
       foreach (var jenkinsJob in jenkinsJobs.Jobs)
@@ -90,7 +85,7 @@ namespace Soloplan.WhatsON.Jenkins
         if (string.Equals(jenkinsJob.ClassName.Trim(), "com.cloudbees.hudson.plugins.folder.Folder".Trim(), System.StringComparison.InvariantCultureIgnoreCase)
          || string.Equals(jenkinsJob.ClassName.Trim(), "org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject".Trim(), System.StringComparison.InvariantCultureIgnoreCase))
         {
-          await this.GetProjectsLists(jenkinsJob.Url, newServerProject.ServerProjects, jenkinsApi);
+          await this.GetProjectsLists(jenkinsJob.Url, newServerProject.Children, jenkinsApi);
         }
       }
     }
@@ -101,9 +96,9 @@ namespace Soloplan.WhatsON.Jenkins
     /// <param name="parentList">The parent list.</param>
     /// <param name="jenkinsJobsItem">The new Jenkins Job Item.</param>
     /// <returns>The newly  created server projects tree item.</returns>
-    private ServerProjectTreeItem AddServerProject(IList<ServerProjectTreeItem> parentList, JenkinsJob jenkinsJobsItem)
+    private Project AddServerProject(IList<Project> parentList, JenkinsJob jenkinsJobsItem)
     {
-      var newServerProject = new ServerProjectTreeItem { Address = jenkinsJobsItem.Url, Name = jenkinsJobsItem.Name };
+      var newServerProject = new Project { Address = jenkinsJobsItem.Url, Name = jenkinsJobsItem.Name };
       parentList.Add(newServerProject);
       return newServerProject;
     }

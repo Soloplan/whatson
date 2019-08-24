@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ServerProject.cs" company="Soloplan GmbH">
+// <copyright file="Project.cs" company="Soloplan GmbH">
 // Copyright (c) Soloplan GmbH. All rights reserved.
 // Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
@@ -13,7 +13,7 @@ namespace Soloplan.WhatsON.Model
   /// <summary>
   /// Represents the metadata for a project on the server.
   /// </summary>
-  public class ServerProject
+  public class Project
   {
     /// <summary>
     /// Gets or sets the name of the project.
@@ -29,17 +29,10 @@ namespace Soloplan.WhatsON.Model
     /// Gets or sets the plugin.
     /// </summary>
     public IConnectorPlugin Plugin { get; set; }
-  }
 
-  /// <summary>
-  /// Represents the metadata of the project on the server which can also contain sub projects.
-  /// </summary>
-  /// <seealso cref="Soloplan.WhatsON.ServerProject" />
-  public class ServerProjectTreeItem : ServerProject
-  {
     /// <summary>
     /// Gets the server projects.
     /// </summary>
-    public List<ServerProjectTreeItem> ServerProjects { get; } = new List<ServerProjectTreeItem>();
+    public List<Project> Children { get; } = new List<Project>();
   }
 }

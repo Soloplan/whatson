@@ -10,7 +10,7 @@ namespace Soloplan.WhatsON.Configuration
   /// <summary>
   /// Gives support to access <see cref="IConfigurationItem"/>s.
   /// </summary>
-  public interface IConfigurationItemsSupport
+  public interface IConfigurationItemProvider
   {
     /// <summary>
     /// Gets (and might also create if it does not exists) the configuration item by key.
