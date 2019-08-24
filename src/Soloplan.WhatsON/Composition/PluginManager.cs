@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PlugInsManager.cs" company="Soloplan GmbH">
+// <copyright file="PluginManager.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
@@ -158,7 +158,7 @@ namespace Soloplan.WhatsON.Composition
     /// <summary>
     /// Finds all the <see cref="T:Soloplan.WhatsON.Composition.IPlugin"/>s that are provided by the specified assemblies.
     /// Note that this method only supports assemblies from the applications root directory,
-    /// i.e. the plugin assembly must be located next to the application's executable
+    /// i.e. the plugin assembly must be located next to the application's executable.
     /// </summary>
     /// <param name="assemblies">A list of assemblies that contain plugins.</param>
     /// <returns>An enumerator with all the found plugins.</returns>
