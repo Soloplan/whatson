@@ -15,7 +15,7 @@ namespace Soloplan.WhatsON.Composition
   /// <summary>
   /// Base implementation for all plugins that provide connectors.
   /// </summary>
-  public abstract class ConnectorPlugin : IPlugin, IProjectPlugin
+  public abstract class ConnectorPlugin : IPlugin
   {
     protected ConnectorPlugin(Type connectorType)
     {
@@ -36,10 +36,21 @@ namespace Soloplan.WhatsON.Composition
 
     public string Description { get; }
 
-    public abstract void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress);
-
     public abstract Connector CreateNew(ConnectorConfiguration configuration);
 
+    /// <summary>
+    /// Assigns the <see cref="Project"/> to <see cref="ConfigurationItem"/>.
+    /// </summary>
+    /// <param name="project">The server project.</param>
+    /// <param name="configurationItemsSupport">The configuration items provider.</param>
+    /// <param name="serverAddress">The server address.</param>
+    public abstract void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress);
+
+    /// <summary>
+    /// Gets the projects.
+    /// </summary>
+    /// <param name="address">The address.</param>
+    /// <returns>The projects from the server.</returns>
     public abstract Task<IList<Project>> GetProjects(string address);
 
     public override string ToString()

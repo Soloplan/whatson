@@ -290,13 +290,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
           throw new InvalidOperationException("One selected project is required.");
         }
 
-        var currentConnectorAsAssignable = this.CurrentConnector.SourceConnectorPlugin as IProjectPlugin;
-        if (currentConnectorAsAssignable == null)
-        {
-          throw new InvalidOperationException("Connector does not support assign from server project.");
-        }
-
-        currentConnectorAsAssignable.Configure(selectedProjects[0], this.CurrentConnector, wizardController.ProposedServerAddress);
+        this.CurrentConnector.SourceConnectorPlugin.Configure(selectedProjects[0], this.CurrentConnector, wizardController.ProposedServerAddress);
       }
     }
   }

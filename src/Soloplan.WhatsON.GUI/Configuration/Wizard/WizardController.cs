@@ -317,12 +317,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         newConnector.Load(null);
         configurationViewModel.Connectors.Add(newConnector);
 
-        if (!(selectedProject.Plugin is IProjectPlugin projectPlugin))
-        {
-          throw new InvalidOperationException("Connector does not support assign from project.");
-        }
-
-        projectPlugin.Configure(selectedProject, newConnector, this.ProposedServerAddress);
+        selectedProject.Plugin.Configure(selectedProject, newConnector, this.ProposedServerAddress);
       }
 
       if (configurationViewModel.ConfigurationIsModified)
@@ -392,19 +387,16 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <returns>The task.</returns>
     private async Task PrepareProjectsList()
     {
-      var pluginsToQueryWithModel = new Dictionary<IProjectPlugin, ProjectViewModelList>();
+      var pluginsToQueryWithModel = new Dictionary<ConnectorPlugin, ProjectViewModelList>();
       if (this.connectorPlugin != null)
       {
-        pluginsToQueryWithModel.Add((IProjectPlugin)this.connectorPlugin, new ProjectViewModelList { MultiSelectionMode = false, PlugIn = this.connectorPlugin });
+        pluginsToQueryWithModel.Add(this.connectorPlugin, new ProjectViewModelList { MultiSelectionMode = false, PlugIn = this.connectorPlugin });
       }
       else
       {
         foreach (var plugin in PluginManager.Instance.ConnectorPlugins)
         {
-          if (plugin is IProjectPlugin projectsListQueryingPlugin)
-          {
-            pluginsToQueryWithModel.Add(projectsListQueryingPlugin, new ProjectViewModelList { MultiSelectionMode = true, PlugIn = plugin });
-          }
+          pluginsToQueryWithModel.Add(plugin, new ProjectViewModelList { MultiSelectionMode = true, PlugIn = plugin });
         }
       }
 
@@ -447,7 +439,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     /// <param name="listQueryingPlugin">The list querying plugin.</param>
     /// <returns>The task.</returns>
-    private async Task LoadProjectsFromPlugin(KeyValuePair<IProjectPlugin, ProjectViewModelList> listQueryingPlugin)
+    private async Task LoadProjectsFromPlugin(KeyValuePair<ConnectorPlugin, ProjectViewModelList> listQueryingPlugin)
     {
       var serverProjects = await listQueryingPlugin.Key.GetProjects(this.ProposedServerAddress);
       foreach (var serverProject in serverProjects)
