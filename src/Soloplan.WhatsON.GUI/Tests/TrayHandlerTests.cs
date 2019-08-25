@@ -9,6 +9,7 @@ namespace Soloplan.WhatsON.GUI.Tests
 {
   using NUnit.Framework;
   using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Model;
 
@@ -36,11 +37,11 @@ namespace Soloplan.WhatsON.GUI.Tests
       var connectorViewModel = new ConnectorViewModel();
       var statusViewModel = new StatusViewModel(connectorViewModel);
       statusViewModel.State = currentState;
-      var status1 = new StatusViewModel(connectorViewModel) { State = currentState };
-      var status2 = new StatusViewModel(connectorViewModel) { State = historyState1 };
-      var status3 = new StatusViewModel(connectorViewModel) { State = historyState2 };
-      var status4 = new StatusViewModel(connectorViewModel) { State = historyState3 };
-      var status5 = new StatusViewModel(connectorViewModel) { State = historyState4 };
+      var status1 = new BuildStatusViewModel(connectorViewModel) { State = currentState };
+      var status2 = new BuildStatusViewModel(connectorViewModel) { State = historyState1 };
+      var status3 = new BuildStatusViewModel(connectorViewModel) { State = historyState2 };
+      var status4 = new BuildStatusViewModel(connectorViewModel) { State = historyState3 };
+      var status5 = new BuildStatusViewModel(connectorViewModel) { State = historyState4 };
       connectorViewModel.ConnectorSnapshots.Add(status5);
       connectorViewModel.ConnectorSnapshots.Add(status4);
       connectorViewModel.ConnectorSnapshots.Add(status3);

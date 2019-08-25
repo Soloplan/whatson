@@ -57,7 +57,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       }
     }
 
-    protected override StatusViewModel GetViewModelForStatus()
+    protected override BuildStatusViewModel GetViewModelForStatus()
     {
       var jenkinsModel = new JenkinsStatusViewModel(this);
       this.SetAddressForState(jenkinsModel);

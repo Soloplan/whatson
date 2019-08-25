@@ -13,7 +13,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Model;
 
-  public abstract class BuildStatusViewModel : StatusViewModel
+  public class BuildStatusViewModel : StatusViewModel
   {
     private TimeSpan estimatedDuration;
     private TimeSpan duration;
@@ -47,7 +47,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
     public virtual CopyBuildLabelCommand CopyBuildLabel { get; } = new CopyBuildLabelCommand();
 
-    public abstract OpenWebPageCommandData OpenBuildPageCommandData { get; }
+    public virtual OpenWebPageCommandData OpenBuildPageCommandData { get; }
 
     public ObservableCollection<UserViewModel> Culprits => this.culprits ?? (this.culprits = new ObservableCollection<UserViewModel>());
 

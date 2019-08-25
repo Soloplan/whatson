@@ -11,6 +11,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Windows.Input;
   using NLog;
   using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.Model;
 
   public class ConnectorViewModel : TreeItemViewModel
@@ -20,13 +21,13 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
-    private ObservableCollection<StatusViewModel> connectorSnapshots;
+    private ObservableCollection<BuildStatusViewModel> connectorSnapshots;
 
     private string name;
 
     private string description;
 
-    private StatusViewModel currentStatus;
+    private BuildStatusViewModel currentStatus;
 
     public string Name
     {
@@ -54,7 +55,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
-    public StatusViewModel CurrentStatus
+    public BuildStatusViewModel CurrentStatus
     {
       get => this.currentStatus;
       private set
@@ -69,7 +70,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     public Guid Identifier { get; private set; }
 
-    public ObservableCollection<StatusViewModel> ConnectorSnapshots => this.connectorSnapshots ?? (this.connectorSnapshots = new ObservableCollection<StatusViewModel>());
+    public ObservableCollection<BuildStatusViewModel> ConnectorSnapshots => this.connectorSnapshots ?? (this.connectorSnapshots = new ObservableCollection<BuildStatusViewModel>());
 
     public Connector Connector { get; private set; }
 
@@ -137,9 +138,9 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.CurrentStatus.Update(changedConnector.CurrentStatus);
     }
 
-    protected virtual StatusViewModel GetViewModelForStatus()
+    protected virtual BuildStatusViewModel GetViewModelForStatus()
     {
-      StatusViewModel result = new StatusViewModel(this);
+      BuildStatusViewModel result = new BuildStatusViewModel(this);
       return result;
     }
 

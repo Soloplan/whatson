@@ -30,7 +30,7 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
       }
     }
 
-    protected override StatusViewModel GetViewModelForStatus()
+    protected override BuildStatusViewModel GetViewModelForStatus()
     {
       var ccStatusModel = new CruiseControlStatusViewModel(this);
       return ccStatusModel;

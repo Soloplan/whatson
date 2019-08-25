@@ -42,10 +42,15 @@ namespace Soloplan.WhatsON.GUI
         if (presentationPlugIn != null)
         {
           modelToUpdate = presentationPlugIn.CreateViewModel();
-          modelToUpdate.Init(connector.ConnectorConfiguration);
-          modelToUpdate.PropertyChanged += this.OnPropertyChanged;
-          this.connectors.Add(modelToUpdate);
         }
+        else
+        {
+          modelToUpdate = new ConnectorViewModel();
+        }
+
+        modelToUpdate.Init(connector.ConnectorConfiguration);
+        modelToUpdate.PropertyChanged += this.OnPropertyChanged;
+        this.connectors.Add(modelToUpdate);
       }
 
       return modelToUpdate;
