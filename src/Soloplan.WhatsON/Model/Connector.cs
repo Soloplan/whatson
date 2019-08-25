@@ -106,11 +106,6 @@ namespace Soloplan.WhatsON.Model
       }
 
       this.Snapshots.Add(new Snapshot(status));
-      for (var i = 0; i < this.Snapshots.Count; i++)
-      {
-        this.Snapshots[i].Age = MaxSnapshots - i;
-      }
-
       this.Snapshots.Sort((x, y) => x.Age.CompareTo(y.Age));
     }
 

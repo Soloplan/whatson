@@ -35,21 +35,21 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private bool unstable;
 
-    private int age;
+    private bool first;
 
     public StatusViewModel(ConnectorViewModel connector)
     {
       this.Parent = connector;
     }
 
-    public int Age
+    public bool First
     {
-      get => this.age;
+      get => this.first;
       set
       {
-        if (this.age != value)
+        if (this.first != value)
         {
-          this.age = value;
+          this.first = value;
           this.OnPropertyChanged();
         }
       }
@@ -59,7 +59,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       get
       {
-        return this.Age == 1 ? 6 : 4;
+        return this.First ? 6 : 4;
       }
     }
 

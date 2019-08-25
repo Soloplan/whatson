@@ -67,21 +67,34 @@
   </DataTemplate>
 
   <DataTemplate DataType="{x:Type connectorTreeView:ConnectorViewModel}">
-    <StackPanel ContextMenu="{StaticResource BuildServerProjectContextMenu}" Orientation="Horizontal">
-      <buildServer:BuildInformationIconControl DataContext="{Binding CurrentStatus}">
+    <DockPanel Width="Auto" ContextMenu="{DynamicResource BuildServerProjectContextMenu}">
+      <buildServer:BuildInformationIconControl DataContext="{Binding CurrentStatus}" DockPanel.Dock="Left">
         <buildServer:BuildInformationIconControl.ToolTip>
           <StackPanel>
             <buildServer:ProgressBarTooltipControl DataContext="{Binding}" />
-            <buildServer:CulpritsControl Caption="Changes by:" CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
+            <StackPanel Visibility="{Binding CulpritsAndLastCommittedDifferent, Converter={StaticResource BoolToVisibility}}">
+              <buildServer:CulpritsControl Caption="Commits by:" CulpritsProp="{Binding DataContext.CommittedToThisBuild, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
+            </StackPanel>
+            <buildServer:CulpritsControl Caption="All culprits for this build:" CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
           </StackPanel>
         </buildServer:BuildInformationIconControl.ToolTip>
       </buildServer:BuildInformationIconControl>
-      <TextBlock Text=" " />
-      <TextBlock Text="{Binding Name}" />
-      <TextBlock Text=" " />
-      <TextBlock Text="{Binding CurrentStatus.BuildNumber}" />
-      <TextBlock Text=" " />
-      <buildServer:HistoryBuildList DataContext="{Binding ConnectorSnapshots, Mode=OneWay}" />
-    </StackPanel>
+      <buildServer:BuildNumberControl Margin="5,0,0,0" BuildNumber="{Binding DataContext.CurrentStatus.BuildNumber, RelativeSource={RelativeSource AncestorType=DockPanel}}" />
+      <TextBlock MinWidth="150"
+                 MaxWidth="250"
+                 Margin="5,0,0,0"
+                 FontSize="12"
+                 FontWeight="Light"
+                 Text="{Binding Name}"
+                 TextTrimming="CharacterEllipsis" />
+      <buildServer:HistoryBuildList DataContext="{Binding ConnectorSnapshots, Mode=OneWay}" DockPanel.Dock="Right" />
+      <TextBlock Margin="5,0,10,0"
+                 HorizontalAlignment="Right"
+                 VerticalAlignment="Center"
+                 DockPanel.Dock="Right"
+                 FontSize="10"
+                 FontWeight="Light"
+                 Text="{Binding CurrentStatus.Time, Converter={StaticResource TimeToAproximateTimeConverter}}" />
+    </DockPanel>
   </DataTemplate>
 </ResourceDictionary>

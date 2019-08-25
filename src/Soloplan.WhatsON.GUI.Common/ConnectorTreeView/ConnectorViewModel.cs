@@ -129,7 +129,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         {
           var connectorSnapshotViewModel = this.GetViewModelForStatus();
           connectorSnapshotViewModel.Update(connectorSnapshot.Status);
-          connectorSnapshotViewModel.Age = connectorSnapshot.Age;
+          if (changedConnector.Snapshots[0] == connectorSnapshot)
+          {
+            connectorSnapshotViewModel.First = true;
+          }
+
           this.ConnectorSnapshots.Add(connectorSnapshotViewModel);
         }
       }

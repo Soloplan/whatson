@@ -5,6 +5,8 @@
 
 namespace Soloplan.WhatsON.Model
 {
+  using System;
+
   public class Snapshot
   {
     public Snapshot(Status status)
@@ -16,6 +18,17 @@ namespace Soloplan.WhatsON.Model
 
     public Status Status { get; }
 
-    public int Age { get; set; }
+    public long Age
+    {
+      get
+      {
+        if (this.Status == null)
+        {
+          return 0;
+        }
+
+        return (long)(DateTime.Now - this.Status.Time).TotalSeconds;
+      }
+    }
   }
 }
