@@ -262,6 +262,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
       this.BuildNumber = newStatus.BuildNumber;
       this.Building = newStatus.Building;
+      this.UpdateCalculatedFields();
     }
 
     protected void UpdateCalculatedFields()

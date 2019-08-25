@@ -148,8 +148,8 @@ namespace Soloplan.WhatsON.Jenkins
       newStatus.BuildNumber = latestBuild.Number;
       newStatus.DisplayName = latestBuild.DisplayName;
       newStatus.Building = latestBuild.Building;
-      newStatus.Duration = new TimeSpan(latestBuild.Duration);
-      newStatus.EstimatedDuration = new TimeSpan(latestBuild.EstimatedDuration);
+      newStatus.Duration = new TimeSpan(latestBuild.Duration * TicksInMillisecond);
+      newStatus.EstimatedDuration = new TimeSpan(latestBuild.EstimatedDuration * TicksInMillisecond);
       newStatus.Culprits = latestBuild.Culprits;
 
       newStatus.CommittedToThisBuild = latestBuild.ChangeSets?.SelectMany(p => p.ChangeSetItems)
