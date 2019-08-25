@@ -66,6 +66,13 @@ namespace Soloplan.WhatsON.GUI
       this.config = SerializationHelper.LoadOrCreateConfiguration();
       this.scheduler = new ObservationScheduler();
 
+      // call the plugins with the application args, so plugins can process them
+      foreach (var connectorPlugin in PluginManager.Instance.ConnectorPlugins)
+      {
+        connectorPlugin.OnStartup(e.Args);
+      }
+
+      // add each connector to the observation scheduler
       foreach (var connectorConfiguration in this.config.ConnectorsConfiguration)
       {
         var connector = PluginManager.Instance.GetConnector(connectorConfiguration);

@@ -53,6 +53,10 @@ namespace Soloplan.WhatsON.Composition
     /// <returns>The projects from the server.</returns>
     public abstract Task<IList<Project>> GetProjects(string address);
 
+    public virtual void OnStartup(string[] args)
+    {
+    }
+
     public override string ToString()
     {
       return $"{this.GetType().Name} ({this.Name}: {this.Description}";
