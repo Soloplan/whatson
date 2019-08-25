@@ -75,7 +75,7 @@
               </Binding>
             </TextBox.Text-->
           </TextBox>
-          <materialDesign:ColorZone Mode="Standard" Padding="8 4 8 4" CornerRadius="3" Background="DarkGray"
+          <materialDesign:ColorZone Mode="Standard" Padding="8 4 8 4"  Background="DarkGray"
                                     Visibility="{Binding Path=SingleConnectorMode, Converter={StaticResource InvertBoolToVis}}">
             <ComboBox x:Name="uxConnectors" Height="28" SelectionChanged="ConnectorsSelectionChanged" Cursor="Hand" 
                     ItemsSource="{Binding Connectors}" DisplayMemberPath="Name" IsSynchronizedWithCurrentItem="true"

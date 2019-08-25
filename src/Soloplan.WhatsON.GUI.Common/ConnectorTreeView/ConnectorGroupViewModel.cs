@@ -167,7 +167,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         return new ConnectorMissingViewModel();
       }
 
-      var presentationPlugIn = PluginManager.Instance.GetPresentationPlugin(connector.GetType());
+      var presentationPlugIn = PluginManager.Instance.GetPresentationPlugin(connector.ConnectorConfiguration.Type);
       if (presentationPlugIn != null)
       {
         return presentationPlugIn.CreateViewModel();

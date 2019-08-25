@@ -16,7 +16,7 @@
       FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
 
   <Grid x:Name="MainGrid">
-    <materialDesign:ColorZone Mode="Standard" CornerRadius="5" Margin="5">
+    <materialDesign:ColorZone Mode="Standard" Margin="5">
       <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel x:Name="StackPanel" MinWidth="300"/>
       </ScrollViewer>

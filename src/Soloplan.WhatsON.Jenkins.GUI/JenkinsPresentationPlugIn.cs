@@ -16,7 +16,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
   public class JenkinsPresentationPlugin : PresentationPlugin
   {
     public JenkinsPresentationPlugin()
-      : base(typeof(JenkinsConnector), Properties.Resources.JenkinsProjectDataTemplate)
+      : base(JenkinsConnector.ConnectorName, Properties.Resources.JenkinsProjectDataTemplate)
     {
     }
 

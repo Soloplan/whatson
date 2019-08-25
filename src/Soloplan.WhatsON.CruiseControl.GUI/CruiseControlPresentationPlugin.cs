@@ -18,7 +18,7 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
   public class CruiseControlPresentationPlugin : PresentationPlugin
   {
     public CruiseControlPresentationPlugin()
-      : base(typeof(CruiseControlConnector), Properties.Resources.CcProjectDataTemplate)
+      : base(CruiseControlConnector.ConnectorName, Properties.Resources.CcProjectDataTemplate)
     {
     }
 

@@ -126,8 +126,6 @@ namespace Soloplan.WhatsON.GUI
     public void ShowBaloon(string title, string tipText, ToolTipIcon icon)
     {
       tipText = string.IsNullOrEmpty(tipText) ? " " : tipText;
-
-      log.Info("Showing notification: {notification},", new { Title = title, Text = tipText, Icon = icon });
       this.icon.ShowBalloonTip(1000, title, tipText, icon);
     }
 

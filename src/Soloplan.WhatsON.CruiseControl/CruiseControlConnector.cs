@@ -18,11 +18,12 @@ namespace Soloplan.WhatsON.CruiseControl
   using Soloplan.WhatsON.CruiseControl.Model;
   using Soloplan.WhatsON.Model;
 
-  [ConnectorType("CruiseControl", Description = "Retrieve the current status of a Cruise Control project.")]
+  [ConnectorType(ConnectorName, Description = "Retrieve the current status of a Cruise Control project.")]
   [ConfigurationItem(ProjectName, typeof(string), Optional = false, Priority = 300)]
   [NotificationConfigurationItem(NotificationsVisbility, typeof(ConnectorNotificationConfiguration), SupportsUnstableNotify = false, Priority = 1600000000)]
   public class CruiseControlConnector : Connector
   {
+    public const string ConnectorName = "CruiseControl";
     public const string ProjectName = "ProjectName";
 
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());

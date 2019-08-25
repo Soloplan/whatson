@@ -19,18 +19,23 @@ namespace Soloplan.WhatsON.GUI.Common
   /// </summary>
   public abstract class PresentationPlugin : IPlugin
   {
-    private string layoutXaml;
-
-    protected PresentationPlugin(Type connectorType, string layoutXaml)
+    protected PresentationPlugin(string connectorType)
     {
       this.ConnectorType = connectorType;
-      this.layoutXaml = layoutXaml;
+    }
+
+    protected PresentationPlugin(string connectorType, string layoutXaml)
+    {
+      this.ConnectorType = connectorType;
+      this.LayoutXaml = layoutXaml;
     }
 
     /// <summary>
     /// Gets type of connector for which this PlugIn provides presentation.
     /// </summary>
-    public Type ConnectorType { get; }
+    public string ConnectorType { get; }
+
+    public string LayoutXaml { get; set; }
 
     /// <summary>
     /// Creates the <see cref="ConnectorViewModel"/> decedent.
@@ -44,7 +49,12 @@ namespace Soloplan.WhatsON.GUI.Common
     /// <returns>Data template.</returns>
     public XmlReader GetDataTempletXaml()
     {
-      return XmlReader.Create(new MemoryStream(Encoding.UTF8.GetBytes(this.layoutXaml)));
+      if (string.IsNullOrWhiteSpace(this.LayoutXaml))
+      {
+        return null;
+      }
+
+      return XmlReader.Create(new MemoryStream(Encoding.UTF8.GetBytes(this.LayoutXaml)));
     }
   }
 }

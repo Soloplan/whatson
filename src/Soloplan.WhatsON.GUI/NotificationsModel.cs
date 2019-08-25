@@ -38,7 +38,7 @@ namespace Soloplan.WhatsON.GUI
       var modelToUpdate = this.connectors.FirstOrDefault(sub => sub.Identifier == connector.ConnectorConfiguration.Identifier);
       if (modelToUpdate == null)
       {
-        var presentationPlugIn = PluginManager.Instance.GetPresentationPlugin(connector.GetType());
+        var presentationPlugIn = PluginManager.Instance.GetPresentationPlugin(connector.ConnectorConfiguration.Type);
         if (presentationPlugIn != null)
         {
           modelToUpdate = presentationPlugIn.CreateViewModel();

@@ -20,10 +20,6 @@
         mc:Ignorable="d">
   <Window.Resources>
     <ResourceDictionary>
-      <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
-      </ResourceDictionary.MergedDictionaries>
-
       <Storyboard x:Key="hideStorBoard">
         <DoubleAnimation Storyboard.TargetName="HideableStackPanel"
                          Storyboard.TargetProperty="RenderTransform.Y"

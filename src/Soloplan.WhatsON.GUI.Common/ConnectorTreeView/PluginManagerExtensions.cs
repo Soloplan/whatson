@@ -24,7 +24,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// The presentation plugins.
     /// </summary>
-    private static Dictionary<Type, PresentationPlugin> presentationPlugins = new Dictionary<Type, PresentationPlugin>();
+    private static Dictionary<string, PresentationPlugin> presentationPlugins = new Dictionary<string, PresentationPlugin>();
 
     /// <summary>
     /// Gets all found plugIns.
@@ -42,7 +42,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <param name="manager">Plugin manager.</param>
     /// <param name="connectorType">Type of connector.</param>
     /// <returns>Appropriate <see cref="ITreeViewPresentationPlugIn"/>.</returns>
-    public static PresentationPlugin GetPresentationPlugin(this PluginManager manager, Type connectorType)
+    public static PresentationPlugin GetPresentationPlugin(this PluginManager manager, string connectorType)
     {
       if (presentationPlugins.TryGetValue(connectorType, out var presentationPlugin))
       {
@@ -50,15 +50,15 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
 
       var allPlugins = manager.GetPresentationPlugins().ToList();
-      var result = allPlugins.FirstOrDefault(plugin => plugin.ConnectorType.ToString() == connectorType.ToString());
+      var result = allPlugins.FirstOrDefault(plugin => plugin.ConnectorType == connectorType);
       if (result != null)
       {
-        log.Info($"Found presentation plugin {result.GetType().Name} for connector type {connectorType.Name}.");
+        log.Info($"Found presentation plugin {result.GetType().Name} for connector type {connectorType}.");
         presentationPlugins[connectorType] = result;
         return result;
       }
 
-      return allPlugins.FirstOrDefault(plugIn => plugIn.ConnectorType.IsAssignableFrom(connectorType));
+      return null;
     }
   }
 }
