@@ -28,6 +28,6 @@ namespace Soloplan.WhatsON.CruiseControl
 
     public string JobUrl { get; set; }
 
-    public IList<Culprit> Culprits { get; } = new List<Culprit>();
+    public IList<CruiseControlUser> Culprits { get; } = new List<CruiseControlUser>();
   }
 }

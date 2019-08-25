@@ -124,7 +124,7 @@ namespace Soloplan.WhatsON.CruiseControl
             continue;
           }
 
-          var culprit = new Culprit { Name = breaker };
+          var culprit = new CruiseControlUser { Name = breaker };
           result.Culprits.Add(culprit);
         }
       }
