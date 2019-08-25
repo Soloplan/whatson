@@ -20,17 +20,19 @@ namespace Soloplan.WhatsON.Model
       this.State = state;
     }
 
-    public string Name { get; set; }
+    public virtual string Name { get; set; }
 
-    public string Detail { get; set; }
+    public virtual string Detail { get; set; }
 
-    public DateTime Time { get; set; }
+    public virtual DateTime Time { get; set; }
 
-    public ObservationState State { get; set; }
+    public virtual TimeSpan Duration { get; set; }
 
-    public int BuildNumber { get; set; }
+    public virtual ObservationState State { get; set; }
 
-    public bool Building { get; set; }
+    public virtual int BuildNumber { get; set; }
+
+    public virtual bool Building { get; set; }
 
     public override string ToString()
     {

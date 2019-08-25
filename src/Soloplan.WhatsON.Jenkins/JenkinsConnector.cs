@@ -23,6 +23,8 @@ namespace Soloplan.WhatsON.Jenkins
   [NotificationConfigurationItem(NotificationsVisbility, typeof(ConnectorNotificationConfiguration), Priority = 1600000000)]
   public class JenkinsConnector : Connector
   {
+    private const long TicksInMillisecond = 10000;
+
     public const string ConnectorName = "Jenkins";
 
     public const string ProjectName = "ProjectName";
@@ -146,8 +148,8 @@ namespace Soloplan.WhatsON.Jenkins
       newStatus.BuildNumber = latestBuild.Number;
       newStatus.DisplayName = latestBuild.DisplayName;
       newStatus.Building = latestBuild.Building;
-      newStatus.DurationInMs = latestBuild.Duration;
-      newStatus.EstimatedDurationInMs = latestBuild.EstimatedDuration;
+      newStatus.Duration = new TimeSpan(latestBuild.Duration);
+      newStatus.EstimatedDuration = new TimeSpan(latestBuild.EstimatedDuration);
       newStatus.Culprits = latestBuild.Culprits;
 
       newStatus.CommittedToThisBuild = latestBuild.ChangeSets?.SelectMany(p => p.ChangeSetItems)

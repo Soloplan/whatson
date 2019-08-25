@@ -18,8 +18,6 @@ namespace Soloplan.WhatsON.CruiseControl
 
     public bool CheckingModifications { get; set; }
 
-    public TimeSpan Duration { get; set; }
-
     public TimeSpan EstimatedDuration { get; set; }
 
     public DateTime LastBuildTime { get; set; }

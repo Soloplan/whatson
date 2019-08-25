@@ -16,7 +16,7 @@ namespace Soloplan.WhatsON.Jenkins
 
   public class JenkinsStatus : Status
   {
-    private const long TicksInMillisecond = 10000;
+
 
     public JenkinsStatus(ObservationState state)
     : base(state)
@@ -25,21 +25,7 @@ namespace Soloplan.WhatsON.Jenkins
 
     public string DisplayName { get; set; }
 
-    public TimeSpan Duration
-    {
-      get => new TimeSpan(this.DurationInMs * TicksInMillisecond);
-      set => this.DurationInMs = value.Ticks / TicksInMillisecond;
-    }
-
-    public long DurationInMs { get; set; }
-
-    public TimeSpan EstimatedDuration
-    {
-      get => new TimeSpan(this.EstimatedDurationInMs * TicksInMillisecond);
-      set => this.EstimatedDurationInMs = value.Ticks / TicksInMillisecond;
-    }
-
-    public long EstimatedDurationInMs { get; set; }
+    public TimeSpan EstimatedDuration { get; set; }
 
     public IList<JenkinsUser> CommittedToThisBuild { get; set; }
 
