@@ -66,7 +66,7 @@
     </buildServer:HistoryBuildControl>
   </DataTemplate>
 
-  <DataTemplate DataType="{x:Type buildServer:BuildServerProjectStatusViewModel}">
+  <DataTemplate DataType="{x:Type connectorTreeView:ConnectorViewModel}">
     <StackPanel ContextMenu="{StaticResource BuildServerProjectContextMenu}" Orientation="Horizontal">
       <buildServer:BuildInformationIconControl DataContext="{Binding CurrentStatus}">
         <buildServer:BuildInformationIconControl.ToolTip>

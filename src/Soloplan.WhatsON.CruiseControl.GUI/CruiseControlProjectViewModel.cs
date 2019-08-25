@@ -11,7 +11,7 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
 
-  public class CruiseControlProjectViewModel : BuildServerProjectStatusViewModel
+  public class CruiseControlProjectViewModel : ConnectorViewModel
   {
     public override OpenWebPageCommandData OpenWebPageParam
     {

@@ -65,7 +65,6 @@
     <Compile Include="BuildServer\BuildInformationIconControl.xaml.cs">
       <DependentUpon>BuildInformationIconControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BuildServer\BuildServerProjectStatusViewModel.cs" />
     <Compile Include="BuildServer\BuildStatusViewModel.cs" />
     <Compile Include="BuildServer\UserViewModel.cs" />
     <Compile Include="BuildServer\ProgressBarTooltipControl.xaml.cs">

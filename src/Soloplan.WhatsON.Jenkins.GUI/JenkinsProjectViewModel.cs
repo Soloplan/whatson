@@ -14,7 +14,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
   using Soloplan.WhatsON.Jenkins.Model;
   using Soloplan.WhatsON.Model;
 
-  public class JenkinsProjectViewModel : BuildServerProjectStatusViewModel
+  public class JenkinsProjectViewModel : ConnectorViewModel
   {
     private OpenJenkinsWebPageCommandData openWebPageParam;
 

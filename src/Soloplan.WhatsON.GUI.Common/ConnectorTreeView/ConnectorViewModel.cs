@@ -7,6 +7,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
   using System;
   using System.Collections.ObjectModel;
+  using System.Windows.Controls;
+  using System.Windows.Input;
   using NLog;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.Model;
@@ -70,6 +72,23 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     public ObservableCollection<StatusViewModel> ConnectorSnapshots => this.connectorSnapshots ?? (this.connectorSnapshots = new ObservableCollection<StatusViewModel>());
 
     public Connector Connector { get; private set; }
+
+    /// <summary>
+    /// Gets command for opening builds webPage.
+    /// </summary>
+    public virtual OpenWebPageCommand OpenWebPage { get; } = new OpenWebPageCommand();
+
+    public virtual OpenWebPageCommandData OpenWebPageParam { get; set; }
+
+    public override void OnDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+      base.OnDoubleClick(sender, e);
+      var treeViewItem = sender as TreeViewItem;
+      if (treeViewItem != null && treeViewItem.DataContext == this && this.OpenWebPage.CanExecute(this.OpenWebPageParam))
+      {
+        this.OpenWebPage.Execute(this.OpenWebPageParam);
+      }
+    }
 
     public virtual void Init(ConnectorConfiguration configuration)
     {
