@@ -52,12 +52,9 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
       var ccStatus = newStatus as CruiseControlStatus;
       if (ccStatus == null)
       {
-        this.BuildNumber = null;
         return;
       }
 
-      this.BuildNumber = ccStatus.BuildNumber;
-      this.Building = ccStatus.Building;
       this.Duration = ccStatus.Duration;
       this.EstimatedDuration = ccStatus.EstimatedDuration;
 
@@ -74,7 +71,7 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
       this.Culprits.Clear();
       foreach (var culprit in ccStatus.Culprits)
       {
-        var culpritModel = new CulpritViewModel();
+        var culpritModel = new UserViewModel();
         culpritModel.FullName = culprit.Name;
         this.Culprits.Add(culpritModel);
       }

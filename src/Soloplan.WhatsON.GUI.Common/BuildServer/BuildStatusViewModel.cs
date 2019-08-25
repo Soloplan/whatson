@@ -11,6 +11,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
   using System.Collections.ObjectModel;
   using System.Windows;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
+  using Soloplan.WhatsON.Model;
 
   public abstract class BuildStatusViewModel : StatusViewModel
   {
@@ -32,7 +33,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
     private TimeSpan buildTimeExcedingEstimation;
 
-    private ObservableCollection<CulpritViewModel> culprits;
+    private ObservableCollection<UserViewModel> culprits;
 
     public BuildStatusViewModel(ConnectorViewModel model)
       : base(model)
@@ -48,7 +49,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
     public abstract OpenWebPageCommandData OpenBuildPageCommandData { get; }
 
-    public ObservableCollection<CulpritViewModel> Culprits => this.culprits ?? (this.culprits = new ObservableCollection<CulpritViewModel>());
+    public ObservableCollection<UserViewModel> Culprits => this.culprits ?? (this.culprits = new ObservableCollection<UserViewModel>());
 
     public int? BuildNumber
     {
@@ -251,11 +252,23 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
       }
     }
 
+    public override void Update(Status newStatus)
+    {
+      base.Update(newStatus);
+      if (newStatus == null)
+      {
+        return;
+      }
+
+      this.BuildNumber = newStatus.BuildNumber;
+      this.Building = newStatus.Building;
+    }
+
     protected void UpdateCalculatedFields()
     {
       this.UpdateStateFlags();
       this.UpdateEstimatedRemaining();
-      this.UpdateProgres();
+      this.UpdateProgress();
     }
 
     /// <summary>
@@ -309,7 +322,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     /// and won't change. It is important not to change values when <see cref="BuildingLongerThenExpected"/> because it resets the indeterminate progress bar
     /// and the animation looks bad.
     /// </remarks>
-    private void UpdateProgres()
+    private void UpdateProgress()
     {
       if (this.BuildingNoLongerThenExpected && this.RawProgress == 0)
       {

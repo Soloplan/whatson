@@ -7,7 +7,7 @@
 
 namespace Soloplan.WhatsON.GUI.Common.BuildServer
 {
-  public class CulpritViewModel : NotifyPropertyChanged
+  public class UserViewModel : NotifyPropertyChanged
   {
     private string fullName;
     private string url;

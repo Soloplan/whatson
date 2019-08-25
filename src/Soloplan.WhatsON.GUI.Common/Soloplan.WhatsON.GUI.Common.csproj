@@ -67,7 +67,7 @@
     </Compile>
     <Compile Include="BuildServer\BuildServerProjectStatusViewModel.cs" />
     <Compile Include="BuildServer\BuildStatusViewModel.cs" />
-    <Compile Include="BuildServer\CulpritViewModel.cs" />
+    <Compile Include="BuildServer\UserViewModel.cs" />
     <Compile Include="BuildServer\ProgressBarTooltipControl.xaml.cs">
       <DependentUpon>ProgressBarTooltipControl.xaml</DependentUpon>
     </Compile>

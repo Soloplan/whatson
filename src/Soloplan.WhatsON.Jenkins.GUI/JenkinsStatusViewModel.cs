@@ -19,7 +19,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
   {
     private OpenJenkinsWebPageCommandData parentCommandData;
 
-    private ObservableCollection<CulpritViewModel> committedToThisBuild;
+    private ObservableCollection<UserViewModel> committedToThisBuild;
 
     private bool culpritsAndLastCommittedDifferent;
 
@@ -58,20 +58,17 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       }
     }
 
-    public ObservableCollection<CulpritViewModel> CommittedToThisBuild => this.committedToThisBuild ?? (this.committedToThisBuild = new ObservableCollection<CulpritViewModel>());
+    public ObservableCollection<UserViewModel> CommittedToThisBuild => this.committedToThisBuild ?? (this.committedToThisBuild = new ObservableCollection<UserViewModel>());
 
     public override void Update(Status newStatus)
     {
       base.Update(newStatus);
       if (!(newStatus is JenkinsStatus jenkinsStatus))
       {
-        this.BuildNumber = null;
         return;
       }
 
-      this.BuildNumber = jenkinsStatus.BuildNumber;
       this.DisplayName = jenkinsStatus.DisplayName;
-      this.Building = jenkinsStatus.Building;
       this.Duration = jenkinsStatus.Duration;
       this.EstimatedDuration = jenkinsStatus.EstimatedDuration;
 
@@ -90,13 +87,13 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       this.Culprits.Clear();
       foreach (var culprit in jenkinsStatus.Culprits)
       {
-        var culpritModel = new CulpritViewModel() { FullName = culprit.FullName, Url = culprit.AbsoluteUrl };
+        var culpritModel = new UserViewModel() { FullName = culprit.FullName, Url = culprit.AbsoluteUrl };
         this.Culprits.Add(culpritModel);
       }
 
       foreach (var culprit in jenkinsStatus.CommittedToThisBuild ?? Enumerable.Empty<Culprit>())
       {
-        var culpritModel = new CulpritViewModel() { FullName = culprit.FullName, Url = culprit.AbsoluteUrl };
+        var culpritModel = new UserViewModel() { FullName = culprit.FullName, Url = culprit.AbsoluteUrl };
         this.CommittedToThisBuild.Add(culpritModel);
       }
 
