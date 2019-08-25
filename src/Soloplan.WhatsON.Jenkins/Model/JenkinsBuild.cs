@@ -28,7 +28,7 @@ namespace Soloplan.WhatsON.Jenkins.Model
 
     public long Timestamp { get; set; }
 
-    public IList<Culprit> Culprits { get; set; }
+    public IList<JenkinsUser> Culprits { get; set; }
 
     public IList<ChangeSet> ChangeSets { get; set; }
   }

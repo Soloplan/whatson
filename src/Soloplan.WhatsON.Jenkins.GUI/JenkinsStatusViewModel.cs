@@ -91,7 +91,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
         this.Culprits.Add(culpritModel);
       }
 
-      foreach (var culprit in jenkinsStatus.CommittedToThisBuild ?? Enumerable.Empty<Culprit>())
+      foreach (var culprit in jenkinsStatus.CommittedToThisBuild ?? Enumerable.Empty<JenkinsUser>())
       {
         var culpritModel = new UserViewModel() { FullName = culprit.FullName, Url = culprit.AbsoluteUrl };
         this.CommittedToThisBuild.Add(culpritModel);

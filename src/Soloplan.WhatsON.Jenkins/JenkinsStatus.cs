@@ -28,7 +28,7 @@ namespace Soloplan.WhatsON.Jenkins
     public TimeSpan Duration
     {
       get => new TimeSpan(this.DurationInMs * TicksInMillisecond);
-      set => this.DurationInMs = value.Ticks / 10000;
+      set => this.DurationInMs = value.Ticks / TicksInMillisecond;
     }
 
     public long DurationInMs { get; set; }
@@ -36,13 +36,13 @@ namespace Soloplan.WhatsON.Jenkins
     public TimeSpan EstimatedDuration
     {
       get => new TimeSpan(this.EstimatedDurationInMs * TicksInMillisecond);
-      set => this.EstimatedDurationInMs = value.Ticks / 10000;
+      set => this.EstimatedDurationInMs = value.Ticks / TicksInMillisecond;
     }
 
     public long EstimatedDurationInMs { get; set; }
 
-    public IList<Culprit> CommittedToThisBuild { get; set; }
+    public IList<JenkinsUser> CommittedToThisBuild { get; set; }
 
-    public IList<Culprit> Culprits { get; set; } = new List<Culprit>();
+    public IList<JenkinsUser> Culprits { get; set; } = new List<JenkinsUser>();
   }
 }
