@@ -10,6 +10,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
   public class CulpritViewModel : NotifyPropertyChanged
   {
     private string fullName;
+    private string url;
 
     /// <summary>
     /// Gets or sets name of user how made modifications in this build.
@@ -20,6 +21,19 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
       set
       {
         this.fullName = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets URL to user.
+    /// </summary>
+    public string Url
+    {
+      get => this.url;
+      set
+      {
+        this.url = value;
         this.OnPropertyChanged();
       }
     }

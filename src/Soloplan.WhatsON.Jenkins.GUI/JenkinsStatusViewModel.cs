@@ -19,7 +19,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
   {
     private OpenJenkinsWebPageCommandData parentCommandData;
 
-    private ObservableCollection<JenkinsCulpritViewModel> committedToThisBuild;
+    private ObservableCollection<CulpritViewModel> committedToThisBuild;
 
     private bool culpritsAndLastCommittedDifferent;
 
@@ -58,7 +58,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       }
     }
 
-    public ObservableCollection<JenkinsCulpritViewModel> CommittedToThisBuild => this.committedToThisBuild ?? (this.committedToThisBuild = new ObservableCollection<JenkinsCulpritViewModel>());
+    public ObservableCollection<CulpritViewModel> CommittedToThisBuild => this.committedToThisBuild ?? (this.committedToThisBuild = new ObservableCollection<CulpritViewModel>());
 
     public override void Update(Status newStatus)
     {
@@ -90,16 +90,14 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       this.Culprits.Clear();
       foreach (var culprit in jenkinsStatus.Culprits)
       {
-        var culpritModle = new JenkinsCulpritViewModel();
-        culpritModle.Init(culprit);
-        this.Culprits.Add(culpritModle);
+        var culpritModel = new CulpritViewModel() { FullName = culprit.FullName, Url = culprit.AbsoluteUrl };
+        this.Culprits.Add(culpritModel);
       }
 
       foreach (var culprit in jenkinsStatus.CommittedToThisBuild ?? Enumerable.Empty<Culprit>())
       {
-        var culpritModle = new JenkinsCulpritViewModel();
-        culpritModle.Init(culprit);
-        this.CommittedToThisBuild.Add(culpritModle);
+        var culpritModel = new CulpritViewModel() { FullName = culprit.FullName, Url = culprit.AbsoluteUrl };
+        this.CommittedToThisBuild.Add(culpritModel);
       }
 
       this.CulpritsAndLastCommittedDifferent = this.Culprits.Count != this.CommittedToThisBuild.Count || this.Culprits.Any(culprit => this.CommittedToThisBuild.All(committer => committer.FullName != culprit.FullName));
