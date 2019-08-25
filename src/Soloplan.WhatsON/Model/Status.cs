@@ -29,6 +29,10 @@ namespace Soloplan.WhatsON.Model
 
     public ObservationState State { get; set; }
 
+    public int BuildNumber { get; set; }
+
+    public bool Building { get; set; }
+
     public IDictionary<string, string> Properties { get; }
 
     public override string ToString()

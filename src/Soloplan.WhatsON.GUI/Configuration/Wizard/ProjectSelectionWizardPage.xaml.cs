@@ -29,6 +29,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       this.InitializeComponent();
       this.projectsTreeView.Loaded += (s, e) =>
       {
+        if (this.projectsTreeView.mainTreeView.Items.Count == 0)
+        {
+          return;
+        }
+
         var treeViewItem = (TreeViewItem)this.projectsTreeView.mainTreeView.ItemContainerGenerator.ContainerFromItem(this.projectsTreeView.mainTreeView.Items[0]);
         treeViewItem?.Focus();
       };

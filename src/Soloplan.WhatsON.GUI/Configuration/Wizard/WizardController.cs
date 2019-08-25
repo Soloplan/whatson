@@ -315,18 +315,9 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         newConnector.SourceConnectorPlugin = selectedProject.Plugin;
         newConnector.Name = selectedProject.Name;
         newConnector.Load(null);
-
-        try
-        {
-          selectedProject.Plugin.Configure(selectedProject, newConnector, this.ProposedServerAddress);
-        }
-        catch (Exception e)
-        {
-          log.Error(e);
-          continue;
-        }
-
         configurationViewModel.Connectors.Add(newConnector);
+
+        selectedProject.Plugin.Configure(selectedProject, newConnector, this.ProposedServerAddress);
       }
 
       if (configurationViewModel.ConfigurationIsModified)
@@ -450,18 +441,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <returns>The task.</returns>
     private async Task LoadProjectsFromPlugin(KeyValuePair<ConnectorPlugin, ProjectViewModelList> listQueryingPlugin)
     {
-      IList<Project> projects;
-      try
-      {
-        projects = await listQueryingPlugin.Key.GetProjects(this.ProposedServerAddress);
-      }
-      catch (Exception e)
-      {
-        log.Error(e);
-        return;
-      }
-
-      foreach (var serverProject in projects)
+      var serverProjects = await listQueryingPlugin.Key.GetProjects(this.ProposedServerAddress);
+      foreach (var serverProject in serverProjects)
       {
         var newProject = listQueryingPlugin.Value.AddProject(serverProject.Name);
         newProject.Address = serverProject.Address;

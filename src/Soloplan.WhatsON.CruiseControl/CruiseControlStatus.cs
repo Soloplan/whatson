@@ -14,10 +14,6 @@ namespace Soloplan.WhatsON.CruiseControl
 
   public class CruiseControlStatus : Status
   {
-    public int BuildNumber { get; set; }
-
-    public bool Building { get; set; }
-
     public bool Pending { get; set; }
 
     public bool CheckingModifications { get; set; }

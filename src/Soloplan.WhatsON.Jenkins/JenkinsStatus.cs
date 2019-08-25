@@ -23,24 +23,6 @@ namespace Soloplan.WhatsON.Jenkins
     {
     }
 
-    public int BuildNumber
-    {
-      get
-      {
-        if (this.Properties.TryGetValue(BuildPropertyKeys.Number, out var buildNubmerString) && int.TryParse(buildNubmerString, out var buildNubmer))
-        {
-          return buildNubmer;
-        }
-
-        throw new InvalidOperationException($"{nameof(this.BuildNumber)} wasn't set.");
-      }
-
-      set
-      {
-        this.Properties[BuildPropertyKeys.Number] = value.ToString(CultureInfo.InvariantCulture);
-      }
-    }
-
     public string DisplayName
     {
       get
@@ -56,24 +38,6 @@ namespace Soloplan.WhatsON.Jenkins
       set
       {
         this.Properties[BuildPropertyKeys.DisplayName] = value;
-      }
-    }
-
-    public bool Building
-    {
-      get
-      {
-        if (this.Properties.TryGetValue(BuildPropertyKeys.Building, out var buildingString) && bool.TryParse(buildingString, out var isBuilding))
-        {
-          return isBuilding;
-        }
-
-        throw new InvalidOperationException($"{nameof(this.Building)} wasn't set.");
-      }
-
-      set
-      {
-        this.Properties[BuildPropertyKeys.Building] = value.ToString(CultureInfo.InvariantCulture);
       }
     }
 
@@ -127,24 +91,7 @@ namespace Soloplan.WhatsON.Jenkins
 
     public IList<Culprit> CommittedToThisBuild { get; set; }
 
-    public IList<Culprit> Culprits
-    {
-      get
-      {
-        var list = new List<Culprit>();
-        if (this.Properties.TryGetValue(BuildPropertyKeys.Culprits, out var data))
-        {
-          foreach (var culprit in JsonConvert.DeserializeObject<IList<Culprit>>(data))
-          {
-            list.Add(culprit);
-          }
-        }
-
-        return list.AsReadOnly();
-      }
-
-      set => this.Properties[BuildPropertyKeys.Culprits] = JsonConvert.SerializeObject(value);
-    }
+    public IList<Culprit> Culprits { get; set; } = new List<Culprit>();
 
     private static class BuildPropertyKeys
     {
