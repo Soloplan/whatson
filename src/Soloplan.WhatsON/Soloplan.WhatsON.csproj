@@ -2,6 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageIconUrl>https://github.com/Soloplan/whatson/blob/master/whatsON-logo.png</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/Soloplan/whatson</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Soloplan/whatson</RepositoryUrl>
+    <PackageTags>monitoring, jenkins, tray-application, build-jobs, dektop-notifications</PackageTags>
+    <PackageVersion>1.0.0-RC1</PackageVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Steffen Wilke, Krzysztof Lorenc, Dominik Gołda</Authors>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -18,5 +26,12 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="NLog" Version="4.6.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 </Project>
