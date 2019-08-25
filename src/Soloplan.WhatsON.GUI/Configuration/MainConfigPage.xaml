@@ -8,7 +8,9 @@
       Title="MainConfigPage"
       d:DesignHeight="450"
       d:DesignWidth="800"
-      mc:Ignorable="d">
+      mc:Ignorable="d"
+      Background="{DynamicResource MaterialDesignPaper}"
+      TextElement.Foreground="{DynamicResource MaterialDesignBody}">
 
   <StackPanel>
     <StackPanel>

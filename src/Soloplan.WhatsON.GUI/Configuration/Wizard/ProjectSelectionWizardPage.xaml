@@ -7,7 +7,9 @@
       xmlns:wizard="clr-namespace:Soloplan.WhatsON.GUI.Configuration.Wizard"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="ProjectSelectionWizardPage">
+      Title="ProjectSelectionWizardPage"
+      Background="{DynamicResource MaterialDesignPaper}"
+      TextElement.Foreground="{DynamicResource MaterialDesignBody}">
 
   <Grid>
     <wizard:ProjectsTreeView  x:Name="projectsTreeView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DataContext="{Binding Path=Projects}" PreviewKeyUp="MainTreeViewPreviewKeyUp"

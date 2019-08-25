@@ -79,6 +79,11 @@ namespace Soloplan.WhatsON.Jenkins
     private async Task GetProjectsLists(string address, List<Project> projects, JenkinsApi jenkinsApi)
     {
       var jenkinsJobs = await jenkinsApi.GetJenkinsJobs(address, default);
+      if (jenkinsJobs == null || jenkinsJobs.Jobs == null)
+      {
+        return;
+      }
+
       foreach (var jenkinsJob in jenkinsJobs.Jobs)
       {
         var newServerProject = this.AddProject(projects, jenkinsJob);

@@ -155,6 +155,34 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       }
     }
 
+    public List<string> AvailableConnectorTypes
+    {
+      get
+      {
+        return PluginManager.Instance.ConnectorPlugins.Select(x => x.Name).ToList();
+      }
+    }
+
+    private string selectedConnectorType;
+
+    public string SelectedConnectorType
+    {
+      get
+      {
+        if (this.selectedConnectorType == null)
+        {
+          this.selectedConnectorType = this.AvailableConnectorTypes.FirstOrDefault();
+        }
+
+        return this.selectedConnectorType;
+      }
+
+      set
+      {
+        this.selectedConnectorType = value;
+      }
+    }
+
     /// <summary>
     /// Gets a value indicating whether any project is checked.
     /// </summary>
@@ -387,27 +415,22 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <returns>The task.</returns>
     private async Task PrepareProjectsList()
     {
-      var pluginsToQueryWithModel = new Dictionary<ConnectorPlugin, ProjectViewModelList>();
+      Tuple<ConnectorPlugin, ProjectViewModelList> pluginToQueryWithModel;
       if (this.connectorPlugin != null)
       {
-        pluginsToQueryWithModel.Add(this.connectorPlugin, new ProjectViewModelList { MultiSelectionMode = false, PlugIn = this.connectorPlugin });
+        pluginToQueryWithModel = new Tuple<ConnectorPlugin, ProjectViewModelList>(this.connectorPlugin, new ProjectViewModelList { MultiSelectionMode = false, PlugIn = this.connectorPlugin });
       }
       else
       {
-        foreach (var plugin in PluginManager.Instance.ConnectorPlugins)
-        {
-          pluginsToQueryWithModel.Add(plugin, new ProjectViewModelList { MultiSelectionMode = true, PlugIn = plugin });
-        }
+        var plugin = PluginManager.Instance.ConnectorPlugins.FirstOrDefault(x => x.Name.Equals(this.SelectedConnectorType));
+        pluginToQueryWithModel = new Tuple<ConnectorPlugin, ProjectViewModelList>(plugin, new ProjectViewModelList { MultiSelectionMode = true, PlugIn = plugin });
       }
 
       var taskList = new Dictionary<Task, ProjectViewModelList>();
       var timeoutTask = Task.Delay(25000);
       taskList.Add(timeoutTask, null);
-      foreach (var pluginToQueryWithModel in pluginsToQueryWithModel)
-      {
-        var task = this.LoadProjectsFromPlugin(pluginToQueryWithModel);
-        taskList.Add(task, pluginToQueryWithModel.Value);
-      }
+      var task = this.LoadProjectsFromPlugin(pluginToQueryWithModel);
+      taskList.Add(task, pluginToQueryWithModel.Item2);
 
       while (taskList.Count > 0)
       {
@@ -439,12 +462,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     /// <param name="listQueryingPlugin">The list querying plugin.</param>
     /// <returns>The task.</returns>
-    private async Task LoadProjectsFromPlugin(KeyValuePair<ConnectorPlugin, ProjectViewModelList> listQueryingPlugin)
+    private async Task LoadProjectsFromPlugin(Tuple<ConnectorPlugin, ProjectViewModelList> listQueryingPlugin)
     {
-      var serverProjects = await listQueryingPlugin.Key.GetProjects(this.ProposedServerAddress);
+      var serverProjects = await listQueryingPlugin.Item1.GetProjects(this.ProposedServerAddress);
       foreach (var serverProject in serverProjects)
       {
-        var newProject = listQueryingPlugin.Value.AddProject(serverProject.Name);
+        var newProject = listQueryingPlugin.Item2.AddProject(serverProject.Name);
         newProject.Address = serverProject.Address;
         this.ProcessServerSubProjects(serverProject.Children, newProject);
       }

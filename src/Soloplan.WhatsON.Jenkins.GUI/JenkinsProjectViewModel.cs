@@ -51,8 +51,6 @@ namespace Soloplan.WhatsON.Jenkins.GUI
 
       this.OpenWebPageParam = param;
 
-      this.SetAddressForState(this.CurrentStatus);
-
       foreach (var connectorSnapshot in this.ConnectorSnapshots)
       {
         this.SetAddressForState(connectorSnapshot);
@@ -62,7 +60,6 @@ namespace Soloplan.WhatsON.Jenkins.GUI
     protected override StatusViewModel GetViewModelForStatus()
     {
       var jenkinsModel = new JenkinsStatusViewModel(this);
-      this.SetAddressForState(jenkinsModel);
       this.SetAddressForState(jenkinsModel);
       return jenkinsModel;
     }

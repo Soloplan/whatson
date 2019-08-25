@@ -6,7 +6,9 @@
       xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Configuration"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="AboutPage">
+      Title="AboutPage"
+      Background="{DynamicResource MaterialDesignPaper}"
+      TextElement.Foreground="{DynamicResource MaterialDesignBody}">
 
   <DockPanel>
     <StackPanel DockPanel.Dock="Top">
