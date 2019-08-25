@@ -17,7 +17,6 @@ namespace Soloplan.WhatsON.Model
 
     public Status(ObservationState state)
     {
-      this.Properties = new Dictionary<string, string>();
       this.State = state;
     }
 
@@ -32,8 +31,6 @@ namespace Soloplan.WhatsON.Model
     public int BuildNumber { get; set; }
 
     public bool Building { get; set; }
-
-    public IDictionary<string, string> Properties { get; }
 
     public override string ToString()
     {
