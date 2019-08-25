@@ -9,6 +9,9 @@ namespace Soloplan.WhatsON
 {
   using System;
   using System.IO;
+  using System.Net;
+  using System.Threading;
+  using System.Threading.Tasks;
   using Newtonsoft.Json;
   using NLog;
   using Soloplan.WhatsON.Configuration;
@@ -89,6 +92,47 @@ namespace Soloplan.WhatsON
       }
 
       Save(configuration, configFilePath ?? ConfigFile);
+    }
+
+    public static async Task<TModel> GetJsonModel<TModel>(string requestUrl, CancellationToken token, Action<WebRequest> requestCallback = null)
+     where TModel : class
+    {
+      var request = WebRequest.Create(requestUrl);
+      requestCallback?.Invoke(request);
+
+      try
+      {
+        using (token.Register(() => request.Abort(), false))
+        using (var response = await request.GetResponseAsync())
+        {
+          // Get the stream containing content returned by the server
+          // Open the stream using a StreamReader for easy access
+          using (var dataStream = response.GetResponseStream())
+          using (var reader = new StreamReader(dataStream))
+          {
+            var responseFromServer = reader.ReadToEnd();
+            var settings = new JsonSerializerSettings
+            {
+              Error = (s, e) =>
+              {
+                e.ErrorContext.Handled = true;
+                throw new InvalidPlugInApiResponseException($"Error during model deserialization for type {typeof(TModel).Name}");
+              },
+            };
+
+            return JsonConvert.DeserializeObject<TModel>(responseFromServer, settings);
+          }
+        }
+      }
+      catch (WebException ex)
+      {
+        if (token.IsCancellationRequested)
+        {
+          throw new OperationCanceledException(ex.Message, ex, token);
+        }
+
+        throw;
+      }
     }
   }
 }

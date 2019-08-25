@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Soloplan.WhatsON.Jenkins.Model
+namespace Soloplan.WhatsON.Jenkins
 {
   using System;
   using System.Linq;

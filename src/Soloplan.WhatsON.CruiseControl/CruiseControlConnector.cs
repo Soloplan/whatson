@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Soloplan.WhatsON.CruiseControl.Model
+namespace Soloplan.WhatsON.CruiseControl
 {
   using System;
   using System.Linq;

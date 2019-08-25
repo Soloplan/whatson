@@ -30,7 +30,7 @@ namespace Soloplan.WhatsON.Jenkins
 
       var jobRequest = $"{address.Trim('/')}/job/{projectName.Trim('/')}/api/json?tree={JenkinsJob.RequestProperties}";
       log.Trace("Querying job: {jobRequest}", jobRequest);
-      return await GetJenkinsModel<JenkinsJob>(jobRequest, token);
+      return await SerializationHelper.GetJsonModel<JenkinsJob>(jobRequest, token);
     }
 
     /// <summary>
@@ -43,7 +43,7 @@ namespace Soloplan.WhatsON.Jenkins
     {
       var jobsRequest = $"{address.Trim('/')}/api/json?tree={JenkinsJobs.RequestProperties}";
       log.Trace("Querying jobs: {jobsRequest}", jobsRequest);
-      return await GetJenkinsModel<JenkinsJobs>(jobsRequest, token);
+      return await SerializationHelper.GetJsonModel<JenkinsJobs>(jobsRequest, token);
     }
 
     public async Task<JenkinsBuild> GetJenkinsBuild(JenkinsConnector connector, int buildNumber, CancellationToken token)
@@ -53,46 +53,7 @@ namespace Soloplan.WhatsON.Jenkins
 
       var buildRequest = $"{address.Trim('/')}/job/{projectName.Trim('/')}/{buildNumber}/api/json?tree={JenkinsBuild.RequestProperties}";
       log.Trace("Querying build: {jobRequest}", buildRequest);
-      return await GetJenkinsModel<JenkinsBuild>(buildRequest, token);
-    }
-
-    private static async Task<TModel> GetJenkinsModel<TModel>(string requestUrl, CancellationToken token)
-    where TModel : class
-    {
-      var request = WebRequest.Create(requestUrl);
-      try
-      {
-        using (token.Register(() => request.Abort(), false))
-        using (var response = await request.GetResponseAsync())
-        {
-          // Get the stream containing content returned by the server
-          // Open the stream using a StreamReader for easy access
-          using (var dataStream = response.GetResponseStream())
-          using (var reader = new StreamReader(dataStream))
-          {
-            var responseFromServer = reader.ReadToEnd();
-            var settings = new JsonSerializerSettings
-            {
-              Error = (s, e) =>
-              {
-                e.ErrorContext.Handled = true;
-                throw new InvalidPlugInApiResponseException("Error while potential Jenkins response deserialization");
-              },
-            };
-
-            return JsonConvert.DeserializeObject<TModel>(responseFromServer, settings);
-          }
-        }
-      }
-      catch (WebException ex)
-      {
-        if (token.IsCancellationRequested)
-        {
-          throw new OperationCanceledException(ex.Message, ex, token);
-        }
-
-        throw;
-      }
+      return await SerializationHelper.GetJsonModel<JenkinsBuild>(buildRequest, token);
     }
   }
 }

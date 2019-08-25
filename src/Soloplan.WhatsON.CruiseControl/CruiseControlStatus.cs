@@ -5,10 +5,11 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Soloplan.WhatsON.CruiseControl.Model
+namespace Soloplan.WhatsON.CruiseControl
 {
   using System;
   using System.Collections.Generic;
+  using Soloplan.WhatsON.CruiseControl.Model;
   using Soloplan.WhatsON.Model;
 
   public class CruiseControlStatus : Status

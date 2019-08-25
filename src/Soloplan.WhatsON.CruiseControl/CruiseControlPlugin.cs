@@ -13,7 +13,6 @@ namespace Soloplan.WhatsON.CruiseControl
   using System.Threading.Tasks;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
-  using Soloplan.WhatsON.CruiseControl.Model;
   using Soloplan.WhatsON.Model;
 
   public class CruiseControlPlugin : ConnectorPlugin
