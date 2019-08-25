@@ -133,9 +133,19 @@ namespace Soloplan.WhatsON.Composition
         return null;
       }
 
-      var connector = plugin.CreateNew(connectorConfiguration);
-      this.connectors.Add(connector);
-      return connector;
+      Connector newConnector;
+      try
+      {
+        newConnector = plugin.CreateNew(connectorConfiguration);
+      }
+      catch (Exception e)
+      {
+        log.Error(e);
+        return null;
+      }
+
+      this.connectors.Add(newConnector);
+      return newConnector;
     }
 
     /// <summary>

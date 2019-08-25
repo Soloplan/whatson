@@ -5,9 +5,11 @@
 
 namespace Soloplan.WhatsON.GUI
 {
+  using System;
   using System.Net;
   using System.Windows;
   using System.Windows.Interop;
+  using NLog;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
@@ -18,6 +20,11 @@ namespace Soloplan.WhatsON.GUI
   /// </summary>
   public partial class App : Application
   {
+    /// <summary>
+    /// Logger instance used by this class.
+    /// </summary>
+    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+
     /// <summary>
     /// The theme helper.
     /// </summary>
@@ -69,7 +76,14 @@ namespace Soloplan.WhatsON.GUI
       // call the plugins with the application args, so plugins can process them
       foreach (var connectorPlugin in PluginManager.Instance.ConnectorPlugins)
       {
-        connectorPlugin.OnStartup(e.Args);
+        try
+        {
+          connectorPlugin.OnStartup(e.Args);
+        }
+        catch (Exception ex)
+        {
+          log.Error(ex);
+        }
       }
 
       // add each connector to the observation scheduler
