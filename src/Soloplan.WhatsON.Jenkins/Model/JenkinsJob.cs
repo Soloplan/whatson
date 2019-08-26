@@ -17,12 +17,14 @@ namespace Soloplan.WhatsON.Jenkins.Model
     /// <summary>
     /// The request properties for the server query.
     /// </summary>
-    public const string RequestProperties = "displayName,lastBuild[number],firstBuild[number],_class,name,url";
+    public const string RequestProperties = "displayName,fullDisplayName,lastBuild[number],firstBuild[number],_class,name,url";
 
     /// <summary>
     /// Gets or sets the job display name.
     /// </summary>
     public string DisplayName { get; set; }
+
+    public string FullDisplayName { get; set; }
 
     /// <summary>
     /// Gets or sets the last build.

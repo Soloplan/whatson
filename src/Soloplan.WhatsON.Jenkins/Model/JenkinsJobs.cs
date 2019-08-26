@@ -17,7 +17,7 @@ namespace Soloplan.WhatsON.Jenkins.Model
     /// <summary>
     /// The definition of properties used as query parameters.
     /// </summary>
-    public const string RequestProperties = "jobs[url,name]";
+    public const string RequestProperties = "jobs[url,name,displayName,fullDisplayName]";
 
     /// <summary>
     /// Gets or sets the jobs list.

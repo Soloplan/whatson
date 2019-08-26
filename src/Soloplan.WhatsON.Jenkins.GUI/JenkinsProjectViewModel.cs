@@ -11,7 +11,6 @@ namespace Soloplan.WhatsON.Jenkins.GUI
   using Soloplan.WhatsON.GUI.Common;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
-  using Soloplan.WhatsON.Jenkins.Model;
   using Soloplan.WhatsON.Model;
 
   public class JenkinsProjectViewModel : ConnectorViewModel
