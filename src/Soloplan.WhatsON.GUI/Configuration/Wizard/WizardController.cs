@@ -38,6 +38,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     private readonly Window ownerWindow;
 
+    private readonly ApplicationConfiguration config;
+
     /// <summary>
     /// The wizard window.
     /// </summary>
@@ -82,9 +84,10 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// Initializes a new instance of the <see cref="WizardController"/> class.
     /// </summary>
     /// <param name="ownerWindow">The owner window.</param>
-    public WizardController(Window ownerWindow)
+    public WizardController(Window ownerWindow, ApplicationConfiguration config)
     {
       this.ownerWindow = ownerWindow;
+      this.config = config;
     }
 
     /// <summary>
@@ -155,6 +158,19 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       }
     }
 
+    public List<string> AvailableServers
+    {
+      get
+      {
+        if (this.SelectedConnectorType == null)
+        {
+          return new List<string>();
+        }
+
+        return this.config.ConnectorsConfiguration.Where(x => x.Type == this.SelectedConnectorType).Select(x => x.GetConfigurationByKey(Connector.ServerAddress).Value).Distinct().ToList();
+      }
+    }
+
     public List<string> AvailableConnectorTypes
     {
       get
@@ -180,6 +196,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       set
       {
         this.selectedConnectorType = value;
+        this.OnPropertyChanged(nameof(this.SelectedConnectorType));
+        this.OnPropertyChanged(nameof(this.AvailableServers));
       }
     }
 
@@ -230,7 +248,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     public bool Start(ConnectorPlugin plugin)
     {
       this.connectorPlugin = plugin;
-      return this.Start();
+      return this.Start(false);
     }
 
     /// <summary>
@@ -241,11 +259,19 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <returns>
     /// True if the wizard was finished correctly and not canceled in any way.
     /// </returns>
-    public bool Start(ApplicationConfiguration configuration)
+    public bool Start(bool applyConfig = true)
     {
-      if (this.Start())
+      this.wizardWindow = new WizardWindow(this);
+      this.wizardWindow.Owner = this.ownerWindow;
+      this.wizardWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+      this.GoToConnectionStep();
+      if (this.wizardWindow.ShowDialog() == true)
       {
-        this.ApplyToConfiguration(configuration);
+        if (applyConfig)
+        {
+          this.ApplyToConfiguration();
+        }
+
         return true;
       }
 
@@ -326,7 +352,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// Applies the results of the wizard to configuration.
     /// </summary>
     /// <param name="configuration">The configuration.</param>
-    private void ApplyToConfiguration(ApplicationConfiguration configuration)
+    private void ApplyToConfiguration()
     {
       var selectedProjects = this.GetSelectedProjects();
       if (selectedProjects.Count < 1)
@@ -335,7 +361,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       }
 
       var configurationViewModel = new ConfigViewModel();
-      configurationViewModel.Load(configuration);
+      configurationViewModel.Load(this.config);
 
       foreach (var selectedProject in selectedProjects)
       {
@@ -350,29 +376,9 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 
       if (configurationViewModel.ConfigurationIsModified)
       {
-        configurationViewModel.Connectors.ApplyToConfiguration(configuration);
-        SerializationHelper.SaveConfiguration(configuration);
+        configurationViewModel.Connectors.ApplyToConfiguration(this.config);
+        SerializationHelper.SaveConfiguration(this.config);
       }
-    }
-
-    /// <summary>
-    /// Starts this wizard.
-    /// </summary>
-    /// <returns>
-    /// True if wizard was finished successfully.
-    /// </returns>
-    private bool Start()
-    {
-      this.wizardWindow = new WizardWindow(this);
-      this.wizardWindow.Owner = this.ownerWindow;
-      this.wizardWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-      this.GoToConnectionStep();
-      if (this.wizardWindow.ShowDialog() == true)
-      {
-        return true;
-      }
-
-      return false;
     }
 
     /// <summary>

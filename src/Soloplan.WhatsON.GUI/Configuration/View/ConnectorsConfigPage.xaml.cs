@@ -16,6 +16,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
   using System.Windows.Data;
   using MaterialDesignThemes.Wpf;
   using Soloplan.WhatsON.Composition;
+  using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Configuration.ViewModel;
   using Soloplan.WhatsON.GUI.Configuration.Wizard;
   using Soloplan.WhatsON.Model;
@@ -29,6 +30,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// The owner window.
     /// </summary>
     private readonly Window ownerWindow;
+
+    private readonly ApplicationConfiguration config;
 
     /// <summary>
     /// The current connector.
@@ -51,8 +54,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <param name="connectors">The connectors.</param>
     /// <param name="ownerWindow">The owner <see cref="Window" />.</param>
     /// <param name="initialFocusedConnector">The initial focused connector.</param>
-    public ConnectorsPage(ConnectorViewModelCollection connectors, Window ownerWindow, Connector initialFocusedConnector)
-     : this(connectors, ownerWindow)
+    public ConnectorsPage(ConnectorViewModelCollection connectors, Window ownerWindow, Connector initialFocusedConnector, ApplicationConfiguration config)
+     : this(connectors, ownerWindow, config)
     {
       this.InitialFocusedConnectorViewModel = this.Connectors.FirstOrDefault(c => c.SourceConnectorConfiguration == initialFocusedConnector.ConnectorConfiguration);
       this.InitilizeConnectorNameTextEditBinding();
@@ -65,8 +68,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <param name="connectors">The connectors.</param>
     /// <param name="ownerWindow">The owner <see cref="Window" />.</param>
     /// <param name="newConnectorPlugin">The new connector plugin.</param>
-    public ConnectorsPage(ConnectorViewModelCollection connectors, Window ownerWindow, ConnectorPlugin newConnectorPlugin)
-      : this(connectors, ownerWindow)
+    public ConnectorsPage(ConnectorViewModelCollection connectors, Window ownerWindow, ConnectorPlugin newConnectorPlugin, ApplicationConfiguration config)
+      : this(connectors, ownerWindow, config)
     {
       this.currentConnector = new ConnectorViewModel();
 
@@ -85,10 +88,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     /// <param name="connectors">The connectors.</param>
     /// <param name="ownerWindow">The owner <see cref="Window" />.</param>
-    public ConnectorsPage(ConnectorViewModelCollection connectors, Window ownerWindow)
+    public ConnectorsPage(ConnectorViewModelCollection connectors, Window ownerWindow, ApplicationConfiguration config)
     {
       this.ownerWindow = ownerWindow;
       this.Connectors = connectors;
+      this.config = config;
       this.DataContext = this;
       this.InitializeComponent();
       this.Connectors.Loaded -= this.ConnectorsLoaded;
@@ -281,7 +285,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private void StartWizardClick(object sender, System.Windows.RoutedEventArgs e)
     {
-      var wizardController = new WizardController(this.ownerWindow);
+      var wizardController = new WizardController(this.ownerWindow, this.config);
       if (wizardController.Start(this.CurrentConnector.SourceConnectorPlugin))
       {
         var selectedProjects = wizardController.GetSelectedProjects();

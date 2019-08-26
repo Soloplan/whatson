@@ -206,15 +206,15 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
           {
             if (!this.configurationViewModel.SingleConnectorMode)
             {
-              this.connectorPage = new ConnectorsPage(this.configurationViewModel.Connectors, this);
+              this.connectorPage = new ConnectorsPage(this.configurationViewModel.Connectors, this, this.configurationSource);
             }
             else if (this.initialFocusedConnector != null)
             {
-              this.connectorPage = new ConnectorsPage(this.configurationViewModel.Connectors, this, this.initialFocusedConnector);
+              this.connectorPage = new ConnectorsPage(this.configurationViewModel.Connectors, this, this.initialFocusedConnector, this.configurationSource);
             }
             else
             {
-              this.connectorPage = new ConnectorsPage(this.configurationViewModel.Connectors, this, this.newConnectorPlugin);
+              this.connectorPage = new ConnectorsPage(this.configurationViewModel.Connectors, this, this.newConnectorPlugin, this.configurationSource);
             }
           }
 

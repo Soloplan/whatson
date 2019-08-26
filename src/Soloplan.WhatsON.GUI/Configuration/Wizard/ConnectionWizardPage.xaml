@@ -14,7 +14,7 @@
   <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="6">
     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch" Orientation="Vertical">
       <ComboBox materialDesign:HintAssist.Hint="Type" Margin="10,0,10,0" Style="{StaticResource MaterialDesignFloatingHintComboBox}" ItemsSource="{Binding AvailableConnectorTypes}" SelectedItem="{Binding SelectedConnectorType}" />
-      <ComboBox materialDesign:HintAssist.Hint="Project URL" Margin="10,30,10,0" DockPanel.Dock="Top" Padding="8 4 8 4" IsEditable="True" materialDesign:HintAssist.HintOpacity=".26" Text="{Binding Path=ProposedServerAddress}" KeyUp="ConnectionAdressKeyUp" Name="AddressComboBox" />
+      <ComboBox materialDesign:HintAssist.Hint="Project URL" Margin="10,30,10,0" DockPanel.Dock="Top" Padding="8 4 8 4" IsEditable="True" materialDesign:HintAssist.HintOpacity=".26" ItemsSource="{Binding AvailableServers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Text="{Binding Path=ProposedServerAddress}" KeyUp="ConnectionAdressKeyUp" Name="AddressComboBox" />
     </StackPanel>
   </StackPanel>
 </Page>

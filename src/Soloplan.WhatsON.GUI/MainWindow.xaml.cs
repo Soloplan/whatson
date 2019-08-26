@@ -172,11 +172,11 @@ namespace Soloplan.WhatsON.GUI
     /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
     private void NewConnectorClick(object sender, EventArgs e)
     {
-      var wizardController = new WizardController(this);
+      var wizardController = new WizardController(this, this.config);
       var result = false;
       try
       {
-        result = wizardController.Start(this.config);
+        result = wizardController.Start();
       }
       finally
       {

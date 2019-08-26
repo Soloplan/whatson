@@ -44,10 +44,6 @@
             <buildServer:BuildInformationIconControl.ToolTip>
               <StackPanel>
                 <buildServer:ProgressBarTooltipControl DataContext="{Binding}" />
-                <StackPanel Visibility="{Binding CulpritsAndLastCommittedDifferent, Converter={StaticResource BoolToVisibility}}">
-                  <buildServer:CulpritsControl Caption="Commits by:" CulpritsProp="{Binding DataContext.CommittedToThisBuild, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
-                </StackPanel>
-                <buildServer:CulpritsControl Caption="All culprits for this build:" CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
               </StackPanel>
             </buildServer:BuildInformationIconControl.ToolTip>
           </buildServer:BuildInformationIconControl>
