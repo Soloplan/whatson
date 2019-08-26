@@ -8,10 +8,12 @@
 namespace Soloplan.WhatsON.Jenkins.Tests
 {
   using System;
+  using System.Collections.Generic;
   using System.Threading;
   using System.Threading.Tasks;
   using Soloplan.WhatsON.Jenkins;
   using Soloplan.WhatsON.Jenkins.Model;
+  using Soloplan.WhatsON.Model;
 
   public class FakeJenkinsApi : IJenkinsApi
   {
@@ -51,6 +53,11 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       }
 
       return eventArgs.Result;
+    }
+
+    public Task<IList<JenkinsBuild>> GetBuilds(JenkinsConnector connector, CancellationToken token, int @from = 0, int to = Connector.MaxSnapshots)
+    {
+      throw new NotImplementedException();
     }
   }
 

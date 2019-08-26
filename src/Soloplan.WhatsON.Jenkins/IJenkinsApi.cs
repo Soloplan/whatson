@@ -7,9 +7,11 @@
 
 namespace Soloplan.WhatsON.Jenkins
 {
+  using System.Collections.Generic;
   using System.Threading;
   using System.Threading.Tasks;
   using Soloplan.WhatsON.Jenkins.Model;
+  using Soloplan.WhatsON.Model;
 
   /// <summary>
   /// Interface defining API for Jenkins.
@@ -32,5 +34,7 @@ namespace Soloplan.WhatsON.Jenkins
     /// <param name="token">Cancellation token.</param>
     /// <returns>Information about specific build. <seealso cref="JenkinsBuild"/>.</returns>
     Task<JenkinsBuild> GetJenkinsBuild(JenkinsConnector connector, int buildNumber, CancellationToken token);
+
+    Task<IList<JenkinsBuild>> GetBuilds(JenkinsConnector connector, CancellationToken token, int from = 0, int to = Connector.MaxSnapshots);
   }
 }

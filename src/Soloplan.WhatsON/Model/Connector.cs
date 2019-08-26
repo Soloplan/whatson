@@ -102,7 +102,7 @@ namespace Soloplan.WhatsON.Model
       while (this.Snapshots.Count >= MaxSnapshots)
       {
         log.Debug("Max number of snapshots exceeded. Dequeuing snapshot.", new { Name = this.ConnectorConfiguration.Name, CurrentStatus = this.CurrentStatus });
-        this.Snapshots.RemoveAt(0);
+        this.Snapshots.RemoveAt(this.Snapshots.Count - 1); // remove the end of the list because we're sortring by age
       }
 
       this.Snapshots.Add(new Snapshot(status));
@@ -131,6 +131,14 @@ namespace Soloplan.WhatsON.Model
 
     protected virtual bool ShouldTakeSnapshot(Status status)
     {
+      log.Trace("Checking if snapshot should be taken...");
+
+      if (status.State != ObservationState.Running && this.Snapshots.All(x => x.Status.BuildNumber != status.BuildNumber))
+      {
+        log.Debug("Snapshot should be taken. {stat}", new { CurrentStatus = status });
+        return true;
+      }
+
       return false;
     }
   }

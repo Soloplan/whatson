@@ -57,8 +57,6 @@ namespace Soloplan.WhatsON.Jenkins
 
     public string Project => this.GetProject();
 
-    private JenkinsStatus PreviousCheckStatus { get; set; }
-
     /// <summary>
     /// Gets the project.
     /// </summary>
@@ -78,62 +76,20 @@ namespace Soloplan.WhatsON.Jenkins
 
       var latestBuild = await this.api.GetJenkinsBuild(this, job.LastBuild.Number, cancellationToken);
       this.CurrentStatus = CreateStatus(latestBuild);
-      if (this.Snapshots.Count == 0 && job.FirstBuild.Number < job.LastBuild.Number)
+      if (this.Snapshots.Count == 0 && job.LastBuild.Number > 1)
       {
-        var startBuildNumber = latestBuild.Building ? latestBuild.Number - 1 : latestBuild.Number;
-        var lastHistoryBuild = Math.Max(startBuildNumber - MaxSnapshots + 1, 0);
-        lastHistoryBuild = Math.Max(lastHistoryBuild, job.FirstBuild.Number);
-        log.Debug("Retrieving history from the server for builds {builds}", new { StartBuild = lastHistoryBuild, EndBuild = startBuildNumber - 1 });
-
-        JenkinsStatus buildStatus = null;
-        for (int i = lastHistoryBuild; i <= startBuildNumber; i++)
+        foreach (var build in await this.api.GetBuilds(this, cancellationToken, 1, MaxSnapshots + 1))
         {
-          buildStatus = CreateStatus(await this.api.GetJenkinsBuild(this, i, cancellationToken));
-          log.Debug("Retrieved status {buildStatus}", buildStatus);
+          var buildStatus = CreateStatus(build);
           this.AddSnapshot(buildStatus);
         }
-
-        this.PreviousCheckStatus = buildStatus;
       }
 
-      if (this.PreviousCheckStatus != null && this.CurrentStatus is JenkinsStatus currentStatus)
+      // push current state to the snapshots because it's done building
+      if (this.ShouldTakeSnapshot(this.CurrentStatus))
       {
-        if (currentStatus.BuildNumber - this.PreviousCheckStatus.BuildNumber > 1)
-        {
-          var start = this.PreviousCheckStatus.BuildNumber + 1;
-          for (int i = start; i < currentStatus.BuildNumber; i++)
-          {
-            var buildStatus = CreateStatus(await this.api.GetJenkinsBuild(this, i, cancellationToken));
-            if (this.ShouldTakeSnapshot(buildStatus))
-            {
-              this.AddSnapshot(buildStatus);
-            }
-          }
-        }
+        this.AddSnapshot(this.CurrentStatus);
       }
-    }
-
-    protected override bool ShouldTakeSnapshot(Status status)
-    {
-      log.Trace("Checking if snapshot should be taken...");
-      if (status is JenkinsStatus currentStatus)
-      {
-        if (this.PreviousCheckStatus != null)
-        {
-          if (status.State != ObservationState.Running && (status.State != this.PreviousCheckStatus.State || this.PreviousCheckStatus.BuildNumber != currentStatus.BuildNumber))
-          {
-            log.Debug("Snapshot should be taken. {stat}", new { this.PreviousCheckStatus, CurrentStatus = currentStatus });
-            this.PreviousCheckStatus = currentStatus;
-            return true;
-          }
-        }
-        else
-        {
-          this.PreviousCheckStatus = currentStatus;
-        }
-      }
-
-      return false;
     }
 
     private static JenkinsStatus CreateStatus(JenkinsBuild latestBuild)
