@@ -13,8 +13,8 @@
     <ResourceDictionary>
       <HierarchicalDataTemplate DataType="{x:Type local:ProjectViewModel}" ItemsSource="{Binding Path=Projects}">
         <StackPanel Orientation="Horizontal">
-          <CheckBox IsChecked="{Binding IsChecked}" Visibility="{Binding Path=IsCheckable, Converter={StaticResource BoolToVis}}" Focusable="False" />
-          <TextBlock Text="{Binding Name}" Focusable="False" />
+          <CheckBox IsChecked="{Binding IsChecked}" Visibility="{Binding Path=IsCheckable, Converter={StaticResource BoolToVis}}" Style="{StaticResource MaterialDesignCheckBox}" Focusable="False" />
+          <TextBlock Text="{Binding Name}" Focusable="False" Margin="10,0,0,0" />
         </StackPanel>
       </HierarchicalDataTemplate>
     </ResourceDictionary>

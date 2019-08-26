@@ -23,7 +23,8 @@
     <gui:CustomTitleBar CustomButtonVisible="False"
                         DockPanel.Dock="Top"
                         ShowMinimizeButton="False"
-                        Window="{Binding RelativeSource={RelativeSource AncestorType={x:Type wizard:WizardWindow}}}" />
+                        Window="{Binding RelativeSource={RelativeSource AncestorType={x:Type wizard:WizardWindow}}}"
+                        Height="32"/>
 
     <materialDesign:DialogHost Name="WizardWaitDialogHost" Identifier="WizardWaitDialogHostId">
       <materialDesign:DialogHost.DialogContent>
