@@ -6,7 +6,7 @@
 
   <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
   <connectorTreeView:StatusToColorConverter x:Key="StatusToColorConverter" />
-  <connectorTreeView:TimeToAproximateTimeConverter x:Key="TimeToAproximateTimeConverter" />
+  <connectorTreeView:TimeToApproximateTimeConverter x:Key="TimeToApproximateTimeConverter" />
 
   <DataTemplate DataType="{x:Type gui:JenkinsStatusViewModel}">
     <buildServer:HistoryBuildControl DataContext="{Binding}">
@@ -50,7 +50,7 @@
                  DockPanel.Dock="Right"
                  FontSize="10"
                  FontWeight="Light"
-                 Text="{Binding CurrentStatus.Time, Converter={StaticResource TimeToAproximateTimeConverter}}" />
+                 Text="{Binding CurrentStatus.Time, Converter={StaticResource TimeToApproximateTimeConverter}}" />
     </DockPanel>
   </DataTemplate>
 </ResourceDictionary>

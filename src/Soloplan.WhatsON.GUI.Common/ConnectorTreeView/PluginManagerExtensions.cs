@@ -33,7 +33,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <returns>List of all <see cref="ITreeViewPresentationPlugIn"/>.</returns>
     public static IEnumerable<PresentationPlugin> GetPresentationPlugins(this PluginManager manager)
     {
-      return manager.PlugIns.OfType<PresentationPlugin>();
+      return manager.Plugins.OfType<PresentationPlugin>();
     }
 
     /// <summary>

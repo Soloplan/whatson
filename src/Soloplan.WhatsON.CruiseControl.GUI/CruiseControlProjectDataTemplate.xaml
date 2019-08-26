@@ -4,7 +4,7 @@
                     xmlns:connectorTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView;assembly=Soloplan.WhatsON.GUI.Common"
                     xmlns:local="clr-namespace:Soloplan.WhatsON.CruiseControl.GUI;assembly=Soloplan.WhatsON.CruiseControl.GUI">
 
-  <connectorTreeView:TimeToAproximateTimeConverter x:Key="TimeToAproximateTimeConverter" />
+  <connectorTreeView:TimeToApproximateTimeConverter x:Key="TimeToApproximateTimeConverter" />
 
   <DataTemplate DataType="{x:Type local:CruiseControlProjectViewModel}">
     <DockPanel Width="Auto" ContextMenu="{DynamicResource BuildServerProjectContextMenu}">
@@ -33,7 +33,7 @@
                  DockPanel.Dock="Right"
                  FontSize="10"
                  FontWeight="Light"
-                 Text="{Binding CurrentStatus.Time, Converter={StaticResource TimeToAproximateTimeConverter}}" />
+                 Text="{Binding CurrentStatus.Time, Converter={StaticResource TimeToApproximateTimeConverter}}" />
     </DockPanel>
   </DataTemplate>
 </ResourceDictionary>

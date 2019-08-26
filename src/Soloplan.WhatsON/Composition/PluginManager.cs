@@ -96,7 +96,7 @@ namespace Soloplan.WhatsON.Composition
       }
     }
 
-    public IReadOnlyList<IPlugin> PlugIns => this.plugIns.AsReadOnly();
+    public IReadOnlyList<IPlugin> Plugins => this.plugIns.AsReadOnly();
 
     /// <summary>
     /// Gets the Plugin instance of a Connector Plugin.

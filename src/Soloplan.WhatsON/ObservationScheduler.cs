@@ -23,7 +23,7 @@ namespace Soloplan.WhatsON
     /// <summary>
     /// Default interval for polling connectors for status.
     /// </summary>
-    private const int DefaultPollInterval = 5;
+    private const int DefaultPollInterval = 10;
 
     /// <summary>
     /// Logger instance used by this class.
@@ -142,7 +142,7 @@ namespace Soloplan.WhatsON
       {
         try
         {
-          if (DateTime.Now - connector.LastPoll > connector.Interval)
+          if (connector.LastPoll == default || DateTime.Now - connector.LastPoll > connector.Interval)
           {
             log.Log(LogLevel.Trace, "Observation of {@connector} started.", connector);
             connector.LastPoll = DateTime.Now;
@@ -158,8 +158,8 @@ namespace Soloplan.WhatsON
           var remainingOfInterval = connector.Interval - (DateTime.Now - connector.LastPoll);
           if (remainingOfInterval.TotalMilliseconds > 0 && connector.Running)
           {
-            int milisecondsToWait = remainingOfInterval.TotalMilliseconds < int.MaxValue ? (int)remainingOfInterval.TotalMilliseconds : int.MaxValue;
-            await Task.Delay(milisecondsToWait, token);
+            int millisecondsToWait = remainingOfInterval.TotalMilliseconds < int.MaxValue ? (int)remainingOfInterval.TotalMilliseconds : int.MaxValue;
+            await Task.Delay(millisecondsToWait, token);
           }
         }
         catch (Exception e)

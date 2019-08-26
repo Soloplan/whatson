@@ -6,10 +6,13 @@
 namespace Soloplan.WhatsON.GUI.Configuration
 {
   using System;
+  using System.Collections.Generic;
+  using System.Linq;
   using System.Reflection;
   using System.Windows;
   using System.Windows.Controls;
   using System.Windows.Input;
+  using Soloplan.WhatsON.Composition;
 
   /// <summary>
   /// Interaction logic for AboutPage.xaml.
@@ -33,6 +36,24 @@ namespace Soloplan.WhatsON.GUI.Configuration
 
       var materialDesignAssembly = Assembly.GetAssembly(typeof(MaterialDesignThemes.Wpf.DialogHost));
       this.MDIXVersionLabel.Text = materialDesignAssembly.GetName().Version.ToString();
+      this.PluginList.ItemsSource = this.Plugins;
+    }
+
+    public IList<PluginViewModel> Plugins
+    {
+      get
+      {
+        return PluginManager.Instance.Plugins.Select(x =>
+        {
+          var newPlugin = new PluginViewModel { Name = x.GetType().Name, Version = x.GetType().Assembly.GetName().Version };
+          if (x is ConnectorPlugin connector)
+          {
+            newPlugin.Description = $"{connector.Name}: {connector.Description}";
+          }
+
+          return newPlugin;
+        }).ToList();
+      }
     }
 
     /// <summary>
@@ -48,11 +69,11 @@ namespace Soloplan.WhatsON.GUI.Configuration
       }
     }
 
-      /// <summary>
-      /// Made by Soloplan link mouse up.
-      /// </summary>
-      /// <param name="sender">The sender.</param>
-      /// <param name="e">The <see cref="MouseButtonEventArgs"/> instance containing the event data.</param>
+    /// <summary>
+    /// Made by Soloplan link mouse up.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="MouseButtonEventArgs"/> instance containing the event data.</param>
     private void MadeBySoloplanLinkMouseUp(object sender, MouseButtonEventArgs e)
     {
       if (e.LeftButton == MouseButtonState.Released)
@@ -61,11 +82,11 @@ namespace Soloplan.WhatsON.GUI.Configuration
       }
     }
 
-      /// <summary>
-      /// Report an issue link mouse up.
-      /// </summary>
-      /// <param name="sender">The sender.</param>
-      /// <param name="e">The <see cref="MouseButtonEventArgs"/> instance containing the event data.</param>
+    /// <summary>
+    /// Report an issue link mouse up.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="MouseButtonEventArgs"/> instance containing the event data.</param>
     private void ReportABugMouseUp(object sender, MouseButtonEventArgs e)
     {
       if (e.LeftButton == MouseButtonState.Released)

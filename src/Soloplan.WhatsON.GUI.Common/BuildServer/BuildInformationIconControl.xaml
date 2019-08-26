@@ -45,14 +45,27 @@
       Width="Auto"
       Height="Auto"
       Kind="CloseCircle" />
-    
-    <ProgressBar DockPanel.Dock="Left"
-                 IsIndeterminate="True"
-                 Width="13"
-                 Height="13"
-                 Style="{StaticResource MaterialDesignCircularProgressBar}"
-                 Foreground="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
-                 Visibility="{Binding Building, Converter={StaticResource BoolToVisibility}}"
-                 Value="{Binding Progress, Mode=OneWay}" />
+
+    <materialDesign:PackIcon 
+      DockPanel.Dock="Left"
+      Foreground="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
+      Visibility="{Binding Building, Converter={StaticResource BoolToVisibility}}"
+      Width="Auto"
+      Height="Auto"
+      Kind="Circle"
+      Name="BuildIcon">
+      <materialDesign:PackIcon.Triggers>
+        <EventTrigger RoutedEvent="Image.Loaded">
+          <BeginStoryboard>
+            <Storyboard>
+              <DoubleAnimation Storyboard.TargetName="BuildIcon"
+                               Storyboard.TargetProperty="Opacity"
+                               From="1.0" To="0.2" Duration="0:0:1"
+                               AutoReverse="True" RepeatBehavior="Forever"/>
+            </Storyboard>
+          </BeginStoryboard>
+        </EventTrigger>
+      </materialDesign:PackIcon.Triggers>
+    </materialDesign:PackIcon>
   </DockPanel>
 </UserControl>

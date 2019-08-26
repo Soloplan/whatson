@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Configuration"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="AboutPage"
@@ -20,7 +21,7 @@
         <TextBlock TextWrapping="Wrap" Text="MIT license:" Margin="0,2,5,0" Width="68"/>
         <TextBlock Width="562" RenderTransformOrigin="0.503,0.479" Text="https://github.com/Soloplan/whatson/blob/master/LICENSE" Margin="0" Foreground="#FF2B7AD2" MouseUp="TextBlockLinkMouseUp" MouseEnter="TextBlockMouseEnter" MouseLeave="TextBlockMouseLeave"/>
       </StackPanel>
-      <TextBlock TextWrapping="Wrap" Text="Authors: Krzysztof Lorenc, Dominik Gołda, Steffen Wilke, Christian Heidl" Margin="20,0,20,10"/>
+      <TextBlock TextWrapping="Wrap" Text="Authors: Steffen Wilke, Dominik Gołda, Krzysztof Lorenc, Christian Heidl" Margin="20,0,20,10"/>
       <StackPanel Height="22" Margin="20,0,20,10" Orientation="Horizontal">
         <TextBlock TextWrapping="Wrap" Text="Version:" Margin="0,0,3,0"/>
         <TextBlock x:Name="VersionLabel" TextWrapping="Wrap" Text="{}{Version}" Width="176"/>
@@ -30,6 +31,27 @@
         <TextBlock x:Name="MDIXVersionLabel" TextWrapping="Wrap" Text="{}{Version}" Width="176"/>
       </StackPanel>
       <TextBlock TextWrapping="Wrap" Text="Made by Soloplan GmbH" Margin="20,0,20,30"  Foreground="#FF2B7AD2" AutomationProperties.Name="MadeBySoloplanLabel" MouseUp="MadeBySoloplanLinkMouseUp" MouseEnter="TextBlockMouseEnter" MouseLeave="TextBlockMouseLeave"/>
+      <TextBlock TextWrapping="Wrap" Text="Plugins:" Height="22" Margin="20,0,20,0"/>
+      <ListView Name="PluginList" Margin="20,0,20,10" FontSize="10">
+        <ListView.Resources>
+          <Style TargetType="GridViewColumnHeader">
+            <Setter Property="Visibility" Value="Collapsed" />
+          </Style>
+        </ListView.Resources>
+        <ListView.View>
+          <GridView>
+            <GridViewColumn
+              DisplayMemberBinding="{Binding Name}"
+              Header="Name" />
+            <GridViewColumn
+              DisplayMemberBinding="{Binding Version}"
+              Header="Version" />
+            <GridViewColumn
+              DisplayMemberBinding="{Binding Description}"
+              Header="Description" />
+          </GridView>
+        </ListView.View>
+      </ListView>
     </StackPanel>
     <DockPanel DockPanel.Dock ="Bottom"  VerticalAlignment="Bottom">
       <TextBlock DockPanel.Dock="Left" Margin="20,20,20,20" TextWrapping="Wrap" Text="Report a bug...." Foreground="#FF2B7AD2" MouseUp="ReportABugMouseUp" AutomationProperties.Name="ReportABugLabel" Width="760" MouseEnter="TextBlockMouseEnter" MouseLeave="TextBlockMouseLeave"/>

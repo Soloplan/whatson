@@ -6,7 +6,7 @@
 
   <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
   <connectorTreeView:StatusToColorConverter x:Key="StatusToColorConverter" />
-  <connectorTreeView:TimeToAproximateTimeConverter x:Key="TimeToAproximateTimeConverter" />
+  <connectorTreeView:TimeToApproximateTimeConverter x:Key="TimeToApproximateTimeConverter" />
 
   <ContextMenu x:Key="BuildServerProjectContextMenu">
     <!--  CommandParameter must be declared before Command or else value from previous opening of context menu will be passed. WTF?!  -->
@@ -94,7 +94,7 @@
                  DockPanel.Dock="Right"
                  FontSize="10"
                  FontWeight="Light"
-                 Text="{Binding CurrentStatus.Time, Converter={StaticResource TimeToAproximateTimeConverter}}" />
+                 Text="{Binding CurrentStatus.Time, Converter={StaticResource TimeToApproximateTimeConverter}}" />
     </DockPanel>
   </DataTemplate>
 </ResourceDictionary>

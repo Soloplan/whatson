@@ -74,6 +74,7 @@
       <DependentUpon>MessageControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Configuration\NotificationSettingsControlBuilder.cs" />
+    <Compile Include="Configuration\PluginViewModel.cs" />
     <Compile Include="Configuration\ViewModel\GroupViewModel.cs" />
     <Compile Include="Configuration\View\EditGroupNameDialog.xaml.cs">
       <DependentUpon>EditGroupNameDialog.xaml</DependentUpon>
