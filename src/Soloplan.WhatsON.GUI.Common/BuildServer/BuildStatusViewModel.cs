@@ -262,6 +262,8 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
       this.BuildNumber = newStatus.BuildNumber;
       this.Building = newStatus.Building;
+      this.Duration = newStatus.Duration;
+
       this.UpdateCalculatedFields();
     }
 

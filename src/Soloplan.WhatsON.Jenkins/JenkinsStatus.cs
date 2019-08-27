@@ -16,8 +16,6 @@ namespace Soloplan.WhatsON.Jenkins
 
   public class JenkinsStatus : Status
   {
-
-
     public JenkinsStatus(ObservationState state)
     : base(state)
     {
