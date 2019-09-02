@@ -26,7 +26,7 @@ namespace Soloplan.WhatsON.CruiseControl
 
     private DateTime lastPoolled;
 
-    private Task<CruiseControlJobs> cache;
+    private CruiseControlJobs cache;
 
     public CruiseControlServer(string address)
     {
@@ -43,11 +43,11 @@ namespace Soloplan.WhatsON.CruiseControl
       {
         log.Trace("Polling server {@server}", new { Address = this.httpAddress, LastPolled = this.lastPoolled, CallingProject = projectName });
         this.lastPoolled = DateTime.Now;
-        this.cache = this.GetStatusAsync<CruiseControlJobs>(cancellationToken, this.httpAddress);
+        this.cache = await this.GetStatusAsync<CruiseControlJobs>(cancellationToken, this.httpAddress);
       }
 
       log.Trace("Retrieving value from cache for project {projectName}", projectName);
-      return (await this.cache).CruiseControlProject.FirstOrDefault(job => job.Name == projectName);
+      return this.cache.CruiseControlProject.FirstOrDefault(job => job.Name == projectName);
     }
 
     public async Task<List<CruiseControlBuild>> GetBuilds(string projectName, int limit = CruiseControlConnector.MaxSnapshots)
