@@ -84,10 +84,10 @@ namespace Soloplan.WhatsON.Model
     /// </summary>
     public ConnectorConfiguration ConnectorConfiguration { get; set; }
 
-    public async Task QueryStatus(CancellationToken cancellationToken, params string[] args)
+    public async Task QueryStatus(CancellationToken cancellationToken)
     {
       log.Trace("Querying status for connector {connector}.", new { Name = this.ConnectorConfiguration.Name, CurrentStatus = this.CurrentStatus });
-      await this.ExecuteQuery(cancellationToken, args);
+      await this.ExecuteQuery(cancellationToken);
       log.Trace("Status for connector {connector} queried.", new { Name = this.ConnectorConfiguration.Name, CurrentStatus = this.CurrentStatus });
 
       if (this.CurrentStatus != null && this.ShouldTakeSnapshot(this.CurrentStatus))
@@ -127,13 +127,36 @@ namespace Soloplan.WhatsON.Model
       return sb.ToString();
     }
 
-    protected abstract Task ExecuteQuery(CancellationToken cancellationToken, params string[] args);
+    protected virtual async Task ExecuteQuery(CancellationToken cancellationToken)
+    {
+      this.CurrentStatus = await this.GetCurrentStatus(cancellationToken);
+
+      // initialize history
+      if (this.Snapshots.Count == 0 && this.CurrentStatus != null && this.CurrentStatus.BuildNumber > 1)
+      {
+        foreach (var snapshot in await this.GetHistory(cancellationToken))
+        {
+          if (snapshot == null)
+          {
+            continue;
+          }
+
+          this.AddSnapshot(snapshot);
+        }
+      }
+
+      // push current state to the history because it's done building
+      if (this.ShouldTakeSnapshot(this.CurrentStatus))
+      {
+        this.AddSnapshot(this.CurrentStatus);
+      }
+    }
 
     protected virtual bool ShouldTakeSnapshot(Status status)
     {
       log.Trace("Checking if snapshot should be taken...");
 
-      if (status.State != ObservationState.Running && this.Snapshots.All(x => x.Status.BuildNumber != status.BuildNumber))
+      if (status != null && status.State != ObservationState.Running && this.Snapshots.All(x => x.Status.BuildNumber != status.BuildNumber))
       {
         log.Debug("Snapshot should be taken. {stat}", new { CurrentStatus = status });
         return true;
@@ -141,5 +164,9 @@ namespace Soloplan.WhatsON.Model
 
       return false;
     }
+
+    protected abstract Task<Status> GetCurrentStatus(CancellationToken cancellationToken);
+
+    protected abstract Task<List<Status>> GetHistory(CancellationToken cancellationToken);
   }
 }

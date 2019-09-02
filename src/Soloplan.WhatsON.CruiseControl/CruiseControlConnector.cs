@@ -8,6 +8,7 @@
 namespace Soloplan.WhatsON.CruiseControl
 {
   using System;
+  using System.Collections.Generic;
   using System.Linq;
   using System.Threading;
   using System.Threading.Tasks;
@@ -39,58 +40,27 @@ namespace Soloplan.WhatsON.CruiseControl
 
     public string Project => this.ConnectorConfiguration.GetConfigurationByKey(CruiseControlConnector.ProjectName).Value;
 
-    private CruiseControlStatus PreviousCheckStatus { get; set; }
-
-    protected override async Task ExecuteQuery(CancellationToken cancellationToken, params string[] args)
+    protected async override Task<Status> GetCurrentStatus(CancellationToken cancellationToken)
     {
       var server = CruiseControlManager.GetServer(this.Address);
       var projectData = await server.GetProjectStatus(cancellationToken, this.Project, 5);
       log.Trace("Retrieved status for cruise control project {project}: {@projectData}", this.Project, projectData);
-      var status = this.CreateStatus(projectData);
-      log.Trace("Converted status for cruise control project {project}: {@status}", this.Project, status);
-      this.CurrentStatus = status;
+      return this.CreateStatus(projectData);
+    }
 
-      if (status.Duration.TotalSeconds > 0)
+    protected async override Task<List<Status>> GetHistory(CancellationToken cancellationToken)
+    {
+      var server = CruiseControlManager.GetServer(this.Address);
+      var history = new List<Status>();
+
+      var builds = await server.GetBuilds(this.Project);
+
+      foreach (var build in builds)
       {
-        this.cachedDuration = status.Duration;
+        history.Add(CreateStatus(build));
       }
 
-      if (this.PreviousCheckStatus != null)
-      {
-        if (status.State != ObservationState.Running)
-        {
-          if (status.State != this.PreviousCheckStatus.State || this.PreviousCheckStatus.BuildNumber != status.BuildNumber)
-          {
-            log.Debug("Shoud take snapshot, build not running. {@status}, {@PreviousCheckStatus}", status, this.PreviousCheckStatus);
-            log.Debug("Changing estimated duration {proj}", new { ProjectName = this.Project, PrevEstimatedDurtion = this.estimatedDuration, NewEstimatedDuration = this.cachedDuration });
-            this.estimatedDuration = this.cachedDuration;
-            this.PreviousCheckStatus = status;
-            this.PreviousCheckStatus.Duration = this.cachedDuration;
-            this.AddOrUpdateSnapshot(this.PreviousCheckStatus);
-          }
-        }
-        else
-        {
-          if (this.PreviousCheckStatus.BuildNumber < status.BuildNumber)
-          {
-            log.Debug("Shoud take snapshot, build running. {@status}, {@PreviousCheckStatus}", status, this.PreviousCheckStatus);
-            this.PreviousCheckStatus.State = CcStatusToObservationStatus(projectData);
-            log.Debug("Changing estimated duration {proj}", new { ProjectName = this.Project, PrevEstimatedDurtion = this.estimatedDuration, NewEstimatedDuration = this.cachedDuration });
-            this.estimatedDuration = this.cachedDuration;
-            this.PreviousCheckStatus.Duration = this.cachedDuration;
-            this.AddOrUpdateSnapshot(this.PreviousCheckStatus);
-          }
-        }
-      }
-      else
-      {
-        log.Debug("Initialize previous check status: {@status}", status);
-        this.PreviousCheckStatus = status;
-        if (!this.PreviousCheckStatus.Building)
-        {
-          this.AddSnapshot(this.PreviousCheckStatus);
-        }
-      }
+      return history;
     }
 
     /// <summary>
@@ -111,6 +81,22 @@ namespace Soloplan.WhatsON.CruiseControl
       }
 
       return ObservationState.Unknown;
+    }
+
+    private static ObservationState CcStatusToObservationStatus(CcBuildStatus status)
+    {
+      switch (status)
+      {
+        case CcBuildStatus.Success:
+          return ObservationState.Success;
+        case CcBuildStatus.Exception:
+        case CcBuildStatus.Failure:
+          return ObservationState.Failure;
+        case CcBuildStatus.Cancelled:
+        case CcBuildStatus.Unknown:
+        default:
+          return ObservationState.Unknown;
+      }
     }
 
     private static void SetCulprits(CruiseControlJob job, CruiseControlStatus result)
@@ -135,9 +121,9 @@ namespace Soloplan.WhatsON.CruiseControl
     /// Adds or updates snapshot based on <paramref name="status"/>. Update is done when build with the same number is already present.
     /// </summary>
     /// <param name="status">Status which should be added/updated.</param>
-    private void AddOrUpdateSnapshot(CruiseControlStatus status)
+    private void AddOrUpdateSnapshot(Status status)
     {
-      var existingStatusIndex = this.Snapshots.IndexOf(this.Snapshots.FirstOrDefault(snap => (snap.Status as CruiseControlStatus)?.BuildNumber == status.BuildNumber));
+      var existingStatusIndex = this.Snapshots.IndexOf(this.Snapshots.FirstOrDefault(snap => snap.Status.BuildNumber == status.BuildNumber));
       if (existingStatusIndex >= 0)
       {
         log.Debug("Changes exist for build cruise control project {proj}", new { ProjectName = this.Project, Build = status.BuildNumber });
@@ -148,6 +134,17 @@ namespace Soloplan.WhatsON.CruiseControl
       {
         this.AddSnapshot(status);
       }
+    }
+
+    private static Status CreateStatus(CruiseControlBuild build)
+    {
+      var result = new CruiseControlStatus();
+      result.Building = false;
+      result.BuildNumber = build.BuildNumber;
+      result.Duration = build.Duration;
+      result.State = CcStatusToObservationStatus(build.Status);
+      result.Name = build.Id;
+      return result;
     }
 
     private CruiseControlStatus CreateStatus(CruiseControlJob job)
