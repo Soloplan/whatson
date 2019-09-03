@@ -10,6 +10,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
   using System.Collections;
   using System.Windows;
   using System.Windows.Controls;
+  using Soloplan.WhatsON.GUI.Common.Converters;
 
   /// <summary>
   /// Interaction logic for CulpritsControl.xaml.

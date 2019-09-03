@@ -4,7 +4,7 @@
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-namespace Soloplan.WhatsON.GUI.Common
+namespace Soloplan.WhatsON.GUI.Common.Converters
 {
   using System;
   using System.Globalization;

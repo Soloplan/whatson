@@ -7,13 +7,15 @@
              xmlns:s="clr-namespace:System;assembly=mscorlib"
              xmlns:connectorTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:common="clr-namespace:Soloplan.WhatsON.GUI.Common"
+             xmlns:converters="clr-namespace:Soloplan.WhatsON.GUI.Common.Converters"
              MaxHeight="14"
              MaxWidth="14"
              d:DataContext="{d:DesignInstance local:BuildStatusViewModel}"
              ToolTipService.ShowDuration="{x:Static s:Int32.MaxValue}"
              mc:Ignorable="d">
   <UserControl.Resources>
-    <connectorTreeView:StatusToColorConverter x:Key="StatusToColorConverter" />
+    <converters:StatusToColorConverter x:Key="StatusToColorConverter" />
     <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
   </UserControl.Resources>
   <DockPanel>

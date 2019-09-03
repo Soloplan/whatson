@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Soloplan.WhatsON.GUI.Common
+namespace Soloplan.WhatsON.GUI.Common.Converters
 {
   using System;
   using System.Globalization;

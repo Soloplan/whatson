@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Soloplan.WhatsON.GUI"
              xmlns:common="clr-namespace:Soloplan.WhatsON.GUI.Common;assembly=Soloplan.WhatsON.GUI.Common"
+             xmlns:converters="clr-namespace:Soloplan.WhatsON.GUI.Common.Converters;assembly=Soloplan.WhatsON.GUI.Common"
              ShutdownMode="OnExplicitShutdown">
   <Application.Resources>
     <ResourceDictionary>
@@ -22,8 +23,8 @@
         </ResourceDictionary>
       </ResourceDictionary.MergedDictionaries>
       <BooleanToVisibilityConverter x:Key="BoolToVis"/>
-      <common:InvertBoolVisibilityConverter x:Key="InvertBoolToVis" />
-      <common:InvertBoolConverter x:Key="InvertBoolConverter" />
+      <converters:InvertBoolVisibilityConverter x:Key="InvertBoolToVis" />
+      <converters:InvertBoolConverter x:Key="InvertBoolConverter" />
     </ResourceDictionary>
   </Application.Resources>
 </Application>
