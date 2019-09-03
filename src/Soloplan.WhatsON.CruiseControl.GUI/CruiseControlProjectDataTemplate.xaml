@@ -1,10 +1,11 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:buildServer="clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer;assembly=Soloplan.WhatsON.GUI.Common"
-                    xmlns:connectorTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView;assembly=Soloplan.WhatsON.GUI.Common"
-                    xmlns:local="clr-namespace:Soloplan.WhatsON.CruiseControl.GUI;assembly=Soloplan.WhatsON.CruiseControl.GUI">
+                    xmlns:local="clr-namespace:Soloplan.WhatsON.CruiseControl.GUI;assembly=Soloplan.WhatsON.CruiseControl.GUI"
+                    xmlns:converters="clr-namespace:Soloplan.WhatsON.GUI.Common.Converters;assembly=Soloplan.WhatsON.GUI.Common">
 
-  <connectorTreeView:TimeToApproximateTimeConverter x:Key="TimeToApproximateTimeConverter" />
+  <converters:TimeToApproximateTimeConverter x:Key="TimeToApproximateTimeConverter" />
+  <converters:NullOrDefaultToVisibilityConverter x:Key="NullOrDefaultVisibilityConverter" />
 
   <DataTemplate DataType="{x:Type local:CruiseControlProjectViewModel}">
     <DockPanel Width="Auto" ContextMenu="{DynamicResource BuildServerProjectContextMenu}">
@@ -33,7 +34,8 @@
                  DockPanel.Dock="Right"
                  FontSize="10"
                  FontWeight="Light"
-                 Text="{Binding CurrentStatus.Time, Converter={StaticResource TimeToApproximateTimeConverter}}" />
+                 Text="{Binding CurrentStatus.Time, Converter={StaticResource TimeToApproximateTimeConverter}}"
+                 Visibility="{Binding CurrentStatus.Time, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
     </DockPanel>
   </DataTemplate>
 </ResourceDictionary>

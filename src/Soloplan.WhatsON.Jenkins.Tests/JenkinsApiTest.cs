@@ -10,7 +10,6 @@ namespace Soloplan.WhatsON.Jenkins.Tests
   using NUnit.Framework;
   using Soloplan.WhatsON;
   using Soloplan.WhatsON.Configuration;
-  using Soloplan.WhatsON.Jenkins.Model;
   using Soloplan.WhatsON.Model;
 
   [TestFixture]

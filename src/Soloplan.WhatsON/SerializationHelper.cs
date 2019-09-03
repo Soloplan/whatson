@@ -94,7 +94,7 @@ namespace Soloplan.WhatsON
       Save(configuration, configFilePath ?? ConfigFile);
     }
 
-    public static async Task<TModel> GetJsonModel<TModel>(string requestUrl, CancellationToken token, Action<WebRequest> requestCallback = null)
+    public static async Task<TModel> GetJsonModel<TModel>(string requestUrl, CancellationToken token = default, Action<WebRequest> requestCallback = null)
      where TModel : class
     {
       var request = WebRequest.Create(requestUrl);

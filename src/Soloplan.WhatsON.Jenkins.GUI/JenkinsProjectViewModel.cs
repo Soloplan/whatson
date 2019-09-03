@@ -33,7 +33,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
 
       if (this.CurrentStatus is JenkinsStatusViewModel status)
       {
-        (status.OpenBuildPage as OpenWebPageCommand).CanExecuteExternal += (s, e) => e.Cancel = this.CurrentStatus is JenkinsStatusViewModel model && !model.Building;
+        status.OpenBuildPage.CanExecuteExternal += (s, e) => e.Cancel = this.CurrentStatus is JenkinsStatusViewModel model && !model.Building;
       }
 
       OpenJenkinsWebPageCommandData param = new OpenJenkinsWebPageCommandData();

@@ -10,6 +10,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
   using System.Collections;
   using System.Windows;
   using System.Windows.Controls;
+  using Soloplan.WhatsON.GUI.Common.Converters;
 
   /// <summary>
   /// Interaction logic for CulpritsControl.xaml.
@@ -29,7 +30,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     public CulpritsControl()
     {
       this.InitializeComponent();
-      var converter = this.Resources["CountToVisibility"] as CountToVisibilityConvrter;
+      var converter = this.Resources["CountToVisibility"] as CountVisibilityConverter;
       converter.ValueForFalse = Visibility.Collapsed;
       this.DataContext = this;
     }

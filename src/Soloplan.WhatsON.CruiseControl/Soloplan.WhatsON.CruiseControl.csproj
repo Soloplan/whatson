@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -16,12 +16,13 @@
   <Import Project="..\..\config\Soloplan.WhatsON.targets" />
 
   <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.12" />
     <PackageReference Include="NLog" Version="4.6.6" />
   </ItemGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\Soloplan.WhatsON\Soloplan.WhatsON.csproj">
-          <Private>false</Private>
+      <Private>false</Private>
     </ProjectReference>
   </ItemGroup>
 

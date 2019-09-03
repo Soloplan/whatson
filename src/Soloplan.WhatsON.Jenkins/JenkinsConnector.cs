@@ -8,6 +8,7 @@
 namespace Soloplan.WhatsON.Jenkins
 {
   using System;
+  using System.Collections.Generic;
   using System.Linq;
   using System.Threading;
   using System.Threading.Tasks;
@@ -66,39 +67,31 @@ namespace Soloplan.WhatsON.Jenkins
       return this.ConnectorConfiguration.GetConfigurationByKey(JenkinsConnector.ProjectName).Value;
     }
 
-    protected override async Task ExecuteQuery(CancellationToken cancellationToken, params string[] args)
+    protected async override Task<Status> GetCurrentStatus(CancellationToken cancellationToken)
     {
       var job = await this.api.GetJenkinsJob(this, cancellationToken);
       if (job?.LastBuild?.Number == null)
       {
-        return;
+        return null;
       }
 
       var latestBuild = await this.api.GetJenkinsBuild(this, job.LastBuild.Number, cancellationToken);
-      this.CurrentStatus = CreateStatus(latestBuild);
-      if (this.Snapshots.Count == 0 && job.LastBuild.Number > 1)
-      {
-        foreach (var build in await this.api.GetBuilds(this, cancellationToken, 1, MaxSnapshots + 1))
-        {
-          var buildStatus = CreateStatus(build);
-          this.AddSnapshot(buildStatus);
-        }
-      }
-
-      // push current state to the snapshots because it's done building
-      if (this.ShouldTakeSnapshot(this.CurrentStatus))
-      {
-        this.AddSnapshot(this.CurrentStatus);
-      }
+      return CreateStatus(latestBuild);
     }
 
-    private static JenkinsStatus CreateStatus(JenkinsBuild latestBuild)
+    protected async override Task<List<Status>> GetHistory(CancellationToken cancellationToken)
+    {
+      var builds = await this.api.GetBuilds(this, cancellationToken, 1, MaxSnapshots + 1);
+      return builds.Select(build => CreateStatus(build)).ToList();
+    }
+
+    private static Status CreateStatus(JenkinsBuild latestBuild)
     {
       var newStatus = new JenkinsStatus(GetState(latestBuild))
       {
         Name = $"{latestBuild.DisplayName} ({TimeSpan.FromMilliseconds(latestBuild.Duration):g})",
         Time = DateTimeOffset.FromUnixTimeMilliseconds(latestBuild.Timestamp).UtcDateTime,
-        Detail = latestBuild.Description,
+        Details = latestBuild.Description,
       };
 
       newStatus.BuildNumber = latestBuild.Number;

@@ -14,7 +14,6 @@ namespace Soloplan.WhatsON.Composition
   using System.Reflection;
   using System.Runtime.CompilerServices;
   using NLog;
-  using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.Model;
 

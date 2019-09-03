@@ -7,14 +7,9 @@
 
 namespace Soloplan.WhatsON.Jenkins
 {
-  using System;
   using System.Collections.Generic;
-  using System.IO;
-  using System.Net;
   using System.Threading;
   using System.Threading.Tasks;
-  using System.Web;
-  using Newtonsoft.Json;
   using NLog;
   using Soloplan.WhatsON.Jenkins.Model;
   using Soloplan.WhatsON.Model;

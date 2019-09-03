@@ -4,11 +4,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:common="clr-namespace:Soloplan.WhatsON.GUI.Common"
+             xmlns:converters="clr-namespace:Soloplan.WhatsON.GUI.Common.Converters"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
   <UserControl.Resources>
-    <local:CountToVisibilityConvrter x:Key="CountToVisibility" />
+    <converters:CountVisibilityConverter x:Key="CountToVisibility" />
   </UserControl.Resources>
 
   <StackPanel Visibility="{Binding CulpritsProp, Mode=OneWay, Converter={StaticResource CountToVisibility}}">

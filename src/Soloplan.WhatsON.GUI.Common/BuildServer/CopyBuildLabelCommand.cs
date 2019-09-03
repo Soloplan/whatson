@@ -13,9 +13,9 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
   {
     public override void Execute(object parameter)
     {
-      if (parameter is BuildStatusViewModel buildStatus && !string.IsNullOrEmpty(buildStatus.BuildLabel))
+      if (parameter is BuildStatusViewModel buildStatus && !string.IsNullOrEmpty(buildStatus.Label))
       {
-        Clipboard.SetText(buildStatus.BuildLabel);
+        Clipboard.SetText(buildStatus.Label);
       }
     }
   }

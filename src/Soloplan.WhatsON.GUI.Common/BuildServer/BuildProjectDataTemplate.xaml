@@ -2,11 +2,13 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:buildServer="clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer"
                     xmlns:connectorTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView"
-                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+                    xmlns:converters="clr-namespace:Soloplan.WhatsON.GUI.Common.Converters">
 
   <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
-  <connectorTreeView:StatusToColorConverter x:Key="StatusToColorConverter" />
-  <connectorTreeView:TimeToApproximateTimeConverter x:Key="TimeToApproximateTimeConverter" />
+  <converters:StatusToColorConverter x:Key="StatusToColorConverter" />
+  <converters:TimeToApproximateTimeConverter x:Key="TimeToApproximateTimeConverter" />
+  <converters:NullOrDefaultToVisibilityConverter x:Key="NullOrDefaultVisibilityConverter" />
 
   <ContextMenu x:Key="BuildServerProjectContextMenu">
     <!--  CommandParameter must be declared before Command or else value from previous opening of context menu will be passed. WTF?!  -->
@@ -94,7 +96,8 @@
                  DockPanel.Dock="Right"
                  FontSize="10"
                  FontWeight="Light"
-                 Text="{Binding CurrentStatus.Time, Converter={StaticResource TimeToApproximateTimeConverter}}" />
+                 Text="{Binding CurrentStatus.Time, Converter={StaticResource TimeToApproximateTimeConverter}}"
+                 Visibility="{Binding CurrentStatus.Time, Converter={StaticResource NullOrDefaultVisibilityConverter}}"/>
     </DockPanel>
   </DataTemplate>
 </ResourceDictionary>

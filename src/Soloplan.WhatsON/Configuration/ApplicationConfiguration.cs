@@ -7,7 +7,6 @@
 
 namespace Soloplan.WhatsON.Configuration
 {
-  using System;
   using System.Collections.Generic;
   using System.Linq;
   using Soloplan.WhatsON.Model;

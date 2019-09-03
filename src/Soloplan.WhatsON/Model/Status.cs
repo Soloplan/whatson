@@ -6,7 +6,6 @@
 namespace Soloplan.WhatsON.Model
 {
   using System;
-  using System.Collections.Generic;
 
   public class Status
   {
@@ -22,7 +21,9 @@ namespace Soloplan.WhatsON.Model
 
     public virtual string Name { get; set; }
 
-    public virtual string Detail { get; set; }
+    public virtual string Label { get; set; }
+
+    public virtual string Details { get; set; }
 
     public virtual DateTime Time { get; set; }
 
@@ -33,10 +34,5 @@ namespace Soloplan.WhatsON.Model
     public virtual int BuildNumber { get; set; }
 
     public virtual bool Building { get; set; }
-
-    public override string ToString()
-    {
-      return $"[{this.Time}]: {this.Name} - {this.State}";
-    }
   }
 }

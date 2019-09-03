@@ -7,7 +7,6 @@
 
 namespace Soloplan.WhatsON.CruiseControl.Model
 {
-  using System.Collections.Generic;
   using System.Xml.Serialization;
 
   public enum CcBuildStatus

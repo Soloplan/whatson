@@ -66,7 +66,7 @@ namespace Soloplan.WhatsON.Jenkins
       }
 
       configurationItemsSupport.GetConfigurationByKey(JenkinsConnector.ProjectName).Value = projectNameWithoutAddress;
-      configurationItemsSupport.GetConfigurationByKey(JenkinsConnector.ServerAddress).Value = serverAddress;
+      configurationItemsSupport.GetConfigurationByKey(Connector.ServerAddress).Value = serverAddress;
     }
 
     /// <summary>

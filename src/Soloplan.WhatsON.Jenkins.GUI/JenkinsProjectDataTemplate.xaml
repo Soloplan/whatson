@@ -1,12 +1,13 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:buildServer="clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer;assembly=Soloplan.WhatsON.GUI.Common"
-                    xmlns:connectorTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView;assembly=Soloplan.WhatsON.GUI.Common"
-                    xmlns:gui="clr-namespace:Soloplan.WhatsON.Jenkins.GUI;assembly=Soloplan.WhatsON.Jenkins.GUI">
+                    xmlns:gui="clr-namespace:Soloplan.WhatsON.Jenkins.GUI;assembly=Soloplan.WhatsON.Jenkins.GUI"
+                    xmlns:converters="clr-namespace:Soloplan.WhatsON.GUI.Common.Converters;assembly=Soloplan.WhatsON.GUI.Common">
 
   <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
-  <connectorTreeView:StatusToColorConverter x:Key="StatusToColorConverter" />
-  <connectorTreeView:TimeToApproximateTimeConverter x:Key="TimeToApproximateTimeConverter" />
+  <converters:StatusToColorConverter x:Key="StatusToColorConverter" />
+  <converters:TimeToApproximateTimeConverter x:Key="TimeToApproximateTimeConverter" />
+  <converters:NullOrDefaultToVisibilityConverter x:Key="NullOrDefaultVisibilityConverter" />
 
   <DataTemplate DataType="{x:Type gui:JenkinsStatusViewModel}">
     <buildServer:HistoryBuildControl DataContext="{Binding}">
@@ -50,7 +51,8 @@
                  DockPanel.Dock="Right"
                  FontSize="10"
                  FontWeight="Light"
-                 Text="{Binding CurrentStatus.Time, Converter={StaticResource TimeToApproximateTimeConverter}}" />
+                 Text="{Binding CurrentStatus.Time, Converter={StaticResource TimeToApproximateTimeConverter}}"
+                 Visibility="{Binding CurrentStatus.Time, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
     </DockPanel>
   </DataTemplate>
 </ResourceDictionary>

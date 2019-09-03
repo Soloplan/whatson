@@ -84,8 +84,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     public override void OnDoubleClick(object sender, MouseButtonEventArgs e)
     {
       base.OnDoubleClick(sender, e);
-      var treeViewItem = sender as TreeViewItem;
-      if (treeViewItem != null && treeViewItem.DataContext == this && this.OpenWebPage.CanExecute(this.OpenWebPageParam))
+      if (sender is TreeViewItem treeViewItem && treeViewItem.DataContext == this && this.OpenWebPage.CanExecute(this.OpenWebPageParam))
       {
         this.OpenWebPage.Execute(this.OpenWebPageParam);
       }
@@ -96,12 +95,12 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.Identifier = configuration.Identifier;
       this.Name = configuration.Name;
       this.CurrentStatus = this.GetViewModelForStatus();
-      log.Debug("Initializing {type}, {instance}.", this.GetType(), new { Name = this.Name, Identifier = this.Identifier });
+      log.Debug("Initializing {type}, {instance}.", this.GetType(), new { this.Name, this.Identifier });
     }
 
     public virtual void Update(Connector changedConnector)
     {
-      log.Trace("Updating model {model}", new { Name = this.Name, Identifier = this.Identifier });
+      log.Trace("Updating model {model}", new { this.Name, this.Identifier });
 
       if (this.Connector == null)
       {
@@ -114,7 +113,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       {
         if (i >= this.ConnectorSnapshots.Count || this.ConnectorSnapshots[i].Time.ToUniversalTime() != changedConnectorSnapshot.Status.Time)
         {
-          log.Debug("Rebuilding list of history builds for model {type}, {instance}.", this.GetType(), new { Name = this.Name, Identifier = this.Identifier });
+          log.Debug("Rebuilding list of history builds for model {type}, {instance}.", this.GetType(), new { this.Name, this.Identifier });
           clearList = true;
           break;
         }

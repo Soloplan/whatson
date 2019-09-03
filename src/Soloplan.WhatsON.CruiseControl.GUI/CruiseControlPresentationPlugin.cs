@@ -7,11 +7,6 @@
 
 namespace Soloplan.WhatsON.CruiseControl.GUI
 {
-  using System;
-  using System.IO;
-  using System.Text;
-  using System.Xml;
-  using Soloplan.WhatsON.CruiseControl.Model;
   using Soloplan.WhatsON.GUI.Common;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
 

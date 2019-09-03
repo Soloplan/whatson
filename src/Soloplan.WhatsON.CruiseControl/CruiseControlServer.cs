@@ -8,40 +8,72 @@
 namespace Soloplan.WhatsON.CruiseControl
 {
   using System;
+  using System.Collections.Generic;
   using System.Linq;
   using System.Net;
   using System.Threading;
   using System.Threading.Tasks;
   using System.Xml.Serialization;
+  using HtmlAgilityPack;
   using NLog;
   using Soloplan.WhatsON.CruiseControl.Model;
+  using Soloplan.WhatsON.Model;
 
   public class CruiseControlServer
   {
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
-    private readonly string address;
+    private readonly string baseUrl;
 
     private DateTime lastPoolled;
 
-    private Task<CruiseControlJobs> cache;
+    private CruiseControlJobs cache;
 
     public CruiseControlServer(string address)
     {
-      this.address = address.Trim('/') + "/XmlStatusReport.aspx";
+      this.baseUrl = address.Trim('/');
     }
+
+    public string ReportUrl => $"{this.baseUrl}/XmlStatusReport.aspx";
 
     public async Task<CruiseControlJob> GetProjectStatus(CancellationToken cancellationToken, string projectName, int interval)
     {
       var pollInterval = new TimeSpan(0, 0, 0, interval, 0);
       if (DateTime.Now - this.lastPoolled > pollInterval)
       {
-        log.Trace("Polling server {@server}", new { Address = this.address, LastPolled = this.lastPoolled, CallingProject = projectName });
+        log.Trace("Polling server {@server}", new { Address = this.ReportUrl, LastPolled = this.lastPoolled, CallingProject = projectName });
         this.lastPoolled = DateTime.Now;
-        this.cache = this.GetStatusAsync<CruiseControlJobs>(cancellationToken, this.address);
+        this.cache = await this.GetStatusAsync<CruiseControlJobs>(cancellationToken, this.ReportUrl);
       }
 
       log.Trace("Retrieving value from cache for project {projectName}", projectName);
-      return (await this.cache).CruiseControlProject.FirstOrDefault(job => job.Name == projectName);
+      return this.cache?.CruiseControlProject?.FirstOrDefault(job => job.Name == projectName);
+    }
+
+    public async Task<List<CruiseControlBuild>> GetBuilds(string projectName, int limit = Connector.MaxSnapshots)
+    {
+      var history = new List<CruiseControlBuild>();
+
+      var projectReportUrl = $"{this.baseUrl}/project/{Uri.EscapeDataString(projectName)}/ViewAllBuilds.aspx";
+      using (var client = new WebClient())
+      {
+        var html = client.DownloadString(projectReportUrl);
+        var doc = new HtmlDocument();
+        doc.LoadHtml(html);
+        var recentBuilds = doc.DocumentNode.SelectNodes("//table[@class='RecentBuildsPanel']/tr/td/a[@class]");
+        foreach (var b in recentBuilds.Take(limit))
+        {
+          var authority = new Uri(projectReportUrl).GetLeftPart(System.UriPartial.Authority);
+          var build = CruiseControlBuild.FromHtmlNode(b, authority);
+          if (build == null)
+          {
+            continue;
+          }
+
+          history.Add(build);
+        }
+      }
+
+      return history;
     }
 
     /// <summary>
@@ -50,7 +82,7 @@ namespace Soloplan.WhatsON.CruiseControl
     /// <returns>The list of all projects.</returns>
     public async Task<CruiseControlJobs> GetAllProjects()
     {
-      return await this.GetStatusAsync<CruiseControlJobs>(default, this.address);
+      return await this.GetStatusAsync<CruiseControlJobs>(default, this.ReportUrl);
     }
 
     private async Task<TModel> GetStatusAsync<TModel>(CancellationToken cancellationToken, string requestUrl)

@@ -1,11 +1,11 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="InvertBoolToVisibleConverter.cs" company="Soloplan GmbH">
+// <copyright file="InvertBooleanToVisibilityConverter.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Soloplan.WhatsON.GUI.Common
+namespace Soloplan.WhatsON.GUI.Common.Converters
 {
   using System;
   using System.Globalization;
@@ -15,7 +15,7 @@ namespace Soloplan.WhatsON.GUI.Common
   /// <summary>
   /// Negates the value before converting it to visibility.
   /// </summary>
-  public class InvertBoolToVisibleConverter : IValueConverter
+  public class InvertBooleanToVisibilityConverter : IValueConverter
   {
     /// <summary>Converts a Boolean value to a <see cref="T:System.Windows.Visibility" /> enumeration value.</summary>
     /// <param name="value">The Boolean value to convert. This value can be a standard Boolean value or a nullable Boolean value.</param>
@@ -26,10 +26,10 @@ namespace Soloplan.WhatsON.GUI.Common
     /// <see cref="F:System.Windows.Visibility.Visible" /> if <paramref name="value" /> is <see langword="true" />; otherwise, <see cref="F:System.Windows.Visibility.Collapsed" />.</returns>
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-      bool flag = false;
-      if (value is bool)
+      var flag = false;
+      if (value is bool val)
       {
-        flag = (bool)value;
+        flag = val;
       }
 
       return (Visibility)(flag ? 2 : 0);
@@ -44,9 +44,9 @@ namespace Soloplan.WhatsON.GUI.Common
     /// <see langword="true" /> if <paramref name="value" /> is <see cref="F:System.Windows.Visibility.Visible" />; otherwise, <see langword="false" />.</returns>
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
-      if (value is Visibility)
+      if (value is Visibility visibility)
       {
-        return (Visibility)value != Visibility.Visible;
+        return visibility != Visibility.Visible;
       }
 
       return false;

@@ -18,7 +18,7 @@ namespace Soloplan.WhatsON.GUI.Logging
   public class LoggingConfiguration
   {
     /// <summary>
-    /// The default file extension of a log4net config file.
+    /// The default file extension of a nlog config file.
     /// </summary>
     private const string NLogExtension = ".nlog.xml";
 
@@ -29,7 +29,7 @@ namespace Soloplan.WhatsON.GUI.Logging
     public bool LogInitialized { get; private set; }
 
     /// <summary>
-    /// Gets a list of supported log4net configuration file names. The first one found will be used.
+    /// Gets a list of supported nlog configuration file names. The first one found will be used.
     /// </summary>
     private static string ConfigFileName
     {
