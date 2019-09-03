@@ -94,8 +94,6 @@ namespace Soloplan.WhatsON.CruiseControl
         case CcBuildStatus.Exception:
         case CcBuildStatus.Failure:
           return ObservationState.Failure;
-        case CcBuildStatus.Cancelled:
-        case CcBuildStatus.Unknown:
         default:
           return ObservationState.Unknown;
       }
@@ -119,25 +117,6 @@ namespace Soloplan.WhatsON.CruiseControl
       }
     }
 
-    /// <summary>
-    /// Adds or updates snapshot based on <paramref name="status"/>. Update is done when build with the same number is already present.
-    /// </summary>
-    /// <param name="status">Status which should be added/updated.</param>
-    private void AddOrUpdateSnapshot(Status status)
-    {
-      var existingStatusIndex = this.Snapshots.IndexOf(this.Snapshots.FirstOrDefault(snap => snap.Status.BuildNumber == status.BuildNumber));
-      if (existingStatusIndex >= 0)
-      {
-        log.Debug("Changes exist for build cruise control project {proj}", new { ProjectName = this.Project, Build = status.BuildNumber });
-        this.Snapshots.RemoveAt(existingStatusIndex);
-        this.Snapshots.Insert(existingStatusIndex, new Snapshot(status));
-      }
-      else
-      {
-        this.AddSnapshot(status);
-      }
-    }
-
     private static Status CreateStatus(CruiseControlBuild build)
     {
       var result = new CruiseControlStatus();
@@ -145,6 +124,7 @@ namespace Soloplan.WhatsON.CruiseControl
       result.BuildNumber = build.BuildNumber;
       result.Detail = build.BuildLabel;
       result.JobUrl = build.Url;
+      result.Time = build.BuildTime;
       result.State = CcStatusToObservationStatus(build.Status);
       result.Name = build.Name;
       return result;

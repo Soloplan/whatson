@@ -57,7 +57,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <param name="changedConnector">Connector which has changed - always null.</param>
     public override void Update(Connector changedConnector)
     {
-      return;
     }
   }
 }

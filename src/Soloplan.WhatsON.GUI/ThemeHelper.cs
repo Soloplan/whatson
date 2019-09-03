@@ -34,9 +34,9 @@ namespace Soloplan.WhatsON.GUI
 
     public static Color ChangeColorBrightness(Color color, float correctionFactor)
     {
-      float red = (float)color.R;
-      float green = (float)color.G;
-      float blue = (float)color.B;
+      var red = (float)color.R;
+      var green = (float)color.G;
+      var blue = (float)color.B;
 
       if (correctionFactor < 0)
       {

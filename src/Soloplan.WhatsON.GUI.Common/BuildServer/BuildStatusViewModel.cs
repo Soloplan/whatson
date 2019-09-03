@@ -9,7 +9,6 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 {
   using System;
   using System.Collections.ObjectModel;
-  using System.Windows;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Model;
 
@@ -47,7 +46,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
     public virtual CopyBuildLabelCommand CopyBuildLabel { get; } = new CopyBuildLabelCommand();
 
-    public virtual OpenWebPageCommandData OpenBuildPageCommandData { get; }
+    public virtual OpenWebPageCommandData OpenBuildPageCommandData { get; protected set; }
 
     public ObservableCollection<UserViewModel> Culprits => this.culprits ?? (this.culprits = new ObservableCollection<UserViewModel>());
 

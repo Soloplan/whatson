@@ -98,7 +98,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       var newConnectors = connectorGroup.Where(configurationSubject => this.ConnectorViewModels.All(viewModel => configurationSubject.Identifier != viewModel.Identifier));
       foreach (var noLongerPresentConnectorViewModel in connectorsNoLongerPresent)
       {
-        log.Debug("Remove no longer present connector {noLongerPresentConnectorViewModel}", new { Identifier = noLongerPresentConnectorViewModel.Identifier, Name = noLongerPresentConnectorViewModel.Name });
+        log.Debug("Remove no longer present connector {noLongerPresentConnectorViewModel}", new { noLongerPresentConnectorViewModel.Identifier, noLongerPresentConnectorViewModel.Name });
         noLongerPresentConnectorViewModel.EditItem -= this.OnSubItemEdit;
         this.ConnectorViewModels.Remove(noLongerPresentConnectorViewModel);
       }
@@ -106,7 +106,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       var addedIds = new List<Guid>();
       foreach (var newConnector in newConnectors)
       {
-        log.Debug("Adding new connector {connectorConfiguration}", new { Identifier = newConnector.Identifier, Name = newConnector.Name });
+        log.Debug("Adding new connector {connectorConfiguration}", new { newConnector.Identifier, newConnector.Name });
         addedIds.Add(newConnector.Identifier);
         this.CreateViewModelForConnectorConfiguration(newConnector);
       }
@@ -114,8 +114,13 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       int index = 0;
       foreach (var config in connectorGroup)
       {
-        log.Debug("Updating viewmodel for {connectorConfiguration}", new { Identifier = config.Identifier, Name = config.Name });
+        log.Debug("Updating viewmodel for {connectorConfiguration}", new { config.Identifier, config.Name });
         var connectorViewModel = this.ConnectorViewModels.FirstOrDefault(model => model.Identifier == config.Identifier);
+        if (connectorViewModel == null)
+        {
+          continue;
+        }
+
         if (!addedIds.Contains(config.Identifier))
         {
           connectorViewModel.Init(config);

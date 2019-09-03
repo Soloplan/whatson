@@ -26,10 +26,10 @@ namespace Soloplan.WhatsON.GUI.Common
     /// <see cref="F:System.Windows.Visibility.Visible" /> if <paramref name="value" /> is <see langword="true" />; otherwise, <see cref="F:System.Windows.Visibility.Collapsed" />.</returns>
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-      bool flag = false;
-      if (value is bool)
+      var flag = false;
+      if (value is bool val)
       {
-        flag = (bool)value;
+        flag = val;
       }
 
       return (Visibility)(flag ? 2 : 0);
@@ -44,9 +44,9 @@ namespace Soloplan.WhatsON.GUI.Common
     /// <see langword="true" /> if <paramref name="value" /> is <see cref="F:System.Windows.Visibility.Visible" />; otherwise, <see langword="false" />.</returns>
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
-      if (value is Visibility)
+      if (value is Visibility visibility)
       {
-        return (Visibility)value != Visibility.Visible;
+        return visibility != Visibility.Visible;
       }
 
       return false;

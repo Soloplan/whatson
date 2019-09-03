@@ -9,8 +9,6 @@ namespace Soloplan.WhatsON.Jenkins
 {
   using System;
   using System.Collections.Generic;
-  using System.Globalization;
-  using Newtonsoft.Json;
   using Soloplan.WhatsON.Jenkins.Model;
   using Soloplan.WhatsON.Model;
 
