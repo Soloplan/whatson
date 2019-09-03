@@ -1,51 +1,54 @@
 ﻿namespace Soloplan.WhatsON.CruiseControl.Model
 {
   using System;
-  using System.Collections.Generic;
-  using System.Linq;
-  using System.Text;
-  using System.Threading.Tasks;
-  using System.Xml.Linq;
-  using System.Xml.XPath;
-  using ThoughtWorks.CruiseControl.Core;
-  using ThoughtWorks.CruiseControl.Remote;
+  using System.Text.RegularExpressions;
+  using HtmlAgilityPack;
 
   public class CruiseControlBuild
   {
-    public string Id { get; set; }
-
-    public CcBuildStatus Status { get; set; }
+    public string Name { get; set; }
 
     public int BuildNumber { get; set; }
 
-    public TimeSpan Duration { get; set; }
+    public string BuildLabel { get; set; }
+
+    public CcBuildStatus Status { get; set; }
 
     public DateTime BuildTime { get; set; }
 
-    public List<CruiseControlUser> Culprits { get; set; }
+    public string Url { get; set; }
 
-    public static CruiseControlBuild FromRawLog(ThoughtWorks.CruiseControl.Remote.CruiseServerClient client, string log)
+    public static CruiseControlBuild FromHtmlNode(HtmlNode node, string serverUrl)
     {
-      var logXml = XDocument.Parse(log);
-      var id = logXml.XPathSelectElement($"/cruisecontrol/integrationProperties/{IntegrationPropertyNames.CCNetBuildId}")?.Value;
-      var time = logXml.XPathSelectElement($"/cruisecontrol/integrationProperties/{IntegrationPropertyNames.CCNetBuildTime}")?.Value;
-      var projectName = logXml.XPathSelectElement($"/cruisecontrol/integrationProperties/{IntegrationPropertyNames.CCNetLabel}")?.Value;
-      var build = logXml.XPathSelectElement($"/cruisecontrol/integrationProperties/{IntegrationPropertyNames.CCNetNumericLabel}")?.Value;
-      var status = logXml.XPathSelectElement($"/cruisecontrol/integrationProperties/{IntegrationPropertyNames.CCNetIntegrationStatus}")?.Value;
-      var duration = logXml.XPathSelectElement($"/cruisecontrol/build")?.Attribute("buildtime")?.Value;
+      var url = node.Attributes["href"].Value;
+      var clazz = node.Attributes["class"].Value;
+      var value = node.InnerHtml;
 
-      var buildTime = DateTime.Parse(time);
-      var buildNumber = int.TryParse(build, out var b) ? b : 0;
-      var buildDuration = TimeSpan.Parse(duration);
-      var buildStatus = (CcBuildStatus)Enum.Parse(typeof(CcBuildStatus), status);
-      return new CruiseControlBuild
+      var labelMatch = Regex.Match(value, @"\((\w*)\)");
+      var label = labelMatch.Groups[1].Value;
+
+      var timeMatch = Regex.Match(value, @"(.*) \((\w*)\)");
+      var time = DateTime.Parse(timeMatch.Groups[1].Value);
+
+      var nameMatch = Regex.Match(url, @".*/project/(.*)/build/(.*\.xml)");
+      var name = Uri.UnescapeDataString(nameMatch.Groups[2].Value);
+
+      var status = clazz.Contains("failed") ? CcBuildStatus.Failure : clazz.Contains("passed") ? CcBuildStatus.Success : CcBuildStatus.Unknown; 
+      var build = new CruiseControlBuild
       {
-        Id = id,
-        BuildNumber = buildNumber,
-        BuildTime = buildTime,
-        Duration = buildDuration,
-        Status = buildStatus,
+        Url = $"{serverUrl}{url}",
+        BuildLabel = label,
+        BuildTime = time,
+        Name = name,
+        Status = status,
       };
+
+      if (int.TryParse(label, out var buildNumber))
+      {
+        build.BuildNumber = buildNumber;
+      }
+
+      return build;
     }
   }
 }

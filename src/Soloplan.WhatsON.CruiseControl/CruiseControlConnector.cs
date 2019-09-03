@@ -13,7 +13,6 @@ namespace Soloplan.WhatsON.CruiseControl
   using System.Threading;
   using System.Threading.Tasks;
   using NLog;
-  using Soloplan.WhatsON;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.CruiseControl.Model;
@@ -31,8 +30,6 @@ namespace Soloplan.WhatsON.CruiseControl
 
     private TimeSpan estimatedDuration = default;
 
-    private TimeSpan cachedDuration = default;
-
     public CruiseControlConnector(ConnectorConfiguration configuration)
       : base(configuration)
     {
@@ -40,15 +37,20 @@ namespace Soloplan.WhatsON.CruiseControl
 
     public string Project => this.ConnectorConfiguration.GetConfigurationByKey(CruiseControlConnector.ProjectName).Value;
 
-    protected async override Task<Status> GetCurrentStatus(CancellationToken cancellationToken)
+    protected override async Task<Status> GetCurrentStatus(CancellationToken cancellationToken)
     {
       var server = CruiseControlManager.GetServer(this.Address);
       var projectData = await server.GetProjectStatus(cancellationToken, this.Project, 5);
+      if (projectData == null)
+      {
+        return null;
+      }
+
       log.Trace("Retrieved status for cruise control project {project}: {@projectData}", this.Project, projectData);
       return this.CreateStatus(projectData);
     }
 
-    protected async override Task<List<Status>> GetHistory(CancellationToken cancellationToken)
+    protected override async Task<List<Status>> GetHistory(CancellationToken cancellationToken)
     {
       var server = CruiseControlManager.GetServer(this.Address);
       var history = new List<Status>();
@@ -141,9 +143,10 @@ namespace Soloplan.WhatsON.CruiseControl
       var result = new CruiseControlStatus();
       result.Building = false;
       result.BuildNumber = build.BuildNumber;
-      result.Duration = build.Duration;
+      result.Detail = build.BuildLabel;
+      result.JobUrl = build.Url;
       result.State = CcStatusToObservationStatus(build.Status);
-      result.Name = build.Id;
+      result.Name = build.Name;
       return result;
     }
 
