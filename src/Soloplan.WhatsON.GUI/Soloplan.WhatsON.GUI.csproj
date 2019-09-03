@@ -274,7 +274,6 @@
     <Resource Include="Whatson.ico" />
     <Resource Include="Logging\LogConfig.xml" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Resource Include="Resources\whatsONx16.png" />
   </ItemGroup>

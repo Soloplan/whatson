@@ -36,6 +36,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
 
       var materialDesignAssembly = Assembly.GetAssembly(typeof(MaterialDesignThemes.Wpf.DialogHost));
       this.MDIXVersionLabel.Text = materialDesignAssembly.GetName().Version.ToString();
+      this.ConfigFile.Text = SerializationHelper.ConfigFile;
       this.PluginList.ItemsSource = this.Plugins;
     }
 
