@@ -13,7 +13,7 @@
              mc:Ignorable="d">
   <UserControl.Resources>
     <converters:TimeToApproximateTimeConverter x:Key="TimeToAproximateTimeConverter" />
-    <converters:NullOrDefaultVisibilityConverter x:Key="NullOrDefaultVisibilityConverter" />
+    <converters:NullOrDefaultToVisibilityConverter x:Key="NullOrDefaultVisibilityConverter" />
   </UserControl.Resources>
   <StackPanel>
     <StackPanel Orientation="Horizontal" Visibility="{Binding Label, Converter={StaticResource NullOrDefaultVisibilityConverter}}">

@@ -49,7 +49,7 @@
       <DependentUpon>BuildNumberControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="BuildServer\CopyBuildLabelCommand.cs" />
-    <Compile Include="Converters\CountVisibilityConverter.cs" />
+    <Compile Include="Converters\CountToVisibilityConverter.cs" />
     <Compile Include="BuildServer\CulpritsControl.xaml.cs">
       <DependentUpon>CulpritsControl.xaml</DependentUpon>
     </Compile>
@@ -72,9 +72,9 @@
     </Compile>
     <Compile Include="ConnectorTreeView\CustomCommand.cs" />
     <Compile Include="ExternalEnabledStateCommand.cs" />
-    <Compile Include="Converters\InvertBoolConverter.cs" />
-    <Compile Include="Converters\InvertBoolVisibilityConverter.cs" />
-    <Compile Include="Converters\NullOrDefaultVisibilityConverter.cs" />
+    <Compile Include="Converters\InvertBooleanConverter.cs" />
+    <Compile Include="Converters\InvertBooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\NullOrDefaultToVisibilityConverter.cs" />
     <Compile Include="OpenWebPageCommand.cs" />
     <Compile Include="PresentationPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

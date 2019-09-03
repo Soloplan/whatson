@@ -5,7 +5,7 @@
                     xmlns:converters="clr-namespace:Soloplan.WhatsON.GUI.Common.Converters;assembly=Soloplan.WhatsON.GUI.Common">
 
   <converters:TimeToApproximateTimeConverter x:Key="TimeToApproximateTimeConverter" />
-  <converters:NullOrDefaultVisibilityConverter x:Key="NullOrDefaultVisibilityConverter" />
+  <converters:NullOrDefaultToVisibilityConverter x:Key="NullOrDefaultVisibilityConverter" />
 
   <DataTemplate DataType="{x:Type local:CruiseControlProjectViewModel}">
     <DockPanel Width="Auto" ContextMenu="{DynamicResource BuildServerProjectContextMenu}">

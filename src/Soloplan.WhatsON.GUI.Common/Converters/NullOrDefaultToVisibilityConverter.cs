@@ -11,7 +11,7 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
   using System.Windows;
   using System.Windows.Data;
 
-  public class NullOrDefaultVisibilityConverter : IValueConverter
+  public class NullOrDefaultToVisibilityConverter : IValueConverter
   {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {

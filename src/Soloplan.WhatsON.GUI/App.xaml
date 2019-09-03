@@ -23,8 +23,8 @@
         </ResourceDictionary>
       </ResourceDictionary.MergedDictionaries>
       <BooleanToVisibilityConverter x:Key="BoolToVis"/>
-      <converters:InvertBoolVisibilityConverter x:Key="InvertBoolToVis" />
-      <converters:InvertBoolConverter x:Key="InvertBoolConverter" />
+      <converters:InvertBooleanToVisibilityConverter x:Key="InvertBoolToVis" />
+      <converters:InvertBooleanConverter x:Key="InvertBoolConverter" />
     </ResourceDictionary>
   </Application.Resources>
 </Application>

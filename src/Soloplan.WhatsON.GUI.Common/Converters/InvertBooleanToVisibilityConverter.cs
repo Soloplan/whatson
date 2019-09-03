@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="InvertBoolToVisibleConverter.cs" company="Soloplan GmbH">
+// <copyright file="InvertBooleanToVisibilityConverter.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
@@ -15,7 +15,7 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
   /// <summary>
   /// Negates the value before converting it to visibility.
   /// </summary>
-  public class InvertBoolVisibilityConverter : IValueConverter
+  public class InvertBooleanToVisibilityConverter : IValueConverter
   {
     /// <summary>Converts a Boolean value to a <see cref="T:System.Windows.Visibility" /> enumeration value.</summary>
     /// <param name="value">The Boolean value to convert. This value can be a standard Boolean value or a nullable Boolean value.</param>

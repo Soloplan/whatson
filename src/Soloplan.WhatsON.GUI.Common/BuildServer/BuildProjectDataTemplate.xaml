@@ -8,7 +8,7 @@
   <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
   <converters:StatusToColorConverter x:Key="StatusToColorConverter" />
   <converters:TimeToApproximateTimeConverter x:Key="TimeToApproximateTimeConverter" />
-  <converters:NullOrDefaultVisibilityConverter x:Key="NullOrDefaultVisibilityConverter" />
+  <converters:NullOrDefaultToVisibilityConverter x:Key="NullOrDefaultVisibilityConverter" />
 
   <ContextMenu x:Key="BuildServerProjectContextMenu">
     <!--  CommandParameter must be declared before Command or else value from previous opening of context menu will be passed. WTF?!  -->
