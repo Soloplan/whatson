@@ -407,7 +407,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 
     private void ProcessServerSubProjects(IList<Project> projects, ProjectViewModel projectViewModel)
     {
-      foreach (var project in projects)
+      foreach (var project in projects.OrderBy(x => x.Name))
       {
         var newProject = projectViewModel.AddProject(project.Name);
         newProject.Address = project.Address;
@@ -471,7 +471,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     private async Task LoadProjectsFromPlugin(Tuple<ConnectorPlugin, ProjectViewModelList> listQueryingPlugin)
     {
       var serverProjects = await listQueryingPlugin.Item1.GetProjects(this.ProposedServerAddress);
-      foreach (var serverProject in serverProjects)
+      foreach (var serverProject in serverProjects.OrderBy(x => x.Name))
       {
         var newProject = listQueryingPlugin.Item2.AddProject(serverProject.Name);
         newProject.Address = serverProject.Address;
