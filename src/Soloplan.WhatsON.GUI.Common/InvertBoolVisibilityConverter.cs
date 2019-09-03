@@ -15,7 +15,7 @@ namespace Soloplan.WhatsON.GUI.Common
   /// <summary>
   /// Negates the value before converting it to visibility.
   /// </summary>
-  public class InvertBoolToVisibleConverter : IValueConverter
+  public class InvertBoolVisibilityConverter : IValueConverter
   {
     /// <summary>Converts a Boolean value to a <see cref="T:System.Windows.Visibility" /> enumeration value.</summary>
     /// <param name="value">The Boolean value to convert. This value can be a standard Boolean value or a nullable Boolean value.</param>

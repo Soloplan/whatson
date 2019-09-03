@@ -122,8 +122,9 @@ namespace Soloplan.WhatsON.CruiseControl
       var result = new CruiseControlStatus();
       result.Building = false;
       result.BuildNumber = build.BuildNumber;
-      result.Detail = build.BuildLabel;
+      result.Details = build.BuildLabel;
       result.JobUrl = build.Url;
+      result.Label = build.BuildLabel;
       result.Time = build.BuildTime;
       result.State = CcStatusToObservationStatus(build.Status);
       result.Name = build.Name;
@@ -134,7 +135,7 @@ namespace Soloplan.WhatsON.CruiseControl
     {
       var result = new CruiseControlStatus();
       result.Name = job.Name;
-      result.Detail = job.Description;
+      result.Details = job.Description;
       result.Building = job.Activity == ActivityConstants.Building;
       result.Pending = job.Activity == ActivityConstants.Pending;
       result.CheckingModifications = job.Activity == ActivityConstants.CheckingModifications;

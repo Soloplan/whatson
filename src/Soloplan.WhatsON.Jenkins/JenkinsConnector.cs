@@ -91,7 +91,7 @@ namespace Soloplan.WhatsON.Jenkins
       {
         Name = $"{latestBuild.DisplayName} ({TimeSpan.FromMilliseconds(latestBuild.Duration):g})",
         Time = DateTimeOffset.FromUnixTimeMilliseconds(latestBuild.Timestamp).UtcDateTime,
-        Detail = latestBuild.Description,
+        Details = latestBuild.Description,
       };
 
       newStatus.BuildNumber = latestBuild.Number;

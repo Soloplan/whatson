@@ -23,7 +23,7 @@ namespace Soloplan.WhatsON.Model
 
     public virtual string Label { get; set; }
 
-    public virtual string Detail { get; set; }
+    public virtual string Details { get; set; }
 
     public virtual DateTime Time { get; set; }
 

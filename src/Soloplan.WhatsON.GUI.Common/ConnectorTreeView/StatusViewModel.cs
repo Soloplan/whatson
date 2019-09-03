@@ -21,7 +21,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private string name;
 
-    private string label;
+    private string details;
 
     private DateTime time;
 
@@ -36,6 +36,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private bool unstable;
 
     private bool first;
+
+    private string label;
 
     public StatusViewModel(ConnectorViewModel connector)
     {
@@ -80,7 +82,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
-    public string Label
+    public virtual string Label
     {
       get
       {
@@ -92,6 +94,23 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         if (this.label != value)
         {
           this.label = value;
+          this.OnPropertyChanged();
+        }
+      }
+    }
+
+    public string Details
+    {
+      get
+      {
+        return this.details;
+      }
+
+      protected set
+      {
+        if (this.details != value)
+        {
+          this.details = value;
           this.OnPropertyChanged();
         }
       }
@@ -169,17 +188,17 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     public virtual void Update(Status newStatus)
     {
-      log.Trace("Updating status model {model}", new { this.Name, Details = this.Label });
+      log.Trace("Updating status model {model}", new { this.Name, Details = this.Details });
       if (newStatus == null)
       {
         this.Name = "Loading...";
-        this.Label = "Loading...";
+        this.Details = "Loading...";
         this.state = ObservationState.Unknown;
         return;
       }
 
       this.Name = newStatus.Name;
-      this.Label = newStatus.Detail;
+      this.Details = newStatus.Details;
       this.Time = newStatus.Time.ToLocalTime();
       this.State = newStatus.State;
     }

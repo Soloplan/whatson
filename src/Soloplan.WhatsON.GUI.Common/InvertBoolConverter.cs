@@ -1,37 +1,36 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="CountToVisibilityConvrter.cs" company="Soloplan GmbH">
+// <copyright file="InvertBoolConverter.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-namespace Soloplan.WhatsON.GUI.Common.BuildServer
+
+namespace Soloplan.WhatsON.GUI.Common
 {
   using System;
-  using System.Collections;
   using System.Globalization;
-  using System.Windows;
   using System.Windows.Data;
 
-  /// <summary>
-  /// Converts count to visibility. Count ==  0 -> Hidden, Count > 0 -> Visible.
-  /// </summary>
-  internal class CountToVisibilityConvrter : IValueConverter
+  public class InvertBoolConverter : IValueConverter
   {
-    public Visibility ValueForFalse { get; set; } = Visibility.Hidden;
-
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-      if (value is IList list)
-      {
-        return list.Count > 0 ? Visibility.Visible : this.ValueForFalse;
-      }
-
-      return this.ValueForFalse;
+      return Negate(value);
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
-      return null;
+      return Negate(value);
+    }
+
+    private static object Negate(object value)
+    {
+      if (value is bool boolean)
+      {
+        return !boolean;
+      }
+
+      return false;
     }
   }
 }

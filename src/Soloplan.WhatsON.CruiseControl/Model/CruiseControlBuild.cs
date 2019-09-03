@@ -33,7 +33,7 @@
       var nameMatch = Regex.Match(url, @".*/project/(.*)/build/(.*\.xml)");
       var name = Uri.UnescapeDataString(nameMatch.Groups[2].Value);
 
-      var status = clazz.Contains("failed") ? CcBuildStatus.Failure : clazz.Contains("passed") ? CcBuildStatus.Success : CcBuildStatus.Unknown; 
+      var status = clazz.Contains("failed") ? CcBuildStatus.Failure : clazz.Contains("passed") ? CcBuildStatus.Success : CcBuildStatus.Unknown;
       var build = new CruiseControlBuild
       {
         Url = $"{serverUrl}{url}",
@@ -46,6 +46,7 @@
       if (int.TryParse(label, out var buildNumber))
       {
         build.BuildNumber = buildNumber;
+        build.BuildLabel = $"#{build.BuildNumber}";
       }
 
       return build;

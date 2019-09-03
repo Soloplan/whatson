@@ -84,10 +84,16 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
       }
     }
 
-    public string BuildLabel
+    public override string Label
     {
       get
       {
+        // if a custom label is set, use it
+        if (!string.IsNullOrWhiteSpace(base.Label))
+        {
+          return base.Label;
+        }
+
         if (!string.IsNullOrEmpty(this.DisplayName))
         {
           // #123 some displayname
@@ -99,7 +105,8 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
           // another displayName without number (#123)
           return $"{this.DisplayName} (#{this.BuildNumber})";
         }
-        else if (this.BuildNumber.HasValue)
+
+        if (this.BuildNumber.HasValue)
         {
           // #123
           return $"#{this.BuildNumber.Value}";
@@ -107,6 +114,8 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
         return string.Empty;
       }
+
+      protected set => base.Label = value;
     }
 
     public bool Building
@@ -262,6 +271,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
       this.BuildNumber = newStatus.BuildNumber;
       this.Building = newStatus.Building;
       this.Duration = newStatus.Duration;
+      this.Label = newStatus.Label;
 
       this.UpdateCalculatedFields();
     }
