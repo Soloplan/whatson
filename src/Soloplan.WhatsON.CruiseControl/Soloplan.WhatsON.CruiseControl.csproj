@@ -22,7 +22,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\Soloplan.WhatsON\Soloplan.WhatsON.csproj">
-          <Private>false</Private>
+      <Private>false</Private>
     </ProjectReference>
   </ItemGroup>
 
