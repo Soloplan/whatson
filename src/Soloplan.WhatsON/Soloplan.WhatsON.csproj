@@ -7,7 +7,7 @@
     <PackageProjectUrl>https://github.com/Soloplan/whatson</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Soloplan/whatson</RepositoryUrl>
     <PackageTags>monitoring, jenkins, tray-application, build-jobs, dektop-notifications</PackageTags>
-    <PackageVersion>1.0.0-RC6</PackageVersion>
+    <PackageVersion>1.0.0-RC7</PackageVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Steffen Wilke, Krzysztof Lorenc, Dominik Gołda</Authors>
   </PropertyGroup>
