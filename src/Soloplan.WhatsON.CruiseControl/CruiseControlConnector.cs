@@ -35,7 +35,7 @@ namespace Soloplan.WhatsON.CruiseControl
     {
     }
 
-    public string Project => this.ConnectorConfiguration.GetConfigurationByKey(CruiseControlConnector.ProjectName).Value;
+    public string Project => this.Configuration.GetConfigurationByKey(CruiseControlConnector.ProjectName).Value;
 
     protected override async Task<Status> GetCurrentStatus(CancellationToken cancellationToken)
     {
@@ -123,7 +123,7 @@ namespace Soloplan.WhatsON.CruiseControl
       result.Building = false;
       result.BuildNumber = build.BuildNumber;
       result.Details = build.BuildLabel;
-      result.JobUrl = build.Url;
+      result.Url = build.Url;
       result.Label = build.BuildLabel;
       result.Time = build.BuildTime;
       result.State = CcStatusToObservationStatus(build.Status);
@@ -144,7 +144,7 @@ namespace Soloplan.WhatsON.CruiseControl
         result.BuildNumber = buildNr;
       }
 
-      result.JobUrl = job.WebUrl;
+      result.Url = job.WebUrl;
       SetCulprits(job, result);
 
       result.NextBuildTime = job.NextBuildTime;

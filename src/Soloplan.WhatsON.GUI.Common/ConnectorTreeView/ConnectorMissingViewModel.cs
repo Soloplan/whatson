@@ -11,12 +11,12 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Windows;
   using System.Windows.Input;
   using Microsoft.Expression.Interactivity.Core;
-  using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.Model;
 
   public class ConnectorMissingViewModel : ConnectorViewModel
   {
-    public ConnectorMissingViewModel()
+    public ConnectorMissingViewModel(Connector connector)
+      : base(connector)
     {
       void Act()
       {
@@ -29,6 +29,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
 
       this.CopyData = new ActionCommand(Act);
+      this.ExpectedConnectorType = connector.Configuration.Type;
     }
 
     /// <summary>
@@ -39,17 +40,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// Gets plugin type which was expected.
     /// </summary>
-    public string ExpectedConnectorType { get; private set; }
-
-    /// <summary>
-    /// Initializes viewmodel based on <paramref name="configuration"/>.
-    /// </summary>
-    /// <param name="configuration">Configuration of this connector.</param>
-    public override void Init(ConnectorConfiguration configuration)
-    {
-      this.ExpectedConnectorType = configuration.Type;
-      base.Init(configuration);
-    }
+    public string ExpectedConnectorType { get; }
 
     /// <summary>
     /// Doesn't do anything since <paramref name="changedConnector"/> is null.

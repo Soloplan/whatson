@@ -12,37 +12,19 @@ namespace Soloplan.WhatsON.Jenkins.GUI
   using System.Linq;
   using Soloplan.WhatsON.GUI.Common;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
+  using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Jenkins.Model;
   using Soloplan.WhatsON.Model;
 
   public class JenkinsStatusViewModel : BuildStatusViewModel
   {
-    private OpenJenkinsWebPageCommandData parentCommandData;
-
     private ObservableCollection<UserViewModel> committedToThisBuild;
 
     private bool culpritsAndLastCommittedDifferent;
 
-    public JenkinsStatusViewModel(JenkinsProjectViewModel model)
+    public JenkinsStatusViewModel(ConnectorViewModel model)
       : base(model)
     {
-    }
-
-    public override OpenWebPageCommandData OpenBuildPageCommandData
-    {
-      get
-      {
-        if (this.parentCommandData == null)
-        {
-          return null;
-        }
-
-        return new OpenJenkinsWebPageCommandData
-        {
-          Address = this.parentCommandData.Address + "/" + this.BuildNumber,
-          Redirect = this.parentCommandData.Redirect,
-        };
-      }
     }
 
     public bool CulpritsAndLastCommittedDifferent
@@ -69,8 +51,6 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       }
 
       this.DisplayName = jenkinsStatus.DisplayName;
-      this.Duration = jenkinsStatus.Duration;
-      this.EstimatedDuration = jenkinsStatus.EstimatedDuration;
 
       if (this.State == ObservationState.Running)
       {
@@ -100,12 +80,6 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       this.CulpritsAndLastCommittedDifferent = this.Culprits.Count != this.CommittedToThisBuild.Count || this.Culprits.Any(culprit => this.CommittedToThisBuild.All(committer => committer.FullName != culprit.FullName));
 
       this.UpdateCalculatedFields();
-    }
-
-    public void SetJobAddress(OpenJenkinsWebPageCommandData parentData)
-    {
-      this.parentCommandData = parentData;
-      this.OnPropertyChanged(nameof(this.OpenBuildPageCommandData));
     }
   }
 }

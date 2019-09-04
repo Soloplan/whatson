@@ -57,7 +57,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     public ConnectorsPage(ConnectorViewModelCollection connectors, Window ownerWindow, Connector initialFocusedConnector, ApplicationConfiguration config)
      : this(connectors, ownerWindow, config)
     {
-      this.InitialFocusedConnectorViewModel = this.Connectors.FirstOrDefault(c => c.SourceConnectorConfiguration == initialFocusedConnector.ConnectorConfiguration);
+      this.InitialFocusedConnectorViewModel = this.Connectors.FirstOrDefault(c => c.SourceConnectorConfiguration == initialFocusedConnector.Configuration);
       this.InitilizeConnectorNameTextEditBinding();
     }
 

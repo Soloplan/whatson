@@ -33,7 +33,7 @@ namespace Soloplan.WhatsON.CruiseControl
       this.baseUrl = address.Trim('/');
     }
 
-    public string ReportUrl => $"{this.baseUrl}/XmlStatusReport.aspx";
+    public string ReportUrl => UrlHelper.GetXmlReportUrl(this.baseUrl);
 
     public async Task<CruiseControlJob> GetProjectStatus(CancellationToken cancellationToken, string projectName, int interval)
     {
@@ -53,7 +53,7 @@ namespace Soloplan.WhatsON.CruiseControl
     {
       var history = new List<CruiseControlBuild>();
 
-      var projectReportUrl = $"{this.baseUrl}/project/{Uri.EscapeDataString(projectName)}/ViewAllBuilds.aspx";
+      var projectReportUrl = UrlHelper.GetAllBuildsUrl(this.baseUrl, projectName);
       using (var client = new WebClient())
       {
         var html = client.DownloadString(projectReportUrl);
@@ -111,6 +111,29 @@ namespace Soloplan.WhatsON.CruiseControl
         }
 
         throw;
+      }
+    }
+
+    public static class UrlHelper
+    {
+      public static string GetReportUrl(string baseUrl, string project)
+      {
+        return $"{SanitizeBaseUri(baseUrl)}/project/{Uri.EscapeDataString(project)}/ViewProjectReport.aspx";
+      }
+
+      public static string GetXmlReportUrl(string baseUrl)
+      {
+        return $"{SanitizeBaseUri(baseUrl)}/XmlStatusReport.aspx";
+      }
+
+      public static string GetAllBuildsUrl(string baseUrl, string project)
+      {
+        return $"{SanitizeBaseUri(baseUrl)}/project/{Uri.EscapeDataString(project)}/ViewAllBuilds.aspx";
+      }
+
+      private static string SanitizeBaseUri(string baseUrl)
+      {
+        return baseUrl.TrimEnd('/');
       }
     }
   }

@@ -18,13 +18,9 @@ namespace Soloplan.WhatsON.CruiseControl
 
     public bool CheckingModifications { get; set; }
 
-    public TimeSpan EstimatedDuration { get; set; }
-
     public DateTime LastBuildTime { get; set; }
 
     public DateTime NextBuildTime { get; set; }
-
-    public string JobUrl { get; set; }
 
     public IList<CruiseControlUser> Culprits { get; } = new List<CruiseControlUser>();
   }

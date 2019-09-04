@@ -58,7 +58,7 @@ namespace Soloplan.WhatsON.Model
         configuration = new ConnectorConfiguration(plugin.Name);
       }
 
-      this.ConnectorConfiguration = configuration;
+      this.Configuration = configuration;
     }
 
     /// <summary>
@@ -75,24 +75,24 @@ namespace Soloplan.WhatsON.Model
     /// </summary>
     public string Address
     {
-      get => this.ConnectorConfiguration.GetConfigurationByKey(ServerAddress).Value;
-      set => this.ConnectorConfiguration.GetConfigurationByKey(ServerAddress).Value = value;
+      get => this.Configuration.GetConfigurationByKey(ServerAddress).Value;
+      set => this.Configuration.GetConfigurationByKey(ServerAddress).Value = value;
     }
 
     /// <summary>
     /// Gets or sets the configuration of a connector.
     /// </summary>
-    public ConnectorConfiguration ConnectorConfiguration { get; set; }
+    public ConnectorConfiguration Configuration { get; set; }
 
     public async Task QueryStatus(CancellationToken cancellationToken)
     {
-      log.Trace("Querying status for connector {connector}.", new { Name = this.ConnectorConfiguration.Name, CurrentStatus = this.CurrentStatus });
+      log.Trace("Querying status for connector {connector}.", new { this.Configuration.Name, this.CurrentStatus });
       await this.ExecuteQuery(cancellationToken);
-      log.Trace("Status for connector {connector} queried.", new { Name = this.ConnectorConfiguration.Name, CurrentStatus = this.CurrentStatus });
+      log.Trace("Status for connector {connector} queried.", new { this.Configuration.Name, this.CurrentStatus });
 
       if (this.CurrentStatus != null && this.ShouldTakeSnapshot(this.CurrentStatus))
       {
-        log.Debug("Adding snapshot for connector {connector}", new { Name = this.ConnectorConfiguration.Name, CurrentStatus = this.CurrentStatus });
+        log.Debug("Adding snapshot for connector {connector}", new { this.Configuration.Name, this.CurrentStatus });
         this.AddSnapshot(this.CurrentStatus);
       }
     }
@@ -101,7 +101,7 @@ namespace Soloplan.WhatsON.Model
     {
       while (this.Snapshots.Count >= MaxSnapshots)
       {
-        log.Debug("Max number of snapshots exceeded. Dequeuing snapshot.", new { Name = this.ConnectorConfiguration.Name, CurrentStatus = this.CurrentStatus });
+        log.Debug("Max number of snapshots exceeded. Dequeuing snapshot.", new { Name = this.Configuration.Name, CurrentStatus = this.CurrentStatus });
         this.Snapshots.RemoveAt(this.Snapshots.Count - 1); // remove the end of the list because we're sortring by age
       }
 
@@ -111,7 +111,7 @@ namespace Soloplan.WhatsON.Model
 
     public override string ToString()
     {
-      var sb = new StringBuilder(this.ConnectorConfiguration.Name);
+      var sb = new StringBuilder(this.Configuration.Name);
       if (!string.IsNullOrWhiteSpace(this.Description))
       {
         sb.Append(" - ");

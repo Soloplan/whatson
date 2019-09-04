@@ -9,6 +9,7 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
 {
   using Soloplan.WhatsON.GUI.Common;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
+  using Soloplan.WhatsON.Model;
 
   public class CruiseControlPresentationPlugin : PresentationPlugin
   {
@@ -17,9 +18,9 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
     {
     }
 
-    public override ConnectorViewModel CreateViewModel()
+    public override ConnectorViewModel CreateViewModel(Connector connector)
     {
-      return new CruiseControlProjectViewModel();
+      return new CruiseControlProjectViewModel(connector as CruiseControlConnector);
     }
   }
 }

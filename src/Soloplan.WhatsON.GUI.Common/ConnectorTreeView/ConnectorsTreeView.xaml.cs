@@ -124,7 +124,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       {
         foreach (var connectorViewModel in groupViewModel.ConnectorViewModels)
         {
-          if (connectorViewModel.Connector.ConnectorConfiguration.Identifier == connector.ConnectorConfiguration.Identifier)
+          if (connectorViewModel.Connector.Configuration.Identifier == connector.Configuration.Identifier)
           {
             TreeViewItem groupViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(groupViewModel);
             var treeViewItem = (TreeViewItem)groupViewItem?.ItemContainerGenerator.ContainerFromItem(connectorViewModel)

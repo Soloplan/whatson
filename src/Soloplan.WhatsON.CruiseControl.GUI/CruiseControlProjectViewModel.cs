@@ -7,33 +7,21 @@
 
 namespace Soloplan.WhatsON.CruiseControl.GUI
 {
-  using Soloplan.WhatsON.GUI.Common;
+  using System;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
 
   public class CruiseControlProjectViewModel : ConnectorViewModel
   {
-    public override OpenWebPageCommandData OpenWebPageParam
+    public CruiseControlProjectViewModel(CruiseControlConnector connector)
+      : base(connector)
     {
-      get
-      {
-        if (this.CurrentStatus is CruiseControlStatusViewModel ccModel && !string.IsNullOrEmpty(ccModel.OpenBuildPageCommandData?.Address))
-        {
-          return new OpenWebPageCommandData { Address = ccModel.OpenBuildPageCommandData.Address.Replace("ViewLatestBuildReport.aspx", "ViewProjectReport.aspx") };
-        }
-
-        return null;
-      }
-
-      set
-      {
-      }
+      this.Url = CruiseControlServer.UrlHelper.GetReportUrl(connector.Address, connector.Project);
     }
 
-    protected override BuildStatusViewModel GetViewModelForStatus()
+    protected override BuildStatusViewModel GetStatusViewModel()
     {
-      var ccStatusModel = new CruiseControlStatusViewModel(this);
-      return ccStatusModel;
+      return new CruiseControlStatusViewModel(this);
     }
   }
 }

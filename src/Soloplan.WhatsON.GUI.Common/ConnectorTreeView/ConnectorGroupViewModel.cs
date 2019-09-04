@@ -75,7 +75,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <returns>True if something was changed; false otherwise.</returns>
     public bool Update(Connector changedConnector)
     {
-      var changedViewModel = this.ConnectorViewModels.FirstOrDefault(connector => connector.Identifier == changedConnector.ConnectorConfiguration.Identifier);
+      var changedViewModel = this.ConnectorViewModels.FirstOrDefault(connector => connector.Identifier == changedConnector.Configuration.Identifier);
       if (changedViewModel != null)
       {
         changedViewModel.Update(changedConnector);
@@ -121,11 +121,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
           continue;
         }
 
-        if (!addedIds.Contains(config.Identifier))
-        {
-          connectorViewModel.Init(config);
-        }
-
         var oldIndex = this.ConnectorViewModels.IndexOf(connectorViewModel);
         if (oldIndex != index)
         {
@@ -160,7 +155,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       ConnectorViewModel connectorViewModel = this.GetConnectorViewModel(connector);
       connectorViewModel.EditItem += this.OnSubItemEdit;
       connectorViewModel.DeleteItem += this.DeleteConnector;
-      connectorViewModel.Init(connectorConfiguration);
       connectorViewModel.Update(connector);
       this.ConnectorViewModels.Add(connectorViewModel);
     }
@@ -169,16 +163,16 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       if (connector == null)
       {
-        return new ConnectorMissingViewModel();
+        return new ConnectorMissingViewModel(connector);
       }
 
-      var presentationPlugIn = PluginManager.Instance.GetPresentationPlugin(connector.ConnectorConfiguration.Type);
+      var presentationPlugIn = PluginManager.Instance.GetPresentationPlugin(connector.Configuration.Type);
       if (presentationPlugIn != null)
       {
-        return presentationPlugIn.CreateViewModel();
+        return presentationPlugIn.CreateViewModel(connector);
       }
 
-      return new ConnectorViewModel();
+      return new ConnectorViewModel(connector);
     }
 
     private void OnSubItemEdit(object sender, ValueEventArgs<TreeItemViewModel> e)

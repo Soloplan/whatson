@@ -10,7 +10,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Windows.Controls;
   using System.Windows.Input;
   using NLog;
-  using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.Model;
 
@@ -28,6 +27,15 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private string description;
 
     private BuildStatusViewModel currentStatus;
+
+    private string url;
+
+    public ConnectorViewModel(Connector connector)
+    {
+      this.Identifier = connector.Configuration.Identifier;
+      this.Name = connector.Configuration.Name;
+      this.CurrentStatus = this.GetStatusViewModel();
+    }
 
     public string Name
     {
@@ -68,6 +76,19 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
+    public string Url
+    {
+      get => this.url;
+      protected set
+      {
+        if (this.url != value)
+        {
+          this.url = value;
+          this.OnPropertyChanged();
+        }
+      }
+    }
+
     public Guid Identifier { get; private set; }
 
     public ObservableCollection<BuildStatusViewModel> ConnectorSnapshots => this.connectorSnapshots ?? (this.connectorSnapshots = new ObservableCollection<BuildStatusViewModel>());
@@ -79,23 +100,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     public virtual OpenWebPageCommand OpenWebPage { get; } = new OpenWebPageCommand();
 
-    public virtual OpenWebPageCommandData OpenWebPageParam { get; set; }
 
     public override void OnDoubleClick(object sender, MouseButtonEventArgs e)
     {
       base.OnDoubleClick(sender, e);
-      if (sender is TreeViewItem treeViewItem && treeViewItem.DataContext == this && this.OpenWebPage.CanExecute(this.OpenWebPageParam))
+      if (sender is TreeViewItem treeViewItem && treeViewItem.DataContext == this && this.OpenWebPage.CanExecute(this.Url))
       {
-        this.OpenWebPage.Execute(this.OpenWebPageParam);
+        this.OpenWebPage.Execute(this.Url);
       }
-    }
-
-    public virtual void Init(ConnectorConfiguration configuration)
-    {
-      this.Identifier = configuration.Identifier;
-      this.Name = configuration.Name;
-      this.CurrentStatus = this.GetViewModelForStatus();
-      log.Debug("Initializing {type}, {instance}.", this.GetType(), new { this.Name, this.Identifier });
     }
 
     public virtual void Update(Connector changedConnector)
@@ -124,16 +136,16 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       if (clearList)
       {
         this.ConnectorSnapshots.Clear();
-        foreach (var connectorSnapshot in changedConnector.Snapshots)
+        foreach (var snapshot in changedConnector.Snapshots)
         {
-          var connectorSnapshotViewModel = this.GetViewModelForStatus();
-          connectorSnapshotViewModel.Update(connectorSnapshot.Status);
-          if (changedConnector.Snapshots[0] == connectorSnapshot)
+          var viewModel = this.GetStatusViewModel();
+          viewModel.Update(snapshot.Status);
+          if (changedConnector.Snapshots[0] == snapshot)
           {
-            connectorSnapshotViewModel.First = true;
+            viewModel.First = true;
           }
 
-          this.ConnectorSnapshots.Add(connectorSnapshotViewModel);
+          this.ConnectorSnapshots.Add(viewModel);
         }
       }
 
@@ -141,10 +153,9 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.CurrentStatus.Update(changedConnector.CurrentStatus);
     }
 
-    protected virtual BuildStatusViewModel GetViewModelForStatus()
+    protected virtual BuildStatusViewModel GetStatusViewModel()
     {
-      BuildStatusViewModel result = new BuildStatusViewModel(this);
-      return result;
+      return new BuildStatusViewModel(this);
     }
 
     /// <summary>

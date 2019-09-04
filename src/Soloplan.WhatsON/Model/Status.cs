@@ -29,10 +29,14 @@ namespace Soloplan.WhatsON.Model
 
     public virtual TimeSpan Duration { get; set; }
 
+    public virtual TimeSpan EstimatedDuration { get; set; }
+
     public virtual ObservationState State { get; set; }
 
     public virtual int BuildNumber { get; set; }
 
     public virtual bool Building { get; set; }
+
+    public virtual string Url { get; set; }
   }
 }

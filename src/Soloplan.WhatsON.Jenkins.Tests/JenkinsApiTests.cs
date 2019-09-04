@@ -13,7 +13,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
   using Soloplan.WhatsON.Model;
 
   [TestFixture]
-  public class JenkinsApiTest
+  public class JenkinsApiTests
   {
     [Test]
     public void BuildsShouldNotBeMissedWhenBuildsAreRunningOneAfterAnother()

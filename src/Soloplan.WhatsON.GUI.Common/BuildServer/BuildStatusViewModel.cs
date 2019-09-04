@@ -34,6 +34,8 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
     private ObservableCollection<UserViewModel> culprits;
 
+    private string url;
+
     public BuildStatusViewModel(ConnectorViewModel model)
       : base(model)
     {
@@ -45,8 +47,6 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     public virtual OpenWebPageCommand OpenBuildPage { get; } = new OpenWebPageCommand();
 
     public virtual CopyBuildLabelCommand CopyBuildLabel { get; } = new CopyBuildLabelCommand();
-
-    public virtual OpenWebPageCommandData OpenBuildPageCommandData { get; protected set; }
 
     public ObservableCollection<UserViewModel> Culprits => this.culprits ?? (this.culprits = new ObservableCollection<UserViewModel>());
 
@@ -118,12 +118,22 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
       protected set => base.Label = value;
     }
 
+    public string Url
+    {
+      get => this.url;
+      set
+      {
+        if (this.url != value)
+        {
+          this.url = value;
+          this.OnPropertyChanged();
+        }
+      }
+    }
+
     public bool Building
     {
-      get
-      {
-        return this.building;
-      }
+      get => this.building;
 
       protected set
       {
@@ -271,7 +281,9 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
       this.BuildNumber = newStatus.BuildNumber;
       this.Building = newStatus.Building;
       this.Duration = newStatus.Duration;
+      this.EstimatedDuration = newStatus.EstimatedDuration;
       this.Label = newStatus.Label;
+      this.Url = newStatus.Url;
 
       this.UpdateCalculatedFields();
     }

@@ -35,20 +35,19 @@ namespace Soloplan.WhatsON.GUI
 
     private ConnectorViewModel GetModelToUpdate(Connector connector)
     {
-      var modelToUpdate = this.connectors.FirstOrDefault(sub => sub.Identifier == connector.ConnectorConfiguration.Identifier);
+      var modelToUpdate = this.connectors.FirstOrDefault(sub => sub.Identifier == connector.Configuration.Identifier);
       if (modelToUpdate == null)
       {
-        var presentationPlugIn = PluginManager.Instance.GetPresentationPlugin(connector.ConnectorConfiguration.Type);
+        var presentationPlugIn = PluginManager.Instance.GetPresentationPlugin(connector.Configuration.Type);
         if (presentationPlugIn != null)
         {
-          modelToUpdate = presentationPlugIn.CreateViewModel();
+          modelToUpdate = presentationPlugIn.CreateViewModel(connector);
         }
         else
         {
-          modelToUpdate = new ConnectorViewModel();
+          modelToUpdate = new ConnectorViewModel(connector);
         }
 
-        modelToUpdate.Init(connector.ConnectorConfiguration);
         modelToUpdate.PropertyChanged += this.OnPropertyChanged;
         this.connectors.Add(modelToUpdate);
       }

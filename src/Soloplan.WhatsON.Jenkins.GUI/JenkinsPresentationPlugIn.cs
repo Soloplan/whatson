@@ -7,6 +7,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
 {
   using Soloplan.WhatsON.GUI.Common;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
+  using Soloplan.WhatsON.Model;
 
   public class JenkinsPresentationPlugin : PresentationPlugin
   {
@@ -15,9 +16,9 @@ namespace Soloplan.WhatsON.Jenkins.GUI
     {
     }
 
-    public override ConnectorViewModel CreateViewModel()
+    public override ConnectorViewModel CreateViewModel(Connector connector)
     {
-      return new JenkinsProjectViewModel();
+      return new JenkinsProjectViewModel(connector);
     }
   }
 }

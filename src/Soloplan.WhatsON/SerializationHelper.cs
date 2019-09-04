@@ -102,6 +102,7 @@ namespace Soloplan.WhatsON
 
       try
       {
+        log.Trace($"Fetching JSON object ({typeof(TModel)}) from \"{requestUrl}\" ...");
         using (token.Register(() => request.Abort(), false))
         using (var response = await request.GetResponseAsync())
         {

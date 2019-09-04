@@ -18,10 +18,10 @@ namespace Soloplan.WhatsON.GUI.Common
 
     public override void Execute(object parameter)
     {
-      if (parameter is OpenWebPageCommandData webPageParam)
+      if (parameter is string url)
       {
-        log.Debug("Opening web page {@address}.", webPageParam);
-        System.Diagnostics.Process.Start(webPageParam.FullAddress);
+        log.Debug("Opening web page {@address}.", url);
+        System.Diagnostics.Process.Start(url);
         return;
       }
 
@@ -30,21 +30,14 @@ namespace Soloplan.WhatsON.GUI.Common
 
     protected override bool CanExecuteInternal(object parameter)
     {
-      if (parameter is OpenWebPageCommandData webPageParam && !string.IsNullOrEmpty(webPageParam.Address))
+      if (parameter is string url && !string.IsNullOrEmpty(url))
       {
-        log.Debug("Checking if command should be opened for {@param}", webPageParam);
+        log.Debug("Checking if command should be opened for {@param}", url);
         return base.CanExecuteInternal(parameter);
       }
 
       log.Warn("Webpage opening parameters are invalid {parameter}", new { Type = parameter?.GetType() });
       return false;
     }
-  }
-
-  public class OpenWebPageCommandData
-  {
-    public virtual string FullAddress => this.Address;
-
-    public string Address { get; set; }
   }
 }

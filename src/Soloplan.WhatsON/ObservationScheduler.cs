@@ -107,7 +107,7 @@ namespace Soloplan.WhatsON
       if (this.observedConnectors.Any(s => s.Connector.Equals(connector)))
       {
         // connector is already being observed
-        log.Warn("Connector {connector} is already being observed, skip adding.", new { Interval = interval, Name = connector.ConnectorConfiguration.Name, CurrentStatus = connector.CurrentStatus });
+        log.Warn("Connector {connector} is already being observed, skip adding.", new { Interval = interval, Name = connector.Configuration.Name, CurrentStatus = connector.CurrentStatus });
         return;
       }
 
@@ -164,7 +164,7 @@ namespace Soloplan.WhatsON
         }
         catch (Exception e)
         {
-          log.Error(e, "Exception occurred when observing connector {connector}", new { Interval = connector.Interval, Name = connector.Connector.ConnectorConfiguration.Name, CurrentStatus = connector.Connector.CurrentStatus });
+          log.Error(e, "Exception occurred when observing connector {connector}", new { Interval = connector.Interval, Name = connector.Connector.Configuration.Name, CurrentStatus = connector.Connector.CurrentStatus });
         }
       }
 

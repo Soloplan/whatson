@@ -26,7 +26,7 @@
           </StackPanel>
         </MenuItem.Header>
       </MenuItem>
-      <MenuItem CommandParameter="{Binding OpenBuildPageCommandData}" Command="{Binding OpenBuildPage}">
+      <MenuItem CommandParameter="{Binding Url}" Command="{Binding OpenBuildPage}">
         <MenuItem.Header>
           <StackPanel Orientation="Horizontal">
             <materialDesign:PackIcon Kind="Link" />
@@ -47,7 +47,7 @@
       <i:Interaction.Triggers>
         <!--  Handle clicking on history builds.  -->
         <i:EventTrigger EventName="Click">
-          <i:InvokeCommandAction CommandParameter="{Binding OpenBuildPageCommandData}" Command="{Binding OpenBuildPage}" />
+          <i:InvokeCommandAction CommandParameter="{Binding Url}" Command="{Binding OpenBuildPage}" />
         </i:EventTrigger>
       </i:Interaction.Triggers>
       <Ellipse Width="{Binding Size}"

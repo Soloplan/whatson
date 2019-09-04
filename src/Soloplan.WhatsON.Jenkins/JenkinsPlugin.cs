@@ -76,10 +76,10 @@ namespace Soloplan.WhatsON.Jenkins
     /// <param name="projects">The list of projects to update.</param>
     /// <param name="jenkinsApi">Jenkins Api instance.</param>
     /// <returns>A task representing the job.</returns>
-    private async Task GetProjectsLists(string address, List<Project> projects, JenkinsApi jenkinsApi)
+    private async Task GetProjectsLists(string address, IList<Project> projects, JenkinsApi jenkinsApi)
     {
       var jenkinsJobs = await jenkinsApi.GetJenkinsJobs(address, default);
-      if (jenkinsJobs == null || jenkinsJobs.Jobs == null)
+      if (jenkinsJobs?.Jobs == null)
       {
         return;
       }

@@ -12,7 +12,6 @@ namespace Soloplan.WhatsON.Jenkins
   using System.Linq;
   using System.Threading;
   using System.Threading.Tasks;
-  using NLog;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.Jenkins.Model;
@@ -34,11 +33,6 @@ namespace Soloplan.WhatsON.Jenkins
     /// The redirect plugin tag.
     /// </summary>
     public const string RedirectPlugin = "RedirectPlugin";
-
-    /// <summary>
-    /// Logger instance used by this class.
-    /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
     /// <summary>
     /// API class for accessing Jenkins.
@@ -64,10 +58,10 @@ namespace Soloplan.WhatsON.Jenkins
     /// <returns>Project name.</returns>
     public string GetProject()
     {
-      return this.ConnectorConfiguration.GetConfigurationByKey(JenkinsConnector.ProjectName).Value;
+      return this.Configuration.GetConfigurationByKey(JenkinsConnector.ProjectName).Value;
     }
 
-    protected async override Task<Status> GetCurrentStatus(CancellationToken cancellationToken)
+    protected override async Task<Status> GetCurrentStatus(CancellationToken cancellationToken)
     {
       var job = await this.api.GetJenkinsJob(this, cancellationToken);
       if (job?.LastBuild?.Number == null)
@@ -76,16 +70,16 @@ namespace Soloplan.WhatsON.Jenkins
       }
 
       var latestBuild = await this.api.GetJenkinsBuild(this, job.LastBuild.Number, cancellationToken);
-      return CreateStatus(latestBuild);
+      return this.CreateStatus(latestBuild);
     }
 
-    protected async override Task<List<Status>> GetHistory(CancellationToken cancellationToken)
+    protected override async Task<List<Status>> GetHistory(CancellationToken cancellationToken)
     {
       var builds = await this.api.GetBuilds(this, cancellationToken, 1, MaxSnapshots + 1);
-      return builds.Select(build => CreateStatus(build)).ToList();
+      return builds.Select(this.CreateStatus).ToList();
     }
 
-    private static Status CreateStatus(JenkinsBuild latestBuild)
+    private Status CreateStatus(JenkinsBuild latestBuild)
     {
       var newStatus = new JenkinsStatus(GetState(latestBuild))
       {
@@ -100,6 +94,7 @@ namespace Soloplan.WhatsON.Jenkins
       newStatus.Duration = new TimeSpan(latestBuild.Duration * TicksInMillisecond);
       newStatus.EstimatedDuration = new TimeSpan(latestBuild.EstimatedDuration * TicksInMillisecond);
       newStatus.Culprits = latestBuild.Culprits;
+      newStatus.Url = JenkinsApi.UrlHelper.BuildUrl(this, newStatus.BuildNumber, true);
 
       newStatus.CommittedToThisBuild = latestBuild.ChangeSets?.SelectMany(p => p.ChangeSetItems)
         .Select(p => p.Author)

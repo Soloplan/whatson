@@ -8,15 +8,12 @@
 namespace Soloplan.WhatsON.CruiseControl.GUI
 {
   using System;
-  using Soloplan.WhatsON.GUI.Common;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Model;
 
   public class CruiseControlStatusViewModel : BuildStatusViewModel
   {
-    private OpenWebPageCommandData openBuildPageCommandData;
-
     /// <summary>
     /// The backing field for <see cref="BuildTimeUnknown"/>.
     /// </summary>
@@ -26,8 +23,6 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
       : base(model)
     {
     }
-
-    public override OpenWebPageCommandData OpenBuildPageCommandData => this.openBuildPageCommandData;
 
     /// <summary>
     /// Gets or sets a value indicating whether estimated build time is known.
@@ -54,7 +49,6 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
         return;
       }
 
-      this.Duration = ccStatus.Duration;
       this.EstimatedDuration = ccStatus.EstimatedDuration;
 
       if (this.State == ObservationState.Running && this.EstimatedDuration.TotalSeconds > 0)
@@ -75,8 +69,6 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
         this.Culprits.Add(culpritModel);
       }
 
-      this.openBuildPageCommandData = new OpenWebPageCommandData();
-      this.OpenBuildPageCommandData.Address = ccStatus.JobUrl;
       this.UpdateCalculatedFields();
 
       if (this.State == ObservationState.Running && this.EstimatedDuration.TotalSeconds < 1)

@@ -79,7 +79,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     {
       if (e.LeftButton == MouseButtonState.Released)
       {
-        System.Diagnostics.Process.Start("http://www.soloplan.de");
+        System.Diagnostics.Process.Start("https://www.soloplan.de");
       }
     }
 

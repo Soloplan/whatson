@@ -12,6 +12,7 @@ namespace Soloplan.WhatsON.GUI.Common
   using System.Xml;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
+  using Soloplan.WhatsON.Model;
 
   /// <summary>
   /// PlugIn which provides presentation of <see cref="ConnectorType"/> connectors.
@@ -40,7 +41,7 @@ namespace Soloplan.WhatsON.GUI.Common
     /// Creates the <see cref="ConnectorViewModel"/> decedent.
     /// </summary>
     /// <returns><see cref="ConnectorViewModel"/> decedent.</returns>
-    public abstract ConnectorViewModel CreateViewModel();
+    public abstract ConnectorViewModel CreateViewModel(Connector connector);
 
     /// <summary>
     /// Gets the XAML file defining the DataTemplet for displaying the view model created by <see cref="CreateViewModel"/>.

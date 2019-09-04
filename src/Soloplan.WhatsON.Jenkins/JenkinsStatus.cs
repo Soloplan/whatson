@@ -7,7 +7,6 @@
 
 namespace Soloplan.WhatsON.Jenkins
 {
-  using System;
   using System.Collections.Generic;
   using Soloplan.WhatsON.Jenkins.Model;
   using Soloplan.WhatsON.Model;
@@ -20,8 +19,6 @@ namespace Soloplan.WhatsON.Jenkins
     }
 
     public string DisplayName { get; set; }
-
-    public TimeSpan EstimatedDuration { get; set; }
 
     public IList<JenkinsUser> CommittedToThisBuild { get; set; }
 

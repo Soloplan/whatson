@@ -7,68 +7,29 @@
 
 namespace Soloplan.WhatsON.Jenkins.GUI
 {
-  using Soloplan.WhatsON.Configuration;
-  using Soloplan.WhatsON.GUI.Common;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Model;
 
   public class JenkinsProjectViewModel : ConnectorViewModel
   {
-    private OpenJenkinsWebPageCommandData openWebPageParam;
-
-    public override OpenWebPageCommandData OpenWebPageParam
+    public JenkinsProjectViewModel(Connector connector)
+      : base(connector)
     {
-      get => this.openWebPageParam;
-      set
+      this.CurrentStatus.OpenBuildPage.CanExecuteExternal += (s, e) => e.Cancel = !this.CurrentStatus.Building;
+
+      var address = connector.Configuration.GetConfigurationByKey(Connector.ServerAddress).Value.Trim('/') + "/job/" + connector.Configuration.GetConfigurationByKey(JenkinsConnector.ProjectName).Value.Trim('/');
+      if (bool.TryParse(connector.Configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin)?.Value, out var redirect) && redirect)
       {
-        this.openWebPageParam = value as OpenJenkinsWebPageCommandData;
-        this.OnPropertyChanged(nameof(this.OpenWebPageParam));
+        address += JenkinsApi.UrlHelper.RedirectPluginUrlSuffix;
       }
+
+      this.Url = address;
     }
 
-    public override void Init(ConnectorConfiguration configuration)
+    protected override BuildStatusViewModel GetStatusViewModel()
     {
-      base.Init(configuration);
-
-      if (this.CurrentStatus is JenkinsStatusViewModel status)
-      {
-        status.OpenBuildPage.CanExecuteExternal += (s, e) => e.Cancel = this.CurrentStatus is JenkinsStatusViewModel model && !model.Building;
-      }
-
-      OpenJenkinsWebPageCommandData param = new OpenJenkinsWebPageCommandData();
-      if (bool.TryParse(configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin)?.Value, out var redirect) && redirect)
-      {
-        param.Redirect = true;
-      }
-      else
-      {
-        param.Redirect = false;
-      }
-
-      param.Address = configuration.GetConfigurationByKey(Connector.ServerAddress).Value.Trim('/') + "/job/" + configuration.GetConfigurationByKey(JenkinsConnector.ProjectName).Value.Trim('/');
-
-      this.OpenWebPageParam = param;
-
-      foreach (var connectorSnapshot in this.ConnectorSnapshots)
-      {
-        this.SetAddressForState(connectorSnapshot);
-      }
-    }
-
-    protected override BuildStatusViewModel GetViewModelForStatus()
-    {
-      var jenkinsModel = new JenkinsStatusViewModel(this);
-      this.SetAddressForState(jenkinsModel);
-      return jenkinsModel;
-    }
-
-    private void SetAddressForState(StatusViewModel model)
-    {
-      if (model is JenkinsStatusViewModel jenkinsModel)
-      {
-        jenkinsModel.SetJobAddress(this.openWebPageParam);
-      }
+      return new JenkinsStatusViewModel(this);
     }
   }
 }

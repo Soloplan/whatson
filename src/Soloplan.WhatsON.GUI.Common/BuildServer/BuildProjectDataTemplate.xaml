@@ -46,7 +46,7 @@
       </MenuItem.Header>
     </MenuItem>
     <MenuItem Visibility="{Binding CurrentStatus.Building, Converter={StaticResource BoolToVisibility}}"
-              CommandParameter="{Binding CurrentStatus.OpenBuildPageCommandData}"
+              CommandParameter="{Binding CurrentStatus.Url}"
               Command="{Binding CurrentStatus.OpenBuildPage}">
       <MenuItem.Header>
         <StackPanel Orientation="Horizontal">
