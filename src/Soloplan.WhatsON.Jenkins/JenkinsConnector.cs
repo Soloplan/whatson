@@ -23,8 +23,6 @@ namespace Soloplan.WhatsON.Jenkins
   [NotificationConfigurationItem(NotificationsVisbility, typeof(ConnectorNotificationConfiguration), Priority = 1600000000)]
   public class JenkinsConnector : Connector
   {
-    private const long TicksInMillisecond = 10000;
-
     public const string ConnectorName = "Jenkins";
 
     public const string ProjectName = "ProjectName";
@@ -33,6 +31,8 @@ namespace Soloplan.WhatsON.Jenkins
     /// The redirect plugin tag.
     /// </summary>
     public const string RedirectPlugin = "RedirectPlugin";
+
+    private const long TicksInMillisecond = 10000;
 
     /// <summary>
     /// API class for accessing Jenkins.
@@ -79,6 +79,21 @@ namespace Soloplan.WhatsON.Jenkins
       return builds.Select(this.CreateStatus).ToList();
     }
 
+    private static ObservationState GetState(JenkinsBuild build)
+    {
+      if (string.IsNullOrWhiteSpace(build.Result))
+      {
+        return build.Building ? ObservationState.Running : ObservationState.Unknown;
+      }
+
+      if (Enum.TryParse<ObservationState>(build.Result, true, out var state))
+      {
+        return state;
+      }
+
+      return ObservationState.Unknown;
+    }
+
     private Status CreateStatus(JenkinsBuild latestBuild)
     {
       var newStatus = new JenkinsStatus(GetState(latestBuild))
@@ -103,21 +118,6 @@ namespace Soloplan.WhatsON.Jenkins
         .ToList();
 
       return newStatus;
-    }
-
-    private static ObservationState GetState(JenkinsBuild build)
-    {
-      if (string.IsNullOrWhiteSpace(build.Result))
-      {
-        return build.Building ? ObservationState.Running : ObservationState.Unknown;
-      }
-
-      if (Enum.TryParse<ObservationState>(build.Result, true, out var state))
-      {
-        return state;
-      }
-
-      return ObservationState.Unknown;
     }
   }
 }

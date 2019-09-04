@@ -80,6 +80,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     private bool isProposedAddressEmpty = true;
 
+    private string selectedConnectorType;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="WizardController"/> class.
     /// </summary>
@@ -178,8 +180,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         return PluginManager.Instance.ConnectorPlugins.Select(x => x.Name).ToList();
       }
     }
-
-    private string selectedConnectorType;
 
     public string SelectedConnectorType
     {

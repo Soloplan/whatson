@@ -42,7 +42,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     }
 
     /// <summary>
-    /// Command for opening builds webPage.
+    /// Gets the command for opening the build webPage.
     /// </summary>
     public virtual OpenWebPageCommand OpenBuildPage { get; } = new OpenWebPageCommand();
 
