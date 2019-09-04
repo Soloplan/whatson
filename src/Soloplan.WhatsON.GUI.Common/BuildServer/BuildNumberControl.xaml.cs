@@ -50,13 +50,13 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     private async void OnPreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
       Clipboard.SetText(this.BuildNumber.ToString());
-      this.ToolTipText.Text = "Value copied.";
+      this.ToolTipText.Text = "Build label copied";
       this.ControlToolTip.IsOpen = true;
       e.Handled = true;
       await Task.Delay(1000);
 
       this.ControlToolTip.IsOpen = false;
-      this.ToolTipText.Text = "Double click to copy.";
+      this.ToolTipText.Text = "Double click to copy build label";
     }
   }
 }

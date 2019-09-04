@@ -49,8 +49,6 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
         return;
       }
 
-      this.EstimatedDuration = ccStatus.EstimatedDuration;
-
       if (this.State == ObservationState.Running && this.EstimatedDuration.TotalSeconds > 0)
       {
         var elapsedSinceStart = (DateTime.Now - ccStatus.NextBuildTime).TotalSeconds;
