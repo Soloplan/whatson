@@ -30,6 +30,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private string url;
 
+    public ConnectorViewModel()
+    {
+    }
+
     public ConnectorViewModel(Connector connector)
     {
       this.Identifier = connector.Configuration.Identifier;
