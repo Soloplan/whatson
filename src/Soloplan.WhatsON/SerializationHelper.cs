@@ -97,15 +97,29 @@ namespace Soloplan.WhatsON
     public static async Task<TModel> GetJsonModel<TModel>(string requestUrl, CancellationToken token = default, Action<WebRequest> requestCallback = null)
      where TModel : class
     {
-      var request = WebRequest.Create(requestUrl);
+      const string JSON_CONTENT_TYPE = "application/json";
+
+      var request = (HttpWebRequest)WebRequest.Create(requestUrl);
+      request.Accept = JSON_CONTENT_TYPE;
+      request.ContentType = JSON_CONTENT_TYPE;
       requestCallback?.Invoke(request);
 
       try
       {
         log.Trace($"Fetching JSON object ({typeof(TModel)}) from \"{requestUrl}\" ...");
         using (token.Register(() => request.Abort(), false))
-        using (var response = await request.GetResponseAsync())
+        using (var response = (HttpWebResponse)await request.GetResponseAsync())
         {
+          if (response.StatusCode != HttpStatusCode.OK)
+          {
+            throw new InvalidPlugInApiResponseException($"Error while accessing the API via \"{requestUrl}\": The server returned the error code: {response.StatusCode}: {response.StatusDescription}. ");
+          }
+
+          if (!response.ContentType.Contains(JSON_CONTENT_TYPE))
+          {
+            throw new InvalidPlugInApiResponseException($"The API didn't return JSON content from the requested url \"{requestUrl}\". Content type was \"{response.ContentType}\".");
+          }
+
           // Get the stream containing content returned by the server
           // Open the stream using a StreamReader for easy access
           using (var dataStream = response.GetResponseStream())
