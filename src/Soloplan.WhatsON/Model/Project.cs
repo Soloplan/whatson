@@ -20,6 +20,10 @@ namespace Soloplan.WhatsON.Model
     /// </summary>
     public string Name { get; set; }
 
+    public string FullName { get; set; }
+
+    public string Description { get; set; }
+
     /// <summary>
     /// Gets or sets the address of the project.
     /// </summary>

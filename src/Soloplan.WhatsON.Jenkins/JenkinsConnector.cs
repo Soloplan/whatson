@@ -18,14 +18,11 @@ namespace Soloplan.WhatsON.Jenkins
   using Soloplan.WhatsON.Model;
 
   [ConnectorType(ConnectorName, Description = "Retrieve the current status of a Jenkins project.")]
-  [ConfigurationItem(ProjectName, typeof(string), Optional = false, Priority = 300)]
   [ConfigurationItem(RedirectPlugin, typeof(bool), Priority = 400)] // defines use of Display URL API Plugin https://wiki.jenkins.io/display/JENKINS/Display+URL+API+Plugin
   [NotificationConfigurationItem(NotificationsVisbility, typeof(ConnectorNotificationConfiguration), Priority = 1600000000)]
   public class JenkinsConnector : Connector
   {
     public const string ConnectorName = "Jenkins";
-
-    public const string ProjectName = "ProjectName";
 
     /// <summary>
     /// The redirect plugin tag.
@@ -48,17 +45,6 @@ namespace Soloplan.WhatsON.Jenkins
       : base(configuration)
     {
       this.api = api;
-    }
-
-    public string Project => this.GetProject();
-
-    /// <summary>
-    /// Gets the project.
-    /// </summary>
-    /// <returns>Project name.</returns>
-    public string GetProject()
-    {
-      return this.Configuration.GetConfigurationByKey(JenkinsConnector.ProjectName).Value;
     }
 
     protected override async Task<Status> GetCurrentStatus(CancellationToken cancellationToken)
