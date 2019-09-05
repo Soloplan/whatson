@@ -417,7 +417,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
                                                                          && x.GetConfigurationByKey(Connector.ProjectName)?.Value == (!string.IsNullOrWhiteSpace(project.FullName) ? project.FullName : project.Name)).ToList();
 
         newProject.AlreadyAdded = alreadyExists.Any();
-        newProject.AddedProject = alreadyExists.Any() ? string.Join(", ", alreadyExists.Select(x => $"{x.GetConfigurationByKey(Connector.Category).Value}/{x.Name}")) : null;
+        newProject.AddedProject = alreadyExists.Any() ? string.Join(" - ", alreadyExists.Select(x => $"{x.GetConfigurationByKey(Connector.Category).Value}/{x.Name}")) : null;
 
         this.ProcessServerSubProjects(project.Children, newProject);
       }
