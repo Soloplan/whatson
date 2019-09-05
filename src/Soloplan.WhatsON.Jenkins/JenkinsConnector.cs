@@ -95,7 +95,7 @@ namespace Soloplan.WhatsON.Jenkins
       newStatus.Duration = new TimeSpan(latestBuild.Duration * TicksInMillisecond);
       newStatus.EstimatedDuration = new TimeSpan(latestBuild.EstimatedDuration * TicksInMillisecond);
       newStatus.Culprits = latestBuild.Culprits;
-      newStatus.Url = JenkinsApi.UrlHelper.BuildUrl(this, newStatus.BuildNumber, true);
+      newStatus.Url = JenkinsApi.UrlHelper.BuildUrl(this, newStatus.BuildNumber);
 
       newStatus.CommittedToThisBuild = latestBuild.ChangeSets?.SelectMany(p => p.ChangeSetItems)
         .Select(p => p.Author)

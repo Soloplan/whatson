@@ -58,14 +58,20 @@ namespace Soloplan.WhatsON.Jenkins
     /// <param name="serverAddress">The server address.</param>
     public override void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress)
     {
-      // for now, we extract the project name from the address
-      var projectNameWithoutAddress = project.Address.Substring(serverAddress.Length, project.Address.Length - serverAddress.Length - 1).Trim('/');
-      if (projectNameWithoutAddress.StartsWith("job", StringComparison.CurrentCultureIgnoreCase))
+      var projectName = project.FullName;
+
+      // hacky way to extract the project name from the URL for versions prior to 0.9.1...
+      if (string.IsNullOrWhiteSpace(projectName))
       {
-        projectNameWithoutAddress = projectNameWithoutAddress.Substring(3, projectNameWithoutAddress.Length - 3).TrimStart('/');
+        // for now, we extract the project name from the address
+        var projectNameWithoutAddress = project.Address.Substring(serverAddress.Length, project.Address.Length - serverAddress.Length - 1).Trim('/');
+        if (projectNameWithoutAddress.StartsWith(JenkinsApi.UrlHelper.JobUrlPrefix, StringComparison.CurrentCultureIgnoreCase))
+        {
+          projectName = projectNameWithoutAddress.Substring(3, projectNameWithoutAddress.Length - 3).TrimStart('/');
+        }
       }
 
-      configurationItemsSupport.GetConfigurationByKey(JenkinsConnector.ProjectName).Value = projectNameWithoutAddress;
+      configurationItemsSupport.GetConfigurationByKey(Connector.ProjectName).Value = projectName;
       configurationItemsSupport.GetConfigurationByKey(Connector.ServerAddress).Value = serverAddress;
     }
 
@@ -103,7 +109,7 @@ namespace Soloplan.WhatsON.Jenkins
     /// <returns>The newly  created server projects tree item.</returns>
     private Project AddProject(IList<Project> parentList, JenkinsJob jenkinsJobsItem)
     {
-      var newServerProject = new Project { Address = jenkinsJobsItem.Url, Name = jenkinsJobsItem.DisplayName ?? jenkinsJobsItem.Name };
+      var newServerProject = new Project { Address = jenkinsJobsItem.Url, Name = jenkinsJobsItem.DisplayName ?? jenkinsJobsItem.Name, FullName = jenkinsJobsItem.FullName, Description = jenkinsJobsItem.Description };
       parentList.Add(newServerProject);
       return newServerProject;
     }

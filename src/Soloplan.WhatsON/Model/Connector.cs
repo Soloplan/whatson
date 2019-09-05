@@ -21,6 +21,7 @@ namespace Soloplan.WhatsON.Model
   /// </summary>
   [ConfigurationItem(Category, typeof(string), Priority = 1000000000)]
   [ConfigurationItem(ServerAddress, typeof(string), Optional = false, Priority = 100)]
+  [ConfigurationItem(ProjectName, typeof(string), Optional = false, Priority = 300)]
   public abstract class Connector
   {
     /// <summary>
@@ -34,6 +35,8 @@ namespace Soloplan.WhatsON.Model
     public const string Category = "Category";
 
     public const string ServerAddress = "Address";
+
+    public const string ProjectName = "ProjectName";
 
     /// <summary>
     /// Default value for max nubmer of snapshots.
@@ -77,6 +80,12 @@ namespace Soloplan.WhatsON.Model
     {
       get => this.Configuration.GetConfigurationByKey(ServerAddress).Value;
       set => this.Configuration.GetConfigurationByKey(ServerAddress).Value = value;
+    }
+
+    public string Project
+    {
+      get => this.Configuration.GetConfigurationByKey(ProjectName).Value;
+      set => this.Configuration.GetConfigurationByKey(ProjectName).Value = value;
     }
 
     /// <summary>

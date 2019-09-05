@@ -7,7 +7,9 @@
 
 namespace Soloplan.WhatsON.Jenkins
 {
+  using System;
   using System.Collections.Generic;
+  using System.Linq;
   using System.Threading;
   using System.Threading.Tasks;
   using Soloplan.WhatsON.Jenkins.Model;
@@ -45,6 +47,8 @@ namespace Soloplan.WhatsON.Jenkins
     {
       public const string RedirectPluginUrlSuffix = "/display/redirect";
 
+      public const string JobUrlPrefix = "job";
+
       public static string JobsRequest(string address)
       {
         return $"{SanitizeBaseUrl(address)}/api/json?tree={JenkinsJobs.RequestProperties}";
@@ -52,14 +56,25 @@ namespace Soloplan.WhatsON.Jenkins
 
       public static string JobRequest(JenkinsConnector connector)
       {
-        return $"{SanitizeBaseUrl(connector.Address)}/job/{connector.Project.Trim('/')}/api/json?tree={JenkinsJob.RequestProperties}";
+        return $"{SanitizeBaseUrl(connector.Address)}/{GetRelativeProjectUrl(connector)}/api/json?tree={JenkinsJob.RequestProperties}";
       }
 
-      public static string BuildUrl(JenkinsConnector connector, int buildNumber, bool respectRedirect = false)
+      public static string BuildUrl(JenkinsConnector connector, int buildNumber, bool appendRedirect = true)
       {
-        var url = $"{SanitizeBaseUrl(connector.Address)}/job/{connector.Project.Trim('/')}/{buildNumber}";
-        if (respectRedirect
-           && bool.TryParse(connector.Configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin)?.Value, out var redirect) && redirect)
+        var url = $"{SanitizeBaseUrl(connector.Address)}/{GetRelativeProjectUrl(connector)}/{buildNumber}";
+        if (appendRedirect && bool.TryParse(connector.Configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin)?.Value, out var redirect) && redirect)
+        {
+          return $"{url}{RedirectPluginUrlSuffix}";
+        }
+
+        return url;
+      }
+
+      public static string ProjectUrl(Connector connector, bool appendRedirect = true)
+      {
+        var url = $"{SanitizeBaseUrl(connector.Address)}/{GetRelativeProjectUrl(connector)}";
+
+        if (bool.TryParse(connector.Configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin)?.Value, out var redirect) && redirect)
         {
           return $"{url}{RedirectPluginUrlSuffix}";
         }
@@ -69,17 +84,30 @@ namespace Soloplan.WhatsON.Jenkins
 
       public static string BuildRequest(JenkinsConnector connector, int buildNumber)
       {
-        return $"{BuildUrl(connector, buildNumber)}/api/json?tree={JenkinsBuild.RequestProperties}";
+        return $"{BuildUrl(connector, buildNumber, false)}/api/json?tree={JenkinsBuild.RequestProperties}";
       }
 
       public static string BuildsRequest(JenkinsConnector connector, int from, int to)
       {
-        return $"{SanitizeBaseUrl(connector.Address)}/job/{connector.Project.Trim('/')}/api/json?tree=builds[{JenkinsBuild.RequestProperties}]{{{from},{to}}}";
+        return $"{SanitizeBaseUrl(connector.Address)}/{GetRelativeProjectUrl(connector)}/api/json?tree=builds[{JenkinsBuild.RequestProperties}]{{{from},{to}}}";
       }
 
       private static string SanitizeBaseUrl(string address)
       {
         return address.TrimEnd('/');
+      }
+
+      private static string GetRelativeProjectUrl(Connector connector)
+      {
+        // support for legacy format connector project names: prior to 0.9.1 the connector project name was extracted from the URL and didn't reflect the actual name of the project (without URL aritfacts)
+        if (connector.Project.Contains(JobUrlPrefix))
+        {
+          return $"{JobUrlPrefix}/{connector.Project}";
+        }
+
+        var parts = connector.Project.Split('/').Select(Uri.EscapeUriString);
+
+        return $"{JobUrlPrefix}/{string.Join($"/{JobUrlPrefix}/", parts).TrimEnd('/')}";
       }
     }
   }

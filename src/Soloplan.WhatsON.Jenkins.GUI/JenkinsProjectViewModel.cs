@@ -17,14 +17,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       : base(connector)
     {
       this.CurrentStatus.OpenBuildPage.CanExecuteExternal += (s, e) => e.Cancel = !this.CurrentStatus.Building;
-
-      var address = connector.Configuration.GetConfigurationByKey(Connector.ServerAddress).Value.Trim('/') + "/job/" + connector.Configuration.GetConfigurationByKey(JenkinsConnector.ProjectName).Value.Trim('/');
-      if (bool.TryParse(connector.Configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin)?.Value, out var redirect) && redirect)
-      {
-        address += JenkinsApi.UrlHelper.RedirectPluginUrlSuffix;
-      }
-
-      this.Url = address;
+      this.Url = JenkinsApi.UrlHelper.ProjectUrl(connector);
     }
 
     protected override BuildStatusViewModel GetStatusViewModel()
