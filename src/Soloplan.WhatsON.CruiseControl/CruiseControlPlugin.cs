@@ -71,7 +71,7 @@ namespace Soloplan.WhatsON.CruiseControl
     /// <param name="serverAddress">The server address.</param>
     public override void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress)
     {
-      configurationItemsSupport.GetConfigurationByKey(CruiseControlConnector.ProjectName).Value = project.Name;
+      configurationItemsSupport.GetConfigurationByKey(Connector.ProjectName).Value = project.Name;
       configurationItemsSupport.GetConfigurationByKey(Connector.ServerAddress).Value = serverAddress;
     }
   }

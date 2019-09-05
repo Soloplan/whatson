@@ -10,6 +10,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
   using System.Collections.Generic;
   using System.ComponentModel;
   using System.Runtime.CompilerServices;
+  using Soloplan.WhatsON.Model;
 
   /// <summary>
   /// The view model for the selectable projects on the wizard.
@@ -62,6 +63,14 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// Gets or sets the address of the project.
     /// </summary>
     public string Address { get; set; }
+
+    public bool AlreadyAdded { get; set; }
+
+    public string AddedProject { get; set; }
+
+    public string FullName { get; set; }
+
+    public string Description { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether this project is checked.
@@ -138,19 +147,14 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       return false;
     }
 
-    /// <summary>
-    /// Adds new project to the <see cref="Projects" /> list.
-    /// </summary>
-    /// <param name="name">The name of the new.</param>
-    /// <returns>The new, added project.</returns>
-    public ProjectViewModel AddProject(string name)
+    public ProjectViewModel AddProject(Project project)
     {
       if (this.projects == null)
       {
         this.projects = new List<ProjectViewModel>();
       }
 
-      var newProject = new ProjectViewModel(name, this.rootList);
+      var newProject = new ProjectViewModel(project.Name, this.rootList) { FullName = project.FullName, Description = project.Description };
       this.projects.Add(newProject);
       return newProject;
     }

@@ -293,7 +293,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       var checkedProjects = this.Projects.GetChecked();
       foreach (var checkedProject in checkedProjects.Where(p => p.Projects.Count == 0))
       {
-        var newProject = new Project { Address = checkedProject.Address, Name = checkedProject.Name, Plugin = this.Projects.PlugIn };
+        var newProject = new Project { Address = checkedProject.Address, Name = checkedProject.Name, FullName = checkedProject.FullName, Description = checkedProject.Description, Plugin = this.Projects.PlugIn };
         serverProjects.Add(newProject);
       }
 
@@ -409,8 +409,16 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     {
       foreach (var project in projects.OrderBy(x => x.Name))
       {
-        var newProject = projectViewModel.AddProject(project.Name);
+        var newProject = projectViewModel.AddProject(project);
         newProject.Address = project.Address;
+
+        var alreadyExists = this.config.ConnectorsConfiguration.Where(x => x.Type == this.SelectedConnectorType
+                                                                         && x.GetConfigurationByKey(Connector.ServerAddress)?.Value == this.ProposedServerAddress
+                                                                         && x.GetConfigurationByKey(Connector.ProjectName)?.Value == (!string.IsNullOrWhiteSpace(project.FullName) ? project.FullName : project.Name)).ToList();
+
+        newProject.AlreadyAdded = alreadyExists.Any();
+        newProject.AddedProject = alreadyExists.Any() ? string.Join(", ", alreadyExists.Select(x => $"{x.GetConfigurationByKey(Connector.Category).Value}/{x.Name}")) : null;
+
         this.ProcessServerSubProjects(project.Children, newProject);
       }
     }
@@ -473,7 +481,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       var serverProjects = await listQueryingPlugin.Item1.GetProjects(this.ProposedServerAddress);
       foreach (var serverProject in serverProjects.OrderBy(x => x.Name))
       {
-        var newProject = listQueryingPlugin.Item2.AddProject(serverProject.Name);
+        var newProject = listQueryingPlugin.Item2.AddProject(serverProject);
         newProject.Address = serverProject.Address;
         this.ProcessServerSubProjects(serverProject.Children, newProject);
       }

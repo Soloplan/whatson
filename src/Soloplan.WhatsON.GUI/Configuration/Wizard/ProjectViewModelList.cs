@@ -10,6 +10,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
   using System.Collections;
   using System.Collections.Generic;
   using Soloplan.WhatsON.Composition;
+  using Soloplan.WhatsON.Model;
 
   /// <summary>
   /// The list which is able to keep the <see cref="ProjectViewModel"/>s and serves additional functionalities.
@@ -81,11 +82,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// Adds the project.
     /// </summary>
-    /// <param name="name">The name.</param>
+    /// <param name="project">The project.</param>
     /// <returns>The added project.</returns>
-    public ProjectViewModel AddProject(string name)
+    public ProjectViewModel AddProject(Project project)
     {
-      var newProject = new ProjectViewModel(name, this);
+      var newProject = new ProjectViewModel(project.Name, this) { FullName = project.FullName, Description = project.Description };
       this.projects.Add(newProject);
       return newProject;
     }
