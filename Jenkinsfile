@@ -2,7 +2,9 @@
 @Library('SoloPipeline@1.0-rc7')
 import com.soloplan.*
 
-def Bucket = "whatson"
+def Bucket = "tools"
+def outputDir = "src/bin/Release"
+
 pipeline {
   agent {
     label 'dotnet-framework'
@@ -17,7 +19,13 @@ pipeline {
 
     stage('Build') {
       steps {
-        stepMSBuild(project: 'src/Soloplan.WhatsON.sln', outputDir: '')
+        stepMSBuild(project: 'src/Soloplan.WhatsON.sln', outputDir: outputDir)
+      }
+    }
+
+    stage('Test') {
+      steps {
+        stepNunit(folder: outputDir)
       }
     }
 
@@ -27,7 +35,7 @@ pipeline {
       }
       
       steps {
-        stepPublishArtifacts(bucket: Bucket, targetFolder: "master", folder: "src/bin/Release",  exclude: ['*.deps.json'], excludeSubfolders: false)
+        stepPublishArtifacts(bucket: Bucket, targetFolder: "whatson/master", folder: outputDir,  exclude: ['*.deps.json', '*.Tests.dll', '.nupkg'], excludeSubfolders: false)
       }
     }
 
@@ -37,7 +45,7 @@ pipeline {
       }
       
       steps {
-        stepPublishArtifacts(bucket: Bucket, targetFolder: env.TAG_NAME, folder: "src/bin/Release", exclude: ['*.deps.json', '*.pdb'], excludeSubfolders: false)
+        stepPublishArtifacts(bucket: Bucket, targetFolder: "whatson/${env.TAG_NAME}", folder: outputDir, exclude: ['*.deps.json', '*.pdb', '*.Tests.dll', '.nupkg'], excludeSubfolders: false)
       }
     }
   }
