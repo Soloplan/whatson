@@ -29,7 +29,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
 
       this.CopyData = new ActionCommand(Act);
-      this.ExpectedConnectorType = connector.Configuration.Type;
+      this.ExpectedConnectorType = connector?.Configuration?.Type;
     }
 
     /// <summary>

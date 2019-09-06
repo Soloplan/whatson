@@ -36,9 +36,12 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     public ConnectorViewModel(Connector connector)
     {
-      this.Identifier = connector.Configuration.Identifier;
-      this.Name = connector.Configuration.Name;
-      this.CurrentStatus = this.GetStatusViewModel();
+      if (connector != null)
+      {
+        this.Identifier = connector.Configuration.Identifier;
+        this.Name = connector.Configuration.Name;
+        this.CurrentStatus = this.GetStatusViewModel();
+      }
     }
 
     public string Name
