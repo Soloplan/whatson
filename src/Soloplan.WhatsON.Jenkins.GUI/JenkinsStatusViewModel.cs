@@ -52,6 +52,9 @@ namespace Soloplan.WhatsON.Jenkins.GUI
 
       this.DisplayName = jenkinsStatus.DisplayName;
 
+      // convert the UTC time to local time for displaying purposes
+      this.Time = this.Time.ToLocalTime();
+
       if (this.State == ObservationState.Running)
       {
         var elapsedSinceStart = (DateTime.Now - this.Time).TotalSeconds;

@@ -199,7 +199,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
       this.Name = newStatus.Name;
       this.Details = newStatus.Details;
-      this.Time = newStatus.Time.ToLocalTime();
+      this.Time = newStatus.Time;
       this.State = newStatus.State;
     }
 
