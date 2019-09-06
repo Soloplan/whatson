@@ -104,7 +104,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     public virtual OpenWebPageCommand OpenWebPage { get; } = new OpenWebPageCommand();
 
-
     public override void OnDoubleClick(object sender, MouseButtonEventArgs e)
     {
       base.OnDoubleClick(sender, e);

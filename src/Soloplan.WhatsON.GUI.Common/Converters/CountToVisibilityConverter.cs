@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="CountVisibilityConverter.cs" company="Soloplan GmbH">
+// <copyright file="CountToVisibilityConverter.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
@@ -15,7 +15,7 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
   /// <summary>
   /// Converts count to visibility. Count ==  0 -> Hidden, Count > 0 -> Visible.
   /// </summary>
-  internal class CountVisibilityConverter : IValueConverter
+  internal class CountToVisibilityConverter : IValueConverter
   {
     public Visibility ValueForFalse { get; set; } = Visibility.Hidden;
 

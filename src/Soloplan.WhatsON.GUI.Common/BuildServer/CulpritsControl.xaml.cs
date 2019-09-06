@@ -30,7 +30,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     public CulpritsControl()
     {
       this.InitializeComponent();
-      var converter = this.Resources["CountToVisibility"] as CountVisibilityConverter;
+      var converter = this.Resources["CountToVisibility"] as CountToVisibilityConverter;
       converter.ValueForFalse = Visibility.Collapsed;
       this.DataContext = this;
     }
