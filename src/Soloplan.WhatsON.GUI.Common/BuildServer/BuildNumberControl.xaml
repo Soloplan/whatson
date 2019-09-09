@@ -24,7 +24,7 @@
              HorizontalAlignment="Right"
              VerticalAlignment="Center"
              FontSize="{Binding DataContext.FontSizeSmall, Mode=OneWay, RelativeSource={RelativeSource AncestorType=connectorTreeView:ConnectorsTreeView}}"
-             FontWeight="Light"
+             FontWeight="Normal"
              Text="{Binding BuildNumber, Mode=OneWay}" />
   </StackPanel>
 </UserControl>

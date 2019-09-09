@@ -52,7 +52,7 @@
                  MaxWidth="250"
                  Margin="5,0,0,0"
                  FontSize="{Binding DataContext.FontSize, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}"
-                 FontWeight="Light"
+                 FontWeight="Normal"
                  Text="{Binding Name}"
                  TextTrimming="CharacterEllipsis" />
           <buildServer:HistoryBuildList DataContext="{Binding ConnectorSnapshots, Mode=OneWay}" DockPanel.Dock="Right" />
@@ -61,7 +61,7 @@
                  VerticalAlignment="Center"
                  DockPanel.Dock="Right"
                  FontSize="{Binding DataContext.FontSizeSmall, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}"
-                 FontWeight="Light"
+                 FontWeight="Normal"
                  Text="{Binding CurrentStatus.Time, Converter={StaticResource TimeToApproximateTimeConverter}}" />
         </DockPanel>
       </DataTemplate>
