@@ -51,7 +51,7 @@
           <TextBlock MinWidth="150"
                  MaxWidth="250"
                  Margin="5,0,0,0"
-                 FontSize="12"
+                 FontSize="{Binding DataContext.FontSize, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}"
                  FontWeight="Light"
                  Text="{Binding Name}"
                  TextTrimming="CharacterEllipsis" />
@@ -60,7 +60,7 @@
                  HorizontalAlignment="Right"
                  VerticalAlignment="Center"
                  DockPanel.Dock="Right"
-                 FontSize="10"
+                 FontSize="{Binding DataContext.FontSizeSmall, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}"
                  FontWeight="Light"
                  Text="{Binding CurrentStatus.Time, Converter={StaticResource TimeToApproximateTimeConverter}}" />
         </DockPanel>

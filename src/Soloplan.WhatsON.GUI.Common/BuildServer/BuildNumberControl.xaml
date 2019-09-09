@@ -4,6 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:connectorTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView"
              MinWidth="40"
              d:DataContext="{d:DesignInstance local:BuildNumberControl}"
              d:DesignHeight="450"
@@ -16,13 +17,13 @@
   </UserControl.ToolTip>
   <StackPanel Orientation="Horizontal">
     <TextBlock VerticalAlignment="Center"
-               FontSize="11"
+               FontSize="{Binding DataContext.FontSizeSmall, Mode=OneWay, RelativeSource={RelativeSource AncestorType=connectorTreeView:ConnectorsTreeView}}"
                FontWeight="Normal"
                Text="#" />
     <TextBlock Margin="2,0,0,0"
              HorizontalAlignment="Right"
              VerticalAlignment="Center"
-             FontSize="11"
+             FontSize="{Binding DataContext.FontSizeSmall, Mode=OneWay, RelativeSource={RelativeSource AncestorType=connectorTreeView:ConnectorsTreeView}}"
              FontWeight="Light"
              Text="{Binding BuildNumber, Mode=OneWay}" />
   </StackPanel>

@@ -48,6 +48,12 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     private bool prevOneGroupValue;
 
+    private int fontSize;
+
+    private int fontSizeSmall;
+
+    private int buildIconSize;
+
     /// <summary>
     /// Called when configuration has changed due to user input.
     /// </summary>
@@ -89,6 +95,45 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         if (this.itemPadding != value)
         {
           this.itemPadding = value;
+          this.OnPropertyChanged();
+        }
+      }
+    }
+
+    public int FontSize
+    {
+      get => this.fontSize;
+      set
+      {
+        if (this.fontSize != value)
+        {
+          this.fontSize = value;
+          this.OnPropertyChanged();
+        }
+      }
+    }
+
+    public int FontSizeSmall
+    {
+      get => this.fontSizeSmall;
+      set
+      {
+        if (this.fontSizeSmall != value)
+        {
+          this.fontSizeSmall = value;
+          this.OnPropertyChanged();
+        }
+      }
+    }
+
+    public int BuildIconSize
+    {
+      get => this.buildIconSize;
+      set
+      {
+        if (this.buildIconSize != value)
+        {
+          this.buildIconSize = value;
           this.OnPropertyChanged();
         }
       }
@@ -226,12 +271,21 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       {
         case ViewStyle.Normal:
           this.ItemPadding = 8;
+          this.FontSize = 16;
+          this.FontSizeSmall = 13;
+          this.BuildIconSize = 18;
           break;
         case ViewStyle.Compact:
           this.ItemPadding = 4;
+          this.FontSize = 14;
+          this.FontSizeSmall = 12;
+          this.BuildIconSize = 16;
           break;
         case ViewStyle.Pcked:
           this.ItemPadding = 0;
+          this.FontSize = 12;
+          this.FontSizeSmall = 10;
+          this.BuildIconSize = 14;
           break;
       }
 
