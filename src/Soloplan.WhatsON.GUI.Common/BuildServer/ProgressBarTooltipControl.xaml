@@ -31,9 +31,9 @@
         <TextBlock Text=" estimated remaining" />
       </StackPanel>
     </StackPanel>
-    <StackPanel Visibility="{Binding BuildingLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
-      <TextBlock FontSize="10" Text=" Taking " />
-      <TextBlock FontSize="10">
+    <StackPanel Orientation="Horizontal" Visibility="{Binding BuildingLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
+      <TextBlock Text="Taking " />
+      <TextBlock>
         <TextBlock.Text>
           <MultiBinding StringFormat="{}{0:00}:{1:00}:{2:00}">
             <Binding Path="BuildTimeExcedingEstimation.Hours" />
@@ -42,7 +42,7 @@
           </MultiBinding>
         </TextBlock.Text>
       </TextBlock>
-      <TextBlock FontSize="10" Text=" longer then estimated." />
+      <TextBlock Text=" longer than estimated." />
     </StackPanel>
   </StackPanel>
 </UserControl>
