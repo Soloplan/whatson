@@ -10,7 +10,7 @@ A build monitoring tool written in C#.
 <p align="center">
   <a href="https://github.com/Soloplan/whatson/issues/new?template=bug.md">Report bug</a>
   ·
-  <a href="https://github.com/v/issues/new?template=feature.md&labels=feature">Request feature</a>
+  <a href="https://github.com/Soloplan/whatson/issues/new?template=feature.md&labels=feature">Request feature</a>
 </p>
 
 
