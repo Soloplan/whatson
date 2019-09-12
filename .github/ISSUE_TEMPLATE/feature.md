@@ -1,9 +1,3 @@
----
-name: Feature request
-about: Suggest an idea for a new feature.
-
----
-
 Before opening [search for duplicate or closed issues](https://github.com/Soloplan/whatson/issues?utf8=%E2%9C%93&q=is%3Aissue)
 
 Feature requests must include:
