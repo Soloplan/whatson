@@ -3,10 +3,11 @@
 
 # whatsON
 
+A build monitoring tool written in C#.
+  <br>
+  <br>
+
 <p align="center">
-  A build monitoring tool written in C#.
-  <br>
-  <br>
   <a href="https://github.com/Soloplan/whatson/issues/new?template=bug.md">Report bug</a>
   ·
   <a href="https://github.com/v/issues/new?template=feature.md&labels=feature">Request feature</a>
@@ -22,7 +23,7 @@
 - [Plugins](#plugins)
 - [Documentation](#documentation)
 - [Creators](#creators)
-- [Copyright and license](#copyright-and-license)
+- [License](#License)
 
 
 ## Quick start
@@ -36,3 +37,35 @@
 ## Feature requests and bugs
 
 Have a bug or a feature request please search forit in existing and closed issues. If your problem or idea is not addressed yet, [please open a new issue](https://github.com/Soloplan/whatson/issues/new).
+
+## Plugins
+
+The plugins in whatsON allows to monitor builds from various build servers.
+It is possible to develop your own plugin, if it would be useful for the comunity, we would be happy if you would share it's code.
+By default, it allows to monitor these servers:
+ - [Jenkins](https://jenkins.io/)
+ - [CrusieControl.NET](https://github.com/ccnet/CruiseControl.NET)
+ 
+ ## Documentation
+ 
+ Documentation is avaliable as a [github WIKI](https://github.com/Soloplan/whatson/wiki)
+ 
+ ## Creators
+
+**Christian Heidl**
+
+**Steffen Wilke**
+
+- <https://github.com/steffen-wilke>
+
+**Dominik Gouda**
+
+- <https://github.com/dominikgolda>
+
+**Krzysztof Lorenc**
+
+- <https://github.com/lorokl2>
+
+## License
+
+[MIT license](https://github.com/Soloplan/whatson/blob/master/LICENSE)
