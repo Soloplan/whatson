@@ -36,7 +36,7 @@ A build monitoring tool written in C#.
 
 ## Feature requests and bugs
 
-Have a bug or a feature request please search forit in existing and closed issues. If your problem or idea is not addressed yet, [please open a new issue](https://github.com/Soloplan/whatson/issues/new).
+Have a bug or a feature request please search forit in existing and closed issues. If your problem or idea is not addressed yet, please [open a new issue](https://github.com/Soloplan/whatson/issues/new).
 
 ## Plugins
 
