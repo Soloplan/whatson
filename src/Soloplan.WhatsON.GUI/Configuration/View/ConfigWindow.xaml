@@ -29,32 +29,38 @@
                         Window="{Binding RelativeSource={RelativeSource AncestorType={x:Type view:ConfigWindow}}}"
                         Height="32"/>
     <DockPanel Margin="5" LastChildFill="True">
-      <Border x:Name="HideableStackPanel"
-              Padding="8,8,30,8"
-              DockPanel.Dock="Bottom"
-              Visibility="{Binding Path=ConfigurationIsModified, Converter={StaticResource BoolToVis}}">
-        <DockPanel Background="{DynamicResource MaterialDesignBody}" LastChildFill="False" Margin="0,0,-20,0">
-          <TextBlock Padding="5"
+      <materialDesign:TransitioningContent
+        DockPanel.Dock="Bottom"
+        Visibility="{Binding Path=ConfigurationIsModified, Converter={StaticResource BoolToVis}}">
+        <materialDesign:TransitioningContent.OpeningEffects>
+          <materialDesign:TransitionEffect Kind="SlideInFromBottom" Duration="0:0:0.8"/>
+        </materialDesign:TransitioningContent.OpeningEffects>
+        <Border x:Name="HideableStackPanel"
+              Padding="0,0,20,0">
+          <DockPanel Background="{DynamicResource MaterialDesignBody}" LastChildFill="False" Margin="0,0,-20,0">
+            <TextBlock Padding="5"
                      VerticalAlignment="Center"
                      Foreground="{DynamicResource MaterialDesignBackground}"
                      Text="Configuration is modified" />
-          <DockPanel DockPanel.Dock="Right">
-            <Button Margin="5"
+            <DockPanel DockPanel.Dock="Right">
+              <Button Margin="5"
                     Padding="5"
+                    Click="SnackbarSaveClick"
                     Style="{StaticResource MaterialDesignFlatButton}">
-              Save
-            </Button>
-            <Button Margin="5"
+                Save
+              </Button>
+              <Button Margin="5"
                     Padding="5"
-                    Click="SnackbarMessageActionClick"
+                    Click="SnackbarResetClick"
                     Style="{StaticResource MaterialDesignFlatButton}"
                     Content="{Binding Path=SnackbarActionCaption}" />
+            </DockPanel>
           </DockPanel>
-        </DockPanel>
-        <Border.RenderTransform>
-          <TranslateTransform Y="0" />
-        </Border.RenderTransform>
-      </Border>
+          <Border.RenderTransform>
+            <TranslateTransform Y="0" />
+          </Border.RenderTransform>
+        </Border>
+      </materialDesign:TransitioningContent>
       <DockPanel DockPanel.Dock="Left" Visibility="{Binding Path=SingleConnectorMode, Converter={StaticResource InvertBoolToVis}}">
         <ListBox x:Name="ConfigTopicsListBox"
                  Width="158"

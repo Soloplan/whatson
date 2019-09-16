@@ -78,8 +78,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     private bool windowShown;
 
-    private bool skipSavingOnClose;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="ConfigWindow"/> class.
     /// </summary>
@@ -250,32 +248,19 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <param name="e">The <see cref="System.ComponentModel.CancelEventArgs"/> instance containing the event data.</param>
     private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
     {
-      if (this.skipSavingOnClose)
-      {
-        return;
-      }
-
-      if (!Validation.IsValid(this))
-      {
-        e.Cancel = true;
-        return;
-      }
-
       this.Owner.Closing -= this.OwnerClosing;
-      this.configurationViewModel.ApplyToSourceAndSave();
     }
 
     /// <summary>
-    /// Handles the ActionClick event of the SnackbarMessage control.
+    /// Handles the Reset Click on the Snackbar.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-    private void SnackbarMessageActionClick(object sender, RoutedEventArgs e)
+    private void SnackbarResetClick(object sender, RoutedEventArgs e)
     {
       this.configurationViewModel.Load(this.configurationSource);
       if (this.configurationViewModel.SingleConnectorMode && this.newConnectorPlugin != null)
       {
-        this.skipSavingOnClose = true;
         this.Close();
       }
     }
@@ -337,6 +322,19 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     private void OwnerClosing(object sender, System.ComponentModel.CancelEventArgs e)
     {
       e.Cancel = this.configurationViewModel.ConfigurationIsModified;
+    }
+
+    /// <summary>
+    /// Handles the Save Click on the Snackbar.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+    private void SnackbarSaveClick(object sender, RoutedEventArgs e)
+    {
+      if (Validation.IsValid(this))
+      {
+        this.configurationViewModel.ApplyToSourceAndSave();
+      }
     }
   }
 }
