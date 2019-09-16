@@ -29,15 +29,32 @@
                         Window="{Binding RelativeSource={RelativeSource AncestorType={x:Type view:ConfigWindow}}}"
                         Height="32"/>
     <DockPanel Margin="5" LastChildFill="True">
-      <materialDesign:Snackbar x:Name="ConfigSnackBack"
-                               Padding="8,8,30,8"
-                               HorizontalAlignment="Stretch"
-                               DockPanel.Dock="Bottom"
-                               IsActive="{Binding ConfigurationIsModified}">
-        <materialDesign:SnackbarMessage ActionClick="SnackbarMessageActionClick"
-                                        ActionContent="{Binding Path=SnackbarActionCaption}"
-                                        Content="Configuration is modified" />
-      </materialDesign:Snackbar>
+      <Border x:Name="HideableStackPanel"
+              Padding="8,8,30,8"
+              DockPanel.Dock="Bottom"
+              Visibility="{Binding Path=ConfigurationIsModified, Converter={StaticResource BoolToVis}}">
+        <DockPanel Background="{DynamicResource MaterialDesignBody}" LastChildFill="False" Margin="0,0,-20,0">
+          <TextBlock Padding="5"
+                     VerticalAlignment="Center"
+                     Foreground="{DynamicResource MaterialDesignBackground}"
+                     Text="Configuration is modified" />
+          <DockPanel DockPanel.Dock="Right">
+            <Button Margin="5"
+                    Padding="5"
+                    Style="{StaticResource MaterialDesignFlatButton}">
+              Save
+            </Button>
+            <Button Margin="5"
+                    Padding="5"
+                    Click="SnackbarMessageActionClick"
+                    Style="{StaticResource MaterialDesignFlatButton}"
+                    Content="{Binding Path=SnackbarActionCaption}" />
+          </DockPanel>
+        </DockPanel>
+        <Border.RenderTransform>
+          <TranslateTransform Y="0" />
+        </Border.RenderTransform>
+      </Border>
       <DockPanel DockPanel.Dock="Left" Visibility="{Binding Path=SingleConnectorMode, Converter={StaticResource InvertBoolToVis}}">
         <ListBox x:Name="ConfigTopicsListBox"
                  Width="158"
