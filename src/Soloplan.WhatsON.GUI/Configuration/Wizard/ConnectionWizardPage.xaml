@@ -10,11 +10,13 @@
       Title="ConnectionWizardPage"
       Background="{DynamicResource MaterialDesignPaper}"
       TextElement.Foreground="{DynamicResource MaterialDesignBody}">
-
-  <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="6">
-    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch" Orientation="Vertical">
-      <ComboBox materialDesign:HintAssist.Hint="Type" Margin="10,0,10,0" Style="{StaticResource MaterialDesignFloatingHintComboBox}" ItemsSource="{Binding AvailableConnectorTypes}" SelectedItem="{Binding SelectedConnectorType}" />
-      <ComboBox materialDesign:HintAssist.Hint="Project URL" Margin="10,30,10,0" DockPanel.Dock="Top" Padding="8 4 8 4" IsEditable="True" materialDesign:HintAssist.HintOpacity=".26" ItemsSource="{Binding AvailableServers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Text="{Binding Path=ProposedServerAddress}" KeyUp="ConnectionAdressKeyUp" Name="AddressComboBox" />
+  <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+    <TextBox Margin="10 50 10 0" DockPanel.Dock="Top" Height="100" TextWrapping="Wrap" Text="Welcome to connection wizard.&#xD;&#xA;&#xA;Select the type of the plugin which you would like to use for the connection and type the URL." FontSize="16" IsReadOnly="True" BorderThickness="0" />
+    <StackPanel DockPanel.Dock="Bottom" Orientation="Vertical" VerticalAlignment="Center" Margin="6">
+      <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch" Orientation="Vertical" Margin="10 0 10 0">
+        <ComboBox materialDesign:HintAssist.Hint="Type" Style="{StaticResource MaterialDesignFloatingHintComboBox}" ItemsSource="{Binding AvailableConnectorTypes}" SelectedItem="{Binding SelectedConnectorType}" />
+        <ComboBox materialDesign:HintAssist.Hint="Project URL" Margin="0,30,0,0" DockPanel.Dock="Top" Padding="8 4 8 4" IsEditable="True" materialDesign:HintAssist.HintOpacity=".26" ItemsSource="{Binding AvailableServers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Text="{Binding ProposedServerAddress}" KeyUp="ConnectionAdressKeyUp" x:Name="AddressComboBox" />
+      </StackPanel>
     </StackPanel>
-  </StackPanel>
+  </DockPanel>
 </Page>
