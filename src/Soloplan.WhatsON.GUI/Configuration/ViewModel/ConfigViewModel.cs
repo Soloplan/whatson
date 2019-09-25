@@ -98,6 +98,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     private bool singleConnectorMode;
 
     /// <summary>
+    /// The configuration is modified flag.
+    /// </summary>
+    private bool configurationIsModified;
+
+    /// <summary>
     /// Occurs when configuration was applied.
     /// </summary>
     public event EventHandler<ValueEventArgs<ApplicationConfiguration>> ConfigurationApplied;
@@ -362,7 +367,15 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <value>
     ///   <c>true</c> if configuration is modified; otherwise, <c>false</c>.
     /// </value>
-    public bool ConfigurationIsModified { get; private set; }
+    public bool ConfigurationIsModified
+    {
+      get => this.configurationIsModified;
+      private set
+      {
+        this.configurationIsModified = value;
+        this.OnPropertyChanged();
+      }
+    }
 
     /// <summary>
     /// Gets a value indicating whether configuration is not modified.
@@ -442,6 +455,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
         this.Connectors.ApplyToConfiguration(this.Configuration);
         this.ApplyMainSettingsToConfiguration(this.Configuration);
         SerializationHelper.SaveConfiguration(this.Configuration);
+        this.ConfigurationIsModified = false;
       }
       finally
       {
