@@ -36,6 +36,14 @@
         </StackPanel>
       </MenuItem.Header>
     </MenuItem>
+    <MenuItem Command="{Binding ExportCommand}">
+      <MenuItem.Header>
+        <StackPanel Orientation="Horizontal">
+          <materialDesign:PackIcon Kind="Export" />
+          <TextBlock Padding="10,0,0,0" Text="Export" />
+        </StackPanel>
+      </MenuItem.Header>
+    </MenuItem>
     <Separator />
     <MenuItem CommandParameter="{Binding OpenWebPageParam}" Command="{Binding OpenWebPage}">
       <MenuItem.Header>

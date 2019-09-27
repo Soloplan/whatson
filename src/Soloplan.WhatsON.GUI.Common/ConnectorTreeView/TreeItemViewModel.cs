@@ -21,6 +21,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     private CustomCommand editCommand;
 
+    /// <summary>
+    /// Backing field for <see cref="ExportCommand"/>.
+    /// </summary>
+    private CustomCommand exportCommand;
+
     private CustomCommand deleteCommand;
 
     /// <summary>
@@ -37,6 +42,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// Event fired when item should be deleted.
     /// </summary>
     public event EventHandler<DeleteTreeItemEventArgs> DeleteItem;
+
+    /// <summary>
+    /// Event fired when user requested exporting of tree view item in context menu.
+    /// </summary>
+    public event EventHandler<ValueEventArgs<TreeItemViewModel>> ExportItem;
 
     public bool IsNodeExpanded
     {
@@ -59,7 +69,12 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     public virtual CustomCommand DeleteCommand => this.deleteCommand ?? (this.deleteCommand = this.CreateDeleteCommand());
 
     /// <summary>
-    /// Gets or sets a value indicating whether configuration was modified from main window.
+    /// Gets command for exporting tree item.
+    /// </summary>
+    public virtual CustomCommand ExportCommand => this.exportCommand ?? (this.exportCommand = this.CreateExportCommand());
+
+    /// <summary>
+    /// Gets or sets a value indicating whether configuration was modified from main window.s
     /// </summary>
     public virtual bool ConfigurationModifiedInTree
     {
@@ -105,6 +120,16 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
+    /// Called when item is exported.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="eventArgs">Arguments containing data about exporting item.</param>
+    protected virtual void OnExportItem(object sender, ValueEventArgs<TreeItemViewModel> eventArgs)
+    {
+      this.ExportItem?.Invoke(sender, eventArgs);
+    }
+
+    /// <summary>
     /// Creates command used for editing this tree item.
     /// </summary>
     /// <returns>Command used to edit tree item.</returns>
@@ -112,6 +137,17 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       var command = new CustomCommand();
       command.OnExecute += (s, e) => this.OnEditItem(this, new ValueEventArgs<TreeItemViewModel>(this));
+      return command;
+    }
+
+    /// <summary>
+    /// Creates command used for exporting this tree item.
+    /// </summary>
+    /// <returns>Command used to export tree item.</returns>
+    protected virtual CustomCommand CreateExportCommand()
+    {
+      var command = new CustomCommand();
+      command.OnExecute += (s, e) => this.OnExportItem(this, new ValueEventArgs<TreeItemViewModel>(this));
       return command;
     }
 

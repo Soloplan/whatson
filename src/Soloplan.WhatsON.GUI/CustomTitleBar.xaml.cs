@@ -66,6 +66,11 @@ namespace Soloplan.WhatsON.GUI
     public event EventHandler AddGroupClicked;
 
     /// <summary>
+    /// Occurs when import button was clicked.
+    /// </summary>
+    public event EventHandler ImportClicked;
+
+    /// <summary>
     /// Gets or sets the window handled by this instance.
     /// </summary>
     public Window Window
@@ -215,6 +220,16 @@ namespace Soloplan.WhatsON.GUI
     private void NewConnectorClick(object sender, RoutedEventArgs e)
     {
       this.AddConnectorClicked?.Invoke(sender, e);
+    }
+
+    /// <summary>
+    /// Import click handler.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+    private void ImportClick(object sender, RoutedEventArgs e)
+    {
+      this.ImportClicked?.Invoke(sender, e);
     }
   }
 }

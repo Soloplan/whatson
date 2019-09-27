@@ -30,6 +30,14 @@
             </StackPanel>
           </MenuItem.Header>
         </MenuItem>
+        <MenuItem Command="{Binding ExportCommand}" >
+          <MenuItem.Header>
+            <StackPanel Orientation="Horizontal">
+              <materialDesign:PackIcon Kind="Export"/>
+              <TextBlock Padding="5,0,0,0" Text="Export" />
+            </StackPanel>
+          </MenuItem.Header>
+        </MenuItem>
       </ContextMenu>
 
       <HierarchicalDataTemplate DataType="{x:Type local:ConnectorGroupViewModel}" ItemsSource="{Binding Path=ConnectorViewModels}">

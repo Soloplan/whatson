@@ -155,8 +155,19 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       ConnectorViewModel connectorViewModel = this.GetConnectorViewModel(connector);
       connectorViewModel.EditItem += this.OnSubItemEdit;
       connectorViewModel.DeleteItem += this.DeleteConnector;
+      connectorViewModel.ExportItem += this.ExportItemHandler;
       connectorViewModel.Update(connector);
       this.ConnectorViewModels.Add(connectorViewModel);
+    }
+
+    /// <summary>
+    /// Handles the export of a project item.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="ValueEventArgs{TreeItemViewModel}"/> instance containing the event data.</param>
+    private void ExportItemHandler(object sender, ValueEventArgs<TreeItemViewModel> e)
+    {
+      this.OnExportItem(this, e);
     }
 
     private ConnectorViewModel GetConnectorViewModel(Connector connector)

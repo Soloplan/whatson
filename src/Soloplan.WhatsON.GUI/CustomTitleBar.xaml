@@ -60,6 +60,12 @@
               <TextBlock Margin="10,0,0,0">Add new group</TextBlock>
             </StackPanel>
           </Button>
+          <Button Click="ImportClick" IsEnabled="{Binding CustomButtonVisible}">
+            <StackPanel Orientation="Horizontal">
+              <materialDesign:PackIcon Width="16" Height="16" Kind="Import" />
+              <TextBlock Margin="10,0,0,0">Import</TextBlock>
+            </StackPanel>
+          </Button>
         </StackPanel>
       </materialDesign:PopupBox>
 

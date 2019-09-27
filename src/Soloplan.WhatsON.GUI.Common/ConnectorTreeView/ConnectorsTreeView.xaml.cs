@@ -63,6 +63,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     public event EventHandler<ValueEventArgs<TreeItemViewModel>> EditItem;
 
     /// <summary>
+    /// Event fired when user requested exporting of tree view item in context menu.
+    /// </summary>
+    public event EventHandler<ValueEventArgs<TreeItemViewModel>> ExportItem;
+
+    /// <summary>
     /// Event fired when user wants to delete item.
     /// </summary>
     public event EventHandler<DeleteTreeItemEventArgs> DeleteItem;
@@ -77,6 +82,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.model = new ConnectorTreeViewModel();
       this.model.PropertyChanged += this.ModelPropertyChanged;
       this.model.EditItem += (s, e) => this.EditItem?.Invoke(s, e);
+      this.model.ExportItem += (s, e) => this.ExportItem?.Invoke(s, e);
       this.model.DeleteItem += (s, e) => this.DeleteItem?.Invoke(s, e);
       this.model.ConfigurationChanged += (s, e) => this.ConfigurationChanged?.Invoke(this, EventArgs.Empty);
       this.model.Init(scheduler, configuration, initialConnectorState);

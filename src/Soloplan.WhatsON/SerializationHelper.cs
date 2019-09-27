@@ -8,11 +8,14 @@
 namespace Soloplan.WhatsON
 {
   using System;
+  using System.Collections.Generic;
   using System.IO;
+  using System.Linq;
   using System.Net;
   using System.Threading;
   using System.Threading.Tasks;
   using Newtonsoft.Json;
+  using Newtonsoft.Json.Serialization;
   using NLog;
   using Soloplan.WhatsON.Configuration;
 
@@ -38,10 +41,14 @@ namespace Soloplan.WhatsON
     /// <typeparam name="T">The type of configuration.</typeparam>
     /// <param name="configuration">The configuration.</param>
     /// <param name="file">The file path.</param>
-    public static void Save<T>(T configuration, string file)
+    public static void Save<T>(T configuration, string file, bool serializeIdentifier = true)
     {
       log.Debug("Saving configuration {configuration} to file {file}.", configuration, file);
       var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto, NullValueHandling = NullValueHandling.Ignore, Formatting = Formatting.Indented };
+      if (!serializeIdentifier)
+      {
+        settings.ContractResolver = new WhatsOnContractResolver(nameof(ConnectorConfiguration.Identifier));
+      }
       var json = JsonConvert.SerializeObject(configuration, settings);
       File.WriteAllText(file, json);
       log.Debug("Configuration saved.");
@@ -94,7 +101,7 @@ namespace Soloplan.WhatsON
       Save(configuration, configFilePath ?? ConfigFile);
     }
 
-    public static async Task<TModel> GetJsonModel<TModel>(string requestUrl, CancellationToken token = default, Action<WebRequest> requestCallback = null)
+    public static async Task<TModel> GetJsonModel<TModel>(string requestUrl, CancellationToken token = default(CancellationToken), Action<WebRequest> requestCallback = null)
      where TModel : class
     {
       const string JSON_CONTENT_TYPE = "application/json";
@@ -147,6 +154,42 @@ namespace Soloplan.WhatsON
         }
 
         throw;
+      }
+    }
+
+    /// <summary>
+    /// The contract resolver capable of ignoring certain properties.
+    /// </summary>
+    /// <seealso cref="Newtonsoft.Json.Serialization.DefaultContractResolver" />
+    private class WhatsOnContractResolver : DefaultContractResolver
+    {
+      /// <summary>
+      /// The properties.
+      /// </summary>
+      private readonly string[] properties;
+
+      /// <summary>
+      /// Initializes a new instance of the <see cref="WhatsOnContractResolver"/> class.
+      /// </summary>
+      /// <param name="properties">The properties.</param>
+      public WhatsOnContractResolver(params string[] properties)
+      {
+        this.properties = properties;
+      }
+
+      /// <summary>
+      /// Creates properties for the given <see cref="T:Newtonsoft.Json.Serialization.JsonContract" />.
+      /// </summary>
+      /// <param name="type">The type to create properties for.</param>
+      /// <param name="memberSerialization">The member serialization mode for the type.</param>
+      /// <returns>
+      /// Properties for the given <see cref="T:Newtonsoft.Json.Serialization.JsonContract" />.
+      /// </returns>
+      protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
+      {
+        var resultProperties = base.CreateProperties(type, memberSerialization);
+        resultProperties = resultProperties.Where(p => !this.properties.Contains(p.PropertyName)).ToList();
+        return resultProperties;
       }
     }
   }

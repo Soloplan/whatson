@@ -21,6 +21,7 @@ namespace Soloplan.WhatsON.GUI
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
+  using Soloplan.WhatsON.GUI.Configuration;
   using Soloplan.WhatsON.GUI.Configuration.View;
   using Soloplan.WhatsON.GUI.Configuration.ViewModel;
   using Soloplan.WhatsON.GUI.Configuration.Wizard;
@@ -74,6 +75,7 @@ namespace Soloplan.WhatsON.GUI
       this.mainTreeView.ConfigurationChanged += this.MainTreeViewOnConfigurationChanged;
       this.mainTreeView.EditItem += this.EditTreeItem;
       this.mainTreeView.DeleteItem += this.OnItemDeleted;
+      this.mainTreeView.ExportItem += this.ExportTreeItem;
     }
 
     /// <summary>
@@ -187,6 +189,20 @@ namespace Soloplan.WhatsON.GUI
       }
     }
 
+    /// <summary>
+    /// Handles the import click.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+    private void ImportClick(object sender, EventArgs e)
+    {
+      var interchange = new ProjectsDataInterchange();
+      if (interchange.Import(this.config))
+      {
+        this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.config));
+      }
+    }
+
     private void MainTreeViewOnConfigurationChanged(object sender, EventArgs e)
     {
       var showAnimation = !this.ConfigurationModifiedFromTree;
@@ -293,13 +309,29 @@ namespace Soloplan.WhatsON.GUI
     }
 
     /// <summary>
-    /// Opens the configuration.
+    /// Handles editing of tree item.
     /// </summary>
-    /// <param name="newConnectorPlugin">The new connector plugin.</param>
-    private void OpenConfig(ConnectorPlugin newConnectorPlugin)
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">Event args.</param>
+    private void ExportTreeItem(object sender, ValueEventArgs<Common.ConnectorTreeView.TreeItemViewModel> e)
     {
-      var configWindow = new ConfigWindow(this.config, newConnectorPlugin);
-      this.OpenConfig(configWindow);
+      if (e.Value is ConnectorGroupViewModel groupTreeViewModel)
+      {
+        var connectors = new List<ConnectorConfiguration>();
+        foreach (var connectorViewModelItem in groupTreeViewModel.ConnectorViewModels)
+        {
+          connectors.Add(connectorViewModelItem.Connector.Configuration);
+        }
+
+        var projectsDataInterchange = new ProjectsDataInterchange();
+        projectsDataInterchange.Export(connectors);
+      }
+
+      if (e.Value is Common.ConnectorTreeView.ConnectorViewModel connectorViewModel)
+      {
+        var projectsDataInterchange = new ProjectsDataInterchange();
+        projectsDataInterchange.Export(connectorViewModel.Connector.Configuration);
+      }
     }
 
     /// <summary>
