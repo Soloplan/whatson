@@ -49,18 +49,6 @@
         </StackPanel>
     </materialDesign:PopupBox>
 
-    <Button
-      Style="{StaticResource MaterialDesignFloatingActionButton}"
-      ToolTip="Rename connector"
-      Visibility="{Binding Path=SingleConnectorMode, Converter={StaticResource BoolToVis}}"
-      Panel.ZIndex="2" Margin="0,0,25,10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="56"
-      Click="RenameConnectorClick">
-      <materialDesign:PackIcon
-        Kind="Edit"
-        Height="36"
-        Width="36" />
-    </Button>
-
       <DockPanel LastChildFill="true">
         <StackPanel DockPanel.Dock="Top">
           <TextBox materialDesign:HintAssist.Hint="Name"
