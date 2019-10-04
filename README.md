@@ -65,7 +65,9 @@ By default, it allows to monitor these servers:
  ## Contribution
  
  You can create your own plugin, see this [guide](https://github.com/Soloplan/whatson/wiki/Developing-a-new-plugin) for details.
- You can checkour the [Travis CI plugin](https://github.com/steffen-wilke/whatson-travis-ci) as example.
+ 
+ You can checkout the [Travis CI plugin](https://github.com/steffen-wilke/whatson-travis-ci) as example.
+ 
  See also [contribution guidelines](https://github.com/Soloplan/whatson/wiki/Contribiution).
  
  ## Creators
