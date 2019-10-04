@@ -25,7 +25,7 @@ A build monitoring tool written in C#.
 - [Feature requests and bugs](#feature-requests-and-bugs)
 - [Plugins](#plugins)
 - [Documentation](#documentation)
-- [Contribiution](#contribiution)
+- [Contribiution](#contribution)
 - [Creators](#creators)
 - [License](#License)
 
