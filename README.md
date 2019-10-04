@@ -18,6 +18,7 @@ A build monitoring tool written in C#.
 
 ## Table of contents
 
+- [Features](#features)
 - [Quick start](#quick-start)
 - [Feature requests and bugs](#feature-requests-and-bugs)
 - [Plugins](#plugins)
@@ -25,6 +26,14 @@ A build monitoring tool written in C#.
 - [Creators](#creators)
 - [License](#License)
 
+## Features
+- Monitor multiple builds status with a lot of additional information.
+- Supports multiple build automation systems. By default Jenkins and CruiseControl.NET, but you can create your own plugin!
+- Quick view for status of last 5 builds (Jenkins plugin)
+- Easy configuration directly on main window.
+- Wizard to add new projects.
+- Configurable Windows notifications.
+- Dark and light theme
 
 ## Quick start
 
