@@ -16,6 +16,8 @@ A build monitoring tool written in C#.
 
 **whatsON** is a tool that provides the possibility to monitor the status and progress of build processes. It's designed to give developers or other collaborators a quick overview of the infrastructure's health and to notify them about issues in the build.
 
+![alt text](https://raw.githubusercontent.com/Soloplan/whatson/master/WebContent/Screenshot.png)
+
 ## Table of contents
 
 - [Features](#features)
@@ -23,6 +25,7 @@ A build monitoring tool written in C#.
 - [Feature requests and bugs](#feature-requests-and-bugs)
 - [Plugins](#plugins)
 - [Documentation](#documentation)
+- [Contribiution](#contribution)
 - [Creators](#creators)
 - [License](#License)
 
@@ -58,6 +61,14 @@ By default, it allows to monitor these servers:
  ## Documentation
  
  Documentation is avaliable as a [github WIKI](https://github.com/Soloplan/whatson/wiki)
+ 
+ ## Contribution
+ 
+ You can create your own plugin, see this [guide](https://github.com/Soloplan/whatson/wiki/Developing-a-new-plugin) for details.
+ 
+ You can checkout the [Travis CI plugin](https://github.com/steffen-wilke/whatson-travis-ci) as example.
+ 
+ See also [contribution guidelines](https://github.com/Soloplan/whatson/wiki/Contribiution).
  
  ## Creators
 
