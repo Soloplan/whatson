@@ -25,6 +25,7 @@ A build monitoring tool written in C#.
 - [Feature requests and bugs](#feature-requests-and-bugs)
 - [Plugins](#plugins)
 - [Documentation](#documentation)
+- [Contribiution](#contribiution)
 - [Creators](#creators)
 - [License](#License)
 
@@ -60,6 +61,12 @@ By default, it allows to monitor these servers:
  ## Documentation
  
  Documentation is avaliable as a [github WIKI](https://github.com/Soloplan/whatson/wiki)
+ 
+ ## Contribution
+ 
+ You can create your own plugin, see this [guide](https://github.com/Soloplan/whatson/wiki/Developing-a-new-plugin) for details.
+ You can checkour the [Travis CI plugin](https://github.com/steffen-wilke/whatson-travis-ci) as example.
+ See also [contribution guidelines](https://github.com/Soloplan/whatson/wiki/Contribiution).
  
  ## Creators
 
