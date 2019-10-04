@@ -271,6 +271,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         this.ConnectorGroups.Remove(connectorGroupViewModel);
       }
 
+      foreach (var group in this.ConnectorGroups)
+      {
+        foreach (var projectViewModel in group.ConnectorViewModels)
+        {
+          projectViewModel.Update(projectViewModel.Connector);
+        }
+      }
+
       this.FireOneGroupChanged();
       switch (configuration.ViewStyle)
       {

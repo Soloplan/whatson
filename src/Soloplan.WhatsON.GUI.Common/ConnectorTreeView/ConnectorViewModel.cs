@@ -156,6 +156,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
 
       this.Description = changedConnector.Description;
+      this.Name = this.Connector.Configuration.Name;
       this.CurrentStatus.Update(changedConnector.CurrentStatus);
     }
 
