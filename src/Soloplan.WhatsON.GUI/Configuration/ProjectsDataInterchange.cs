@@ -33,6 +33,11 @@ namespace Soloplan.WhatsON.GUI.Configuration
     public void Export(IList<ConnectorConfiguration> connectorsConfiguration)
     {
       var filePath = this.GetExportFilePath();
+      if (string.IsNullOrWhiteSpace(filePath))
+      {
+        return;
+      }
+
       SerializationHelper.Save(connectorsConfiguration, filePath, false);
     }
 
