@@ -24,7 +24,7 @@ namespace Soloplan.WhatsON.CruiseControl
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
     private readonly string baseUrl;
 
-    private DateTime lastPoolled;
+    private DateTime lastPolled;
 
     private CruiseControlJobs cache;
 
@@ -38,10 +38,10 @@ namespace Soloplan.WhatsON.CruiseControl
     public async Task<CruiseControlJob> GetProjectStatus(CancellationToken cancellationToken, string projectName, int interval)
     {
       var pollInterval = new TimeSpan(0, 0, 0, interval, 0);
-      if (DateTime.Now - this.lastPoolled > pollInterval)
+      if (DateTime.Now - this.lastPolled > pollInterval)
       {
-        log.Trace("Polling server {@server}", new { Address = this.ReportUrl, LastPolled = this.lastPoolled, CallingProject = projectName });
-        this.lastPoolled = DateTime.Now;
+        log.Trace("Polling server {@server}", new { Address = this.ReportUrl, LastPolled = this.lastPolled, CallingProject = projectName });
+        this.lastPolled = DateTime.Now;
         this.cache = await this.GetStatusAsync<CruiseControlJobs>(cancellationToken, this.ReportUrl);
       }
 
