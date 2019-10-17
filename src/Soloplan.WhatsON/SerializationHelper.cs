@@ -22,13 +22,34 @@ namespace Soloplan.WhatsON
   /// <summary>
   /// The serializer which is responsible for the for loading, saving or creating empty configuration.
   /// </summary>
-  public static class SerializationHelper
+  public sealed class SerializationHelper
   {
-    public static readonly string ConfigFileExtension = "json";
+    /// <summary>
+    /// The  <see cref="Lazy{T}"/> instance for the singleton.
+    /// </summary>
+    static readonly Lazy<SerializationHelper> lazy = new Lazy<SerializationHelper>(() => new SerializationHelper());
 
-    public static readonly string ConfigFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\WhatsOn";
+    /// <summary>
+    /// The instance of the <see cref="SerializationHelper"/>.
+    /// </summary>
+    public static SerializationHelper Instance => lazy.Value;
 
-    public static readonly string ConfigFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\WhatsOn\\configuration." + ConfigFileExtension;
+    /// <summary>
+    /// The configuration file extension.
+    /// </summary>
+    public readonly string ConfigFileExtension = "json";
+
+    /// <summary>
+    /// The configuration folder path, without the back slash.
+    /// </summary>
+    public string ConfigFolder;
+
+    public string ConfigFile => this.ConfigFolder + "\\configuration." + this.ConfigFileExtension;
+
+    public SerializationHelper()
+    {
+      this.ConfigFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\WhatsOn";
+    }
 
     /// <summary>
     /// Logger instance used by this class.
@@ -41,7 +62,7 @@ namespace Soloplan.WhatsON
     /// <typeparam name="T">The type of configuration.</typeparam>
     /// <param name="configuration">The configuration.</param>
     /// <param name="file">The file path.</param>
-    public static void Save<T>(T configuration, string file, bool serializeIdentifier = true)
+    public void Save<T>(T configuration, string file, bool serializeIdentifier = true)
     {
       log.Debug("Saving configuration {configuration} to file {file}.", configuration, file);
       var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto, NullValueHandling = NullValueHandling.Ignore, Formatting = Formatting.Indented };
@@ -49,6 +70,7 @@ namespace Soloplan.WhatsON
       {
         settings.ContractResolver = new WhatsOnContractResolver(nameof(ConnectorConfiguration.Identifier));
       }
+
       var json = JsonConvert.SerializeObject(configuration, settings);
       File.WriteAllText(file, json);
       log.Debug("Configuration saved.");
@@ -60,19 +82,48 @@ namespace Soloplan.WhatsON
       return JsonConvert.DeserializeObject<T>(File.ReadAllText(file), settings);
     }
 
-    public static ApplicationConfiguration LoadConfiguration()
+    public ApplicationConfiguration LoadConfiguration()
     {
       log.Debug("Loading configuration form file {file}", ConfigFile);
       return Load<ApplicationConfiguration>(ConfigFile);
     }
 
     /// <summary>
+    /// Sets the configuration folder to given path.
+    /// </summary>
+    /// <param name="configDir">The new configuration Directory Path. Can be null, then default is used. The ending slash will be trimmed.</param>
+    public void SetConfigFolder(string configDir)
+    {
+      if (configDir == null)
+      {
+        return;
+      }
+
+      try
+      {
+        configDir = configDir.TrimEnd('\\');
+        if (!Directory.Exists(configDir))
+        {
+          Directory.CreateDirectory(configDir);
+        }
+      }
+      catch (Exception e)
+      {
+        log.Error($"Couldn't set the configuration directory to: {configDir}, Error message: {e.Message}");
+      }
+      finally
+      {
+        this.ConfigFolder = configDir;
+      }
+    }
+
+    /// <summary>
     /// Loads the or creates the configuration.
     /// </summary>
     /// <returns>The existing or new configuration.</returns>
-    public static ApplicationConfiguration LoadOrCreateConfiguration()
+    public ApplicationConfiguration LoadOrCreateConfiguration()
     {
-      if (File.Exists(ConfigFile))
+      if (File.Exists(this.ConfigFile))
       {
         return LoadConfiguration();
       }
@@ -85,7 +136,7 @@ namespace Soloplan.WhatsON
     /// Saves the configuration.
     /// </summary>
     /// <param name="configuration">The configuration.</param>
-    public static void SaveConfiguration(ApplicationConfiguration configuration, string configFilePath = null)
+    public void SaveConfiguration(ApplicationConfiguration configuration, string configFilePath = null)
     {
       if (configFilePath == null)
       {
@@ -101,7 +152,7 @@ namespace Soloplan.WhatsON
       Save(configuration, configFilePath ?? ConfigFile);
     }
 
-    public static async Task<TModel> GetJsonModel<TModel>(string requestUrl, CancellationToken token = default(CancellationToken), Action<WebRequest> requestCallback = null)
+    public async Task<TModel> GetJsonModel<TModel>(string requestUrl, CancellationToken token = default(CancellationToken), Action<WebRequest> requestCallback = null)
      where TModel : class
     {
       const string JSON_CONTENT_TYPE = "application/json";

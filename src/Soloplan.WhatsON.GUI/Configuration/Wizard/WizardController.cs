@@ -377,7 +377,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       if (configurationViewModel.ConfigurationIsModified)
       {
         configurationViewModel.Connectors.ApplyToConfiguration(this.config);
-        SerializationHelper.SaveConfiguration(this.config);
+        SerializationHelper.Instance.SaveConfiguration(this.config);
       }
     }
 

@@ -135,7 +135,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
       var configurationItemAttributes = this.SourceConnectorPlugin.ConnectorType.GetCustomAttributes(typeof(ConfigurationItemAttribute), true).Cast<ConfigurationItemAttribute>().ToList();
       foreach (var configurationItemAttribute in configurationItemAttributes)
       {
-        ConfigResourcesHelper.ApplyConfigResourses(configurationItemAttribute, this.SourceConnectorPlugin.ConnectorType);
+        ConfigResourcesHelper.ApplyConfigResources(configurationItemAttribute, this.SourceConnectorPlugin.ConnectorType);
       }
 
       return configurationItemAttributes;

@@ -38,7 +38,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
         return;
       }
 
-      SerializationHelper.Save(connectorsConfiguration, filePath, false);
+      SerializationHelper.Instance.Save(connectorsConfiguration, filePath, false);
     }
 
     public bool Import(ApplicationConfiguration appConfiguration)
@@ -60,7 +60,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
 
     private string GetProjectsInterchangeFileFilter()
     {
-      return $"{Properties.Resources.JsonFilesFilterName}|*.{SerializationHelper.ConfigFileExtension}";
+      return $"{Properties.Resources.JsonFilesFilterName}|*.{SerializationHelper.Instance.ConfigFileExtension}";
     }
 
     /// <summary>

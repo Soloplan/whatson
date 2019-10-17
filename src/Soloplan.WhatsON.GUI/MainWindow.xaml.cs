@@ -227,7 +227,7 @@ namespace Soloplan.WhatsON.GUI
       this.HideChangesPanel();
 
       this.mainTreeView.WriteToConfiguration(this.config);
-      SerializationHelper.SaveConfiguration(this.config);
+      SerializationHelper.Instance.SaveConfiguration(this.config);
       this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.config));
     }
 

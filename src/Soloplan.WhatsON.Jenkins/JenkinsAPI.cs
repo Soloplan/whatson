@@ -20,25 +20,25 @@ namespace Soloplan.WhatsON.Jenkins
     public async Task<JenkinsJob> GetJenkinsJob(JenkinsConnector connector, CancellationToken token)
     {
       var jobRequest = UrlHelper.JobRequest(connector);
-      return await SerializationHelper.GetJsonModel<JenkinsJob>(jobRequest, token);
+      return await SerializationHelper.Instance.GetJsonModel<JenkinsJob>(jobRequest, token);
     }
 
     public async Task<JenkinsJobs> GetJenkinsJobs(string address, CancellationToken token)
     {
       var jobsRequest = UrlHelper.JobsRequest(address);
-      return await SerializationHelper.GetJsonModel<JenkinsJobs>(jobsRequest, token);
+      return await SerializationHelper.Instance.GetJsonModel<JenkinsJobs>(jobsRequest, token);
     }
 
     public async Task<JenkinsBuild> GetJenkinsBuild(JenkinsConnector connector, int buildNumber, CancellationToken token)
     {
       var buildRequest = UrlHelper.BuildRequest(connector, buildNumber);
-      return await SerializationHelper.GetJsonModel<JenkinsBuild>(buildRequest, token);
+      return await SerializationHelper.Instance.GetJsonModel<JenkinsBuild>(buildRequest, token);
     }
 
     public async Task<IList<JenkinsBuild>> GetBuilds(JenkinsConnector connector, CancellationToken token, int from = 0, int to = Connector.MaxSnapshots)
     {
       var buildsRequest = UrlHelper.BuildsRequest(connector, from, to);
-      var builds = await SerializationHelper.GetJsonModel<JenkinsBuilds>(buildsRequest, token);
+      var builds = await SerializationHelper.Instance.GetJsonModel<JenkinsBuilds>(buildsRequest, token);
 
       return builds?.Builds ?? new List<JenkinsBuild>();
     }

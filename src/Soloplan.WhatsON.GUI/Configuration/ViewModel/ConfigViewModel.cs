@@ -454,7 +454,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
       {
         this.Connectors.ApplyToConfiguration(this.Configuration);
         this.ApplyMainSettingsToConfiguration(this.Configuration);
-        SerializationHelper.SaveConfiguration(this.Configuration);
+        SerializationHelper.Instance.SaveConfiguration(this.Configuration);
         this.ConfigurationIsModified = false;
       }
       finally
@@ -487,7 +487,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     {
       var tempConfig = new ApplicationConfiguration();
       this.ApplyToConfiguration(tempConfig);
-      SerializationHelper.SaveConfiguration(tempConfig, filePath);
+      SerializationHelper.Instance.SaveConfiguration(tempConfig, filePath);
     }
 
     /// <summary>

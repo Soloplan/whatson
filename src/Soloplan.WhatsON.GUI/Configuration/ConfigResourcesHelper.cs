@@ -35,7 +35,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// </summary>
     /// <param name="configurationItemAttribute">The configuration item attribute.</param>
     /// <param name="connectorType">Type of the connector.</param>
-    public static void ApplyConfigResourses(ConfigurationItemAttribute configurationItemAttribute, Type connectorType)
+    public static void ApplyConfigResources(ConfigurationItemAttribute configurationItemAttribute, Type connectorType)
     {
       ApplyCaptionConfigResources(configurationItemAttribute, connectorType);
     }

@@ -66,9 +66,9 @@ namespace Soloplan.WhatsON.GUI
       this.model = new NotificationsModel(this.scheduler);
       this.model.PropertyChanged += this.CurrentStatusPropertyChanged;
 
-      if (File.Exists(Path.Combine(SerializationHelper.ConfigFolder, VisualSettingsFile)))
+      if (File.Exists(Path.Combine(SerializationHelper.Instance.ConfigFolder, VisualSettingsFile)))
       {
-        this.VisualSettings = SerializationHelper.Load<MainWindowSettings>(Path.Combine(SerializationHelper.ConfigFolder, VisualSettingsFile));
+        this.VisualSettings = SerializationHelper.Load<MainWindowSettings>(Path.Combine(SerializationHelper.Instance.ConfigFolder, VisualSettingsFile));
       }
 
       if (!this.configuration.OpenMinimized)
@@ -179,7 +179,7 @@ namespace Soloplan.WhatsON.GUI
     {
       if (this.VisualSettings != null)
       {
-        SerializationHelper.Save(this.VisualSettings, Path.Combine(SerializationHelper.ConfigFolder, VisualSettingsFile));
+        SerializationHelper.Instance.Save(this.VisualSettings, Path.Combine(SerializationHelper.Instance.ConfigFolder, VisualSettingsFile));
       }
 
       this.mainWindow.Closing -= this.MainWindowClosing;

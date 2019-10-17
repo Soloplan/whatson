@@ -45,7 +45,7 @@ namespace Soloplan.WhatsON.GUI.Logging
 #if DEBUG
       var rootDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 #else
-      var rootDir = SerializationHelper.ConfigFolder;
+      var rootDir = SerializationHelper.Instance.ConfigFolder;
 #endif
       var file = GetConfigFilePath(rootDir);
       if (string.IsNullOrEmpty(file))

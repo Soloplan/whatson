@@ -277,7 +277,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
 
     private string GetConfigFileFilter()
     {
-      return $"{Properties.Resources.JsonFilesFilterName}|*.{SerializationHelper.ConfigFileExtension}";
+      return $"{Properties.Resources.JsonFilesFilterName}|*.{SerializationHelper.Instance.ConfigFileExtension}";
     }
 
     /// <summary>

@@ -3,6 +3,8 @@
 // Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 
+using System.Linq;
+
 namespace Soloplan.WhatsON.GUI
 {
   using System;
@@ -60,9 +62,21 @@ namespace Soloplan.WhatsON.GUI
       this.themeHelper.ApplyLightDarkMode(isDark.Value);
     }
 
+    /// <summary>
+    /// The argument name for the configuration directory.
+    /// </summary>
+    private static string ConfigDirArgName = @"/configDir:";
+
     protected override void OnStartup(StartupEventArgs e)
     {
       base.OnStartup(e);
+
+      var configDirArg = e.Args.FirstOrDefault(a => a.ToLower().StartsWith(ConfigDirArgName.ToLower()));
+      if (configDirArg != null)
+      {
+        configDirArg = configDirArg.Substring(ConfigDirArgName.Length);
+        SerializationHelper.Instance.SetConfigFolder(configDirArg);
+      }
 
       ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
@@ -70,7 +84,7 @@ namespace Soloplan.WhatsON.GUI
       logConfiguration.Initialize();
       ExceptionHandlingInitialization.Initialize();
 
-      this.config = SerializationHelper.LoadOrCreateConfiguration();
+      this.config = SerializationHelper.Instance.LoadOrCreateConfiguration();
       this.scheduler = new ObservationScheduler();
 
       // call the plugins with the application args, so plugins can process them
