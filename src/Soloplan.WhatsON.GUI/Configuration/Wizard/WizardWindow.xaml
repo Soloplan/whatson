@@ -27,15 +27,6 @@
                         Height="32"/>
 
     <materialDesign:DialogHost Name="WizardWaitDialogHost" Identifier="WizardWaitDialogHostId">
-      <materialDesign:DialogHost.DialogContent>
-        <ProgressBar Width="50"
-                     Height="50"
-                     Margin="10"
-                     IsIndeterminate="True"
-                     Style="{StaticResource MaterialDesignCircularProgressBar}"
-                     Value="0" />
-      </materialDesign:DialogHost.DialogContent>
-
       <DockPanel Margin="6" LastChildFill="True">
         <TextBlock x:Name="StepDescription"
                    Margin="10,0,10,10"

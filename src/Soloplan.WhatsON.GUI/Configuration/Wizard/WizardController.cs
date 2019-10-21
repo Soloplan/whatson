@@ -520,7 +520,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     {
       var error = false;
       var errorMessage = string.Empty;
-      var waitDailogTask = DialogHost.Show(this.wizardWindow.WizardWaitDialogHost.DialogContent, "WizardWaitDialogHostId");
+      var waitControl = new WaitControl();
+      var waitDailogTask = DialogHost.Show(waitControl, "WizardWaitDialogHostId");
       try
       {
         await this.PrepareProjectsList();

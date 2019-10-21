@@ -80,6 +80,9 @@
     <Compile Include="Configuration\View\EditGroupNameDialog.xaml.cs">
       <DependentUpon>EditGroupNameDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Configuration\WaitControl.xaml.cs">
+      <DependentUpon>WaitControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Configuration\Wizard\ProjectSelectionWizardPage.xaml.cs">
       <DependentUpon>ProjectSelectionWizardPage.xaml</DependentUpon>
     </Compile>
@@ -131,6 +134,10 @@
     <Page Include="Configuration\View\EditGroupNameDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Configuration\WaitControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Configuration\Wizard\ProjectSelectionWizardPage.xaml">
       <SubType>Designer</SubType>
