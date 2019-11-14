@@ -367,7 +367,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       {
         var newConnector = new ConnectorViewModel();
         newConnector.SourceConnectorPlugin = selectedProject.Plugin;
-        newConnector.Name = selectedProject.Name;
+        newConnector.Name = selectedProject.FullName;
         newConnector.Load(null);
         configurationViewModel.Connectors.Add(newConnector);
 
