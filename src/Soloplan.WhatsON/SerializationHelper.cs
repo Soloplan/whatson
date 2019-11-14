@@ -62,6 +62,7 @@ namespace Soloplan.WhatsON
     /// <typeparam name="T">The type of configuration.</typeparam>
     /// <param name="configuration">The configuration.</param>
     /// <param name="file">The file path.</param>
+    /// <param name="serializeIdentifier">if set to <c>true</c> serialize the identifier.</param>
     public void Save<T>(T configuration, string file, bool serializeIdentifier = true)
     {
       log.Debug("Saving configuration {configuration} to file {file}.", configuration, file);
@@ -85,7 +86,9 @@ namespace Soloplan.WhatsON
     public ApplicationConfiguration LoadConfiguration()
     {
       log.Debug("Loading configuration form file {file}", ConfigFile);
-      return Load<ApplicationConfiguration>(ConfigFile);
+      var result = Load<ApplicationConfiguration>(ConfigFile);
+      this.HandleConfigurationErrors(result);
+      return result;
     }
 
     /// <summary>
@@ -136,6 +139,8 @@ namespace Soloplan.WhatsON
     /// Saves the configuration.
     /// </summary>
     /// <param name="configuration">The configuration.</param>
+    /// <param name="configFilePath">The configuration file path.</param>
+    /// <exception cref="InvalidOperationException">Couldn't get the directory for configuration file.</exception>
     public void SaveConfiguration(ApplicationConfiguration configuration, string configFilePath = null)
     {
       if (configFilePath == null)
@@ -205,6 +210,32 @@ namespace Soloplan.WhatsON
         }
 
         throw;
+      }
+    }
+
+    /// <summary>
+    /// Handles the configuration errors.
+    /// </summary>
+    /// <param name="appConfiguration">The application configuration.</param>
+    private void HandleConfigurationErrors(ApplicationConfiguration appConfiguration)
+    {
+      this.CheckConnectorsConfigurationDoNotContainNull(appConfiguration);
+    }
+
+    /// <summary>
+    /// Checks the connectors configuration do not contain null and removes the configuration if it was null.
+    /// </summary>
+    /// <param name="appConfiguration">The application configuration.</param>
+    private void CheckConnectorsConfigurationDoNotContainNull(ApplicationConfiguration appConfiguration)
+    {
+      for (var i = 0; i < appConfiguration.ConnectorsConfiguration.Count; i++)
+      {
+        if (appConfiguration.ConnectorsConfiguration[i] == null)
+        {
+          log.Error("One of the project configuration entries was null");
+          appConfiguration.ConnectorsConfiguration.RemoveAt(i);
+          i--;
+        }
       }
     }
 
