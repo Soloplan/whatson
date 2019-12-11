@@ -183,7 +183,23 @@ namespace Soloplan.WhatsON.Composition
         }
 
         log.Debug("Scanning assembly {absoluteName} for plugins.", absoluteName);
-        var assembly = Assembly.LoadFile(absoluteName);
+        Assembly assembly;
+        try
+        {
+          assembly = Assembly.LoadFrom(absoluteName);
+        }
+        catch (FileLoadException loadEx)
+        {
+          log.Error($"Failed to load file {assemblyName}. Check if the plugIn isn't blocked.");
+          log.Error(loadEx);
+          continue;
+        }
+        catch (Exception e)
+        {
+          log.Error(e, "Failed to load assembly from PlugIn directory");
+          continue;
+        }
+
         foreach (var type in assembly.GetExportedTypes())
         {
           if (typeof(IPlugin).IsAssignableFrom(type) && !type.IsAbstract)
