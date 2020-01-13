@@ -16,7 +16,7 @@ namespace Soloplan.WhatsON.GUI
   public class NotificationsModel : NotifyPropertyChanged
   {
     private readonly ObservableCollection<ConnectorViewModel> connectors;
-
+    private object lockObj = new object();
     public NotificationsModel(ObservationScheduler scheduler)
     {
       this.connectors = new ObservableCollection<ConnectorViewModel>();
@@ -35,24 +35,27 @@ namespace Soloplan.WhatsON.GUI
 
     private ConnectorViewModel GetModelToUpdate(Connector connector)
     {
-      var modelToUpdate = this.connectors.FirstOrDefault(sub => sub.Identifier == connector.Configuration.Identifier);
-      if (modelToUpdate == null)
+      lock (this.lockObj)
       {
-        var presentationPlugIn = PluginManager.Instance.GetPresentationPlugin(connector.Configuration.Type);
-        if (presentationPlugIn != null)
+        var modelToUpdate = this.connectors.FirstOrDefault(sub => sub.Identifier == connector.Configuration.Identifier);
+        if (modelToUpdate == null)
         {
-          modelToUpdate = presentationPlugIn.CreateViewModel(connector);
-        }
-        else
-        {
-          modelToUpdate = new ConnectorViewModel(connector);
+          var presentationPlugIn = PluginManager.Instance.GetPresentationPlugin(connector.Configuration.Type);
+          if (presentationPlugIn != null)
+          {
+            modelToUpdate = presentationPlugIn.CreateViewModel(connector);
+          }
+          else
+          {
+            modelToUpdate = new ConnectorViewModel(connector);
+          }
+
+          modelToUpdate.PropertyChanged += this.OnPropertyChanged;
+          this.connectors.Add(modelToUpdate);
         }
 
-        modelToUpdate.PropertyChanged += this.OnPropertyChanged;
-        this.connectors.Add(modelToUpdate);
+        return modelToUpdate;
       }
-
-      return modelToUpdate;
     }
   }
 }

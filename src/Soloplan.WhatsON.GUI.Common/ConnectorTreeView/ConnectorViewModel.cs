@@ -7,8 +7,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
   using System;
   using System.Collections.ObjectModel;
+  using System.Windows;
   using System.Windows.Controls;
   using System.Windows.Input;
+  using System.Windows.Threading;
   using NLog;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.Model;
@@ -118,46 +120,54 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     public virtual void Update(Connector changedConnector)
     {
-      log.Trace("Updating model {model}", new { this.Name, this.Identifier });
-
-      if (this.Connector == null)
+      Application.Current.Dispatcher.BeginInvoke(new Action(() =>
       {
-        this.Connector = changedConnector;
-      }
+        log.Trace("Updating model {model}", new { this.Name, this.Identifier });
 
-      int i = 0;
-      bool clearList = false;
-      foreach (var changedConnectorSnapshot in changedConnector.Snapshots)
-      {
-        if (i >= this.ConnectorSnapshots.Count || this.ConnectorSnapshots[i].Time.ToUniversalTime() != changedConnectorSnapshot.Status.Time)
+        if (this.Connector == null)
         {
-          log.Debug("Rebuilding list of history builds for model {type}, {instance}.", this.GetType(), new { this.Name, this.Identifier });
-          clearList = true;
-          break;
+          this.Connector = changedConnector;
         }
 
-        i++;
-      }
-
-      if (clearList)
-      {
-        this.ConnectorSnapshots.Clear();
-        foreach (var snapshot in changedConnector.Snapshots)
+        if (changedConnector == null)
         {
-          var viewModel = this.GetStatusViewModel();
-          viewModel.Update(snapshot.Status);
-          if (changedConnector.Snapshots[0] == snapshot)
+          return;
+        }
+
+        int i = 0;
+        bool clearList = false;
+        foreach (var changedConnectorSnapshot in changedConnector.Snapshots)
+        {
+          if (i >= this.ConnectorSnapshots.Count || this.ConnectorSnapshots[i].Time.ToUniversalTime() != changedConnectorSnapshot.Status.Time)
           {
-            viewModel.First = true;
+            log.Debug("Rebuilding list of history builds for model {type}, {instance}.", this.GetType(), new { this.Name, this.Identifier });
+            clearList = true;
+            break;
           }
 
-          this.ConnectorSnapshots.Add(viewModel);
+          i++;
         }
-      }
 
-      this.Description = changedConnector.Description;
-      this.Name = this.Connector.Configuration.Name;
-      this.CurrentStatus.Update(changedConnector.CurrentStatus);
+        if (clearList)
+        {
+          this.ConnectorSnapshots.Clear();
+          foreach (var snapshot in changedConnector.Snapshots)
+          {
+            var viewModel = this.GetStatusViewModel();
+            viewModel.Update(snapshot.Status);
+            if (changedConnector.Snapshots[0] == snapshot)
+            {
+              viewModel.First = true;
+            }
+
+            this.ConnectorSnapshots.Add(viewModel);
+          }
+        }
+
+        this.Description = changedConnector.Description;
+        this.Name = this.Connector.Configuration.Name;
+        this.CurrentStatus.Update(changedConnector.CurrentStatus);
+      }));
     }
 
     protected virtual BuildStatusViewModel GetStatusViewModel()

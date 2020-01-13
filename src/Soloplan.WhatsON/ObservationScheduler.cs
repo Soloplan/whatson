@@ -61,7 +61,7 @@ namespace Soloplan.WhatsON
 
     public bool Running => this.observedConnectors.Any(connector => connector.Running);
 
-    public void Start()
+    public async void Start()
     {
       log.Debug("Start of observation requested.");
       if (!this.Running && !this.stopping)
@@ -81,7 +81,7 @@ namespace Soloplan.WhatsON
         foreach (var observationConnector in this.observedConnectors)
         {
           log.Log(LogLevel.Debug, "Starting observation for {@connector}.", observationConnector);
-          this.StartObserveSingle(observationConnector, this.cancellationTokenSource.Token);
+          Task.Run(() => this.StartObserveSingle(observationConnector, this.cancellationTokenSource.Token));
         }
 
         log.Debug("Observation started.");
@@ -145,8 +145,9 @@ namespace Soloplan.WhatsON
           if (connector.LastPoll == default || DateTime.Now - connector.LastPoll > connector.Interval)
           {
             log.Log(LogLevel.Trace, "Observation of {@connector} started.", connector);
-            connector.LastPoll = DateTime.Now;
+
             await connector.Connector.QueryStatus(token);
+            connector.LastPoll = DateTime.Now;
             if (connector.Running)
             {
               this.StatusQueried?.Invoke(this, connector.Connector);
