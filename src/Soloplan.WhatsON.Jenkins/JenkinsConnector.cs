@@ -55,8 +55,7 @@ namespace Soloplan.WhatsON.Jenkins
         return null;
       }
 
-      var latestBuild = await this.api.GetJenkinsBuild(this, job.LastBuild.Number, cancellationToken);
-      return this.CreateStatus(latestBuild);
+      return this.CreateStatus(job.LastBuild);
     }
 
     protected override async Task<List<Status>> GetHistory(CancellationToken cancellationToken)
