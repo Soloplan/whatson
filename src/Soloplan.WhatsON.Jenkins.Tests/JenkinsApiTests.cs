@@ -26,17 +26,17 @@ namespace Soloplan.WhatsON.Jenkins.Tests
        {
          if (state == 0)
          {
-           e.Result = ApiHelper.GetProject(ObservationState.Running, 10, 7);
+           e.Result = ApiHelper.GetProject(ObservationState.Running, 10);
            state++;
          }
          else if (state == 1)
          {
-           e.Result = ApiHelper.GetProject(ObservationState.Running, 11, 7);
+           e.Result = ApiHelper.GetProject(ObservationState.Running, 11);
            state++;
          }
          else
          {
-           e.Result = ApiHelper.GetProject(ObservationState.Running, 12, 7);
+           e.Result = ApiHelper.GetProject(ObservationState.Running, 12);
            scheduler.Stop(false);
          }
        };
