@@ -12,6 +12,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
   using System.Windows.Controls.Primitives;
   using System.Windows.Data;
   using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.GUI.Common.Converters;
   using Soloplan.WhatsON.GUI.Configuration.ViewModel;
 
   /// <summary>
@@ -75,6 +76,8 @@ namespace Soloplan.WhatsON.GUI.Configuration
       {
         if (candidateControl is CheckBox foundCheckBox)
         {
+          valueBinding.Converter = new NullableBooleanConverter();
+
           BindingOperations.SetBinding(foundCheckBox, this.ValueBindingDependencyProperty, valueBinding);
           return;
         }
