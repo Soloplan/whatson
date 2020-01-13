@@ -41,9 +41,9 @@
       </ContextMenu>
 
       <HierarchicalDataTemplate DataType="{x:Type local:ConnectorGroupViewModel}" ItemsSource="{Binding Path=ConnectorViewModels}">
-        <StackPanel MinWidth="300" ContextMenu="{StaticResource BaseTreeMenuImpl}">
+        <VirtualizingStackPanel MinWidth="300" ContextMenu="{StaticResource BaseTreeMenuImpl}">
           <TextBlock FontSize="13" FontWeight="Normal" Text="{Binding GroupName}" />
-        </StackPanel>
+        </VirtualizingStackPanel>
       </HierarchicalDataTemplate>
 
       <DataTemplate DataType="{x:Type local:ConnectorViewModel}">

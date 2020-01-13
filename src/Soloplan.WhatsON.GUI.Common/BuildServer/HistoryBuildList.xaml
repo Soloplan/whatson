@@ -22,7 +22,7 @@
     </ListView.ItemContainerStyle>
     <ListView.ItemsPanel>
       <ItemsPanelTemplate>
-        <StackPanel Orientation="Horizontal" />
+        <VirtualizingStackPanel  Orientation="Horizontal" />
       </ItemsPanelTemplate>
     </ListView.ItemsPanel>
   </ListView>
