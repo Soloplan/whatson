@@ -163,6 +163,9 @@ namespace Soloplan.WhatsON
             await Task.Delay(millisecondsToWait, token);
           }
         }
+        catch (TaskCanceledException e)
+        {
+        }
         catch (Exception e)
         {
           log.Error(e, "Exception occurred when observing connector {connector}", new { Interval = connector.Interval, Name = connector.Connector.Configuration.Name, CurrentStatus = connector.Connector.CurrentStatus });
