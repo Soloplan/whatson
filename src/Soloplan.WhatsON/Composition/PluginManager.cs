@@ -155,7 +155,7 @@ namespace Soloplan.WhatsON.Composition
     /// <exception cref="InvalidOperationException">Couldn't find plugin for a type: {connectorConfiguration.TypeName}.</exception>
     public Connector GetConnector(ConnectorConfiguration connectorConfiguration)
     {
-      var connector = this.connectors.FirstOrDefault(s => s.Configuration.Identifier == connectorConfiguration.Identifier);
+      var connector = this.connectors.FirstOrDefault(s => s != null && s.Configuration.Identifier == connectorConfiguration.Identifier);
       if (connector != null)
       {
         return connector;
