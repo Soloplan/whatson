@@ -9,6 +9,7 @@ namespace Soloplan.WhatsON
 {
   using System;
   using System.Collections.Generic;
+  using System.Diagnostics;
   using System.IO;
   using System.Linq;
   using System.Net;
@@ -161,17 +162,18 @@ namespace Soloplan.WhatsON
      where TModel : class
     {
       const string JSON_CONTENT_TYPE = "application/json";
-
+      WebRequest.DefaultWebProxy = null;
       var request = (HttpWebRequest)WebRequest.Create(requestUrl);
       request.Accept = JSON_CONTENT_TYPE;
       request.ContentType = JSON_CONTENT_TYPE;
+
       requestCallback?.Invoke(request);
 
       try
       {
         log.Trace($"Fetching JSON object ({typeof(TModel)}) from \"{requestUrl}\" ...");
         using (token.Register(() => request.Abort(), false))
-        using (var response = (HttpWebResponse)await request.GetResponseAsync())
+        using (var response = (HttpWebResponse)request.GetResponse())
         {
           if (response.StatusCode != HttpStatusCode.OK)
           {
