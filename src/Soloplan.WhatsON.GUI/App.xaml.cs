@@ -11,6 +11,7 @@ namespace Soloplan.WhatsON.GUI
   using System.Net;
   using System.Windows;
   using System.Windows.Interop;
+  using System.Windows.Media.Animation;
   using NLog;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
@@ -110,6 +111,8 @@ namespace Soloplan.WhatsON.GUI
       this.handler = new TrayHandler(this.scheduler, this.config);
       this.themeHelper.Initialize(this.handler.VisualSettings?.ColorSettings);
       this.ApplyTheme();
+
+      Timeline.DesiredFrameRateProperty.OverrideMetadata(typeof(Timeline), new FrameworkPropertyMetadata { DefaultValue = 15 });
 
       this.scheduler.Start();
       ComponentDispatcher.ThreadPreprocessMessage += this.ComponentDispatcherThreadPreprocessMessage;
