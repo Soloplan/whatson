@@ -17,7 +17,7 @@ namespace Soloplan.WhatsON.Jenkins.Model
     /// <summary>
     /// The request properties for the server query.
     /// </summary>
-    public const string RequestProperties = "displayName,fullDisplayName,lastBuild[number],firstBuild[number],_class,name,fullName,url";
+    public const string RequestProperties = "displayName,fullDisplayName,lastBuild[number],name,fullName,url";
 
     /// <summary>
     /// Gets or sets the job display name.
@@ -34,11 +34,6 @@ namespace Soloplan.WhatsON.Jenkins.Model
     /// Gets or sets the last build.
     /// </summary>
     public JenkinsBuild LastBuild { get; set; }
-
-    /// <summary>
-    /// Gets or sets the first build.
-    /// </summary>
-    public JenkinsBuild FirstBuild { get; set; }
 
     /// <summary>
     /// Gets or sets the job name.
