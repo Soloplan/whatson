@@ -161,6 +161,19 @@ namespace Soloplan.WhatsON.GUI
       this.mainTreeView.FocusItem(connector);
     }
 
+    /// <summary>Raises the <see cref="E:System.Windows.Window.Closed" /> event. Performs necessry cleanup.</summary>
+    /// <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data.</param>
+    protected override void OnClosed(EventArgs e)
+    {
+      this.mainTreeView.ConfigurationChanged -= this.MainTreeViewOnConfigurationChanged;
+      this.mainTreeView.EditItem -= this.EditTreeItem;
+      this.mainTreeView.DeleteItem -= this.OnItemDeleted;
+      this.mainTreeView.ExportItem -= this.ExportTreeItem;
+      base.OnClosed(e);
+      this.mainTreeView.Dispose();
+      this.mainTreeView = null;
+    }
+
     private void OpenConfig(object sender, EventArgs e)
     {
       var configWindow = new ConfigWindow(this.config);

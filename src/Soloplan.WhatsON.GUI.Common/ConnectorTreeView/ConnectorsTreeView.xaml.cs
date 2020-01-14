@@ -22,7 +22,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   /// <summary>
   /// Interaction logic for ConnectorsTreeView.xaml.
   /// </summary>
-  public partial class ConnectorsTreeView : UserControl
+  public partial class ConnectorsTreeView : UserControl, IDisposable
   {
     private ConnectorTreeViewModel model;
 
@@ -80,11 +80,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     public void Init(ObservationScheduler scheduler, ApplicationConfiguration configuration, IList<Connector> initialConnectorState)
     {
       this.model = new ConnectorTreeViewModel();
-      this.model.PropertyChanged += this.ModelPropertyChanged;
-      this.model.EditItem += (s, e) => this.EditItem?.Invoke(s, e);
-      this.model.ExportItem += (s, e) => this.ExportItem?.Invoke(s, e);
-      this.model.DeleteItem += (s, e) => this.DeleteItem?.Invoke(s, e);
-      this.model.ConfigurationChanged += (s, e) => this.ConfigurationChanged?.Invoke(this, EventArgs.Empty);
+      this.HookUnhookModelEvents(true);
       this.model.Init(scheduler, configuration, initialConnectorState);
       this.DataContext = this.model;
       this.SetupDataContext();
@@ -166,8 +162,20 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       return this.model.ConnectorGroups.Select(grp => grp.GroupName).ToList();
     }
 
+    /// <summary>
+    /// Cleares some resources.
+    /// </summary>
+    public void Dispose()
+    {
+      this.HookUnhookModelEvents(false);
+      this.model = null;
+      this.deleteFocusedObject = null;
+      BindingOperations.ClearBinding(this.mainTreeView, TreeView.ItemsSourceProperty);
+    }
+
     private void SetupDataContext()
     {
+      BindingOperations.ClearBinding(this.mainTreeView, TreeView.ItemsSourceProperty);
       if (this.model.OneGroup && string.IsNullOrWhiteSpace(this.model.ConnectorGroups.FirstOrDefault().GroupName))
       {
         Binding myBinding = new Binding();
@@ -212,6 +220,35 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       if (e.PropertyName == nameof(ConnectorTreeViewModel.OneGroup))
       {
         this.SetupDataContext();
+      }
+    }
+
+    /// <summary>
+    /// Hooks or unhooks events for <see cref="model"/>.
+    /// </summary>
+    /// <param name="hook">Controls whether the events should be hooked or unhooked.</param>
+    private void HookUnhookModelEvents(bool hook)
+    {
+      void OnModelOnEditItem(object s, ValueEventArgs<TreeItemViewModel> e) => this.EditItem?.Invoke(s, e);
+      void OnModelOnExportItem(object s, ValueEventArgs<TreeItemViewModel> e) => this.ExportItem?.Invoke(s, e);
+      void OnModelOnDeleteItem(object s, DeleteTreeItemEventArgs e) => this.DeleteItem?.Invoke(s, e);
+      void OnModelOnConfigurationChanged(object s, EventArgs e) => this.ConfigurationChanged?.Invoke(this, EventArgs.Empty);
+
+      if (hook)
+      {
+        this.model.PropertyChanged += this.ModelPropertyChanged;
+        this.model.EditItem += OnModelOnEditItem;
+        this.model.ExportItem += OnModelOnExportItem;
+        this.model.DeleteItem += OnModelOnDeleteItem;
+        this.model.ConfigurationChanged += OnModelOnConfigurationChanged;
+      }
+      else
+      {
+        this.model.PropertyChanged -= this.ModelPropertyChanged;
+        this.model.EditItem -= OnModelOnEditItem;
+        this.model.ExportItem -= OnModelOnExportItem;
+        this.model.DeleteItem -= OnModelOnDeleteItem;
+        this.model.ConfigurationChanged -= OnModelOnConfigurationChanged;
       }
     }
   }
