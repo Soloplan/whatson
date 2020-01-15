@@ -6,8 +6,11 @@
 
 namespace Soloplan.WhatsON.GUI.Configuration
 {
+  using System;
   using System.Collections.Generic;
+  using System.Windows;
   using System.Windows.Forms;
+  using NLog;
   using Soloplan.WhatsON.Configuration;
 
   /// <summary>
@@ -15,6 +18,11 @@ namespace Soloplan.WhatsON.GUI.Configuration
   /// </summary>
   public class ProjectsDataInterchange
   {
+    /// <summary>
+    /// Logger instance used by this class.
+    /// </summary>
+    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+
     /// <summary>
     /// Exports the specified connector configuration.
     /// </summary>
@@ -41,6 +49,11 @@ namespace Soloplan.WhatsON.GUI.Configuration
       SerializationHelper.Instance.Save(connectorsConfiguration, filePath, false);
     }
 
+    /// <summary>
+    /// Imports the projects configuration.
+    /// </summary>
+    /// <param name="appConfiguration">The application configuration.</param>
+    /// <returns>True if import was successfull.</returns>
     public bool Import(ApplicationConfiguration appConfiguration)
     {
       var filePath = this.GetImportFilePath();
@@ -49,10 +62,21 @@ namespace Soloplan.WhatsON.GUI.Configuration
         return false;
       }
 
-      var importedProjectsConfig = SerializationHelper.Load<IList<ConnectorConfiguration>>(filePath);
-      foreach (var importedProjecConfig in importedProjectsConfig)
+      try
       {
-        appConfiguration.ConnectorsConfiguration.Add(importedProjecConfig);
+        var importedProjectsConfig = SerializationHelper.Load<IList<ConnectorConfiguration>>(filePath);
+        foreach (var importedProjecConfig in importedProjectsConfig)
+        {
+          appConfiguration.ConnectorsConfiguration.Add(importedProjecConfig);
+        }
+      }
+      catch (Exception e)
+      {
+        var errorMessage = $"Import of the projects onfiguration from JSON file was not successfull; file path: {filePath}; exception: {e.Message}";
+        log.Error(errorMessage);
+        log.Error(e);
+        System.Windows.MessageBox.Show(errorMessage, "Import error", MessageBoxButton.OK, MessageBoxImage.Error);
+        return false;
       }
 
       return true;

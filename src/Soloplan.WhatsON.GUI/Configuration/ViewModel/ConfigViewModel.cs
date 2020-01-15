@@ -9,6 +9,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
   using System.Runtime.CompilerServices;
   using System.Windows.Controls;
   using Microsoft.Win32;
+  using NLog;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Configuration.View;
 
@@ -17,6 +18,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
   /// </summary>
   public class ConfigViewModel : ViewModelBase
   {
+    /// <summary>
+    /// Logger instance used by this class.
+    /// </summary>
+    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+
     /// <summary>
     /// The Windows Startup Keys registry location.
     /// </summary>
@@ -494,20 +500,27 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// Imports the configuration from specified file.
     /// </summary>
     /// <param name="filePath">The file path.</param>
-    public void Import(string filePath)
+    /// <returns>True if import was successful.</returns>
+    public bool Import(string filePath, out string errorMessage)
     {
-      this.ConfigurationApplying?.Invoke(this, new EventArgs());
+      errorMessage = null;
       try
       {
         var newConfiguration = SerializationHelper.Load<ApplicationConfiguration>(filePath);
+        this.ConfigurationApplying?.Invoke(this, new EventArgs());
         this.Load(newConfiguration);
-      }
-      finally
-      {
         this.ConfigurationIsModified = true;
         this.ApplyToSourceAndSave();
         this.ConfigurationIsModified = false;
         this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.Configuration));
+        return true;
+      }
+      catch (Exception e)
+      {
+        errorMessage = $"Import of the configuration from JSON file was not successfull; file path: {filePath}; exception: {e.Message}";
+        log.Error(errorMessage);
+        log.Error(e);
+        return false;
       }
     }
 

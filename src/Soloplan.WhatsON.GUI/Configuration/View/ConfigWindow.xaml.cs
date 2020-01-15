@@ -292,7 +292,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
         openFileDialog.Filter = this.GetConfigFileFilter();
         if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
         {
-          this.configurationViewModel.Import(openFileDialog.FileName);
+          var result = this.configurationViewModel.Import(openFileDialog.FileName, out var errorMessage);
+          if (!result)
+          {
+            System.Windows.MessageBox.Show(errorMessage, "Import error", MessageBoxButton.OK, MessageBoxImage.Error);
+          }
         }
       }
     }
