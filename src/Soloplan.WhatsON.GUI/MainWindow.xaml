@@ -38,15 +38,15 @@
     </ResourceDictionary>
   </Window.Resources>
   <DockPanel>
-    <local:CustomTitleBar ButtonClicked="OpenConfig"
+    <local:CustomTitleBar Height="32"
                           AddConnectorClicked="NewConnectorClick"
-                          ImportClicked="ImportClick"
                           AddGroupClicked="NewGroupClick"
+                          ButtonClicked="OpenConfig"
                           CustomButtonIcon="SettingsOutline"
                           CustomButtonVisible="{Binding ConfigurationModifiedFromTree, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Converter={StaticResource InvertBoolConverter}}"
                           DockPanel.Dock="Top"
                           FontSize="12"
-                          Height="32"
+                          ImportClicked="ImportClick"
                           ShowMinimizeButton="{Binding Path=ShowInTaskbar, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}"
                           Window="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" />
 
@@ -54,7 +54,9 @@
             Padding="8,8,30,8"
             DockPanel.Dock="Bottom"
             Visibility="{Binding ConfigurationModifiedFromTree, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Converter={StaticResource BoolToVis}}">
-      <DockPanel Background="{DynamicResource MaterialDesignBody}" LastChildFill="False" Margin="0,0,-20,0">
+      <DockPanel Margin="0,0,-20,0"
+                 Background="{DynamicResource MaterialDesignBody}"
+                 LastChildFill="False">
         <TextBlock Padding="5"
                    VerticalAlignment="Center"
                    Foreground="{DynamicResource MaterialDesignBackground}"
@@ -81,7 +83,9 @@
 
     <materialDesign:DialogHost DockPanel.Dock="Bottom" Identifier="MainWindowPageHost">
       <Grid>
-        <connectorTreeView:ConnectorsTreeView x:Name="mainTreeView" Margin="0,3,0,0" HorizontalAlignment="Stretch" />
+        <connectorTreeView:ConnectorsTreeView x:Name="mainTreeView"
+                                              Margin="0,3,0,0"
+                                              HorizontalAlignment="Stretch" />
         <TextBlock HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    FontSize="18"

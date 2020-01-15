@@ -1,12 +1,12 @@
 ﻿<UserControl x:Class="Soloplan.WhatsON.GUI.Common.ConnectorTreeView.ConnectorsTreeView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:buildServer="clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:dd="urn:gong-wpf-dragdrop"
              xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:buildServer="clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
@@ -17,23 +17,23 @@
         <MenuItem Command="{Binding EditCommand}">
           <MenuItem.Header>
             <StackPanel Orientation="Horizontal">
-              <materialDesign:PackIcon Kind="Edit"/>
+              <materialDesign:PackIcon Kind="Edit" />
               <TextBlock Padding="5,0,0,0" Text="Rename" />
             </StackPanel>
           </MenuItem.Header>
         </MenuItem>
-        <MenuItem Command="{Binding DeleteCommand}" >
+        <MenuItem Command="{Binding DeleteCommand}">
           <MenuItem.Header>
             <StackPanel Orientation="Horizontal">
-              <materialDesign:PackIcon Kind="RemoveCircle"/>
+              <materialDesign:PackIcon Kind="RemoveCircle" />
               <TextBlock Padding="5,0,0,0" Text="Delete" />
             </StackPanel>
           </MenuItem.Header>
         </MenuItem>
-        <MenuItem Command="{Binding ExportCommand}" >
+        <MenuItem Command="{Binding ExportCommand}">
           <MenuItem.Header>
             <StackPanel Orientation="Horizontal">
-              <materialDesign:PackIcon Kind="Export"/>
+              <materialDesign:PackIcon Kind="Export" />
               <TextBlock Padding="5,0,0,0" Text="Export" />
             </StackPanel>
           </MenuItem.Header>
@@ -42,12 +42,14 @@
 
       <HierarchicalDataTemplate DataType="{x:Type local:ConnectorGroupViewModel}" ItemsSource="{Binding Path=ConnectorViewModels}">
         <VirtualizingStackPanel MinWidth="300" ContextMenu="{StaticResource BaseTreeMenuImpl}">
-          <TextBlock FontSize="13" FontWeight="Normal" Text="{Binding GroupName}" />
+          <TextBlock FontSize="13"
+                     FontWeight="Normal"
+                     Text="{Binding GroupName}" />
         </VirtualizingStackPanel>
       </HierarchicalDataTemplate>
 
       <DataTemplate DataType="{x:Type local:ConnectorViewModel}">
-        <DockPanel Width="Auto" >
+        <DockPanel Width="Auto">
           <buildServer:BuildInformationIconControl DataContext="{Binding CurrentStatus}" DockPanel.Dock="Left">
             <buildServer:BuildInformationIconControl.ToolTip>
               <StackPanel>
@@ -57,20 +59,20 @@
           </buildServer:BuildInformationIconControl>
           <buildServer:BuildNumberControl Margin="5,0,0,0" BuildNumber="{Binding DataContext.CurrentStatus.BuildNumber, RelativeSource={RelativeSource AncestorType=DockPanel}}" />
           <TextBlock MinWidth="150"
-                 MaxWidth="250"
-                 Margin="5,0,0,0"
-                 FontSize="{Binding DataContext.FontSize, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}"
-                 FontWeight="Normal"
-                 Text="{Binding Name}"
-                 TextTrimming="CharacterEllipsis" />
+                     MaxWidth="250"
+                     Margin="5,0,0,0"
+                     FontSize="{Binding DataContext.FontSize, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}"
+                     FontWeight="Normal"
+                     Text="{Binding Name}"
+                     TextTrimming="CharacterEllipsis" />
           <buildServer:HistoryBuildList DataContext="{Binding ConnectorSnapshots, Mode=OneWay}" DockPanel.Dock="Right" />
           <TextBlock Margin="5,0,10,0"
-                 HorizontalAlignment="Right"
-                 VerticalAlignment="Center"
-                 DockPanel.Dock="Right"
-                 FontSize="{Binding DataContext.FontSizeSmall, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}"
-                 FontWeight="Normal"
-                 Text="{Binding CurrentStatus.Time, Converter={StaticResource TimeToApproximateTimeConverter}}" />
+                     HorizontalAlignment="Right"
+                     VerticalAlignment="Center"
+                     DockPanel.Dock="Right"
+                     FontSize="{Binding DataContext.FontSizeSmall, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}"
+                     FontWeight="Normal"
+                     Text="{Binding CurrentStatus.Time, Converter={StaticResource TimeToApproximateTimeConverter}}" />
         </DockPanel>
       </DataTemplate>
 
@@ -82,9 +84,10 @@
   </UserControl.Resources>
 
   <TreeView Name="mainTreeView"
+            HorizontalContentAlignment="Stretch"
             dd:DragDrop.DropHandler="{Binding}"
             dd:DragDrop.IsDragSource="True"
-            dd:DragDrop.IsDropTarget="True" HorizontalContentAlignment="Stretch">
+            dd:DragDrop.IsDropTarget="True">
     <TreeView.InputBindings>
       <KeyBinding Key="Delete" Command="{Binding DeleteSelectedObject, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}" />
     </TreeView.InputBindings>
