@@ -72,8 +72,8 @@
           </materialDesign:ColorZone>
         </StackPanel>
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom">
-          <Button Height="30" Visibility="{Binding CurrentConnectorIsNull, Converter={StaticResource InvertBoolToVis}}" Click="EditInWizardClick">Edit (wizard)</Button>
-          <Button Height="30" Click="NewInWizardClick" Margin="8 0 0 0">New (wizard)</Button>
+          <Button Height="30" Visibility="{Binding CurrentConnectorIsNull, Converter={StaticResource InvertBoolToVis}}" Click="EditInWizardClick" Margin="0 0 0 1">Edit (wizard)</Button>
+          <Button Height="30" Click="NewInWizardClick" Margin="8 0 0 1">New (wizard)</Button>
       </StackPanel>
         <Frame x:Name="uxConnectorFrame" Content="Frame" />
       </DockPanel>
