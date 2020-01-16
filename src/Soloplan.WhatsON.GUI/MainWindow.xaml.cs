@@ -14,10 +14,8 @@ namespace Soloplan.WhatsON.GUI
   using System.Threading.Tasks;
   using System.Windows;
   using System.Windows.Controls;
-  using System.Windows.Data;
   using System.Windows.Media.Animation;
   using MaterialDesignThemes.Wpf;
-  using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
@@ -111,7 +109,14 @@ namespace Soloplan.WhatsON.GUI
     public MainWindowSettings GetVisualSettings()
     {
       this.settings.TreeListSettings = this.mainTreeView.GetTreeListSettings();
-      this.settings.MainWindowDimensions = new WindowSettings().Parse(this);
+      this.settings.Maximized = this.WindowState == WindowState.Maximized;
+      if (!this.settings.Maximized)
+      {
+        this.settings.MainWindowDimensions = new WindowSettings().Parse(this);
+        this.settings.Left = this.Left;
+        this.settings.Top = this.Top;
+      }
+
       this.settings.ColorSettings = new ColorSettings();
       this.settings.ColorSettings.Primary.Apply(ThemeHelper.PrimaryColor);
       this.settings.ColorSettings.Secondary.Apply(ThemeHelper.SecondaryColor);
@@ -126,6 +131,9 @@ namespace Soloplan.WhatsON.GUI
       if (this.settings.MainWindowDimensions != null)
       {
         this.settings.MainWindowDimensions.Apply(this);
+        this.Top = this.settings.Top;
+        this.Left = this.settings.Left;
+        this.WindowState = this.settings.Maximized ? WindowState.Maximized : WindowState.Normal;
       }
       else
       {

@@ -13,6 +13,18 @@ namespace Soloplan.WhatsON.GUI.Common.VisualConfig
 
     public WindowSettings MainWindowDimensions { get; set; }
 
+    /// <summary>
+    /// Gets or sets the window location.
+    /// </summary>
+    public double Left { get; set; }
+
+    /// <summary>
+    /// Gets or sets the window location.
+    /// </summary>
+    public double Top { get; set; }
+
+    public bool Maximized { get; set; }
+
     public WindowSettings ConfigDialogSettings { get; set; }
 
     public ColorSettings ColorSettings { get; set; }

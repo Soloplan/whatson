@@ -115,6 +115,7 @@
     <Compile Include="Configuration\View\Validation.cs" />
     <Compile Include="ThemeHelper.cs" />
     <Compile Include="TrayHandler.cs" />
+    <Compile Include="WindowFinder.cs" />
     <Page Include="Configuration\AboutPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -48,6 +48,11 @@ namespace Soloplan.WhatsON.GUI
 
     private NotificationsModel model;
 
+    /// <summary>
+    /// The last time the window was focused by clicking on tray icon.
+    /// </summary>
+    private DateTime lastWindowFocused;
+
     public TrayHandler(ObservationScheduler scheduler, ApplicationConfiguration configuration)
     {
       this.icon = new System.Windows.Forms.NotifyIcon();
@@ -220,7 +225,18 @@ namespace Soloplan.WhatsON.GUI
     {
       if (this.MainWindowVisible)
       {
-        this.MainWindow.Close();
+        if (this.MainWindow.WindowState == System.Windows.WindowState.Minimized)
+        {
+          this.MainWindow.WindowState = System.Windows.WindowState.Normal;
+        }
+        else if ((DateTime.Now - this.lastWindowFocused).TotalMilliseconds > 250)
+        {
+          this.MainWindow.Close();
+        }
+        else
+        {
+          this.BringToFront(false);
+        }
       }
       else
       {
@@ -240,6 +256,11 @@ namespace Soloplan.WhatsON.GUI
     {
       if (this.MainWindowVisible)
       {
+        if (!WindowFinder.IsWindowVisible(this.MainWindow))
+        {
+          this.lastWindowFocused = DateTime.Now;
+        }
+
         this.MainWindow.Show();
         this.MainWindow.Activate();
       }
