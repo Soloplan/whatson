@@ -36,6 +36,7 @@
         <Setter Property="IsExpanded" Value="True" />
         <EventSetter Event="RequestBringIntoView" Handler="NullHandler"/>
         <EventSetter Event="PreviewKeyUp" Handler="TreeViewItemPreviewKeyUp"/>
+        <Setter Property="Padding" Value="0" />
       </Style>
     </TreeView.ItemContainerStyle>
   </TreeView>
