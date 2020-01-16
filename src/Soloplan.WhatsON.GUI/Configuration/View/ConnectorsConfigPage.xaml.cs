@@ -8,6 +8,7 @@
 namespace Soloplan.WhatsON.GUI.Configuration.View
 {
   using System;
+  using System.Collections.Generic;
   using System.ComponentModel;
   using System.Linq;
   using System.Runtime.CompilerServices;
@@ -139,6 +140,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// Gets the current connector.
     /// </summary>
     public ConnectorViewModel CurrentConnector => this.currentConnector ?? (ConnectorViewModel)this.uxConnectors.SelectedItem;
+
+    /// <summary>
+    /// Gets a value indicating whether current connector is null.
+    /// </summary>
+    public bool CurrentConnectorIsNull => this.CurrentConnector == null;
 
     /// <summary>
     /// Called when property was changed.
@@ -279,14 +285,14 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     }
 
     /// <summary>
-    /// Handles the start wizard button click.
+    /// Handles the edit in wizard button click.
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
-    private void StartWizardClick(object sender, System.Windows.RoutedEventArgs e)
+    private void EditInWizardClick(object sender, System.Windows.RoutedEventArgs e)
     {
       var wizardController = new WizardController(this.ownerWindow, this.config);
-      if (wizardController.Start(this.CurrentConnector.SourceConnectorPlugin))
+      if (wizardController.Start(this.CurrentConnector))
       {
         var selectedProjects = wizardController.GetSelectedProjects();
         if (selectedProjects.Count != 1)
@@ -295,6 +301,33 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
         }
 
         this.CurrentConnector.SourceConnectorPlugin.Configure(selectedProjects[0], this.CurrentConnector, wizardController.ProposedServerAddress);
+      }
+    }
+
+    /// <summary>
+    /// Handles the new in wizard button click.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
+    private void NewInWizardClick(object sender, System.Windows.RoutedEventArgs e)
+    {
+      var wizardController = new WizardController(this.ownerWindow, this.config);
+      wizardController.MultiSelectionMode = false;
+      var result = false;
+      IList<ConnectorViewModel> newConnectors = null;
+      try
+      {
+        result = wizardController.Start(out newConnectors);
+      }
+      finally
+      {
+        if (result && newConnectors != null && newConnectors.Count == 1)
+        {
+          var newConnector = newConnectors.First();
+          this.currentConnector = newConnector;
+          this.Connectors.Add(this.currentConnector);
+          this.uxConnectors.SelectedItem = this.currentConnector;
+        }
       }
     }
   }

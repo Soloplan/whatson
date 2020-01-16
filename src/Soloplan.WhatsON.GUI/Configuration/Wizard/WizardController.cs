@@ -66,11 +66,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     private bool isFinishEnabled;
 
     /// <summary>
-    /// The connector plugin.
-    /// </summary>
-    private ConnectorPlugin connectorPlugin;
-
-    /// <summary>
     /// The proposed server address.
     /// </summary>
     private string proposedServerAddress;
@@ -81,6 +76,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     private bool isProposedAddressEmpty = true;
 
     private string selectedConnectorType;
+
+    /// <summary>
+    /// The connector view model.
+    /// </summary>
+    private ConnectorViewModel editedConnectorViewModel;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WizardController"/> class.
@@ -243,39 +243,71 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// Starts the wizard.
     /// </summary>
-    /// <param name="plugin">The connector plugin.</param>
-    /// <returns>True if the wizard was finished correctly and not canceled in any way.</returns>
-    public bool Start(ConnectorPlugin plugin)
+    /// <param name="connector">The connector view model.</param>
+    /// <returns>
+    /// True if the wizard was finished correctly and not canceled in any way.
+    /// </returns>
+    public bool Start(ConnectorViewModel connector)
     {
-      this.connectorPlugin = plugin;
-      return this.Start(false);
+      this.editedConnectorViewModel = connector;
+      return this.Start(true);
     }
 
     /// <summary>
     /// Starts the wizard and applies the results to given configuration.
     /// Multiple, new connectors might be created.
     /// </summary>
-    /// <param name="configuration">The configuration.</param>
+    /// <param name="newConnectors">The new connectors.</param>
+    /// <param name="applyConfig">if set to <c>true</c> [apply configuration].</param>
     /// <returns>
     /// True if the wizard was finished correctly and not canceled in any way.
     /// </returns>
-    public bool Start(bool applyConfig = true)
+    public bool Start(out IList<ConnectorViewModel> newConnectors, bool applyConfig = true)
     {
+      newConnectors = null;
       this.wizardWindow = new WizardWindow(this);
       this.wizardWindow.Owner = this.ownerWindow;
       this.wizardWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-      this.GoToConnectionStep();
+      if (this.editedConnectorViewModel == null)
+      {
+        this.GoToConnectionStep();
+      }
+      else
+      {
+        this.ProposedServerAddress = this.editedConnectorViewModel.GetConfigurationByKey(Connector.ServerAddress)?.Value;
+        void OnActivated(object sender, EventArgs e)
+        {
+          this.GoToProjectSelectionStep();
+          this.wizardWindow.Activated -= OnActivated;
+        }
+
+        this.wizardWindow.Activated += OnActivated;
+      }
+
       if (this.wizardWindow.ShowDialog() == true)
       {
         if (applyConfig)
         {
-          this.ApplyToConfiguration();
+          this.ApplyToConfiguration(out newConnectors);
         }
 
         return true;
       }
 
       return false;
+    }
+
+    /// <summary>
+    /// Starts the wizard and applies the results to given configuration.
+    /// Multiple, new connectors might be created.
+    /// </summary>
+    /// <param name="applyConfig">if set to <c>true</c> [apply configuration].</param>
+    /// <returns>
+    /// True if the wizard was finished correctly and not canceled in any way.
+    /// </returns>
+    public bool Start(bool applyConfig = true)
+    {
+      return this.Start(out _, applyConfig);
     }
 
     /// <summary>
@@ -351,9 +383,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// Applies the results of the wizard to configuration.
     /// </summary>
-    /// <param name="configuration">The configuration.</param>
-    private void ApplyToConfiguration()
+    /// <param name="newConnectors">The new connectors.</param>
+    /// <exception cref="InvalidOperationException">At least one selected project is required.</exception>
+    private void ApplyToConfiguration(out IList<ConnectorViewModel> newConnectors)
     {
+      newConnectors = new List<ConnectorViewModel>();
       var selectedProjects = this.GetSelectedProjects();
       if (selectedProjects.Count < 1)
       {
@@ -372,6 +406,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         configurationViewModel.Connectors.Add(newConnector);
 
         selectedProject.Plugin.Configure(selectedProject, newConnector, this.ProposedServerAddress);
+        newConnectors.Add(newConnector);
       }
 
       if (configurationViewModel.ConfigurationIsModified)
@@ -402,6 +437,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       this.currentPage = new ConnectionWizardPage(this);
       this.currentPage.DataContext = this;
       this.WizardFrame.Content = this.currentPage;
+      if (this.editedConnectorViewModel != null)
+      {
+        this.SelectedConnectorType = this.editedConnectorViewModel.SourceConnectorPlugin.Name;
+      }
+
       this.OnPageChanged();
     }
 
@@ -430,9 +470,9 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     private async Task PrepareProjectsList()
     {
       Tuple<ConnectorPlugin, ProjectViewModelList> pluginToQueryWithModel;
-      if (this.connectorPlugin != null)
+      if (this.editedConnectorViewModel != null)
       {
-        pluginToQueryWithModel = new Tuple<ConnectorPlugin, ProjectViewModelList>(this.connectorPlugin, new ProjectViewModelList { MultiSelectionMode = false, PlugIn = this.connectorPlugin });
+        pluginToQueryWithModel = new Tuple<ConnectorPlugin, ProjectViewModelList>(this.editedConnectorViewModel.SourceConnectorPlugin, new ProjectViewModelList { MultiSelectionMode = false, PlugIn = this.editedConnectorViewModel.SourceConnectorPlugin });
       }
       else
       {
@@ -546,6 +586,10 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       {
         var errorDialog = new MessageControl(errorMessage);
         await DialogHost.Show(errorDialog, "WizardWaitDialogHostId");
+        if (this.editedConnectorViewModel != null)
+        {
+          this.wizardWindow.Close();
+        }
       }
     }
   }
