@@ -83,9 +83,15 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     private ConnectorViewModel editedConnectorViewModel;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="WizardController"/> class.
+    /// The force of <see cref="IsPreviousStepEnabled"/> flag.
+    /// </summary>
+    private bool? forceIsPreviousStepEnabled = false;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WizardController" /> class.
     /// </summary>
     /// <param name="ownerWindow">The owner window.</param>
+    /// <param name="config">The configuration.</param>
     public WizardController(Window ownerWindow, ApplicationConfiguration config)
     {
       this.ownerWindow = ownerWindow;
@@ -120,10 +126,25 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// Gets a value indicating whether this the next step button is enabled.
     /// </summary>
-    /// <value>
-    ///   <c>true</c> if the next step button is enabled; otherwise, <c>false</c>.
-    /// </value>
     public bool IsNextStepEnabled => this.IsNotLastStep && !this.IsProposedAddressEmpty;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether this the previous step button is enabled.
+    /// </summary>
+    public bool IsPreviousStepEnabled
+    {
+      get
+      {
+        if (this.forceIsPreviousStepEnabled.HasValue)
+        {
+          return this.forceIsPreviousStepEnabled.Value;
+        }
+
+        return this.IsNotFirstStep;
+      }
+
+      set => this.forceIsPreviousStepEnabled = value;
+    }
 
     /// <summary>
     /// Gets a value indicating whether the proposed address is empty.
@@ -250,21 +271,20 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     public bool Start(ConnectorViewModel connector)
     {
       this.editedConnectorViewModel = connector;
-      return this.Start(true);
+      this.IsPreviousStepEnabled = false;
+      return this.Start(false);
     }
 
     /// <summary>
     /// Starts the wizard and applies the results to given configuration.
     /// Multiple, new connectors might be created.
     /// </summary>
-    /// <param name="newConnectors">The new connectors.</param>
     /// <param name="applyConfig">if set to <c>true</c> [apply configuration].</param>
     /// <returns>
     /// True if the wizard was finished correctly and not canceled in any way.
     /// </returns>
-    public bool Start(out IList<ConnectorViewModel> newConnectors, bool applyConfig = true)
+    public bool Start(bool applyConfig = true)
     {
-      newConnectors = null;
       this.wizardWindow = new WizardWindow(this);
       this.wizardWindow.Owner = this.ownerWindow;
       this.wizardWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -288,26 +308,13 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       {
         if (applyConfig)
         {
-          this.ApplyToConfiguration(out newConnectors);
+          this.ApplyToConfiguration();
         }
 
         return true;
       }
 
       return false;
-    }
-
-    /// <summary>
-    /// Starts the wizard and applies the results to given configuration.
-    /// Multiple, new connectors might be created.
-    /// </summary>
-    /// <param name="applyConfig">if set to <c>true</c> [apply configuration].</param>
-    /// <returns>
-    /// True if the wizard was finished correctly and not canceled in any way.
-    /// </returns>
-    public bool Start(bool applyConfig = true)
-    {
-      return this.Start(out _, applyConfig);
     }
 
     /// <summary>
@@ -383,11 +390,9 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// Applies the results of the wizard to configuration.
     /// </summary>
-    /// <param name="newConnectors">The new connectors.</param>
     /// <exception cref="InvalidOperationException">At least one selected project is required.</exception>
-    private void ApplyToConfiguration(out IList<ConnectorViewModel> newConnectors)
+    private void ApplyToConfiguration()
     {
-      newConnectors = new List<ConnectorViewModel>();
       var selectedProjects = this.GetSelectedProjects();
       if (selectedProjects.Count < 1)
       {
@@ -406,7 +411,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         configurationViewModel.Connectors.Add(newConnector);
 
         selectedProject.Plugin.Configure(selectedProject, newConnector, this.ProposedServerAddress);
-        newConnectors.Add(newConnector);
       }
 
       if (configurationViewModel.ConfigurationIsModified)

@@ -65,13 +65,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
           connectorViewModel = new ConnectorViewModel();
           connectorViewModel.Load(connectorConfiguration);
           this.Add(connectorViewModel);
-          connectorViewModel.PropertyChanged += (s, e) =>
-          {
-            if (connectorViewModel.IsLoaded)
-            {
-              this.OnCollectionItemPropertyChanged(e);
-            }
-          };
         }
       }
       finally
@@ -108,6 +101,23 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
           configuration.ConnectorsConfiguration.Add(connectorConfiguration);
         }
       }
+    }
+
+    /// <summary>
+    /// Inserts an item into the collection at the specified index.
+    /// </summary>
+    /// <param name="index">The zero-based index at which <paramref name="item" /> should be inserted.</param>
+    /// <param name="item">The object to insert.</param>
+    protected override void InsertItem(int index, ConnectorViewModel item)
+    {
+      base.InsertItem(index, item);
+      item.PropertyChanged += (s, e) =>
+      {
+        if (item.IsLoaded)
+        {
+          this.OnCollectionItemPropertyChanged(e);
+        }
+      };
     }
 
     /// <summary>

@@ -45,11 +45,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     private bool singleConnectorMode;
 
     /// <summary>
-    /// The initially focused <see cref="ConnectorViewModel"/>.
-    /// </summary>
-    private ConnectorViewModel initialFocusedConnectorViewModel;
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="ConnectorsPage" /> class.
     /// </summary>
     /// <param name="connectors">The connectors.</param>
@@ -58,7 +53,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     public ConnectorsPage(ConnectorViewModelCollection connectors, Window ownerWindow, Connector initialFocusedConnector, ApplicationConfiguration config)
      : this(connectors, ownerWindow, config)
     {
-      this.InitialFocusedConnectorViewModel = this.Connectors.FirstOrDefault(c => c.SourceConnectorConfiguration == initialFocusedConnector.Configuration);
+      this.CurrentConnector = this.Connectors.FirstOrDefault(c => c.SourceConnectorConfiguration == initialFocusedConnector.Configuration);
       this.InitilizeConnectorNameTextEditBinding();
     }
 
@@ -72,14 +67,14 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     public ConnectorsPage(ConnectorViewModelCollection connectors, Window ownerWindow, ConnectorPlugin newConnectorPlugin, ApplicationConfiguration config)
       : this(connectors, ownerWindow, config)
     {
-      this.currentConnector = new ConnectorViewModel();
+      var newConnector = new ConnectorViewModel();
 
       // TODO move to connector view model/model
       this.currentConnector.SourceConnectorPlugin = newConnectorPlugin;
       this.currentConnector.Name = string.Empty;
       this.currentConnector.Load(null);
       this.Connectors.Add(this.currentConnector);
-      this.InitialFocusedConnectorViewModel = this.currentConnector;
+      this.CurrentConnector = newConnector;
 
       this.InitilizeConnectorNameTextEditBinding();
     }
@@ -119,27 +114,23 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     }
 
     /// <summary>
-    /// Gets or sets the initially focused <see cref="ConnectorViewModel"/>.
-    /// </summary>
-    public ConnectorViewModel InitialFocusedConnectorViewModel
-    {
-      get => this.initialFocusedConnectorViewModel;
-      set
-      {
-        this.initialFocusedConnectorViewModel = value;
-        this.OnPropertyChanged();
-      }
-    }
-
-    /// <summary>
     /// Gets the connectors.
     /// </summary>
     public ConnectorViewModelCollection Connectors { get; }
 
     /// <summary>
-    /// Gets the current connector.
+    /// Gets or sets the current connector.
     /// </summary>
-    public ConnectorViewModel CurrentConnector => this.currentConnector ?? (ConnectorViewModel)this.uxConnectors.SelectedItem;
+    public ConnectorViewModel CurrentConnector
+    {
+      get => this.currentConnector;
+      set
+      {
+        this.currentConnector = value;
+        this.OnPropertyChanged();
+        this.OnPropertyChanged(nameof(this.CurrentConnectorIsNull));
+      }
+    }
 
     /// <summary>
     /// Gets a value indicating whether current connector is null.
@@ -271,16 +262,17 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
         return;
       }
 
-      this.currentConnector = new ConnectorViewModel();
-      var createEditDialod = new CreateEditConnectorDialog(this.currentConnector, true);
+      var newConnector = new ConnectorViewModel();
+      var createEditDialod = new CreateEditConnectorDialog(newConnector, true);
       var result = (bool)await DialogHost.Show(createEditDialod, "ConnectorsConfigPageHost");
       if (result)
       {
         // TODO move to connector view model/model
-        this.currentConnector.SourceConnectorPlugin = (ConnectorPlugin)createEditDialod.uxPluginType.SelectedItem;
-        this.currentConnector.Load(null);
-        this.Connectors.Add(this.currentConnector);
-        this.uxConnectors.SelectedItem = this.currentConnector;
+        newConnector.SourceConnectorPlugin = (ConnectorPlugin)createEditDialod.uxPluginType.SelectedItem;
+        newConnector.Name = createEditDialod.uxEditConnectorName.Text;
+        newConnector.Load(null);
+        this.Connectors.Add(newConnector);
+        this.CurrentConnector = newConnector;
       }
     }
 
@@ -314,19 +306,27 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
       var wizardController = new WizardController(this.ownerWindow, this.config);
       wizardController.MultiSelectionMode = false;
       var result = false;
-      IList<ConnectorViewModel> newConnectors = null;
       try
       {
-        result = wizardController.Start(out newConnectors);
+        result = wizardController.Start(false);
       }
       finally
       {
-        if (result && newConnectors != null && newConnectors.Count == 1)
+        if (result)
         {
-          var newConnector = newConnectors.First();
-          this.currentConnector = newConnector;
-          this.Connectors.Add(this.currentConnector);
-          this.uxConnectors.SelectedItem = this.currentConnector;
+          var selectedProjects = wizardController.GetSelectedProjects();
+          if (selectedProjects != null && selectedProjects.Count == 1)
+          {
+            var selectedProject = selectedProjects.First();
+            var newConnector = new ConnectorViewModel();
+            newConnector.SourceConnectorPlugin = selectedProject.Plugin;
+            newConnector.Name = selectedProject.Name;
+            newConnector.Load(null);
+            newConnector.GetConfigurationByKey(Connector.ProjectName).Value = selectedProject.FullName;
+            newConnector.GetConfigurationByKey(Connector.ServerAddress).Value = wizardController.ProposedServerAddress;
+            this.Connectors.Add(newConnector);
+            this.CurrentConnector = newConnector;
+          }
         }
       }
     }

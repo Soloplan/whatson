@@ -23,37 +23,36 @@
         mc:Ignorable="d">
 
   <DockPanel Margin="0" LastChildFill="True">
-    <gui:CustomTitleBar CustomButtonVisible="False"
+    <gui:CustomTitleBar Height="32"
+                        CustomButtonVisible="False"
                         DockPanel.Dock="Top"
                         ShowMinimizeButton="False"
-                        Window="{Binding RelativeSource={RelativeSource AncestorType={x:Type view:ConfigWindow}}}"
-                        Height="32"/>
+                        Window="{Binding RelativeSource={RelativeSource AncestorType={x:Type view:ConfigWindow}}}" />
     <DockPanel Margin="5" LastChildFill="True">
-      <materialDesign:TransitioningContent
-        DockPanel.Dock="Bottom"
-        Visibility="{Binding Path=ConfigurationIsModified, Converter={StaticResource BoolToVis}}">
+      <materialDesign:TransitioningContent DockPanel.Dock="Bottom" Visibility="{Binding Path=ConfigurationIsModified, Converter={StaticResource BoolToVis}}">
         <materialDesign:TransitioningContent.OpeningEffects>
-          <materialDesign:TransitionEffect Kind="SlideInFromBottom" Duration="0:0:0.8"/>
+          <materialDesign:TransitionEffect Kind="SlideInFromBottom" Duration="0:0:0.8" />
         </materialDesign:TransitioningContent.OpeningEffects>
-        <Border x:Name="HideableStackPanel"
-              Padding="0,0,20,0">
-          <DockPanel Background="{DynamicResource MaterialDesignBody}" LastChildFill="False" Margin="0,0,-20,0">
+        <Border x:Name="HideableStackPanel" Padding="0,0,20,0">
+          <DockPanel Margin="0,0,-20,0"
+                     Background="{DynamicResource MaterialDesignBody}"
+                     LastChildFill="False">
             <TextBlock Padding="5"
-                     VerticalAlignment="Center"
-                     Foreground="{DynamicResource MaterialDesignBackground}"
-                     Text="Configuration is modified" />
+                       VerticalAlignment="Center"
+                       Foreground="{DynamicResource MaterialDesignBackground}"
+                       Text="Configuration is modified" />
             <DockPanel DockPanel.Dock="Right">
               <Button Margin="5"
-                    Padding="5"
-                    Click="SnackbarSaveClick"
-                    Style="{StaticResource MaterialDesignFlatButton}">
+                      Padding="5"
+                      Click="SnackbarSaveClick"
+                      Style="{StaticResource MaterialDesignFlatButton}">
                 Save
               </Button>
               <Button Margin="5"
-                    Padding="5"
-                    Click="SnackbarResetClick"
-                    Style="{StaticResource MaterialDesignFlatButton}"
-                    Content="{Binding Path=SnackbarActionCaption}" />
+                      Padding="5"
+                      Click="SnackbarResetClick"
+                      Content="{Binding Path=SnackbarActionCaption}"
+                      Style="{StaticResource MaterialDesignFlatButton}" />
             </DockPanel>
           </DockPanel>
           <Border.RenderTransform>
@@ -67,8 +66,8 @@
                  Padding="5"
                  Cursor="Hand"
                  DockPanel.Dock="Top"
-                 SelectionChanged="ListBoxSelectionChanged"
-                 SelectedItem="{Binding Path=InitialFocusedConfigurationListBoxItem, Mode=OneWay}">
+                 SelectedItem="{Binding Path=InitialFocusedConfigurationListBoxItem, Mode=OneWay}"
+                 SelectionChanged="ListBoxSelectionChanged">
           <ListBoxItem Content="Main" Tag="{x:Static view:ConfigWindow.MainListItemTag}" />
           <ListBoxItem Content="Projects" Tag="{x:Static view:ConfigWindow.ConnectorsListItemTag}" />
           <ListBoxItem Content="About" Tag="{x:Static view:ConfigWindow.AboutListItemTag}" />
