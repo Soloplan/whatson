@@ -120,7 +120,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     public virtual void Update(Connector changedConnector)
     {
-      Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+      Application.Current.Dispatcher.Invoke(new Action(() =>
       {
         log.Trace("Updating model {model}", new { this.Name, this.Identifier });
 
