@@ -34,8 +34,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.IsNodeExpanded = true;
     }
 
-    public event EventHandler ConfigurationChanged;
-
     public ObservableCollection<ConnectorViewModel> ConnectorViewModels => this.statusViewModels ?? (this.statusViewModels = new ObservableCollection<ConnectorViewModel>());
 
     public string GroupName
@@ -100,6 +98,9 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       {
         log.Debug("Remove no longer present connector {noLongerPresentConnectorViewModel}", new { noLongerPresentConnectorViewModel.Identifier, noLongerPresentConnectorViewModel.Name });
         noLongerPresentConnectorViewModel.EditItem -= this.OnSubItemEdit;
+        noLongerPresentConnectorViewModel.DeleteItem -= this.DeleteConnector;
+        noLongerPresentConnectorViewModel.ExportItem -= this.ExportItemHandler;
+        noLongerPresentConnectorViewModel.ConfigurationChanged -= this.ConnectorViewModelConfigurationChanged;
         this.ConnectorViewModels.Remove(noLongerPresentConnectorViewModel);
       }
 
@@ -139,16 +140,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
-    /// <summary>
-    /// Firest <see cref="ConfigurationChanged"/> event.
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="eventArgs">Event args.</param>
-    protected void OnConfigurationChanged(object sender, EventArgs eventArgs)
-    {
-      this.ConfigurationChanged?.Invoke(sender, eventArgs);
-    }
-
     private void CreateViewModelForConnectorConfiguration(ConnectorConfiguration connectorConfiguration)
     {
       var connector = PluginManager.Instance.GetConnector(connectorConfiguration);
@@ -156,8 +147,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       connectorViewModel.EditItem += this.OnSubItemEdit;
       connectorViewModel.DeleteItem += this.DeleteConnector;
       connectorViewModel.ExportItem += this.ExportItemHandler;
+      connectorViewModel.ConfigurationChanged += this.ConnectorViewModelConfigurationChanged;
       connectorViewModel.Update(connector);
       this.ConnectorViewModels.Add(connectorViewModel);
+    }
+
+    private void ConnectorViewModelConfigurationChanged(object sender, EventArgs e)
+    {
+      this.OnConfigurationChanged(sender, e);
     }
 
     /// <summary>
@@ -186,7 +183,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       return new ConnectorViewModel(connector);
     }
 
-    private void OnSubItemEdit(object sender, ValueEventArgs<TreeItemViewModel> e)
+    private void OnSubItemEdit(object sender, EditTreeItemViewModelEventArgs e)
     {
       this.OnEditItem(sender, e);
     }

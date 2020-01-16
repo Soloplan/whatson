@@ -34,9 +34,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private bool configurationModifiedInTree;
 
     /// <summary>
+    /// Backing field for <see cref="RenameCommand"/>.
+    /// </summary>
+    private CustomCommand renameCommand;
+
+    /// <summary>
     /// Event fired when user requested editing of tree view item in context menu.
     /// </summary>
-    public event EventHandler<ValueEventArgs<TreeItemViewModel>> EditItem;
+    public event EventHandler<EditTreeItemViewModelEventArgs> EditItem;
 
     /// <summary>
     /// Event fired when item should be deleted.
@@ -47,6 +52,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// Event fired when user requested exporting of tree view item in context menu.
     /// </summary>
     public event EventHandler<ValueEventArgs<TreeItemViewModel>> ExportItem;
+
+    public event EventHandler ConfigurationChanged;
 
     public bool IsNodeExpanded
     {
@@ -67,6 +74,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     public virtual CustomCommand EditCommand => this.editCommand ?? (this.editCommand = this.CreateEditCommand());
 
     public virtual CustomCommand DeleteCommand => this.deleteCommand ?? (this.deleteCommand = this.CreateDeleteCommand());
+
+    /// <summary>
+    /// Gets command for renaming tree item.
+    /// </summary>
+    public virtual CustomCommand RenameCommand => this.renameCommand ?? (this.renameCommand = this.CreateRenameCommand());
 
     /// <summary>
     /// Gets command for exporting tree item.
@@ -104,7 +116,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="eventArgs">Arguments containing data about edited item.</param>
-    protected virtual void OnEditItem(object sender, ValueEventArgs<TreeItemViewModel> eventArgs)
+    protected virtual void OnEditItem(object sender, EditTreeItemViewModelEventArgs eventArgs)
     {
       this.EditItem?.Invoke(sender, eventArgs);
     }
@@ -136,7 +148,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     protected virtual CustomCommand CreateEditCommand()
     {
       var command = new CustomCommand();
-      command.OnExecute += (s, e) => this.OnEditItem(this, new ValueEventArgs<TreeItemViewModel>(this));
+      command.OnExecute += (s, e) => this.OnEditItem(this, new EditTreeItemViewModelEventArgs { Model = this, EditType = EditType.Edit });
+      return command;
+    }
+
+    protected virtual CustomCommand CreateRenameCommand()
+    {
+      var command = new CustomCommand();
+      command.OnExecute += (s,e )=> this.OnEditItem(this, new EditTreeItemViewModelEventArgs { Model = this, EditType = EditType.Rename });
       return command;
     }
 
@@ -160,6 +179,16 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       var command = new CustomCommand();
       command.OnExecute += this.DeleteCommandOnExecute;
       return command;
+    }
+
+    /// <summary>
+    /// Firest <see cref="ConfigurationChanged"/> event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="eventArgs">Event args.</param>
+    protected virtual void OnConfigurationChanged(object sender, EventArgs eventArgs)
+    {
+      this.ConfigurationChanged?.Invoke(sender, eventArgs);
     }
 
     /// <summary>

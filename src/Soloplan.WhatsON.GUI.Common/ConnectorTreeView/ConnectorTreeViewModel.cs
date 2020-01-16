@@ -62,7 +62,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// Event fired when user requested editing of tree view item in context menu.
     /// </summary>
-    public event EventHandler<ValueEventArgs<TreeItemViewModel>> EditItem;
+    public event EventHandler<EditTreeItemViewModelEventArgs> EditItem;
 
     /// <summary>
     /// Event fired when user requested exporting of tree view item in context menu.
@@ -275,7 +275,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       {
         foreach (var projectViewModel in group.ConnectorViewModels)
         {
-          projectViewModel.Update(projectViewModel.Connector);
+          projectViewModel.ApplyConfiguration(projectViewModel.Connector.Configuration);
         }
       }
 
@@ -321,6 +321,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
           if (config != null)
           {
             config.GetConfigurationByKey(Connector.Category).Value = connectorGroupViewModel.GroupName;
+            config.Name = connectorViewModel.Name;
           }
 
           configuration.ConnectorsConfiguration.Add(config);

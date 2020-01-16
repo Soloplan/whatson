@@ -49,6 +49,7 @@
       <DependentUpon>BuildNumberControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="BuildServer\CopyBuildLabelCommand.cs" />
+    <Compile Include="ConnectorTreeView\EditTreeItemViewModelEventArgs.cs" />
     <Compile Include="Converters\CountToVisibilityConverter.cs" />
     <Compile Include="BuildServer\CulpritsControl.xaml.cs">
       <DependentUpon>CulpritsControl.xaml</DependentUpon>

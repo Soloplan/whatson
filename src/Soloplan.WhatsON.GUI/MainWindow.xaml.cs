@@ -360,9 +360,9 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">Event args.</param>
-    private async void EditTreeItem(object sender, ValueEventArgs<Common.ConnectorTreeView.TreeItemViewModel> e)
+    private async void EditTreeItem(object sender, Common.ConnectorTreeView.EditTreeItemViewModelEventArgs e)
     {
-      if (e.Value is ConnectorGroupViewModel groupTreeViewModel)
+      if (e.Model is ConnectorGroupViewModel groupTreeViewModel)
       {
         var model = new GroupViewModel
         {
@@ -374,13 +374,33 @@ namespace Soloplan.WhatsON.GUI
         if (result && groupTreeViewModel.GroupName != model.Name)
         {
           groupTreeViewModel.GroupName = model.Name;
-          this.ConfigurationModifiedFromTree = true;
         }
       }
 
-      if (e.Value is Common.ConnectorTreeView.ConnectorViewModel connectorViewModel)
+      if (e.Model is Common.ConnectorTreeView.ConnectorViewModel connectorViewModel)
       {
-        this.OpenConfig(connectorViewModel.Connector);
+        if (e.EditType == EditType.Rename)
+        {
+          var model = new Soloplan.WhatsON.GUI.Configuration.ViewModel.ConnectorViewModel
+          {
+            Name = connectorViewModel.Name,
+          };
+
+          var editProjectNameDialog = new EditProjectName(model);
+          var result = await this.ShowDialogOnPageHost(editProjectNameDialog);
+          if (result && connectorViewModel.Name != model.Name)
+          {
+            var connector = this.config.ConnectorsConfiguration.FirstOrDefault(c => c.Identifier == connectorViewModel.Identifier);
+            if (connector != null)
+            {
+              connectorViewModel.Name = model.Name;
+            }
+          }
+        }
+        else
+        {
+          this.OpenConfig(connectorViewModel.Connector);
+        }
       }
     }
 

@@ -2,8 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:buildServer="clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer"
                     xmlns:connectorTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView"
-                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-                    xmlns:converters="clr-namespace:Soloplan.WhatsON.GUI.Common.Converters">
+                    xmlns:converters="clr-namespace:Soloplan.WhatsON.GUI.Common.Converters"
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
 
   <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
   <converters:StatusToColorConverter x:Key="StatusToColorConverter" />
@@ -17,6 +17,14 @@
         <StackPanel Orientation="Horizontal">
           <materialDesign:PackIcon Kind="TagOutline" />
           <TextBlock Padding="10,0,0,0" Text="Copy latest build label" />
+        </StackPanel>
+      </MenuItem.Header>
+    </MenuItem>
+    <MenuItem Command="{Binding RenameCommand}">
+      <MenuItem.Header>
+        <StackPanel Orientation="Horizontal">
+          <materialDesign:PackIcon Kind="Rename" />
+          <TextBlock Padding="10,0,0,0" Text="Rename" />
         </StackPanel>
       </MenuItem.Header>
     </MenuItem>
@@ -105,7 +113,7 @@
                  FontSize="{Binding DataContext.FontSizeSmall, Mode=OneWay, RelativeSource={RelativeSource AncestorType=connectorTreeView:ConnectorsTreeView}}"
                  FontWeight="Normal"
                  Text="{Binding CurrentStatus.Time, Converter={StaticResource TimeToApproximateTimeConverter}}"
-                 Visibility="{Binding CurrentStatus.Time, Converter={StaticResource NullOrDefaultVisibilityConverter}}"/>
+                 Visibility="{Binding CurrentStatus.Time, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
     </DockPanel>
   </DataTemplate>
 </ResourceDictionary>

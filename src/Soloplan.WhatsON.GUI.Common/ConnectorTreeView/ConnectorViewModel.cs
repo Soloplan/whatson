@@ -10,8 +10,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Windows;
   using System.Windows.Controls;
   using System.Windows.Input;
-  using System.Windows.Threading;
   using NLog;
+  using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.Model;
 
@@ -49,11 +49,12 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     public string Name
     {
       get => this.name;
-      protected set
+      set
       {
         if (this.name != value)
         {
           this.name = value;
+          this.OnConfigurationChanged(this, EventArgs.Empty);
           this.OnPropertyChanged();
         }
       }
@@ -118,6 +119,15 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
+    /// <summary>
+    /// Applies configuration (currently just name) without firing property changed.
+    /// </summary>
+    /// <param name="configuration">The configuration to apply.</param>
+    public virtual void ApplyConfiguration(ConnectorConfiguration configuration)
+    {
+      this.name = configuration.Name;
+    }
+
     public virtual void Update(Connector changedConnector)
     {
       Application.Current.Dispatcher.Invoke(new Action(() =>
@@ -165,7 +175,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         }
 
         this.Description = changedConnector.Description;
-        this.Name = this.Connector.Configuration.Name;
         this.CurrentStatus.Update(changedConnector.CurrentStatus);
       }));
     }

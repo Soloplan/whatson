@@ -1,6 +1,7 @@
-﻿<UserControl x:Class="Soloplan.WhatsON.GUI.Configuration.View.EditGroupNameDialog"
+﻿<UserControl x:Class="Soloplan.WhatsON.GUI.Configuration.View.EditProjectName"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:configuration="clr-namespace:Soloplan.WhatsON.GUI.Configuration"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -10,16 +11,18 @@
              Background="{DynamicResource MaterialDesignPaper}"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              mc:Ignorable="d">
+  <UserControl.CommandBindings>
+    <CommandBinding CanExecute="CanCloseDialog" Command="materialDesign:DialogHost.CloseDialogCommand" />
+  </UserControl.CommandBindings>
   <StackPanel MinWidth="300" Margin="8">
-    <TextBox x:Name="uxEditGroupName"
-             Margin="0,8,0,0"
+    <TextBox Margin="0,8,0,0"
              HorizontalAlignment="Stretch"
-             materialDesign:HintAssist.Hint="Group name"
+             materialDesign:HintAssist.Hint="Project name"
              Style="{StaticResource MaterialDesignFloatingHintTextBox}">
       <TextBox.Text>
-        <Binding Path="Name" UpdateSourceTrigger="Explicit">
+        <Binding Path="Name" UpdateSourceTrigger="PropertyChanged">
           <Binding.ValidationRules>
-            <DataErrorValidationRule />
+            <configuration:NotEmptyValidationRule />
           </Binding.ValidationRules>
         </Binding>
       </TextBox.Text>
@@ -28,7 +31,8 @@
     <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
       <Button Margin="0,8,8,0"
               Click="OkButtonClick"
-              IsDefault="True">
+              IsDefault="True"
+              Command="materialDesign:DialogHost.CloseDialogCommand">
         <Button.CommandParameter>
           <system:Boolean>True</system:Boolean>
         </Button.CommandParameter>

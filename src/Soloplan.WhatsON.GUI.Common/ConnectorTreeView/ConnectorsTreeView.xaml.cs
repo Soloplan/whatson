@@ -60,7 +60,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// Event fired when user requested editing of tree view item in context menu.
     /// </summary>
-    public event EventHandler<ValueEventArgs<TreeItemViewModel>> EditItem;
+    public event EventHandler<EditTreeItemViewModelEventArgs> EditItem;
 
     /// <summary>
     /// Event fired when user requested exporting of tree view item in context menu.
@@ -229,7 +229,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <param name="hook">Controls whether the events should be hooked or unhooked.</param>
     private void HookUnhookModelEvents(bool hook)
     {
-      void OnModelOnEditItem(object s, ValueEventArgs<TreeItemViewModel> e) => this.EditItem?.Invoke(s, e);
+      void OnModelOnEditItem(object s, EditTreeItemViewModelEventArgs e) => this.EditItem?.Invoke(s, e);
       void OnModelOnExportItem(object s, ValueEventArgs<TreeItemViewModel> e) => this.ExportItem?.Invoke(s, e);
       void OnModelOnDeleteItem(object s, DeleteTreeItemEventArgs e) => this.DeleteItem?.Invoke(s, e);
       void OnModelOnConfigurationChanged(object s, EventArgs e) => this.ConfigurationChanged?.Invoke(this, EventArgs.Empty);

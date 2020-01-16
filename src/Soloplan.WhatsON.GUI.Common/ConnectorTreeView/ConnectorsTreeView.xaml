@@ -14,10 +14,10 @@
     <ResourceDictionary>
 
       <ContextMenu x:Key="BaseTreeMenuImpl">
-        <MenuItem Command="{Binding EditCommand}">
+        <MenuItem CommandParameter="Rename" Command="{Binding RenameCommand}">
           <MenuItem.Header>
             <StackPanel Orientation="Horizontal">
-              <materialDesign:PackIcon Kind="Edit" />
+              <materialDesign:PackIcon Kind="Rename" />
               <TextBlock Padding="5,0,0,0" Text="Rename" />
             </StackPanel>
           </MenuItem.Header>
