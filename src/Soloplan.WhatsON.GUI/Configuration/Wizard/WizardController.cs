@@ -91,7 +91,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// The force of <see cref="IsPreviousStepEnabled"/> flag.
     /// </summary>
-    private bool? forceIsPreviousStepEnabled = false;
+    private bool? forceIsPreviousStepEnabled;
 
     /// <summary>
     /// The selected grouping setting.
