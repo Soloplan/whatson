@@ -27,6 +27,8 @@ namespace Soloplan.WhatsON.GUI.Common.VisualConfig
 
     public WindowSettings ConfigDialogSettings { get; set; }
 
+    public WindowSettings WizardDialogSettings { get; set; } = new WindowSettings();
+
     public ColorSettings ColorSettings { get; set; }
   }
 }

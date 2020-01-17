@@ -86,6 +86,7 @@
     <Compile Include="Configuration\WaitControl.xaml.cs">
       <DependentUpon>WaitControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Configuration\Wizard\GrouppingSetting.cs" />
     <Compile Include="Configuration\Wizard\ProjectSelectionWizardPage.xaml.cs">
       <DependentUpon>ProjectSelectionWizardPage.xaml</DependentUpon>
     </Compile>

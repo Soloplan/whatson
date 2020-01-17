@@ -14,6 +14,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
   using System.Windows.Forms;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.GUI.Configuration.ViewModel;
   using Soloplan.WhatsON.Model;
   using Application = System.Windows.Application;
@@ -54,6 +55,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     private readonly ConnectorPlugin newConnectorPlugin;
 
     /// <summary>
+    /// The wizard dialog settings.
+    /// </summary>
+    private readonly WindowSettings wizardDialogSettings;
+
+    /// <summary>
     /// The configuration source.
     /// </summary>
     private ApplicationConfiguration configurationSource;
@@ -79,12 +85,14 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     private bool windowShown;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ConfigWindow"/> class.
+    /// Initializes a new instance of the <see cref="ConfigWindow" /> class.
     /// </summary>
     /// <param name="configuration">The configuration.</param>
-    public ConfigWindow(ApplicationConfiguration configuration)
+    /// <param name="wizardDialogSettings">The wizard dialog settings.</param>
+    public ConfigWindow(ApplicationConfiguration configuration, WindowSettings wizardDialogSettings)
     {
       this.configurationSource = configuration;
+      this.wizardDialogSettings = wizardDialogSettings;
       this.configurationViewModel.Load(configuration);
       this.configurationViewModel.SingleConnectorMode = false;
       this.DataContext = this.configurationViewModel;
@@ -100,12 +108,13 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ConfigWindow"/> class.
+    /// Initializes a new instance of the <see cref="ConfigWindow" /> class.
     /// </summary>
     /// <param name="configuration">The configuration.</param>
     /// <param name="initialFocusedConnector">The connector focused on initialization.</param>
-    public ConfigWindow(ApplicationConfiguration configuration, Connector initialFocusedConnector)
-      : this(configuration)
+    /// <param name="wizardDialogSettings">The wizard dialog settings.</param>
+    public ConfigWindow(ApplicationConfiguration configuration, Connector initialFocusedConnector, WindowSettings wizardDialogSettings)
+      : this(configuration, wizardDialogSettings)
     {
       this.initialFocusedConnector = initialFocusedConnector;
       this.configurationViewModel.SingleConnectorMode = true;
@@ -118,8 +127,9 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     /// <param name="configuration">The configuration.</param>
     /// <param name="newConnectorPlugin">The new connector plugin.</param>
-    public ConfigWindow(ApplicationConfiguration configuration, ConnectorPlugin newConnectorPlugin)
-      : this(configuration)
+    /// <param name="wizardDialogSettings">The wizard dialog settings.</param>
+    public ConfigWindow(ApplicationConfiguration configuration, ConnectorPlugin newConnectorPlugin, WindowSettings wizardDialogSettings)
+      : this(configuration, wizardDialogSettings)
     {
       this.newConnectorPlugin = newConnectorPlugin;
       this.configurationViewModel.SingleConnectorMode = true;
@@ -204,15 +214,15 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
           {
             if (!this.configurationViewModel.SingleConnectorMode)
             {
-              this.connectorPage = new ConnectorsPage(this.configurationViewModel.Connectors, this, this.configurationSource);
+              this.connectorPage = new ConnectorsPage(this.configurationViewModel.Connectors, this, this.configurationSource, this.wizardDialogSettings);
             }
             else if (this.initialFocusedConnector != null)
             {
-              this.connectorPage = new ConnectorsPage(this.configurationViewModel.Connectors, this, this.initialFocusedConnector, this.configurationSource);
+              this.connectorPage = new ConnectorsPage(this.configurationViewModel.Connectors, this, this.initialFocusedConnector, this.configurationSource, this.wizardDialogSettings);
             }
             else
             {
-              this.connectorPage = new ConnectorsPage(this.configurationViewModel.Connectors, this, this.newConnectorPlugin, this.configurationSource);
+              this.connectorPage = new ConnectorsPage(this.configurationViewModel.Connectors, this, this.newConnectorPlugin, this.configurationSource, this.wizardDialogSettings);
             }
           }
 

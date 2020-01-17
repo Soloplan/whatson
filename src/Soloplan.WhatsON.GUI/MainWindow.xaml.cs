@@ -184,7 +184,7 @@ namespace Soloplan.WhatsON.GUI
 
     private void OpenConfig(object sender, EventArgs e)
     {
-      var configWindow = new ConfigWindow(this.config);
+      var configWindow = new ConfigWindow(this.config, this.settings.WizardDialogSettings);
       this.OpenConfig(configWindow);
     }
 
@@ -195,7 +195,7 @@ namespace Soloplan.WhatsON.GUI
     /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
     private void NewConnectorClick(object sender, EventArgs e)
     {
-      var wizardController = new WizardController(this, this.config);
+      var wizardController = new WizardController(this, this.config, this.settings.WizardDialogSettings);
       var result = false;
       try
       {
@@ -313,7 +313,7 @@ namespace Soloplan.WhatsON.GUI
 
       configWindow.Closing += (s, ev) =>
       {
-        this.settings.ConfigDialogSettings = new WindowSettings().Parse(configWindow);
+        this.settings.ConfigDialogSettings.Parse(configWindow);
       };
 
       configWindow.ShowDialog();
@@ -325,7 +325,7 @@ namespace Soloplan.WhatsON.GUI
     /// <param name="connector">The connector.</param>
     private void OpenConfig(Connector connector)
     {
-      var configWindow = new ConfigWindow(this.config, connector);
+      var configWindow = new ConfigWindow(this.config, connector, this.settings.WizardDialogSettings);
       this.OpenConfig(configWindow);
     }
 

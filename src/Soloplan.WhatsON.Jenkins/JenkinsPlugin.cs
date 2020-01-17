@@ -97,6 +97,10 @@ namespace Soloplan.WhatsON.Jenkins
          || string.Equals(jenkinsJob.ClassName.Trim(), "org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject".Trim(), System.StringComparison.InvariantCultureIgnoreCase))
         {
           await this.GetProjectsLists(jenkinsJob.Url, newServerProject.Children, jenkinsApi);
+          foreach (var child in newServerProject.Children)
+          {
+            child.Parent = newServerProject;
+          }
         }
       }
     }
@@ -109,7 +113,7 @@ namespace Soloplan.WhatsON.Jenkins
     /// <returns>The newly  created server projects tree item.</returns>
     private Project AddProject(IList<Project> parentList, JenkinsJob jenkinsJobsItem)
     {
-      var newServerProject = new Project { Address = jenkinsJobsItem.Url, Name = jenkinsJobsItem.DisplayName ?? jenkinsJobsItem.Name, FullName = jenkinsJobsItem.FullName, Description = jenkinsJobsItem.Description };
+      var newServerProject = new Project(jenkinsJobsItem.Url, jenkinsJobsItem.DisplayName ?? jenkinsJobsItem.Name, jenkinsJobsItem.FullName, jenkinsJobsItem.Description);
       parentList.Add(newServerProject);
       return newServerProject;
     }

@@ -19,6 +19,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
   using NLog;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.GUI.Configuration.ViewModel;
   using Soloplan.WhatsON.Model;
 
@@ -39,6 +40,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     private readonly Window ownerWindow;
 
     private readonly ApplicationConfiguration config;
+
+    /// <summary>
+    /// The wizard dialog settings.
+    /// </summary>
+    private readonly WindowSettings wizardDialogSettings;
 
     /// <summary>
     /// The wizard window.
@@ -88,14 +94,22 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     private bool? forceIsPreviousStepEnabled = false;
 
     /// <summary>
+    /// The selected grouping setting.
+    /// </summary>
+    private GrouppingSetting selectedGroupingSetting;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="WizardController" /> class.
     /// </summary>
     /// <param name="ownerWindow">The owner window.</param>
     /// <param name="config">The configuration.</param>
-    public WizardController(Window ownerWindow, ApplicationConfiguration config)
+    /// <param name="wizardDialogSettings">The wizard dialog settings.</param>
+    public WizardController(Window ownerWindow, ApplicationConfiguration config, WindowSettings wizardDialogSettings)
     {
       this.ownerWindow = ownerWindow;
       this.config = config;
+      this.wizardDialogSettings = wizardDialogSettings;
+      this.GroupingSettings = this.InitializeGrouppingSettings();
     }
 
     /// <summary>
@@ -107,6 +121,27 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// Gets the projects tree.
     /// </summary>
     public ProjectViewModelList Projects => this.projects ?? (this.projects = new ProjectViewModelList());
+
+    /// <summary>
+    /// Gets the projects tree.
+    /// </summary>
+    public IReadOnlyList<GrouppingSetting> GroupingSettings
+    {
+      get;
+    }
+
+    /// <summary>
+    /// Gets or sets the selected grouping setting.
+    /// </summary>
+    public GrouppingSetting SelectedGroupingSetting
+    {
+      get => this.selectedGroupingSetting;
+      set
+      {
+        this.selectedGroupingSetting = value;
+        this.OnPropertyChanged(nameof(this.SelectedGroupingSetting));
+      }
+    }
 
     /// <summary>
     /// Gets a value indicating whether wizard is NOT on it's first step.
@@ -304,7 +339,10 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         this.wizardWindow.Activated += OnActivated;
       }
 
-      if (this.wizardWindow.ShowDialog() == true)
+      this.wizardDialogSettings.Apply(this.wizardWindow);
+      var wizardShowResult = this.wizardWindow.ShowDialog();
+      this.wizardDialogSettings.Parse(this.wizardWindow);
+      if (wizardShowResult == true)
       {
         if (applyConfig)
         {
@@ -315,6 +353,22 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       }
 
       return false;
+    }
+
+    /// <summary>
+    /// Creates the parent project structure.
+    /// </summary>
+    /// <param name="viewModel">The view model.</param>
+    /// <returns>Parent project.</returns>
+    private Project CreateParentProjectStructure(ProjectViewModel viewModel)
+    {
+      if (viewModel.Parent == null)
+      {
+        return null;
+      }
+
+      var newParent = new Project(viewModel.Parent.Address, viewModel.Parent.Name, viewModel.Parent.FullName, viewModel.Parent.Description, this.Projects.PlugIn, this.CreateParentProjectStructure(viewModel.Parent));
+      return newParent;
     }
 
     /// <summary>
@@ -332,7 +386,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       var checkedProjects = this.Projects.GetChecked();
       foreach (var checkedProject in checkedProjects.Where(p => p.Projects.Count == 0))
       {
-        var newProject = new Project { Address = checkedProject.Address, Name = checkedProject.Name, FullName = checkedProject.FullName, Description = checkedProject.Description, Plugin = this.Projects.PlugIn };
+        var newProject = new Project(checkedProject.Address, checkedProject.Name, checkedProject.FullName, checkedProject.Description, this.Projects.PlugIn, this.CreateParentProjectStructure(checkedProject));
         serverProjects.Add(newProject);
       }
 
@@ -388,6 +442,33 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     }
 
     /// <summary>
+    /// Creates the group name from project tree.
+    /// </summary>
+    /// <param name="project">The project.</param>
+    /// <param name="currentName">Name of the current.</param>
+    /// <returns>Group name.</returns>
+    private string CreateGroupNameFromProjectTree(Project project, string currentName = null)
+    {
+      if (project == null)
+      {
+        return currentName;
+      }
+
+      if (currentName?.Length > 0)
+      {
+        currentName = currentName.Insert(0, "/");
+      }
+
+      currentName = project.Name + currentName;
+      if (project.Parent == null)
+      {
+        return currentName;
+      }
+
+      return this.CreateGroupNameFromProjectTree(project.Parent, currentName);
+    }
+
+    /// <summary>
     /// Applies the results of the wizard to configuration.
     /// </summary>
     /// <exception cref="InvalidOperationException">At least one selected project is required.</exception>
@@ -406,8 +487,18 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       {
         var newConnector = new ConnectorViewModel();
         newConnector.SourceConnectorPlugin = selectedProject.Plugin;
-        newConnector.Name = selectedProject.FullName;
+        newConnector.Name = this.SelectedGroupingSetting.Id == WizardWindow.AddProjectPathToProjectName ? selectedProject.FullName : selectedProject.Name;
         newConnector.Load(null);
+        if (this.SelectedGroupingSetting.Id == WizardWindow.AssignGroupsForAddedProjects)
+        {
+          var groupName = this.CreateGroupNameFromProjectTree(selectedProject.Parent);
+
+          if (!string.IsNullOrWhiteSpace(groupName))
+          {
+            newConnector.GetConfigurationByKey(Connector.Category).Value = groupName;
+          }
+        }
+
         configurationViewModel.Connectors.Add(newConnector);
 
         selectedProject.Plugin.Configure(selectedProject, newConnector, this.ProposedServerAddress);
@@ -454,6 +545,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       foreach (var project in projects.OrderBy(x => x.Name))
       {
         var newProject = projectViewModel.AddProject(project);
+        newProject.Parent = projectViewModel;
         newProject.Address = project.Address;
 
         var alreadyExists = this.config.ConnectorsConfiguration.Where(x => x.Type == this.SelectedConnectorType
@@ -595,6 +687,19 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
           this.wizardWindow.Close();
         }
       }
+    }
+
+    /// <summary>
+    /// Initializes the groupping settings.
+    /// </summary>
+    /// <returns>The list with initlized groupping settings.</returns>
+    private List<GrouppingSetting> InitializeGrouppingSettings()
+    {
+      var grouppingSettings = new List<GrouppingSetting>();
+      grouppingSettings.Add(new GrouppingSetting("Assign groups for added projects", WizardWindow.AssignGroupsForAddedProjects));
+      grouppingSettings.Add(new GrouppingSetting("Add project path to project name", WizardWindow.AddProjectPathToProjectName));
+      grouppingSettings.Add(new GrouppingSetting("Do not assign any groups", WizardWindow.DoNotAssignAnyGroups));
+      return grouppingSettings;
     }
   }
 }

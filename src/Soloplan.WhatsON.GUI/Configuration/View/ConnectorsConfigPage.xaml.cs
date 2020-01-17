@@ -8,7 +8,6 @@
 namespace Soloplan.WhatsON.GUI.Configuration.View
 {
   using System;
-  using System.Collections.Generic;
   using System.ComponentModel;
   using System.Linq;
   using System.Runtime.CompilerServices;
@@ -18,6 +17,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
   using MaterialDesignThemes.Wpf;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.GUI.Configuration.ViewModel;
   using Soloplan.WhatsON.GUI.Configuration.Wizard;
   using Soloplan.WhatsON.Model;
@@ -35,6 +35,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     private readonly ApplicationConfiguration config;
 
     /// <summary>
+    /// The wizard dialog settings.
+    /// </summary>
+    private readonly WindowSettings wizardDialogSettings;
+
+    /// <summary>
     /// The current connector.
     /// </summary>
     private ConnectorViewModel currentConnector;
@@ -50,8 +55,10 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <param name="connectors">The connectors.</param>
     /// <param name="ownerWindow">The owner <see cref="Window" />.</param>
     /// <param name="initialFocusedConnector">The initial focused connector.</param>
-    public ConnectorsPage(ConnectorViewModelCollection connectors, Window ownerWindow, Connector initialFocusedConnector, ApplicationConfiguration config)
-     : this(connectors, ownerWindow, config)
+    /// <param name="config">The configuration.</param>
+    /// <param name="wizardDialogSettings">The wizard dialog settings.</param>
+    public ConnectorsPage(ConnectorViewModelCollection connectors, Window ownerWindow, Connector initialFocusedConnector, ApplicationConfiguration config, WindowSettings wizardDialogSettings)
+     : this(connectors, ownerWindow, config, wizardDialogSettings)
     {
       this.CurrentConnector = this.Connectors.FirstOrDefault(c => c.SourceConnectorConfiguration == initialFocusedConnector.Configuration);
       this.InitilizeConnectorNameTextEditBinding();
@@ -64,8 +71,10 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <param name="connectors">The connectors.</param>
     /// <param name="ownerWindow">The owner <see cref="Window" />.</param>
     /// <param name="newConnectorPlugin">The new connector plugin.</param>
-    public ConnectorsPage(ConnectorViewModelCollection connectors, Window ownerWindow, ConnectorPlugin newConnectorPlugin, ApplicationConfiguration config)
-      : this(connectors, ownerWindow, config)
+    /// <param name="config">The configuration.</param>
+    /// <param name="wizardDialogSettings">The wizard dialog settings.</param>
+    public ConnectorsPage(ConnectorViewModelCollection connectors, Window ownerWindow, ConnectorPlugin newConnectorPlugin, ApplicationConfiguration config, WindowSettings wizardDialogSettings)
+      : this(connectors, ownerWindow, config, wizardDialogSettings)
     {
       var newConnector = new ConnectorViewModel();
 
@@ -84,11 +93,14 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     /// <param name="connectors">The connectors.</param>
     /// <param name="ownerWindow">The owner <see cref="Window" />.</param>
-    public ConnectorsPage(ConnectorViewModelCollection connectors, Window ownerWindow, ApplicationConfiguration config)
+    /// <param name="config">The configuration.</param>
+    /// <param name="wizardDialogSettings">The wizard dialog settings.</param>
+    public ConnectorsPage(ConnectorViewModelCollection connectors, Window ownerWindow, ApplicationConfiguration config, WindowSettings wizardDialogSettings)
     {
       this.ownerWindow = ownerWindow;
       this.Connectors = connectors;
       this.config = config;
+      this.wizardDialogSettings = wizardDialogSettings;
       this.DataContext = this;
       this.InitializeComponent();
       this.Connectors.Loaded -= this.ConnectorsLoaded;
@@ -283,7 +295,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private void EditInWizardClick(object sender, System.Windows.RoutedEventArgs e)
     {
-      var wizardController = new WizardController(this.ownerWindow, this.config);
+      var wizardController = new WizardController(this.ownerWindow, this.config, this.wizardDialogSettings);
       if (wizardController.Start(this.CurrentConnector))
       {
         var selectedProjects = wizardController.GetSelectedProjects();
@@ -303,7 +315,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private void NewInWizardClick(object sender, System.Windows.RoutedEventArgs e)
     {
-      var wizardController = new WizardController(this.ownerWindow, this.config);
+      var wizardController = new WizardController(this.ownerWindow, this.config, this.wizardDialogSettings);
       wizardController.MultiSelectionMode = false;
       var result = false;
       try

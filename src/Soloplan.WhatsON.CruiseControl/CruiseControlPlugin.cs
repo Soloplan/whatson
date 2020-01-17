@@ -41,7 +41,7 @@ namespace Soloplan.WhatsON.CruiseControl
       var serverProjects = new List<Project>();
       foreach (var project in allProjects.CruiseControlProject)
       {
-        var serverProjectTreeItem = new Project { Name = project.Name, Address = address };
+        var serverProjectTreeItem = new Project(address, project.Name);
         if (string.IsNullOrWhiteSpace(project.ServerName))
         {
           result.Add(serverProjectTreeItem);
@@ -51,12 +51,13 @@ namespace Soloplan.WhatsON.CruiseControl
           var serverProject = serverProjects.FirstOrDefault(s => s.Name == project.ServerName);
           if (serverProject == null)
           {
-            serverProject = new Project { Name = project.ServerName };
+            serverProject = new Project(null, project.ServerName);
             serverProjects.Add(serverProject);
             result.Add(serverProject);
           }
 
           serverProject.Children.Add(serverProjectTreeItem);
+          serverProjectTreeItem.Parent = serverProject;
         }
       }
 

@@ -124,6 +124,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     }
 
     /// <summary>
+    /// Gets or sets the parent.
+    /// </summary>
+    public ProjectViewModel Parent { get; set; }
+
+    /// <summary>
     /// Determines whether is any project checked.
     /// </summary>
     /// <returns>

@@ -7,7 +7,10 @@
 
 namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 {
+  using System.Windows;
   using System.Windows.Controls;
+  using System.Windows.Controls.Primitives;
+  using System.Windows.Data;
 
   /// <summary>
   /// Interaction logic for ProjectSelectionWizardPage.xaml.
@@ -51,6 +54,17 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         this.wizardController.GoToNextPage();
         e.Handled = true;
       }
+    }
+
+    /// <summary>
+    /// Handles the Loaded event of the uxGrouppingSettings control.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+    private void UxGrouppingSettingsLoaded(object sender, RoutedEventArgs e)
+    {
+      var bindingExpressionbase = BindingOperations.GetBindingExpressionBase((ComboBox)sender, Selector.SelectedItemProperty);
+      bindingExpressionbase?.UpdateTarget();
     }
   }
 }

@@ -16,6 +16,25 @@ namespace Soloplan.WhatsON.Model
   public class Project
   {
     /// <summary>
+    /// Initializes a new instance of the <see cref="Project"/> class.
+    /// </summary>
+    /// <param name="address">The address.</param>
+    /// <param name="name">The name.</param>
+    /// <param name="fullName">The full name.</param>
+    /// <param name="description">The description.</param>
+    /// <param name="projectPlugIn">The project plug in.</param>
+    /// <param name="parent">The parent.</param>
+    public Project(string address, string name, string fullName = null, string description = null, ConnectorPlugin projectPlugIn = null, Project parent = null)
+    {
+      this.Address = address;
+      this.Name = name;
+      this.FullName = fullName;
+      this.Description = description;
+      this.Plugin = projectPlugIn;
+      this.Parent = parent;
+    }
+
+    /// <summary>
     /// Gets or sets the name of the project.
     /// </summary>
     public string Name { get; set; }
@@ -38,5 +57,10 @@ namespace Soloplan.WhatsON.Model
     /// Gets the server projects.
     /// </summary>
     public List<Project> Children { get; } = new List<Project>();
+
+    /// <summary>
+    /// Gets or sets the parent.
+    /// </summary>
+    public Project Parent { get; set; }
   }
 }
