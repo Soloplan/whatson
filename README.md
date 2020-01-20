@@ -84,7 +84,7 @@ By default, it allows to monitor these servers:
 
 **Krzysztof Lorenc**
 
-- <https://github.com/lorokl2>
+- <https://github.com/krzysztof-lorenc>
 
 ## License
 
