@@ -1,69 +1,69 @@
 ﻿<UserControl x:Class="Soloplan.WhatsON.GUI.Common.BuildServer.BuildInformationIconControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:connectorTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:s="clr-namespace:System;assembly=mscorlib"
-             xmlns:connectorTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:common="clr-namespace:Soloplan.WhatsON.GUI.Common"
-             xmlns:converters="clr-namespace:Soloplan.WhatsON.GUI.Common.Converters"
-             MaxHeight="{Binding DataContext.BuildIconSize, Mode=OneWay, RelativeSource={RelativeSource AncestorType=connectorTreeView:ConnectorsTreeView}}"
              MaxWidth="{Binding DataContext.BuildIconSize, Mode=OneWay, RelativeSource={RelativeSource AncestorType=connectorTreeView:ConnectorsTreeView}}"
+             MaxHeight="{Binding DataContext.BuildIconSize, Mode=OneWay, RelativeSource={RelativeSource AncestorType=connectorTreeView:ConnectorsTreeView}}"
              d:DataContext="{d:DesignInstance local:BuildStatusViewModel}"
              ToolTipService.ShowDuration="{x:Static s:Int32.MaxValue}"
              mc:Ignorable="d">
   <UserControl.Resources>
-    <converters:StatusToColorConverter x:Key="StatusToColorConverter" />
-    <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="../BuildStateColors.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+      <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+    </ResourceDictionary>
   </UserControl.Resources>
   <DockPanel>
-    <materialDesign:PackIcon 
-      DockPanel.Dock="Left"
-      Foreground="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
-      Visibility="{Binding Unstable, Converter={StaticResource BoolToVisibility}}"
-      Width="Auto"
-      Height="Auto"
-      Kind="Error" />
-    <materialDesign:PackIcon 
-      DockPanel.Dock="Left"
-      Foreground="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
-      Visibility="{Binding Succees, Converter={StaticResource BoolToVisibility}}"
-      Width="Auto"
-      Height="Auto"
-      Kind="TickCircle" />
-    <materialDesign:PackIcon 
-      DockPanel.Dock="Left"
-      Foreground="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
-      Visibility="{Binding Unknown, Converter={StaticResource BoolToVisibility}}"
-      Width="Auto"
-      Height="Auto"
-      Kind="MinusCircle" />
-    <materialDesign:PackIcon 
-      DockPanel.Dock="Left"
-      Foreground="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
-      Visibility="{Binding Failure, Converter={StaticResource BoolToVisibility}}"
-      Width="Auto"
-      Height="Auto"
-      Kind="CloseCircle" />
+    <materialDesign:PackIcon Width="Auto"
+                             Height="Auto"
+                             DockPanel.Dock="Left"
+                             Foreground="{StaticResource ResourceKey=Unstable}"
+                             Kind="Error"
+                             Visibility="{Binding Unstable, Converter={StaticResource BoolToVisibility}}" />
+    <materialDesign:PackIcon Width="Auto"
+                             Height="Auto"
+                             DockPanel.Dock="Left"
+                             Foreground="{StaticResource ResourceKey=Success}"
+                             Kind="TickCircle"
+                             Visibility="{Binding Succees, Converter={StaticResource BoolToVisibility}}" />
+    <materialDesign:PackIcon Width="Auto"
+                             Height="Auto"
+                             DockPanel.Dock="Left"
+                             Foreground="{StaticResource ResourceKey=Unknown}"
+                             Kind="MinusCircle"
+                             Visibility="{Binding Unknown, Converter={StaticResource BoolToVisibility}}" />
+    <materialDesign:PackIcon Width="Auto"
+                             Height="Auto"
+                             DockPanel.Dock="Left"
+                             Foreground="{StaticResource Failure}"
+                             Kind="CloseCircle"
+                             Visibility="{Binding Failure, Converter={StaticResource BoolToVisibility}}" />
 
-    <materialDesign:PackIcon 
-      DockPanel.Dock="Left"
-      Foreground="{Binding State, Mode=OneWay, Converter={StaticResource StatusToColorConverter}}"
-      Visibility="{Binding Building, Converter={StaticResource BoolToVisibility}}"
-      Width="Auto"
-      Height="Auto"
-      Kind="Circle"
-      Name="BuildIcon">
+    <materialDesign:PackIcon Name="BuildIcon"
+                             Width="Auto"
+                             Height="Auto"
+                             DockPanel.Dock="Left"
+                             Foreground="{StaticResource Running}"
+                             Kind="Circle"
+                             Visibility="{Binding Building, Converter={StaticResource BoolToVisibility}}">
       <materialDesign:PackIcon.Triggers>
         <EventTrigger RoutedEvent="Image.Loaded">
           <BeginStoryboard>
             <Storyboard>
-              <DoubleAnimation Storyboard.TargetName="BuildIcon"
+              <DoubleAnimation AutoReverse="True"
+                               RepeatBehavior="Forever"
+                               Storyboard.TargetName="BuildIcon"
                                Storyboard.TargetProperty="Opacity"
-                               From="1.0" To="0.2" Duration="0:0:1"
-                               AutoReverse="True" RepeatBehavior="Forever"/>
+                               From="1.0"
+                               To="0.2"
+                               Duration="0:0:1" />
             </Storyboard>
           </BeginStoryboard>
         </EventTrigger>

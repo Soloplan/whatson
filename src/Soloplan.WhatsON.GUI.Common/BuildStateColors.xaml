@@ -1,0 +1,7 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <SolidColorBrush x:Key="Failure">#C92A3C</SolidColorBrush>
+  <SolidColorBrush x:Key="Success">#42AB14</SolidColorBrush>
+  <SolidColorBrush x:Key="Running">#008B8B</SolidColorBrush>
+  <SolidColorBrush x:Key="Unknown">#78909C</SolidColorBrush>
+  <SolidColorBrush x:Key="Unstable">#FFA500</SolidColorBrush>
+</ResourceDictionary>

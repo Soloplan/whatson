@@ -12,6 +12,11 @@
              mc:Ignorable="d">
   <UserControl.Resources>
     <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="../BuildStateColors.xaml" />
+        <ResourceDictionary Source="ConnectorMissingDataTemplate.xaml" />
+        <ResourceDictionary Source="../BuildServer/BuildProjectDataTemplate.xaml" />
+      </ResourceDictionary.MergedDictionaries>
 
       <ContextMenu x:Key="BaseTreeMenuImpl">
         <MenuItem CommandParameter="Rename" Command="{Binding RenameCommand}">
@@ -41,11 +46,115 @@
       </ContextMenu>
 
       <HierarchicalDataTemplate DataType="{x:Type local:ConnectorGroupViewModel}" ItemsSource="{Binding Path=ConnectorViewModels}">
-        <VirtualizingStackPanel MinWidth="300" ContextMenu="{StaticResource BaseTreeMenuImpl}">
-          <TextBlock FontSize="13"
-                     FontWeight="Normal"
-                     Text="{Binding GroupName}" />
-        </VirtualizingStackPanel>
+        <DockPanel Width="Auto"
+                   ContextMenu="{StaticResource BaseTreeMenuImpl}"
+                   LastChildFill="True">
+          <DockPanel MinWidth="150"
+                     MaxWidth="250"
+                     DockPanel.Dock="Left">
+            <TextBlock DockPanel.Dock="Left"
+                       FontSize="13"
+                       FontWeight="Normal"
+                       Text="{Binding GroupName}" />
+            <TextBlock FontSize="11"
+                       FontWeight="Normal"
+                       Text=" (" />
+            <TextBlock FontSize="11"
+                       FontWeight="Normal"
+                       Text="{Binding ConnectorViewModels.Count}" />
+            <TextBlock FontSize="11"
+                       FontWeight="Normal"
+                       Text=")" />
+          </DockPanel>
+
+
+          <StackPanel MaxHeight="{Binding DataContext.BuildIconSize, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}"
+                      Margin="0,0,15,0"
+                      HorizontalAlignment="Right"
+                      DockPanel.Dock="Right"
+                      Orientation="Horizontal">
+
+            <StackPanel Orientation="Horizontal" Visibility="{Binding RunningConnectorColumnVisibility, Mode=OneWay}">
+              <Border Name="RunningBorder"
+                      Margin="2,0,2,0"
+                      HorizontalAlignment="Center"
+                      Background="{StaticResource Running}"
+                      BorderThickness="0"
+                      CornerRadius="3">
+                <TextBlock MinWidth="15"
+                           Padding="0,0,0,0"
+                           FontSize="{Binding DataContext.FontSizeSmall, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}"
+                           Foreground="White"
+                           Text="{Binding RunningConnectors, Mode=OneWay}"
+                           TextAlignment="Center" />
+                <Border.Triggers>
+                  <EventTrigger RoutedEvent="Image.Loaded">
+                    <BeginStoryboard>
+                      <Storyboard>
+                        <DoubleAnimation AutoReverse="True"
+                                         RepeatBehavior="Forever"
+                                         Storyboard.TargetName="RunningBorder"
+                                         Storyboard.TargetProperty="Opacity"
+                                         From="1.0"
+                                         To="0.2"
+                                         Duration="0:0:1" />
+                      </Storyboard>
+                    </BeginStoryboard>
+                  </EventTrigger>
+                </Border.Triggers>
+              </Border>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Visibility="{Binding UnstableConnectorColumnVisibility, Mode=OneWay}">
+              <Border Margin="2,0,2,0"
+                      HorizontalAlignment="Center"
+                      Background="{StaticResource Unstable}"
+                      BorderBrush="{StaticResource Unstable}"
+                      BorderThickness="1"
+                      CornerRadius="3">
+                <TextBlock MinWidth="15"
+                           Padding="0,0,0,0"
+                           FontSize="{Binding DataContext.FontSizeSmall, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}"
+                           Foreground="White"
+                           Text="{Binding UnstableConnectors, Mode=OneWay}"
+                           TextAlignment="Center" />
+              </Border>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Visibility="{Binding FailureConnectorColumnVisibility, Mode=OneWay}">
+              <Border Margin="2,0,2,0"
+                      HorizontalAlignment="Center"
+                      Background="{StaticResource Failure}"
+                      BorderBrush="{StaticResource Failure}"
+                      BorderThickness="1"
+                      CornerRadius="3">
+                <TextBlock MinWidth="15"
+                           Padding="0,0,0,0"
+                           FontSize="{Binding DataContext.FontSizeSmall, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}"
+                           Foreground="White"
+                           Text="{Binding FailingConnectors, Mode=OneWay}"
+                           TextAlignment="Center" />
+              </Border>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Visibility="{Binding UnknownConnectorColumnVisibility, Mode=OneWay}">
+              <Border Margin="2,0,2,0"
+                      HorizontalAlignment="Center"
+                      Background="{StaticResource Unknown}"
+                      BorderBrush="{StaticResource Unknown}"
+                      BorderThickness="1"
+                      CornerRadius="3">
+                <TextBlock MinWidth="15"
+                           Padding="0,0,0,0"
+                           FontSize="{Binding DataContext.FontSizeSmall, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}"
+                           Foreground="White"
+                           Text="{Binding UnknownConnectors, Mode=OneWay}"
+                           TextAlignment="Center" />
+              </Border>
+            </StackPanel>
+
+          </StackPanel>
+        </DockPanel>
       </HierarchicalDataTemplate>
 
       <DataTemplate DataType="{x:Type local:ConnectorViewModel}">
@@ -75,11 +184,6 @@
                      Text="{Binding CurrentStatus.Time, Converter={StaticResource TimeToApproximateTimeConverter}}" />
         </DockPanel>
       </DataTemplate>
-
-      <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="ConnectorMissingDataTemplate.xaml" />
-        <ResourceDictionary Source="../BuildServer/BuildProjectDataTemplate.xaml" />
-      </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
   </UserControl.Resources>
 
