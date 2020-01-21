@@ -9,6 +9,15 @@
   <converters:StatusToColorConverter x:Key="StatusToColorConverter" />
   <converters:TimeToApproximateTimeConverter x:Key="TimeToApproximateTimeConverter" />
   <converters:NullOrDefaultToVisibilityConverter x:Key="NullOrDefaultVisibilityConverter" />
+  <converters:InvertBooleanToVisibilityConverter x:Key="InvertBooleanToVisibilityConverter" />
+
+  <Style x:Key="TextBlockTime" TargetType="{x:Type TextBlock}">
+    <Setter Property="HorizontalAlignment" Value="Right" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="FontWeight" Value="Normal" />
+    <Setter Property="FontSize" Value="{Binding DataContext.FontSizeSmall, Mode=OneWay, RelativeSource={RelativeSource AncestorType=connectorTreeView:ConnectorsTreeView}}" />
+
+  </Style>
   <ToolTip x:Key="HistoryBuildControlToolTip">
     <StackPanel>
       <buildServer:HistoryBuildTooltipControl DataContext="{Binding}" />
@@ -47,14 +56,28 @@
                  Text="{Binding Name}"
                  TextTrimming="CharacterEllipsis" />
       <buildServer:HistoryBuildList DataContext="{Binding ConnectorSnapshots, Mode=OneWay}" DockPanel.Dock="Right" />
-      <TextBlock Margin="5,0,10,0"
-                 HorizontalAlignment="Right"
-                 VerticalAlignment="Center"
-                 DockPanel.Dock="Right"
-                 FontSize="{Binding DataContext.FontSizeSmall, Mode=OneWay, RelativeSource={RelativeSource AncestorType=connectorTreeView:ConnectorsTreeView}}"
-                 FontWeight="Normal"
-                 Text="{Binding CurrentStatus.Time, Converter={StaticResource TimeToApproximateTimeConverter}}"
-                 Visibility="{Binding CurrentStatus.Time, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
+      <StackPanel Margin="5,0,10,0"
+                  DockPanel.Dock="Right"
+                  Visibility="{Binding CurrentStatus.Building, Converter={StaticResource InvertBooleanToVisibilityConverter}, Mode=OneWay}">
+        <StackPanel.Resources>
+          <Style BasedOn="{StaticResource TextBlockTime}" TargetType="{x:Type TextBlock}" />
+        </StackPanel.Resources>
+        <TextBlock Text="{Binding CurrentStatus.Time, Converter={StaticResource TimeToApproximateTimeConverter}}" Visibility="{Binding CurrentStatus.Time, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
+      </StackPanel>
+      <buildServer:ProgressBarTooltipControl Margin="5,0,10,0"
+                                             CompactDisplay="True"
+                                             ControlOrientation="Horizontal"
+                                             DataContext="{Binding CurrentStatus}"
+                                             DockPanel.Dock="Right"
+                                             Visibility="{Binding CurrentStatus.Building, Converter={StaticResource BoolToVisibility}, Mode=OneWay}">
+        <buildServer:ProgressBarTooltipControl.Resources>
+          <Style BasedOn="{StaticResource TextBlockTime}" TargetType="{x:Type TextBlock}" />
+        </buildServer:ProgressBarTooltipControl.Resources>
+      </buildServer:ProgressBarTooltipControl>
+
+      <DockPanel>
+        <TextBlock />
+      </DockPanel>
     </DockPanel>
   </DataTemplate>
 </ResourceDictionary>
