@@ -87,7 +87,7 @@ namespace Soloplan.WhatsON.GUI
     /// <summary>
     /// Gets a value indicating whether the main window is visible.
     /// </summary>
-    private bool MainWindowVisible => Application.Current.MainWindow is MainWindow;
+    private bool MainWindowVisible => Application.Current.MainWindow is MainWindow window && window.Visibility == System.Windows.Visibility.Visible;
 
     /// <summary>
     /// Gets instance of <see cref="MainWindow"/>.
@@ -231,7 +231,13 @@ namespace Soloplan.WhatsON.GUI
         }
         else if ((DateTime.Now - this.lastWindowFocused).TotalMilliseconds > 250)
         {
-          this.MainWindow.Close();
+          this.VisualSettings = this.mainWindow.GetVisualSettings();
+          if (this.VisualSettings != null)
+          {
+            SerializationHelper.Instance.Save(this.VisualSettings, Path.Combine(SerializationHelper.Instance.ConfigFolder, VisualSettingsFile));
+          }
+
+          this.MainWindow.Hide();
         }
         else
         {
@@ -240,10 +246,20 @@ namespace Soloplan.WhatsON.GUI
       }
       else
       {
-        Application.Current.MainWindow = this.MainWindow;
+        bool firstShow = false;
+        if (Application.Current.MainWindow != this.MainWindow)
+        {
+          Application.Current.MainWindow = this.MainWindow;
+          firstShow = true;
+        }
+
         this.MainWindow.Show();
         this.MainWindow.Activate();
-        this.MainWindow.FinishDrawing();
+        if (firstShow)
+        {
+          this.MainWindow.FinishDrawing();
+        }
+
         this.MainWindow.IsTreeInitialized = true;
       }
     }
