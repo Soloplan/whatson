@@ -12,6 +12,7 @@ namespace Soloplan.WhatsON.Jenkins
   using System.Linq;
   using System.Threading;
   using System.Threading.Tasks;
+  using NLog;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.Jenkins.Model;
@@ -32,6 +33,11 @@ namespace Soloplan.WhatsON.Jenkins
     private const long TicksInMillisecond = 10000;
 
     /// <summary>
+    /// Logger instance used by this class.
+    /// </summary>
+    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+
+    /// <summary>
     /// API class for accessing Jenkins.
     /// </summary>
     private readonly IJenkinsApi api;
@@ -45,6 +51,32 @@ namespace Soloplan.WhatsON.Jenkins
       : base(configuration)
     {
       this.api = api;
+    }
+
+    private JenkinsStatus PreviousCheckStatus { get; set; }
+
+    protected override async Task ExecuteQuery(CancellationToken cancellationToken)
+    {
+      await base.ExecuteQuery(cancellationToken);
+
+      if (this.PreviousCheckStatus != null && this.CurrentStatus is JenkinsStatus currentStatus && this.Snapshots.Count != 0)
+      {
+        if (currentStatus.BuildNumber - this.PreviousCheckStatus.BuildNumber <= 1)
+        {
+          return;
+        }
+
+        log.Info($"It was necessary to reevaluate history of jenkins job {Configuration.GetConfigurationByKey(Connector.Category)?.Value?.Trim()} / {Configuration.Name}, prev build number {this.PreviousCheckStatus.BuildNumber}, current build number {currentStatus.BuildNumber}");
+        foreach (var snapshot in await this.GetHistory(cancellationToken))
+        {
+          if (snapshot == null)
+          {
+            continue;
+          }
+
+          this.AddSnapshot(snapshot);
+        }
+      }
     }
 
     protected override async Task<Status> GetCurrentStatus(CancellationToken cancellationToken)
@@ -61,7 +93,20 @@ namespace Soloplan.WhatsON.Jenkins
     protected override async Task<List<Status>> GetHistory(CancellationToken cancellationToken)
     {
       var builds = await this.api.GetBuilds(this, cancellationToken, 1, MaxSnapshots + 1);
-      return builds.Select(this.CreateStatus).ToList();
+      var statuses = builds.Select(this.CreateStatus).ToList();
+      this.PreviousCheckStatus = statuses.OfType<JenkinsStatus>().FirstOrDefault();
+      return statuses;
+    }
+
+    protected override bool ShouldTakeSnapshot(Status status)
+    {
+      var shouldTakeSnapshot = base.ShouldTakeSnapshot(status);
+      if (shouldTakeSnapshot && status is JenkinsStatus jenkinsStatus)
+      {
+        this.PreviousCheckStatus = jenkinsStatus;
+      }
+
+      return shouldTakeSnapshot;
     }
 
     private static ObservationState GetState(JenkinsBuild build)
