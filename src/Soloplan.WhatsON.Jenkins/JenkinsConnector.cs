@@ -66,9 +66,14 @@ namespace Soloplan.WhatsON.Jenkins
 
     private static ObservationState GetState(JenkinsBuild build)
     {
+      if (build.Building)
+      {
+        return ObservationState.Running;
+      }
+
       if (string.IsNullOrWhiteSpace(build.Result))
       {
-        return build.Building ? ObservationState.Running : ObservationState.Unknown;
+        return ObservationState.Unknown;
       }
 
       if (Enum.TryParse<ObservationState>(build.Result, true, out var state))
