@@ -38,13 +38,13 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private int unknownConnectors = -1;
 
-    private Visibility runningConnectorColumnVisibility;
+    private Visibility runningConnectorColumnVisibility = Visibility.Collapsed;
 
-    private Visibility failureConnectorColumnVisibility;
+    private Visibility failureConnectorColumnVisibility = Visibility.Collapsed;
 
-    private Visibility unstableConnectorColumnVisibility;
+    private Visibility unstableConnectorColumnVisibility = Visibility.Collapsed;
 
-    private Visibility unknownConnectorColumnVisibility;
+    private Visibility unknownConnectorColumnVisibility = Visibility.Collapsed;
 
     public ConnectorGroupViewModel()
     {
@@ -283,7 +283,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
 
       this.ConnectorViewModels.CollectionChanged += this.ConnectorViewModelsCollectionChanged;
-      this.UpdateConnectorWithGivenStatusCount();
     }
 
     public override void OnDoubleClick(object sender, MouseButtonEventArgs e)
