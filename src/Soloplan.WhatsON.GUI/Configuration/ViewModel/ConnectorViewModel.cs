@@ -12,9 +12,10 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
   using System.Linq;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.Model;
 
   /// <summary>
-  /// The view model for see <see cref="Soloplan.WhatsON.Connector"/>.
+  /// The view model for see <see cref="Connector"/>.
   /// </summary>
   public class ConnectorViewModel : ViewModelBase, IConfigurationItemProvider
   {
@@ -80,6 +81,23 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
       {
         this.name = value;
         this.OnPropertyChanged();
+      }
+    }
+
+    /// <summary>
+    /// Gets the full name of this connector including the category (if set).
+    /// </summary>
+    public string FullName
+    {
+      get
+      {
+        var group = this.ConfigurationItems.FirstOrDefault(x => x?.Key != null && x.Key == Connector.Category)?.Value;
+        if (!string.IsNullOrWhiteSpace(group))
+        {
+          return $"{group} > {this.Name}";
+        }
+
+        return this.Name;
       }
     }
 
@@ -157,7 +175,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// Applies changes to source connector configuration.
     /// </summary>
     /// <param name="newConnectorConfigurationCreated">if set to <c>true</c> [new connector configuration created].</param>
-    /// <returns>New instance of <see cref="Soloplan.WhatsON.ConnectorConfiguration"/> if it was created; otherwise the existing instance.</returns>
+    /// <returns>New instance of <see cref="ConnectorConfiguration"/> if it was created; otherwise the existing instance.</returns>
     public ConnectorConfiguration ApplyToSourceConnectorConfiguration(out bool newConnectorConfigurationCreated)
     {
       newConnectorConfigurationCreated = false;
@@ -186,7 +204,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// Creates the new connector configuration with applied changes.
     /// </summary>
-    /// <returns>New instance of <see cref="Soloplan.WhatsON.ConnectorConfiguration"/>.</returns>
+    /// <returns>New instance of <see cref="ConnectorConfiguration"/>.</returns>
     public ConnectorConfiguration CreateNewConnectorConfiguration()
     {
       var sourceConnectorConfig = new ConnectorConfiguration(this.SourceConnectorPlugin.Name);

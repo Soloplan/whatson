@@ -87,7 +87,7 @@
             <ComboBox x:Name="uxConnectors"
                       Height="28"
                       Cursor="Hand"
-                      DisplayMemberPath="Name"
+                      DisplayMemberPath="FullName"
                       IsSynchronizedWithCurrentItem="true"
                       ItemsSource="{Binding Connectors}"
                       SelectedItem="{Binding Path=CurrentConnector, Mode=TwoWay}"
