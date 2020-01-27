@@ -1,5 +1,5 @@
 #!groovy​
-@Library('SoloPipeline@1.0-rc7')
+@Library('SoloPipeline@1.0-rc10')
 import com.soloplan.*
 
 def Bucket = "tools"
