@@ -245,7 +245,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     {
       get
       {
-        return PluginManager.Instance.ConnectorPlugins.Select(x => x.Name).ToList();
+        return PluginManager.Instance.ConnectorPlugins.Select(x => x.Name).OrderByDescending(x => this.config.ConnectorsConfiguration.Count(y => y.Type == x)).ToList();
       }
     }
 
