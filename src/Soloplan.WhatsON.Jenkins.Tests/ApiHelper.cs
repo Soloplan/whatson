@@ -7,6 +7,7 @@
 
 namespace Soloplan.WhatsON.Jenkins.Tests
 {
+  using System;
   using Soloplan.WhatsON.Jenkins.Model;
   using Soloplan.WhatsON.Model;
 
@@ -19,6 +20,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         Number = number,
         Result = state.ToString(),
         Building = state == ObservationState.Running,
+        Timestamp = (long)(new DateTime(2020, 1, 1, 12, number, 0, 0) - new DateTime(1970, 1, 1)).TotalMilliseconds,
       };
     }
 

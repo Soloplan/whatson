@@ -21,6 +21,8 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
     public event EventHandler<BuildEventArgs> BuildRequest;
 
+    public event EventHandler<BuildsEventArgs> BuildsRequest;
+
     public async Task<JenkinsJob> GetJenkinsJob(JenkinsConnector connector, CancellationToken token)
     {
       if (this.JobRequest == null)
@@ -42,7 +44,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     {
       if (this.BuildRequest == null)
       {
-        throw new InvalidOperationException($"{nameof(this.JobRequest)} must be handled for {nameof(FakeJenkinsApi)} to work.");
+        throw new InvalidOperationException($"{nameof(this.BuildRequest)} must be handled for {nameof(FakeJenkinsApi)} to work.");
       }
 
       var eventArgs = new BuildEventArgs(connector, buildNumber);
@@ -55,9 +57,21 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       return eventArgs.Result;
     }
 
-    public Task<IList<JenkinsBuild>> GetBuilds(JenkinsConnector connector, CancellationToken token, int @from = 0, int to = Connector.MaxSnapshots)
+    public async Task<IList<JenkinsBuild>> GetBuilds(JenkinsConnector connector, CancellationToken token, int @from = 0, int to = Connector.MaxSnapshots)
     {
-      throw new NotImplementedException();
+      if (this.BuildsRequest == null)
+      {
+        throw new InvalidOperationException($"{nameof(this.BuildsRequest)} must be handled for {nameof(FakeJenkinsApi)} to work.");
+      }
+
+      var eventArgs = new BuildsEventArgs(connector);
+      this.BuildsRequest(this, eventArgs);
+      if (eventArgs.ResponseDelay > 0)
+      {
+        await Task.Delay(eventArgs.ResponseDelay, token);
+      }
+
+      return eventArgs.Builds;
     }
   }
 
@@ -94,5 +108,16 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     public int BuildNumber { get; }
 
     public JenkinsBuild Result { get; set; }
+  }
+
+  public class BuildsEventArgs : FakeApiEventArgs
+  {
+    public BuildsEventArgs(JenkinsConnector connector)
+      : base(connector)
+    {
+      this.Builds = new List<JenkinsBuild>();
+    }
+
+    public IList<JenkinsBuild> Builds { get; }
   }
 }

@@ -66,16 +66,17 @@ namespace Soloplan.WhatsON.Jenkins
           return;
         }
 
-        log.Info($"It was necessary to reevaluate history of jenkins job {Configuration.GetConfigurationByKey(Connector.Category)?.Value?.Trim()} / {Configuration.Name}, prev build number {this.PreviousCheckStatus.BuildNumber}, current build number {currentStatus.BuildNumber}");
-        foreach (var snapshot in await this.GetHistory(cancellationToken))
+        log.Error($"It was necessary to reevaluate history of jenkins job {Configuration.GetConfigurationByKey(Connector.Category)?.Value?.Trim()} / {Configuration.Name}, prev build number {this.PreviousCheckStatus.BuildNumber}, current build number {currentStatus.BuildNumber}");
+        for (var i = currentStatus.BuildNumber - 1; i > this.PreviousCheckStatus.BuildNumber; i--)
         {
-          if (snapshot == null)
+          var build = await this.api.GetJenkinsBuild(this, i, cancellationToken);
+          if (build != null)
           {
-            continue;
+            this.AddSnapshot(this.CreateStatus(build));
           }
-
-          this.AddSnapshot(snapshot);
         }
+
+        this.PreviousCheckStatus = this.Snapshots.FirstOrDefault()?.Status as JenkinsStatus;
       }
     }
 

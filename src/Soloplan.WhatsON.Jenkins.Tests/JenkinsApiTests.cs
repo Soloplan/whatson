@@ -6,6 +6,7 @@
 namespace Soloplan.WhatsON.Jenkins.Tests
 {
   using System;
+  using System.Collections.Generic;
   using System.Linq;
   using NUnit.Framework;
   using Soloplan.WhatsON;
@@ -37,9 +38,36 @@ namespace Soloplan.WhatsON.Jenkins.Tests
          else
          {
            e.Result = ApiHelper.GetProject(ObservationState.Running, 12);
+           state++;
            scheduler.Stop(false);
          }
        };
+
+      api.BuildsRequest += (s, e) =>
+      {
+        var buildsStates = new Dictionary<int, ObservationState>
+        {
+          { 11, ObservationState.Failure },
+          { 10, ObservationState.Success },
+          { 9, ObservationState.Unstable },
+          { 8, ObservationState.Unstable },
+          { 7, ObservationState.Unstable },
+          { 6, ObservationState.Unstable },
+          { 5, ObservationState.Unstable },
+          { 4, ObservationState.Unstable },
+        };
+
+        int start = 0;
+        int end = 0;
+
+        start = 8 + state;
+        end = 4 + state;
+
+        for(int i = start; i >= end; i--)
+        {
+          e.Builds.Add(ApiHelper.GetBuild(buildsStates[i], i));
+        }
+      };
 
       api.BuildRequest += (s, e) =>
       {
@@ -76,7 +104,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         }
       };
 
-      var subj = new JenkinsConnector(new ConnectorConfiguration("Jenkins"), api);
+      var subj = new JenkinsConnector(new ConnectorConfiguration("Jenkins", "name", "Address", "MyAddress", "ProjectName", "MyProject"), api);
       scheduler.Observe(subj, 0);
       scheduler.Start();
       while (scheduler.Running)
