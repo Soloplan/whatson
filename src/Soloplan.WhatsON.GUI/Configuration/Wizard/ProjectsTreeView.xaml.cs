@@ -7,8 +7,10 @@
 
 namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 {
+  using System.Diagnostics;
   using System.Windows;
   using System.Windows.Controls;
+  using System.Windows.Navigation;
 
   /// <summary>
   /// Interaction logic for ProjectsTreeView.xaml.
@@ -49,6 +51,17 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
           e.Handled = true;
         }
       }
+    }
+
+    /// <summary>
+    /// Handles the hyperlink requiest event of elements in the TreeViewItem control.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="RequestNavigateEventArgs"/> instance containing the event data.</param>
+    private void HyperlinkRequestNavigate(object sender, RequestNavigateEventArgs e)
+    {
+      Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+      e.Handled = true;
     }
   }
 }

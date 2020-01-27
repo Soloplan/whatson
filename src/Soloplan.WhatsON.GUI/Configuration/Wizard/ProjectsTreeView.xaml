@@ -26,6 +26,16 @@
             <TextBlock Margin="10,0,0,0"
                        Focusable="False"
                        Text="{Binding Name}" />
+            <TextBlock Margin="5,0,0,0">
+              <Hyperlink
+                NavigateUri="{Binding Address}"
+                RequestNavigate="HyperlinkRequestNavigate"
+                Style="{StaticResource MaterialDesignHeadline4Hyperlink}">
+                <TextBlock>
+                  <materialDesign:PackIcon Kind="Link" Width="14"/>
+                </TextBlock>
+              </Hyperlink>
+            </TextBlock>
           </StackPanel>
           <StackPanel DockPanel.Dock="Right"
                       Opacity="0.5"
