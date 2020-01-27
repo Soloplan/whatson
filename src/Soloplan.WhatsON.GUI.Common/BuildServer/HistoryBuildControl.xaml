@@ -31,7 +31,7 @@
         <MenuItem.Header>
           <StackPanel Orientation="Horizontal">
             <materialDesign:PackIcon Kind="Link" />
-            <TextBlock Padding="10,0,0,0" Text="Open build web page" />
+            <TextBlock Padding="10,0,0,0" Text="Open build website" />
           </StackPanel>
         </MenuItem.Header>
       </MenuItem>

@@ -53,11 +53,11 @@
       </MenuItem.Header>
     </MenuItem>
     <Separator />
-    <MenuItem CommandParameter="{Binding OpenWebPageParam}" Command="{Binding OpenWebPage}">
+    <MenuItem CommandParameter="{Binding CurrentStatus.Parent.Url}" Command="{Binding OpenWebPage}">
       <MenuItem.Header>
         <StackPanel Orientation="Horizontal">
           <materialDesign:PackIcon Kind="Link" />
-          <TextBlock Padding="10,0,0,0" Text="Open project web page" />
+          <TextBlock Padding="10,0,0,0" Text="Open website" />
         </StackPanel>
       </MenuItem.Header>
     </MenuItem>
@@ -67,7 +67,7 @@
       <MenuItem.Header>
         <StackPanel Orientation="Horizontal">
           <materialDesign:PackIcon Kind="Link" />
-          <TextBlock Padding="10,0,0,0" Text="Open current build page" />
+          <TextBlock Padding="10,0,0,0" Text="Open current build website" />
         </StackPanel>
       </MenuItem.Header>
     </MenuItem>
