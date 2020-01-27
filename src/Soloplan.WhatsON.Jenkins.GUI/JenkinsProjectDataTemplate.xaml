@@ -69,7 +69,7 @@
                                              ControlOrientation="Horizontal"
                                              DataContext="{Binding CurrentStatus}"
                                              DockPanel.Dock="Right"
-                                             Visibility="{Binding CurrentStatus.Building, Converter={StaticResource BoolToVisibility}, Mode=OneWay}">
+                                             Visibility="{Binding Building, Converter={StaticResource BoolToVisibility}, Mode=OneWay}">
         <buildServer:ProgressBarTooltipControl.Resources>
           <Style BasedOn="{StaticResource TextBlockTime}" TargetType="{x:Type TextBlock}" />
         </buildServer:ProgressBarTooltipControl.Resources>
