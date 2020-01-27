@@ -54,16 +54,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private int buildIconSize;
 
-    private bool anyConnectorRunning;
-
-    private bool anyConnectorSuccessful;
-
-    private bool anyConnectorUnstable;
-
-    private bool anyConnectorFailing;
-
-    private bool anyConnectorUnknown;
-
     /// <summary>
     /// Called when configuration has changed due to user input.
     /// </summary>
@@ -151,61 +141,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
           this.buildIconSize = value;
           this.OnPropertyChanged();
         }
-      }
-    }
-
-    private bool AnyConnectorRunning
-    {
-      set
-      {
-        this.anyConnectorRunning = value;
-        foreach (var group in this.ConnectorGroups)
-        {
-          group.SetRunningColumnVisible(value);
-        }
-
-        this.OnPropertyChanged();
-      }
-    }
-
-    private bool AnyConnectorUnstable
-    {
-      set
-      {
-        this.anyConnectorUnstable = value;
-        foreach (var group in this.ConnectorGroups)
-        {
-          group.SetUnstableColumnVisible(value);
-        }
-
-        this.OnPropertyChanged();
-      }
-    }
-
-    private bool AnyConnectorFailing
-    {
-      set
-      {
-        this.anyConnectorFailing = value;
-        foreach (var group in this.ConnectorGroups)
-        {
-          group.SetFailureColumnVisible(value);
-        }
-
-        this.OnPropertyChanged();
-      }
-    }
-
-    private bool AnyConnectorUnknown
-    {
-      set
-      {
-        foreach (var group in this.ConnectorGroups)
-        {
-          group.SetUnknownColumnVisible(value);
-        }
-
-        this.OnPropertyChanged();
       }
     }
 
@@ -367,7 +302,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
           break;
       }
 
-      this.UpdateAggregateGroupStates();
       this.SetConnectionModifiedInTree(false);
     }
 
@@ -586,20 +520,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       {
         if (connectorGroupViewModel.Update(e))
         {
-          this.UpdateAggregateGroupStates();
           return;
         }
       }
 
       log.Warn("No viewmodel found for connector {@Connector}", e);
-    }
-
-    private void UpdateAggregateGroupStates()
-    {
-      this.AnyConnectorRunning = this.ConnectorGroups.Any(group => group.RunningConnectors > 0);
-      this.AnyConnectorUnstable = this.ConnectorGroups.Any(group => group.UnstableConnectors > 0);
-      this.AnyConnectorFailing = this.ConnectorGroups.Any(group => group.FailingConnectors > 0);
-      this.AnyConnectorUnknown = this.ConnectorGroups.Any(group => group.UnknownConnectors > 0);
     }
 
     private ObservableCollection<ConnectorGroupViewModel> CreateConnectorGroupViewModelCollection()

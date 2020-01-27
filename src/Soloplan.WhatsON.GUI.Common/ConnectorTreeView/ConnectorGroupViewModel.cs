@@ -30,13 +30,13 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private ObservableCollection<ConnectorViewModel> statusViewModels;
 
-    private int runningConnectors;
+    private int runningConnectors = -1;
 
-    private int failingConnectors;
+    private int failingConnectors = -1;
 
-    private int unstableConnectors;
+    private int unstableConnectors = -1;
 
-    private int unknownConnectors;
+    private int unknownConnectors = -1;
 
     private Visibility runningConnectorColumnVisibility;
 
@@ -110,6 +110,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         if (this.runningConnectors != value)
         {
           this.runningConnectors = value;
+          this.SetRunningColumnVisible();
           this.OnPropertyChanged();
         }
       }
@@ -142,6 +143,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         if (this.FailingConnectors != value)
         {
           this.failingConnectors = value;
+          this.SetFailureColumnVisible();
           this.OnPropertyChanged();
         }
       }
@@ -174,6 +176,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         if (this.unstableConnectors != value)
         {
           this.unstableConnectors = value;
+          this.SetUnstableColumnVisible();
           this.OnPropertyChanged();
         }
       }
@@ -206,6 +209,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         if (this.unknownConnectors != value)
         {
           this.unknownConnectors = value;
+          this.SetUnknownColumnVisible();
           this.OnPropertyChanged();
         }
       }
@@ -293,61 +297,33 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// Sets the visiblity of column containing <see cref="ObservationState.Running"/> state indicator.
     /// </summary>
-    /// <param name="value">Value indicating whether the column should be visible or not.</param>
-    public void SetRunningColumnVisible(bool value)
+    private void SetRunningColumnVisible()
     {
-      if (!value)
-      {
-        this.RunningConnectorColumnVisibility = Visibility.Collapsed;
-        return;
-      }
-
-      this.RunningConnectorColumnVisibility = this.RunningConnectors > 0 ? Visibility.Visible : Visibility.Hidden;
+      this.RunningConnectorColumnVisibility = this.RunningConnectors > 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
     /// <summary>
     /// Sets the visiblity of column containing <see cref="ObservationState.Failure"/> state indicator.
     /// </summary>
-    /// <param name="value">Value indicating whether the column should be visible or not.</param>
-    public void SetFailureColumnVisible(bool value)
+    private void SetFailureColumnVisible()
     {
-      if (!value)
-      {
-        this.FailureConnectorColumnVisibility = Visibility.Collapsed;
-        return;
-      }
-
-      this.FailureConnectorColumnVisibility = this.FailingConnectors > 0 ? Visibility.Visible : Visibility.Hidden;
+      this.FailureConnectorColumnVisibility = this.FailingConnectors > 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
     /// <summary>
     /// Sets the visiblity of column containing <see cref="ObservationState.Unstable"/> state indicator.
     /// </summary>
-    /// <param name="value">Value indicating whether the column should be visible or not.</param>
-    public void SetUnstableColumnVisible(bool value)
+    private void SetUnstableColumnVisible()
     {
-      if (!value)
-      {
-        this.UnstableConnectorColumnVisibility = Visibility.Collapsed;
-        return;
-      }
-
-      this.UnstableConnectorColumnVisibility = this.UnstableConnectors > 0 ? Visibility.Visible : Visibility.Hidden;
+      this.UnstableConnectorColumnVisibility = this.UnstableConnectors > 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
     /// <summary>
     /// Sets the visiblity of column containing <see cref="ObservationState.Unknown"/> state indicator.
     /// </summary>
-    /// <param name="value">Value indicating whether the column should be visible or not.</param>
-    public void SetUnknownColumnVisible(bool value)
+    private void SetUnknownColumnVisible()
     {
-      if (!value)
-      {
-        this.UnknownConnectorColumnVisibility = Visibility.Collapsed;
-        return;
-      }
-
-      this.UnknownConnectorColumnVisibility = this.UnknownConnectors > 0 ? Visibility.Visible : Visibility.Hidden;
+      this.UnknownConnectorColumnVisibility = this.UnknownConnectors > 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
     /// <summary>
@@ -358,10 +334,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private void ConnectorViewModelsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
       this.UpdateConnectorWithGivenStatusCount();
-      this.SetRunningColumnVisible(this.RunningConnectorColumnVisibility != Visibility.Collapsed);
-      this.SetFailureColumnVisible(this.FailureConnectorColumnVisibility != Visibility.Collapsed);
-      this.SetUnstableColumnVisible(this.UnstableConnectorColumnVisibility != Visibility.Collapsed);
-      this.SetUnknownColumnVisible(this.UnknownConnectorColumnVisibility != Visibility.Collapsed);
+      this.SetRunningColumnVisible();
+      this.SetFailureColumnVisible();
+      this.SetUnstableColumnVisible();
+      this.SetUnknownColumnVisible();
     }
 
     private void UpdateConnectorWithGivenStatusCount()
