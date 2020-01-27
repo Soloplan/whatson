@@ -51,7 +51,7 @@
                           Window="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" />
 
     <Border x:Name="HideableStackPanel"
-            Padding="8,8,30,8"
+            Padding="8,8,8,8"
             DockPanel.Dock="Bottom"
             Visibility="{Binding ConfigurationModifiedFromTree, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Converter={StaticResource BoolToVis}}">
       <materialDesign:ColorZone Mode="Inverted">
