@@ -5,20 +5,18 @@
       xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Configuration.Wizard"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      Title="ConnectionWizardPage"
+      Title="ProjectWizardPage"
       d:DesignHeight="640.997"
       d:DesignWidth="619.132"
       Background="{DynamicResource MaterialDesignPaper}"
       TextElement.Foreground="{DynamicResource MaterialDesignBody}"
       mc:Ignorable="d">
   <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-    <TextBox Height="100"
+    <TextBlock  Height="100"
              Margin="10,50,10,0"
-             BorderThickness="0"
              DockPanel.Dock="Top"
              FontSize="16"
-             IsReadOnly="True"
-             Text="Welcome to connection wizard.&#xD;&#xA;&#xA;Select the type of the plugin which you would like to use for the connection and type the URL."
+             Text="Welcome to the project wizard.&#xD;&#xA;&#xA;Please select the project type that you would like to add and provide the URL to the build server."
              TextWrapping="Wrap" />
     <StackPanel Margin="6"
                 VerticalAlignment="Center"

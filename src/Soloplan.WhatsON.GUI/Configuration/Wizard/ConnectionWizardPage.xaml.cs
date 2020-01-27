@@ -35,7 +35,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     }
 
     /// <summary>
-    /// Handles the key up event for control which allows providing a connection address.
+    /// Handles the key up event for control which allows providing a project address.
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.Windows.Input.KeyEventArgs"/> instance containing the event data.</param>

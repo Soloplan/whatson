@@ -528,7 +528,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     private void GoToConnectionStep()
     {
-      this.StepDescriptionTextBlock.Text = "Connection"; // TODO load from resources
+      this.StepDescriptionTextBlock.Text = "Add projects"; // TODO load from resources
       this.currentPage = new ConnectionWizardPage(this);
       this.currentPage.DataContext = this;
       this.WizardFrame.Content = this.currentPage;
@@ -665,7 +665,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       catch (Exception e)
       {
         error = true;
-        errorMessage = $"There was a connection error,{Environment.NewLine}details: {e.Message}"; // TODO load from resources
+        errorMessage = $"There was a project error,{Environment.NewLine}details: {e.Message}"; // TODO load from resources
       }
 
       DialogHost.CloseDialogCommand.Execute("WizardWaitDialogHostId", this.wizardWindow.WizardWaitDialogHost);
