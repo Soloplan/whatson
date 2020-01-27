@@ -33,28 +33,27 @@
         <materialDesign:TransitioningContent.OpeningEffects>
           <materialDesign:TransitionEffect Kind="SlideInFromBottom" Duration="0:0:0.8" />
         </materialDesign:TransitioningContent.OpeningEffects>
-        <Border x:Name="HideableStackPanel" Padding="0,0,20,0">
-          <DockPanel Margin="0,0,-20,0"
-                     Background="{DynamicResource MaterialDesignBody}"
-                     LastChildFill="False">
-            <TextBlock Padding="5"
-                       VerticalAlignment="Center"
-                       Foreground="{DynamicResource MaterialDesignBackground}"
-                       Text="Configuration is modified" />
-            <DockPanel DockPanel.Dock="Right">
-              <Button Margin="5"
-                      Padding="5"
-                      Click="SnackbarSaveClick"
-                      Style="{StaticResource MaterialDesignFlatButton}">
-                Save
-              </Button>
-              <Button Margin="5"
-                      Padding="5"
-                      Click="SnackbarResetClick"
-                      Content="{Binding Path=SnackbarActionCaption}"
-                      Style="{StaticResource MaterialDesignFlatButton}" />
+        <Border x:Name="HideableStackPanel" Padding="0,0,0,0">
+          <materialDesign:ColorZone Mode="Inverted">
+            <DockPanel LastChildFill="False">
+              <TextBlock Padding="5"
+                         VerticalAlignment="Center"
+                         Text="Configuration is modified" />
+              <DockPanel DockPanel.Dock="Right">
+                <Button Margin="5"
+                        Padding="5"
+                        Click="SnackbarSaveClick"
+                        Style="{StaticResource MaterialDesignFlatAccentBgButton}">
+                  Save
+                </Button>
+                <Button Margin="5"
+                        Padding="5"
+                        Click="SnackbarResetClick"
+                        Content="{Binding Path=SnackbarActionCaption}" 
+                        Style="{StaticResource MaterialDesignFlatAccentBgButton}"/>
+              </DockPanel>
             </DockPanel>
-          </DockPanel>
+          </materialDesign:ColorZone>
           <Border.RenderTransform>
             <TranslateTransform Y="0" />
           </Border.RenderTransform>

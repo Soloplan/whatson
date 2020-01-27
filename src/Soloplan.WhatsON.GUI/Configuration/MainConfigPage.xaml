@@ -17,25 +17,25 @@
       <StackPanel Orientation="Horizontal">
         <ToggleButton Checked="LightOrDarkModeToggleButtonChecked"
                       IsChecked="{Binding DarkThemeEnabled}"
-                      Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                      Style="{StaticResource MaterialDesignSwitchAccentToggleButton}"
                       Unchecked="LightOrDarkModeToggleButtonUnchecked" />
         <Label>Dark mode on</Label>
       </StackPanel>
     </StackPanel>
     <StackPanel Orientation="Horizontal">
-      <ToggleButton IsChecked="{Binding OpenOnSystemStart}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
+      <ToggleButton IsChecked="{Binding OpenOnSystemStart}" Style="{StaticResource MaterialDesignSwitchAccentToggleButton}" />
       <Label>Run when Windows starts</Label>
     </StackPanel>
     <StackPanel Orientation="Horizontal">
-      <ToggleButton IsChecked="{Binding ShowInTaskbar}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
+      <ToggleButton IsChecked="{Binding ShowInTaskbar}" Style="{StaticResource MaterialDesignSwitchAccentToggleButton}" />
       <Label>Show in Taskbar</Label>
     </StackPanel>
     <StackPanel Orientation="Horizontal">
-      <ToggleButton IsChecked="{Binding AlwaysOnTop}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
+      <ToggleButton IsChecked="{Binding AlwaysOnTop}" Style="{StaticResource MaterialDesignSwitchAccentToggleButton}" />
       <Label>Always on top</Label>
     </StackPanel>
     <StackPanel Orientation="Horizontal">
-      <ToggleButton IsChecked="{Binding OpenMinimized}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
+      <ToggleButton IsChecked="{Binding OpenMinimized}" Style="{StaticResource MaterialDesignSwitchAccentToggleButton}" />
       <Label>Open minimized</Label>
     </StackPanel>
     <StackPanel Orientation="Horizontal">
@@ -71,29 +71,29 @@
           <StackPanel Orientation="Horizontal">
             <StackPanel Margin="0 0 50 0">
               <StackPanel Orientation="Horizontal" Margin="2,6,2,0">
-                <ToggleButton IsChecked="{Binding UnstableObservationState}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
+                <ToggleButton IsChecked="{Binding UnstableObservationState}" Style="{StaticResource MaterialDesignSwitchAccentToggleButton}" />
                 <Label>Unstable</Label>
               </StackPanel>
               <StackPanel Orientation="Horizontal" Margin="2,6,2,0">
-                <ToggleButton IsChecked="{Binding FailureObservationState}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
+                <ToggleButton IsChecked="{Binding FailureObservationState}" Style="{StaticResource MaterialDesignSwitchAccentToggleButton}" />
                 <Label>Failure</Label>
               </StackPanel>
               <StackPanel Orientation="Horizontal" Margin="2,6,2,0">
-                <ToggleButton IsChecked="{Binding SuccessObservationState}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
+                <ToggleButton IsChecked="{Binding SuccessObservationState}" Style="{StaticResource MaterialDesignSwitchAccentToggleButton}" />
                 <Label>Success</Label>
               </StackPanel>
               <StackPanel Orientation="Horizontal" Margin="2,6,2,0">
-                <ToggleButton IsChecked="{Binding RunningObservationState}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
+                <ToggleButton IsChecked="{Binding RunningObservationState}" Style="{StaticResource MaterialDesignSwitchAccentToggleButton}" />
                 <Label>Running</Label>
               </StackPanel>
               <StackPanel Orientation="Horizontal" Margin="2,6,2,0">
-                <ToggleButton IsChecked="{Binding UnknownObservationState}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
+                <ToggleButton IsChecked="{Binding UnknownObservationState}" Style="{StaticResource MaterialDesignSwitchAccentToggleButton}" />
                 <Label>Unknown</Label>
               </StackPanel>
             </StackPanel>
             <StackPanel>
               <StackPanel Orientation="Horizontal" Margin="2,6,2,0">
-                <ToggleButton IsChecked="{Binding NotifyOnlyIfStatusChanged}" Style="{StaticResource MaterialDesignSwitchToggleButton}" />
+                <ToggleButton IsChecked="{Binding NotifyOnlyIfStatusChanged}" Style="{StaticResource MaterialDesignSwitchAccentToggleButton}" />
                 <Label>Only if status changed</Label>
               </StackPanel>
             </StackPanel>

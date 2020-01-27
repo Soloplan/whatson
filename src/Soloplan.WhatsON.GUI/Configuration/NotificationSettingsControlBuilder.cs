@@ -102,6 +102,8 @@ namespace Soloplan.WhatsON.GUI.Configuration
       itemStackPanel.Orientation = Orientation.Horizontal;
       itemStackPanel.Margin = new Thickness(2, 6, 2, 0);
       var toggleButton = new ToggleButton();
+      var style = Application.Current.FindResource("MaterialDesignSwitchAccentToggleButton") as Style;
+      toggleButton.Style = style;
       var toogleButtonBinding = new Binding(nameof(NotificationStateItem.IsActive));
       toogleButtonBinding.Source = notificationStateItem;
       toogleButtonBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;

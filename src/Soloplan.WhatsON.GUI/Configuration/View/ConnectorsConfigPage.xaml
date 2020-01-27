@@ -42,19 +42,22 @@
           <Button Click="DeleteConnectorClick" ToolTip="Delete project">
             <materialDesign:PackIcon Width="24"
                                      Height="24"
-                                     Kind="RemoveCircle" />
+                                     Kind="RemoveCircle"
+                                     Foreground="White"/>
           </Button>
 
           <Button Click="RenameConnectorClick" ToolTip="Rename project">
             <materialDesign:PackIcon Width="24"
                                      Height="24"
-                                     Kind="Edit" />
+                                     Kind="Edit" 
+                                     Foreground="White"/>
           </Button>
 
           <Button Click="AddConnectorClick" ToolTip="Add project">
             <materialDesign:PackIcon Width="24"
                                      Height="24"
-                                     Kind="Add" />
+                                     Kind="Add" 
+                                     Foreground="White"/>
           </Button>
 
         </StackPanel>

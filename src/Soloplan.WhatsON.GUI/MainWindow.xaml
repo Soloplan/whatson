@@ -54,28 +54,17 @@
             Padding="8,8,30,8"
             DockPanel.Dock="Bottom"
             Visibility="{Binding ConfigurationModifiedFromTree, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Converter={StaticResource BoolToVis}}">
-      <DockPanel Margin="0,0,-20,0"
-                 Background="{DynamicResource MaterialDesignBody}"
-                 LastChildFill="False">
-        <TextBlock Padding="5"
-                   VerticalAlignment="Center"
-                   Foreground="{DynamicResource MaterialDesignBackground}"
-                   Text="Configuration is modified" />
-        <DockPanel DockPanel.Dock="Right">
-          <Button Margin="5"
-                  Padding="5"
-                  Click="SaveClick"
-                  Style="{StaticResource MaterialDesignFlatButton}">
-            Save
-          </Button>
-          <Button Margin="5"
-                  Padding="5"
-                  Click="ResetClick"
-                  Style="{StaticResource MaterialDesignFlatButton}">
-            Reset
-          </Button>
+      <materialDesign:ColorZone Mode="Inverted">
+        <DockPanel LastChildFill="False">
+          <TextBlock Padding="5"
+                     VerticalAlignment="Center"
+                     Text="Configuration is modified" />
+          <DockPanel DockPanel.Dock="Right">
+            <Button Margin="5" Padding="5" Click="SaveClick" Style="{StaticResource MaterialDesignFlatAccentBgButton}">Save</Button>
+            <Button Margin="5" Padding="5" Click="ResetClick" Style="{StaticResource MaterialDesignFlatAccentBgButton}">Reset</Button>
+          </DockPanel>
         </DockPanel>
-      </DockPanel>
+      </materialDesign:ColorZone>
       <Border.RenderTransform>
         <TranslateTransform Y="0" />
       </Border.RenderTransform>

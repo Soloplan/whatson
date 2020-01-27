@@ -49,7 +49,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
 
       var checkBox = new CheckBox();
       checkBox.DataContext = configItem;
-      var style = Application.Current.FindResource("MaterialDesignSwitchToggleButton") as Style;
+      var style = Application.Current.FindResource("MaterialDesignSwitchAccentToggleButton") as Style;
       checkBox.Style = style;
       checkBox.Margin = new Thickness(2, 8, 0, 8);
       stackPanel.Children.Add(checkBox);
