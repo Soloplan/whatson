@@ -207,7 +207,16 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     public string ProposedServerAddress
     {
-      get => this.proposedServerAddress;
+      get
+      {
+        if (!this.IsProposedAddressEmpty)
+        {
+          return new Uri(this.proposedServerAddress).AbsoluteUri;
+        }
+
+        return this.proposedServerAddress;
+      }
+
       set
       {
         this.proposedServerAddress = value;
@@ -225,7 +234,10 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
           return new List<string>();
         }
 
-        return this.config.ConnectorsConfiguration.Where(x => x.Type == this.SelectedConnectorType).Select(x => x.GetConfigurationByKey(Connector.ServerAddress).Value).Distinct().ToList();
+        return this.config.ConnectorsConfiguration.Where(x =>
+          x.Type == this.SelectedConnectorType &&
+          x.GetConfigurationByKey(Connector.ServerAddress) != null &&
+          !string.IsNullOrEmpty(x.GetConfigurationByKey(Connector.ServerAddress).Value)).Select(x => new Uri(x.GetConfigurationByKey(Connector.ServerAddress).Value).AbsoluteUri).Distinct().ToList();
       }
     }
 
@@ -548,9 +560,18 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         newProject.Parent = projectViewModel;
         newProject.Address = project.Address;
 
-        var alreadyExists = this.config.ConnectorsConfiguration.Where(x => x.Type == this.SelectedConnectorType
-                                                                         && x.GetConfigurationByKey(Connector.ServerAddress)?.Value == this.ProposedServerAddress
-                                                                         && x.GetConfigurationByKey(Connector.ProjectName)?.Value == (!string.IsNullOrWhiteSpace(project.FullName) ? project.FullName : project.Name)).ToList();
+        var alreadyExists = this.config.ConnectorsConfiguration.Where(x =>
+        {
+          var address = x.GetConfigurationByKey(Connector.ServerAddress)?.Value;
+          if (string.IsNullOrWhiteSpace(address))
+          {
+            return false;
+          }
+
+          return x.Type == this.SelectedConnectorType
+          && new Uri(address).AbsoluteUri.Equals(this.ProposedServerAddress)
+          && x.GetConfigurationByKey(Connector.ProjectName)?.Value == (!string.IsNullOrWhiteSpace(project.FullName) ? project.FullName : project.Name);
+        }).ToList();
 
         newProject.AlreadyAdded = alreadyExists.Any();
         newProject.AddedProject = alreadyExists.Any() ? string.Join(" - ", alreadyExists.Select(x => $"{x.GetConfigurationByKey(Connector.Category).Value}/{x.Name}")) : null;
