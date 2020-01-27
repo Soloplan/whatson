@@ -21,7 +21,7 @@
           <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
             <CheckBox Focusable="False"
                       IsChecked="{Binding IsChecked}"
-                      Style="{StaticResource MaterialDesignCheckBox}"
+                      Style="{StaticResource MaterialDesignAccentCheckBox}"
                       Visibility="{Binding Path=IsCheckable, Converter={StaticResource BoolToVis}}" />
             <TextBlock Margin="10,0,0,0"
                        Focusable="False"

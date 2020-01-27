@@ -13,19 +13,32 @@
       mc:Ignorable="d">
 
   <DockPanel>
-    <ComboBox x:Name="uxGrouppingSettings"
-              MinHeight="28"
-              MaxHeight="28"
-              Margin="0,10,0,0"
-              HorizontalAlignment="Left"
-              DisplayMemberPath="Caption"
-              DockPanel.Dock="Bottom"
-              IsSynchronizedWithCurrentItem="True"
-              ItemsSource="{Binding GroupingSettings}"
-              Loaded="UxGrouppingSettingsLoaded"
-              SelectedItem="{Binding SelectedGroupingSetting, Mode=TwoWay}" />
+    <StackPanel Margin="10,10,0,0" DockPanel.Dock="Bottom" Orientation="Horizontal">
+      <Label Margin="0,0,10,0">Grouping:</Label>
+      <ComboBox x:Name="uxGrouppingSettings"
+                MinHeight="28"
+                MaxHeight="28"
+
+                HorizontalAlignment="Left"
+                DisplayMemberPath="Caption"
+ 
+                IsSynchronizedWithCurrentItem="True"
+                ItemsSource="{Binding GroupingSettings}"
+                Loaded="UxGrouppingSettingsLoaded"
+                SelectedItem="{Binding SelectedGroupingSetting, Mode=TwoWay}" />
+    </StackPanel>
+
+    <TextBlock Margin="10,0,0,0" DockPanel.Dock="Top">
+      <Hyperlink
+        IsEnabled="False"
+        Style="{StaticResource MaterialDesignHeadline6Hyperlink}" >
+        <TextBlock Text="{Binding ProposedServerAddress}" />
+      </Hyperlink>
+    </TextBlock>
+    <Label ></Label>
     <wizard:ProjectsTreeView x:Name="projectsTreeView"
                              Height="Auto"
+                             Padding="0,10,0,0"
                              DataContext="{Binding Path=Projects}"
                              PreviewKeyUp="MainTreeViewPreviewKeyUp"
                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
