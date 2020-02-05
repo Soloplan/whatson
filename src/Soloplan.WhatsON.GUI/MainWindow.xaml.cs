@@ -313,7 +313,7 @@ namespace Soloplan.WhatsON.GUI
 
       configWindow.Closing += (s, ev) =>
       {
-        this.settings.ConfigDialogSettings.Parse(configWindow);
+        this.settings.ConfigDialogSettings = new WindowSettings().Parse(configWindow);
       };
 
       configWindow.ShowDialog();
