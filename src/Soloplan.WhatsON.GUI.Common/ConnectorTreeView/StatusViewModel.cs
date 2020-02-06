@@ -130,14 +130,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
-    public DateTime Time
+    public virtual DateTime Time
     {
       get
       {
         return this.time;
       }
 
-      protected set
+      protected  set
       {
         this.time = value;
         this.OnPropertyChanged();

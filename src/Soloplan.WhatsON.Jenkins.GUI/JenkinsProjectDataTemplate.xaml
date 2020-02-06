@@ -62,7 +62,7 @@
         <StackPanel.Resources>
           <Style BasedOn="{StaticResource TextBlockTime}" TargetType="{x:Type TextBlock}" />
         </StackPanel.Resources>
-        <TextBlock Text="{Binding CurrentStatus.Time, Converter={StaticResource TimeToApproximateTimeConverter}}" Visibility="{Binding CurrentStatus.Time, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
+        <TextBlock Text="{Binding CurrentStatus.FinishTime, Converter={StaticResource TimeToApproximateTimeConverter}}" Visibility="{Binding CurrentStatus.Time, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
       </StackPanel>
       <buildServer:ProgressBarTooltipControl Margin="5,0,10,0"
                                              CompactDisplay="True"
