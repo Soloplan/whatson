@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Configuration.View"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:wizard="clr-namespace:Soloplan.WhatsON.GUI.Configuration.Wizard"
       Title="ProjectSelectionWizardPage"
@@ -13,29 +14,45 @@
       mc:Ignorable="d">
 
   <DockPanel>
-    <StackPanel Margin="10,10,0,0" DockPanel.Dock="Bottom" Orientation="Horizontal">
-      <Label Margin="0,0,10,0">Grouping:</Label>
+    <Grid Margin="10,10,0,0"
+          HorizontalAlignment="Stretch"
+          DockPanel.Dock="Bottom">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
+      <TextBox Name="searchTextBox"
+               Grid.Row="0"
+               Grid.Column="0"
+               MinWidth="150"
+               Margin="0,0,10,0"
+               materialDesign:HintAssist.Hint="Search"
+               Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+               TextChanged="SearchTextBoxTextChanged" />
       <ComboBox x:Name="uxGrouppingSettings"
-                MinHeight="28"
-                MaxHeight="28"
-
-                HorizontalAlignment="Left"
+                Grid.Row="0"
+                Grid.Column="1"
+                MinHeight="38"
+                MaxHeight="38"
+                HorizontalAlignment="Stretch"
+                materialDesign:HintAssist.Hint="Grouping"
                 DisplayMemberPath="Caption"
- 
                 IsSynchronizedWithCurrentItem="True"
                 ItemsSource="{Binding GroupingSettings}"
                 Loaded="UxGrouppingSettingsLoaded"
-                SelectedItem="{Binding SelectedGroupingSetting, Mode=TwoWay}" />
-    </StackPanel>
+                SelectedItem="{Binding SelectedGroupingSetting, Mode=TwoWay}"
+                Style="{StaticResource MaterialDesignFloatingHintComboBox}" />
+    </Grid>
 
     <TextBlock Margin="10,0,0,0" DockPanel.Dock="Top">
-      <Hyperlink
-        IsEnabled="False"
-        Style="{StaticResource MaterialDesignHeadline6Hyperlink}" >
+      <Hyperlink IsEnabled="False" Style="{StaticResource MaterialDesignHeadline6Hyperlink}">
         <TextBlock Text="{Binding ProposedServerAddress}" />
       </Hyperlink>
     </TextBlock>
-    <Label ></Label>
+    <Label />
     <wizard:ProjectsTreeView x:Name="projectsTreeView"
                              Height="Auto"
                              Padding="0,10,0,0"

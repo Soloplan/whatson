@@ -34,6 +34,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     private bool isChecked;
 
     /// <summary>
+    /// The is visible flag.
+    /// </summary>
+    private bool isVisible = true;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="ProjectViewModel" /> class which will be a root element.
     /// </summary>
     /// <param name="name">The name.</param>
@@ -71,6 +76,16 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     public string FullName { get; set; }
 
     public string Description { get; set; }
+
+    public bool IsVisible
+    {
+      get => this.isVisible;
+      set
+      {
+        this.isVisible = value;
+        this.OnPropertyChanged();
+      }
+    }
 
     /// <summary>
     /// Gets or sets a value indicating whether this project is checked.
