@@ -112,8 +112,8 @@
                  DockPanel.Dock="Right"
                  FontSize="{Binding DataContext.FontSizeSmall, Mode=OneWay, RelativeSource={RelativeSource AncestorType=connectorTreeView:ConnectorsTreeView}}"
                  FontWeight="Normal"
-                 Text="{Binding CurrentStatus.Time, Converter={StaticResource TimeToApproximateTimeConverter}}"
-                 Visibility="{Binding CurrentStatus.Time, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
+                 Text="{Binding CurrentStatus.FinishTime, Converter={StaticResource TimeToApproximateTimeConverter}}"
+                 Visibility="{Binding CurrentStatus.FinishTime, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
     </DockPanel>
   </DataTemplate>
 </ResourceDictionary>

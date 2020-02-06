@@ -145,6 +145,27 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
       }
     }
 
+    public DateTime FinishTime
+    {
+      get
+      {
+        return this.Time + this.Duration;
+      }
+    }
+
+    public override DateTime Time
+    {
+      get => base.Time;
+      protected set
+      {
+        if (base.Time != value)
+        {
+          base.Time = value;
+          this.OnPropertyChanged(nameof(this.FinishTime));
+        }
+      }
+    }
+
     public TimeSpan Duration
     {
       get
@@ -158,6 +179,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
         {
           this.duration = value;
           this.OnPropertyChanged();
+          this.OnPropertyChanged(nameof(this.FinishTime));
         }
       }
     }
