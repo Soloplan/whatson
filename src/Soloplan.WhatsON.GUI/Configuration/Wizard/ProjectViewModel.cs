@@ -9,6 +9,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 {
   using System.Collections.Generic;
   using System.ComponentModel;
+  using System.Linq;
   using System.Runtime.CompilerServices;
   using Soloplan.WhatsON.Model;
 
@@ -77,6 +78,9 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 
     public string Description { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether this project is visible.
+    /// </summary>
     public bool IsVisible
     {
       get => this.isVisible;
@@ -84,42 +88,49 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       {
         this.isVisible = value;
         this.OnPropertyChanged();
+        this.UpdateParentGroupsCheckedState();
       }
     }
 
     /// <summary>
     /// Gets or sets a value indicating whether this project is checked.
     /// </summary>
-    /// <value>
-    ///   <c>true</c> if this project is checked; otherwise, <c>false</c>.
-    /// </value>
     public bool IsChecked
     {
-      get => this.isChecked;
+      get
+      {
+        if (this.rootList.MultiSelectionMode && this.Projects.Count > 0)
+        {
+          return this.Projects.Where(p => p.IsVisible).All(p => p.IsChecked);
+        }
+
+        return this.isChecked;
+      }
+
       set
       {
         this.isChecked = value;
-        this.OnPropertyChanged();
         if (this.rootList.MultiSelectionMode)
         {
-          foreach (var project in this.Projects)
+          foreach (var project in this.Projects.Where(p => p.IsVisible))
           {
             project.IsChecked = value;
           }
+
+          this.UpdateParentGroupsCheckedState();
         }
         else
         {
           this.rootList.UncheckAll(this);
         }
+
+        this.OnPropertyChanged();
       }
     }
 
     /// <summary>
     /// Gets a value indicating whether this project is checkable - supports checking (some items might be only some grouping items).
     /// </summary>
-    /// <value>
-    ///   <c>true</c> if this project is checkable; otherwise, <c>false</c>.
-    /// </value>
     public bool IsCheckable
     {
       get
@@ -186,6 +197,19 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
       this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    /// <summary>
+    /// Updates the checked state of the groups(including parent groups).
+    /// </summary>
+    private void UpdateParentGroupsCheckedState()
+    {
+      var currentParent = this.Parent;
+      while (currentParent != null)
+      {
+        currentParent.OnPropertyChanged(nameof(this.IsChecked));
+        currentParent = currentParent.Parent;
+      }
     }
   }
 }
