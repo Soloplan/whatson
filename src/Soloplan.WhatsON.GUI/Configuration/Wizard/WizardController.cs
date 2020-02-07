@@ -589,12 +589,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       Tuple<ConnectorPlugin, ProjectViewModelList> pluginToQueryWithModel;
       if (this.editedConnectorViewModel != null)
       {
-        pluginToQueryWithModel = new Tuple<ConnectorPlugin, ProjectViewModelList>(this.editedConnectorViewModel.SourceConnectorPlugin, new ProjectViewModelList { MultiSelectionMode = false, PlugIn = this.editedConnectorViewModel.SourceConnectorPlugin });
+        pluginToQueryWithModel = new Tuple<ConnectorPlugin, ProjectViewModelList>(this.editedConnectorViewModel.SourceConnectorPlugin, new ProjectViewModelList { MultiSelectionMode = this.MultiSelectionMode, PlugIn = this.editedConnectorViewModel.SourceConnectorPlugin });
       }
       else
       {
         var plugin = PluginManager.Instance.ConnectorPlugins.FirstOrDefault(x => x.Name.Equals(this.SelectedConnectorType));
-        pluginToQueryWithModel = new Tuple<ConnectorPlugin, ProjectViewModelList>(plugin, new ProjectViewModelList { MultiSelectionMode = true, PlugIn = plugin });
+        pluginToQueryWithModel = new Tuple<ConnectorPlugin, ProjectViewModelList>(plugin, new ProjectViewModelList { MultiSelectionMode = this.MultiSelectionMode, PlugIn = plugin });
       }
 
       var taskList = new Dictionary<Task, ProjectViewModelList>();
