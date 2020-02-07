@@ -111,6 +111,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         newVisibility = true;
       }
 
+      if (project.IsChecked)
+      {
+        newVisibility = true;
+      }
+
       if (project.IsVisible != newVisibility)
       {
         project.IsVisible = newVisibility;

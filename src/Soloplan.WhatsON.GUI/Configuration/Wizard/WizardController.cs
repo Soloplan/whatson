@@ -200,7 +200,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// Gets or sets a value indicating whether multi selection mode is active.
     /// </summary>
-    public bool MultiSelectionMode { get; set; }
+    public bool MultiSelectionMode { get; set; } = true;
 
     /// <summary>
     /// Gets or sets the proposed server address.
@@ -304,9 +304,9 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     private Frame WizardFrame => this.wizardWindow?.Frame;
 
     /// <summary>
-    /// Gets the step description text block control.
+    /// The wizard page title.
     /// </summary>
-    private TextBlock StepDescriptionTextBlock => this.wizardWindow.StepDescription;
+    private string wizardPageTitle;
 
     /// <summary>
     /// Starts the wizard.
@@ -540,7 +540,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     private void GoToConnectionStep()
     {
-      this.StepDescriptionTextBlock.Text = "Add projects"; // TODO load from resources
       this.currentPage = new ConnectionWizardPage(this);
       this.currentPage.DataContext = this;
       this.WizardFrame.Content = this.currentPage;
@@ -693,7 +692,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 
       if (!error)
       {
-        this.StepDescriptionTextBlock.Text = "Project selection"; // TODO load from resources
         this.currentPage = new ProjectSelectionWizardPage(this);
         this.currentPage.DataContext = this;
         this.WizardFrame.Content = this.currentPage;

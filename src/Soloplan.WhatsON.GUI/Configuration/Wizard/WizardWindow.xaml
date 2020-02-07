@@ -28,15 +28,6 @@
 
     <materialDesign:DialogHost Name="WizardWaitDialogHost" Identifier="WizardWaitDialogHostId">
       <DockPanel Margin="6" LastChildFill="True">
-        <TextBlock x:Name="StepDescription"
-                   Margin="10,0,10,10"
-                   VerticalAlignment="Top"
-                   DockPanel.Dock="Top"
-                   FontFamily="Arial"
-                   FontSize="24"
-                   FontWeight="SemiBold"
-                   Text="Wizard step description"
-                   TextWrapping="Wrap" />
         <StackPanel Margin="0,15,0,6"
                     HorizontalAlignment="Right"
                     DockPanel.Dock="Bottom"

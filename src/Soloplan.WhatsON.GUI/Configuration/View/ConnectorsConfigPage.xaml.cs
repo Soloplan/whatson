@@ -296,6 +296,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     private void EditInWizardClick(object sender, System.Windows.RoutedEventArgs e)
     {
       var wizardController = new WizardController(this.ownerWindow, this.config, this.wizardDialogSettings);
+      wizardController.MultiSelectionMode = false;
       if (wizardController.Start(this.CurrentConnector))
       {
         var selectedProjects = wizardController.GetSelectedProjects();
