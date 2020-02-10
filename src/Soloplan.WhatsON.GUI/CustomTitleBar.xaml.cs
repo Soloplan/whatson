@@ -6,6 +6,7 @@
 namespace Soloplan.WhatsON.GUI
 {
   using System;
+  using System.IO;
   using System.Windows;
   using System.Windows.Controls;
   using System.Windows.Input;
@@ -181,6 +182,18 @@ namespace Soloplan.WhatsON.GUI
     {
       if (!this.EnsureWindow())
       {
+        return;
+      }
+
+      if (this.Window is MainWindow main)
+      {
+        var settings = main.GetVisualSettings();
+        if (settings != null)
+        {
+          SerializationHelper.Instance.Save(settings, Path.Combine(SerializationHelper.Instance.ConfigFolder, MainWindow.VisualSettingsFile));
+        }
+
+        this.Window.Hide();
         return;
       }
 

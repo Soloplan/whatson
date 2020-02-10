@@ -22,8 +22,6 @@ namespace Soloplan.WhatsON.GUI
   /// </summary>
   public class TrayHandler : IDisposable
   {
-    private const string VisualSettingsFile = "visualsettings.json";
-
     /// <summary>
     /// Scheduler instance.
     /// </summary>
@@ -71,9 +69,9 @@ namespace Soloplan.WhatsON.GUI
       this.model = new NotificationsModel(this.scheduler);
       this.model.PropertyChanged += this.CurrentStatusPropertyChanged;
 
-      if (File.Exists(Path.Combine(SerializationHelper.Instance.ConfigFolder, VisualSettingsFile)))
+      if (File.Exists(Path.Combine(SerializationHelper.Instance.ConfigFolder, MainWindow.VisualSettingsFile)))
       {
-        this.VisualSettings = SerializationHelper.Load<MainWindowSettings>(Path.Combine(SerializationHelper.Instance.ConfigFolder, VisualSettingsFile));
+        this.VisualSettings = SerializationHelper.Load<MainWindowSettings>(Path.Combine(SerializationHelper.Instance.ConfigFolder, MainWindow.VisualSettingsFile));
       }
 
       if (!this.configuration.OpenMinimized)
@@ -184,7 +182,7 @@ namespace Soloplan.WhatsON.GUI
     {
       if (this.VisualSettings != null)
       {
-        SerializationHelper.Instance.Save(this.VisualSettings, Path.Combine(SerializationHelper.Instance.ConfigFolder, VisualSettingsFile));
+        SerializationHelper.Instance.Save(this.VisualSettings, Path.Combine(SerializationHelper.Instance.ConfigFolder, MainWindow.VisualSettingsFile));
       }
 
       this.mainWindow.Closing -= this.MainWindowClosing;
@@ -234,7 +232,7 @@ namespace Soloplan.WhatsON.GUI
           this.VisualSettings = this.mainWindow.GetVisualSettings();
           if (this.VisualSettings != null)
           {
-            SerializationHelper.Instance.Save(this.VisualSettings, Path.Combine(SerializationHelper.Instance.ConfigFolder, VisualSettingsFile));
+            SerializationHelper.Instance.Save(this.VisualSettings, Path.Combine(SerializationHelper.Instance.ConfigFolder, MainWindow.VisualSettingsFile));
           }
 
           this.MainWindow.Hide();

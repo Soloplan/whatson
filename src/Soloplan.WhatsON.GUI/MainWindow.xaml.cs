@@ -30,6 +30,8 @@ namespace Soloplan.WhatsON.GUI
   /// </summary>
   public partial class MainWindow : INotifyPropertyChanged
   {
+    public const string VisualSettingsFile = "visualsettings.json";
+
     private readonly IList<Connector> initialConnectorState;
 
     /// <summary>
