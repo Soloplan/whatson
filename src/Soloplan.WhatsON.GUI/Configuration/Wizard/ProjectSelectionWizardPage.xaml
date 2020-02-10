@@ -14,25 +14,9 @@
       mc:Ignorable="d">
 
   <DockPanel>
-    <Grid Margin="10,10,0,0"
-          HorizontalAlignment="Stretch"
-          DockPanel.Dock="Bottom">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto" />
-      </Grid.RowDefinitions>
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*" />
-        <ColumnDefinition Width="Auto" />
-      </Grid.ColumnDefinitions>
-      <TextBox Name="searchTextBox"
-               Grid.Row="0"
-               Grid.Column="0"
-               MinWidth="150"
-               Margin="0,0,10,0"
-               materialDesign:HintAssist.Hint="Search"
-               Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-               TextChanged="SearchTextBoxTextChanged" />
       <ComboBox x:Name="uxGrouppingSettings"
+                Margin="10,5,0,0"
+                DockPanel.Dock="Bottom"
                 Grid.Row="0"
                 Grid.Column="1"
                 MinHeight="38"
@@ -45,13 +29,22 @@
                 Loaded="UxGrouppingSettingsLoaded"
                 SelectedItem="{Binding SelectedGroupingSetting, Mode=TwoWay}"
                 Style="{StaticResource MaterialDesignFloatingHintComboBox}" />
-    </Grid>
 
     <TextBlock Margin="10,0,0,0" DockPanel.Dock="Top">
       <Hyperlink IsEnabled="False" Style="{StaticResource MaterialDesignHeadline6Hyperlink}">
         <TextBlock Text="{Binding ProposedServerAddress}" />
       </Hyperlink>
     </TextBlock>
+    <TextBox Margin="10,0,0,0" 
+             Name="searchTextBox"
+             Grid.Row="0"
+             Grid.Column="0"
+             MinWidth="150"
+             materialDesign:HintAssist.Hint="Search"
+             Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+             TextChanged="SearchTextBoxTextChanged"
+             DockPanel.Dock="Top" />
+
     <Label />
     <wizard:ProjectsTreeView x:Name="projectsTreeView"
                              Height="Auto"
