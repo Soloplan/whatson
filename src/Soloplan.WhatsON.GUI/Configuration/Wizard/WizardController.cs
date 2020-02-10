@@ -146,7 +146,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// Gets a value indicating whether wizard is NOT on it's first step.
     /// </summary>
-    public bool IsNotFirstStep => !(this.currentPage is ConnectionWizardPage);
+    public bool IsNotFirstStep => this.currentPage != null && !(this.currentPage is ConnectionWizardPage);
 
     /// <summary>
     /// Gets a value indicating whether wizard is on it's last step.
@@ -533,6 +533,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       this.OnPropertyChanged(nameof(this.IsNotLastStep));
       this.OnPropertyChanged(nameof(this.IsFinishEnabled));
       this.OnPropertyChanged(nameof(this.IsNextStepEnabled));
+      this.OnPropertyChanged(nameof(this.IsPreviousStepEnabled));
     }
 
     /// <summary>
@@ -715,9 +716,9 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     private List<GrouppingSetting> InitializeGrouppingSettings()
     {
       var grouppingSettings = new List<GrouppingSetting>();
-      grouppingSettings.Add(new GrouppingSetting("Assign groups for added projects", WizardWindow.AssignGroupsForAddedProjects));
-      grouppingSettings.Add(new GrouppingSetting("Add project path to project name", WizardWindow.AddProjectPathToProjectName));
-      grouppingSettings.Add(new GrouppingSetting("Do not assign any groups", WizardWindow.DoNotAssignAnyGroups));
+      grouppingSettings.Add(new GrouppingSetting("Assign parent as group", WizardWindow.AssignGroupsForAddedProjects));
+      grouppingSettings.Add(new GrouppingSetting("Add hierarchy to project name", WizardWindow.AddProjectPathToProjectName));
+      grouppingSettings.Add(new GrouppingSetting("No automatic grouping", WizardWindow.DoNotAssignAnyGroups));
       return grouppingSettings;
     }
   }
