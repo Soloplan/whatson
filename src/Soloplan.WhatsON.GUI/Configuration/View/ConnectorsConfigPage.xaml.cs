@@ -240,7 +240,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private async void DeleteConnectorClick(object sender, System.Windows.RoutedEventArgs e)
     {
-      var result = (bool)await DialogHost.Show(new OkCancelDialog("Are you sure you want to delete this connector?"), "ConnectorsConfigPageHost"); // TODO translate
+      var result = (bool)await DialogHost.Show(new OkCancelDialog("Are you sure you want to delete this project?"), "ConnectorsConfigPageHost"); // TODO translate
       if (result)
       {
         this.Connectors.Remove(this.CurrentConnector);
@@ -285,27 +285,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
         newConnector.Load(null);
         this.Connectors.Add(newConnector);
         this.CurrentConnector = newConnector;
-      }
-    }
-
-    /// <summary>
-    /// Handles the edit in wizard button click.
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
-    private void EditInWizardClick(object sender, System.Windows.RoutedEventArgs e)
-    {
-      var wizardController = new WizardController(this.ownerWindow, this.config, this.wizardDialogSettings);
-      wizardController.MultiSelectionMode = false;
-      if (wizardController.Start(this.CurrentConnector))
-      {
-        var selectedProjects = wizardController.GetSelectedProjects();
-        if (selectedProjects.Count != 1)
-        {
-          throw new InvalidOperationException("One selected project is required.");
-        }
-
-        this.CurrentConnector.SourceConnectorPlugin.Configure(selectedProjects[0], this.CurrentConnector, wizardController.ProposedServerAddress);
       }
     }
 

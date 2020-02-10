@@ -96,16 +96,10 @@
         </StackPanel>
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
           <Button Height="30"
-                  Margin="0,0,0,1"
-                  Click="EditInWizardClick"
-                  Visibility="{Binding CurrentConnectorIsNull, Converter={StaticResource InvertBoolToVis}}">
-            Edit (wizard)
-          </Button>
-          <Button Height="30"
                   Margin="8,0,0,1"
                   Click="NewInWizardClick"
                   Visibility="{Binding Path=SingleConnectorMode, Converter={StaticResource InvertBoolToVis}}">
-            New (wizard)
+            Add project
           </Button>
         </StackPanel>
         <Frame x:Name="uxConnectorFrame" Content="Frame" />
