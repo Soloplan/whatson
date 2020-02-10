@@ -32,7 +32,6 @@
                   Style="{StaticResource MaterialDesignFloatingHintComboBox}" />
         <ComboBox x:Name="AddressComboBox"
                   Margin="0,30,0,0"
-                  Padding="8,4,8,4"
                   materialDesign:HintAssist.Hint="Project URL"
                   materialDesign:HintAssist.HintOpacity=".26"
                   DockPanel.Dock="Top"
