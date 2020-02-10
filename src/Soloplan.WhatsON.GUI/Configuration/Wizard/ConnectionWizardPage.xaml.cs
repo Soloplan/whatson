@@ -30,6 +30,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       this.InitializeComponent();
       this.AddressComboBox.Loaded += (s, e) =>
       {
+        if (this.AddressComboBox.Items.Count > 0)
+        {
+          this.AddressComboBox.SelectedIndex = 0;
+        }
+
         this.AddressComboBox.Focus();
       };
     }
