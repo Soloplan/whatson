@@ -19,7 +19,7 @@
                 DockPanel.Dock="Bottom"
                 Grid.Row="0"
                 Grid.Column="1"
-                MinHeight="38"
+                MinHeight="40"
                 MaxHeight="38"
                 HorizontalAlignment="Stretch"
                 materialDesign:HintAssist.Hint="Grouping"
@@ -35,15 +35,26 @@
         <TextBlock Text="{Binding ProposedServerAddress}" />
       </Hyperlink>
     </TextBlock>
-    <TextBox Margin="10,0,0,0" 
+    <TextBox Margin="10,5,0,0" 
              Name="searchTextBox"
              Grid.Row="0"
              Grid.Column="0"
              MinWidth="150"
-             materialDesign:HintAssist.Hint="Search"
              Style="{StaticResource MaterialDesignFloatingHintTextBox}"
              TextChanged="SearchTextBoxTextChanged"
-             DockPanel.Dock="Top" />
+             DockPanel.Dock="Top">
+      <materialDesign:HintAssist.Hint>
+        <StackPanel
+          Orientation="Horizontal"
+          Margin="-2 0 0 0">
+          <materialDesign:PackIcon
+            Kind="Search" />
+          <TextBlock>
+            Search
+          </TextBlock>
+        </StackPanel>
+      </materialDesign:HintAssist.Hint>
+    </TextBox>
 
     <Label />
     <wizard:ProjectsTreeView x:Name="projectsTreeView"
