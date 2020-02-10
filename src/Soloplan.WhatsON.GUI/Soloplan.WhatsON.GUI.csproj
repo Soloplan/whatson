@@ -283,9 +283,6 @@
     <PackageReference Include="ShowMeTheXAML.MSBuild">
       <Version>1.0.12</Version>
     </PackageReference>
-    <PackageReference Include="squirrel.windows">
-      <Version>1.9.1</Version>
-    </PackageReference>
     <PackageReference Include="System.Windows.Interactivity.WPF">
       <Version>2.0.20525</Version>
     </PackageReference>
