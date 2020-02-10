@@ -53,7 +53,7 @@
                                      Foreground="White"/>
           </Button>
 
-          <Button Click="AddConnectorClick" ToolTip="Add project">
+          <Button Click="AddConnectorClick" ToolTip="Add project manually">
             <materialDesign:PackIcon Width="24"
                                      Height="24"
                                      Kind="Add" 
