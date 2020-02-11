@@ -211,7 +211,8 @@ namespace Soloplan.WhatsON
           throw new OperationCanceledException(ex.Message, ex, token);
         }
 
-        throw;
+        log.Error($"Could not fetch JSON data from {requestUrl}.", ex);
+        return null;
       }
     }
 
