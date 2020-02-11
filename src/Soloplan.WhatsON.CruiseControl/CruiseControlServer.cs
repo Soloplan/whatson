@@ -56,20 +56,27 @@ namespace Soloplan.WhatsON.CruiseControl
       var projectReportUrl = UrlHelper.GetAllBuildsUrl(this.baseUrl, projectName);
       using (var client = new WebClient())
       {
-        var html = client.DownloadString(projectReportUrl);
-        var doc = new HtmlDocument();
-        doc.LoadHtml(html);
-        var recentBuilds = doc.DocumentNode.SelectNodes("//table[@class='RecentBuildsPanel']/tr/td/a[@class]");
-        foreach (var b in recentBuilds.Take(limit))
+        try
         {
-          var authority = new Uri(projectReportUrl).GetLeftPart(System.UriPartial.Authority);
-          var build = CruiseControlBuild.FromHtmlNode(b, authority);
-          if (build == null)
+          var html = client.DownloadString(projectReportUrl);
+          var doc = new HtmlDocument();
+          doc.LoadHtml(html);
+          var recentBuilds = doc.DocumentNode.SelectNodes("//table[@class='RecentBuildsPanel']/tr/td/a[@class]");
+          foreach (var b in recentBuilds.Take(limit))
           {
-            continue;
-          }
+            var authority = new Uri(projectReportUrl).GetLeftPart(System.UriPartial.Authority);
+            var build = CruiseControlBuild.FromHtmlNode(b, authority);
+            if (build == null)
+            {
+              continue;
+            }
 
-          history.Add(build);
+            history.Add(build);
+          }
+        }
+        catch (WebException ex)
+        {
+          log.Error(ex);
         }
       }
 
