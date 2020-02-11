@@ -91,8 +91,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       }
 
       this.windowShown = true;
-      var app = (App)Application.Current;
-      app.ApplyTheme(app.IsDarkThemeEnabled);
     }
 
     /// <summary>

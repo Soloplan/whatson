@@ -70,8 +70,6 @@ namespace Soloplan.WhatsON.GUI
 
     protected override void OnStartup(StartupEventArgs e)
     {
-      base.OnStartup(e);
-
       var configDirArg = e.Args.FirstOrDefault(a => a.ToLower().StartsWith(ConfigDirArgName.ToLower()));
       if (configDirArg != null)
       {
@@ -112,10 +110,17 @@ namespace Soloplan.WhatsON.GUI
       this.themeHelper.Initialize(this.handler.VisualSettings?.ColorSettings);
       this.ApplyTheme();
 
+      if (!this.config.OpenMinimized)
+      {
+        this.handler.ShowOrHideWindow();
+      }
+
       Timeline.DesiredFrameRateProperty.OverrideMetadata(typeof(Timeline), new FrameworkPropertyMetadata { DefaultValue = 15 });
 
       this.scheduler.Start();
       ComponentDispatcher.ThreadPreprocessMessage += this.ComponentDispatcherThreadPreprocessMessage;
+
+      base.OnStartup(e);
     }
 
     /// <summary>

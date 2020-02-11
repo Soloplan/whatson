@@ -162,7 +162,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
       }
 
       this.windowShown = true;
-      ((App)Application.Current).ApplyTheme(this.configurationSource.DarkThemeEnabled);
     }
 
     /// <summary>

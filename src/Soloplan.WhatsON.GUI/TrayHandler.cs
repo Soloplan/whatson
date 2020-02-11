@@ -73,11 +73,6 @@ namespace Soloplan.WhatsON.GUI
       {
         this.VisualSettings = SerializationHelper.Load<MainWindowSettings>(Path.Combine(SerializationHelper.Instance.ConfigFolder, MainWindow.VisualSettingsFile));
       }
-
-      if (!this.configuration.OpenMinimized)
-      {
-        this.ShowOrHideWindow();
-      }
     }
 
     public MainWindowSettings VisualSettings { get; private set; }
@@ -219,7 +214,7 @@ namespace Soloplan.WhatsON.GUI
     /// <summary>
     /// Handles showing and hiding main window.
     /// </summary>
-    private void ShowOrHideWindow()
+    public void ShowOrHideWindow()
     {
       if (this.MainWindowVisible)
       {

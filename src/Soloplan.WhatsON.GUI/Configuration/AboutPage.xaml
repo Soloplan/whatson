@@ -40,8 +40,8 @@
       <TextBlock TextWrapping="Wrap" Text="Configuration:" Margin="20,0,20,10" FontWeight="Bold"/>
 
       <DockPanel Margin="20,0,20,20">
-        <Button Style="{StaticResource MaterialDesignFlatMidBgButton}" Content="{x:Static properties:Resources.Export}" DockPanel.Dock="Right" Click="ExportButtonClick"/>
-        <Button Style="{StaticResource MaterialDesignFlatMidBgButton}" Content="{x:Static properties:Resources.Import}" Margin="10,0,10,0"  DockPanel.Dock="Right" Click="ImportButtonClick"/>
+        <Button Style="{StaticResource MaterialDesignFlatMidBgButton}" Content="{x:Static properties:Resources.Export}" DockPanel.Dock="Right" VerticalAlignment="Center" Click="ExportButtonClick"/>
+        <Button Style="{StaticResource MaterialDesignFlatMidBgButton}" Content="{x:Static properties:Resources.Import}" Margin="10,0,10,0"  DockPanel.Dock="Right" VerticalAlignment="Center" Click="ImportButtonClick"/>
         <TextBox x:Name="ConfigFile" Text="{}{CONFIG_FILE}" IsReadOnly="True"  DockPanel.Dock="Left"/>
       </DockPanel>
 
