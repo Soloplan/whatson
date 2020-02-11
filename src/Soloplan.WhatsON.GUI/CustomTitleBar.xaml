@@ -54,16 +54,16 @@
               <TextBlock  Margin="10,0,0,0">Add project(s)</TextBlock>
             </StackPanel>
           </Button>
-          <Button Click="NewGroupClick" IsEnabled="{Binding CustomButtonVisible}">
-            <StackPanel Orientation="Horizontal">
-              <materialDesign:PackIcon Width="16" Height="16" Kind="LibraryAdd" />
-              <TextBlock Margin="10,0,0,0">Add new group</TextBlock>
-            </StackPanel>
-          </Button>
           <Button Click="ImportClick" IsEnabled="{Binding CustomButtonVisible}">
             <StackPanel Orientation="Horizontal">
               <materialDesign:PackIcon Width="16" Height="16" Kind="Import" />
-              <TextBlock Margin="10,0,0,0">Import</TextBlock>
+              <TextBlock Margin="10,0,0,0">Import project(s)</TextBlock>
+            </StackPanel>
+          </Button>
+          <Button Click="NewGroupClick" IsEnabled="{Binding CustomButtonVisible}">
+            <StackPanel Orientation="Horizontal">
+              <materialDesign:PackIcon Width="16" Height="16" Kind="LibraryAdd" />
+              <TextBlock Margin="10,0,0,0">Add group</TextBlock>
             </StackPanel>
           </Button>
         </StackPanel>

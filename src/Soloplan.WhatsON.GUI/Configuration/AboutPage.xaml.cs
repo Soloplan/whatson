@@ -7,12 +7,16 @@ namespace Soloplan.WhatsON.GUI.Configuration
 {
   using System;
   using System.Collections.Generic;
+  using System.IO;
   using System.Linq;
   using System.Reflection;
   using System.Windows;
   using System.Windows.Controls;
+  using System.Windows.Forms;
   using System.Windows.Input;
   using Soloplan.WhatsON.Composition;
+  using Soloplan.WhatsON.GUI.Configuration.ViewModel;
+  using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 
   /// <summary>
   /// Interaction logic for AboutPage.xaml.
@@ -20,11 +24,17 @@ namespace Soloplan.WhatsON.GUI.Configuration
   public partial class AboutPage : Page
   {
     /// <summary>
+    /// The configuration view model.
+    /// </summary>
+    private readonly ConfigViewModel configurationViewModel;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="AboutPage"/> class.
     /// </summary>
-    public AboutPage()
+    public AboutPage(ConfigViewModel configurationViewModel)
     {
       this.InitializeComponent();
+      this.configurationViewModel = configurationViewModel;
       try
       {
         this.VersionLabel.Text = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
@@ -100,7 +110,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// Handles the MouseEnter event of the TextBlock control.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The <see cref="MouseEventArgs"/> instance containing the event data.</param>
+    /// <param name="e">The <see cref="System.Windows.Input.MouseEventArgs"/> instance containing the event data.</param>
     private void TextBlockMouseEnter(object sender, MouseEventArgs e)
     {
       if (sender is TextBlock textBlock)
@@ -120,6 +130,51 @@ namespace Soloplan.WhatsON.GUI.Configuration
       {
         textBlock.TextDecorations = null;
       }
+    }
+
+    /// <summary>
+    /// Handles import button click.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+    private void ImportButtonClick(object sender, RoutedEventArgs e)
+    {
+      using (var openFileDialog = new OpenFileDialog())
+      {
+        openFileDialog.Filter = this.GetConfigFileFilter();
+        openFileDialog.FileName = !string.IsNullOrWhiteSpace(this.ConfigFile.Text) ? Path.GetFileName(this.ConfigFile.Text) : string.Empty;
+        if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        {
+          var result = this.configurationViewModel.Import(openFileDialog.FileName, out var errorMessage);
+          if (!result)
+          {
+            System.Windows.MessageBox.Show(errorMessage, "Import error", MessageBoxButton.OK, MessageBoxImage.Error);
+          }
+        }
+      }
+    }
+
+    /// <summary>
+    /// Handles export button click.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+    private void ExportButtonClick(object sender, RoutedEventArgs e)
+    {
+      using (var saveFileDialog = new SaveFileDialog())
+      {
+        saveFileDialog.Filter = this.GetConfigFileFilter();
+        saveFileDialog.FileName = !string.IsNullOrWhiteSpace(this.ConfigFile.Text) ? Path.GetFileName(this.ConfigFile.Text) : string.Empty;
+        if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        {
+          this.configurationViewModel.Export(saveFileDialog.FileName);
+        }
+      }
+    }
+
+    private string GetConfigFileFilter()
+    {
+      return $"{Properties.Resources.JsonFilesFilterName}|*.{SerializationHelper.Instance.ConfigFileExtension}";
     }
   }
 }

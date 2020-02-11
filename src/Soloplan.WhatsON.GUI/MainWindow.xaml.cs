@@ -347,13 +347,13 @@ namespace Soloplan.WhatsON.GUI
         }
 
         var projectsDataInterchange = new ProjectsDataInterchange();
-        projectsDataInterchange.Export(connectors);
+        projectsDataInterchange.Export(connectors, groupTreeViewModel.GroupName);
       }
 
       if (e.Value is Common.ConnectorTreeView.ConnectorViewModel connectorViewModel)
       {
         var projectsDataInterchange = new ProjectsDataInterchange();
-        projectsDataInterchange.Export(connectorViewModel.Connector.Configuration);
+        projectsDataInterchange.Export(connectorViewModel.Connector.Configuration, connectorViewModel.Name);
       }
     }
 

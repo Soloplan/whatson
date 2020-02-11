@@ -71,30 +71,6 @@
           <ListBoxItem Content="Projects" Tag="{x:Static view:ConfigWindow.ConnectorsListItemTag}" />
           <ListBoxItem Content="About" Tag="{x:Static view:ConfigWindow.AboutListItemTag}" />
         </ListBox>
-
-        <materialDesign:PopupBox x:Name="uxImportExportPopup"
-                                 HorizontalAlignment="Stretch"
-                                 VerticalAlignment="Bottom"
-                                 HorizontalContentAlignment="Stretch"
-                                 DockPanel.Dock="Bottom"
-                                 StaysOpen="True">
-          <materialDesign:PopupBox.ToggleContent>
-            <Button x:Name="MainMenuButton"
-                    Width="156"
-                    Height="30"
-                    Margin="0"
-                    Click="ImportExportButtonClick"
-                    Content="{x:Static properties:Resources.ImportExport}" />
-          </materialDesign:PopupBox.ToggleContent>
-          <StackPanel>
-            <Button Width="166"
-                    Click="ImportButtonClick"
-                    Content="{x:Static properties:Resources.Import}" />
-            <Button Width="166"
-                    Click="ExportButtonClick"
-                    Content="{x:Static properties:Resources.Export}" />
-          </StackPanel>
-        </materialDesign:PopupBox>
       </DockPanel>
       <Frame x:Name="ConfigFrame"
              Margin="5,0,5,0"

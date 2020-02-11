@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Configuration"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      xmlns:properties="clr-namespace:Soloplan.WhatsON.GUI.Properties"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="AboutPage"
@@ -36,9 +37,15 @@
       </StackPanel>
 
       <TextBlock Cursor="Hand" TextWrapping="Wrap" Text="Made by Soloplan GmbH" Margin="20,0,20,30"  Foreground="#FF2B7AD2" AutomationProperties.Name="MadeBySoloplanLabel" MouseUp="MadeBySoloplanLinkMouseUp" MouseEnter="TextBlockMouseEnter" MouseLeave="TextBlockMouseLeave"/>
-      <TextBlock TextWrapping="Wrap" Text="Configuration:" Margin="20,0,20,10"/>
-      <TextBox x:Name="ConfigFile" Text="{}{CONFIG_FILE}" IsReadOnly="True"  Margin="20,0,20,20" />
-      <TextBlock TextWrapping="Wrap" Text="Plugins:" Height="22" Margin="20,0,20,0"/>
+      <TextBlock TextWrapping="Wrap" Text="Configuration:" Margin="20,0,20,10" FontWeight="Bold"/>
+
+      <DockPanel Margin="20,0,20,20">
+        <Button Style="{StaticResource MaterialDesignFlatMidBgButton}" Content="{x:Static properties:Resources.Export}" DockPanel.Dock="Right" Click="ExportButtonClick"/>
+        <Button Style="{StaticResource MaterialDesignFlatMidBgButton}" Content="{x:Static properties:Resources.Import}" Margin="10,0,10,0"  DockPanel.Dock="Right" Click="ImportButtonClick"/>
+        <TextBox x:Name="ConfigFile" Text="{}{CONFIG_FILE}" IsReadOnly="True"  DockPanel.Dock="Left"/>
+      </DockPanel>
+
+      <TextBlock TextWrapping="Wrap" Text="Plugins:" Height="22" Margin="20,0,20,0" FontWeight="Bold"/>
       <ListView Name="PluginList" Margin="20,0,20,10" FontSize="10">
         <ListView.Resources>
           <Style TargetType="GridViewColumnHeader">

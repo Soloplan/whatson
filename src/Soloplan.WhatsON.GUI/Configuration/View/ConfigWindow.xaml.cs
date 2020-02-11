@@ -11,7 +11,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
   using System.Linq;
   using System.Windows;
   using System.Windows.Controls;
-  using System.Windows.Forms;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
@@ -232,7 +231,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
           this.ConfigFrame.Content = this.connectorPage;
           return;
         case AboutListItemTag:
-          this.aboutPage = this.aboutPage ?? new AboutPage();
+          this.aboutPage = this.aboutPage ?? new AboutPage(this.configurationViewModel);
           this.ConfigFrame.Content = this.aboutPage;
           return;
       }
@@ -272,59 +271,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
       if (this.configurationViewModel.SingleConnectorMode && this.newConnectorPlugin != null)
       {
         this.Close();
-      }
-    }
-
-    /// <summary>
-    /// Handles the Click event of the ImportExport button.
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-    private void ImportExportButtonClick(object sender, RoutedEventArgs e)
-    {
-      this.uxImportExportPopup.IsPopupOpen = !this.uxImportExportPopup.IsPopupOpen;
-    }
-
-    private string GetConfigFileFilter()
-    {
-      return $"{Properties.Resources.JsonFilesFilterName}|*.{SerializationHelper.Instance.ConfigFileExtension}";
-    }
-
-    /// <summary>
-    /// Handles import button click.
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-    private void ImportButtonClick(object sender, RoutedEventArgs e)
-    {
-      using (var openFileDialog = new OpenFileDialog())
-      {
-        openFileDialog.Filter = this.GetConfigFileFilter();
-        if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-        {
-          var result = this.configurationViewModel.Import(openFileDialog.FileName, out var errorMessage);
-          if (!result)
-          {
-            System.Windows.MessageBox.Show(errorMessage, "Import error", MessageBoxButton.OK, MessageBoxImage.Error);
-          }
-        }
-      }
-    }
-
-    /// <summary>
-    /// Handles export button click.
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-    private void ExportButtonClick(object sender, RoutedEventArgs e)
-    {
-      using (var saveFileDialog = new SaveFileDialog())
-      {
-        saveFileDialog.Filter = this.GetConfigFileFilter();
-        if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-        {
-          this.configurationViewModel.Export(saveFileDialog.FileName);
-        }
       }
     }
 

@@ -8,6 +8,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
 {
   using System;
   using System.Collections.Generic;
+  using System.IO;
   using System.Windows;
   using System.Windows.Forms;
   using NLog;
@@ -27,20 +28,20 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// Exports the specified connector configuration.
     /// </summary>
     /// <param name="connectorConfiguration">The connector configuration.</param>
-    public void Export(ConnectorConfiguration connectorConfiguration)
+    public void Export(ConnectorConfiguration connectorConfiguration, string exportName)
     {
       var itemsList = new List<ConnectorConfiguration>();
       itemsList.Add(connectorConfiguration);
-      this.Export(itemsList);
+      this.Export(itemsList, exportName);
     }
 
     /// <summary>
     /// Exports the specified connectors configuration.
     /// </summary>
     /// <param name="connectorsConfiguration">The connectors configuration.</param>
-    public void Export(IList<ConnectorConfiguration> connectorsConfiguration)
+    public void Export(IList<ConnectorConfiguration> connectorsConfiguration, string exportName)
     {
-      var filePath = this.GetExportFilePath();
+      var filePath = this.GetExportFilePath(exportName);
       if (string.IsNullOrWhiteSpace(filePath))
       {
         return;
@@ -72,7 +73,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
       }
       catch (Exception e)
       {
-        var errorMessage = $"Import of the projects onfiguration from JSON file was not successfull; file path: {filePath}; exception: {e.Message}";
+        var errorMessage = $"Import of the projects onfiguration from JSON file was not successful; file path: {filePath}; exception: {e.Message}";
         log.Error(errorMessage);
         log.Error(e);
         System.Windows.MessageBox.Show(errorMessage, "Import error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -91,11 +92,13 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// Gets the export file path.
     /// </summary>
     /// <returns>The export file path.</returns>
-    private string GetExportFilePath()
+    private string GetExportFilePath(string fileName)
     {
       using (var saveFileDialog = new SaveFileDialog())
       {
         saveFileDialog.Filter = this.GetProjectsInterchangeFileFilter();
+
+        saveFileDialog.FileName = $"whatson_{string.Join("_", fileName.Split(Path.GetInvalidFileNameChars()))}.json";
         if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
         {
           return saveFileDialog.FileName;

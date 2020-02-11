@@ -517,7 +517,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
       }
       catch (Exception e)
       {
-        errorMessage = $"Import of the configuration from JSON file was not successfull; file path: {filePath}; exception: {e.Message}";
+        errorMessage = $"Import of the configuration from JSON file was not successful; file path: {filePath}; exception: {e.Message}";
         log.Error(errorMessage);
         log.Error(e);
         return false;
