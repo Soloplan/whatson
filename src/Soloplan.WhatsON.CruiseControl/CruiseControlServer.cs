@@ -117,7 +117,8 @@ namespace Soloplan.WhatsON.CruiseControl
           throw new OperationCanceledException(ex.Message, ex, cancellationToken);
         }
 
-        throw;
+        log.Error($"Could not fetch status from {requestUrl}.", ex);
+        return null;
       }
     }
 
