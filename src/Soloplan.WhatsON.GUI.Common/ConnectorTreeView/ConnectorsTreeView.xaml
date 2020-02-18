@@ -49,9 +49,7 @@
         <DockPanel Width="Auto"
                    ContextMenu="{StaticResource BaseTreeMenuImpl}"
                    LastChildFill="True">
-          <DockPanel MinWidth="150"
-                     MaxWidth="250"
-                     DockPanel.Dock="Left">
+          <DockPanel MaxWidth="250" DockPanel.Dock="Left">
             <TextBlock DockPanel.Dock="Left"
                        FontSize="13"
                        FontWeight="Normal"
@@ -86,12 +84,12 @@
                       CornerRadius="7">
                 <TextBlock MinWidth="15"
                            Padding="0,0,0,0"
+                           VerticalAlignment="Center"
                            FontSize="{Binding DataContext.FontSizeSmall, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}"
                            FontWeight="Bold"
                            Foreground="{DynamicResource MaterialDesignPaper}"
                            Text="{Binding RunningConnectors, Mode=OneWay}"
-                           TextAlignment="Center"
-                           VerticalAlignment="Center"/>
+                           TextAlignment="Center" />
                 <Border.Triggers>
                   <EventTrigger RoutedEvent="Image.Loaded">
                     <BeginStoryboard>
@@ -118,12 +116,12 @@
                       CornerRadius="7">
                 <TextBlock MinWidth="15"
                            Padding="0,0,0,0"
+                           VerticalAlignment="Center"
                            FontSize="{Binding DataContext.FontSizeSmall, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}"
                            FontWeight="Bold"
                            Foreground="{DynamicResource MaterialDesignPaper}"
                            Text="{Binding UnstableConnectors, Mode=OneWay}"
-                           TextAlignment="Center"
-                           VerticalAlignment="Center"/>
+                           TextAlignment="Center" />
               </Border>
             </StackPanel>
 
@@ -135,12 +133,12 @@
                       CornerRadius="7">
                 <TextBlock MinWidth="15"
                            Padding="0,0,0,0"
+                           VerticalAlignment="Center"
                            FontSize="{Binding DataContext.FontSizeSmall, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}"
                            FontWeight="Bold"
                            Foreground="{DynamicResource MaterialDesignPaper}"
                            Text="{Binding FailingConnectors, Mode=OneWay}"
-                           TextAlignment="Center"
-                           VerticalAlignment="Center"/>
+                           TextAlignment="Center" />
               </Border>
             </StackPanel>
 
@@ -152,16 +150,19 @@
                       CornerRadius="7">
                 <TextBlock MinWidth="15"
                            Padding="0,0,0,0"
+                           VerticalAlignment="Center"
                            FontSize="{Binding DataContext.FontSizeSmall, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}"
                            FontWeight="Bold"
                            Foreground="{DynamicResource MaterialDesignPaper}"
                            Text="{Binding UnknownConnectors, Mode=OneWay}"
-                           TextAlignment="Center" 
-                           VerticalAlignment="Center" />
+                           TextAlignment="Center" />
               </Border>
             </StackPanel>
 
           </StackPanel>
+          <DockPanel>
+            <TextBlock />
+          </DockPanel>
         </DockPanel>
       </HierarchicalDataTemplate>
 
