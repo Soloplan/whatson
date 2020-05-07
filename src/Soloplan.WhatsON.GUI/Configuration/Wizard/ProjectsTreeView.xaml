@@ -17,7 +17,7 @@
       <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
 
       <HierarchicalDataTemplate DataType="{x:Type local:ProjectViewModel}" ItemsSource="{Binding Path=Projects}">
-        <DockPanel Width="400">
+        <DockPanel Width="400" ToolTip="{Binding Description}">
           <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
             <CheckBox Focusable="False"
                       IsChecked="{Binding IsChecked}"
