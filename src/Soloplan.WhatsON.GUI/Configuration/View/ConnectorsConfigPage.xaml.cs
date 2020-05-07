@@ -282,6 +282,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
         // TODO move to connector view model/model
         newConnector.SourceConnectorPlugin = (ConnectorPlugin)createEditDialod.uxPluginType.SelectedItem;
         newConnector.Name = createEditDialod.uxEditConnectorName.Text;
+        newConnector.DisplayName = newConnector.SourceConnectorPlugin.DisplayName;
         newConnector.Load(null);
         this.Connectors.Add(newConnector);
         this.CurrentConnector = newConnector;

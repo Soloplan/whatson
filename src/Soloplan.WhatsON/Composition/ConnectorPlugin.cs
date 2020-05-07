@@ -27,12 +27,15 @@ namespace Soloplan.WhatsON.Composition
       }
 
       this.Name = connectorTypeAttribute.Name;
+      this.DisplayName = connectorTypeAttribute.DisplayName;
       this.Description = connectorTypeAttribute.Description;
     }
 
     public Type ConnectorType { get; }
 
     public string Name { get; }
+
+    public string DisplayName { get; }
 
     public string Description { get; }
 
