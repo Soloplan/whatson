@@ -25,11 +25,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     private string name;
 
     /// <summary>
-    /// The name of the connector to be displayed.
-    /// </summary>
-    private string displayName;
-
-    /// <summary>
     /// The source connector.
     /// </summary>
     private ConnectorConfiguration sourceConnectorConfiguration;
@@ -89,15 +84,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
       }
     }
 
-    public string DisplayName
-    {
-      get => this.displayName;
-      set
-      {
-        this.displayName = value;
-        this.OnPropertyChanged();
-      }
-    }
+
 
     /// <summary>
     /// Gets the full name of this connector including the category (if set).
