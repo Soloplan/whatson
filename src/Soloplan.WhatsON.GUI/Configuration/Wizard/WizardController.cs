@@ -594,7 +594,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       }
       else
       {
-        var plugin = PluginManager.Instance.ConnectorPlugins.FirstOrDefault(x => x.Name.Equals(this.SelectedConnectorType));
+        var plugin = PluginManager.Instance.ConnectorPlugins.FirstOrDefault(x => x.Name.Equals(this.SelectedConnectorType.Name));
         pluginToQueryWithModel = new Tuple<ConnectorPlugin, ProjectViewModelList>(plugin, new ProjectViewModelList { MultiSelectionMode = this.MultiSelectionMode, PlugIn = plugin });
       }
 
