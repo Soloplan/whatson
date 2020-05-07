@@ -10,10 +10,6 @@ namespace Soloplan.WhatsON.Composition
   [AttributeUsage(AttributeTargets.Class)]
   public class ConnectorTypeAttribute : Attribute
   {
-    public ConnectorTypeAttribute() 
-    {
-
-    }
     public ConnectorTypeAttribute(string name)
     {
       this.Name = name;
