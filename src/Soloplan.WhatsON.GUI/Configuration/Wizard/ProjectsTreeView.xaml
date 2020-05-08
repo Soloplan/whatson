@@ -20,14 +20,14 @@
             <HierarchicalDataTemplate DataType="{x:Type local:ProjectViewModel}" ItemsSource="{Binding Path=Projects}">
                 <DockPanel Width="400">
                     <DockPanel.ToolTip>
-                        <TextBlock>
-                            <TextBlock.Text>
-                                <MultiBinding StringFormat='{}&lt;font size=&quot;6&quot; face=&quot;arial&quot; color=&quot;#FFFFFF&quot;&gt; {0} sadasd {0} &lt;/font&gt;'>
+                        <wpf:HtmlPanel Background="Transparent">
+                            <wpf:HtmlPanel.Text>
+                                <MultiBinding StringFormat='{}&lt;font size=&quot;6&quot; face=&quot;arial&quot; color=&quot;#ffffff&quot;&gt; sadasd {0} &lt;/font&gt;'>
                                     <Binding Path="Description"></Binding>
-                                    <!--<Binding Path="{DynamicResource MaterialDesignPaper}"></Binding>-->
+                                    <Binding Source="{StaticResource MaterialDesignPaper}"></Binding>
                                 </MultiBinding>
-                            </TextBlock.Text>
-                        </TextBlock>
+                            </wpf:HtmlPanel.Text>
+                        </wpf:HtmlPanel>
                     </DockPanel.ToolTip>
                     <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
                         <CheckBox Focusable="False"
