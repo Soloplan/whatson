@@ -24,7 +24,7 @@
                             <wpf:HtmlPanel.Text>
                                 <MultiBinding StringFormat='{}&lt;font size=&quot;6&quot; face=&quot;arial&quot; color=&quot;#ffffff&quot;&gt; sadasd {0} &lt;/font&gt;'>
                                     <Binding Path="Description"></Binding>
-                                    <Binding Source="{StaticResource MaterialDesignPaper}"></Binding>
+                                    <Binding Source="{StaticResource MaterialDesignPaper}" Converter="{StaticResource RGBAToRGBConverter}"></Binding>
                                 </MultiBinding>
                             </wpf:HtmlPanel.Text>
                         </wpf:HtmlPanel>
