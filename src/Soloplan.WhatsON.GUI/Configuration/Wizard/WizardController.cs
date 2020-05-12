@@ -81,7 +81,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     private bool isProposedAddressEmpty = true;
 
-    private string selectedConnectorType;
+    private ConnectorPlugin selectedConnectorType;
 
     /// <summary>
     /// The connector view model.
@@ -235,21 +235,22 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         }
 
         return this.config.ConnectorsConfiguration.Where(x =>
-          x.Type == this.SelectedConnectorType &&
+          x.Type == this.SelectedConnectorType.Name &&
           x.GetConfigurationByKey(Connector.ServerAddress) != null &&
           !string.IsNullOrEmpty(x.GetConfigurationByKey(Connector.ServerAddress).Value)).Select(x => new Uri(x.GetConfigurationByKey(Connector.ServerAddress).Value).AbsoluteUri).Distinct().ToList();
       }
     }
 
-    public List<string> AvailableConnectorTypes
+    public List<ConnectorPlugin> AvailableConnectorTypes
     {
       get
       {
-        return PluginManager.Instance.ConnectorPlugins.Select(x => x.Name).OrderByDescending(x => this.config.ConnectorsConfiguration.Count(y => y.Type == x)).ToList();
+        return PluginManager.Instance.ConnectorPlugins.OrderByDescending(x => this.config.ConnectorsConfiguration.Count(y => y.Type == x.Name)).ToList();
       }
     }
 
-    public string SelectedConnectorType
+
+    public ConnectorPlugin SelectedConnectorType
     {
       get
       {
@@ -546,7 +547,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       this.WizardFrame.Content = this.currentPage;
       if (this.editedConnectorViewModel != null)
       {
-        this.SelectedConnectorType = this.editedConnectorViewModel.SourceConnectorPlugin.Name;
+        this.SelectedConnectorType = this.editedConnectorViewModel.SourceConnectorPlugin;
       }
 
       this.OnPageChanged();
@@ -568,7 +569,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
             return false;
           }
 
-          return x.Type == this.SelectedConnectorType
+            return x.Type == this.SelectedConnectorType.Name
           && new Uri(address).AbsoluteUri.Equals(this.ProposedServerAddress)
           && x.GetConfigurationByKey(Connector.ProjectName)?.Value == (!string.IsNullOrWhiteSpace(project.FullName) ? project.FullName : project.Name);
         }).ToList();
@@ -593,7 +594,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       }
       else
       {
-        var plugin = PluginManager.Instance.ConnectorPlugins.FirstOrDefault(x => x.Name.Equals(this.SelectedConnectorType));
+        var plugin = PluginManager.Instance.ConnectorPlugins.FirstOrDefault(x => x.Name.Equals(this.SelectedConnectorType.Name));
         pluginToQueryWithModel = new Tuple<ConnectorPlugin, ProjectViewModelList>(plugin, new ProjectViewModelList { MultiSelectionMode = this.MultiSelectionMode, PlugIn = plugin });
       }
 
