@@ -10,28 +10,56 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
     using System;
     using System.Globalization;
     using System.Windows.Data;
-
+    using System.Windows.Media;
 
     /// <summary>
-    /// Converts RGBA hex with hash color to RGB color hex with hash
+    /// Converts given value from rgba to rgb.
     /// </summary>
-    internal class RGBAToRGBConverter : IValueConverter
+    public class RGBToRGBAConverter : IValueConverter
     {
+        /// <summary>Converts SolidColorBrush from RGBA to RGB, if RGB given it returns RGB. F ex, when given "#FFDDFFDD" returns "#DDFFDD"</summary>
+        /// <param name="value">SolidColorBrush is the given brush to convert from rgba to rgb</param>
+        /// <param name="targetType">This parameter is not used.</param>
+        /// <param name="parameter">This parameter is not used.</param>
+        /// <param name="culture">This parameter is not used.</param>
+        /// <returns>
+        ///  String with rgb />.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string input = (string)value;
-            string output = "";
-            for (int i = 0; i < 7; i++)
+            if (value is SolidColorBrush)
             {
-                output += input[i];
+                string input = ((SolidColorBrush)value).ToString();
+                if (input.Length == 7)
+                {
+                    return input;
+                }
+
+                string output=string.Empty;
+                for (int i = 0; i < input.Length; i++)
+                {
+                    if (i == 1) { i = 3; }
+                    output += input[i];
+                }
+
+                return output;
             }
 
-            return output;
+            return null;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return null;
+            return Negate(value);
+        }
+
+        private static object Negate(object value)
+        {
+            if (value is bool boolean)
+            {
+                return !boolean;
+            }
+
+            return false;
         }
     }
 }
