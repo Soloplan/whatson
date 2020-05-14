@@ -47,7 +47,7 @@ namespace Soloplan.WhatsON.Composition
     /// <param name="project">The server project.</param>
     /// <param name="configurationItemsSupport">The configuration items provider.</param>
     /// <param name="serverAddress">The server address.</param>
-    public abstract void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress);
+    public abstract void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress=null);
 
     /// <summary>
     /// Gets the projects.

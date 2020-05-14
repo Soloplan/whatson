@@ -500,7 +500,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       {
         var newConnector = new ConnectorViewModel();
         newConnector.SourceConnectorPlugin = selectedProject.Plugin;
-        newConnector.Name = this.SelectedGroupingSetting.Id == WizardWindow.AddProjectPathToProjectName ? selectedProject.FullName : selectedProject.Name;
+        newConnector.Name = selectedProject.Name;
         newConnector.Load(null);
         if (this.SelectedGroupingSetting.Id == WizardWindow.AssignGroupsForAddedProjects)
         {
@@ -514,7 +514,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 
         configurationViewModel.Connectors.Add(newConnector);
 
-        selectedProject.Plugin.Configure(selectedProject, newConnector, this.ProposedServerAddress);
+        selectedProject.Plugin.Configure(selectedProject, newConnector, proposedServerAddress);
       }
 
       if (configurationViewModel.ConfigurationIsModified)
