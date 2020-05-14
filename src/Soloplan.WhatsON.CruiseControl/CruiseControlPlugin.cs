@@ -41,7 +41,7 @@ namespace Soloplan.WhatsON.CruiseControl
       var serverProjects = new List<Project>();
       foreach (var project in allProjects.CruiseControlProject)
       {
-        var serverProjectTreeItem = new Project(project.WebUrl, project.Name);
+        var serverProjectTreeItem = new Project(address, project.Name, address + "server/" + project.ServerName + "/project/" + project.Name + "/ViewProjectReport.aspx"); ;
         if (string.IsNullOrWhiteSpace(project.ServerName))
         {
           result.Add(serverProjectTreeItem);
@@ -51,7 +51,7 @@ namespace Soloplan.WhatsON.CruiseControl
           var serverProject = serverProjects.FirstOrDefault(s => s.Name == project.ServerName);
           if (serverProject == null)
           {
-            serverProject = new Project(null, project.ServerName);
+            serverProject = new Project(null, project.ServerName, project.Name, address + "server/" + project.ServerName + "/project/" + project.Name);
             serverProjects.Add(serverProject);
             result.Add(serverProject);
           }
@@ -74,6 +74,7 @@ namespace Soloplan.WhatsON.CruiseControl
     {
       configurationItemsSupport.GetConfigurationByKey(Connector.ProjectName).Value = project.Name;
       configurationItemsSupport.GetConfigurationByKey(Connector.ServerAddress).Value = project.Address;
+      configurationItemsSupport.GetConfigurationByKey(Connector.DirectAddress).Value = project.DirectAddress;
     }
   }
 }

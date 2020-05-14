@@ -78,6 +78,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 
     public string Description { get; set; }
 
+    public string DirectAddress { get; set; }
+
     /// <summary>
     /// Gets or sets a value indicating whether this project is visible.
     /// </summary>
