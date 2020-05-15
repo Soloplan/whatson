@@ -46,7 +46,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     {
       foreach (var be in BindingOperations.GetSourceUpdatingBindings(this))
       {
-        be.UpdateSource();
+        //be.UpdateSource();
       }
     }
 
