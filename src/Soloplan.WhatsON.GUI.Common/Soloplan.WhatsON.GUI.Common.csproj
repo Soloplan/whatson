@@ -73,6 +73,7 @@
     </Compile>
     <Compile Include="ConnectorTreeView\CustomCommand.cs" />
     <Compile Include="Converters\NullableBooleanConverter.cs" />
+    <Compile Include="Converters\RGBAToRGBConverter.cs" />
     <Compile Include="ExternalEnabledStateCommand.cs" />
     <Compile Include="Converters\InvertBooleanConverter.cs" />
     <Compile Include="Converters\InvertBooleanToVisibilityConverter.cs" />
