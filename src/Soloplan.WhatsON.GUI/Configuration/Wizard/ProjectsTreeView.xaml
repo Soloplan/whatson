@@ -5,29 +5,40 @@
              xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Configuration.Wizard"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wpf="clr-namespace:TheArtOfDev.HtmlRenderer.WPF;assembly=HtmlRenderer.WPF"
              d:DesignHeight="450"
              d:DesignWidth="800"
              Background="{DynamicResource MaterialDesignPaper}"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              mc:Ignorable="d">
 
-  <UserControl.Resources>
-    <ResourceDictionary>
+    <UserControl.Resources>
+        <ResourceDictionary>
 
-      <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+            <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
 
-      <HierarchicalDataTemplate DataType="{x:Type local:ProjectViewModel}" ItemsSource="{Binding Path=Projects}">
-        <DockPanel Width="400">
-          <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
-            <CheckBox Focusable="False"
+            <HierarchicalDataTemplate DataType="{x:Type local:ProjectViewModel}" ItemsSource="{Binding Path=Projects}">
+                <DockPanel Width="400">
+                    <DockPanel.ToolTip>
+                        <wpf:HtmlPanel Background="Transparent" MaxWidth="600">
+                            <wpf:HtmlPanel.Text>
+                                <MultiBinding StringFormat='{}&lt;font size=&quot;6&quot; face=&quot;arial&quot; color=&quot;{1}&quot;&gt; {0} &lt;/font&gt;'>
+                                    <Binding Path="Description"></Binding>
+                                    <Binding Source="{StaticResource MaterialDesignPaper}" Converter="{StaticResource RGBAToRGBConverter}"></Binding>
+                                </MultiBinding>
+                            </wpf:HtmlPanel.Text>
+                        </wpf:HtmlPanel>
+                    </DockPanel.ToolTip>
+                    <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                        <CheckBox Focusable="False"
                       IsChecked="{Binding IsChecked}"
                       Style="{StaticResource MaterialDesignAccentCheckBox}"
                       Visibility="{Binding Path=IsCheckable, Converter={StaticResource BoolToVis}}" />
-            <TextBlock Margin="10,0,0,0"
+                        <TextBlock Margin="10,0,0,0"
                        Focusable="False"
                        Text="{Binding Name}" />
-            <TextBlock Margin="5,0,0,0">
-              <Hyperlink NavigateUri="{Binding DirectAddress}"
+                        <TextBlock Margin="5,0,0,0">
+              <Hyperlink NavigateUri="{Binding Address}"
                          RequestNavigate="HyperlinkRequestNavigate"
                          Style="{StaticResource MaterialDesignHeadline4Hyperlink}">
                 <TextBlock>
@@ -35,35 +46,35 @@
                 </TextBlock>
               </Hyperlink>
             </TextBlock>
-          </StackPanel>
-          <StackPanel DockPanel.Dock="Right"
+                    </StackPanel>
+                    <StackPanel DockPanel.Dock="Right"
                       Opacity="0.5"
                       Orientation="Horizontal"
                       Visibility="{Binding AlreadyAdded, Converter={StaticResource BoolToVisibility}}">
-            <TextBlock Margin="10,0,0,0"
+                        <TextBlock Margin="10,0,0,0"
                        VerticalAlignment="Center"
                        FontSize="10"
                        Text="Already added: " />
-            <TextBlock Margin="3,0,0,0"
+                        <TextBlock Margin="3,0,0,0"
                        VerticalAlignment="Center"
                        FontSize="10"
                        FontWeight="Bold"
                        Text="{Binding AddedProject}" />
-          </StackPanel>
-        </DockPanel>
-      </HierarchicalDataTemplate>
-    </ResourceDictionary>
-  </UserControl.Resources>
+                    </StackPanel>
+                </DockPanel>
+            </HierarchicalDataTemplate>
+        </ResourceDictionary>
+    </UserControl.Resources>
 
-  <TreeView Name="mainTreeView" ItemsSource="{Binding}">
-    <TreeView.ItemContainerStyle>
-      <Style BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="{x:Type TreeViewItem}">
-        <Setter Property="IsExpanded" Value="True" />
-        <Setter Property="Visibility" Value="{Binding IsVisible, Converter={StaticResource BoolToVisibility}}" />
-        <EventSetter Event="RequestBringIntoView" Handler="NullHandler" />
-        <EventSetter Event="PreviewKeyUp" Handler="TreeViewItemPreviewKeyUp" />
-        <Setter Property="Padding" Value="0" />
-      </Style>
-    </TreeView.ItemContainerStyle>
-  </TreeView>
+    <TreeView Name="mainTreeView" ItemsSource="{Binding}">
+        <TreeView.ItemContainerStyle>
+            <Style BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="{x:Type TreeViewItem}">
+                <Setter Property="IsExpanded" Value="True" />
+                <Setter Property="Visibility" Value="{Binding IsVisible, Converter={StaticResource BoolToVisibility}}" />
+                <EventSetter Event="RequestBringIntoView" Handler="NullHandler" />
+                <EventSetter Event="PreviewKeyUp" Handler="TreeViewItemPreviewKeyUp" />
+                <Setter Property="Padding" Value="0" />
+            </Style>
+        </TreeView.ItemContainerStyle>
+    </TreeView>
 </UserControl>
