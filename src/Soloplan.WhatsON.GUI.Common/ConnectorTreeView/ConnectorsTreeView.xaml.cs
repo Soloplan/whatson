@@ -7,6 +7,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
   using System;
   using System.Collections.Generic;
+  using System.Collections.ObjectModel;
   using System.ComponentModel;
   using System.Linq;
   using System.Windows;
@@ -25,6 +26,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   public partial class ConnectorsTreeView : UserControl, IDisposable
   {
     private ConnectorTreeViewModel model;
+
+    private Collection<Connector> selectedConnectors;
 
     /// <summary>
     /// Backing field for <see cref="DeleteSelectedObject"/>.
@@ -249,6 +252,67 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         this.model.ExportItem -= OnModelOnExportItem;
         this.model.DeleteItem -= OnModelOnDeleteItem;
         this.model.ConfigurationChanged -= OnModelOnConfigurationChanged;
+      }
+    }
+
+    private void OnTreeViewItemMouseDown(object sender, MouseButtonEventArgs e)
+    {
+      return;
+    }
+
+
+
+    private void OnTreeItemLeftMouseDown(object sender, MouseButtonEventArgs e)
+    {
+      TreeViewItem item = (TreeViewItem)sender;
+      if (item == null)
+      {
+        return;
+      }
+      else
+      {
+        if (Keyboard.IsKeyDown(Key.LeftShift))
+        {
+          //item.Focus();
+          item.IsSelected = true;
+        }
+        else
+        {
+          foreach (var groupViewModel in mainTreeView.Items)
+          {
+            //TreeViewItem groupViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(groupViewModel);
+            //var treeViewItem = (TreeViewItem)groupViewItem?.ItemContainerGenerator.ContainerFromItem(connectorViewModel);
+          }
+          //item.Focus();
+          item.IsSelected = true;
+          var connector = (Connector)item.Header;
+          selectedConnectors.Add(connector);
+        }
+      }
+      e.Handled = true;
+      return;
+    }
+
+    private void TreeViewItem_Drop(object sender, DragEventArgs e)
+    {
+      int selectedItemCounter = 0;
+      foreach (var groupViewModel in this.model.ConnectorGroups)
+      {
+        foreach (var connectorViewModel in groupViewModel.ConnectorViewModels)
+        {
+          TreeViewItem groupViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(groupViewModel);
+          var treeViewItem = (TreeViewItem)groupViewItem?.ItemContainerGenerator.ContainerFromItem(connectorViewModel)
+            ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorViewModel);
+          if (treeViewItem != null)
+          {
+            if (treeViewItem.IsSelected == true)
+            {
+              selectedItemCounter++;
+            }
+          }
+        }
+        selectedItemCounter = selectedItemCounter;
+        return;
       }
     }
   }
