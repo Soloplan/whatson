@@ -15,6 +15,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Windows.Data;
   using System.Windows.Input;
   using System.Windows.Markup;
+  using System.Windows.Media;
+  using MaterialDesignThemes.Wpf;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
@@ -27,7 +29,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   {
     private ConnectorTreeViewModel model;
 
-    private Collection<Connector> selectedConnectors;
+    private Collection<ConnectorViewModel> selectedConnectors;
+
 
     /// <summary>
     /// Backing field for <see cref="DeleteSelectedObject"/>.
@@ -36,6 +39,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     public ConnectorsTreeView()
     {
+      selectedConnectors = new Collection<ConnectorViewModel>();
       this.InitializeComponent();
       if (!DesignerProperties.GetIsInDesignMode(this))
       {
@@ -260,60 +264,167 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       return;
     }
 
+    private void SwapStyle(ref TreeViewItem treeViewItem)
+    {
+      if (treeViewItem.Opacity == 0.5)
+      {
+        treeViewItem.Opacity = 1.0;
+      }
+      else
+      {
+        treeViewItem.Opacity = 0.5;
+      }
+    }
+
+    private void ResetStyle(ref TreeViewItem treeViewItem)
+    {
+      treeViewItem.Opacity = 1;
+    }
+
+    private void SetStyle(ref TreeViewItem treeViewItem)
+    {
+      treeViewItem.Opacity = 0.5;
+    }
+
+    private void ProjectClicked(ConnectorViewModel connector)
+    {
+      foreach (var groupViewModel in this.model.ConnectorGroups)
+      {
+        foreach (var connectorViewModel in groupViewModel.ConnectorViewModels)
+        {
+          if (connectorViewModel.Connector.Configuration.Identifier == connector.Identifier)
+          {
+            TreeViewItem groupViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(groupViewModel);
+            var treeViewItem = (TreeViewItem)groupViewItem?.ItemContainerGenerator.ContainerFromItem(connectorViewModel)
+              ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorViewModel);
+            bool isAlreadyAdded = false;
+
+            foreach (var selectedConnector in selectedConnectors)
+            {
+              if (selectedConnector.Identifier == connector.Identifier)
+              {
+                isAlreadyAdded = true;
+                foreach (var group in this.model.ConnectorGroups)
+                {
+                  foreach (var itemInGroup in group.ConnectorViewModels)
+                  {
+                    if (itemInGroup.Connector.Configuration.Identifier == selectedConnector.Identifier)
+                    {
+                      TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(group);
+                      var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(itemInGroup)
+                        ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(itemInGroup);
+                      this.ResetStyle(ref treeViewItemInGroup);
+                      this.selectedConnectors.Remove(selectedConnector);
+                    }
+                  }
+                }
+              }
+            }
+
+            if (isAlreadyAdded == false)
+            {
+              this.SetStyle(ref treeViewItem);
+              this.selectedConnectors.Add(connector);
+            }
+          }
+        }
+      }
+    }
 
 
     private void OnTreeItemLeftMouseDown(object sender, MouseButtonEventArgs e)
     {
-      TreeViewItem item = (TreeViewItem)sender;
-      if (item == null)
+      if (Keyboard.IsKeyDown(Key.LeftShift))
       {
-        return;
-      }
-      else
-      {
-        if (Keyboard.IsKeyDown(Key.LeftShift))
+        TreeViewItem item = (TreeViewItem)sender;
+        if (item == null)
         {
-          //item.Focus();
-          item.IsSelected = true;
+          return;
         }
-        else
+        var connector = new ConnectorViewModel();
+        try
         {
-          foreach (var groupViewModel in mainTreeView.Items)
+          connector = (ConnectorViewModel)item.Header;
+          this.ProjectClicked(connector);
+        }
+        catch
+        {
+          var group = new ConnectorGroupViewModel();
+          try
           {
-            //TreeViewItem groupViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(groupViewModel);
-            //var treeViewItem = (TreeViewItem)groupViewItem?.ItemContainerGenerator.ContainerFromItem(connectorViewModel);
+            group = (ConnectorGroupViewModel)item.Header;
           }
-          //item.Focus();
-          item.IsSelected = true;
-          var connector = (Connector)item.Header;
-          selectedConnectors.Add(connector);
+          catch (Exception ex)
+          {
+            //todo
+          }
         }
       }
       e.Handled = true;
       return;
     }
 
-    private void TreeViewItem_Drop(object sender, DragEventArgs e)
+    private void OnTreeItemLeftMouseUp(object sender, MouseButtonEventArgs e)
     {
-      int selectedItemCounter = 0;
-      foreach (var groupViewModel in this.model.ConnectorGroups)
+      if (Keyboard.IsKeyUp(Key.LeftShift))
       {
-        foreach (var connectorViewModel in groupViewModel.ConnectorViewModels)
+        if (selectedConnectors.Count > 1)
         {
-          TreeViewItem groupViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(groupViewModel);
-          var treeViewItem = (TreeViewItem)groupViewItem?.ItemContainerGenerator.ContainerFromItem(connectorViewModel)
-            ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorViewModel);
-          if (treeViewItem != null)
+          foreach (var group in this.model.ConnectorGroups)
           {
-            if (treeViewItem.IsSelected == true)
+            foreach (var itemInGroup in group.ConnectorViewModels)
             {
-              selectedItemCounter++;
+              TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(group);
+              var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(itemInGroup)
+                ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(itemInGroup);
+              this.ResetStyle(ref treeViewItemInGroup);
             }
           }
+
+          this.selectedConnectors.Clear();
         }
-        selectedItemCounter = selectedItemCounter;
-        return;
+        TreeViewItem item = (TreeViewItem)sender;
+        try
+        {
+          var connector = new ConnectorViewModel();
+          if (item == null)
+          {
+            return;
+          }
+          connector = (ConnectorViewModel)item.Header;
+          this.ProjectClicked(connector);
+        }
+        catch
+        {
+          var group = new ConnectorGroupViewModel();
+          try
+          {
+            group = (ConnectorGroupViewModel)item.Header;
+          }
+          catch (Exception ex)
+          {
+            //todo
+          }
+        }
       }
     }
+
+    private void TreeViewItem_Drop(object sender, DragEventArgs e)
+    {
+      //this.model.Drop(//dropinfo);
+      foreach (var group in this.model.ConnectorGroups)
+      {
+        foreach (var itemInGroup in group.ConnectorViewModels)
+        {
+          TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(group);
+          var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(itemInGroup)
+            ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(itemInGroup);
+          ResetStyle(ref treeViewItemInGroup);
+        }
+      }
+
+      this.selectedConnectors.Clear();
+    }
+
   }
 }
