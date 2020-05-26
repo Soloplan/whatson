@@ -9,8 +9,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Collections.Generic;
   using System.Collections.ObjectModel;
   using System.ComponentModel;
-    using System.Globalization;
-    using System.Linq;
+  using System.Globalization;
+  using System.Linq;
   using System.ServiceModel.Security.Tokens;
   using System.Windows;
   using System.Windows.Controls;
@@ -34,8 +34,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private ConnectorTreeViewModel model;
 
     private Collection<ConnectorViewModel> selectedConnectors;
-
-    private Brush treeViewItemDefaultForeground;
 
     /// <summary>
     /// Backing field for <see cref="DeleteSelectedObject"/>.
