@@ -428,7 +428,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         }
       }
 
-      model.MoveListAfter(sortedConnectors, connector);
+      model.MoveListAfter(sortedConnectors, connector, sender , e);
 
       foreach (var group in this.model.ConnectorGroups)
       {

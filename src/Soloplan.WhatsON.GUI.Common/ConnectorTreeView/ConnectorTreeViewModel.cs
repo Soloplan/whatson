@@ -401,17 +401,18 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
-    public bool MoveListAfter(Collection<ConnectorViewModel> list,ConnectorViewModel connectorViewModel)
+    public bool MoveListAfter(Collection<ConnectorViewModel> list,ConnectorViewModel connectorViewModel,object sender, EventArgs e)
     {
-      //get target list
       var targetGroup = this.GetConnectorGroup(connectorViewModel);
       foreach (var element in list)
       {
-        //get source list
         var sourceGroup = this.GetConnectorGroup(element);
         MoveObject(sourceGroup, targetGroup, GongSolutions.Wpf.DragDrop.RelativeInsertPosition.AfterTargetItem);
-        targetGroup = this.GetConnectorGroup(connectorViewModel);
+        targetGroup = this.GetConnectorGroup(element);
       }
+
+      this.OnConfigurationChanged(sender, e);
+
       return true;
     }
 
