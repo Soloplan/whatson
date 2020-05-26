@@ -9,7 +9,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Collections.Generic;
   using System.Collections.ObjectModel;
   using System.ComponentModel;
-  using System.Linq;
+    using System.Globalization;
+    using System.Linq;
   using System.ServiceModel.Security.Tokens;
   using System.Windows;
   using System.Windows.Controls;
@@ -18,6 +19,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Windows.Markup;
   using System.Windows.Media;
   using GongSolutions.Wpf.DragDrop;
+  using Humanizer.Localisation;
   using MaterialDesignThemes.Wpf;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
@@ -33,6 +35,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private Collection<ConnectorViewModel> selectedConnectors;
 
+    private Brush treeViewItemDefaultForeground;
 
     /// <summary>
     /// Backing field for <see cref="DeleteSelectedObject"/>.
@@ -261,27 +264,61 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
-
-    private void SwapStyle(ref TreeViewItem treeViewItem)
+    private static Color HexToColor(string hexColor)
     {
-      if (treeViewItem.Opacity == 0.5)
+      if (hexColor.IndexOf('#') != -1)
       {
-        treeViewItem.Opacity = 1.0;
+        hexColor = hexColor.Replace("#", "");
+      }
+
+      byte red = 0;
+      byte green = 0;
+      byte blue = 0;
+
+      if (hexColor.Length == 8)
+      {
+        hexColor = hexColor.Substring(2);
+      }
+
+      if (hexColor.Length == 6)
+      {
+        red = byte.Parse(hexColor.Substring(0, 2), NumberStyles.AllowHexSpecifier);
+        green = byte.Parse(hexColor.Substring(2, 2), NumberStyles.AllowHexSpecifier);
+        blue = byte.Parse(hexColor.Substring(4, 2), NumberStyles.AllowHexSpecifier);
+      }
+      else if (hexColor.Length == 3)
+      {
+        red = byte.Parse(hexColor[0].ToString() + hexColor[0].ToString(), NumberStyles.AllowHexSpecifier);
+        green = byte.Parse(hexColor[1].ToString() + hexColor[1].ToString(), NumberStyles.AllowHexSpecifier);
+        blue = byte.Parse(hexColor[2].ToString() + hexColor[2].ToString(), NumberStyles.AllowHexSpecifier);
+      }
+
+      return Color.FromRgb(red, green, blue);
+    }
+
+    private Brush InvertColor(string value)
+    {
+      if (value != null)
+      {
+        Color colorToConvert = HexToColor(value);
+        Color invertedColor = Color.FromRgb((byte)~colorToConvert.R, (byte)~colorToConvert.G, (byte)~colorToConvert.B);
+        return new SolidColorBrush(invertedColor);
       }
       else
       {
-        treeViewItem.Opacity = 0.5;
+          return new SolidColorBrush(Color.FromRgb(0,0,0));
       }
     }
 
     private void ResetStyle(ref TreeViewItem treeViewItem)
     {
-      treeViewItem.Opacity = 1;
+      var style = this.FindResource("MaterialDesignBackground");
+      treeViewItem.Foreground = this.InvertColor(style.ToString());
     }
 
     private void SetStyle(ref TreeViewItem treeViewItem)
     {
-      treeViewItem.Opacity = 0.5;
+      treeViewItem.Foreground = Brushes.MediumVioletRed;
     }
 
     private void ProjectClicked(ConnectorViewModel connector)
