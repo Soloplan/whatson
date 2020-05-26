@@ -401,6 +401,21 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
+    public bool MoveListAfter(Collection<ConnectorViewModel> list,ConnectorViewModel connectorViewModel)
+    {
+      //get target list
+      var targetGroup = this.GetConnectorGroup(connectorViewModel);
+      foreach (var element in list)
+      {
+        //get source list
+        var sourceGroup = this.GetConnectorGroup(element);
+        MoveObject(sourceGroup, targetGroup, GongSolutions.Wpf.DragDrop.RelativeInsertPosition.AfterTargetItem);
+        targetGroup = this.GetConnectorGroup(connectorViewModel);
+      }
+      return true;
+    }
+
+
     /// <summary>
     /// Moves object given by <paramref name="source"/> to <paramref name="target"/>.
     /// </summary>
@@ -594,7 +609,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// Helper class with information about where the moved object is or should be in <see cref="List"/>.
     /// </summary>
-    private class MovedObjectLocation
+    public class MovedObjectLocation
     {
       public MovedObjectLocation(IList list, int index)
       {

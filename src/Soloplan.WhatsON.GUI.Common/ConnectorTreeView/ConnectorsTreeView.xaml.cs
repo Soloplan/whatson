@@ -10,12 +10,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Collections.ObjectModel;
   using System.ComponentModel;
   using System.Linq;
+  using System.ServiceModel.Security.Tokens;
   using System.Windows;
   using System.Windows.Controls;
   using System.Windows.Data;
   using System.Windows.Input;
   using System.Windows.Markup;
   using System.Windows.Media;
+  using GongSolutions.Wpf.DragDrop;
   using MaterialDesignThemes.Wpf;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
@@ -259,10 +261,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
-    private void OnTreeViewItemMouseDown(object sender, MouseButtonEventArgs e)
-    {
-      return;
-    }
 
     private void SwapStyle(ref TreeViewItem treeViewItem)
     {
@@ -331,7 +329,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
-
     private void OnTreeItemLeftMouseDown(object sender, MouseButtonEventArgs e)
     {
       if (Keyboard.IsKeyDown(Key.LeftShift))
@@ -341,6 +338,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         {
           return;
         }
+
         var connector = new ConnectorViewModel();
         try
         {
@@ -360,6 +358,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
           }
         }
       }
+
       e.Handled = true;
       return;
     }
@@ -368,7 +367,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       if (Keyboard.IsKeyUp(Key.LeftShift))
       {
-        if (selectedConnectors.Count > 1)
+        if (selectedConnectors.Count > 0)
         {
           foreach (var group in this.model.ConnectorGroups)
           {
@@ -383,6 +382,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
           this.selectedConnectors.Clear();
         }
+
         TreeViewItem item = (TreeViewItem)sender;
         try
         {
@@ -411,7 +411,25 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private void TreeViewItem_Drop(object sender, DragEventArgs e)
     {
-      //this.model.Drop(//dropinfo);
+      var item = (TreeViewItem)sender;
+      var connector = (ConnectorViewModel)item.Header;
+      Collection<ConnectorViewModel> sortedConnectors = new Collection<ConnectorViewModel>();
+      foreach (var group in this.model.ConnectorGroups)
+      {
+        foreach (var itemInGroup in group.ConnectorViewModels)
+        {
+          foreach (var selectedConnector in selectedConnectors)
+          {
+            if (selectedConnector.Identifier == itemInGroup.Identifier)
+            {
+              sortedConnectors.Add(itemInGroup);
+            }
+          }
+        }
+      }
+
+      model.MoveListAfter(sortedConnectors, connector);
+
       foreach (var group in this.model.ConnectorGroups)
       {
         foreach (var itemInGroup in group.ConnectorViewModels)
@@ -419,12 +437,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
           TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(group);
           var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(itemInGroup)
             ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(itemInGroup);
-          ResetStyle(ref treeViewItemInGroup);
+          this.ResetStyle(ref treeViewItemInGroup);
         }
       }
 
       this.selectedConnectors.Clear();
     }
-
   }
 }
