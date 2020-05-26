@@ -209,6 +209,7 @@
         <EventSetter Event="MouseDoubleClick" Handler="OnTreeItemDoubleClick" />
         <EventSetter Event="MouseLeftButtonDown" Handler="OnTreeItemLeftMouseDown"/>
         <EventSetter Event="MouseLeftButtonUp" Handler="OnTreeItemLeftMouseUp"/>
+        <EventSetter Event="MouseRightButtonDown" Handler="OnTreeItemRightMouseDown"/>
         <EventSetter Event="Drop" Handler="TreeViewItem_Drop"/>
         <Setter Property="Focusable" Value="False"/>
         <Setter Property="IsExpanded" Value="{Binding IsNodeExpanded, Mode=TwoWay}" />

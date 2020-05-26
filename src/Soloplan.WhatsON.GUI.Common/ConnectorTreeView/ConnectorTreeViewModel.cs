@@ -10,6 +10,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Collections.Generic;
   using System.Collections.ObjectModel;
   using System.Linq;
+  using System.Text.RegularExpressions;
   using System.Windows;
   using System.Windows.Input;
   using GongSolutions.Wpf.DragDrop;
@@ -32,6 +33,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// Backing field for <see cref="ConnectorGroups"/>.
     /// </summary>
     private ObservableCollection<ConnectorGroupViewModel> connectorGroups;
+
+    /// <summary>
+    /// Copy of currently selected connectors in case of multiple actions on viewmodel/>.
+    /// </summary>
+    private Collection<ConnectorViewModel> selectedConnectors;
 
     /// <summary>
     /// Flag indicating that <see cref="ConfigurationChanged"/> event is triggered - used to ignore updates of model.
@@ -574,6 +580,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private async void DeleteGroup(object sender, DeleteTreeItemEventArgs e)
     {
+      //TODO jesli mamy co usuwac to usuwamy i robimy inny invoke
       this.DeleteItem?.Invoke(sender, e);
       if (e.DeleteItem is ConnectorGroupViewModel group)
       {
@@ -584,6 +591,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
           this.FireOneGroupChanged();
         }
       }
+      
+      //pas selected connectors to deleteConnectors function
     }
 
     private void FireOneGroupChanged()
@@ -608,6 +617,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
+    /// Updates the currently selected items form view
+    /// </summary>
+    public void UpdateSelectedConnectors(Collection<ConnectorViewModel> selectedConnectors)
+    {
+      this.selectedConnectors = selectedConnectors;
+    }
+
+    /// <summary>
     /// Helper class with information about where the moved object is or should be in <see cref="List"/>.
     /// </summary>
     public class MovedObjectLocation
@@ -628,5 +645,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       /// </summary>
       public int Index { get; }
     }
+
+   
   }
 }

@@ -12,6 +12,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Globalization;
   using System.Linq;
   using System.ServiceModel.Security.Tokens;
+  using System.Text.RegularExpressions;
   using System.Windows;
   using System.Windows.Controls;
   using System.Windows.Data;
@@ -392,6 +393,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
             //todo
           }
         }
+        this.model.UpdateSelectedConnectors(this.selectedConnectors);
       }
 
       e.Handled = true;
@@ -426,6 +428,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
           {
             return;
           }
+
           connector = (ConnectorViewModel)item.Header;
           this.ProjectClicked(connector);
         }
@@ -441,6 +444,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
             //todo
           }
         }
+
+        this.model.UpdateSelectedConnectors(this.selectedConnectors);
       }
     }
 
@@ -468,7 +473,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         }
       }
 
-      model.MoveListAfter(sortedConnectors, connector, sender, e);
+      this.model.MoveListAfter(sortedConnectors, connector, sender, e);
 
       foreach (var group in this.model.ConnectorGroups)
       {
@@ -482,6 +487,47 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
 
       this.selectedConnectors.Clear();
+      this.model.UpdateSelectedConnectors(this.selectedConnectors);
+    }
+
+    private void OnTreeItemRightMouseDown(object sender, MouseButtonEventArgs e)
+    {
+      TreeViewItem item = (TreeViewItem)sender;
+      try
+      {
+        var connector = new ConnectorViewModel();
+        if (item == null)
+        {
+          return;
+        }
+
+        connector = (ConnectorViewModel)item.Header;
+        foreach (var selectedItem in this.selectedConnectors)
+        {
+          if (selectedItem.Identifier == connector.Identifier)
+          {
+            return;
+          }
+        }
+      }
+      catch
+      {
+        return;
+      }
+
+      foreach (var group in this.model.ConnectorGroups)
+      {
+        foreach (var itemInGroup in group.ConnectorViewModels)
+        {
+          TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(group);
+          var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(itemInGroup)
+            ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(itemInGroup);
+          this.ResetStyle(ref treeViewItemInGroup);
+        }
+      }
+
+      this.selectedConnectors.Clear();
+      this.model.UpdateSelectedConnectors(this.selectedConnectors);
     }
   }
 }
