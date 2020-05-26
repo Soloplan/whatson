@@ -213,7 +213,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       var command = new CustomCommand();
       command.OnExecute += (s, e) =>
       {
-        if (this.mainTreeView.SelectedItems[0] is TreeItemViewModel model)
+        if (this.mainTreeView.SelectedItem is TreeItemViewModel model)
         {
           model.DeleteCommand.Execute(null);
         }
@@ -264,189 +264,167 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       return;
     }
 
-    //private void SwapStyle(ref TreeViewItem treeViewItem)
-    //{
-    //  if (treeViewItem.Opacity == 0.5)
-    //  {
-    //    treeViewItem.Opacity = 1.0;
-    //  }
-    //  else
-    //  {
-    //    treeViewItem.Opacity = 0.5;
-    //  }
-    //}
+    private void SwapStyle(ref TreeViewItem treeViewItem)
+    {
+      if (treeViewItem.Opacity == 0.5)
+      {
+        treeViewItem.Opacity = 1.0;
+      }
+      else
+      {
+        treeViewItem.Opacity = 0.5;
+      }
+    }
 
-    //private void ResetStyle(ref TreeViewItem treeViewItem)
-    //{
-    //  treeViewItem.Opacity = 1;
-    //}
+    private void ResetStyle(ref TreeViewItem treeViewItem)
+    {
+      treeViewItem.Opacity = 1;
+    }
 
-    //private void SetStyle(ref TreeViewItem treeViewItem)
-    //{
-    //  treeViewItem.Opacity = 0.5;
-    //}
+    private void SetStyle(ref TreeViewItem treeViewItem)
+    {
+      treeViewItem.Opacity = 0.5;
+    }
 
-    //private void ProjectClicked(ConnectorViewModel connector)
-    //{
-    //  foreach (var groupViewModel in this.model.ConnectorGroups)
-    //  {
-    //    foreach (var connectorViewModel in groupViewModel.ConnectorViewModels)
-    //    {
-    //      if (connectorViewModel.Connector.Configuration.Identifier == connector.Identifier)
-    //      {
-    //        TreeViewItem groupViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(groupViewModel);
-    //        var treeViewItem = (TreeViewItem)groupViewItem?.ItemContainerGenerator.ContainerFromItem(connectorViewModel)
-    //          ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorViewModel);
-    //        bool isAlreadyAdded = false;
+    private void ProjectClicked(ConnectorViewModel connector)
+    {
+      foreach (var groupViewModel in this.model.ConnectorGroups)
+      {
+        foreach (var connectorViewModel in groupViewModel.ConnectorViewModels)
+        {
+          if (connectorViewModel.Connector.Configuration.Identifier == connector.Identifier)
+          {
+            TreeViewItem groupViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(groupViewModel);
+            var treeViewItem = (TreeViewItem)groupViewItem?.ItemContainerGenerator.ContainerFromItem(connectorViewModel)
+              ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorViewModel);
+            bool isAlreadyAdded = false;
 
-    //        foreach (var selectedConnector in selectedConnectors)
-    //        {
-    //          if (selectedConnector.Identifier == connector.Identifier)
-    //          {
-    //            isAlreadyAdded = true;
-    //            foreach (var group in this.model.ConnectorGroups)
-    //            {
-    //              foreach (var itemInGroup in group.ConnectorViewModels)
-    //              {
-    //                if (itemInGroup.Connector.Configuration.Identifier == selectedConnector.Identifier)
-    //                {
-    //                  TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(group);
-    //                  var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(itemInGroup)
-    //                    ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(itemInGroup);
-    //                  this.ResetStyle(ref treeViewItemInGroup);
-    //                  this.selectedConnectors.Remove(selectedConnector);
-    //                }
-    //              }
-    //            }
-    //          }
-    //        }
+            foreach (var selectedConnector in selectedConnectors)
+            {
+              if (selectedConnector.Identifier == connector.Identifier)
+              {
+                isAlreadyAdded = true;
+                foreach (var group in this.model.ConnectorGroups)
+                {
+                  foreach (var itemInGroup in group.ConnectorViewModels)
+                  {
+                    if (itemInGroup.Connector.Configuration.Identifier == selectedConnector.Identifier)
+                    {
+                      TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(group);
+                      var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(itemInGroup)
+                        ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(itemInGroup);
+                      this.ResetStyle(ref treeViewItemInGroup);
+                      this.selectedConnectors.Remove(selectedConnector);
+                    }
+                  }
+                }
+              }
+            }
 
-    //        if (isAlreadyAdded == false)
-    //        {
-    //          this.SetStyle(ref treeViewItem);
-    //          this.selectedConnectors.Add(connector);
-    //        }
-    //      }
-    //    }
-    //  }
-    //}
+            if (isAlreadyAdded == false)
+            {
+              this.SetStyle(ref treeViewItem);
+              this.selectedConnectors.Add(connector);
+            }
+          }
+        }
+      }
+    }
 
-    //private void OnTreeItemLeftMouseDown(object sender, MouseButtonEventArgs e)
-    //{
-    //  if (Keyboard.IsKeyDown(Key.LeftShift))
-    //  {
-    //    TreeViewItem item = (TreeViewItem)sender;
-    //    if (item == null)
-    //    {
-    //      return;
-    //    }
 
-    //    var connector = new ConnectorViewModel();
-    //    try
-    //    {
-    //      connector = (ConnectorViewModel)item.Header;
-    //      this.ProjectClicked(connector);
-    //    }
-    //    catch
-    //    {
-    //      var group = new ConnectorGroupViewModel();
-    //      try
-    //      {
-    //        group = (ConnectorGroupViewModel)item.Header;
-    //      }
-    //      catch (Exception ex)
-    //      {
-    //        //todo
-    //      }
-    //    }
-    //  }
+    private void OnTreeItemLeftMouseDown(object sender, MouseButtonEventArgs e)
+    {
+      if (Keyboard.IsKeyDown(Key.LeftShift))
+      {
+        TreeViewItem item = (TreeViewItem)sender;
+        if (item == null)
+        {
+          return;
+        }
+        var connector = new ConnectorViewModel();
+        try
+        {
+          connector = (ConnectorViewModel)item.Header;
+          this.ProjectClicked(connector);
+        }
+        catch
+        {
+          var group = new ConnectorGroupViewModel();
+          try
+          {
+            group = (ConnectorGroupViewModel)item.Header;
+          }
+          catch (Exception ex)
+          {
+            //todo
+          }
+        }
+      }
+      e.Handled = true;
+      return;
+    }
 
-    //  e.Handled = true;
-    //  return;
-    //}
+    private void OnTreeItemLeftMouseUp(object sender, MouseButtonEventArgs e)
+    {
+      if (Keyboard.IsKeyUp(Key.LeftShift))
+      {
+        if (selectedConnectors.Count > 1)
+        {
+          foreach (var group in this.model.ConnectorGroups)
+          {
+            foreach (var itemInGroup in group.ConnectorViewModels)
+            {
+              TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(group);
+              var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(itemInGroup)
+                ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(itemInGroup);
+              this.ResetStyle(ref treeViewItemInGroup);
+            }
+          }
 
-    //private void OnTreeItemLeftMouseUp(object sender, MouseButtonEventArgs e)
-    //{
-    //  if (Keyboard.IsKeyUp(Key.LeftShift))
-    //  {
-    //    if (selectedConnectors.Count > 1)
-    //    {
-    //      foreach (var group in this.model.ConnectorGroups)
-    //      {
-    //        foreach (var itemInGroup in group.ConnectorViewModels)
-    //        {
-    //          TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(group);
-    //          var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(itemInGroup)
-    //            ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(itemInGroup);
-    //          this.ResetStyle(ref treeViewItemInGroup);
-    //        }
-    //      }
+          this.selectedConnectors.Clear();
+        }
+        TreeViewItem item = (TreeViewItem)sender;
+        try
+        {
+          var connector = new ConnectorViewModel();
+          if (item == null)
+          {
+            return;
+          }
+          connector = (ConnectorViewModel)item.Header;
+          this.ProjectClicked(connector);
+        }
+        catch
+        {
+          var group = new ConnectorGroupViewModel();
+          try
+          {
+            group = (ConnectorGroupViewModel)item.Header;
+          }
+          catch (Exception ex)
+          {
+            //todo
+          }
+        }
+      }
+    }
 
-    //      this.selectedConnectors.Clear();
-    //    }
+    private void TreeViewItem_Drop(object sender, DragEventArgs e)
+    {
+      //this.model.Drop(//dropinfo);
+      foreach (var group in this.model.ConnectorGroups)
+      {
+        foreach (var itemInGroup in group.ConnectorViewModels)
+        {
+          TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(group);
+          var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(itemInGroup)
+            ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(itemInGroup);
+          ResetStyle(ref treeViewItemInGroup);
+        }
+      }
 
-    //    TreeViewItem item = (TreeViewItem)sender;
-    //    try
-    //    {
-    //      var connector = new ConnectorViewModel();
-    //      if (item == null)
-    //      {
-    //        return;
-    //      }
-    //      connector = (ConnectorViewModel)item.Header;
-    //      this.ProjectClicked(connector);
-    //    }
-    //    catch
-    //    {
-    //      var group = new ConnectorGroupViewModel();
-    //      try
-    //      {
-    //        group = (ConnectorGroupViewModel)item.Header;
-    //      }
-    //      catch (Exception ex)
-    //      {
-    //        //todo
-    //      }
-    //    }
-    //  }
-    //}
+      this.selectedConnectors.Clear();
+    }
 
-    //private void TreeViewItem_Drop(object sender, DragEventArgs e)
-    //{
-    //  var item = (TreeViewItem)sender;
-    //  var connector = (ConnectorViewModel)item.Header;
-    //  Collection<ConnectorViewModel> sortedConnectors = new Collection<ConnectorViewModel>();
-    //  foreach (var group in this.model.ConnectorGroups)
-    //  {
-    //    foreach (var itemInGroup in group.ConnectorViewModels)
-    //    {
-    //      foreach (var selectedConnector in selectedConnectors)
-    //      {
-    //        if (selectedConnector.Identifier == itemInGroup.Identifier)
-    //        {
-    //          sortedConnectors.Add(itemInGroup);
-    //        }
-    //      }
-    //    }
-    //  }
-
-    //  foreach (var sortedConnector in sortedConnectors)
-    //  {
-    //    //drag&drop
-    //  }
-
-    //  foreach (var group in this.model.ConnectorGroups)
-    //  {
-    //    foreach (var itemInGroup in group.ConnectorViewModels)
-    //    {
-    //      TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(group);
-    //      var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(itemInGroup)
-    //        ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(itemInGroup);
-    //      this.ResetStyle(ref treeViewItemInGroup);
-    //    }
-    //  }
-
-    //  this.selectedConnectors.Clear();
-    //}
   }
 }

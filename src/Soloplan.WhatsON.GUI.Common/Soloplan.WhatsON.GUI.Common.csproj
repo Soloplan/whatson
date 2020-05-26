@@ -111,9 +111,6 @@
     <PackageReference Include="MaterialDesignThemes">
       <Version>3.0.1</Version>
     </PackageReference>
-    <PackageReference Include="MultiSelectTreeView">
-      <Version>1.0.9</Version>
-    </PackageReference>
     <PackageReference Include="NLog">
       <Version>4.6.8</Version>
     </PackageReference>
