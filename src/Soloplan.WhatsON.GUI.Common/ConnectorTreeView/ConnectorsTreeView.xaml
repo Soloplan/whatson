@@ -196,7 +196,7 @@
     </ResourceDictionary>
   </UserControl.Resources>
 
-  <TreeView Name="mainTreeView"
+    <TreeView Name="mainTreeView"
             HorizontalContentAlignment="Stretch"
             dd:DragDrop.DropHandler="{Binding}"
             dd:DragDrop.IsDragSource="True"

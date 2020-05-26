@@ -412,13 +412,18 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private void TreeViewItem_Drop(object sender, DragEventArgs e)
     {
       var item = (TreeViewItem)sender;
+      if (item.Header is ConnectorGroupViewModel)
+      {
+        return;
+      }
+
       var connector = (ConnectorViewModel)item.Header;
       Collection<ConnectorViewModel> sortedConnectors = new Collection<ConnectorViewModel>();
       foreach (var group in this.model.ConnectorGroups)
       {
         foreach (var itemInGroup in group.ConnectorViewModels)
         {
-          foreach (var selectedConnector in selectedConnectors)
+          foreach (var selectedConnector in this.selectedConnectors)
           {
             if (selectedConnector.Identifier == itemInGroup.Identifier)
             {
@@ -428,7 +433,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         }
       }
 
-      model.MoveListAfter(sortedConnectors, connector, sender , e);
+      model.MoveListAfter(sortedConnectors, connector, sender, e);
 
       foreach (var group in this.model.ConnectorGroups)
       {
