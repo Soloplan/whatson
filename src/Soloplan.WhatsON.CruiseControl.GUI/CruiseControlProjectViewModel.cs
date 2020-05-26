@@ -16,7 +16,7 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
     public CruiseControlProjectViewModel(CruiseControlConnector connector)
       : base(connector)
     {
-      this.Url = CruiseControlServer.UrlHelper.GetReportUrl(connector.Address, connector.Project);
+      this.Url = CruiseControlServer.UrlHelper.GetReportUrl(connector.directAddress, connector.Project);
     }
 
     protected override BuildStatusViewModel GetStatusViewModel()

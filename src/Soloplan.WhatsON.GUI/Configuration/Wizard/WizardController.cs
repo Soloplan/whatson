@@ -380,7 +380,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         return null;
       }
 
-      var newParent = new Project(viewModel.Parent.Address, viewModel.Parent.Name, viewModel.Parent.FullName, viewModel.Parent.Description, this.Projects.PlugIn, this.CreateParentProjectStructure(viewModel.Parent));
+      var newParent = new Project(viewModel.Parent.Address, viewModel.Parent.Name, viewModel.Parent.DirectAddress, viewModel.Parent.FullName, viewModel.Parent.Description, this.Projects.PlugIn, this.CreateParentProjectStructure(viewModel.Parent));
       return newParent;
     }
 
@@ -399,7 +399,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       var checkedProjects = this.Projects.GetChecked();
       foreach (var checkedProject in checkedProjects.Where(p => p.Projects.Count == 0))
       {
-        var newProject = new Project(checkedProject.Address, checkedProject.Name, checkedProject.FullName, checkedProject.Description, this.Projects.PlugIn, this.CreateParentProjectStructure(checkedProject));
+        var newProject = new Project(checkedProject.Address, checkedProject.Name, checkedProject.DirectAddress, checkedProject.FullName, checkedProject.Description, this.Projects.PlugIn, this.CreateParentProjectStructure(checkedProject));
         serverProjects.Add(newProject);
       }
 
@@ -500,7 +500,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       {
         var newConnector = new ConnectorViewModel();
         newConnector.SourceConnectorPlugin = selectedProject.Plugin;
-        newConnector.Name = this.SelectedGroupingSetting.Id == WizardWindow.AddProjectPathToProjectName ? selectedProject.FullName : selectedProject.Name;
+        newConnector.Name = selectedProject.Name;
         newConnector.Load(null);
         if (this.SelectedGroupingSetting.Id == WizardWindow.AssignGroupsForAddedProjects)
         {
@@ -514,7 +514,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 
         configurationViewModel.Connectors.Add(newConnector);
 
-        selectedProject.Plugin.Configure(selectedProject, newConnector, this.ProposedServerAddress);
+        selectedProject.Plugin.Configure(selectedProject, newConnector, proposedServerAddress);
       }
 
       if (configurationViewModel.ConfigurationIsModified)
@@ -560,6 +560,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         var newProject = projectViewModel.AddProject(project);
         newProject.Parent = projectViewModel;
         newProject.Address = project.Address;
+        newProject.DirectAddress = project.DirectAddress;
 
         var alreadyExists = this.config.ConnectorsConfiguration.Where(x =>
         {
@@ -641,6 +642,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       {
         var newProject = listQueryingPlugin.Item2.AddProject(serverProject);
         newProject.Address = serverProject.Address;
+        newProject.DirectAddress = serverProject.DirectAddress;
         this.ProcessServerSubProjects(serverProject.Children, newProject);
       }
     }

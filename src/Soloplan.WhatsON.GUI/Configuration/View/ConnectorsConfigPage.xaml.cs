@@ -316,6 +316,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
             newConnector.Load(null);
             newConnector.GetConfigurationByKey(Connector.ProjectName).Value = selectedProject.FullName;
             newConnector.GetConfigurationByKey(Connector.ServerAddress).Value = !string.IsNullOrWhiteSpace(wizardController.ProposedServerAddress) ? new Uri(wizardController.ProposedServerAddress).AbsoluteUri : string.Empty;
+            newConnector.GetConfigurationByKey(Connector.DirectAddress).Value = selectedProject.DirectAddress;
             this.Connectors.Add(newConnector);
             this.CurrentConnector = newConnector;
           }

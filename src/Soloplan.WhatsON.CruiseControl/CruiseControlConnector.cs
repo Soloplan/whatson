@@ -37,7 +37,7 @@ namespace Soloplan.WhatsON.CruiseControl
 
     protected override async Task<Status> GetCurrentStatus(CancellationToken cancellationToken)
     {
-      var server = CruiseControlManager.GetServer(this.Address);
+      var server = CruiseControlManager.GetServer(this.directAddress);
       var projectData = await server.GetProjectStatus(cancellationToken, this.Project, 5);
       if (projectData == null)
       {
@@ -50,7 +50,7 @@ namespace Soloplan.WhatsON.CruiseControl
 
     protected override async Task<List<Status>> GetHistory(CancellationToken cancellationToken)
     {
-      var server = CruiseControlManager.GetServer(this.Address);
+      var server = CruiseControlManager.GetServer(this.directAddress);
       var history = new List<Status>();
 
       var builds = await server.GetBuilds(this.Project);

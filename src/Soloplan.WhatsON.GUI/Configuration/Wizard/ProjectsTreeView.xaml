@@ -38,7 +38,7 @@
                        Focusable="False"
                        Text="{Binding Name}" />
                         <TextBlock Margin="5,0,0,0">
-              <Hyperlink NavigateUri="{Binding Address}"
+              <Hyperlink NavigateUri="{Binding DirectAddress}"
                          RequestNavigate="HyperlinkRequestNavigate"
                          Style="{StaticResource MaterialDesignHeadline4Hyperlink}">
                 <TextBlock>

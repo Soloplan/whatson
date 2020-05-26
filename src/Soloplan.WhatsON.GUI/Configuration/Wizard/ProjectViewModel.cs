@@ -16,7 +16,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
   /// <summary>
   /// The view model for the selectable projects on the wizard.
   /// </summary>
-  /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
+  /// <seealso cref="System.ComponentModel.INotifyPropertyChanged"/>
   public class ProjectViewModel : INotifyPropertyChanged
   {
     /// <summary>
@@ -77,6 +77,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     public string FullName { get; set; }
 
     public string Description { get; set; }
+
+    public string DirectAddress { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether this project is visible.

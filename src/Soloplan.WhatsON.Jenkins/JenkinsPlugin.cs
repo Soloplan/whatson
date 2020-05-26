@@ -113,7 +113,7 @@ namespace Soloplan.WhatsON.Jenkins
     /// <returns>The newly  created server projects tree item.</returns>
     private Project AddProject(IList<Project> parentList, JenkinsJob jenkinsJobsItem)
     {
-      var newServerProject = new Project(jenkinsJobsItem.Url, jenkinsJobsItem.DisplayName ?? jenkinsJobsItem.Name, jenkinsJobsItem.FullName, jenkinsJobsItem.Description);
+      var newServerProject = new Project(jenkinsJobsItem.Url, jenkinsJobsItem.DisplayName ?? jenkinsJobsItem.Name, jenkinsJobsItem.Url, jenkinsJobsItem.FullName, jenkinsJobsItem.Description);
       parentList.Add(newServerProject);
       return newServerProject;
     }
