@@ -596,7 +596,31 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private void DeleteSelectedConnectors()
     {
+      bool madeChanges = false;
+      foreach (var connectorGroup in this.connectorGroups.ToList())
+      {
+        foreach (var connector in connectorGroup.ConnectorViewModels.ToList())
+        {
+          for (int i = 0; i < this.selectedConnectors.Count;)
+          {
+            if (this.selectedConnectors[i].Identifier == connector.Identifier)
+            {
+              connectorGroup.ConnectorViewModels.Remove(this.selectedConnectors[i]);
+              this.selectedConnectors.RemoveAt(i);
+              madeChanges = true;
+              i--;
+            }
 
+            i++;
+          }
+        }
+      }
+
+      if (madeChanges)
+      {
+        this.OnConfigurationChanged(this, EventArgs.Empty);
+        this.FireOneGroupChanged();
+      }
     }
 
     private async void DeleteGroup(object sender, DeleteTreeItemEventArgs e)
@@ -613,34 +637,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         }
 
         this.DeleteItem?.Invoke(sender, e);
-        bool madeChanges = false;
         var canceled = await e.CheckCanceled();
         if (!canceled)
         {
-          foreach (var connectorGroup in this.connectorGroups.ToList())
-          {
-            foreach (var connector in connectorGroup.ConnectorViewModels.ToList())
-            {
-              for (int i = 0; i < this.selectedConnectors.Count;)
-              {
-                if (this.selectedConnectors[i].Identifier == connector.Identifier)
-                {
-                  connectorGroup.ConnectorViewModels.Remove(this.selectedConnectors[i]);
-                  this.selectedConnectors.RemoveAt(i);
-                  madeChanges = true;
-                  i--;
-                }
-
-                i++;
-              }
-            }
-          }
-
-          if (madeChanges)
-          {
-            this.OnConfigurationChanged(this, EventArgs.Empty);
-            this.FireOneGroupChanged();
-          }
+          this.DeleteSelectedConnectors();
         }
 
         return;
