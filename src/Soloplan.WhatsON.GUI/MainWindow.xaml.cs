@@ -419,10 +419,10 @@ namespace Soloplan.WhatsON.GUI
       {
         message = $"Are you sure you want to delete the group '{group.GroupName}' and all its items?";
       }
-      //else if (sender is Collection<Common.ConnectorTreeView.ConnectorViewModel> collection)
-      //{
-      //  message = $"Are you sure you want to delete multiple connectors?";
-      //}
+      else if (e.NoOtherSelections == false)
+      {
+        message = $"Are you sure you want to delete multiple connectors?";
+      }
       else if (e.DeleteItem is Soloplan.WhatsON.GUI.Common.ConnectorTreeView.ConnectorViewModel connector)
       {
         message = $"Are you sure you want to delete the project '{connector.Name}'?";

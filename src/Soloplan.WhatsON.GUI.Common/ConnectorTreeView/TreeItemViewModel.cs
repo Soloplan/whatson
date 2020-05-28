@@ -9,6 +9,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
   using System;
   using System.Collections.Generic;
+  using System.ServiceModel.Configuration;
   using System.Threading.Tasks;
   using System.Windows.Input;
 
@@ -217,6 +218,21 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// Prevents re-using class for multiple event calls.
     /// </summary>
     private bool used;
+
+    /// <summary>
+    /// Indicates if there are no other selected connectots.
+    /// </summary>
+    ///
+    private bool noOtherSelection = true;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether there are no other selected connectots.
+    /// </summary>
+    public bool NoOtherSelections
+    {
+      get { return noOtherSelection; }
+      set { noOtherSelection = value; }
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DeleteTreeItemEventArgs"/> class.

@@ -12,6 +12,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Linq;
   using System.Text.RegularExpressions;
   using System.Windows;
+  using System.Windows.Controls;
   using System.Windows.Input;
   using GongSolutions.Wpf.DragDrop;
   using NLog;
@@ -407,7 +408,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
-    public bool MoveListAfter(Collection<ConnectorViewModel> list,ConnectorViewModel connectorViewModel,object sender, EventArgs e)
+    public bool MoveListAfter(Collection<ConnectorViewModel> list, ConnectorViewModel connectorViewModel, object sender, EventArgs e)
     {
       var targetGroup = this.GetConnectorGroup(connectorViewModel);
       foreach (var element in list)
@@ -578,9 +579,58 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.ExportItem?.Invoke(sender, e);
     }
 
+    private void DeleteSelectedConnectors()
+    {
+
+    }
+
     private async void DeleteGroup(object sender, DeleteTreeItemEventArgs e)
     {
-      //TODO jesli mamy co usuwac to usuwamy i robimy inny invoke
+      if (e.DeleteItem is ConnectorViewModel clickedConnector)
+      {
+        if (this.selectedConnectors.Count != 0)
+        {
+          e.NoOtherSelections = false;
+        }
+        else
+        {
+          return;
+        }
+
+        this.DeleteItem?.Invoke(sender, e);
+        bool madeChanges = false;
+        var canceled = await e.CheckCanceled();
+        if (!canceled)
+        {
+          foreach (var connectorGroup in this.connectorGroups.ToList())
+          {
+            foreach (var connector in connectorGroup.ConnectorViewModels.ToList())
+            {
+              for (int i = 0; i < this.selectedConnectors.Count;)
+              {
+                if (this.selectedConnectors[i].Identifier == connector.Identifier)
+                {
+                  connectorGroup.ConnectorViewModels.Remove(this.selectedConnectors[i]);
+                  this.selectedConnectors.RemoveAt(i);
+                  madeChanges = true;
+                  i--;
+                }
+
+                i++;
+              }
+            }
+          }
+
+          if (madeChanges)
+          {
+            this.OnConfigurationChanged(this, EventArgs.Empty);
+            this.FireOneGroupChanged();
+          }
+        }
+
+        return;
+      }
+
       this.DeleteItem?.Invoke(sender, e);
       if (e.DeleteItem is ConnectorGroupViewModel group)
       {
@@ -591,8 +641,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
           this.FireOneGroupChanged();
         }
       }
-      
-      //pas selected connectors to deleteConnectors function
     }
 
     private void FireOneGroupChanged()
@@ -646,6 +694,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       public int Index { get; }
     }
 
-   
+
   }
 }
