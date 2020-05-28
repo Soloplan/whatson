@@ -430,11 +430,9 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
-    public bool MoveListAfter(Collection<ConnectorViewModel> list, ConnectorViewModel connectorViewModel, object sender, EventArgs e)
+    public bool UpdateConnectorsToDrop(Collection<ConnectorViewModel> list)
     {
       this.connectorsToDrop = list;
-
-
       return true;
     }
 

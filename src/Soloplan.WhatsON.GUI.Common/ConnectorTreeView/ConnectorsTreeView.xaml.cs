@@ -473,7 +473,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         }
       }
 
-      this.model.MoveListAfter(sortedConnectors, connector, sender, e);
+      this.model.UpdateConnectorsToDrop(sortedConnectors);
 
       foreach (var group in this.model.ConnectorGroups)
       {
