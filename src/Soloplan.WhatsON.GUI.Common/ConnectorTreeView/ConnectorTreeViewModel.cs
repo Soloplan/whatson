@@ -55,6 +55,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     private bool prevOneGroupValue;
 
+    /// <summary>
+    /// Previous value of relative instert position.
+    /// </summary>
+    private Collection<ConnectorViewModel> connectorsToDrop = new Collection<ConnectorViewModel>();
+
     private int fontSize;
 
     private int fontSizeSmall;
@@ -192,6 +197,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <param name="dropInfo">Information about the drop.</param>
     public void Drop(IDropInfo dropInfo)
     {
+
       if (dropInfo.Effects != DragDropEffects.Move)
       {
         log.Warn("Unexpected drop operation. {data}", new { Effect = dropInfo.Effects, dropInfo.Data, Target = dropInfo.TargetItem });
@@ -205,7 +211,23 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
       else if (dropInfo.Data is ConnectorViewModel draggedConnector)
       {
-        changesExist = this.DropConnector(dropInfo, draggedConnector);
+        if (this.connectorsToDrop.Count != 0)
+        {
+          var targetGroup = this.GetConnectorGroup((ConnectorViewModel)dropInfo.TargetItem);
+          foreach (var element in this.connectorsToDrop)
+          {
+            var sourceGroup = this.GetConnectorGroup(element);
+            MoveObject(sourceGroup, targetGroup, dropInfo.InsertPosition);
+            targetGroup = this.GetConnectorGroup(element);
+          }
+
+          this.connectorsToDrop = new Collection<ConnectorViewModel>();
+          this.OnConfigurationChanged(this, EventArgs.Empty);
+        }
+        else
+        {
+          changesExist = this.DropConnector(dropInfo, draggedConnector);
+        }
       }
 
       if (changesExist)
@@ -410,15 +432,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     public bool MoveListAfter(Collection<ConnectorViewModel> list, ConnectorViewModel connectorViewModel, object sender, EventArgs e)
     {
-      var targetGroup = this.GetConnectorGroup(connectorViewModel);
-      foreach (var element in list)
-      {
-        var sourceGroup = this.GetConnectorGroup(element);
-        MoveObject(sourceGroup, targetGroup, GongSolutions.Wpf.DragDrop.RelativeInsertPosition.AfterTargetItem);
-        targetGroup = this.GetConnectorGroup(element);
-      }
+      this.connectorsToDrop = list;
 
-      this.OnConfigurationChanged(sender, e);
 
       return true;
     }
