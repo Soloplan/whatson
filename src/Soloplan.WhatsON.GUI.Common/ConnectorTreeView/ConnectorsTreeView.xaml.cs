@@ -216,10 +216,13 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       var command = new CustomCommand();
       command.OnExecute += (s, e) =>
       {
-        if (this.mainTreeView.SelectedItem is TreeItemViewModel model)
+        if (this.selectedConnectors.Count == 0)
         {
-          model.DeleteCommand.Execute(null);
+          return;
         }
+
+        var args = new DeleteTreeItemEventArgs(this.selectedConnectors[0]);
+        this.model.DeleteGroup(s,args);
       };
 
       return command;

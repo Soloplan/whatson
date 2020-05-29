@@ -634,7 +634,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
-    private async void DeleteGroup(object sender, DeleteTreeItemEventArgs e)
+    public async void DeleteGroup(object sender, DeleteTreeItemEventArgs e)
     {
       if (e.DeleteItem is ConnectorViewModel clickedConnector)
       {
