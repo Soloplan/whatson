@@ -85,7 +85,7 @@
   </DataTemplate>
 
   <DataTemplate DataType="{x:Type connectorTreeView:ConnectorViewModel}">
-    <DockPanel Width="Auto" ContextMenu="{DynamicResource BuildServerProjectContextMenu}" ToolTip="Yow">
+    <DockPanel Width="Auto" ContextMenu="{DynamicResource BuildServerProjectContextMenu}">
       <buildServer:BuildInformationIconControl DataContext="{Binding CurrentStatus}" DockPanel.Dock="Left">
         <buildServer:BuildInformationIconControl.ToolTip>
           <StackPanel>

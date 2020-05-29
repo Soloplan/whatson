@@ -427,7 +427,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private void SelectConnector(ConnectorViewModel connector)
     {
-      if (IsConnectorSelected(connector))
+      if (this.IsConnectorSelected(connector))
       {
         return;
       }
@@ -438,7 +438,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private void DeselectConnector(ConnectorViewModel connector)
     {
-      if (!IsConnectorSelected(connector))
+      if (!this.IsConnectorSelected(connector))
       {
         return;
       }
@@ -532,6 +532,39 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private bool ConnectoriItemEventFired = false;
 
+    private void ManageContextMenuAvailability()
+    {
+      if (this.selectedConnectors.Count > 1)
+      {
+        foreach (var group in this.model.ConnectorGroups)
+        {
+          foreach (var itemInGroup in group.ConnectorViewModels)
+          {
+            TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(group);
+            var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(itemInGroup)
+              ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(itemInGroup);
+            //treeViewItemInGroup.ContextMenu.IsEnabled = false;
+            //groupTreeViewItem.ContextMenu.IsEnabled = false;
+          }
+        }
+      }
+      else
+      {
+        foreach (var group in this.model.ConnectorGroups)
+        {
+          foreach (var itemInGroup in group.ConnectorViewModels)
+          {
+            TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(group);
+            var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(itemInGroup)
+              ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(itemInGroup);
+            var x = mainTreeView;
+            var y = treeViewItemInGroup.Items;
+            //groupTreeViewItem.ContextMenu.IsEnabled = false;
+          }
+        }
+      }
+    }
+
     private void OnTreeItemLeftMouseUp(object sender, MouseButtonEventArgs e)
     {
       if (Keyboard.IsKeyUp(Key.LeftCtrl))
@@ -573,6 +606,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
         this.model.UpdateSelectedConnectors(this.selectedConnectors);
       }
+
+      this.ManageContextMenuAvailability();
     }
 
     private void TreeViewItem_Drop(object sender, DragEventArgs e)
