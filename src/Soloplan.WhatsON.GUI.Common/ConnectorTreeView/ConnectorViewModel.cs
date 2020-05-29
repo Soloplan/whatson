@@ -191,7 +191,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     protected override CustomCommand CreateEditCommand()
     {
       var command = base.CreateEditCommand();
-      command.CanExecuteExternal += (s, e) => { e.Cancel = this.ConfigurationModifiedInTree || !this.isOnlySelected; };
+      command.CanExecuteExternal += (s, e) => { e.Cancel = this.ConfigurationModifiedInTree || !this.isOnlyOneSelected; };
       return command;
     }
   }

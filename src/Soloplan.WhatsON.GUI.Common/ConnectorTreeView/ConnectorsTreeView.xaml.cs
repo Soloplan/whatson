@@ -267,6 +267,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
+    /// <summary>
+    /// Converts Hex to RGBA.
+    /// </summary>
+    /// <param name="hexColor">Color in hex as string</param>
+    /// <returns>RGBA color.</returns>
     private static Color HexToColor(string hexColor)
     {
       if (hexColor.IndexOf('#') != -1)
@@ -299,6 +304,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       return Color.FromRgb(red, green, blue);
     }
 
+    /// <summary>
+    /// Iverts color given in HEX and returns a Color.
+    /// </summary>
+    /// <param name="value">Color value to invert, as string</param>
+    /// <returns>Converted SolidColorBrush.</returns>
     private Brush InvertColor(string value)
     {
       if (value != null)
@@ -313,17 +323,29 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
+    /// <summary>
+    /// Resets a selection style for a tree view item. Uses MaterialDesignBackground to determine font color and as consequence is compatible with night mode.
+    /// </summary>
+    /// <param name="treeViewItem">Item to reset its style.</param>
     private void ResetStyle(ref TreeViewItem treeViewItem)
     {
       var style = this.FindResource("MaterialDesignBackground");
       treeViewItem.Foreground = this.InvertColor(style.ToString());
     }
 
+    /// <summary>
+    /// Sets style for a tree view item.
+    /// </summary>
+    /// <param name="treeViewItem">Item to set its style.</param>
     private void SetStyle(ref TreeViewItem treeViewItem)
     {
       treeViewItem.Foreground = Brushes.MediumVioletRed;
     }
 
+    /// <summary>
+    /// Finds a group where a connector is located and calls style reset for him.
+    /// </summary>
+    /// <param name="connector">Connector to reset its style.</param>
     private void ResetConnectorStyle(ConnectorViewModel connector)
     {
       foreach (var group in this.model.ConnectorGroups)
@@ -338,6 +360,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
+    /// <summary>
+    /// Finds a group where a connector is located and calls style set for him.
+    /// </summary>
+    /// <param name="connector">Connector to set its style.</param>
     private void SetConnectorStyle(ConnectorViewModel connector)
     {
       foreach (var group in this.model.ConnectorGroups)
@@ -352,6 +378,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
+    /// <summary>
+    /// Based on group and connector function generates container from item and calls style reset for the generated container.
+    /// </summary>
+    /// <param name="connectorGroupViewModel">Group of the connector.</param>
+    /// <param name="connectorViewModel">Connector to reset its style.</param>
     private void ResetConnectorInGroupStyle(ConnectorGroupViewModel connectorGroupViewModel, ConnectorViewModel connectorViewModel)
     {
       TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorGroupViewModel);
@@ -360,6 +391,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.ResetStyle(ref treeViewItemInGroup);
     }
 
+    /// <summary>
+    /// Based on group and connector function generates container from item and calls style set for the generated container.
+    /// </summary>
+    /// <param name="connectorGroupViewModel">Group of the connector.</param>
+    /// <param name="connectorViewModel">Connector to set its style.</param>
     private void SetConnectorInGroupStyle(ConnectorGroupViewModel connectorGroupViewModel, ConnectorViewModel connectorViewModel)
     {
       TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorGroupViewModel);
@@ -368,34 +404,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.SetStyle(ref treeViewItemInGroup);
     }
 
-    private void ResetAllConnectorStyles()
-    {
-      foreach (var group in this.model.ConnectorGroups)
-      {
-        foreach (var itemInGroup in group.ConnectorViewModels)
-        {
-          TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(group);
-          var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(itemInGroup)
-            ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(itemInGroup);
-          this.ResetStyle(ref treeViewItemInGroup);
-        }
-      }
-    }
-
-    private void SetAllConnectorStyles()
-    {
-      foreach (var group in this.model.ConnectorGroups)
-      {
-        foreach (var itemInGroup in group.ConnectorViewModels)
-        {
-          TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(group);
-          var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(itemInGroup)
-            ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(itemInGroup);
-          this.SetStyle(ref treeViewItemInGroup);
-        }
-      }
-    }
-
+    /// <summary>
+    /// Restores order of a given list based on the order in the tree view.
+    /// </summary>
+    /// <param name="selectedList">Unordered list.</param>
+    /// <returns>Ordered list of connectors.</returns>
     private Collection<ConnectorViewModel> GetListInTreeOrder(Collection<ConnectorViewModel> selectedList)
     {
       var sortedConnectors = new Collection<ConnectorViewModel>();
@@ -416,22 +429,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       return sortedConnectors;
     }
 
-    private ConnectorGroupViewModel FindConnectorGroup(ConnectorViewModel connector)
-    {
-      foreach (var groupViewModel in this.model.ConnectorGroups)
-      {
-        foreach (var connectorViewModel in groupViewModel.ConnectorViewModels)
-        {
-          if (connectorViewModel.Connector.Configuration.Identifier == connector.Identifier)
-          {
-            return groupViewModel;
-          }
-        }
-      }
-
-      return null;
-    }
-
+    /// <summary>
+    /// Function determines behaviour after a connector in the tree was clicked with control pressed. It enables to toggle selection of a given connector.
+    /// </summary>
+    /// <param name="connector">Clicked connector.</param>
     private void OnCtrlProjectClicked(ConnectorViewModel connector)
     {
       if (this.IsConnectorSelected(connector))
@@ -444,6 +445,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
+    /// <summary>
+    /// Function determines behaviour after a connector in the tree was clicked with shift pressed. It allows to select items from last selected item to currently selected one.
+    /// Allows selection between groups.
+    /// </summary>
+    /// <param name="connector">Clicked connector.</param>
     private void OnShiftProjectClicked(ConnectorViewModel connector)
     {
       if (this.selectedConnectors.Count == 0)
@@ -484,6 +490,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
+    /// <summary>
+    /// Performs a selecection of a connector unless it has already been selected.
+    /// </summary>
+    /// <param name="connector">Connector to select.</param>
     private void SelectConnector(ConnectorViewModel connector)
     {
       if (this.IsConnectorSelected(connector))
@@ -495,6 +505,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.selectedConnectors.Add(connector);
     }
 
+    /// <summary>
+    /// Performs a deselection of a connector.
+    /// </summary>
+    /// <param name="connector">Connector to deselect.</param>
     private void DeselectConnector(ConnectorViewModel connector)
     {
       if (!this.IsConnectorSelected(connector))
@@ -506,23 +520,39 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.selectedConnectors.Remove(connector);
     }
 
+    /// <summary>
+    /// Performs deselection for all connectors.
+    /// </summary>
     private void DeselectAllConnectors()
     {
-      this.ResetAllConnectorStyles();
-      this.selectedConnectors.Clear();
+      foreach (var group in this.model.ConnectorGroups)
+      {
+        foreach (var connector in group.ConnectorViewModels)
+        {
+          this.DeselectConnector(connector);
+        }
+      }
     }
 
+    /// <summary>
+    /// Performs a selection for all connectors.
+    /// </summary>
     private void SelectAllConnectors()
     {
-      foreach(var group in this.model.ConnectorGroups)
+      foreach (var group in this.model.ConnectorGroups)
       {
-        foreach(var connector in group.ConnectorViewModels)
+        foreach (var connector in group.ConnectorViewModels)
         {
           this.SelectConnector(connector);
         }
       }
     }
 
+    /// <summary>
+    /// Checks wether a connector is selected or not.
+    /// </summary>
+    /// <param name="connector">Connector to be checked.</param>
+    /// <returns>True - if connector is selected, false - if connector is not selected.</returns>
     private bool IsConnectorSelected(ConnectorViewModel connector)
     {
       bool isAlreadyAdded = false;
@@ -537,6 +567,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       return isAlreadyAdded;
     }
 
+    /// <summary>
+    /// Checks if all connectors are selected.
+    /// </summary>
+    /// <returns>True when all connectors are selected or if there are no connectors at all, false otherwise.</returns>
     private bool AreAllconnectorsSelected()
     {
       bool allSelected = true;
@@ -550,9 +584,15 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
           }
         }
       }
+
       return allSelected;
     }
 
+    /// <summary>
+    /// Defines behoaviour when a group is clicked. If not all connectors in the group are selected, then it selects them. 
+    /// If there are all connectors in the group selected, then the funcion deselects them.
+    /// </summary>
+    /// <param name="group">Group to check and de/select items in.</param>
     private void OnGroupClicked(ConnectorGroupViewModel group)
     {
       bool allConnectorsInGroupSelected = true;
@@ -580,6 +620,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
+    /// <summary>
+    /// Defines behaviour when an item in tree is clicked with Ctrl.
+    /// </summary>
+    /// <param name="sender">sender item.</param>
+    /// <param name="e">event args.</param>
     private void ControlLeftMouseDownHandler(object sender, MouseButtonEventArgs e)
     {
       TreeViewItem item = (TreeViewItem)sender;
@@ -610,6 +655,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.model.UpdateSelectedConnectors(this.selectedConnectors);
     }
 
+    /// <summary>
+    /// Defines behaviour when an item is clicked with shift pressed.
+    /// </summary>
+    /// <param name="sender">sender item.</param>
+    /// <param name="e">event args.</param>
     private void ShiftLeftMouseDownHandler(object sender, MouseButtonEventArgs e)
     {
       TreeViewItem item = (TreeViewItem)sender;
@@ -629,6 +679,9 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
+    /// <summary>
+    /// Event handler for LMB down.
+    /// </summary>
     private void OnTreeItemLeftMouseDown(object sender, MouseButtonEventArgs e)
     {
       if (Keyboard.IsKeyDown(Key.LeftCtrl))
@@ -645,7 +698,9 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
 
-
+    /// <summary>
+    /// Based on items selected count informs all items if there is only one item selected or not.
+    /// </summary>
     private void ManageContextMenuAvailability()
     {
       if (this.selectedConnectors.Count > 1)
@@ -654,7 +709,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         {
           foreach (var itemInGroup in group.ConnectorViewModels)
           {
-            itemInGroup.isOnlySelected = false;
+            itemInGroup.isOnlyOneSelected = false;
           }
         }
       }
@@ -664,13 +719,22 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         {
           foreach (var itemInGroup in group.ConnectorViewModels)
           {
-            itemInGroup.isOnlySelected = true;
+            itemInGroup.isOnlyOneSelected = true;
           }
         }
       }
     }
 
-    private bool ConnectoriItemEventFired = false;
+    /// <summary>
+    /// Bool needed for double mouse up event firing problem. If there was an item clicked then, there will be no group clicked event handling succeeding the mentioned one.
+    /// </summary>
+    private bool connectorItemEventFired = false;
+
+    /// <summary>
+    /// Defines behaviour when LMB is released.
+    /// </summary>
+    /// <param name="sender">sender item.</param>
+    /// <param name="e">event args.</param>
     private void ControlLeftMouseUpHandler(object sender, MouseButtonEventArgs e)
     {
       TreeViewItem item = (TreeViewItem)sender;
@@ -684,14 +748,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
         connector = (ConnectorViewModel)item.Header;
         this.DeselectAllConnectors();
-        this.ConnectoriItemEventFired = true;
+        this.connectorItemEventFired = true;
         this.OnCtrlProjectClicked(connector);
       }
       catch
       {
-        if (this.ConnectoriItemEventFired)
+        if (this.connectorItemEventFired)
         {
-          this.ConnectoriItemEventFired = false;
+          this.connectorItemEventFired = false;
         }
         else
         {
@@ -711,9 +775,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.model.UpdateSelectedConnectors(this.selectedConnectors);
     }
 
+    /// <summary>
+    /// Event handler for release of LMB.
+    /// </summary>
+    /// <param name="sender">sender item.</param>
+    /// <param name="e">event args.</param>
     private void OnTreeItemLeftMouseUp(object sender, MouseButtonEventArgs e)
     {
-      if (Keyboard.IsKeyUp(Key.LeftCtrl) && (Keyboard.IsKeyUp(Key.LeftShift)))
+      if (Keyboard.IsKeyUp(Key.LeftCtrl) && Keyboard.IsKeyUp(Key.LeftShift))
       {
         this.ControlLeftMouseUpHandler(sender,e);
       }
@@ -721,6 +790,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.ManageContextMenuAvailability();
     }
 
+    /// <summary>
+    /// Performs some additional operations to inform model about selected connectors so the model can move/remove them when the time for a drop comes.
+    /// </summary>
+    /// <param name="sender">sender item.</param>
+    /// <param name="e">event args.</param>
     private void OnTreeViewItemDrop(object sender, DragEventArgs e)
     {
       var item = (TreeViewItem)sender;
@@ -738,6 +812,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
+    /// <summary>
+    /// Defines behavoiour when RMB is used.
+    /// </summary>
+    /// <param name="sender">sender item.</param>
+    /// <param name="e">event args.</param>
     private void OnTreeItemRightMouseDown(object sender, MouseButtonEventArgs e)
     {
       TreeViewItem item = (TreeViewItem)sender;
@@ -767,6 +846,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.model.UpdateSelectedConnectors(this.selectedConnectors);
     }
 
+    /// <summary>
+    /// Event handler for key down event.
+    /// </summary>
+    /// <param name="sender">sender item.</param>
+    /// <param name="e">event args.</param>
     private void OnKeyDown(object sender, KeyEventArgs e)
     {
       if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.A))
