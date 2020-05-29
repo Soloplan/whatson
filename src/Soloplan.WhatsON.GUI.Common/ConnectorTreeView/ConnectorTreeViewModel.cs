@@ -213,12 +213,25 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       {
         if (this.connectorsToDrop.Count != 0)
         {
-          var targetGroup = this.GetConnectorGroup((ConnectorViewModel)dropInfo.TargetItem);
-          foreach (var element in this.connectorsToDrop)
+          if (dropInfo.InsertPosition == GongSolutions.Wpf.DragDrop.RelativeInsertPosition.BeforeTargetItem)
           {
-            var sourceGroup = this.GetConnectorGroup(element);
-            MoveObject(sourceGroup, targetGroup, dropInfo.InsertPosition);
-            targetGroup = this.GetConnectorGroup(element);
+            var targetGroup = this.GetConnectorGroup((ConnectorViewModel)dropInfo.TargetItem);
+            foreach (var element in this.connectorsToDrop.Reverse())
+            {
+              var sourceGroup = this.GetConnectorGroup(element);
+              MoveObject(sourceGroup, targetGroup, dropInfo.InsertPosition);
+              targetGroup = this.GetConnectorGroup(element);
+            }
+          }
+          else
+          {
+            var targetGroup = this.GetConnectorGroup((ConnectorViewModel)dropInfo.TargetItem);
+            foreach (var element in this.connectorsToDrop)
+            {
+              var sourceGroup = this.GetConnectorGroup(element);
+              MoveObject(sourceGroup, targetGroup, dropInfo.InsertPosition);
+              targetGroup = this.GetConnectorGroup(element);
+            }
           }
 
           this.connectorsToDrop = new Collection<ConnectorViewModel>();
