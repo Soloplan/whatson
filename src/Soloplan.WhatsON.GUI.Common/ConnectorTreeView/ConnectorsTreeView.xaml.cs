@@ -444,6 +444,46 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
+    private void OnShiftProjectClicked(ConnectorViewModel connector)
+    {
+      if (this.selectedConnectors.Count == 0)
+      {
+        this.OnCtrlProjectClicked(connector);
+        return;
+      }
+
+      ConnectorViewModel source = connector;
+      ConnectorViewModel target = this.selectedConnectors.Last();
+      Collection<ConnectorViewModel> ungroupedConnectors = new Collection<ConnectorViewModel>();
+      foreach (var group in this.model.ConnectorGroups)
+      {
+        foreach (var connectorInGroup in group.ConnectorViewModels)
+        {
+          ungroupedConnectors.Add(connectorInGroup);
+        }
+      }
+
+      if (source.Identifier == target.Identifier)
+      {
+        this.SelectConnector(connector);
+        return;
+      }
+
+      bool select = false;
+      foreach (var item in ungroupedConnectors)
+      {
+        if (item.Identifier == source.Identifier || item.Identifier == target.Identifier)
+        {
+          this.SelectConnector(item);
+          select = !select;
+        }
+        else if (select)
+        {
+          this.SelectConnector(item);
+        }
+      }
+    }
+
     private void SelectConnector(ConnectorViewModel connector)
     {
       if (this.IsConnectorSelected(connector))
@@ -570,18 +610,41 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.model.UpdateSelectedConnectors(this.selectedConnectors);
     }
 
+    private void ShiftLeftMouseDownHandler(object sender, MouseButtonEventArgs e)
+    {
+      TreeViewItem item = (TreeViewItem)sender;
+      if (item == null)
+      {
+        return;
+      }
+
+      var connector = new ConnectorViewModel();
+      try
+      {
+        connector = (ConnectorViewModel)item.Header;
+        this.OnShiftProjectClicked(connector);
+      }
+      catch
+      {
+      }
+    }
+
     private void OnTreeItemLeftMouseDown(object sender, MouseButtonEventArgs e)
     {
       if (Keyboard.IsKeyDown(Key.LeftCtrl))
       {
         this.ControlLeftMouseDownHandler(sender,e);
       }
+      else if (Keyboard.IsKeyDown(Key.LeftShift))
+      {
+        this.ShiftLeftMouseDownHandler(sender, e);
+      }
 
       e.Handled = true;
       return;
     }
 
-    private bool ConnectoriItemEventFired = false;
+
 
     private void ManageContextMenuAvailability()
     {
@@ -607,6 +670,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
+    private bool ConnectoriItemEventFired = false;
     private void ControlLeftMouseUpHandler(object sender, MouseButtonEventArgs e)
     {
       TreeViewItem item = (TreeViewItem)sender;
@@ -649,7 +713,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private void OnTreeItemLeftMouseUp(object sender, MouseButtonEventArgs e)
     {
-      if (Keyboard.IsKeyUp(Key.LeftCtrl))
+      if (Keyboard.IsKeyUp(Key.LeftCtrl) && (Keyboard.IsKeyUp(Key.LeftShift)))
       {
         this.ControlLeftMouseUpHandler(sender,e);
       }
