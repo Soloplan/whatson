@@ -605,6 +605,17 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.ExportItem?.Invoke(sender, e);
     }
 
+    private void ClearEmptyGroups()
+    {
+      foreach (var group in this.connectorGroups.ToList())
+      {
+        if (group.ConnectorViewModels.Count == 0)
+        {
+          this.connectorGroups.Remove(group);
+        }
+      }
+    }
+
     private void DeleteSelectedConnectors()
     {
       bool madeChanges = false;
@@ -626,6 +637,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
           }
         }
       }
+
+      this.ClearEmptyGroups();
 
       if (madeChanges)
       {

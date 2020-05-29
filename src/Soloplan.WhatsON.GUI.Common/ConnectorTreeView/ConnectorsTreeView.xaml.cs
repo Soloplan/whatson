@@ -60,6 +60,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
           }
         }
       }
+
+      this.KeyDown += this.OnKeyDown;
     }
 
     /// <summary>
@@ -380,6 +382,20 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
+    private void SetAllConnectorStyles()
+    {
+      foreach (var group in this.model.ConnectorGroups)
+      {
+        foreach (var itemInGroup in group.ConnectorViewModels)
+        {
+          TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(group);
+          var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(itemInGroup)
+            ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(itemInGroup);
+          this.SetStyle(ref treeViewItemInGroup);
+        }
+      }
+    }
+
     private Collection<ConnectorViewModel> GetListInTreeOrder(Collection<ConnectorViewModel> selectedList)
     {
       var sortedConnectors = new Collection<ConnectorViewModel>();
@@ -456,6 +472,17 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.selectedConnectors.Clear();
     }
 
+    private void SelectAllConnectors()
+    {
+      foreach(var group in this.model.ConnectorGroups)
+      {
+        foreach(var connector in group.ConnectorViewModels)
+        {
+          this.SelectConnector(connector);
+        }
+      }
+    }
+
     private bool IsConnectorSelected(ConnectorViewModel connector)
     {
       bool isAlreadyAdded = false;
@@ -468,6 +495,22 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
 
       return isAlreadyAdded;
+    }
+
+    private bool AreAllconnectorsSelected()
+    {
+      bool allSelected = true;
+      foreach (var group in this.model.ConnectorGroups)
+      {
+        foreach (var connector in group.ConnectorViewModels)
+        {
+          if (!this.IsConnectorSelected(connector))
+          {
+            allSelected = false;
+          }
+        }
+      }
+      return allSelected;
     }
 
     private void OnGroupClicked(ConnectorGroupViewModel group)
@@ -497,36 +540,41 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
+    private void ControlLeftMouseDownHandler(object sender, MouseButtonEventArgs e)
+    {
+      TreeViewItem item = (TreeViewItem)sender;
+      if (item == null)
+      {
+        return;
+      }
+
+      var connector = new ConnectorViewModel();
+      try
+      {
+        connector = (ConnectorViewModel)item.Header;
+        this.OnCtrlProjectClicked(connector);
+      }
+      catch
+      {
+        var group = new ConnectorGroupViewModel();
+        try
+        {
+          group = (ConnectorGroupViewModel)item.Header;
+          this.OnGroupClicked(group);
+        }
+        catch (Exception ex)
+        {
+        }
+      }
+
+      this.model.UpdateSelectedConnectors(this.selectedConnectors);
+    }
+
     private void OnTreeItemLeftMouseDown(object sender, MouseButtonEventArgs e)
     {
       if (Keyboard.IsKeyDown(Key.LeftCtrl))
       {
-        TreeViewItem item = (TreeViewItem)sender;
-        if (item == null)
-        {
-          return;
-        }
-
-        var connector = new ConnectorViewModel();
-        try
-        {
-          connector = (ConnectorViewModel)item.Header;
-          this.OnCtrlProjectClicked(connector);
-        }
-        catch
-        {
-          var group = new ConnectorGroupViewModel();
-          try
-          {
-            group = (ConnectorGroupViewModel)item.Header;
-            this.OnGroupClicked(group);
-          }
-          catch (Exception ex)
-          {
-          }
-        }
-
-        this.model.UpdateSelectedConnectors(this.selectedConnectors);
+        this.ControlLeftMouseDownHandler(sender,e);
       }
 
       e.Handled = true;
@@ -559,52 +607,57 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
+    private void ControlLeftMouseUpHandler(object sender, MouseButtonEventArgs e)
+    {
+      TreeViewItem item = (TreeViewItem)sender;
+      try
+      {
+        var connector = new ConnectorViewModel();
+        if (item == null)
+        {
+          return;
+        }
+
+        connector = (ConnectorViewModel)item.Header;
+        this.DeselectAllConnectors();
+        this.ConnectoriItemEventFired = true;
+        this.OnCtrlProjectClicked(connector);
+      }
+      catch
+      {
+        if (this.ConnectoriItemEventFired)
+        {
+          this.ConnectoriItemEventFired = false;
+        }
+        else
+        {
+          var group = new ConnectorGroupViewModel();
+          try
+          {
+            group = (ConnectorGroupViewModel)item.Header;
+            this.DeselectAllConnectors();
+            this.OnGroupClicked(group);
+          }
+          catch (Exception ex)
+          {
+          }
+        }
+      }
+
+      this.model.UpdateSelectedConnectors(this.selectedConnectors);
+    }
+
     private void OnTreeItemLeftMouseUp(object sender, MouseButtonEventArgs e)
     {
       if (Keyboard.IsKeyUp(Key.LeftCtrl))
       {
-        TreeViewItem item = (TreeViewItem)sender;
-        try
-        {
-          var connector = new ConnectorViewModel();
-          if (item == null)
-          {
-            return;
-          }
-
-          connector = (ConnectorViewModel)item.Header;
-          this.DeselectAllConnectors();
-          this.ConnectoriItemEventFired = true;
-          this.OnCtrlProjectClicked(connector);
-        }
-        catch
-        {
-          if (this.ConnectoriItemEventFired)
-          {
-            this.ConnectoriItemEventFired = false;
-          }
-          else
-          {
-            var group = new ConnectorGroupViewModel();
-            try
-            {
-              group = (ConnectorGroupViewModel)item.Header;
-              this.DeselectAllConnectors();
-              this.OnGroupClicked(group);
-            }
-            catch (Exception ex)
-            {
-            }
-          }
-        }
-
-        this.model.UpdateSelectedConnectors(this.selectedConnectors);
+        this.ControlLeftMouseUpHandler(sender,e);
       }
 
       this.ManageContextMenuAvailability();
     }
 
-    private void TreeViewItem_Drop(object sender, DragEventArgs e)
+    private void OnTreeViewItemDrop(object sender, DragEventArgs e)
     {
       var item = (TreeViewItem)sender;
       if (item.Header is ConnectorGroupViewModel)
@@ -648,6 +701,21 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
       this.DeselectAllConnectors();
       this.model.UpdateSelectedConnectors(this.selectedConnectors);
+    }
+
+    private void OnKeyDown(object sender, KeyEventArgs e)
+    {
+      if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.A))
+      {
+        if (this.AreAllconnectorsSelected() == false)
+        {
+          this.SelectAllConnectors();
+        }
+        else
+        {
+          this.DeselectAllConnectors();
+        }
+      }
     }
   }
 }
