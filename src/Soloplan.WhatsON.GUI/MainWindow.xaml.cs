@@ -419,7 +419,7 @@ namespace Soloplan.WhatsON.GUI
       {
         message = $"Are you sure you want to delete the group '{group.GroupName}' and all its items?";
       }
-      else if (e.NoOtherSelections == false)
+      else if (e.NoOtherSelections == false && e.DeleteItem is Soloplan.WhatsON.GUI.Common.ConnectorTreeView.ConnectorViewModel)
       {
         message = $"Are you sure you want to delete multiple connectors?";
       }

@@ -638,13 +638,13 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       if (e.DeleteItem is ConnectorViewModel clickedConnector)
       {
-        if (this.selectedConnectors.Count != 0)
+        if (this.selectedConnectors.Count > 1)
         {
           e.NoOtherSelections = false;
         }
         else
         {
-          return;
+          e.NoOtherSelections = true;
         }
 
         this.DeleteItem?.Invoke(sender, e);

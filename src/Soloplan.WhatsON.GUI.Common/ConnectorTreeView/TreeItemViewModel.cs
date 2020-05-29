@@ -9,6 +9,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
   using System;
   using System.Collections.Generic;
+  using System.Runtime.CompilerServices;
   using System.ServiceModel.Configuration;
   using System.Threading.Tasks;
   using System.Windows.Input;
@@ -16,6 +17,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   public abstract class TreeItemViewModel : NotifyPropertyChanged, IHandleDoubleClick
   {
     private bool isNodeExpanded;
+
+    public bool isOnlySelected = true;
 
     /// <summary>
     /// Backing field for <see cref="EditCommand"/>.
@@ -119,6 +122,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <param name="eventArgs">Arguments containing data about edited item.</param>
     protected virtual void OnEditItem(object sender, EditTreeItemViewModelEventArgs eventArgs)
     {
+      if (this.isOnlySelected == false)
+      {
+        return;
+      }
+
       this.EditItem?.Invoke(sender, eventArgs);
     }
 
@@ -150,6 +158,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       var command = new CustomCommand();
       command.OnExecute += (s, e) => this.OnEditItem(this, new EditTreeItemViewModelEventArgs { Model = this, EditType = EditType.Edit });
+      command.CanExecuteExternal += (s, e) => { e.Cancel = !this.isOnlySelected; };
       return command;
     }
 
@@ -157,6 +166,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       var command = new CustomCommand();
       command.OnExecute += (s,e )=> this.OnEditItem(this, new EditTreeItemViewModelEventArgs { Model = this, EditType = EditType.Rename });
+      command.CanExecuteExternal += (s, e) => { e.Cancel = !this.isOnlySelected; };
       return command;
     }
 
@@ -168,6 +178,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       var command = new CustomCommand();
       command.OnExecute += (s, e) => this.OnExportItem(this, new ValueEventArgs<TreeItemViewModel>(this));
+      command.CanExecuteExternal += (s, e) => { e.Cancel = !this.isOnlySelected; };
       return command;
     }
 

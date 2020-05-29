@@ -540,11 +540,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         {
           foreach (var itemInGroup in group.ConnectorViewModels)
           {
-            TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(group);
-            var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(itemInGroup)
-              ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(itemInGroup);
-            //treeViewItemInGroup.ContextMenu.IsEnabled = false;
-            //groupTreeViewItem.ContextMenu.IsEnabled = false;
+            itemInGroup.isOnlySelected = false;
           }
         }
       }
@@ -554,12 +550,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         {
           foreach (var itemInGroup in group.ConnectorViewModels)
           {
-            TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(group);
-            var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(itemInGroup)
-              ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(itemInGroup);
-            var x = mainTreeView;
-            var y = treeViewItemInGroup.Items;
-            //groupTreeViewItem.ContextMenu.IsEnabled = false;
+            itemInGroup.isOnlySelected = true;
           }
         }
       }
