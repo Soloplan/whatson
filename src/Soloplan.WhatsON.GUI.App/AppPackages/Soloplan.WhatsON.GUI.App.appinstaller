@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AppInstaller
+	Uri="file:///C:/Users/tsk/source/repos/whatson/src/Soloplan.WhatsON.GUI.App/Installer/Soloplan.WhatsON.GUI.App.appinstaller"
+	Version="0.9.3.0" xmlns="http://schemas.microsoft.com/appx/appinstaller/2017/2">
+	<MainBundle
+		Name="b0b1bf3e-9c35-434c-823b-4858ac56f51a"
+		Version="0.9.3.0"
+		Publisher="CN=tsk"
+		Uri="file:///C:/Users/tsk/source/repos/whatson/src/Soloplan.WhatsON.GUI.App/Installer/Soloplan.WhatsON.GUI.App_0.9.3.0_Debug_Test/Soloplan.WhatsON.GUI.App_0.9.3.0_AnyCPU_Debug.msixbundle" />
+	<UpdateSettings>
+		<OnLaunch
+			HoursBetweenUpdateChecks="0" />
+	</UpdateSettings>
+</AppInstaller>

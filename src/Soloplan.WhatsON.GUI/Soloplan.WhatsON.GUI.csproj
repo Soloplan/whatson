@@ -118,6 +118,7 @@
     <Compile Include="Configuration\NotEmptyValidationRule.cs" />
     <Compile Include="Configuration\View\Validation.cs" />
     <Compile Include="ThemeHelper.cs" />
+    <Compile Include="ToastGenerator.cs" />
     <Compile Include="TrayHandler.cs" />
     <Compile Include="WindowFinder.cs" />
     <Page Include="Configuration\AboutPage.xaml">
@@ -280,6 +281,9 @@
     <PackageReference Include="MaterialDesignThemes">
       <Version>3.0.1</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.Windows.SDK.Contracts">
+      <Version>10.0.19041.1</Version>
+    </PackageReference>
     <PackageReference Include="NLog">
       <Version>4.6.8</Version>
     </PackageReference>
@@ -296,6 +300,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\whatsONx16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\config\Soloplan.WhatsON.targets" />

@@ -16,6 +16,7 @@ namespace Soloplan.WhatsON.GUI
   using System.Windows;
   using System.Windows.Controls;
   using System.Windows.Media.Animation;
+  using Humanizer;
   using MaterialDesignThemes.Wpf;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
@@ -450,6 +451,12 @@ namespace Soloplan.WhatsON.GUI
       }
 
       return false;
+    }
+
+    private void Window_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+      ToastGenerator toastGenerator = new ToastGenerator();
+      toastGenerator.GenerateToast();
     }
   }
 }

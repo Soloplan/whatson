@@ -1,0 +1,2 @@
+MainPackage=C:\Users\tsk\source\repos\whatson\src\Soloplan.WhatsON.GUI.App\bin\AnyCPU\Debug\Soloplan.WhatsON.GUI.App_0.9.3.0_AnyCPU_Debug.msix
+SymbolPackage=C:\Users\tsk\source\repos\whatson\src\Soloplan.WhatsON.GUI.App\obj\Debug\Symbols\Soloplan.WhatsON.GUI.App_0.9.3.0_AnyCPU_Debug.appxsym
