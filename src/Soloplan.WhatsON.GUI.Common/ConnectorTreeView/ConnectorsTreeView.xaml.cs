@@ -20,6 +20,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Windows.Markup;
   using System.Windows.Media;
   using GongSolutions.Wpf.DragDrop;
+  using Humanizer;
   using Humanizer.Localisation;
   using MaterialDesignThemes.Wpf;
   using Soloplan.WhatsON.Composition;
@@ -638,6 +639,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       {
         connector = (ConnectorViewModel)item.Header;
         this.OnCtrlProjectClicked(connector);
+
+        connector.MakeToast();
       }
       catch
       {
@@ -819,29 +822,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <param name="e">event args.</param>
     private void OnTreeItemRightMouseDown(object sender, MouseButtonEventArgs e)
     {
-      TreeViewItem item = (TreeViewItem)sender;
-      try
-      {
-        var connector = new ConnectorViewModel();
-        if (item == null)
-        {
-          return;
-        }
-
-        connector = (ConnectorViewModel)item.Header;
-        foreach (var selectedItem in this.selectedConnectors)
-        {
-          if (selectedItem.Identifier == connector.Identifier)
-          {
-            return;
-          }
-        }
-      }
-      catch
-      {
-        return;
-      }
-
       this.DeselectAllConnectors();
       this.model.UpdateSelectedConnectors(this.selectedConnectors);
     }

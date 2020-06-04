@@ -17,8 +17,7 @@
         TextElement.FontSize="14"
         TextElement.FontWeight="Medium"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-        mc:Ignorable="d"
-        MouseDown="Window_MouseDown">
+        mc:Ignorable="d">
   <Window.Resources>
     <ResourceDictionary>
       <Storyboard x:Key="hideStorBoard">

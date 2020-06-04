@@ -452,11 +452,5 @@ namespace Soloplan.WhatsON.GUI
 
       return false;
     }
-
-    private void Window_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-    {
-      ToastGenerator toastGenerator = new ToastGenerator();
-      toastGenerator.GenerateToast();
-    }
   }
 }
