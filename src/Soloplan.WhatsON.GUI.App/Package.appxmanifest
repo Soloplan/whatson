@@ -34,10 +34,16 @@
         DisplayName="Soloplan.WhatsON.GUI.App"
         Description="Soloplan.WhatsON.GUI.App"
         BackgroundColor="transparent"
-        Square150x150Logo="Images\Square150x150Logo.png"
-        Square44x44Logo="Images\Square44x44Logo.png">
-        <uap:SplashScreen Image="Images\SplashScreen.png" />
-        <uap:DefaultTile/>
+        Square150x150Logo="Images\StoreLogo.png"
+        Square44x44Logo="Images\StoreLogo.png">
+        <uap:DefaultTile Square310x310Logo="Images\StoreLogo.png" Square71x71Logo="Images\StoreLogo.png" Wide310x150Logo="Images\StoreLogo.png">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square310x310Logo"/>
+            <uap:ShowOn Tile="square150x150Logo"/>
+            <uap:ShowOn Tile="wide310x150Logo"/>
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile>
+        <uap:LockScreen BadgeLogo="Images\StoreLogo.png" Notification="badge"/>
       </uap:VisualElements>
     </Application>
   </Applications>
