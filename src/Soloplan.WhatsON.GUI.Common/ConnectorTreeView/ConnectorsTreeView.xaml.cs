@@ -436,6 +436,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <param name="connector">Clicked connector.</param>
     private void OnCtrlProjectClicked(ConnectorViewModel connector)
     {
+      
       if (this.IsConnectorSelected(connector))
       {
         this.DeselectConnector(connector);

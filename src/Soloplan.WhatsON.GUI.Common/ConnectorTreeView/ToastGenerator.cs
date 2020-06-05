@@ -35,11 +35,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
             {
               new AdaptiveText()
               {
-                Text = "Empty Notification"
+                Text = "Empty Notification",
               },
-            }
-          }
-        }
+            },
+          },
+        },
       };
 
       return content;
@@ -48,7 +48,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private string GetIconPath(StatusViewModel statusViewModel)
     {
       string result = string.Empty;
-      string imagesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "assets");
+      string imagesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources");
       if (statusViewModel.State == ObservationState.Success)
       {
         result = imagesPath + "\\check-circle.png";
@@ -69,7 +69,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       {
         result = imagesPath + "\\minus-circle.png";
       }
-
       return result;
     }
 
@@ -83,17 +82,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
           {
             Children =
             {
-              new AdaptiveText()
-              {
-                Text = connectorViewModel.Name,
-                HintStyle = AdaptiveTextStyle.Header,
-                HintAlign = AdaptiveTextAlign.Left,
-              },
-              new AdaptiveText()
-              {
-                Text = "Status: " + connectorViewModel.CurrentStatus.State.ToString(),
-                HintStyle = AdaptiveTextStyle.Body,
-              },
               new AdaptiveGroup()
               {
                 Children =
@@ -108,18 +96,36 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
                         HintAlign = AdaptiveImageAlign.Center,
                       },
                     },
+                    HintWeight = 1,
+                  },
+                  new AdaptiveSubgroup()
+                  {
+                    Children =
+                    {
+                      new AdaptiveText()
+                      {
+                        Text = "Status: " + connectorViewModel.CurrentStatus.State.ToString(),
+                        HintStyle = AdaptiveTextStyle.Body,
+                      },
+                    },
+                    HintWeight = 10,
                   },
                 },
+              },
+              new AdaptiveText()
+              {
+                Text = connectorViewModel.Name,
+                HintStyle = AdaptiveTextStyle.Header,
+                HintAlign = AdaptiveTextAlign.Left,
+                HintWrap = true,
               },
             },
           },
         },
       };
 
-
       return content;
     }
-
 
     public ToastContent GenerateToastContent(ConnectorViewModel connectorViewModel = null)
     {
@@ -132,6 +138,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       {
         content = this.BuildToast(connectorViewModel);
       }
+
       return content;
     }
   }

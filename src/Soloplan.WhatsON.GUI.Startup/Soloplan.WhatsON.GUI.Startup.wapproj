@@ -105,6 +105,9 @@
 		<Content Include="..\bin\Debug\Soloplan.WhatsON.GUI">
 			<CopyToOutputDirectory>true</CopyToOutputDirectory>
 		</Content>
+		<Content Include="..\Soloplan.WhatsON.GUI\Resources\Soloplan.WhatsON.GUI">
+			<CopyToOutputDirectory>true</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Soloplan.WhatsON.GUI\Soloplan.WhatsON.GUI.csproj" />

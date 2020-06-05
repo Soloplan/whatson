@@ -306,6 +306,13 @@
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Soloplan.WhatsON.GUI\Resources\alert-circle.png" />
+    <Resource Include="Resources\Soloplan.WhatsON.GUI\Resources\check-circle.png" />
+    <Resource Include="Resources\Soloplan.WhatsON.GUI\Resources\circle.png" />
+    <Resource Include="Resources\Soloplan.WhatsON.GUI\Resources\close-circle.png" />
+    <Resource Include="Resources\Soloplan.WhatsON.GUI\Resources\minus-circle.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\config\Soloplan.WhatsON.targets" />
 </Project>
