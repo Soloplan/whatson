@@ -28,7 +28,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.WhatsON.CruiseCont
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Soloplan.WhatsON.GUI.Tests", "Soloplan.WhatsON.GUI\Tests\Soloplan.WhatsON.GUI.Tests.csproj", "{7A413D70-1B2A-4118-ADEE-09A86D6D5C34}"
 EndProject
-Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "Soloplan.WhatsON.GUI.Startup", "Soloplan.WhatsON.GUI.App\Soloplan.WhatsON.GUI.Startup.wapproj", "{91307FB8-11E4-4265-8037-C21EA67915CA}"
+Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "Soloplan.WhatsON.GUI.Startup", "Soloplan.WhatsON.GUI.Startup\Soloplan.WhatsON.GUI.Startup.wapproj", "{91307FB8-11E4-4265-8037-C21EA67915CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
