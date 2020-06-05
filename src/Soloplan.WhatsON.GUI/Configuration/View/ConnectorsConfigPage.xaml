@@ -25,6 +25,10 @@
   </Page.Resources>
 
   <materialDesign:DialogHost Identifier="ConnectorsConfigPageHost">
+    <materialDesign:DialogHost.Style>
+      <Style BasedOn="{StaticResource MaterialDesignEmbeddedDialogHost}" TargetType="{x:Type materialDesign:DialogHost}">
+      </Style>
+    </materialDesign:DialogHost.Style>
     <Grid Margin="0">
       <materialDesign:PopupBox Width="56"
                                Margin="0,0,25,10"
