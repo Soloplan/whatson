@@ -31,8 +31,8 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="Soloplan.WhatsON.GUI.App"
-        Description="Soloplan.WhatsON.GUI.App"
+        DisplayName="Soloplan.WhatsON.GUI"
+        Description="Soloplan WhatsOn - build server monitoring application."
         BackgroundColor="transparent" Square150x150Logo="Images\StoreLogo.png" Square44x44Logo="Images\StoreLogo.png">
         <uap:DefaultTile Wide310x150Logo="Images\StoreLogo.png" Square310x310Logo="Images\StoreLogo.png">
           <uap:ShowNameOnTiles>

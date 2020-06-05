@@ -60,7 +60,7 @@
 		<AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
 		<GenerateTestArtifacts>True</GenerateTestArtifacts>
 		<AppxBundlePlatforms>neutral</AppxBundlePlatforms>
-		<AppInstallerUri>C:\Users\tsk\source\repos\whatson\src\Soloplan.WhatsON.GUI.App\Installer</AppInstallerUri>
+		<AppInstallerUri>C:\Users\tsk\source\repos\whatson\src\Soloplan.WhatsON.GUI.Startup\Installer</AppInstallerUri>
 		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
