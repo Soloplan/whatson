@@ -15,7 +15,8 @@ namespace Soloplan.WhatsON.GUI
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.Model;
-  using Application = System.Windows.Application;
+    using Windows.UI.Notifications;
+    using Application = System.Windows.Application;
 
   /// <summary>
   /// Wrapper for <see cref="NotifyIcon"/> from System.WindowsForms. Handles creation/opening/closing of main window.
@@ -350,27 +351,32 @@ namespace Soloplan.WhatsON.GUI
         var connectorConfiguration = this.configuration.ConnectorsConfiguration.FirstOrDefault(s => s.Identifier == statusViewModel.Parent.Identifier);
         var notificationConfiguration = this.configuration.GetNotificationConfiguration(connectorConfiguration);
 
-        var description = $"Project name: {statusViewModel.Parent.Name}.";
-        if (this.CheckNotificationShow(statusViewModel, ObservationState.Running, notificationConfiguration))
-        {
-          this.ShowBaloon("Build started.", description, System.Windows.Forms.ToolTipIcon.None);
-        }
-        else if (this.CheckNotificationShow(statusViewModel, ObservationState.Failure, notificationConfiguration))
-        {
-          this.ShowBaloon("Build failed.", description, System.Windows.Forms.ToolTipIcon.Error);
-        }
-        else if (this.CheckNotificationShow(statusViewModel, ObservationState.Success, notificationConfiguration))
-        {
-          this.ShowBaloon("Build successful", description, System.Windows.Forms.ToolTipIcon.Info);
-        }
-        else if (this.CheckNotificationShow(statusViewModel, ObservationState.Unstable, notificationConfiguration))
-        {
-          this.ShowBaloon("Build successful (Unstable)", description, System.Windows.Forms.ToolTipIcon.Warning);
-        }
-        else if (this.CheckNotificationShow(statusViewModel, ObservationState.Unknown, notificationConfiguration))
-        {
-          this.ShowBaloon("Build interrupted", description, System.Windows.Forms.ToolTipIcon.Warning);
-        }
+        ConnectorGroupViewModel connectorGroupViewModel;
+        //todo pobrac grupe, z category z application configuration z connectors configuration
+        var toastNotifier = ToastNotificationManager.CreateToastNotifier();
+        var toast = statusViewModel.Parent.MakeToast();
+        toastNotifier.Show(toast);
+        //var description = $"Project name: {statusViewModel.Parent.Name}.";
+        //if (this.CheckNotificationShow(statusViewModel, ObservationState.Running, notificationConfiguration))
+        //{
+        //  this.ShowBaloon("Build started.", description, System.Windows.Forms.ToolTipIcon.None);
+        //}
+        //else if (this.CheckNotificationShow(statusViewModel, ObservationState.Failure, notificationConfiguration))
+        //{
+        //  this.ShowBaloon("Build failed.", description, System.Windows.Forms.ToolTipIcon.Error);
+        //}
+        //else if (this.CheckNotificationShow(statusViewModel, ObservationState.Success, notificationConfiguration))
+        //{
+        //  this.ShowBaloon("Build successful", description, System.Windows.Forms.ToolTipIcon.Info);
+        //}
+        //else if (this.CheckNotificationShow(statusViewModel, ObservationState.Unstable, notificationConfiguration))
+        //{
+        //  this.ShowBaloon("Build successful (Unstable)", description, System.Windows.Forms.ToolTipIcon.Warning);
+        //}
+        //else if (this.CheckNotificationShow(statusViewModel, ObservationState.Unknown, notificationConfiguration))
+        //{
+        //  this.ShowBaloon("Build interrupted", description, System.Windows.Forms.ToolTipIcon.Warning);
+        //}
       }
     }
   }

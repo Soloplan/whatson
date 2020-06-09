@@ -27,6 +27,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.Model;
+  using Windows.UI.Notifications;
 
   /// <summary>
   /// Interaction logic for ConnectorsTreeView.xaml.
@@ -662,7 +663,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         connector = (ConnectorViewModel)item.Header;
         this.OnCtrlProjectClicked(connector);
 
-        connector.MakeToast(this.GetConnectorGroup(connector));
+        
       }
       catch
       {

@@ -29,7 +29,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       return new JenkinsStatusViewModel(this);
     }
 
-    public override void MakeToast(ConnectorGroupViewModel connectorGroupViewModel=null)
+    public override ToastNotification MakeToast(ConnectorGroupViewModel connectorGroupViewModel=null)
     {
       ToastGenerator toastGenerator = new ToastGenerator();
       var toastContent = toastGenerator.GenerateToastContent(this,connectorGroupViewModel);
@@ -41,7 +41,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
         progressBar.Value = new BindableProgressBarValue("progressValue");
         progressBar.ValueStringOverride = new BindableString("progressValueString");
         progressBar.Status = new BindableString("progressStatus");
-        toastContent.Visual.BindingGeneric.Children.Add(progressBar);
+        toastContent.Visual.BindingGeneric.Children.Insert(toastContent.Visual.BindingGeneric.Children.Count,progressBar);
       }
 
       var xmlDoc = new XmlDocument();
@@ -58,9 +58,11 @@ namespace Soloplan.WhatsON.Jenkins.GUI
         toast.Data.Values["progressStatus"] = "Building...";
       }
 
-      var toastNotifier = ToastNotificationManager.CreateToastNotifier();
+      //var toastNotifier = ToastNotificationManager.CreateToastNotifier();
       toast.ExpirationTime = DateTimeOffset.Now + TimeSpan.FromDays(1);
-      toastNotifier.Show(toast);
+      //toast.Activated += OnActivated;
+      //toastNotifier.Show(toast);
+      return toast;
     }
   }
 }

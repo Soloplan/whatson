@@ -14,6 +14,7 @@ using Soloplan.WhatsON.Model;
 using System.IO;
 using System.Windows.Controls;
 using MaterialDesignThemes.Wpf;
+using Microsoft.QueryStringDotNET;
 
 namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
@@ -93,6 +94,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
             },
           },
         },
+        Actions = new ToastActionsCustom(),
       };
       title.Text = connectorViewModel.Name;
       if (connectorGroupViewModel != null)
@@ -111,6 +113,18 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       content.Visual.BindingGeneric.Children.Add(title);
       content.Visual.BindingGeneric.Children.Add(groupText);
       content.Visual.BindingGeneric.Children.Add(container);
+
+      ToastButton toastButton = new ToastButton("Click me!", "arguments");
+      toastButton.ActivationType = ToastActivationType.Foreground;
+      ((ToastActionsCustom)content.Actions).Buttons.Add(toastButton);
+
+      content.Launch = new QueryString()
+      {
+        { "action", "viewConversation" },
+        { "conversationId", "srtusada" },
+
+      }.ToString();
+
       return content;
     }
 
@@ -128,5 +142,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
       return content;
     }
+
+
   }
 }

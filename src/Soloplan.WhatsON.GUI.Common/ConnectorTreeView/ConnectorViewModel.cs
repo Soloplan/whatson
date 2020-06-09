@@ -36,7 +36,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private ToastNotifier toastNotifier = null;
 
-    public virtual void MakeToast(ConnectorGroupViewModel connectorGroupViewModel = null)
+    public virtual ToastNotification MakeToast(ConnectorGroupViewModel connectorGroupViewModel = null)
     {
       ToastGenerator toastGenerator = new ToastGenerator();
       var toastContent = toastGenerator.GenerateToastContent(this);
@@ -54,13 +54,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         toast.Data.Values["progressStatus"] = "Building...";
       }
 
-      if (toastNotifier==null)
+      if (this.toastNotifier == null)
       {
-        toastNotifier = ToastNotificationManager.CreateToastNotifier();
-        toastNotifier.Show(toast);
-        return;
+        //this.toastNotifier = ToastNotificationManager.CreateToastNotifier();
+        //this.toastNotifier.Show(toast);
+        return toast;
       }
-      //toastNotifier.Update(toast.Data,);
+
+      return toast;
     }
 
     public ConnectorViewModel()
