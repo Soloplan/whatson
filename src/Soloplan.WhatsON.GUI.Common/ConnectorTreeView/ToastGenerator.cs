@@ -13,6 +13,7 @@ using Microsoft.Toolkit.Uwp.Notifications;
 using Soloplan.WhatsON.Model;
 using System.IO;
 using System.Windows.Controls;
+using MaterialDesignThemes.Wpf;
 
 namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
@@ -69,65 +70,51 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       {
         result = imagesPath + "\\minus-circle.png";
       }
+
       return result;
     }
 
-    private ToastContent BuildToast(ConnectorViewModel connectorViewModel)
+    private ToastContent BuildToast(ConnectorViewModel connectorViewModel, ConnectorGroupViewModel connectorGroupViewModel = null)
     {
+      var title = new AdaptiveText() { Text = connectorViewModel.Name };
+      var container = new AdaptiveGroup();
+      var subContainer = new AdaptiveSubgroup();
+      var groupText = new AdaptiveText();
+      var statusText = new AdaptiveText();
       var content = new Microsoft.Toolkit.Uwp.Notifications.ToastContent()
       {
         Visual = new Microsoft.Toolkit.Uwp.Notifications.ToastVisual()
         {
           BindingGeneric = new ToastBindingGeneric()
           {
-            Children =
+            AppLogoOverride = new ToastGenericAppLogo()
             {
-              new AdaptiveGroup()
-              {
-                Children =
-                {
-                  new AdaptiveSubgroup()
-                  {
-                    Children =
-                    {
-                      new AdaptiveImage()
-                      {
-                        Source = this.GetIconPath(connectorViewModel.CurrentStatus),
-                        HintAlign = AdaptiveImageAlign.Center,
-                      },
-                    },
-                    HintWeight = 1,
-                  },
-                  new AdaptiveSubgroup()
-                  {
-                    Children =
-                    {
-                      new AdaptiveText()
-                      {
-                        Text = "Status: " + connectorViewModel.CurrentStatus.State.ToString(),
-                        HintStyle = AdaptiveTextStyle.Body,
-                      },
-                    },
-                    HintWeight = 10,
-                  },
-                },
-              },
-              new AdaptiveText()
-              {
-                Text = connectorViewModel.Name,
-                HintStyle = AdaptiveTextStyle.Header,
-                HintAlign = AdaptiveTextAlign.Left,
-                HintWrap = true,
-              },
+              Source = this.GetIconPath(connectorViewModel.CurrentStatus),
             },
           },
         },
       };
+      title.Text = connectorViewModel.Name;
+      if (connectorGroupViewModel != null)
+      {
+        if (connectorGroupViewModel.GroupName != string.Empty)
+        {
+          groupText.Text = "Group: " + connectorGroupViewModel.GroupName;
+          groupText.HintStyle = AdaptiveTextStyle.Base;
+        }
+      }
 
+      statusText.Text = "Status: " + connectorViewModel.CurrentStatus.State;
+      statusText.HintStyle = AdaptiveTextStyle.Base;
+      subContainer.Children.Add(statusText);
+      container.Children.Add(subContainer);
+      content.Visual.BindingGeneric.Children.Add(title);
+      content.Visual.BindingGeneric.Children.Add(groupText);
+      content.Visual.BindingGeneric.Children.Add(container);
       return content;
     }
 
-    public ToastContent GenerateToastContent(ConnectorViewModel connectorViewModel = null)
+    public ToastContent GenerateToastContent(ConnectorViewModel connectorViewModel = null, ConnectorGroupViewModel connectorGroupViewModel = null)
     {
       ToastContent content;
       if (connectorViewModel == null)
@@ -136,7 +123,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
       else
       {
-        content = this.BuildToast(connectorViewModel);
+        content = this.BuildToast(connectorViewModel, connectorGroupViewModel);
       }
 
       return content;

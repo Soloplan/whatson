@@ -623,6 +623,27 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
+    /// Gets the connector group/
+    /// </summary>
+    /// <param name="connector">Connector to get froup of</param>
+    /// <returns>Group</returns>
+    private ConnectorGroupViewModel GetConnectorGroup(ConnectorViewModel connector)
+    {
+      foreach (ConnectorGroupViewModel groupViewModel in this.model.ConnectorGroups)
+      {
+        foreach (ConnectorViewModel connectorViewModel in groupViewModel.ConnectorViewModels)
+        {
+          if (connector.Identifier == connectorViewModel.Identifier)
+          {
+            return groupViewModel;
+          }
+        }
+      }
+
+      return null;
+    }
+
+    /// <summary>
     /// Defines behaviour when an item in tree is clicked with Ctrl.
     /// </summary>
     /// <param name="sender">sender item.</param>
@@ -641,7 +662,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         connector = (ConnectorViewModel)item.Header;
         this.OnCtrlProjectClicked(connector);
 
-        connector.MakeToast();
+        connector.MakeToast(this.GetConnectorGroup(connector));
       }
       catch
       {

@@ -36,7 +36,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private ToastNotifier toastNotifier = null;
 
-    public virtual void MakeToast()
+    public virtual void MakeToast(ConnectorGroupViewModel connectorGroupViewModel = null)
     {
       ToastGenerator toastGenerator = new ToastGenerator();
       var toastContent = toastGenerator.GenerateToastContent(this);

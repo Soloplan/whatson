@@ -11,6 +11,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Model;
+  using System;
   using Windows.Data.Xml.Dom;
   using Windows.UI.Notifications;
 
@@ -28,10 +29,10 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       return new JenkinsStatusViewModel(this);
     }
 
-    public override void MakeToast()
+    public override void MakeToast(ConnectorGroupViewModel connectorGroupViewModel=null)
     {
       ToastGenerator toastGenerator = new ToastGenerator();
-      var toastContent = toastGenerator.GenerateToastContent(this);
+      var toastContent = toastGenerator.GenerateToastContent(this,connectorGroupViewModel);
 
       if (this.CurrentStatus.State == ObservationState.Running)
       {
@@ -58,6 +59,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       }
 
       var toastNotifier = ToastNotificationManager.CreateToastNotifier();
+      toast.ExpirationTime = DateTimeOffset.Now + TimeSpan.FromDays(1);
       toastNotifier.Show(toast);
     }
   }
