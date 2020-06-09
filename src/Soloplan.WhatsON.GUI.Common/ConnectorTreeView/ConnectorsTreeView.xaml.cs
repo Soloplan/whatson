@@ -816,16 +816,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
-    /// <summary>
-    /// Defines behavoiour when RMB is used.
-    /// </summary>
-    /// <param name="sender">sender item.</param>
-    /// <param name="e">event args.</param>
-    private void OnTreeItemRightMouseDown(object sender, MouseButtonEventArgs e)
-    {
-      this.DeselectAllConnectors();
-      this.model.UpdateSelectedConnectors(this.selectedConnectors);
-    }
 
     /// <summary>
     /// Event handler for key down event.

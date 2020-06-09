@@ -10,6 +10,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Collections.Generic;
   using System.Collections.ObjectModel;
   using System.Linq;
+  using System.ServiceModel.Channels;
   using System.Text.RegularExpressions;
   using System.Windows;
   using System.Windows.Controls;
@@ -657,6 +658,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       if (e.DeleteItem is ConnectorViewModel clickedConnector)
       {
+        string tempName = clickedConnector.Name;
         if (this.selectedConnectors.Count > 1)
         {
           e.NoOtherSelections = false;
@@ -664,6 +666,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         else
         {
           e.NoOtherSelections = true;
+          if (this.selectedConnectors.Count == 1)
+          {
+            ((ConnectorViewModel)e.DeleteItem).Name = this.selectedConnectors[0].Name;
+          }
         }
 
         this.DeleteItem?.Invoke(sender, e);
@@ -672,7 +678,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         {
           this.DeleteSelectedConnectors();
         }
-
+        ((ConnectorViewModel)(e.DeleteItem)).Name = tempName;
         return;
       }
 

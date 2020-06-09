@@ -3,21 +3,21 @@
 // Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 
+using System;
+using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using Windows.Data.Xml.Dom;
+using NLog;
+using Soloplan.WhatsON.Configuration;
+using Soloplan.WhatsON.GUI.Common.BuildServer;
+using Soloplan.WhatsON.Model;
+using Windows.UI.Notifications;
+
 namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
-  using System;
-  using System.Collections.ObjectModel;
-  using System.Windows;
-  using System.Windows.Controls;
-  using System.Windows.Input;
-  using Windows.Data.Xml.Dom;
-  using NLog;
-  using Soloplan.WhatsON.Configuration;
-  using Soloplan.WhatsON.GUI.Common.BuildServer;
-  using Soloplan.WhatsON.Model;
-    using Windows.UI.Notifications;
-
-    public class ConnectorViewModel : TreeItemViewModel
+  public class ConnectorViewModel : TreeItemViewModel
   {
     /// <summary>
     /// The logger.
@@ -34,6 +34,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private string url;
 
+    private ToastNotifier toastNotifier = null;
+
     public virtual void MakeToast()
     {
       ToastGenerator toastGenerator = new ToastGenerator();
@@ -47,14 +49,18 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       if (this.CurrentStatus.State == ObservationState.Running)
       {
         toast.Data = new NotificationData();
-
         toast.Data.Values["progressValue"] = ((float)this.CurrentStatus.Progress / 100f).ToString().Replace(',', '.');
         toast.Data.Values["progressValueString"] = "ETA: " + this.CurrentStatus.EstimatedRemaining.ToString();
         toast.Data.Values["progressStatus"] = "Building...";
       }
 
-      var toastNotifier = ToastNotificationManager.CreateToastNotifier();
-      toastNotifier.Show(toast);
+      if (toastNotifier==null)
+      {
+        toastNotifier = ToastNotificationManager.CreateToastNotifier();
+        toastNotifier.Show(toast);
+        return;
+      }
+      //toastNotifier.Update(toast.Data,);
     }
 
     public ConnectorViewModel()
