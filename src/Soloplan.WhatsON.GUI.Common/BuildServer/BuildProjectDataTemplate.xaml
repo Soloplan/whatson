@@ -16,11 +16,11 @@
       <MenuItem.Header>
         <StackPanel Orientation="Horizontal">
           <materialDesign:PackIcon Kind="TagOutline" />
-          <TextBlock Padding="10,0,0,0" Text="Copy latest build label" />
+          <TextBlock Padding="10,0,0,0" Text="Copy latest build label" IsEnabled="{Binding RenameCommand.canExecuteState}"/>
         </StackPanel>
       </MenuItem.Header>
     </MenuItem>
-    <MenuItem Command="{Binding RenameCommand}">
+        <MenuItem Command="{Binding RenameCommand}" IsEnabled="{Binding RenameCommand.canExecuteState}">
       <MenuItem.Header>
         <StackPanel Orientation="Horizontal">
           <materialDesign:PackIcon Kind="Rename" />
@@ -28,7 +28,7 @@
         </StackPanel>
       </MenuItem.Header>
     </MenuItem>
-    <MenuItem Command="{Binding EditCommand}">
+    <MenuItem Command="{Binding EditCommand}" IsEnabled="{Binding EditCommand.canExecuteState}">
       <MenuItem.Header>
         <StackPanel Orientation="Horizontal">
           <materialDesign:PackIcon Kind="Edit" />
@@ -44,7 +44,7 @@
         </StackPanel>
       </MenuItem.Header>
     </MenuItem>
-    <MenuItem Command="{Binding ExportCommand}">
+        <MenuItem Command="{Binding ExportCommand}" IsEnabled="{Binding ExportCommand.canExecuteState}">
       <MenuItem.Header>
         <StackPanel Orientation="Horizontal">
           <materialDesign:PackIcon Kind="Export" />
@@ -85,7 +85,7 @@
   </DataTemplate>
 
   <DataTemplate DataType="{x:Type connectorTreeView:ConnectorViewModel}">
-    <DockPanel Width="Auto" ContextMenu="{DynamicResource BuildServerProjectContextMenu}" ToolTip="Yow">
+    <DockPanel Width="Auto" ContextMenu="{DynamicResource BuildServerProjectContextMenu}">
       <buildServer:BuildInformationIconControl DataContext="{Binding CurrentStatus}" DockPanel.Dock="Left">
         <buildServer:BuildInformationIconControl.ToolTip>
           <StackPanel>

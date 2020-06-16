@@ -9,6 +9,7 @@ namespace Soloplan.WhatsON.GUI
 {
   using System;
   using System.Collections.Generic;
+  using System.Collections.ObjectModel;
   using System.ComponentModel;
   using System.Linq;
   using System.Threading.Tasks;
@@ -417,6 +418,10 @@ namespace Soloplan.WhatsON.GUI
       if (e.DeleteItem is ConnectorGroupViewModel group)
       {
         message = $"Are you sure you want to delete the group '{group.GroupName}' and all its items?";
+      }
+      else if (e.NoOtherSelections == false && e.DeleteItem is Soloplan.WhatsON.GUI.Common.ConnectorTreeView.ConnectorViewModel)
+      {
+        message = $"Are you sure you want to delete multiple connectors?";
       }
       else if (e.DeleteItem is Soloplan.WhatsON.GUI.Common.ConnectorTreeView.ConnectorViewModel connector)
       {

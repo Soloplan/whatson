@@ -10,7 +10,9 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Collections.Generic;
   using System.Collections.ObjectModel;
   using System.Linq;
+  using System.Text.RegularExpressions;
   using System.Windows;
+  using System.Windows.Controls;
   using System.Windows.Input;
   using GongSolutions.Wpf.DragDrop;
   using NLog;
@@ -34,6 +36,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private ObservableCollection<ConnectorGroupViewModel> connectorGroups;
 
     /// <summary>
+    /// Copy of currently selected connectors in case of multiple actions on viewmodel/>.
+    /// </summary>
+    private Collection<ConnectorViewModel> selectedConnectors;
+
+    /// <summary>
     /// Flag indicating that <see cref="ConfigurationChanged"/> event is triggered - used to ignore updates of model.
     /// </summary>
     private bool configurationChanging;
@@ -47,6 +54,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// Previous value of <see cref="OneGroup"/>.
     /// </summary>
     private bool prevOneGroupValue;
+
+    /// <summary>
+    /// Previous value of relative instert position.
+    /// </summary>
+    private Collection<ConnectorViewModel> connectorsToDrop = new Collection<ConnectorViewModel>();
 
     private int fontSize;
 
@@ -185,6 +197,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <param name="dropInfo">Information about the drop.</param>
     public void Drop(IDropInfo dropInfo)
     {
+
       if (dropInfo.Effects != DragDropEffects.Move)
       {
         log.Warn("Unexpected drop operation. {data}", new { Effect = dropInfo.Effects, dropInfo.Data, Target = dropInfo.TargetItem });
@@ -198,7 +211,36 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
       else if (dropInfo.Data is ConnectorViewModel draggedConnector)
       {
-        changesExist = this.DropConnector(dropInfo, draggedConnector);
+        if (this.connectorsToDrop.Count != 0)
+        {
+          if (dropInfo.InsertPosition == GongSolutions.Wpf.DragDrop.RelativeInsertPosition.BeforeTargetItem)
+          {
+            var targetGroup = this.GetConnectorGroup((ConnectorViewModel)dropInfo.TargetItem);
+            foreach (var element in this.connectorsToDrop.Reverse())
+            {
+              var sourceGroup = this.GetConnectorGroup(element);
+              MoveObject(sourceGroup, targetGroup, dropInfo.InsertPosition);
+              targetGroup = this.GetConnectorGroup(element);
+            }
+          }
+          else
+          {
+            var targetGroup = this.GetConnectorGroup((ConnectorViewModel)dropInfo.TargetItem);
+            foreach (var element in this.connectorsToDrop)
+            {
+              var sourceGroup = this.GetConnectorGroup(element);
+              MoveObject(sourceGroup, targetGroup, dropInfo.InsertPosition);
+              targetGroup = this.GetConnectorGroup(element);
+            }
+          }
+
+          this.connectorsToDrop = new Collection<ConnectorViewModel>();
+          this.OnConfigurationChanged(this, EventArgs.Empty);
+        }
+        else
+        {
+          changesExist = this.DropConnector(dropInfo, draggedConnector);
+        }
       }
 
       if (changesExist)
@@ -401,6 +443,13 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
+    public bool UpdateConnectorsToDrop(Collection<ConnectorViewModel> list)
+    {
+      this.connectorsToDrop = list;
+      return true;
+    }
+
+
     /// <summary>
     /// Moves object given by <paramref name="source"/> to <paramref name="target"/>.
     /// </summary>
@@ -556,8 +605,77 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.ExportItem?.Invoke(sender, e);
     }
 
-    private async void DeleteGroup(object sender, DeleteTreeItemEventArgs e)
+    /// <summary>
+    /// Removes any empty rpesent groups.
+    /// </summary>
+    private void ClearEmptyGroups()
     {
+      foreach (var group in this.connectorGroups.ToList())
+      {
+        if (group.ConnectorViewModels.Count == 0)
+        {
+          this.connectorGroups.Remove(group);
+        }
+      }
+    }
+
+    /// <summary>
+    /// Performs a deletion of all selected connectors.
+    /// </summary>
+    private void DeleteSelectedConnectors()
+    {
+      bool madeChanges = false;
+      foreach (var connectorGroup in this.connectorGroups.ToList())
+      {
+        foreach (var connector in connectorGroup.ConnectorViewModels.ToList())
+        {
+          for (int i = 0; i < this.selectedConnectors.Count;)
+          {
+            if (this.selectedConnectors[i].Identifier == connector.Identifier)
+            {
+              connectorGroup.ConnectorViewModels.Remove(this.selectedConnectors[i]);
+              this.selectedConnectors.RemoveAt(i);
+              madeChanges = true;
+              i--;
+            }
+
+            i++;
+          }
+        }
+      }
+
+      this.ClearEmptyGroups();
+
+      if (madeChanges)
+      {
+        this.OnConfigurationChanged(this, EventArgs.Empty);
+        this.FireOneGroupChanged();
+      }
+    }
+
+    public async void DeleteGroup(object sender, DeleteTreeItemEventArgs e)
+    {
+      if (e.DeleteItem is ConnectorViewModel clickedConnector)
+      {
+        if (this.selectedConnectors.Count > 1)
+        {
+          e.NoOtherSelections = false;
+        }
+        else
+        {
+          e.NoOtherSelections = true;
+        }
+
+        this.DeleteItem?.Invoke(sender, e);
+        var canceled = await e.CheckCanceled();
+        if (!canceled)
+        {
+          this.DeleteSelectedConnectors();
+        }
+
+        return;
+      }
+
       this.DeleteItem?.Invoke(sender, e);
       if (e.DeleteItem is ConnectorGroupViewModel group)
       {
@@ -592,9 +710,17 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
+    /// Updates the currently selected items form view
+    /// </summary>
+    public void UpdateSelectedConnectors(Collection<ConnectorViewModel> selectedConnectors)
+    {
+      this.selectedConnectors = selectedConnectors;
+    }
+
+    /// <summary>
     /// Helper class with information about where the moved object is or should be in <see cref="List"/>.
     /// </summary>
-    private class MovedObjectLocation
+    public class MovedObjectLocation
     {
       public MovedObjectLocation(IList list, int index)
       {

@@ -196,7 +196,7 @@
     </ResourceDictionary>
   </UserControl.Resources>
 
-  <TreeView Name="mainTreeView"
+    <TreeView Name="mainTreeView"
             HorizontalContentAlignment="Stretch"
             dd:DragDrop.DropHandler="{Binding}"
             dd:DragDrop.IsDragSource="True"
@@ -207,9 +207,15 @@
     <TreeView.ItemContainerStyle>
       <Style BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="{x:Type TreeViewItem}">
         <EventSetter Event="MouseDoubleClick" Handler="OnTreeItemDoubleClick" />
+        <EventSetter Event="MouseLeftButtonDown" Handler="OnTreeItemLeftMouseDown"/>
+        <EventSetter Event="MouseLeftButtonUp" Handler="OnTreeItemLeftMouseUp"/>
+        <EventSetter Event="MouseRightButtonDown" Handler="OnTreeItemRightMouseDown"/>
+        <EventSetter Event="Drop" Handler="OnTreeViewItemDrop"/>
+        <Setter Property="Focusable" Value="False"/>
         <Setter Property="IsExpanded" Value="{Binding IsNodeExpanded, Mode=TwoWay}" />
         <Setter Property="Padding" Value="{Binding DataContext.ItemPadding, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="Background" Value="Orange"/>
       </Style>
     </TreeView.ItemContainerStyle>
   </TreeView>
