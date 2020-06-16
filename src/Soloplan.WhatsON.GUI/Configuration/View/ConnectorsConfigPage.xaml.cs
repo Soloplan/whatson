@@ -323,5 +323,37 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
         }
       }
     }
+
+    public void OnConfigurationIsModified()
+    {
+      ConfigWindow configWindow = (ConfigWindow)this.ownerWindow;
+      if (configWindow == null)
+      {
+        return;
+      }
+
+      if (configWindow.ConfigurationViewModel.ConfigurationIsModified==false)
+      {
+        if (this.AddButton != null) 
+        { 
+            this.AddButton.IsEnabled = true; 
+        }
+        if (this.WizardButton != null) 
+        { 
+            this.WizardButton.IsEnabled = true; 
+        }
+      }
+      else
+      {
+        if (this.AddButton != null) 
+        { 
+            this.AddButton.IsEnabled = false; 
+        }
+        if (this.WizardButton != null) 
+        { 
+            this.WizardButton.IsEnabled = false; 
+        }
+      }
+    }
   }
 }
