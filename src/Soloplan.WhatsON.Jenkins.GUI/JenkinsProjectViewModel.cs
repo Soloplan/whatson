@@ -10,12 +10,12 @@ namespace Soloplan.WhatsON.Jenkins.GUI
   using Microsoft.Toolkit.Uwp.Notifications;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
-  using Soloplan.WhatsON.Model;
   using System;
+  using Soloplan.WhatsON.Model;
   using Windows.Data.Xml.Dom;
   using Windows.UI.Notifications;
 
-    public class JenkinsProjectViewModel : ConnectorViewModel
+  public class JenkinsProjectViewModel : ConnectorViewModel
   {
     public JenkinsProjectViewModel(Connector connector)
       : base(connector)
@@ -29,6 +29,11 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       return new JenkinsStatusViewModel(this);
     }
 
+    /// <summary>
+    /// Creates a toast content for a win10 notification.
+    /// </summary>
+    /// <param name="connectorGroupViewModel"> Group in which the connector is located.</param>
+    /// <returns>Toast notification to be shown.</returns>
     public override ToastNotification MakeToast(ConnectorGroupViewModel connectorGroupViewModel=null)
     {
       ToastGenerator toastGenerator = new ToastGenerator();
@@ -57,12 +62,27 @@ namespace Soloplan.WhatsON.Jenkins.GUI
         toast.Data.Values["progressValueString"] = "ETA: " + this.CurrentStatus.EstimatedRemaining.ToString();
         toast.Data.Values["progressStatus"] = "Building...";
       }
-
-      //var toastNotifier = ToastNotificationManager.CreateToastNotifier();
       toast.ExpirationTime = DateTimeOffset.Now + TimeSpan.FromDays(1);
-      //toast.Activated += OnActivated;
-      //toastNotifier.Show(toast);
       return toast;
+    }
+
+    /// <summary>
+    /// Implements update function for notifications of Jenkins projects.
+    /// </summary>
+    /// <param name="tag">Toast tag</param>
+    /// <param name="sequence">Sequence of update. </param>
+    /// <param name="group">Group of notification. </param>
+    /// <returns>Notification data to be sent. </returns>
+    public override NotificationData CreateNotificationsDataUpdate(uint tag, uint sequence, string group)
+    {
+      var data = new NotificationData();
+
+      data.SequenceNumber = 0;
+      data.Values["progressValue"] = ((float)this.CurrentStatus.Progress / 100f).ToString().Replace(',', '.');
+      data.Values["progressValueString"] = "ETA: " + this.CurrentStatus.EstimatedRemaining.ToString();
+      data.Values["progressStatus"] = "Building...";
+
+      return data;
     }
   }
 }

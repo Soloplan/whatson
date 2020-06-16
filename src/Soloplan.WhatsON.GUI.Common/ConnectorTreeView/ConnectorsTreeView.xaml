@@ -195,27 +195,40 @@
       </DataTemplate>
     </ResourceDictionary>
   </UserControl.Resources>
-
-    <TreeView Name="mainTreeView"
+    <ScrollViewer Name="mainScrollViewer">
+        <TreeView Name="mainTreeView"
             HorizontalContentAlignment="Stretch"
             dd:DragDrop.DropHandler="{Binding}"
             dd:DragDrop.IsDragSource="True"
             dd:DragDrop.IsDropTarget="True">
-    <TreeView.InputBindings>
-      <KeyBinding Key="Delete" Command="{Binding DeleteSelectedObject, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}" />
-    </TreeView.InputBindings>
-    <TreeView.ItemContainerStyle>
-      <Style BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="{x:Type TreeViewItem}">
-        <EventSetter Event="MouseDoubleClick" Handler="OnTreeItemDoubleClick" />
-        <EventSetter Event="MouseLeftButtonDown" Handler="OnTreeItemLeftMouseDown"/>
-        <EventSetter Event="MouseLeftButtonUp" Handler="OnTreeItemLeftMouseUp"/>
-        <EventSetter Event="Drop" Handler="OnTreeViewItemDrop"/>
-        <Setter Property="Focusable" Value="False"/>
-        <Setter Property="IsExpanded" Value="{Binding IsNodeExpanded, Mode=TwoWay}" />
-        <Setter Property="Padding" Value="{Binding DataContext.ItemPadding, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}" />
-        <Setter Property="HorizontalAlignment" Value="Stretch" />
-        <Setter Property="Background" Value="Orange"/>
-      </Style>
-    </TreeView.ItemContainerStyle>
-  </TreeView>
+            <TreeView.InputBindings>
+                <KeyBinding Key="Delete" Command="{Binding DeleteSelectedObject, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}" />
+            </TreeView.InputBindings>
+            <TreeView.ItemContainerStyle>
+                <Style BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="{x:Type TreeViewItem}">
+                    <EventSetter Event="MouseDoubleClick" Handler="OnTreeItemDoubleClick" />
+                    <EventSetter Event="MouseLeftButtonDown" Handler="OnTreeItemLeftMouseDown"/>
+                    <EventSetter Event="MouseLeftButtonUp" Handler="OnTreeItemLeftMouseUp"/>
+                    <EventSetter Event="Drop" Handler="OnTreeViewItemDrop"/>
+                    <Setter Property="Focusable" Value="False"/>
+                    <Setter Property="IsExpanded" Value="{Binding IsNodeExpanded, Mode=TwoWay}" />
+                    <Setter Property="Padding" Value="{Binding DataContext.ItemPadding, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}" />
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                    <Setter Property="Background" Value="Orange"/>
+                </Style>
+            </TreeView.ItemContainerStyle>
+            <!--The code below unblocks MouseWheel tree scrolling mutual lock between ScrollViewer and (inaccessible from code-behind) built-in TreeView.ScrollViewer.
+            As the link below explains it removes the built-in scroll viewer. Very suspicious.
+            https://stackoverflow.com/questions/3498686/wpf-remove-scrollviewer-from-treeview?rq=1 -->
+            <TreeView.Template>
+                <ControlTemplate TargetType="TreeView">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}"
+                SnapsToDevicePixels="true">
+                        <ItemsPresenter/>
+                    </Border>
+                </ControlTemplate>
+            </TreeView.Template>
+        </TreeView>
+    </ScrollViewer>
 </UserControl>

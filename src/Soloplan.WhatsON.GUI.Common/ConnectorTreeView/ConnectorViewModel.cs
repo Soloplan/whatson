@@ -34,8 +34,25 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private string url;
 
-    private ToastNotifier toastNotifier = null;
+    /// <summary>
+    /// Creates NotificationData for connector.
+    /// </summary>
+    /// <param name="tag">Toast tag</param>
+    /// <param name="sequence">Sequence of update. </param>
+    /// <param name="group">Group of notification. </param>
+    /// <returns>Notification data to be sent. </returns>
+    public virtual NotificationData CreateNotificationsDataUpdate(uint tag, uint sequence, string group)
+    {
+      var data = new NotificationData();
+      data.SequenceNumber = 0;
+      return data;
+    }
 
+    /// <summary>
+    /// Creates a toast content for a win10 notification.
+    /// </summary>
+    /// <param name="connectorGroupViewModel"> Group in which the connector is located.</param>
+    /// <returns>Toast notification to be shown.</returns>
     public virtual ToastNotification MakeToast(ConnectorGroupViewModel connectorGroupViewModel = null)
     {
       ToastGenerator toastGenerator = new ToastGenerator();
@@ -53,14 +70,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         toast.Data.Values["progressValueString"] = "ETA: " + this.CurrentStatus.EstimatedRemaining.ToString();
         toast.Data.Values["progressStatus"] = "Building...";
       }
-
-      if (this.toastNotifier == null)
-      {
-        //this.toastNotifier = ToastNotificationManager.CreateToastNotifier();
-        //this.toastNotifier.Show(toast);
-        return toast;
-      }
-
       return toast;
     }
 

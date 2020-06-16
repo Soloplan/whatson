@@ -18,13 +18,23 @@ using Microsoft.QueryStringDotNET;
 
 namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
+  /// <summary>
+  /// Handles Toast body generation.
+  /// </summary>
   public class ToastGenerator
   {
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
     public ToastGenerator()
     {
 
     }
 
+    /// <summary>
+    /// Builds simple empty toast.
+    /// </summary>
+    /// <returns>Content of the empty toast.</returns>
     private ToastContent BuildEmptyToast()
     {
       var content = new Microsoft.Toolkit.Uwp.Notifications.ToastContent()
@@ -47,6 +57,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       return content;
     }
 
+    /// <summary>
+    /// Gets the status icon path.
+    /// </summary>
+    /// <param name="statusViewModel">Status of the connector.</param>
+    /// <returns>Path to the icon.</returns>
     private string GetIconPath(StatusViewModel statusViewModel)
     {
       string result = string.Empty;
@@ -75,6 +90,12 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       return result;
     }
 
+    /// <summary>
+    /// Builds the core of the toast.
+    /// </summary>
+    /// <param name="connectorViewModel">Connector for which the toast will be built.</param>
+    /// <param name="connectorGroupViewModel">Group of the connector.</param>
+    /// <returns></returns>
     private ToastContent BuildToast(ConnectorViewModel connectorViewModel, ConnectorGroupViewModel connectorGroupViewModel = null)
     {
       var title = new AdaptiveText() { Text = connectorViewModel.Name };
@@ -114,20 +135,24 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       content.Visual.BindingGeneric.Children.Add(groupText);
       content.Visual.BindingGeneric.Children.Add(container);
 
-      ToastButton toastButton = new ToastButton("Click me!", "arguments");
+      ToastButton toastButton = new ToastButton("Project page,", "openpage="+connectorViewModel.Identifier.ToString() );
       toastButton.ActivationType = ToastActivationType.Foreground;
       ((ToastActionsCustom)content.Actions).Buttons.Add(toastButton);
 
       content.Launch = new QueryString()
       {
-        { "action", "viewConversation" },
-        { "conversationId", "srtusada" },
-
+        { "connector", connectorViewModel.Identifier.ToString() },
       }.ToString();
 
       return content;
     }
 
+    /// <summary>
+    /// Generates toast content for a connector and a group.
+    /// </summary>
+    /// <param name="connectorViewModel">Connector for which a toast should be built. If null an empty toast will be returned.</param>
+    /// <param name="connectorGroupViewModel">Optional. Group of the connector.</param>
+    /// <returns>Toast content.</returns>
     public ToastContent GenerateToastContent(ConnectorViewModel connectorViewModel = null, ConnectorGroupViewModel connectorGroupViewModel = null)
     {
       ToastContent content;
@@ -142,7 +167,5 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
       return content;
     }
-
-
   }
 }

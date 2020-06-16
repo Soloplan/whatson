@@ -6,6 +6,7 @@
 namespace Soloplan.WhatsON.GUI
 {
   using System;
+  using System.Collections.Generic;
   using System.Drawing;
   using System.IO;
   using System.Linq;
@@ -15,8 +16,8 @@ namespace Soloplan.WhatsON.GUI
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.Model;
-    using Windows.UI.Notifications;
-    using Application = System.Windows.Application;
+  using Windows.UI.Notifications;
+  using Application = System.Windows.Application;
 
   /// <summary>
   /// Wrapper for <see cref="NotifyIcon"/> from System.WindowsForms. Handles creation/opening/closing of main window.
@@ -47,6 +48,8 @@ namespace Soloplan.WhatsON.GUI
 
     private NotificationsModel model;
 
+    private Soloplan.WhatsON.GUI.Common.ConnectorTreeView.ToastManager toastManager;
+
     /// <summary>
     /// The last time the window was focused by clicking on tray icon.
     /// </summary>
@@ -74,6 +77,8 @@ namespace Soloplan.WhatsON.GUI
       {
         this.VisualSettings = SerializationHelper.Load<MainWindowSettings>(Path.Combine(SerializationHelper.Instance.ConfigFolder, MainWindow.VisualSettingsFile));
       }
+
+      this.toastManager = new ToastManager();
     }
 
     public MainWindowSettings VisualSettings { get; private set; }
@@ -352,31 +357,50 @@ namespace Soloplan.WhatsON.GUI
         var notificationConfiguration = this.configuration.GetNotificationConfiguration(connectorConfiguration);
 
         ConnectorGroupViewModel connectorGroupViewModel;
-        //todo pobrac grupe, z category z application configuration z connectors configuration
-        var toastNotifier = ToastNotificationManager.CreateToastNotifier();
-        var toast = statusViewModel.Parent.MakeToast();
-        toastNotifier.Show(toast);
-        //var description = $"Project name: {statusViewModel.Parent.Name}.";
-        //if (this.CheckNotificationShow(statusViewModel, ObservationState.Running, notificationConfiguration))
-        //{
-        //  this.ShowBaloon("Build started.", description, System.Windows.Forms.ToolTipIcon.None);
-        //}
-        //else if (this.CheckNotificationShow(statusViewModel, ObservationState.Failure, notificationConfiguration))
-        //{
-        //  this.ShowBaloon("Build failed.", description, System.Windows.Forms.ToolTipIcon.Error);
-        //}
-        //else if (this.CheckNotificationShow(statusViewModel, ObservationState.Success, notificationConfiguration))
-        //{
-        //  this.ShowBaloon("Build successful", description, System.Windows.Forms.ToolTipIcon.Info);
-        //}
-        //else if (this.CheckNotificationShow(statusViewModel, ObservationState.Unstable, notificationConfiguration))
-        //{
-        //  this.ShowBaloon("Build successful (Unstable)", description, System.Windows.Forms.ToolTipIcon.Warning);
-        //}
-        //else if (this.CheckNotificationShow(statusViewModel, ObservationState.Unknown, notificationConfiguration))
-        //{
-        //  this.ShowBaloon("Build interrupted", description, System.Windows.Forms.ToolTipIcon.Warning);
-        //}
+
+        var toast = statusViewModel.Parent.MakeToast(this.mainWindow.mainTreeView.FindConnectorGroup(statusViewModel.Parent));
+        toast.Activated += this.OnActivated;
+        this.toastManager.DisplayAndRegisterNewToast(statusViewModel.Parent, toast);
+      }
+
+      if (sender is StatusViewModel status)
+      {
+        this.toastManager.UpdateConnectorToast(status.Parent);
+      }
+    }
+
+    /// <summary>
+    /// Function that handles toast clicks.
+    /// </summary>
+    /// <param name="sender">sender notifications.</param>
+    /// <param name="e">args.</param>
+    private void OnActivated(ToastNotification sender, object e)
+    {
+      var y = 20;
+      if (e is Windows.UI.Notifications.ToastActivatedEventArgs args)
+      {
+        string identifier = args.Arguments.Split('=')[1];
+        if (args.Arguments.Split('=')[0] == "openpage")
+        {
+          var connector = this.mainWindow.mainTreeView.GetConnectorWithIdentifier(identifier);
+          connector.OpenWebPage.Execute(connector.Url);
+        }
+        else if (args.Arguments.Split('=')[0] == "connector")
+        {
+          try
+          {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+              Application.Current.MainWindow.Visibility = System.Windows.Visibility.Visible;
+              Application.Current.MainWindow.Activate();
+              Application.Current.MainWindow.Show();
+              this.mainWindow.mainTreeView.FocusItem(this.mainWindow.mainTreeView.GetConnectorWithIdentifier(identifier));
+            });
+          }
+          catch (Exception ex)
+          {
+          }
+        }
       }
     }
   }
