@@ -272,16 +272,13 @@ namespace Soloplan.WhatsON
     }
 
     /// <summary>
-    /// Checks if configuration is old/deprecated and calls functions that make changes to those config versions. Also calls SaveConfiguration to override the file.
+    /// Checks if configuration is old/deprecated and calls functions that make changes to those config versions.
     /// </summary>
     /// <param name="applicationConfiguration">Configuration to be checked.</param>
     private void HandleOlderConfigurationFiles(ApplicationConfiguration applicationConfiguration)
     {
-      bool changesMade = this.HandleCruiseControlNewProperties(applicationConfiguration);
-      if (changesMade)
-      {
-        this.SaveConfiguration(applicationConfiguration);
-      }
+      this.HandleCruiseControlNewProperties(applicationConfiguration);
+      return;
     }
 
     /// <summary>
