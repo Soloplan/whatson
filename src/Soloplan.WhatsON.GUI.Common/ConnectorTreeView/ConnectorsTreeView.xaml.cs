@@ -199,7 +199,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
               groupViewModel.IsNodeExpanded = true;
               treeViewItem.IsSelected = true;
               var offset = treeViewItem.TransformToAncestor(this.mainTreeView).Transform(new Point(0.0, 0.0));
-              this.mainScrollViewer.ScrollToVerticalOffset(offset.Y - (this.RenderSize.Height/2) + (treeViewItem.RenderSize.Height/2));
+              this.mainScrollViewer.ScrollToVerticalOffset(offset.Y - (this.RenderSize.Height / 2) + (treeViewItem.RenderSize.Height / 2));
               this.BeginBlinkAnimation(ref treeViewItem);
             }
           }
@@ -738,21 +738,18 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
 
       var connector = new ConnectorViewModel();
-      try
+      if (item.Header is ConnectorViewModel)
       {
         connector = (ConnectorViewModel)item.Header;
         this.OnCtrlProjectClicked(connector);
       }
-      catch
+      else
       {
         var group = new ConnectorGroupViewModel();
-        try
+        if(item.Header is ConnectorGroupViewModel)
         {
           group = (ConnectorGroupViewModel)item.Header;
           this.OnGroupClicked(group);
-        }
-        catch (Exception ex)
-        {
         }
       }
 
@@ -773,13 +770,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
 
       var connector = new ConnectorViewModel();
-      try
+      if (item.Header is ConnectorViewModel)
       {
         connector = (ConnectorViewModel)item.Header;
         this.OnShiftProjectClicked(connector);
-      }
-      catch
-      {
       }
     }
 
@@ -842,20 +836,21 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private void ControlLeftMouseUpHandler(object sender, MouseButtonEventArgs e)
     {
       TreeViewItem item = (TreeViewItem)sender;
-      try
-      {
-        var connector = new ConnectorViewModel();
-        if (item == null)
-        {
-          return;
-        }
 
+      var connector = new ConnectorViewModel();
+      if (item == null)
+      {
+        return;
+      }
+
+      if (item.Header is ConnectorViewModel)
+      {
         connector = (ConnectorViewModel)item.Header;
         this.DeselectAllConnectors();
         this.connectorItemEventFired = true;
         this.OnCtrlProjectClicked(connector);
       }
-      catch
+      else
       {
         if (this.connectorItemEventFired)
         {
@@ -864,17 +859,15 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         else
         {
           var group = new ConnectorGroupViewModel();
-          try
+          if (item.Header is ConnectorGroupViewModel)
           {
             group = (ConnectorGroupViewModel)item.Header;
             this.DeselectAllConnectors();
             this.OnGroupClicked(group);
           }
-          catch (Exception ex)
-          {
-          }
         }
       }
+
 
       this.model.UpdateSelectedConnectors(this.selectedConnectors);
     }
