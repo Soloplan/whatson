@@ -227,11 +227,13 @@ namespace Soloplan.WhatsON
     }
 
     /// <summary>
-    /// Checks if configuration is old/deprecated and makes changes to those config versions.
+    /// Handles incorrectly loading CC connectors.
     /// </summary>
-    /// <param name="applicationConfiguration">Configuration to be checked.</param>
-    private void HandleOlderConfigurationFiles(ApplicationConfiguration applicationConfiguration)
+    /// <param name="applicationConfiguration">Application configuration to check for errors.</param>
+    /// <returns>True if made changes, false if no changes made. Changes made implies that configuration was incorrect.</returns>
+    private bool HandleCruiseControlNewProperties(ApplicationConfiguration applicationConfiguration)
     {
+      bool changesMade = false;
       foreach (var connector in applicationConfiguration.ConnectorsConfiguration)
       {
         if (connector.Type == "CruiseControl")
@@ -253,7 +255,8 @@ namespace Soloplan.WhatsON
 
           if (!hasDirectAddress)
           {
-            connector.ConfigurationItems.Add(new ConfigurationItem("DirectAddress",address));
+            connector.ConfigurationItems.Add(new ConfigurationItem("DirectAddress", address));
+            changesMade = true;
             foreach (var item in connector.ConfigurationItems)
             {
               if (item.Key == "Address")
@@ -263,6 +266,21 @@ namespace Soloplan.WhatsON
             }
           }
         }
+      }
+
+      return changesMade;
+    }
+
+    /// <summary>
+    /// Checks if configuration is old/deprecated and calls functions that make changes to those config versions. Also calls SaveConfiguration to override the file.
+    /// </summary>
+    /// <param name="applicationConfiguration">Configuration to be checked.</param>
+    private void HandleOlderConfigurationFiles(ApplicationConfiguration applicationConfiguration)
+    {
+      bool changesMade = this.HandleCruiseControlNewProperties(applicationConfiguration);
+      if (changesMade)
+      {
+        this.SaveConfiguration(applicationConfiguration);
       }
     }
 
