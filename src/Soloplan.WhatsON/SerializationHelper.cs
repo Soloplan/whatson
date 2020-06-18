@@ -238,27 +238,27 @@ namespace Soloplan.WhatsON
         {
           bool hasDirectAddress = false;
           string address = string.Empty;
-          foreach (var prop in connector.ConfigurationItems)
+          foreach (var item in connector.ConfigurationItems)
           {
-            if (prop.Key == "DirectAddress")
+            if (item.Key == "DirectAddress")
             {
               hasDirectAddress = true;
             }
 
-            if (prop.Key == "Address")
+            if (item.Key == "Address")
             {
-              address = prop.Value; 
+              address = item.Value;
             }
           }
 
           if (!hasDirectAddress)
           {
             connector.ConfigurationItems.Add(new ConfigurationItem("DirectAddress",address));
-            foreach (var prop in connector.ConfigurationItems)
+            foreach (var item in connector.ConfigurationItems)
             {
-              if (prop.Key == "Address")
+              if (item.Key == "Address")
               {
-                prop.Value = address.Split(new string[] { "server/" },StringSplitOptions.None)[0];
+                item.Value = address.Split(new string[] { "server/" }, StringSplitOptions.None)[0];
               }
             }
           }
