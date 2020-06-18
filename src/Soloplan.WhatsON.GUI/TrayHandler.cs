@@ -10,6 +10,7 @@ namespace Soloplan.WhatsON.GUI
   using System.Drawing;
   using System.IO;
   using System.Linq;
+  using System.Runtime.InteropServices.ComTypes;
   using System.Windows.Forms;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
@@ -360,7 +361,14 @@ namespace Soloplan.WhatsON.GUI
 
         var toast = statusViewModel.Parent.MakeToast(this.mainWindow.mainTreeView.FindConnectorGroup(statusViewModel.Parent));
         toast.Activated += this.OnActivated;
-        this.toastManager.DisplayAndRegisterNewToast(statusViewModel.Parent, toast);
+        if (statusViewModel.PreviousState == ObservationState.Running && statusViewModel.State != ObservationState.Running)
+        {
+          this.toastManager.RemoveConnectorToasts(statusViewModel.Parent,toast);
+        }
+        else
+        {
+          this.toastManager.DisplayAndRegisterNewToast(statusViewModel.Parent, toast);
+        }
       }
 
       if (sender is StatusViewModel status)

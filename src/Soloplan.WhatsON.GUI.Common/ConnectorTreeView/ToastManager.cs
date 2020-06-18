@@ -85,6 +85,25 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
+    /// Displays given toast notification for given connector.
+    /// </summary>
+    /// <param name="connectorViewModel">Connector that notification concerns.</param>
+    /// <param name="toast">Toast of the connector.</param>
+    public void RemoveConnectorToasts(ConnectorViewModel connectorViewModel, ToastNotification toast)
+    {
+      foreach (var item in this.toasts)
+      {
+        if (item.guid == connectorViewModel.Identifier)
+        {
+          var toastNotifier = ToastNotificationManager.CreateToastNotifier();
+          toast.Tag = this.TagPrefix + item.tag.ToString();
+          toast.Group = this.GroupDefault;
+          toastNotifier.Hide(toast);
+        }
+      }
+    }
+
+    /// <summary>
     /// Handles a notification update for the connector.
     /// </summary>
     /// <param name="connectorViewModel">Connector that has a toast needing an update.</param>

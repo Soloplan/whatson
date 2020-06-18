@@ -58,10 +58,21 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       {
         toast.Data = new NotificationData();
 
-        toast.Data.Values["progressValue"] = ((float)this.CurrentStatus.Progress / 100f).ToString().Replace(',','.');
-        toast.Data.Values["progressValueString"] = "ETA: " + this.CurrentStatus.EstimatedRemaining.ToString();
+        if (this.CurrentStatus.RawProgress < 100)
+        {
+          toast.Data.Values["progressValue"] = ((float)this.CurrentStatus.Progress / 100f).ToString().Replace(',', '.');
+          toast.Data.Values["progressValueString"] = "Progress:" + this.CurrentStatus.Progress + " ETA: " + this.CurrentStatus.EstimatedRemaining.Hours
+          + ":" + this.CurrentStatus.EstimatedRemaining.Minutes + ":" + this.CurrentStatus.EstimatedRemaining.Seconds;
+        }
+        else
+        {
+          toast.Data.Values["progressValue"] = 100.0f.ToString().Replace(',', '.');
+          toast.Data.Values["progressValueString"] = "Taking longer than expected.";
+        }
+
         toast.Data.Values["progressStatus"] = "Building...";
       }
+
       toast.ExpirationTime = DateTimeOffset.Now + TimeSpan.FromDays(1);
       return toast;
     }
@@ -78,8 +89,20 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       var data = new NotificationData();
 
       data.SequenceNumber = 0;
-      data.Values["progressValue"] = ((float)this.CurrentStatus.Progress / 100f).ToString().Replace(',', '.');
-      data.Values["progressValueString"] = "ETA: " + this.CurrentStatus.EstimatedRemaining.ToString();
+      data = new NotificationData();
+
+      if (this.CurrentStatus.RawProgress < 100)
+      {
+        data.Values["progressValue"] = ((float)this.CurrentStatus.Progress / 100f).ToString().Replace(',', '.');
+        data.Values["progressValueString"] = "Progress:" + this.CurrentStatus.Progress + " ETA: " + this.CurrentStatus.EstimatedRemaining.Hours
+        + ":" + this.CurrentStatus.EstimatedRemaining.Minutes + ":" + this.CurrentStatus.EstimatedRemaining.Seconds;
+      }
+      else
+      {
+        data.Values["progressValue"] = 100.0f.ToString().Replace(',', '.');
+        data.Values["progressValueString"] = "Taking longer than expected.";
+      }
+
       data.Values["progressStatus"] = "Building...";
 
       return data;
