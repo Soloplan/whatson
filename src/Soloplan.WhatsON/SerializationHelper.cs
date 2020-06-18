@@ -223,6 +223,47 @@ namespace Soloplan.WhatsON
     private void HandleConfigurationErrors(ApplicationConfiguration appConfiguration)
     {
       this.CheckConnectorsConfigurationDoNotContainNull(appConfiguration);
+      this.HandleOlderConfigurationFiles(appConfiguration);
+    }
+
+    /// <summary>
+    /// Checks if configuration is old/deprecated and makes changes to those config versions.
+    /// </summary>
+    /// <param name="applicationConfiguration">Configuration to be checked.</param>
+    private void HandleOlderConfigurationFiles(ApplicationConfiguration applicationConfiguration)
+    {
+      foreach (var connector in applicationConfiguration.ConnectorsConfiguration)
+      {
+        if (connector.Type == "CruiseControl")
+        {
+          bool hasDirectAddress = false;
+          string address = string.Empty;
+          foreach (var prop in connector.ConfigurationItems)
+          {
+            if (prop.Key == "DirectAddress")
+            {
+              hasDirectAddress = true;
+            }
+
+            if (prop.Key == "Address")
+            {
+              address = prop.Value; 
+            }
+          }
+
+          if (!hasDirectAddress)
+          {
+            connector.ConfigurationItems.Add(new ConfigurationItem("DirectAddress",address));
+            foreach (var prop in connector.ConfigurationItems)
+            {
+              if (prop.Key == "Address")
+              {
+                prop.Value = address.Split(new string[] { "server/" },StringSplitOptions.None)[0];
+              }
+            }
+          }
+        }
+      }
     }
 
     /// <summary>
