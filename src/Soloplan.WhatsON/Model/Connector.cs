@@ -22,7 +22,7 @@ namespace Soloplan.WhatsON.Model
   [ConfigurationItem(Category, typeof(string), Priority = 1000000000)]
   [ConfigurationItem(ServerAddress, typeof(string), Optional = false, Priority = 100)]
   [ConfigurationItem(ProjectName, typeof(string), Optional = false, Priority = 300)]
-  [ConfigurationItem(DirectAddress, typeof(string), Optional = false, Priority = 0)]
+  [ConfigurationItem(DirectAddress, typeof(string),Optional = false, Priority = 0)]
   public abstract class Connector
   {
     /// <summary>
