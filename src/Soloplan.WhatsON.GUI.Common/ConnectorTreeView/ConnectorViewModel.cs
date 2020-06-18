@@ -69,7 +69,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         if (this.currentStatus.RawProgress < 100)
         {
           toast.Data.Values["progressValue"] = ((float)this.CurrentStatus.Progress / 100f).ToString().Replace(',', '.');
-          toast.Data.Values["progressValueString"] = "Progress:" + this.currentStatus.Progress + " ETA: " + this.currentStatus.EstimatedRemaining.Hours
+          toast.Data.Values["progressValueString"] = "Progress:" + this.currentStatus.Progress + "% ETA: " + this.currentStatus.EstimatedRemaining.Hours
           + ":" + this.currentStatus.EstimatedRemaining.Minutes + ":" + this.currentStatus.EstimatedRemaining.Seconds;
         }
         else
