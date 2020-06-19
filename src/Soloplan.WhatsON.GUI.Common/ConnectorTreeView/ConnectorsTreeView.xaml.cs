@@ -197,7 +197,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
             if (treeViewItem != null)
             {
               groupViewModel.IsNodeExpanded = true;
-              treeViewItem.IsSelected = true;
+              this.SetConnectorStyle(connector);
               var offset = treeViewItem.TransformToAncestor(this.mainTreeView).Transform(new Point(0.0, 0.0));
               this.mainScrollViewer.ScrollToVerticalOffset(offset.Y - (this.RenderSize.Height / 2) + (treeViewItem.RenderSize.Height / 2));
               this.BeginBlinkAnimation(ref treeViewItem);
@@ -397,6 +397,17 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       animation.AutoReverse = true;
       animation.RepeatBehavior = new RepeatBehavior(TimeSpan.FromSeconds(3.0d));
       treeViewItem.BeginAnimation(TreeViewItem.OpacityProperty, animation);
+      animation.Completed += BlinkAnimationCompleted;
+    }
+
+    /// <summary>
+    /// On Animation completed event handler.
+    /// </summary>
+    /// <param name="sender">Sender item.</param>
+    /// <param name="e">Event args.</param>
+    private void BlinkAnimationCompleted(object sender, EventArgs e)
+    {
+      throw new NotImplementedException();
     }
 
     /// <summary>
