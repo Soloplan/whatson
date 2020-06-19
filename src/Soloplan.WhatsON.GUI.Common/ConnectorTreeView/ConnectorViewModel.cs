@@ -63,23 +63,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
       var toast = new ToastNotification(xmlDoc);
 
-      if (this.CurrentStatus.State == ObservationState.Running)
-      {
-        toast.Data = new NotificationData();
-        if (this.currentStatus.RawProgress < 100)
-        {
-          toast.Data.Values["progressValue"] = ((float)this.CurrentStatus.Progress / 100f).ToString().Replace(',', '.');
-          toast.Data.Values["progressValueString"] = "Progress:" + this.currentStatus.Progress + "% ETA: " + this.currentStatus.EstimatedRemaining.Hours
-          + ":" + this.currentStatus.EstimatedRemaining.Minutes + ":" + this.currentStatus.EstimatedRemaining.Seconds;
-        }
-        else
-        {
-          toast.Data.Values["progressValue"] = 100.0f.ToString().Replace(',', '.');
-          toast.Data.Values["progressValueString"] = "Taking longer than expected.";
-        }
-
-        toast.Data.Values["progressStatus"] = "Building...";
-      }
       return toast;
     }
 

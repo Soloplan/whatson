@@ -363,12 +363,9 @@ namespace Soloplan.WhatsON.GUI
         toast.Activated += this.OnActivated;
         if (statusViewModel.PreviousState == ObservationState.Running && statusViewModel.State != ObservationState.Running)
         {
-          this.toastManager.RemoveConnectorToasts(statusViewModel.Parent,toast);
+          this.toastManager.RemoveRunningConnectorToast(statusViewModel.Parent);
         }
-        else
-        {
-          this.toastManager.DisplayAndRegisterNewToast(statusViewModel.Parent, toast);
-        }
+        this.toastManager.DisplayAndRegisterNewToast(statusViewModel.Parent, toast);
       }
 
       if (sender is StatusViewModel status)

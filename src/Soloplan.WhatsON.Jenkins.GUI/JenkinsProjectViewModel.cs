@@ -61,8 +61,8 @@ namespace Soloplan.WhatsON.Jenkins.GUI
         if (this.CurrentStatus.RawProgress < 100)
         {
           toast.Data.Values["progressValue"] = ((float)this.CurrentStatus.Progress / 100f).ToString().Replace(',', '.');
-          toast.Data.Values["progressValueString"] = "Progress: " + this.CurrentStatus.Progress + "% ETA: " + this.CurrentStatus.EstimatedRemaining.Hours
-          + ":" + this.CurrentStatus.EstimatedRemaining.Minutes + ":" + this.CurrentStatus.EstimatedRemaining.Seconds;
+          toast.Data.Values["progressValueString"] = $"{this.CurrentStatus.Progress} % ETA: {this.CurrentStatus.EstimatedRemaining.Hours}:" +
+            $"{this.CurrentStatus.EstimatedRemaining.Minutes}:{this.CurrentStatus.EstimatedRemaining.Seconds}";
         }
         else
         {
@@ -94,8 +94,8 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       if (this.CurrentStatus.RawProgress < 100)
       {
         data.Values["progressValue"] = ((float)this.CurrentStatus.Progress / 100f).ToString().Replace(',', '.');
-        data.Values["progressValueString"] = "Progress: " + this.CurrentStatus.Progress + "% ETA: " + this.CurrentStatus.EstimatedRemaining.Hours
-        + ":" + this.CurrentStatus.EstimatedRemaining.Minutes + ":" + this.CurrentStatus.EstimatedRemaining.Seconds;
+        data.Values["progressValueString"] = $"{this.CurrentStatus.Progress} % ETA: {this.CurrentStatus.EstimatedRemaining.Hours}:" +
+          $"{this.CurrentStatus.EstimatedRemaining.Minutes}:{this.CurrentStatus.EstimatedRemaining.Seconds}";
       }
       else
       {

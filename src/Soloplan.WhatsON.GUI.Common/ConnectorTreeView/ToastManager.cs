@@ -18,12 +18,17 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private string GroupDefault = "builds";
     private string TagPrefix = "SoloplanWhatsONToast:";
 
+    /// <summary>
+    /// Contains all information necessary to handle toasts.
+    /// </summary>
     private class ToastInfo
     {
       public uint tag;
       public Guid guid;
       public uint sequence;
       public string group;
+      public ToastNotification toast;
+      public Soloplan.WhatsON.Model.ObservationState statusWhenIssued = Soloplan.WhatsON.Model.ObservationState.Unknown;
     }
 
     private Collection<ToastInfo> toasts;
@@ -80,7 +85,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       uint tag = this.GetFirstFreeTag();
       toast.Tag = this.TagPrefix + tag.ToString();
       toast.Group = this.GroupDefault;
-      this.toasts.Add(new ToastInfo { tag = tag, guid = connectorViewModel.Identifier, sequence = 0, group = GroupDefault });
+      this.toasts.Add(new ToastInfo { tag = tag, guid = connectorViewModel.Identifier, sequence = 0, group = GroupDefault, toast = toast, statusWhenIssued = connectorViewModel.CurrentStatus.State });
       toastNotifier.Show(toast);
     }
 
@@ -89,16 +94,18 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     /// <param name="connectorViewModel">Connector that notification concerns.</param>
     /// <param name="toast">Toast of the connector.</param>
-    public void RemoveConnectorToasts(ConnectorViewModel connectorViewModel, ToastNotification toast)
+    public void RemoveRunningConnectorToast(ConnectorViewModel connectorViewModel)
     {
-      foreach (var item in this.toasts)
+      foreach (var item in this.toasts.ToList())
       {
-        if (item.guid == connectorViewModel.Identifier)
+        if (item.guid == connectorViewModel.Identifier && item.statusWhenIssued == Soloplan.WhatsON.Model.ObservationState.Running)
         {
           var toastNotifier = ToastNotificationManager.CreateToastNotifier();
-          toast.Tag = this.TagPrefix + item.tag.ToString();
-          toast.Group = this.GroupDefault;
-          toastNotifier.Hide(toast);
+          item.toast.Tag = this.TagPrefix + item.tag.ToString();
+          item.toast.Group = this.GroupDefault;
+          toastNotifier.Hide(item.toast);
+          this.toasts.Remove(item);
+          break;
         }
       }
     }
