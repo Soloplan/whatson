@@ -767,6 +767,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.model.UpdateSelectedConnectors(this.selectedConnectors);
     }
 
+    ToastManager toastManager = new ToastManager();
     /// <summary>
     /// Defines behaviour when an item is clicked with shift pressed.
     /// </summary>
@@ -785,6 +786,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       {
         connector = (ConnectorViewModel)item.Header;
         this.OnShiftProjectClicked(connector);
+        toastManager.DisplayAndRegisterNewToast(connector,connector.MakeToast(FindConnectorGroup(connector)));
       }
     }
 
