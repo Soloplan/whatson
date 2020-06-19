@@ -357,15 +357,17 @@ namespace Soloplan.WhatsON.GUI
         var connectorConfiguration = this.configuration.ConnectorsConfiguration.FirstOrDefault(s => s.Identifier == statusViewModel.Parent.Identifier);
         var notificationConfiguration = this.configuration.GetNotificationConfiguration(connectorConfiguration);
 
-        ConnectorGroupViewModel connectorGroupViewModel;
-
-        var toast = statusViewModel.Parent.MakeToast(this.mainWindow.mainTreeView.FindConnectorGroup(statusViewModel.Parent));
-        toast.Activated += this.OnActivated;
-        if (statusViewModel.PreviousState == ObservationState.Running && statusViewModel.State != ObservationState.Running)
+        if (this.CheckNotificationShow(statusViewModel,statusViewModel.State,notificationConfiguration))
         {
-          this.toastManager.RemoveRunningConnectorToast(statusViewModel.Parent);
+          var toast = statusViewModel.Parent.MakeToast(this.mainWindow.mainTreeView.FindConnectorGroup(statusViewModel.Parent));
+          toast.Activated += this.OnActivated;
+          if (statusViewModel.PreviousState == ObservationState.Running && statusViewModel.State != ObservationState.Running)
+          {
+            this.toastManager.RemoveRunningConnectorToast(statusViewModel.Parent);
+          }
+
+          this.toastManager.DisplayAndRegisterNewToast(statusViewModel.Parent, toast);
         }
-        this.toastManager.DisplayAndRegisterNewToast(statusViewModel.Parent, toast);
       }
 
       if (sender is StatusViewModel status)
