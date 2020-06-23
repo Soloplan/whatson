@@ -506,7 +506,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       return sortedConnectors;
     }
 
-    ToastManager toastManager = new ToastManager();
     /// <summary>
     /// Function determines behaviour after a connector in the tree was clicked with control pressed. It enables to toggle selection of a given connector.
     /// </summary>
@@ -524,40 +523,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       else
       {
         this.SelectConnector(connector);
-      }
-    }
-
-    private void Toast_Activated(ToastNotification sender, object e)
-    {
-      var y = 20;
-      if (e is Windows.UI.Notifications.ToastActivatedEventArgs args)
-      {
-        string identifier = args.Arguments.Split('=')[1];
-        if (args.Arguments.Split('=')[0] == "openpage")
-        {
-          //var connector = this.mainWindow.mainTreeView.GetConnectorWithIdentifier(identifier);
-          //connector.OpenWebPage.Execute(connector.Url);
-        }
-        else if (args.Arguments.Split('=')[0] == "connector")
-        {
-          try
-          {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-              Application.Current.MainWindow.Visibility = System.Windows.Visibility.Visible;
-              Application.Current.MainWindow.Activate();
-              Application.Current.MainWindow.Show();
-              Application.Current.MainWindow.Focus();
-              var topmost = Application.Current.MainWindow.Topmost;
-              Application.Current.MainWindow.Topmost = true;
-              Application.Current.MainWindow.Topmost = topmost;
-              //this.mainWindow.mainTreeView.FocusItem(this.mainWindow.mainTreeView.GetConnectorWithIdentifier(identifier));
-            });
-          }
-          catch (Exception ex)
-          {
-          }
-        }
       }
     }
 
