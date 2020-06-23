@@ -506,6 +506,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       return sortedConnectors;
     }
 
+    ToastManager toastManager = new ToastManager();
     /// <summary>
     /// Function determines behaviour after a connector in the tree was clicked with control pressed. It enables to toggle selection of a given connector.
     /// </summary>
@@ -516,10 +517,43 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       if (this.IsConnectorSelected(connector))
       {
         this.DeselectConnector(connector);
+        var toast = connector.MakeToast();
+        toast.Activated += Toast_Activated;
+        toastManager.DisplayAndRegisterNewToast(connector, toast);
       }
       else
       {
         this.SelectConnector(connector);
+      }
+    }
+
+    private void Toast_Activated(ToastNotification sender, object e)
+    {
+      var y = 20;
+      if (e is Windows.UI.Notifications.ToastActivatedEventArgs args)
+      {
+        string identifier = args.Arguments.Split('=')[1];
+        if (args.Arguments.Split('=')[0] == "openpage")
+        {
+          //var connector = this.mainWindow.mainTreeView.GetConnectorWithIdentifier(identifier);
+          //connector.OpenWebPage.Execute(connector.Url);
+        }
+        else if (args.Arguments.Split('=')[0] == "connector")
+        {
+          try
+          {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+              Application.Current.MainWindow.Visibility = System.Windows.Visibility.Visible;
+              Application.Current.MainWindow.Activate();
+              Application.Current.MainWindow.Show();
+              //this.mainWindow.mainTreeView.FocusItem(this.mainWindow.mainTreeView.GetConnectorWithIdentifier(identifier));
+            });
+          }
+          catch (Exception ex)
+          {
+          }
+        }
       }
     }
 
@@ -767,7 +801,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.model.UpdateSelectedConnectors(this.selectedConnectors);
     }
 
-    ToastManager toastManager = new ToastManager();
+
     /// <summary>
     /// Defines behaviour when an item is clicked with shift pressed.
     /// </summary>
@@ -785,8 +819,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       if (item.Header is ConnectorViewModel)
       {
         connector = (ConnectorViewModel)item.Header;
-        this.OnShiftProjectClicked(connector);
-        toastManager.DisplayAndRegisterNewToast(connector,connector.MakeToast(FindConnectorGroup(connector)));
       }
     }
 
