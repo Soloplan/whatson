@@ -547,6 +547,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
               Application.Current.MainWindow.Visibility = System.Windows.Visibility.Visible;
               Application.Current.MainWindow.Activate();
               Application.Current.MainWindow.Show();
+              Application.Current.MainWindow.Focus();
+              var topmost = Application.Current.MainWindow.Topmost;
+              Application.Current.MainWindow.Topmost = true;
+              Application.Current.MainWindow.Topmost = topmost;
               //this.mainWindow.mainTreeView.FocusItem(this.mainWindow.mainTreeView.GetConnectorWithIdentifier(identifier));
             });
           }
