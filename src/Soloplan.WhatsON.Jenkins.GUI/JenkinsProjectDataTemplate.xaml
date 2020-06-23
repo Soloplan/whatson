@@ -78,6 +78,9 @@
       <DockPanel>
         <TextBlock />
       </DockPanel>
-    </DockPanel>
+      <DockPanel.ToolTip>
+        <TextBlock Text="{Binding Description}"></TextBlock>
+      </DockPanel.ToolTip>
+        </DockPanel>
   </DataTemplate>
 </ResourceDictionary>

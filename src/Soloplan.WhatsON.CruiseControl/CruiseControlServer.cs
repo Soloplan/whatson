@@ -124,9 +124,9 @@ namespace Soloplan.WhatsON.CruiseControl
 
     public static class UrlHelper
     {
-      public static string GetReportUrl(string baseUrl, string project)
+      public static string GetReportUrl(string baseUrl, string project=null)
       {
-        return $"{SanitizeBaseUri(baseUrl)}/project/{Uri.EscapeDataString(project)}/ViewProjectReport.aspx";
+        return $"{SanitizeBaseUri(baseUrl)}"+(project!=null?$"/project/{Uri.EscapeDataString(project)}/ViewProjectReport.aspx":string.Empty);
       }
 
       public static string GetXmlReportUrl(string baseUrl)

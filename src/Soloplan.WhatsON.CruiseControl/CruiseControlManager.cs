@@ -25,7 +25,10 @@ namespace Soloplan.WhatsON.CruiseControl
       server = new CruiseControlServer(uri.AbsoluteUri);
       if (addToCache)
       {
-        servers[uri] = server;
+        if(server!=null)
+        {
+          servers[uri] = server;
+        }
       }
 
       return server;

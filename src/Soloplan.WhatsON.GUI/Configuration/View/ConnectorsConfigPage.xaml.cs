@@ -316,9 +316,42 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
             newConnector.Load(null);
             newConnector.GetConfigurationByKey(Connector.ProjectName).Value = selectedProject.FullName;
             newConnector.GetConfigurationByKey(Connector.ServerAddress).Value = !string.IsNullOrWhiteSpace(wizardController.ProposedServerAddress) ? new Uri(wizardController.ProposedServerAddress).AbsoluteUri : string.Empty;
+            newConnector.GetConfigurationByKey(Connector.DirectAddress).Value = selectedProject.DirectAddress;
             this.Connectors.Add(newConnector);
             this.CurrentConnector = newConnector;
           }
+        }
+      }
+    }
+
+    public void OnConfigurationIsModified()
+    {
+      ConfigWindow configWindow = (ConfigWindow)this.ownerWindow;
+      if (configWindow == null)
+      {
+        return;
+      }
+
+      if (configWindow.ConfigurationViewModel.ConfigurationIsModified==false)
+      {
+        if (this.AddButton != null) 
+        { 
+            this.AddButton.IsEnabled = true; 
+        }
+        if (this.WizardButton != null) 
+        { 
+            this.WizardButton.IsEnabled = true; 
+        }
+      }
+      else
+      {
+        if (this.AddButton != null) 
+        { 
+            this.AddButton.IsEnabled = false; 
+        }
+        if (this.WizardButton != null) 
+        { 
+            this.WizardButton.IsEnabled = false; 
         }
       }
     }

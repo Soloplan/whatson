@@ -27,6 +27,7 @@
                   VerticalAlignment="Center"
                   Orientation="Vertical">
         <ComboBox materialDesign:HintAssist.Hint="Type"
+                  DisplayMemberPath="DisplayName"
                   ItemsSource="{Binding AvailableConnectorTypes}"
                   SelectedItem="{Binding SelectedConnectorType}"
                   Style="{StaticResource MaterialDesignFloatingHintComboBox}" />
