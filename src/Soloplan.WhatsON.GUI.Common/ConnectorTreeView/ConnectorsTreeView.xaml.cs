@@ -388,7 +388,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorGroupViewModel);
       var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(connectorViewModel)
         ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorViewModel);
-      this.ResetStyle(ref treeViewItemInGroup);
+      if (treeViewItemInGroup != null)
+      {
+        this.ResetStyle(ref treeViewItemInGroup);
+      }
     }
 
     /// <summary>
@@ -401,7 +404,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorGroupViewModel);
       var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(connectorViewModel)
         ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorViewModel);
-      this.SetStyle(ref treeViewItemInGroup);
+      if (treeViewItemInGroup != null)
+      {
+        this.SetStyle(ref treeViewItemInGroup);
+      }
     }
 
     /// <summary>
@@ -862,6 +868,39 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         else
         {
           this.DeselectAllConnectors();
+        }
+      }
+    }
+    
+    /// <summary>
+    /// Handles scrolling event. Becuse of item virtualization it is necessary to refresh displayed item styles in code behind, because virtual items are null pointers when not seen.
+    /// </summary>
+    /// <param name="sender">Sender object.</param>
+    /// <param name="e">Args.</param>
+    private void OnScroll(object sender, ScrollChangedEventArgs e)
+    {
+      if (this.model == null)
+      {
+        return;
+      }
+
+      if (this.model.ConnectorGroups == null)
+      {
+        return;
+      }
+
+      foreach (var group in this.model.ConnectorGroups)
+      {
+        foreach (var item in group.ConnectorViewModels)
+        {
+          if (this.IsConnectorSelected(item))
+          {
+            this.SetConnectorStyle(item);
+          }
+          else if (!this.IsConnectorSelected(item))
+          {
+            this.ResetConnectorStyle(item);
+          }
         }
       }
     }

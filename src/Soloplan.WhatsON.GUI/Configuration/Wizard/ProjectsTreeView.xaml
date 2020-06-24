@@ -67,7 +67,8 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <TreeView Name="mainTreeView" ItemsSource="{Binding}">
+    <TreeView Name="mainTreeView" ItemsSource="{Binding}"
+              VirtualizingPanel.IsVirtualizing="True">
         <TreeView.ItemContainerStyle>
             <Style BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="{x:Type TreeViewItem}">
                 <Setter Property="IsExpanded" Value="True" />
