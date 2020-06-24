@@ -10,6 +10,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
   using System.Diagnostics;
   using System.Windows;
   using System.Windows.Controls;
+  using System.Windows.Input;
   using System.Windows.Navigation;
 
   /// <summary>
@@ -62,6 +63,52 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     {
       Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
       e.Handled = true;
+    }
+
+    /// <summary>
+    /// Checks if all projects are checked.
+    /// </summary>
+    /// <returns>Bool = true if all projects are checked. </returns>
+    private bool AreAllProjectsChecked()
+    {
+      foreach (var item in this.mainTreeView.Items)
+      {
+        var project = (ProjectViewModel)item;
+        if (!project.IsChecked)
+        {
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    /// <summary>
+    /// Handles keydown in wizard projects tree view.
+    /// </summary>
+    /// <param name="sender">Sender item.</param>
+    /// <param name="e">Event args.</param>
+    private void ProjectsTreeViewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+    {
+      if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.A))
+      {
+        if (!this.AreAllProjectsChecked())
+        {
+          foreach (var item in this.mainTreeView.Items)
+          {
+            var project = (ProjectViewModel)item;
+            project.IsChecked = true;
+          }
+        }
+        else
+        {
+          foreach (var item in this.mainTreeView.Items)
+          {
+            var project = (ProjectViewModel)item;
+            project.IsChecked = false;
+          }
+        }
+      }
     }
   }
 }
