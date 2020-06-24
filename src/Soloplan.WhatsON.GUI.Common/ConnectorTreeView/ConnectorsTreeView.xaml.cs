@@ -871,7 +871,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         }
       }
     }
-
+    
     /// <summary>
     /// Handles scrolling event. Becuse of item virtualization it is necessary to refresh displayed item styles in code behind, because virtual items are null pointers when not seen.
     /// </summary>
