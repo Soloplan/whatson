@@ -516,9 +516,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       if (this.IsConnectorSelected(connector))
       {
         this.DeselectConnector(connector);
-        var toast = connector.MakeToast();
-        toast.Activated += Toast_Activated;
-        toastManager.DisplayAndRegisterNewToast(connector, toast);
       }
       else
       {
