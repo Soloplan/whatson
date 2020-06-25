@@ -8,6 +8,7 @@
 namespace Soloplan.WhatsON.GUI.Configuration.View
 {
   using System;
+  using System.ComponentModel;
   using System.Linq;
   using System.Windows;
   using System.Windows.Controls;
@@ -42,6 +43,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// The configuration view model.
     /// </summary>
     private readonly ConfigViewModel configurationViewModel = new ConfigViewModel();
+
+    public ConfigViewModel ConfigurationViewModel
+    {
+            get { return configurationViewModel; }
+    }
 
     /// <summary>
     /// The connector which should be focused during initialization.
@@ -246,6 +252,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
       if (e.PropertyName == nameof(this.configurationViewModel.SingleConnectorMode))
       {
         this.connectorPage.SingleConnectorMode = this.configurationViewModel.SingleConnectorMode;
+      }
+
+      if (e.PropertyName == nameof(this.ConfigurationViewModel.ConfigurationIsModified))
+      {
+        this.connectorPage.OnConfigurationIsModified();
       }
     }
 

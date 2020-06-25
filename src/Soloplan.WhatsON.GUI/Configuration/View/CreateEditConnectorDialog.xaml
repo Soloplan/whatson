@@ -16,7 +16,7 @@
               Height="28"
               Margin="0,8,0,10"
               Cursor="Hand"
-              DisplayMemberPath="Name"
+              DisplayMemberPath="DisplayName"
               ItemsSource="{Binding Path=ConnectorPlugins, Source={x:Static whatsOn:PluginManager.Instance}}" />
     <TextBox x:Name="uxEditConnectorName"
              Margin="0,8,0,0"

@@ -223,6 +223,62 @@ namespace Soloplan.WhatsON
     private void HandleConfigurationErrors(ApplicationConfiguration appConfiguration)
     {
       this.CheckConnectorsConfigurationDoNotContainNull(appConfiguration);
+      this.HandleOlderConfigurationFiles(appConfiguration);
+    }
+
+    /// <summary>
+    /// Handles incorrectly loading CC connectors.
+    /// </summary>
+    /// <param name="applicationConfiguration">Application configuration to check for errors.</param>
+    /// <returns>True if made changes, false if no changes made. Changes made implies that configuration was incorrect.</returns>
+    private bool HandleCruiseControlNewProperties(ApplicationConfiguration applicationConfiguration)
+    {
+      bool changesMade = false;
+      foreach (var connector in applicationConfiguration.ConnectorsConfiguration)
+      {
+        if (connector.Type == "CruiseControl")
+        {
+          bool hasDirectAddress = false;
+          string address = string.Empty;
+          foreach (var item in connector.ConfigurationItems)
+          {
+            if (item.Key == "DirectAddress")
+            {
+              hasDirectAddress = true;
+            }
+
+            if (item.Key == "Address")
+            {
+              address = item.Value;
+            }
+          }
+
+          if (!hasDirectAddress)
+          {
+            connector.ConfigurationItems.Add(new ConfigurationItem("DirectAddress", address));
+            changesMade = true;
+            foreach (var item in connector.ConfigurationItems)
+            {
+              if (item.Key == "Address")
+              {
+                item.Value = address.Split(new string[] { "server/" }, StringSplitOptions.None)[0];
+              }
+            }
+          }
+        }
+      }
+
+      return changesMade;
+    }
+
+    /// <summary>
+    /// Checks if configuration is old/deprecated and calls functions that make changes to those config versions.
+    /// </summary>
+    /// <param name="applicationConfiguration">Configuration to be checked.</param>
+    private void HandleOlderConfigurationFiles(ApplicationConfiguration applicationConfiguration)
+    {
+      this.HandleCruiseControlNewProperties(applicationConfiguration);
+      return;
     }
 
     /// <summary>

@@ -9,12 +9,16 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
   using System;
   using System.Collections.Generic;
+  using System.Runtime.CompilerServices;
+  using System.ServiceModel.Configuration;
   using System.Threading.Tasks;
   using System.Windows.Input;
 
   public abstract class TreeItemViewModel : NotifyPropertyChanged, IHandleDoubleClick
   {
     private bool isNodeExpanded;
+
+    public bool isOnlyOneSelected = true;
 
     /// <summary>
     /// Backing field for <see cref="EditCommand"/>.
@@ -118,6 +122,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <param name="eventArgs">Arguments containing data about edited item.</param>
     protected virtual void OnEditItem(object sender, EditTreeItemViewModelEventArgs eventArgs)
     {
+      if (this.isOnlyOneSelected == false)
+      {
+        return;
+      }
+
       this.EditItem?.Invoke(sender, eventArgs);
     }
 
@@ -149,6 +158,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       var command = new CustomCommand();
       command.OnExecute += (s, e) => this.OnEditItem(this, new EditTreeItemViewModelEventArgs { Model = this, EditType = EditType.Edit });
+      command.CanExecuteExternal += (s, e) => { e.Cancel = !this.isOnlyOneSelected; };
       return command;
     }
 
@@ -156,6 +166,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       var command = new CustomCommand();
       command.OnExecute += (s,e )=> this.OnEditItem(this, new EditTreeItemViewModelEventArgs { Model = this, EditType = EditType.Rename });
+      command.CanExecuteExternal += (s, e) => { e.Cancel = !this.isOnlyOneSelected; };
       return command;
     }
 
@@ -167,6 +178,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       var command = new CustomCommand();
       command.OnExecute += (s, e) => this.OnExportItem(this, new ValueEventArgs<TreeItemViewModel>(this));
+      command.CanExecuteExternal += (s, e) => { e.Cancel = !this.isOnlyOneSelected; };
       return command;
     }
 
@@ -217,6 +229,21 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// Prevents re-using class for multiple event calls.
     /// </summary>
     private bool used;
+
+    /// <summary>
+    /// Indicates if there are no other selected connectots.
+    /// </summary>
+    ///
+    private bool noOtherSelection = true;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether there are no other selected connectots.
+    /// </summary>
+    public bool NoOtherSelections
+    {
+      get { return noOtherSelection; }
+      set { noOtherSelection = value; }
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DeleteTreeItemEventArgs"/> class.

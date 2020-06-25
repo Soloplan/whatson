@@ -11,6 +11,7 @@ namespace Soloplan.WhatsON.GUI.Common
   using System.ComponentModel;
   using System.Windows.Input;
   using NLog;
+  using NLog.Time;
 
   public abstract class ExternalEnabledStateCommand : ICommand
   {

@@ -18,16 +18,18 @@ namespace Soloplan.WhatsON.Jenkins
   using Soloplan.WhatsON.Jenkins.Model;
   using Soloplan.WhatsON.Model;
 
-  [ConnectorType(ConnectorName, Description = "Retrieve the current status of a Jenkins project.")]
+  [ConnectorType(ConnectorName, ConnectorDisplayName, Description = "Retrieve the current status of a Jenkins project.")]
   [ConfigurationItem(RedirectPlugin, typeof(bool), Priority = 400)] // defines use of Display URL API Plugin https://wiki.jenkins.io/display/JENKINS/Display+URL+API+Plugin
   [NotificationConfigurationItem(NotificationsVisbility, typeof(ConnectorNotificationConfiguration), Priority = 1600000000)]
   public class JenkinsConnector : Connector
   {
     public const string ConnectorName = "Jenkins";
 
-    /// <summary>
-    /// The redirect plugin tag.
-    /// </summary>
+    public const string ConnectorDisplayName = "Jenkins";
+
+        /// <summary>
+        /// The redirect plugin tag.
+        /// </summary>
     public const string RedirectPlugin = "RedirectPlugin";
 
     private const long TicksInMillisecond = 10000;

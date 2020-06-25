@@ -15,22 +15,23 @@
   </ToolTip>
 
   <DataTemplate DataType="{x:Type local:CruiseControlProjectViewModel}">
-    <DockPanel Width="Auto" ContextMenu="{DynamicResource BuildServerProjectContextMenu}">
-      <buildServer:BuildInformationIconControl DataContext="{Binding CurrentStatus}"
+        <DockPanel Width="Auto" ContextMenu="{DynamicResource BuildServerProjectContextMenu}">
+            <buildServer:BuildInformationIconControl DataContext="{Binding CurrentStatus}"
                                                DockPanel.Dock="Left"
                                                ToolTip="{StaticResource CruiseControlBuildInfoToolTip}" />
-      <buildServer:BuildNumberControl Margin="5,0,0,0"
+            <buildServer:BuildNumberControl Margin="5,0,0,0"
                                       VerticalAlignment="Center"
                                       BuildNumber="{Binding DataContext.CurrentStatus.BuildNumber, RelativeSource={RelativeSource AncestorType=DockPanel}}" />
-      <TextBlock MinWidth="150"
+            <TextBlock MinWidth="150"
                  MaxWidth="250"
                  Margin="5,0,0,0"
                  FontSize="{Binding DataContext.FontSize, Mode=OneWay, RelativeSource={RelativeSource AncestorType=connectorTreeView:ConnectorsTreeView}}"
                  FontWeight="Normal"
                  Text="{Binding Name}"
-                 TextTrimming="CharacterEllipsis" />
-      <buildServer:HistoryBuildList DataContext="{Binding ConnectorSnapshots, Mode=OneWay}" DockPanel.Dock="Right" />
-      <TextBlock Margin="5,0,10,0"
+                 TextTrimming="CharacterEllipsis">
+            </TextBlock>
+            <buildServer:HistoryBuildList DataContext="{Binding ConnectorSnapshots, Mode=OneWay}" DockPanel.Dock="Right" />
+            <TextBlock Margin="5,0,10,0"
                  HorizontalAlignment="Right"
                  VerticalAlignment="Center"
                  DockPanel.Dock="Right"
@@ -38,6 +39,9 @@
                  FontWeight="Normal"
                  Text="{Binding CurrentStatus.FinishTime, Converter={StaticResource TimeToApproximateTimeConverter}}"
                  Visibility="{Binding CurrentStatus.FinishTime, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
-    </DockPanel>
-  </DataTemplate>
+            <DockPanel.ToolTip>
+                <TextBlock Text="{Binding Description}"></TextBlock>
+            </DockPanel.ToolTip>
+        </DockPanel>
+    </DataTemplate>
 </ResourceDictionary>

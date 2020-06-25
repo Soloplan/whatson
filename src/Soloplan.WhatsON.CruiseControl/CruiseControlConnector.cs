@@ -18,11 +18,13 @@ namespace Soloplan.WhatsON.CruiseControl
   using Soloplan.WhatsON.CruiseControl.Model;
   using Soloplan.WhatsON.Model;
 
-  [ConnectorType(ConnectorName, Description = "Retrieve the current status of a Cruise Control project.")]
+  [ConnectorType(ConnectorName, ConnectorDisplayName, Description = "Retrieve the current status of a Cruise Control project.")]
   [NotificationConfigurationItem(NotificationsVisbility, typeof(ConnectorNotificationConfiguration), SupportsUnstableNotify = false, Priority = 1600000000)]
   public class CruiseControlConnector : Connector
   {
     public const string ConnectorName = "CruiseControl";
+
+    public const string ConnectorDisplayName = "Cruise Control.Net";
 
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
@@ -35,7 +37,7 @@ namespace Soloplan.WhatsON.CruiseControl
 
     protected override async Task<Status> GetCurrentStatus(CancellationToken cancellationToken)
     {
-      var server = CruiseControlManager.GetServer(this.Address);
+      var server = CruiseControlManager.GetServer(this.directAddress);
       var projectData = await server.GetProjectStatus(cancellationToken, this.Project, 5);
       if (projectData == null)
       {
@@ -48,7 +50,7 @@ namespace Soloplan.WhatsON.CruiseControl
 
     protected override async Task<List<Status>> GetHistory(CancellationToken cancellationToken)
     {
-      var server = CruiseControlManager.GetServer(this.Address);
+      var server = CruiseControlManager.GetServer(this.directAddress);
       var history = new List<Status>();
 
       var builds = await server.GetBuilds(this.Project);

@@ -27,12 +27,15 @@ namespace Soloplan.WhatsON.Composition
       }
 
       this.Name = connectorTypeAttribute.Name;
+      this.DisplayName = connectorTypeAttribute.DisplayName;
       this.Description = connectorTypeAttribute.Description;
     }
 
     public Type ConnectorType { get; }
 
     public string Name { get; }
+
+    public string DisplayName { get; }
 
     public string Description { get; }
 
@@ -44,7 +47,7 @@ namespace Soloplan.WhatsON.Composition
     /// <param name="project">The server project.</param>
     /// <param name="configurationItemsSupport">The configuration items provider.</param>
     /// <param name="serverAddress">The server address.</param>
-    public abstract void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress);
+    public abstract void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress=null);
 
     /// <summary>
     /// Gets the projects.

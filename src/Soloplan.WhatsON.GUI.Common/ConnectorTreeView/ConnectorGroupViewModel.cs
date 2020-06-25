@@ -400,11 +400,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       if (e.DeleteItem is ConnectorViewModel model)
       {
         this.OnDeleteItem(this, e);
-        var canceled = await e.CheckCanceled();
-        if (!canceled && this.ConnectorViewModels.Remove(model))
-        {
-          this.OnConfigurationChanged(this, EventArgs.Empty);
-        }
       }
     }
   }
