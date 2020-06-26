@@ -653,6 +653,33 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
+    /// <summary>
+    /// Performs a deletion of a connector.
+    /// </summary>
+    private void DeleteConnector(ConnectorViewModel connectorViewModel)
+    {
+      bool madeChanges = false;
+      foreach (var connectorGroup in this.connectorGroups.ToList())
+      {
+        foreach (var connector in connectorGroup.ConnectorViewModels.ToList())
+        {
+          if (connectorViewModel.Identifier == connector.Identifier)
+          {
+            connectorGroup.ConnectorViewModels.Remove(connectorViewModel);
+            madeChanges = true;
+          }
+        }
+      }
+
+      this.ClearEmptyGroups();
+
+      if (madeChanges)
+      {
+        this.OnConfigurationChanged(this, EventArgs.Empty);
+        this.FireOneGroupChanged();
+      }
+    }
+
     public async void DeleteGroup(object sender, DeleteTreeItemEventArgs e)
     {
       if (e.DeleteItem is ConnectorViewModel clickedConnector)
@@ -670,6 +697,12 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         var canceled = await e.CheckCanceled();
         if (!canceled)
         {
+          if (selectedConnectors.Count == 0)
+          {
+            this.DeleteConnector(clickedConnector);
+            return;
+          }
+
           this.DeleteSelectedConnectors();
         }
 
