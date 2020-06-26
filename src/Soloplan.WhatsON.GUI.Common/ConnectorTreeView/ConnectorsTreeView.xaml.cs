@@ -968,39 +968,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
-    /// <summary>
-    /// Defines behavoiour when RMB is used.
-    /// </summary>
-    /// <param name="sender">sender item.</param>
-    /// <param name="e">event args.</param>
-    private void OnTreeItemRightMouseDown(object sender, MouseButtonEventArgs e)
-    {
-      TreeViewItem item = (TreeViewItem)sender;
-      try
-      {
-        var connector = new ConnectorViewModel();
-        if (item == null)
-        {
-          return;
-        }
-
-        connector = (ConnectorViewModel)item.Header;
-        foreach (var selectedItem in this.selectedConnectors)
-        {
-          if (selectedItem.Identifier == connector.Identifier)
-          {
-            return;
-          }
-        }
-      }
-      catch
-      {
-        return;
-      }
-
-      this.DeselectAllConnectors();
-      this.model.UpdateSelectedConnectors(this.selectedConnectors);
-    }
 
     /// <summary>
     /// Handles scrolling event. Becuse of item virtualization it is necessary to refresh displayed item styles in code behind, because virtual items are null pointers when not seen.
