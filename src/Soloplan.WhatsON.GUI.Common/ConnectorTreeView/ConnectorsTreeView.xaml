@@ -195,7 +195,7 @@
       </DataTemplate>
     </ResourceDictionary>
   </UserControl.Resources>
-    <ScrollViewer Name="mainScrollViewer">
+    <ScrollViewer Name="mainScrollViewer" VirtualizingPanel.IsVirtualizing="True">
         <TreeView Name="mainTreeView"
             HorizontalContentAlignment="Stretch"
             dd:DragDrop.DropHandler="{Binding}"
