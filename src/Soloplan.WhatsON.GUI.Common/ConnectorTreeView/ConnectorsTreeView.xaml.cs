@@ -28,8 +28,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.Model;
-  using Windows.Networking.Sockets;
-  using Windows.UI.Notifications;
 
   /// <summary>
   /// Interaction logic for ConnectorsTreeView.xaml.
@@ -172,7 +170,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
             {
               groupViewModel.IsNodeExpanded = true;
               treeViewItem.IsSelected = true;
-              var scrollViewer = this.mainTreeView.Template.FindName("ScrollViewer", this.mainTreeView) as ScrollViewer;
             }
           }
         }
@@ -198,9 +195,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
             {
               groupViewModel.IsNodeExpanded = true;
               this.SetConnectorStyle(connector);
-              var offset = treeViewItem.TransformToAncestor(this.mainTreeView).Transform(new Point(0.0, 0.0));
-              this.mainScrollViewer.ScrollToVerticalOffset(offset.Y - (this.RenderSize.Height / 2) + (treeViewItem.RenderSize.Height / 2));
-              this.BeginBlinkAnimation(ref treeViewItem);
             }
           }
         }
@@ -968,40 +962,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
           this.DeselectAllConnectors();
         }
       }
-    }
-
-    /// <summary>
-    /// Defines behavoiour when RMB is used.
-    /// </summary>
-    /// <param name="sender">sender item.</param>
-    /// <param name="e">event args.</param>
-    private void OnTreeItemRightMouseDown(object sender, MouseButtonEventArgs e)
-    {
-      TreeViewItem item = (TreeViewItem)sender;
-      try
-      {
-        var connector = new ConnectorViewModel();
-        if (item == null)
-        {
-          return;
-        }
-
-        connector = (ConnectorViewModel)item.Header;
-        foreach (var selectedItem in this.selectedConnectors)
-        {
-          if (selectedItem.Identifier == connector.Identifier)
-          {
-            return;
-          }
-        }
-      }
-      catch
-      {
-        return;
-      }
-
-      this.DeselectAllConnectors();
-      this.model.UpdateSelectedConnectors(this.selectedConnectors);
     }
 
     /// <summary>
