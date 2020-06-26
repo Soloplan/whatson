@@ -871,38 +871,5 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         }
       }
     }
-    
-    /// <summary>
-    /// Handles scrolling event. Becuse of item virtualization it is necessary to refresh displayed item styles in code behind, because virtual items are null pointers when not seen.
-    /// </summary>
-    /// <param name="sender">Sender object.</param>
-    /// <param name="e">Args.</param>
-    private void OnScroll(object sender, ScrollChangedEventArgs e)
-    {
-      if (this.model == null)
-      {
-        return;
-      }
-
-      if (this.model.ConnectorGroups == null)
-      {
-        return;
-      }
-
-      foreach (var group in this.model.ConnectorGroups)
-      {
-        foreach (var item in group.ConnectorViewModels)
-        {
-          if (this.IsConnectorSelected(item))
-          {
-            this.SetConnectorStyle(item);
-          }
-          else if (!this.IsConnectorSelected(item))
-          {
-            this.ResetConnectorStyle(item);
-          }
-        }
-      }
-    }
   }
 }
