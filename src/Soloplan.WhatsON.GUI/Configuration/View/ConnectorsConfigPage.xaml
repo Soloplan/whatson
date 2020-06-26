@@ -25,6 +25,10 @@
   </Page.Resources>
 
   <materialDesign:DialogHost Identifier="ConnectorsConfigPageHost">
+    <materialDesign:DialogHost.Style>
+      <Style BasedOn="{StaticResource MaterialDesignEmbeddedDialogHost}" TargetType="{x:Type materialDesign:DialogHost}">
+      </Style>
+    </materialDesign:DialogHost.Style>
     <Grid Margin="0">
       <materialDesign:PopupBox Width="56"
                                Margin="0,0,25,10"
@@ -39,21 +43,21 @@
           <materialDesign:PackIcon Kind="DotsHorizontal" />
         </materialDesign:PopupBox.ToggleContent>
         <StackPanel>
-          <Button Click="DeleteConnectorClick" ToolTip="Delete project">
+          <Button Name="DeleteButton" Click="DeleteConnectorClick" ToolTip="Delete project">
             <materialDesign:PackIcon Width="24"
                                      Height="24"
                                      Kind="RemoveCircle"
                                      Foreground="White"/>
           </Button>
 
-          <Button Click="RenameConnectorClick" ToolTip="Rename project">
+          <Button Name="RenameButtton" Click="RenameConnectorClick" ToolTip="Rename project">
             <materialDesign:PackIcon Width="24"
                                      Height="24"
                                      Kind="Edit" 
                                      Foreground="White"/>
           </Button>
 
-          <Button Click="AddConnectorClick" ToolTip="Add project manually">
+          <Button Name="AddButton" Click="AddConnectorClick" ToolTip="Add project manually">
             <materialDesign:PackIcon Width="24"
                                      Height="24"
                                      Kind="Add" 
@@ -95,7 +99,8 @@
           </materialDesign:ColorZone>
         </StackPanel>
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
-          <Button Height="30"
+          <Button Name="WizardButton"
+                  Height="30"
                   Margin="8,0,0,1"
                   Click="NewInWizardClick"
                   Visibility="{Binding Path=SingleConnectorMode, Converter={StaticResource InvertBoolToVis}}">

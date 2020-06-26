@@ -384,6 +384,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       var style = this.FindResource("MaterialDesignBackground");
       treeViewItem.Foreground = this.InvertColor(style.ToString());
+
       treeViewItem.BeginAnimation(TreeViewItem.OpacityProperty, null);
       treeViewItem.IsSelected = false;
     }
@@ -397,18 +398,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       animation.AutoReverse = true;
       animation.RepeatBehavior = new RepeatBehavior(TimeSpan.FromSeconds(3.0d));
       treeViewItem.BeginAnimation(TreeViewItem.OpacityProperty, animation);
-      animation.Completed += BlinkAnimationCompleted;
+
     }
 
-    /// <summary>
-    /// On Animation completed event handler.
-    /// </summary>
-    /// <param name="sender">Sender item.</param>
-    /// <param name="e">Event args.</param>
-    private void BlinkAnimationCompleted(object sender, EventArgs e)
-    {
-      throw new NotImplementedException();
-    }
+
 
     /// <summary>
     /// Sets style for a tree view item.
@@ -465,7 +458,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorGroupViewModel);
       var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(connectorViewModel)
         ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorViewModel);
-      this.ResetStyle(ref treeViewItemInGroup);
+      if (treeViewItemInGroup != null)
+      {
+        this.ResetStyle(ref treeViewItemInGroup);
+      }
     }
 
     /// <summary>
@@ -479,6 +475,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(connectorViewModel)
         ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorViewModel);
       this.SetStyle(ref treeViewItemInGroup);
+      if (treeViewItemInGroup != null)
+      {
+        this.SetStyle(ref treeViewItemInGroup);
+      }
     }
 
     /// <summary>
@@ -512,7 +512,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <param name="connector">Clicked connector.</param>
     private void OnCtrlProjectClicked(ConnectorViewModel connector)
     {
-
       if (this.IsConnectorSelected(connector))
       {
         this.DeselectConnector(connector);
@@ -645,6 +644,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       return isAlreadyAdded;
     }
 
+
     public ConnectorGroupViewModel FindConnectorGroup(ConnectorViewModel connectorViewModel)
     {
       foreach (var group in this.model.ConnectorGroups)
@@ -767,7 +767,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.model.UpdateSelectedConnectors(this.selectedConnectors);
     }
 
-
     /// <summary>
     /// Defines behaviour when an item is clicked with shift pressed.
     /// </summary>
@@ -785,6 +784,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       if (item.Header is ConnectorViewModel)
       {
         connector = (ConnectorViewModel)item.Header;
+        this.OnShiftProjectClicked(connector);
       }
     }
 
@@ -878,8 +878,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
           }
         }
       }
-
-
       this.model.UpdateSelectedConnectors(this.selectedConnectors);
     }
 
@@ -920,6 +918,39 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
+    /// <summary>
+    /// Defines behavoiour when RMB is used.
+    /// </summary>
+    /// <param name="sender">sender item.</param>
+    /// <param name="e">event args.</param>
+    private void OnTreeItemRightMouseDown(object sender, MouseButtonEventArgs e)
+    {
+      TreeViewItem item = (TreeViewItem)sender;
+      try
+      {
+        var connector = new ConnectorViewModel();
+        if (item == null)
+        {
+          return;
+        }
+
+        connector = (ConnectorViewModel)item.Header;
+        foreach (var selectedItem in this.selectedConnectors)
+        {
+          if (selectedItem.Identifier == connector.Identifier)
+          {
+            return;
+          }
+        }
+      }
+      catch
+      {
+        return;
+      }
+
+      this.DeselectAllConnectors();
+      this.model.UpdateSelectedConnectors(this.selectedConnectors);
+    }
 
     /// <summary>
     /// Event handler for key down event.
@@ -937,6 +968,39 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         else
         {
           this.DeselectAllConnectors();
+        }
+      }
+    }
+
+    /// <summary>
+    /// Handles scrolling event. Becuse of item virtualization it is necessary to refresh displayed item styles in code behind, because virtual items are null pointers when not seen.
+    /// </summary>
+    /// <param name="sender">Sender object.</param>
+    /// <param name="e">Args.</param>
+    private void OnScroll(object sender, ScrollChangedEventArgs e)
+    {
+      if (this.model == null)
+      {
+        return;
+      }
+
+      if (this.model.ConnectorGroups == null)
+      {
+        return;
+      }
+
+      foreach (var group in this.model.ConnectorGroups)
+      {
+        foreach (var item in group.ConnectorViewModels)
+        {
+          if (this.IsConnectorSelected(item))
+          {
+            this.SetConnectorStyle(item);
+          }
+          else if (!this.IsConnectorSelected(item))
+          {
+            this.ResetConnectorStyle(item);
+          }
         }
       }
     }

@@ -200,7 +200,9 @@
             HorizontalContentAlignment="Stretch"
             dd:DragDrop.DropHandler="{Binding}"
             dd:DragDrop.IsDragSource="True"
-            dd:DragDrop.IsDropTarget="True">
+            dd:DragDrop.IsDropTarget="True"
+            VirtualizingPanel.IsVirtualizing="True"
+            ScrollViewer.ScrollChanged="OnScroll">
             <TreeView.InputBindings>
                 <KeyBinding Key="Delete" Command="{Binding DeleteSelectedObject, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}" />
             </TreeView.InputBindings>
@@ -209,6 +211,7 @@
                     <EventSetter Event="MouseDoubleClick" Handler="OnTreeItemDoubleClick" />
                     <EventSetter Event="MouseLeftButtonDown" Handler="OnTreeItemLeftMouseDown"/>
                     <EventSetter Event="MouseLeftButtonUp" Handler="OnTreeItemLeftMouseUp"/>
+                    <EventSetter Event="MouseRightButtonDown" Handler="OnTreeItemRightMouseDown"/>
                     <EventSetter Event="Drop" Handler="OnTreeViewItemDrop"/>
                     <Setter Property="Focusable" Value="False"/>
                     <Setter Property="IsExpanded" Value="{Binding IsNodeExpanded, Mode=TwoWay}" />
