@@ -27,6 +27,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private ObservationState state;
 
+    private ObservationState previousState = ObservationState.Unknown;
+
     private bool failure;
 
     private bool unknown;
@@ -124,7 +126,22 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       {
         if (this.state != value)
         {
+          this.previousState = this.state;
           this.state = value;
+          this.OnPropertyChanged();
+        }
+      }
+    }
+
+    public ObservationState PreviousState
+    {
+      get => this.previousState;
+
+      set
+      {
+        if (this.previousState != value)
+        {
+          this.previousState = value;
           this.OnPropertyChanged();
         }
       }

@@ -21,39 +21,34 @@
     </ResourceDictionary>
   </UserControl.Resources>
   <DockPanel>
-    <materialDesign:PackIcon Width="Auto"
-                             Height="Auto"
-                             DockPanel.Dock="Left"
-                             Foreground="{StaticResource ResourceKey=Unstable}"
-                             Kind="Error"
-                             Visibility="{Binding Unstable, Converter={StaticResource BoolToVisibility}}" />
-    <materialDesign:PackIcon Width="Auto"
-                             Height="Auto"
-                             DockPanel.Dock="Left"
-                             Foreground="{StaticResource ResourceKey=Success}"
-                             Kind="TickCircle"
-                             Visibility="{Binding Succees, Converter={StaticResource BoolToVisibility}}" />
-    <materialDesign:PackIcon Width="Auto"
-                             Height="Auto"
-                             DockPanel.Dock="Left"
-                             Foreground="{StaticResource ResourceKey=Unknown}"
-                             Kind="MinusCircle"
-                             Visibility="{Binding Unknown, Converter={StaticResource BoolToVisibility}}" />
-    <materialDesign:PackIcon Width="Auto"
-                             Height="Auto"
-                             DockPanel.Dock="Left"
-                             Foreground="{StaticResource Failure}"
-                             Kind="CloseCircle"
-                             Visibility="{Binding Failure, Converter={StaticResource BoolToVisibility}}" />
+    <Image Width="Auto"
+           Height="Auto"
+           Source="pack://application:,,,/Resources/Soloplan.WhatsON.GUI/Resources/alert-circle.png"
+           DockPanel.Dock="Left"
+           Visibility="{Binding Unstable, Converter={StaticResource BoolToVisibility}}" />
+    <Image Width="Auto"
+           Height="Auto"
+           Source="pack://application:,,,/Resources/Soloplan.WhatsON.GUI/Resources/check-circle.png"
+           DockPanel.Dock="Left"
+           Visibility="{Binding Succees, Converter={StaticResource BoolToVisibility}}" />
+    <Image Width="Auto"
+           Height="Auto"
+           Source="pack://application:,,,/Resources/Soloplan.WhatsON.GUI/Resources/minus-circle.png"
+           DockPanel.Dock="Left"
+           Visibility="{Binding Unknown, Converter={StaticResource BoolToVisibility}}" />
+    <Image Width="Auto"
+           Height="Auto"
+           Source="pack://application:,,,/Resources/Soloplan.WhatsON.GUI/Resources/close-circle.png"
+           DockPanel.Dock="Left"
+           Visibility="{Binding Failure, Converter={StaticResource BoolToVisibility}}" />
 
-    <materialDesign:PackIcon Name="BuildIcon"
-                             Width="Auto"
-                             Height="Auto"
-                             DockPanel.Dock="Left"
-                             Foreground="{StaticResource Running}"
-                             Kind="Circle"
-                             Visibility="{Binding Building, Converter={StaticResource BoolToVisibility}}">
-      <materialDesign:PackIcon.Triggers>
+    <Image Name="BuildIcon"
+           Width="Auto"
+           Height="Auto"
+           Source="pack://application:,,,/Resources/Soloplan.WhatsON.GUI/Resources/circle.png"
+           DockPanel.Dock="Left"
+           Visibility="{Binding Building, Converter={StaticResource BoolToVisibility}}">
+      <Image.Triggers>
         <EventTrigger RoutedEvent="Image.Loaded">
           <BeginStoryboard>
             <Storyboard>
@@ -67,7 +62,7 @@
             </Storyboard>
           </BeginStoryboard>
         </EventTrigger>
-      </materialDesign:PackIcon.Triggers>
-    </materialDesign:PackIcon>
-  </DockPanel>
+      </Image.Triggers>
+    </Image>
+    </DockPanel>
 </UserControl>

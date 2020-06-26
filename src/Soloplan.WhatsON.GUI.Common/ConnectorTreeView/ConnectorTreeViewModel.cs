@@ -10,6 +10,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Collections.Generic;
   using System.Collections.ObjectModel;
   using System.Linq;
+  using System.ServiceModel.Channels;
   using System.Text.RegularExpressions;
   using System.Windows;
   using System.Windows.Controls;
@@ -38,7 +39,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// Copy of currently selected connectors in case of multiple actions on viewmodel/>.
     /// </summary>
-    private Collection<ConnectorViewModel> selectedConnectors;
+    private Collection<ConnectorViewModel> selectedConnectors = new Collection<ConnectorViewModel>();
 
     /// <summary>
     /// Flag indicating that <see cref="ConfigurationChanged"/> event is triggered - used to ignore updates of model.
@@ -702,7 +703,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
             this.DeleteConnector(clickedConnector);
             return;
           }
-
           this.DeleteSelectedConnectors();
         }
 

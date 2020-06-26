@@ -3,18 +3,20 @@
 // Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 
+using System;
+using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using Windows.Data.Xml.Dom;
+using NLog;
+using Soloplan.WhatsON.Configuration;
+using Soloplan.WhatsON.GUI.Common.BuildServer;
+using Soloplan.WhatsON.Model;
+using Windows.UI.Notifications;
+
 namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
-  using System;
-  using System.Collections.ObjectModel;
-  using System.Windows;
-  using System.Windows.Controls;
-  using System.Windows.Input;
-  using NLog;
-  using Soloplan.WhatsON.Configuration;
-  using Soloplan.WhatsON.GUI.Common.BuildServer;
-  using Soloplan.WhatsON.Model;
-
   public class ConnectorViewModel : TreeItemViewModel
   {
     /// <summary>
@@ -31,6 +33,38 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private BuildStatusViewModel currentStatus;
 
     private string url;
+
+    /// <summary>
+    /// Creates NotificationData for connector.
+    /// </summary>
+    /// <param name="tag">Toast tag</param>
+    /// <param name="sequence">Sequence of update. </param>
+    /// <param name="group">Group of notification. </param>
+    /// <returns>Notification data to be sent. </returns>
+    public virtual NotificationData CreateNotificationsDataUpdate(uint tag, uint sequence, string group)
+    {
+      var data = new NotificationData();
+      data.SequenceNumber = 0;
+      return data;
+    }
+
+    /// <summary>
+    /// Creates a toast content for a win10 notification.
+    /// </summary>
+    /// <param name="connectorGroupViewModel"> Group in which the connector is located.</param>
+    /// <returns>Toast notification to be shown.</returns>
+    public virtual ToastNotification MakeToast(ConnectorGroupViewModel connectorGroupViewModel = null)
+    {
+      ToastGenerator toastGenerator = new ToastGenerator();
+      var toastContent = toastGenerator.GenerateToastContent(this);
+
+      var xmlDoc = new XmlDocument();
+      xmlDoc.LoadXml(toastContent.GetContent());
+
+      var toast = new ToastNotification(xmlDoc);
+
+      return toast;
+    }
 
     public ConnectorViewModel()
     {

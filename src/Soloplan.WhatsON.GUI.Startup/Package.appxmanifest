@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  IgnorableNamespaces="uap rescap uap3">
+
+  <Identity
+    Name="b0b1bf3e-9c35-434c-823b-4858ac56f51a"
+    Publisher="CN=tsk"
+    Version="0.9.3.0" />
+
+  <Properties>
+    <DisplayName>Soloplan.WhatsON.GUI.App</DisplayName>
+    <PublisherDisplayName>tsk</PublisherDisplayName>
+    <Logo>Images\PackageLogo.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.14393.0" MaxVersionTested="10.0.14393.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="x-generate"/>
+  </Resources>
+
+  <Applications>
+    <Application Id="App"
+      Executable="$targetnametoken$.exe"
+      EntryPoint="$targetentrypoint$">
+      <uap:VisualElements
+        DisplayName="WhatsON"
+        Description="Soloplan WhatsOn - build server monitoring application."
+        BackgroundColor="transparent"  Square150x150Logo="Images\StoreLogo.png" Square44x44Logo="Images\AppIcon.png">
+        <uap:DefaultTile ShortName="WhatsON"  Square71x71Logo="Images\SmallTile.png" Wide310x150Logo="Images\WideTile.png" Square310x310Logo="Images\LargeTile.png">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square150x150Logo"/>
+            <uap:ShowOn Tile="wide310x150Logo"/>
+            <uap:ShowOn Tile="square310x310Logo"/>
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile>
+        <uap:LockScreen Notification="badge"  BadgeLogo="Images\BadgeLogo.png"/>
+        <uap:SplashScreen BackgroundColor="transparent"   Image="Images\SplashScreen.png"/>
+      </uap:VisualElements>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <Capability Name="internetClient" />
+    <rescap:Capability Name="runFullTrust" />
+    <uap3:Capability Name="userNotificationListener"/>
+  </Capabilities>
+</Package>

@@ -279,7 +279,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
       var result = (bool)await DialogHost.Show(createEditDialod, "ConnectorsConfigPageHost");
       if (result)
       {
-        // TODO move to connector view model/model
         newConnector.SourceConnectorPlugin = (ConnectorPlugin)createEditDialod.uxPluginType.SelectedItem;
         newConnector.Name = createEditDialod.uxEditConnectorName.Text;
         newConnector.Load(null);
