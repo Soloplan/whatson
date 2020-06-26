@@ -401,8 +401,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     }
 
-
-
     /// <summary>
     /// Sets style for a tree view item.
     /// </summary>
@@ -474,7 +472,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorGroupViewModel);
       var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(connectorViewModel)
         ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorViewModel);
-      this.SetStyle(ref treeViewItemInGroup);
       if (treeViewItemInGroup != null)
       {
         this.SetStyle(ref treeViewItemInGroup);
@@ -643,7 +640,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
       return isAlreadyAdded;
     }
-
 
     public ConnectorGroupViewModel FindConnectorGroup(ConnectorViewModel connectorViewModel)
     {
@@ -970,6 +966,40 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
           this.DeselectAllConnectors();
         }
       }
+    }
+
+    /// <summary>
+    /// Defines behavoiour when RMB is used.
+    /// </summary>
+    /// <param name="sender">sender item.</param>
+    /// <param name="e">event args.</param>
+    private void OnTreeItemRightMouseDown(object sender, MouseButtonEventArgs e)
+    {
+      TreeViewItem item = (TreeViewItem)sender;
+      try
+      {
+        var connector = new ConnectorViewModel();
+        if (item == null)
+        {
+          return;
+        }
+
+        connector = (ConnectorViewModel)item.Header;
+        foreach (var selectedItem in this.selectedConnectors)
+        {
+          if (selectedItem.Identifier == connector.Identifier)
+          {
+            return;
+          }
+        }
+      }
+      catch
+      {
+        return;
+      }
+
+      this.DeselectAllConnectors();
+      this.model.UpdateSelectedConnectors(this.selectedConnectors);
     }
 
     /// <summary>
