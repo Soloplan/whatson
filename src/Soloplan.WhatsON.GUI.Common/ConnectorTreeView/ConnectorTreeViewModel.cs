@@ -39,7 +39,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// Copy of currently selected connectors in case of multiple actions on viewmodel/>.
     /// </summary>
-    private Collection<ConnectorViewModel> selectedConnectors;
+    private Collection<ConnectorViewModel> selectedConnectors = new Collection<ConnectorViewModel>();
 
     /// <summary>
     /// Flag indicating that <see cref="ConfigurationChanged"/> event is triggered - used to ignore updates of model.
@@ -673,12 +673,13 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         }
 
         this.DeleteItem?.Invoke(sender, e);
+        ((ConnectorViewModel)(e.DeleteItem)).Name = tempName;
         var canceled = await e.CheckCanceled();
         if (!canceled)
         {
           this.DeleteSelectedConnectors();
         }
-        ((ConnectorViewModel)(e.DeleteItem)).Name = tempName;
+
         return;
       }
 
