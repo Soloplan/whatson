@@ -10,6 +10,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Collections.Generic;
   using System.Collections.ObjectModel;
   using System.Linq;
+  using System.ServiceModel.Channels;
   using System.Text.RegularExpressions;
   using System.Windows;
   using System.Windows.Controls;
@@ -38,7 +39,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// Copy of currently selected connectors in case of multiple actions on viewmodel/>.
     /// </summary>
-    private Collection<ConnectorViewModel> selectedConnectors;
+    private Collection<ConnectorViewModel> selectedConnectors = new Collection<ConnectorViewModel>();
 
     /// <summary>
     /// Flag indicating that <see cref="ConfigurationChanged"/> event is triggered - used to ignore updates of model.
@@ -653,6 +654,33 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
+    /// <summary>
+    /// Performs a deletion of a connector.
+    /// </summary>
+    private void DeleteConnector(ConnectorViewModel connectorViewModel)
+    {
+      bool madeChanges = false;
+      foreach (var connectorGroup in this.connectorGroups.ToList())
+      {
+        foreach (var connector in connectorGroup.ConnectorViewModels.ToList())
+        {
+          if (connectorViewModel.Identifier == connector.Identifier)
+          {
+            connectorGroup.ConnectorViewModels.Remove(connectorViewModel);
+            madeChanges = true;
+          }
+        }
+      }
+
+      this.ClearEmptyGroups();
+
+      if (madeChanges)
+      {
+        this.OnConfigurationChanged(this, EventArgs.Empty);
+        this.FireOneGroupChanged();
+      }
+    }
+
     public async void DeleteGroup(object sender, DeleteTreeItemEventArgs e)
     {
       if (e.DeleteItem is ConnectorViewModel clickedConnector)
@@ -670,6 +698,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         var canceled = await e.CheckCanceled();
         if (!canceled)
         {
+          if (selectedConnectors.Count == 0)
+          {
+            this.DeleteConnector(clickedConnector);
+            return;
+          }
           this.DeleteSelectedConnectors();
         }
 

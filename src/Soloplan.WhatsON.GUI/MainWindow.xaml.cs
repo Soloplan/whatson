@@ -16,6 +16,7 @@ namespace Soloplan.WhatsON.GUI
   using System.Windows;
   using System.Windows.Controls;
   using System.Windows.Media.Animation;
+  using Humanizer;
   using MaterialDesignThemes.Wpf;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;

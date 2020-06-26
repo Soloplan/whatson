@@ -1,0 +1,6 @@
+MainPackage=C:\Users\tsk\source\repos\whatson\src\Soloplan.WhatsON.GUI.Startup\bin\AnyCPU\Debug\Soloplan.WhatsON.GUI.Startup_0.9.3.0_AnyCPU_Debug.msix
+SymbolPackage=C:\Users\tsk\source\repos\whatson\src\Soloplan.WhatsON.GUI.Startup\obj\Debug\Symbols\Soloplan.WhatsON.GUI.Startup_0.9.3.0_AnyCPU_Debug.appxsym
+ResourcePack=C:\Users\tsk\source\repos\whatson\src\Soloplan.WhatsON.GUI.Startup\bin\AnyCPU\Debug\Soloplan.WhatsON.GUI.Startup_0.9.3.0_scale-100.msix
+ResourcePack=C:\Users\tsk\source\repos\whatson\src\Soloplan.WhatsON.GUI.Startup\bin\AnyCPU\Debug\Soloplan.WhatsON.GUI.Startup_0.9.3.0_scale-125.msix
+ResourcePack=C:\Users\tsk\source\repos\whatson\src\Soloplan.WhatsON.GUI.Startup\bin\AnyCPU\Debug\Soloplan.WhatsON.GUI.Startup_0.9.3.0_scale-150.msix
+ResourcePack=C:\Users\tsk\source\repos\whatson\src\Soloplan.WhatsON.GUI.Startup\bin\AnyCPU\Debug\Soloplan.WhatsON.GUI.Startup_0.9.3.0_scale-400.msix

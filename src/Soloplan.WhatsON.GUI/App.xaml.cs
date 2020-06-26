@@ -141,5 +141,13 @@ namespace Soloplan.WhatsON.GUI
         System.Windows.Application.Current.Shutdown();
       }
     }
+
+    protected override void OnActivated(EventArgs e)
+    {
+      if (this.config.AlwaysOnTop != this.MainWindow.Topmost)
+      {
+        this.MainWindow.Topmost = this.config.AlwaysOnTop;
+      }
+    }
   }
 }

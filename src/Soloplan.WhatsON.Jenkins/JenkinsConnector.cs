@@ -52,6 +52,7 @@ namespace Soloplan.WhatsON.Jenkins
     public JenkinsConnector(ConnectorConfiguration configuration, IJenkinsApi api)
       : base(configuration)
     {
+      this.directAddress = this.Address;
       this.api = api;
     }
 
