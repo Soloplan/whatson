@@ -131,77 +131,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Gets the ConnectorViewModel based on given identifier.
-    /// </summary>
-    /// <param name="Identifier">Connector's identifier.</param>
-    /// <returns>ConnectorViewModel.</returns>
-    public ConnectorViewModel GetConnectorWithIdentifier(string identifier)
-    {
-      foreach (var group in this.model.ConnectorGroups)
-      {
-        foreach (var connector in group.ConnectorViewModels)
-        {
-          if (connector.Identifier.ToString() == identifier)
-          {
-            return connector;
-          }
-        }
-      }
-
-      return null;
-    }
-
-    /// <summary>
-    /// Focuses the node connected with <paramref name="connector" />.
-    /// </summary>
-    /// <param name="connector">Connector which should be focused.</param>
-    public void FocusItem(Connector connector)
-    {
-      foreach (var groupViewModel in this.model.ConnectorGroups)
-      {
-        foreach (var connectorViewModel in groupViewModel.ConnectorViewModels)
-        {
-          if (connectorViewModel.Connector.Configuration.Identifier == connector.Configuration.Identifier)
-          {
-            TreeViewItem groupViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(groupViewModel);
-            var treeViewItem = (TreeViewItem)groupViewItem?.ItemContainerGenerator.ContainerFromItem(connectorViewModel)
-              ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorViewModel);
-            if (treeViewItem != null)
-            {
-              groupViewModel.IsNodeExpanded = true;
-              treeViewItem.IsSelected = true;
-            }
-          }
-        }
-      }
-    }
-
-    /// <summary>
-    /// Focuses the node connected with <paramref name="connector" />.
-    /// </summary>
-    /// <param name="connector">Connector which should be focused.</param>
-    public void FocusItem(ConnectorViewModel connector)
-    {
-      foreach (var groupViewModel in this.model.ConnectorGroups)
-      {
-        foreach (var connectorViewModel in groupViewModel.ConnectorViewModels)
-        {
-          if (connectorViewModel.Connector.Configuration.Identifier == connector.Identifier)
-          {
-            TreeViewItem groupViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(groupViewModel);
-            var treeViewItem = (TreeViewItem)groupViewItem?.ItemContainerGenerator.ContainerFromItem(connectorViewModel)
-              ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorViewModel);
-            if (treeViewItem != null)
-            {
-              groupViewModel.IsNodeExpanded = true;
-              this.SetConnectorStyle(connector);
-            }
-          }
-        }
-      }
-    }
-
-    /// <summary>
     /// Creates new group with <paramref name="groupName"/> and brings it into focus.
     /// </summary>
     /// <param name="groupName">Name for new group.</param>
@@ -378,24 +307,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       var style = this.FindResource("MaterialDesignBackground");
       treeViewItem.Foreground = this.InvertColor(style.ToString());
-
-      treeViewItem.BeginAnimation(TreeViewItem.OpacityProperty, null);
       treeViewItem.IsSelected = false;
     }
-
-    private void BeginBlinkAnimation(ref TreeViewItem treeViewItem)
-    {
-      DoubleAnimation animation = new DoubleAnimation();
-      animation.From = treeViewItem.Opacity;
-      animation.To = 0.5;
-      animation.Duration = new Duration(TimeSpan.FromSeconds(0.5));
-      animation.AutoReverse = true;
-      animation.RepeatBehavior = new RepeatBehavior(TimeSpan.FromSeconds(3.0d));
-      treeViewItem.BeginAnimation(TreeViewItem.OpacityProperty, animation);
-
-    }
-
-
 
     /// <summary>
     /// Sets style for a tree view item.
@@ -635,22 +548,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
 
       return isAlreadyAdded;
-    }
-
-    public ConnectorGroupViewModel FindConnectorGroup(ConnectorViewModel connectorViewModel)
-    {
-      foreach (var group in this.model.ConnectorGroups)
-      {
-        foreach (var connector in group.ConnectorViewModels)
-        {
-          if (connector.Identifier == connectorViewModel.Identifier)
-          {
-            return group;
-          }
-        }
-      }
-
-      return null;
     }
 
     /// <summary>

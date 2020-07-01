@@ -163,15 +163,6 @@ namespace Soloplan.WhatsON.GUI
       this.mainTreeView.ApplyTreeListSettings(this.settings.TreeListSettings);
     }
 
-    /// <summary>
-    /// Focuses the node connected with <paramref name="connector"/>.
-    /// </summary>
-    /// <param name="connector">Connector which should be focused.</param>
-    public void FocusConnector(Connector connector)
-    {
-      this.mainTreeView.FocusItem(connector);
-    }
-
     /// <summary>Raises the <see cref="E:System.Windows.Window.Closed" /> event. Performs necessry cleanup.</summary>
     /// <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data.</param>
     protected override void OnClosed(EventArgs e)
