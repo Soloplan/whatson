@@ -213,5 +213,14 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         currentParent = currentParent.Parent;
       }
     }
+
+    /// <summary>
+    /// Decides if a tooltip should be visible.
+    /// </summary>
+    /// <returns>True when should be visible, false when should not be visible.</returns>
+    public bool IsTooltipVisible()
+    {
+      return (this.Description == string.Empty || this.Description == null) ? false : true;
+    }
   }
 }

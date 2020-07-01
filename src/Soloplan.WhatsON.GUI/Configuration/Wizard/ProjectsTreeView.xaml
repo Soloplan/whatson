@@ -6,6 +6,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:wpf="clr-namespace:TheArtOfDev.HtmlRenderer.WPF;assembly=HtmlRenderer.WPF"
+             xmlns:converters="clr-namespace:Soloplan.WhatsON.GUI.Configuration.Wizard"
              d:DesignHeight="450"
              d:DesignWidth="800"
              Background="{DynamicResource MaterialDesignPaper}"
@@ -15,20 +16,21 @@
 
     <UserControl.Resources>
         <ResourceDictionary>
-
             <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
-
+            <converters:WizardProjectToVisibilityConverter x:Key="WizardProjectToVisibilityConverter"/>
             <HierarchicalDataTemplate DataType="{x:Type local:ProjectViewModel}" ItemsSource="{Binding Path=Projects}">
                 <DockPanel Width="400">
                     <DockPanel.ToolTip>
-                        <wpf:HtmlPanel Background="Transparent" MaxWidth="600">
-                            <wpf:HtmlPanel.Text>
-                                <MultiBinding StringFormat='{}&lt;font size=&quot;6&quot; face=&quot;arial&quot; color=&quot;{1}&quot;&gt; {0} &lt;/font&gt;'>
-                                    <Binding Path="Description"></Binding>
-                                    <Binding Source="{StaticResource MaterialDesignPaper}" Converter="{StaticResource RGBAToRGBConverter}"></Binding>
-                                </MultiBinding>
-                            </wpf:HtmlPanel.Text>
-                        </wpf:HtmlPanel>
+                        <ToolTip Visibility="{Binding Path=. , Converter={StaticResource WizardProjectToVisibilityConverter}}">
+                            <wpf:HtmlPanel Background="Transparent" MaxWidth="600">
+                                <wpf:HtmlPanel.Text>
+                                    <MultiBinding StringFormat='{}&lt;font size=&quot;6&quot; face=&quot;arial&quot; color=&quot;{1}&quot;&gt; {0} &lt;/font&gt;'>
+                                        <Binding Path="Description"></Binding>
+                                        <Binding Source="{StaticResource MaterialDesignPaper}" Converter="{StaticResource RGBAToRGBConverter}"></Binding>
+                                    </MultiBinding>
+                                </wpf:HtmlPanel.Text>
+                            </wpf:HtmlPanel>
+                        </ToolTip>
                     </DockPanel.ToolTip>
                     <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
                         <CheckBox Focusable="False"
