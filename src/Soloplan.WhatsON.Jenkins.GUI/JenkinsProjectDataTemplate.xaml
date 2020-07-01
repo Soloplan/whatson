@@ -77,16 +77,16 @@
         </StackPanel.Resources>
         <TextBlock Text="{Binding CurrentStatus.FinishTime, Converter={StaticResource TimeToApproximateTimeConverter}}" Visibility="{Binding CurrentStatus.Time, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
       </StackPanel>
-      <buildServer:ProgressBarTooltipControl Margin="5,0,10,0"
+      <buildServer:ProgressBarControl Margin="5,0,10,0"
                                              CompactDisplay="True"
                                              ControlOrientation="Horizontal"
                                              DataContext="{Binding CurrentStatus}"
                                              DockPanel.Dock="Right"
                                              Visibility="{Binding Building, Converter={StaticResource BoolToVisibility}, Mode=OneWay}">
-        <buildServer:ProgressBarTooltipControl.Resources>
+        <buildServer:ProgressBarControl.Resources>
           <Style BasedOn="{StaticResource TextBlockTime}" TargetType="{x:Type TextBlock}" />
-        </buildServer:ProgressBarTooltipControl.Resources>
-      </buildServer:ProgressBarTooltipControl>
+        </buildServer:ProgressBarControl.Resources>
+      </buildServer:ProgressBarControl>
       
       <DockPanel>
         <TextBlock />
