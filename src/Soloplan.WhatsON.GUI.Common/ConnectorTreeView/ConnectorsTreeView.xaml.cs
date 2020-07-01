@@ -686,7 +686,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         {
           foreach (var itemInGroup in group.ConnectorViewModels)
           {
-            itemInGroup.isOnlyOneSelected = false;
+            itemInGroup.IsOnlyOneSelected = false;
           }
         }
       }
@@ -696,7 +696,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         {
           foreach (var itemInGroup in group.ConnectorViewModels)
           {
-            itemInGroup.isOnlyOneSelected = true;
+            itemInGroup.IsOnlyOneSelected = true;
           }
         }
       }

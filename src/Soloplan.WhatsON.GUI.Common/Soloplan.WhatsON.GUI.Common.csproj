@@ -75,6 +75,7 @@
       <DependentUpon>ProgressBarTooltipControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ConnectorTreeView\CustomCommand.cs" />
+    <Compile Include="Converters\DebugConverter.cs" />
     <Compile Include="Converters\MainStatusToVisibilityConverter.cs" />
     <Compile Include="Converters\NullableBooleanConverter.cs" />
     <Compile Include="Converters\RGBAToRGBConverter.cs" />

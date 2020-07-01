@@ -18,7 +18,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   {
     private bool isNodeExpanded;
 
-    public bool isOnlyOneSelected = true;
+    private bool isOnlyOneSelected = true;
 
     /// <summary>
     /// Backing field for <see cref="EditCommand"/>.
@@ -67,6 +67,19 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         if (this.isNodeExpanded != value)
         {
           this.isNodeExpanded = value;
+          this.OnPropertyChanged();
+        }
+      }
+    }
+
+    public bool IsOnlyOneSelected
+    {
+      get => this.isOnlyOneSelected;
+      set
+      {
+        if (this.isOnlyOneSelected != value)
+        {
+          this.isOnlyOneSelected = value;
           this.OnPropertyChanged();
         }
       }
@@ -122,7 +135,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <param name="eventArgs">Arguments containing data about edited item.</param>
     protected virtual void OnEditItem(object sender, EditTreeItemViewModelEventArgs eventArgs)
     {
-      if (this.isOnlyOneSelected == false)
+      if (this.IsOnlyOneSelected == false)
       {
         return;
       }
@@ -158,7 +171,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       var command = new CustomCommand();
       command.OnExecute += (s, e) => this.OnEditItem(this, new EditTreeItemViewModelEventArgs { Model = this, EditType = EditType.Edit });
-      command.CanExecuteExternal += (s, e) => { e.Cancel = !this.isOnlyOneSelected; };
+      command.CanExecuteExternal += (s, e) => { e.Cancel = !this.IsOnlyOneSelected; };
       return command;
     }
 
@@ -166,7 +179,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       var command = new CustomCommand();
       command.OnExecute += (s,e )=> this.OnEditItem(this, new EditTreeItemViewModelEventArgs { Model = this, EditType = EditType.Rename });
-      command.CanExecuteExternal += (s, e) => { e.Cancel = !this.isOnlyOneSelected; };
+      command.CanExecuteExternal += (s, e) => { e.Cancel = !this.IsOnlyOneSelected; };
       return command;
     }
 
@@ -178,7 +191,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       var command = new CustomCommand();
       command.OnExecute += (s, e) => this.OnExportItem(this, new ValueEventArgs<TreeItemViewModel>(this));
-      command.CanExecuteExternal += (s, e) => { e.Cancel = !this.isOnlyOneSelected; };
+      command.CanExecuteExternal += (s, e) => { e.Cancel = !this.IsOnlyOneSelected; };
       return command;
     }
 
