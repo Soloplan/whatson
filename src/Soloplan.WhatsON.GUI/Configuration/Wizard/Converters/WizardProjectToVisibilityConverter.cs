@@ -24,7 +24,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     {
       if (value is Soloplan.WhatsON.GUI.Configuration.Wizard.ProjectViewModel project)
       {
-        return project.IsTooltipVisible() ? Visibility.Visible : Visibility.Hidden;
+        return project.ShouldDisplayTooltip() ? Visibility.Visible : Visibility.Hidden;
       }
 
       return Visibility.Visible;

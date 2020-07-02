@@ -24,7 +24,7 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
     {
       if (value is StatusViewModel status)
       {
-        return status.Parent.IsTooltipVisible() ? Visibility.Visible : Visibility.Hidden;
+        return status.Parent.ShouldDisplayTooltip() ? Visibility.Visible : Visibility.Hidden;
       }
 
       return Visibility.Visible;

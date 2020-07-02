@@ -183,7 +183,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// Implements function that decides if a tooltip should be visible.
     /// </summary>
     /// <returns>Base returns always true.</returns>
-    public virtual bool IsTooltipVisible()
+    public virtual bool ShouldDisplayTooltip()
     {
       return true;
     }

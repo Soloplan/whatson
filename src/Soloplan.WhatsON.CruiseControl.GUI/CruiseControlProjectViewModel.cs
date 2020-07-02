@@ -30,7 +30,7 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
     /// Implements function that decides if a tooltip should be visible.
     /// </summary>
     /// <returns>True when should be visible, false when should not be visible.</returns>
-    public override bool IsTooltipVisible()
+    public override bool ShouldDisplayTooltip()
     {
       if (this.CurrentStatus is CruiseControlStatusViewModel status)
       {

@@ -24,7 +24,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
     /// Implements function that decides if a tooltip should be visible.
     /// </summary>
     /// <returns>Base returns always true.</returns>
-    public override bool IsTooltipVisible()
+    public override bool ShouldDisplayTooltip()
     {
       if (this.CurrentStatus is JenkinsStatusViewModel status)
       {

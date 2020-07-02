@@ -47,6 +47,9 @@
                  FontWeight="Normal"
                  Text="{Binding CurrentStatus.FinishTime, Converter={StaticResource TimeToApproximateTimeConverter}}"
                  Visibility="{Binding CurrentStatus.FinishTime, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
+            <DockPanel>
+                <TextBlock/>
+            </DockPanel>
         </DockPanel>
     </DataTemplate>
 </ResourceDictionary>

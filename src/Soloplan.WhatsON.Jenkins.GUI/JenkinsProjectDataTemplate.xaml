@@ -89,7 +89,7 @@
       </buildServer:ProgressBarControl>
       
       <DockPanel>
-        <TextBlock />
+        <TextBlock/>
       </DockPanel>
     </DockPanel>
   </DataTemplate>
