@@ -25,6 +25,7 @@
           </MultiBinding>
         </TextBlock.Text>
       </TextBlock>
+      <TextBlock><LineBreak/></TextBlock> 
     </StackPanel>
     <buildServer:ProgressBarTooltipControl DataContext="{Binding}" />
   </StackPanel>

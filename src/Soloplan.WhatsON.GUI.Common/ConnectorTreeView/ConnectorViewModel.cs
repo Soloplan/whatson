@@ -179,6 +179,15 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }));
     }
 
+    /// <summary>
+    /// Implements function that decides if a tooltip should be visible.
+    /// </summary>
+    /// <returns>Base returns always true.</returns>
+    public virtual bool ShouldDisplayTooltip()
+    {
+      return true;
+    }
+
     protected virtual BuildStatusViewModel GetStatusViewModel()
     {
       return new BuildStatusViewModel(this);
@@ -191,7 +200,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     protected override CustomCommand CreateEditCommand()
     {
       var command = base.CreateEditCommand();
-      command.CanExecuteExternal += (s, e) => { e.Cancel = this.ConfigurationModifiedInTree || !this.isOnlyOneSelected; };
+      command.CanExecuteExternal += (s, e) => { e.Cancel = this.ConfigurationModifiedInTree || !this.IsOnlyOneSelected; };
       return command;
     }
   }

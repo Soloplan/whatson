@@ -7,15 +7,23 @@
 
   <converters:TimeToApproximateTimeConverter x:Key="TimeToApproximateTimeConverter" />
   <converters:NullOrDefaultToVisibilityConverter x:Key="NullOrDefaultVisibilityConverter" />
-  <ToolTip x:Key="CruiseControlBuildInfoToolTip">
-    <StackPanel>
-      <local:CCProgressBarTooltipControl DataContext="{Binding}" />
-      <buildServer:CulpritsControl Caption="Changes by:" CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
-    </StackPanel>
+  <converters:MainStatusToVisibilityConverter x:Key="MainStatusToVisibilityConverter" />
+  <ToolTip x:Key="CruiseControlBuildInfoToolTip" Visibility="{Binding Path=. , Converter={StaticResource MainStatusToVisibilityConverter}}">
+  <StackPanel>
+    <local:CCProgressBarTooltipControl DataContext="{Binding}" />
+    <buildServer:CulpritsControl Caption="Changes by:" CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
+  </StackPanel>
   </ToolTip>
 
-  <DataTemplate DataType="{x:Type local:CruiseControlProjectViewModel}">
-        <DockPanel Width="Auto" ContextMenu="{DynamicResource BuildServerProjectContextMenu}">
+    <ToolTip x:Key="RowToolTip" Visibility="{Binding CurrentStatus , Converter={StaticResource MainStatusToVisibilityConverter}}">
+        <StackPanel DataContext="{Binding CurrentStatus}">
+            <local:CCProgressBarTooltipControl DataContext="{Binding}" />
+            <buildServer:CulpritsControl Caption="Changes by:" CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
+        </StackPanel>
+    </ToolTip>
+
+    <DataTemplate DataType="{x:Type local:CruiseControlProjectViewModel}">
+        <DockPanel Width="Auto" ContextMenu="{DynamicResource BuildServerProjectContextMenu}" DataContext="{Binding}" ToolTip="{StaticResource RowToolTip}">
             <buildServer:BuildInformationIconControl DataContext="{Binding CurrentStatus}"
                                                DockPanel.Dock="Left"
                                                ToolTip="{StaticResource CruiseControlBuildInfoToolTip}" />
@@ -39,9 +47,9 @@
                  FontWeight="Normal"
                  Text="{Binding CurrentStatus.FinishTime, Converter={StaticResource TimeToApproximateTimeConverter}}"
                  Visibility="{Binding CurrentStatus.FinishTime, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
-            <DockPanel.ToolTip>
-                <TextBlock Text="{Binding Description}"></TextBlock>
-            </DockPanel.ToolTip>
+            <DockPanel>
+                <TextBlock/>
+            </DockPanel>
         </DockPanel>
     </DataTemplate>
 </ResourceDictionary>

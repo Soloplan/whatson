@@ -10,14 +10,15 @@
   <converters:TimeToApproximateTimeConverter x:Key="TimeToApproximateTimeConverter" />
   <converters:NullOrDefaultToVisibilityConverter x:Key="NullOrDefaultVisibilityConverter" />
   <converters:InvertBooleanToVisibilityConverter x:Key="InvertBooleanToVisibilityConverter" />
+  <converters:MainStatusToVisibilityConverter  x:Key="MainStatusToVisibilityConverter"/>
 
   <Style x:Key="TextBlockTime" TargetType="{x:Type TextBlock}">
     <Setter Property="HorizontalAlignment" Value="Right" />
     <Setter Property="VerticalAlignment" Value="Center" />
     <Setter Property="FontWeight" Value="Normal" />
     <Setter Property="FontSize" Value="{Binding DataContext.FontSizeSmall, Mode=OneWay, RelativeSource={RelativeSource AncestorType=connectorTreeView:ConnectorsTreeView}}" />
-
   </Style>
+    
   <ToolTip x:Key="HistoryBuildControlToolTip">
     <StackPanel>
       <buildServer:HistoryBuildTooltipControl DataContext="{Binding}" />
@@ -28,7 +29,7 @@
     </StackPanel>
   </ToolTip>
 
-  <ToolTip x:Key="BuildInformationControlToolTip">
+  <ToolTip x:Key="BuildInformationControlToolTip" Visibility="{Binding Path=. , Converter={StaticResource MainStatusToVisibilityConverter}}">
     <StackPanel>
       <buildServer:ProgressBarTooltipControl DataContext="{Binding}" />
       <StackPanel Visibility="{Binding CulpritsAndLastCommittedDifferent, Converter={StaticResource BoolToVisibility}}">
@@ -37,16 +38,28 @@
       <buildServer:CulpritsControl Caption="All culprits for this build:" CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
     </StackPanel>
   </ToolTip>
+    
+  <ToolTip x:Key="RowTooltip" Visibility="{Binding CurrentStatus , Converter={StaticResource MainStatusToVisibilityConverter }}">
+    <StackPanel DataContext="{Binding CurrentStatus}">
+      <buildServer:ProgressBarTooltipControl DataContext="{Binding}"/>
+      <StackPanel Visibility="{Binding CulpritsAndLastCommittedDifferent, Converter={StaticResource BoolToVisibility}}">
+        <buildServer:CulpritsControl Caption="Commits by:" CulpritsProp="{Binding DataContext.CommittedToThisBuild, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
+      </StackPanel>
+      <buildServer:CulpritsControl Caption="All culprits for this build:" CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
+    </StackPanel>
+  </ToolTip>  
 
   <DataTemplate DataType="{x:Type gui:JenkinsStatusViewModel}">
     <buildServer:HistoryBuildControl DataContext="{Binding}" ToolTip="{StaticResource HistoryBuildControlToolTip}" />
   </DataTemplate>
 
   <DataTemplate DataType="{x:Type gui:JenkinsProjectViewModel}">
-    <DockPanel Width="Auto" ContextMenu="{DynamicResource BuildServerProjectContextMenu}">
-      <buildServer:BuildInformationIconControl DataContext="{Binding CurrentStatus}"
-                                               DockPanel.Dock="Left"
-                                               ToolTip="{StaticResource BuildInformationControlToolTip}" />
+    <DockPanel Width="Auto" ContextMenu="{DynamicResource BuildServerProjectContextMenu}" DataContext="{Binding}" ToolTip="{StaticResource RowTooltip}">
+      <buildServer:BuildInformationIconControl DataContext="{Binding CurrentStatus}" DockPanel.Dock="Left">
+                <buildServer:BuildInformationIconControl.ToolTip>
+                    <StaticResource ResourceKey="BuildInformationControlToolTip"/>
+                </buildServer:BuildInformationIconControl.ToolTip>
+      </buildServer:BuildInformationIconControl>
       <buildServer:BuildNumberControl Margin="5,0,0,0" BuildNumber="{Binding DataContext.CurrentStatus.BuildNumber, RelativeSource={RelativeSource AncestorType=DockPanel}}" />
       <TextBlock MinWidth="150"
                  MaxWidth="250"
@@ -64,23 +77,20 @@
         </StackPanel.Resources>
         <TextBlock Text="{Binding CurrentStatus.FinishTime, Converter={StaticResource TimeToApproximateTimeConverter}}" Visibility="{Binding CurrentStatus.Time, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
       </StackPanel>
-      <buildServer:ProgressBarTooltipControl Margin="5,0,10,0"
+      <buildServer:ProgressBarControl Margin="5,0,10,0"
                                              CompactDisplay="True"
                                              ControlOrientation="Horizontal"
                                              DataContext="{Binding CurrentStatus}"
                                              DockPanel.Dock="Right"
                                              Visibility="{Binding Building, Converter={StaticResource BoolToVisibility}, Mode=OneWay}">
-        <buildServer:ProgressBarTooltipControl.Resources>
+        <buildServer:ProgressBarControl.Resources>
           <Style BasedOn="{StaticResource TextBlockTime}" TargetType="{x:Type TextBlock}" />
-        </buildServer:ProgressBarTooltipControl.Resources>
-      </buildServer:ProgressBarTooltipControl>
-
+        </buildServer:ProgressBarControl.Resources>
+      </buildServer:ProgressBarControl>
+      
       <DockPanel>
-        <TextBlock />
+        <TextBlock/>
       </DockPanel>
-      <DockPanel.ToolTip>
-        <TextBlock Text="{Binding Description}"></TextBlock>
-      </DockPanel.ToolTip>
-        </DockPanel>
+    </DockPanel>
   </DataTemplate>
 </ResourceDictionary>

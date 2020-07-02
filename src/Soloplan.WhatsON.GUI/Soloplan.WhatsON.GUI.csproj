@@ -99,6 +99,7 @@
     <Compile Include="Configuration\Wizard\ProjectViewModel.cs" />
     <Compile Include="Configuration\Wizard\ProjectViewModelList.cs" />
     <Compile Include="Configuration\Wizard\WizardController.cs" />
+    <Compile Include="Configuration\Wizard\Converters\WizardProjectToVisibilityConverter.cs" />
     <Compile Include="Configuration\Wizard\WizardWindow.xaml.cs">
       <DependentUpon>WizardWindow.xaml</DependentUpon>
     </Compile>
@@ -271,8 +272,11 @@
     <PackageReference Include="HtmlRenderer.WPF">
       <Version>1.5.0.6</Version>
     </PackageReference>
+    <PackageReference Include="Humanizer">
+      <Version>2.8.26</Version>
+    </PackageReference>
     <PackageReference Include="Humanizer.Core">
-      <Version>2.7.9</Version>
+      <Version>2.8.26</Version>
     </PackageReference>
     <PackageReference Include="MaterialDesignColors">
       <Version>1.2.2</Version>

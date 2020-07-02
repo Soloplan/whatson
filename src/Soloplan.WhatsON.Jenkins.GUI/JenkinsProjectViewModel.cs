@@ -20,6 +20,20 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       this.Url = JenkinsApi.UrlHelper.ProjectUrl(connector);
     }
 
+    /// <summary>
+    /// Implements function that decides if a tooltip should be visible.
+    /// </summary>
+    /// <returns>Base returns always true.</returns>
+    public override bool ShouldDisplayTooltip()
+    {
+      if (this.CurrentStatus is JenkinsStatusViewModel status)
+      {
+        return (status.Culprits.Count == 0 && status.CommittedToThisBuild.Count == 0 && status.State != ObservationState.Running) ? false : true;
+      }
+
+      return true;
+    }
+
     protected override BuildStatusViewModel GetStatusViewModel()
     {
       return new JenkinsStatusViewModel(this);

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Soloplan.WhatsON.GUI.Common.BuildServer.ProgressBarTooltipControl"
+﻿<UserControl x:Class="Soloplan.WhatsON.GUI.Common.BuildServer.ProgressBarControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -29,7 +29,6 @@
           </TextBlock.Text>
         </TextBlock>
         <TextBlock Name="EstimatedRemainingText" Text=" estimated remaining" />
-        <TextBlock><LineBreak/></TextBlock> 
       </StackPanel>
     </StackPanel>
     <StackPanel Orientation="Horizontal" Visibility="{Binding BuildingLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
@@ -44,7 +43,6 @@
         </TextBlock.Text>
       </TextBlock>
       <TextBlock Text=" longer than estimated." />    
-      <TextBlock><LineBreak/></TextBlock>  
     </StackPanel>
   </StackPanel>
 </UserControl>

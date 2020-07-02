@@ -8,8 +8,10 @@
 namespace Soloplan.WhatsON.CruiseControl.GUI
 {
   using System;
+  using System.Windows.Navigation;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
+  using Soloplan.WhatsON.Model;
 
   public class CruiseControlProjectViewModel : ConnectorViewModel
   {
@@ -22,6 +24,20 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
     protected override BuildStatusViewModel GetStatusViewModel()
     {
       return new CruiseControlStatusViewModel(this);
+    }
+
+    /// <summary>
+    /// Implements function that decides if a tooltip should be visible.
+    /// </summary>
+    /// <returns>True when should be visible, false when should not be visible.</returns>
+    public override bool ShouldDisplayTooltip()
+    {
+      if (this.CurrentStatus is CruiseControlStatusViewModel status)
+      {
+        return (status.Culprits.Count == 0 && status.State != ObservationState.Running) ? false : true;
+      }
+      
+      return true;
     }
   }
 }

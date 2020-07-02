@@ -9,18 +9,19 @@
   <converters:StatusToColorConverter x:Key="StatusToColorConverter" />
   <converters:TimeToApproximateTimeConverter x:Key="TimeToApproximateTimeConverter" />
   <converters:NullOrDefaultToVisibilityConverter x:Key="NullOrDefaultVisibilityConverter" />
+  <converters:DebugConverter x:Key="DebugConverter" />
 
   <ContextMenu x:Key="BuildServerProjectContextMenu">
     <!--  CommandParameter must be declared before Command or else value from previous opening of context menu will be passed. WTF?!  -->
-    <MenuItem CommandParameter="{Binding CurrentStatus}" Command="{Binding CurrentStatus.CopyBuildLabel}">
+    <MenuItem CommandParameter="{Binding CurrentStatus}" Command="{Binding CurrentStatus.CopyBuildLabel}" IsEnabled="{Binding IsOnlyOneSelected}">
       <MenuItem.Header>
         <StackPanel Orientation="Horizontal">
           <materialDesign:PackIcon Kind="TagOutline" />
-          <TextBlock Padding="10,0,0,0" Text="Copy latest build label" IsEnabled="{Binding RenameCommand.canExecuteState}"/>
-        </StackPanel>
+                    <TextBlock Padding="10,0,0,0" Text="Copy latest build label"/>
+                </StackPanel>
       </MenuItem.Header>
     </MenuItem>
-        <MenuItem Command="{Binding RenameCommand}" IsEnabled="{Binding RenameCommand.canExecuteState}">
+    <MenuItem Command="{Binding RenameCommand}" IsEnabled="{Binding RenameCommand.canExecuteState}">
       <MenuItem.Header>
         <StackPanel Orientation="Horizontal">
           <materialDesign:PackIcon Kind="Rename" />
@@ -53,7 +54,7 @@
       </MenuItem.Header>
     </MenuItem>
     <Separator />
-    <MenuItem CommandParameter="{Binding CurrentStatus.Parent.Url}" Command="{Binding OpenWebPage}">
+    <MenuItem CommandParameter="{Binding CurrentStatus.Parent.Url}" Command="{Binding OpenWebPage}" IsEnabled="{Binding IsOnlyOneSelected}">
       <MenuItem.Header>
         <StackPanel Orientation="Horizontal">
           <materialDesign:PackIcon Kind="Link" />

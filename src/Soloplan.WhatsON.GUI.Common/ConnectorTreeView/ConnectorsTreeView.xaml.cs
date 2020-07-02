@@ -19,7 +19,9 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Windows.Input;
   using System.Windows.Markup;
   using System.Windows.Media;
+  using System.Windows.Media.Animation;
   using GongSolutions.Wpf.DragDrop;
+  using Humanizer;
   using Humanizer.Localisation;
   using MaterialDesignThemes.Wpf;
   using Soloplan.WhatsON.Composition;
@@ -34,7 +36,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   {
     private ConnectorTreeViewModel model;
 
-    private Collection<ConnectorViewModel> selectedConnectors=new Collection<ConnectorViewModel>();
+    private Collection<ConnectorViewModel> selectedConnectors = new Collection<ConnectorViewModel>();
 
     /// <summary>
     /// Backing field for <see cref="DeleteSelectedObject"/>.
@@ -129,32 +131,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Focuses the node connected with <paramref name="connector" />.
-    /// </summary>
-    /// <param name="connector">Connector which should be focused.</param>
-    public void FocusItem(Connector connector)
-    {
-      foreach (var groupViewModel in this.model.ConnectorGroups)
-      {
-        foreach (var connectorViewModel in groupViewModel.ConnectorViewModels)
-        {
-          if (connectorViewModel.Connector.Configuration.Identifier == connector.Configuration.Identifier)
-          {
-            TreeViewItem groupViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(groupViewModel);
-            var treeViewItem = (TreeViewItem)groupViewItem?.ItemContainerGenerator.ContainerFromItem(connectorViewModel)
-              ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorViewModel);
-            if (treeViewItem != null)
-            {
-              groupViewModel.IsNodeExpanded = true;
-              treeViewItem.IsSelected = true;
-              treeViewItem.BringIntoView(new Rect(100, 100, 100, 100));
-            }
-          }
-        }
-      }
-    }
-
-    /// <summary>
     /// Creates new group with <paramref name="groupName"/> and brings it into focus.
     /// </summary>
     /// <param name="groupName">Name for new group.</param>
@@ -224,7 +200,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         }
 
         var args = new DeleteTreeItemEventArgs(this.selectedConnectors[0]);
-        this.model.DeleteGroup(s,args);
+        this.model.DeleteGroup(s, args);
       };
 
       return command;
@@ -331,6 +307,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       var style = this.FindResource("MaterialDesignBackground");
       treeViewItem.Foreground = this.InvertColor(style.ToString());
+      treeViewItem.IsSelected = false;
     }
 
     /// <summary>
@@ -640,21 +617,18 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
 
       var connector = new ConnectorViewModel();
-      try
+      if (item.Header is ConnectorViewModel)
       {
         connector = (ConnectorViewModel)item.Header;
         this.OnCtrlProjectClicked(connector);
       }
-      catch
+      else
       {
         var group = new ConnectorGroupViewModel();
-        try
+        if(item.Header is ConnectorGroupViewModel)
         {
           group = (ConnectorGroupViewModel)item.Header;
           this.OnGroupClicked(group);
-        }
-        catch (Exception ex)
-        {
         }
       }
 
@@ -675,13 +649,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
 
       var connector = new ConnectorViewModel();
-      try
+      if (item.Header is ConnectorViewModel)
       {
         connector = (ConnectorViewModel)item.Header;
         this.OnShiftProjectClicked(connector);
-      }
-      catch
-      {
       }
     }
 
@@ -692,7 +663,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       if (Keyboard.IsKeyDown(Key.LeftCtrl))
       {
-        this.ControlLeftMouseDownHandler(sender,e);
+        this.ControlLeftMouseDownHandler(sender, e);
       }
       else if (Keyboard.IsKeyDown(Key.LeftShift))
       {
@@ -715,7 +686,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         {
           foreach (var itemInGroup in group.ConnectorViewModels)
           {
-            itemInGroup.isOnlyOneSelected = false;
+            itemInGroup.IsOnlyOneSelected = false;
           }
         }
       }
@@ -725,7 +696,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         {
           foreach (var itemInGroup in group.ConnectorViewModels)
           {
-            itemInGroup.isOnlyOneSelected = true;
+            itemInGroup.IsOnlyOneSelected = true;
           }
         }
       }
@@ -744,20 +715,21 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private void ControlLeftMouseUpHandler(object sender, MouseButtonEventArgs e)
     {
       TreeViewItem item = (TreeViewItem)sender;
-      try
-      {
-        var connector = new ConnectorViewModel();
-        if (item == null)
-        {
-          return;
-        }
 
+      var connector = new ConnectorViewModel();
+      if (item == null)
+      {
+        return;
+      }
+
+      if (item.Header is ConnectorViewModel)
+      {
         connector = (ConnectorViewModel)item.Header;
         this.DeselectAllConnectors();
         this.connectorItemEventFired = true;
         this.OnCtrlProjectClicked(connector);
       }
-      catch
+      else
       {
         if (this.connectorItemEventFired)
         {
@@ -766,18 +738,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         else
         {
           var group = new ConnectorGroupViewModel();
-          try
+          if (item.Header is ConnectorGroupViewModel)
           {
             group = (ConnectorGroupViewModel)item.Header;
             this.DeselectAllConnectors();
             this.OnGroupClicked(group);
           }
-          catch (Exception ex)
-          {
-          }
         }
       }
-
       this.model.UpdateSelectedConnectors(this.selectedConnectors);
     }
 
@@ -790,7 +758,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       if (Keyboard.IsKeyUp(Key.LeftCtrl) && Keyboard.IsKeyUp(Key.LeftShift))
       {
-        this.ControlLeftMouseUpHandler(sender,e);
+        this.ControlLeftMouseUpHandler(sender, e);
       }
 
       this.ManageContextMenuAvailability();
@@ -871,7 +839,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         }
       }
     }
-    
+
     /// <summary>
     /// Handles scrolling event. Becuse of item virtualization it is necessary to refresh displayed item styles in code behind, because virtual items are null pointers when not seen.
     /// </summary>

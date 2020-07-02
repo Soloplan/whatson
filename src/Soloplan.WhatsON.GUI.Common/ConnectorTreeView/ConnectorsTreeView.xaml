@@ -200,10 +200,8 @@
             HorizontalContentAlignment="Stretch"
             dd:DragDrop.DropHandler="{Binding}"
             dd:DragDrop.IsDragSource="True"
-            dd:DragDrop.IsDropTarget="True"
-            VirtualizingPanel.IsVirtualizing="True"
-            ScrollViewer.ScrollChanged="OnScroll">
-    <TreeView.InputBindings>
+            dd:DragDrop.IsDropTarget="True">
+        <TreeView.InputBindings>
       <KeyBinding Key="Delete" Command="{Binding DeleteSelectedObject, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}" />
     </TreeView.InputBindings>
     <TreeView.ItemContainerStyle>
