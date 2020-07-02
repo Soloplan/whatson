@@ -17,7 +17,6 @@
       <MenuItem.Header>
         <StackPanel Orientation="Horizontal">
           <materialDesign:PackIcon Kind="TagOutline" />
-                    <!--<TextBlock Padding="10,0,0,0" Text="Copy latest build label" IsEnabled="{Binding CurrentStatus.Parent.IsOnlyOneSelected , Converter={StaticResource RGBToRGBAConverter}}"/>-->
                     <TextBlock Padding="10,0,0,0" Text="Copy latest build label"/>
                 </StackPanel>
       </MenuItem.Header>
