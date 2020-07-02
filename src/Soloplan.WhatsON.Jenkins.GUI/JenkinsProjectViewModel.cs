@@ -7,6 +7,7 @@
 
 namespace Soloplan.WhatsON.Jenkins.GUI
 {
+  using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Model;
@@ -32,6 +33,12 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       }
 
       return true;
+    }
+
+    public override void ApplyConfiguration(ConnectorConfiguration configuration)
+    {
+      base.ApplyConfiguration(configuration);
+      this.Url = JenkinsApi.UrlHelper.ProjectUrl(this.Connector);
     }
 
     protected override BuildStatusViewModel GetStatusViewModel()

@@ -9,6 +9,8 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
 {
   using System;
   using System.Windows.Navigation;
+  using Microsoft.Win32;
+  using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Model;
@@ -36,8 +38,14 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
       {
         return (status.Culprits.Count == 0 && status.State != ObservationState.Running) ? false : true;
       }
-      
+
       return true;
+    }
+
+    public override void ApplyConfiguration(ConnectorConfiguration configuration)
+    {
+      base.ApplyConfiguration(configuration);
+      this.Url = CruiseControlServer.UrlHelper.GetReportUrl(this.Connector.directAddress, this.Connector.Project);
     }
   }
 }
