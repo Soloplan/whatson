@@ -59,7 +59,28 @@ namespace Soloplan.WhatsON.CruiseControl
       var projectData = await server.GetProjectStatus(cancellationToken, this.Project, 5);
       if (projectData == null)
       {
-        return null;
+        if (await this.CheckServerURL() == false)
+        {
+          var status = new Status();
+          status.ErrorMessage = "Server not available";
+          status.InvalidBuild = true;
+          return status;
+        }
+        else if (await this.CheckProjectURL() == false)
+        {
+          var status = new Status();
+          status.ErrorMessage = "Project not available";
+          status.InvalidBuild = true;
+          return status;
+        }
+      }
+
+      if (projectData.LastBuildLabel == null)
+      {
+        var status = new Status();
+        status.ErrorMessage = "No builds yet";
+        status.InvalidBuild = true;
+        return status;
       }
 
       log.Trace("Retrieved status for cruise control project {project}: {@projectData}", this.Project, projectData);
