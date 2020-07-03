@@ -35,6 +35,33 @@ namespace Soloplan.WhatsON.CruiseControl
     {
     }
 
+    /// <summary>
+    /// Checks correctness of self server URL.
+    /// </summary>
+    /// <returns>true when fine, false when url is broken.</returns>
+    public override async Task<bool> CheckServerURL()
+    {
+      return false;
+    }
+
+    /// <summary>
+    /// Checks correctness of self project URL.
+    /// </summary>
+    /// <returns>true when fine, false when url is broken.</returns>
+    public override async Task<bool> CheckProjectURL()
+    {
+      return false;
+    }
+
+    /// <summary>
+    /// Checks if there are any builds available.
+    /// </summary>
+    /// <returns>True when there are any builds, false when there are no builds.</returns>
+    public override bool HasBuilds()
+    {
+      return false;
+    }
+
     protected override async Task<Status> GetCurrentStatus(CancellationToken cancellationToken)
     {
       var server = CruiseControlManager.GetServer(this.directAddress);

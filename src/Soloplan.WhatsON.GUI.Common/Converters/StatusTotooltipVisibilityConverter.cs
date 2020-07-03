@@ -7,37 +7,26 @@
 
 namespace Soloplan.WhatsON.GUI.Common.Converters
 {
-  using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Model;
   using System;
   using System.Globalization;
   using System.Windows;
   using System.Windows.Data;
-  using System.Windows.Navigation;
 
   /// <summary>
-  /// Converter for projects DataTemplates. Determines visibility of a project tooltips. Uses StatusViewmodel method to find out if tooltip should be visible or not.
+  /// This converter is only for debug purposes to check what is going on in xaml.
   /// </summary>
-  public class MainStatusToVisibilityConverter : IValueConverter
+  public class StatusTotooltipVisibilityConverter : IValueConverter
   {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-      if (value is StatusViewModel status)
-      {
-        return status.Parent.ShouldDisplayTooltip() ? Visibility.Visible : Visibility.Hidden;
-      }
-
-      if (value is ConnectorViewModel connector)
-      {
-        return connector.ShouldDisplayTooltip() ? Visibility.Visible : Visibility.Hidden;
-      }
-
-      return Visibility.Visible;
+      return ((ObservationState)value) != ObservationState.Unknown ? Visibility.Hidden : Visibility.Visible;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
-      throw new NotImplementedException();
+      return value;
     }
+
   }
 }

@@ -29,7 +29,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
     {
       if (this.CurrentStatus is JenkinsStatusViewModel status)
       {
-        return (status.Culprits.Count == 0 && status.CommittedToThisBuild.Count == 0 && status.State != ObservationState.Running) ? false : true;
+        return (status.Culprits.Count == 0 && status.CommittedToThisBuild.Count == 0 && status.State != ObservationState.Running && status.State != ObservationState.Unknown) ? false : true;
       }
 
       return true;

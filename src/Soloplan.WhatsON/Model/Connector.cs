@@ -7,9 +7,11 @@
 
 namespace Soloplan.WhatsON.Model
 {
-  using System.Collections.Generic;
+    using System;
+    using System.Collections.Generic;
   using System.Linq;
-  using System.Text;
+    using System.Net;
+    using System.Text;
   using System.Threading;
   using System.Threading.Tasks;
   using NLog;
@@ -125,6 +127,56 @@ namespace Soloplan.WhatsON.Model
 
       this.Snapshots.Add(new Snapshot(status));
       this.Snapshots.Sort((x, y) => x.Age.CompareTo(y.Age));
+    }
+
+    public virtual async Task<bool> IsReachableUrl(string urlInput)
+    {
+      bool testStatus;
+      WebRequest request = WebRequest.Create(urlInput);
+      request.Timeout = 10;
+
+      //WebResponse response;
+      try
+      {
+        using (WebResponse response = await request.GetResponseAsync())
+        {
+          testStatus = true;
+          response.Close();
+        }
+      }
+      catch (Exception)
+      {
+        testStatus = false;
+      }
+
+      return testStatus;
+    }
+
+    /// <summary>
+    /// Checks correctness of self server URL.
+    /// </summary>
+    /// <returns>true when fine, false when url is broken.</returns>
+    public virtual async Task<bool> CheckServerURL()
+    {
+      return false;
+    }
+
+    /// <summary>
+    /// Checks correctness of self project URL.
+    /// </summary>
+    /// <returns>true when fine, false when url is broken.</returns>
+    public virtual async Task<bool> CheckProjectURL()
+    {
+      return false;
+    }
+
+    /// <summary>
+    /// Checks if there are any builds available.
+    /// </summary>
+    /// <returns>True when there are any builds, false when there are no builds.</returns>
+    public virtual bool HasBuilds()
+    {
+      return false;
     }
 
     public override string ToString()

@@ -11,6 +11,7 @@
   <converters:NullOrDefaultToVisibilityConverter x:Key="NullOrDefaultVisibilityConverter" />
   <converters:InvertBooleanToVisibilityConverter x:Key="InvertBooleanToVisibilityConverter" />
   <converters:MainStatusToVisibilityConverter  x:Key="MainStatusToVisibilityConverter"/>
+  <converters:StatusTotooltipVisibilityConverter x:Key="StatusTotooltipVisibilityConverter"/>
 
   <Style x:Key="TextBlockTime" TargetType="{x:Type TextBlock}">
     <Setter Property="HorizontalAlignment" Value="Right" />
@@ -39,13 +40,14 @@
     </StackPanel>
   </ToolTip>
     
-  <ToolTip x:Key="RowTooltip" Visibility="{Binding CurrentStatus , Converter={StaticResource MainStatusToVisibilityConverter }}">
+  <ToolTip x:Key="RowTooltip" Visibility="{Binding Path=. , Converter={StaticResource MainStatusToVisibilityConverter }}">
     <StackPanel DataContext="{Binding CurrentStatus}">
       <buildServer:ProgressBarTooltipControl DataContext="{Binding}"/>
       <StackPanel Visibility="{Binding CulpritsAndLastCommittedDifferent, Converter={StaticResource BoolToVisibility}}">
         <buildServer:CulpritsControl Caption="Commits by:" CulpritsProp="{Binding DataContext.CommittedToThisBuild, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
       </StackPanel>
       <buildServer:CulpritsControl Caption="All culprits for this build:" CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
+      <TextBlock Text="{Binding Details, Mode=OneWay}" Visibility="{Binding State , Converter={StaticResource StatusTotooltipVisibilityConverter}}"/>
     </StackPanel>
   </ToolTip>  
 
