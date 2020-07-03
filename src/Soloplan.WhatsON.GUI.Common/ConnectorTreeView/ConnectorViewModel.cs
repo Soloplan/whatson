@@ -175,46 +175,9 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
           }
         }
 
-        if (changedConnector.CurrentStatus == null)
-        {
-          Task.Run(new Action(() => CheckForErrors(this.CurrentStatus,changedConnector)));
-        }
-
         this.Description = changedConnector.Description;
         this.CurrentStatus.Update(changedConnector.CurrentStatus);
       }));
-    }
-
-    public async Task CheckForErrors(BuildStatusViewModel build, Connector connector)
-    {
-      Status status = connector.CurrentStatus ?? new Status();
-
-      bool anyChanges = false;
-      if (connector.HasBuilds() == false)
-      {
-        anyChanges = true;
-        status.Details = "No builds yet";
-        status.State = ObservationState.Unknown;
-      }
-
-      if (await connector.CheckServerURL() == false)
-      {
-        anyChanges = true;
-        status.Details = "Project not available";
-        status.State = ObservationState.Unknown;
-      }
-      else if (await connector.CheckProjectURL() == false)
-      {
-        anyChanges = true;
-        status.Details = "Server not available";
-        status.State = ObservationState.Unknown;
-      }
-
-      if (anyChanges == true)
-      {
-        build.Update(status);
-      }
-      return;
     }
 
     /// <summary>

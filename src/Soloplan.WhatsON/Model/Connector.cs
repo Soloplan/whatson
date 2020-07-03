@@ -226,7 +226,7 @@ namespace Soloplan.WhatsON.Model
     {
       log.Trace("Checking if snapshot should be taken...");
 
-      if (status != null && status.State != ObservationState.Running && this.Snapshots.All(x => x.Status.BuildNumber != status.BuildNumber))
+      if (status != null && status.State != ObservationState.Running && this.Snapshots.All(x => x.Status.BuildNumber != status.BuildNumber) && status.InvalidBuild == false)
       {
         log.Debug("Snapshot should be taken. {stat}", new { CurrentStatus = status });
         return true;

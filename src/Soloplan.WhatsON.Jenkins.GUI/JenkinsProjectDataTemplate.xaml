@@ -12,6 +12,7 @@
   <converters:InvertBooleanToVisibilityConverter x:Key="InvertBooleanToVisibilityConverter" />
   <converters:MainStatusToVisibilityConverter  x:Key="MainStatusToVisibilityConverter"/>
   <converters:StatusTotooltipVisibilityConverter x:Key="StatusTotooltipVisibilityConverter"/>
+  <converters:DebugConverter x:Key="DebugConverter"/>
 
   <Style x:Key="TextBlockTime" TargetType="{x:Type TextBlock}">
     <Setter Property="HorizontalAlignment" Value="Right" />
@@ -47,7 +48,7 @@
         <buildServer:CulpritsControl Caption="Commits by:" CulpritsProp="{Binding DataContext.CommittedToThisBuild, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
       </StackPanel>
       <buildServer:CulpritsControl Caption="All culprits for this build:" CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
-      <TextBlock Text="{Binding Details, Mode=OneWay}" Visibility="{Binding State , Converter={StaticResource StatusTotooltipVisibilityConverter}}"/>
+      <TextBlock Text="{Binding ErrorMessage, Mode=OneWay}" Visibility="{Binding State , Converter={StaticResource StatusTotooltipVisibilityConverter}}" />
     </StackPanel>
   </ToolTip>  
 

@@ -39,6 +39,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private string label;
 
+    private string errorMessage;
+
     public StatusViewModel(ConnectorViewModel connector)
     {
       this.Parent = connector;
@@ -180,6 +182,16 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       set
       {
         this.unstable = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    public string ErrorMessage
+    {
+      get => this.errorMessage;
+      set
+      {
+        this.errorMessage = value;
         this.OnPropertyChanged();
       }
     }

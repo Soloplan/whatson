@@ -138,6 +138,10 @@ namespace Soloplan.WhatsON
     /// <returns>Not used.</returns>
     private async Task StartObserveSingle(ObservationConnector connector, CancellationToken token)
     {
+      if (connector.Connector.Project.Contains("0.7.0"))
+      {
+        var x = 10;
+      }
       while (connector.Running)
       {
         try

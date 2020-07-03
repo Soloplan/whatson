@@ -35,8 +35,12 @@ namespace Soloplan.WhatsON.Model
 
     public virtual int BuildNumber { get; set; }
 
+    public virtual bool InvalidBuild { get; set; }
+
     public virtual bool Building { get; set; }
 
     public virtual string Url { get; set; }
+
+    public virtual string ErrorMessage { get; set; }
   }
 }

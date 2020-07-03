@@ -20,7 +20,7 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
   {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-      return ((ObservationState)value) != ObservationState.Unknown ? Visibility.Hidden : Visibility.Visible;
+      return ((ObservationState)value) != ObservationState.Unknown ? Visibility.Collapsed : Visibility.Visible;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

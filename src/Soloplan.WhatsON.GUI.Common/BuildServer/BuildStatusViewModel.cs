@@ -306,6 +306,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
       this.EstimatedDuration = newStatus.EstimatedDuration;
       this.Label = newStatus.Label;
       this.Url = newStatus.Url;
+      this.ErrorMessage = newStatus.ErrorMessage;
 
       this.UpdateCalculatedFields();
     }
