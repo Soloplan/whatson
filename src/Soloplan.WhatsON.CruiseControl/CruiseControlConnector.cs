@@ -53,15 +53,6 @@ namespace Soloplan.WhatsON.CruiseControl
       return false;
     }
 
-    /// <summary>
-    /// Checks if there are any builds available.
-    /// </summary>
-    /// <returns>True when there are any builds, false when there are no builds.</returns>
-    public override bool HasBuilds()
-    {
-      return false;
-    }
-
     protected override async Task<Status> GetCurrentStatus(CancellationToken cancellationToken)
     {
       var server = CruiseControlManager.GetServer(this.directAddress);

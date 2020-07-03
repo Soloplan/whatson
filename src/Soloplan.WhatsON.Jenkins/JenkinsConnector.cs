@@ -75,15 +75,6 @@ namespace Soloplan.WhatsON.Jenkins
       return await this.IsReachableUrl(JenkinsApi.UrlHelper.ProjectUrl(this));
     }
 
-    /// <summary>
-    /// Checks if there are any builds available.
-    /// </summary>
-    /// <returns>True when there are any builds, false when there are no builds.</returns>
-    public override bool HasBuilds()
-    {
-      return this.Snapshots.Count > 0 ? true : false;
-    }
-
     protected override async Task ExecuteQuery(CancellationToken cancellationToken)
     {
       await base.ExecuteQuery(cancellationToken);

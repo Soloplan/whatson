@@ -133,9 +133,7 @@ namespace Soloplan.WhatsON.Model
     {
       bool testStatus;
       WebRequest request = WebRequest.Create(urlInput);
-      request.Timeout = 10;
-
-      //WebResponse response;
+      request.Timeout = 50; //in ms.
       try
       {
         using (WebResponse response = await request.GetResponseAsync())
@@ -166,15 +164,6 @@ namespace Soloplan.WhatsON.Model
     /// </summary>
     /// <returns>true when fine, false when url is broken.</returns>
     public virtual async Task<bool> CheckProjectURL()
-    {
-      return false;
-    }
-
-    /// <summary>
-    /// Checks if there are any builds available.
-    /// </summary>
-    /// <returns>True when there are any builds, false when there are no builds.</returns>
-    public virtual bool HasBuilds()
     {
       return false;
     }
