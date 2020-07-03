@@ -13,6 +13,7 @@
   <StackPanel>
     <local:CCProgressBarTooltipControl DataContext="{Binding}" />
     <buildServer:CulpritsControl Caption="Changes by:" CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
+    <TextBlock Text="{Binding ErrorMessage, Mode=OneWay}" Visibility="{Binding State , Converter={StaticResource StatusTotooltipVisibilityConverter}}" />
   </StackPanel>
   </ToolTip>
 
