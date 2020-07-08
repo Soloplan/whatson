@@ -123,7 +123,7 @@ namespace Soloplan.WhatsON.Composition
     /// <param name="connectorConfiguration">The connector configuration.</param>
     /// <returns>Creates new connector with given configuration.</returns>
     /// <exception cref="InvalidOperationException">Couldn't find plugin for a type: {connectorConfiguration.TypeName}.</exception>
-    public Connector CreateNewConnector(ConnectorConfiguration connectorConfiguration)
+    public Connector CreateNewConnector(ConnectorConfiguration connectorConfiguration, bool? checkRedirect = null)
     {
       var plugin = this.ConnectorPlugins.FirstOrDefault(p => p.Name == connectorConfiguration.Type);
       if (plugin == null)
@@ -135,7 +135,7 @@ namespace Soloplan.WhatsON.Composition
       Connector newConnector;
       try
       {
-        newConnector = plugin.CreateNew(connectorConfiguration);
+        newConnector = plugin.CreateNew(connectorConfiguration, checkRedirect);
       }
       catch (Exception e)
       {
@@ -153,7 +153,7 @@ namespace Soloplan.WhatsON.Composition
     /// <param name="connectorConfiguration">The connector configuration.</param>
     /// <returns>A new connector with given configuration.</returns>
     /// <exception cref="InvalidOperationException">Couldn't find plugin for a type: {connectorConfiguration.TypeName}.</exception>
-    public Connector GetConnector(ConnectorConfiguration connectorConfiguration)
+    public Connector GetConnector(ConnectorConfiguration connectorConfiguration, bool? checkRedirect = null)
     {
       var connector = this.connectors.FirstOrDefault(s => s != null && s.Configuration.Identifier == connectorConfiguration.Identifier);
       if (connector != null)
@@ -161,7 +161,7 @@ namespace Soloplan.WhatsON.Composition
         return connector;
       }
 
-      return this.CreateNewConnector(connectorConfiguration);
+      return this.CreateNewConnector(connectorConfiguration, checkRedirect);
     }
 
     /// <summary>

@@ -39,7 +39,7 @@ namespace Soloplan.WhatsON.Composition
 
     public string Description { get; }
 
-    public abstract Connector CreateNew(ConnectorConfiguration configuration);
+    public abstract Connector CreateNew(ConnectorConfiguration configuration, bool? checkRedirect = null);
 
     /// <summary>
     /// Assigns the <see cref="Project"/> to <see cref="ConfigurationItem"/>.
@@ -47,7 +47,7 @@ namespace Soloplan.WhatsON.Composition
     /// <param name="project">The server project.</param>
     /// <param name="configurationItemsSupport">The configuration items provider.</param>
     /// <param name="serverAddress">The server address.</param>
-    public abstract void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress=null);
+    public abstract void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress = null);
 
     /// <summary>
     /// Gets the projects.

@@ -10,6 +10,7 @@ namespace Soloplan.WhatsON.Jenkins
   using System;
   using System.Collections.Generic;
   using System.Threading.Tasks;
+  using System.Xml.Serialization;
   using NLog;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
@@ -23,15 +24,48 @@ namespace Soloplan.WhatsON.Jenkins
     /// </summary>
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
+    private static Dictionary<string, bool> blueOceanCache = new Dictionary<string, bool>();
+
     public JenkinsPlugin()
       : base(typeof(JenkinsConnector))
     {
     }
 
-    public override Connector CreateNew(ConnectorConfiguration configuration)
+    public override Connector CreateNew(ConnectorConfiguration configuration, bool? checkRedirect = null)
     {
       log.Debug("Creating new JenkinsProject based on configuration {configuration}", new { configuration.Name, configuration.Identifier });
       var jenkinsProject = new JenkinsConnector(configuration, new JenkinsApi());
+
+      if (checkRedirect == null)
+      {
+        return jenkinsProject;
+      }
+      else if (checkRedirect == false)
+      {
+        return jenkinsProject;
+      }
+
+      if (blueOceanCache.ContainsKey(jenkinsProject.Address))
+      {
+        jenkinsProject.Configuration.GetConfigurationByKey("RedirectPlugin").Value = blueOceanCache[jenkinsProject.Address].ToString();
+        configuration.GetConfigurationByKey("RedirectPlugin").Value = blueOceanCache[jenkinsProject.Address].ToString();
+        return jenkinsProject;
+      }
+
+      var task = Task.Run(async () => await jenkinsProject.IsReachableUrl(JenkinsApi.UrlHelper.ProjectUrl(jenkinsProject) + JenkinsApi.UrlHelper.RedirectPluginUrlSuffix));
+      task.Wait();
+      var result = task.Result;
+      if (result == true)
+      {
+        jenkinsProject.Configuration.GetConfigurationByKey("RedirectPlugin").Value = "True";
+        configuration.GetConfigurationByKey("RedirectPlugin").Value = "True";
+        blueOceanCache.Add(jenkinsProject.Address, true);
+      }
+      else
+      {
+        blueOceanCache.Add(jenkinsProject.Address, false);
+      }
+
       return jenkinsProject;
     }
 
