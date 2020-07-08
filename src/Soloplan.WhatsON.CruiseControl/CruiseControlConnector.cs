@@ -41,7 +41,7 @@ namespace Soloplan.WhatsON.CruiseControl
     /// <returns>true when fine, false when url is broken.</returns>
     public override async Task<bool> CheckServerURL()
     {
-      return false;
+      return await this.IsReachableUrl(this.Address);
     }
 
     /// <summary>
@@ -50,7 +50,7 @@ namespace Soloplan.WhatsON.CruiseControl
     /// <returns>true when fine, false when url is broken.</returns>
     public override async Task<bool> CheckProjectURL()
     {
-      return false;
+      return await this.IsReachableUrl(this.directAddress);
     }
 
     protected override async Task<Status> GetCurrentStatus(CancellationToken cancellationToken)
@@ -73,6 +73,14 @@ namespace Soloplan.WhatsON.CruiseControl
           status.InvalidBuild = true;
           return status;
         }
+      }
+
+      if (projectData == null)
+      {
+        var status = new Status();
+        status.ErrorMessage = "Project not available";
+        status.InvalidBuild = true;
+        return status;
       }
 
       if (projectData.LastBuildLabel == null)

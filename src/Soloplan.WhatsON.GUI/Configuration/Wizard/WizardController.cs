@@ -637,7 +637,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <returns>The task.</returns>
     private async Task LoadProjectsFromPlugin(Tuple<ConnectorPlugin, ProjectViewModelList> listQueryingPlugin)
     {
-      var serverProjects = await listQueryingPlugin.Item1.GetProjects(this.ProposedServerAddress);
+      var serverProjects = await listQueryingPlugin.Item1.GetProjects(this.ProposedServerAddress.Last() != '/' ? this.ProposedServerAddress += '/' : this.ProposedServerAddress);
       foreach (var serverProject in serverProjects.OrderBy(x => x.Name))
       {
         var newProject = listQueryingPlugin.Item2.AddProject(serverProject);
