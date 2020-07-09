@@ -26,11 +26,15 @@
                   HorizontalAlignment="Stretch"
                   VerticalAlignment="Center"
                   Orientation="Vertical">
+        <StackPanel Orientation="Horizontal">
+          <CheckBox x:Name="AutoDetectionCheckbox" Content="Automatically detect type " IsChecked="{Binding IsAutoDetectionEnabled, Mode=TwoWay}"/>
+        </StackPanel>
         <ComboBox materialDesign:HintAssist.Hint="Type"
                   DisplayMemberPath="DisplayName"
                   ItemsSource="{Binding AvailableConnectorTypes}"
                   SelectedItem="{Binding SelectedConnectorType}"
-                  Style="{StaticResource MaterialDesignFloatingHintComboBox}" />
+                  Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                  Visibility="{Binding IsAutoDetectionDisabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         <ComboBox x:Name="AddressComboBox"
                   Margin="0,30,0,0"
                   materialDesign:HintAssist.Hint="Project URL"

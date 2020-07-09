@@ -42,7 +42,14 @@ namespace Soloplan.WhatsON.CruiseControl
       {
         log.Trace("Polling server {@server}", new { Address = this.ReportUrl, LastPolled = this.lastPolled, CallingProject = projectName });
         this.lastPolled = DateTime.Now;
-        this.cache = await this.GetStatusAsync<CruiseControlJobs>(cancellationToken, this.ReportUrl);
+        try
+        {
+          this.cache = await this.GetStatusAsync<CruiseControlJobs>(cancellationToken, this.ReportUrl);
+        }
+        catch (Exception ex)
+        {
+          this.cache = null;
+        }
       }
 
       log.Trace("Retrieving value from cache for project {projectName}", projectName);
@@ -89,7 +96,14 @@ namespace Soloplan.WhatsON.CruiseControl
     /// <returns>The list of all projects.</returns>
     public async Task<CruiseControlJobs> GetAllProjects()
     {
-      return await this.GetStatusAsync<CruiseControlJobs>(default, this.ReportUrl);
+      try
+      {
+        return await this.GetStatusAsync<CruiseControlJobs>(default, this.ReportUrl);
+      }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
     }
 
     private async Task<TModel> GetStatusAsync<TModel>(CancellationToken cancellationToken, string requestUrl)
@@ -118,7 +132,7 @@ namespace Soloplan.WhatsON.CruiseControl
         }
 
         log.Error($"Could not fetch status from {requestUrl}.", ex);
-        return null;
+        throw ex;
       }
     }
 

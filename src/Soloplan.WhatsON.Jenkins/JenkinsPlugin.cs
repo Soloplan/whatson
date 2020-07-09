@@ -80,7 +80,14 @@ namespace Soloplan.WhatsON.Jenkins
     {
       var api = new JenkinsApi();
       var serverProjects = new List<Project>();
-      await this.GetProjectsLists(address, serverProjects, api);
+      try
+      {
+        await this.GetProjectsLists(address, serverProjects, api);
+      }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
       return serverProjects;
     }
 
@@ -118,7 +125,21 @@ namespace Soloplan.WhatsON.Jenkins
     /// <returns>A task representing the job.</returns>
     private async Task GetProjectsLists(string address, IList<Project> projects, JenkinsApi jenkinsApi)
     {
-      var jenkinsJobs = await jenkinsApi.GetJenkinsJobs(address, default);
+      JenkinsJobs jenkinsJobs;
+      try
+      {
+        jenkinsJobs = await jenkinsApi.GetJenkinsJobs(address, default);
+      }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
+
+      if (jenkinsJobs == null)
+      {
+        return;
+      }
+
       if (jenkinsJobs?.Jobs == null)
       {
         return;

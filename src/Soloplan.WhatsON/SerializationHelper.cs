@@ -212,7 +212,7 @@ namespace Soloplan.WhatsON
         }
 
         log.Error($"Could not fetch JSON data from {requestUrl}.", ex);
-        return null;
+        throw ex;
       }
     }
 
