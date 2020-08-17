@@ -79,6 +79,7 @@
     <Compile Include="Converters\MainStatusToVisibilityConverter.cs" />
     <Compile Include="Converters\NullableBooleanConverter.cs" />
     <Compile Include="Converters\RGBAToRGBConverter.cs" />
+    <Compile Include="Converters\StatusTotooltipVisibilityConverter.cs" />
     <Compile Include="ExternalEnabledStateCommand.cs" />
     <Compile Include="Converters\InvertBooleanConverter.cs" />
     <Compile Include="Converters\InvertBooleanToVisibilityConverter.cs" />

@@ -8,10 +8,12 @@
   <converters:TimeToApproximateTimeConverter x:Key="TimeToApproximateTimeConverter" />
   <converters:NullOrDefaultToVisibilityConverter x:Key="NullOrDefaultVisibilityConverter" />
   <converters:MainStatusToVisibilityConverter x:Key="MainStatusToVisibilityConverter" />
+  <converters:StatusTotooltipVisibilityConverter x:Key="StatusTotooltipVisibilityConverter"/>
   <ToolTip x:Key="CruiseControlBuildInfoToolTip" Visibility="{Binding Path=. , Converter={StaticResource MainStatusToVisibilityConverter}}">
   <StackPanel>
     <local:CCProgressBarTooltipControl DataContext="{Binding}" />
     <buildServer:CulpritsControl Caption="Changes by:" CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
+    <TextBlock Text="{Binding ErrorMessage, Mode=OneWay}" Visibility="{Binding State , Converter={StaticResource StatusTotooltipVisibilityConverter}}" />
   </StackPanel>
   </ToolTip>
 
@@ -19,6 +21,7 @@
         <StackPanel DataContext="{Binding CurrentStatus}">
             <local:CCProgressBarTooltipControl DataContext="{Binding}" />
             <buildServer:CulpritsControl Caption="Changes by:" CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
+            <TextBlock Text="{Binding ErrorMessage, Mode=OneWay}" Visibility="{Binding State , Converter={StaticResource StatusTotooltipVisibilityConverter}}" />
         </StackPanel>
     </ToolTip>
 
