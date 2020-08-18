@@ -20,26 +20,54 @@ namespace Soloplan.WhatsON.Jenkins
     public async Task<JenkinsJob> GetJenkinsJob(JenkinsConnector connector, CancellationToken token)
     {
       var jobRequest = UrlHelper.JobRequest(connector);
-      return await SerializationHelper.Instance.GetJsonModel<JenkinsJob>(jobRequest, token);
+      try
+      {
+        return await SerializationHelper.Instance.GetJsonModel<JenkinsJob>(jobRequest, token);
+      }
+      catch (Exception)
+      {
+        return null;
+      }
     }
 
     public async Task<JenkinsJobs> GetJenkinsJobs(string address, CancellationToken token)
     {
       var jobsRequest = UrlHelper.JobsRequest(address);
-      return await SerializationHelper.Instance.GetJsonModel<JenkinsJobs>(jobsRequest, token);
+      try
+      {
+        return await SerializationHelper.Instance.GetJsonModel<JenkinsJobs>(jobsRequest, token);
+      }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
     }
 
     public async Task<JenkinsBuild> GetJenkinsBuild(JenkinsConnector connector, int buildNumber, CancellationToken token)
     {
       var buildRequest = UrlHelper.BuildRequest(connector, buildNumber);
-      return await SerializationHelper.Instance.GetJsonModel<JenkinsBuild>(buildRequest, token);
+      try
+      {
+        return await SerializationHelper.Instance.GetJsonModel<JenkinsBuild>(buildRequest, token);
+      }
+      catch (Exception)
+      {
+        return null;
+      }
     }
 
     public async Task<IList<JenkinsBuild>> GetBuilds(JenkinsConnector connector, CancellationToken token, int from = 0, int to = Connector.MaxSnapshots)
     {
       var buildsRequest = UrlHelper.BuildsRequest(connector, from, to);
-      var builds = await SerializationHelper.Instance.GetJsonModel<JenkinsBuilds>(buildsRequest, token);
+      JenkinsBuilds builds = null;
+      try
+      {
+        builds = await SerializationHelper.Instance.GetJsonModel<JenkinsBuilds>(buildsRequest, token);
+      }
+      catch (Exception ex)
+      {
 
+      }
       return builds?.Builds ?? new List<JenkinsBuild>();
     }
 

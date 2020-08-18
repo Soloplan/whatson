@@ -7,11 +7,13 @@
 
 namespace Soloplan.WhatsON.CruiseControl
 {
+  using System;
   using System.Collections.Generic;
   using System.Linq;
   using System.Threading.Tasks;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.CruiseControl.Model;
   using Soloplan.WhatsON.Model;
 
   public class CruiseControlPlugin : ConnectorPlugin
@@ -37,7 +39,20 @@ namespace Soloplan.WhatsON.CruiseControl
     {
       var result = new List<Project>();
       var server = CruiseControlManager.GetServer(address, false);
-      var allProjects = await server.GetAllProjects();
+      CruiseControlJobs allProjects = null;
+      try
+      {
+        allProjects = await server.GetAllProjects();
+      }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
+      if (allProjects == null)
+      {
+        throw new Exception();
+      }
+
       var serverProjects = new List<Project>();
       foreach (var project in allProjects.CruiseControlProject)
       {
