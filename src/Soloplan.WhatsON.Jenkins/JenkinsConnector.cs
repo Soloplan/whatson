@@ -27,9 +27,9 @@ namespace Soloplan.WhatsON.Jenkins
 
     public const string ConnectorDisplayName = "Jenkins";
 
-        /// <summary>
-        /// The redirect plugin tag.
-        /// </summary>
+    /// <summary>
+    /// The redirect plugin tag.
+    /// </summary>
     public const string RedirectPlugin = "RedirectPlugin";
 
     private const long TicksInMillisecond = 10000;

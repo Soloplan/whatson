@@ -131,8 +131,9 @@ namespace Soloplan.WhatsON.Model
 
     public virtual async Task<bool> IsReachableUrl(string urlInput)
     {
+      var url = urlInput;
       bool testStatus;
-      WebRequest request = WebRequest.Create(urlInput);
+      WebRequest request = WebRequest.Create(url);
       request.Timeout = 50; //in ms.
       try
       {

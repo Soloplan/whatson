@@ -9,7 +9,6 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
 {
   using System;
   using System.Windows.Navigation;
-  using Microsoft.Win32;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;

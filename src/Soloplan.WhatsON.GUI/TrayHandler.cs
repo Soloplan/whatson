@@ -293,7 +293,7 @@ namespace Soloplan.WhatsON.GUI
       this.scheduler.UnobserveAll();
       foreach (var connectorConfiguration in this.configuration.ConnectorsConfiguration)
       {
-        var connector = PluginManager.Instance.GetConnector(connectorConfiguration);
+        var connector = PluginManager.Instance.GetConnector(connectorConfiguration, true);
         this.scheduler.Observe(connector);
       }
 

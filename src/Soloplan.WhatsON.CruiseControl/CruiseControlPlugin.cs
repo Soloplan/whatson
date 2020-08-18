@@ -21,7 +21,7 @@ namespace Soloplan.WhatsON.CruiseControl
     {
     }
 
-    public override Connector CreateNew(ConnectorConfiguration configuration)
+    public override Connector CreateNew(ConnectorConfiguration configuration, bool? checkRedirect = null)
     {
       return new CruiseControlConnector(configuration);
     }
