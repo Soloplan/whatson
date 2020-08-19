@@ -86,6 +86,10 @@ By default, it allows to monitor these servers:
 
 - <https://github.com/krzysztof-lorenc>
 
+**Tomasz Skowron**
+
+- <https://github.com/skowront>
+
 ## License
 
 [MIT license](https://github.com/Soloplan/whatson/blob/master/LICENSE)
