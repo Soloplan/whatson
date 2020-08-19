@@ -8,6 +8,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Soloplan.WhatsON.Jenkins", "Soloplan.WhatsON.Jenkins\Soloplan.WhatsON.Jenkins.csproj", "{ED2AE201-2F23-44D3-A98A-CEDB0F2C6003}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.WhatsON.GUI", "Soloplan.WhatsON.GUI\Soloplan.WhatsON.GUI.csproj", "{BB65378F-518E-43E4-A374-592A9FE88E51}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5343A313-4D8D-4B14-8DF4-B575F8E06E74} = {5343A313-4D8D-4B14-8DF4-B575F8E06E74}
+		{D97A8094-EF1F-4CF7-8511-3619B2BAF31A} = {D97A8094-EF1F-4CF7-8511-3619B2BAF31A}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soloplan.WhatsON.Jenkins.GUI", "Soloplan.WhatsON.Jenkins.GUI\Soloplan.WhatsON.Jenkins.GUI.csproj", "{D97A8094-EF1F-4CF7-8511-3619B2BAF31A}"
 EndProject
