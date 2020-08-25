@@ -51,13 +51,11 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     {
       if (this.CompactDisplay)
       {
-        this.CompletionText.Text = string.Empty;
         this.EstimatedRemainingText.Text = " ETA";
         this.PercentSignText.Text = "%/";
       }
       else
       {
-        this.CompletionText.Text = "Completion: ";
         this.EstimatedRemainingText.Text = " estimated remaining";
         this.PercentSignText.Text = "% ";
       }
