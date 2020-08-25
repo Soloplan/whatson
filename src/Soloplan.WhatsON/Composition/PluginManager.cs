@@ -175,6 +175,10 @@ namespace Soloplan.WhatsON.Composition
     {
       foreach (var assemblyName in assemblies)
       {
+        if(!assemblyName.Contains("WhatsON"))
+        {
+          continue;
+        }
         var absoluteName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, assemblyName);
         if (!File.Exists(absoluteName))
         {
