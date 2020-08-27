@@ -14,11 +14,8 @@
   <StackPanel Orientation="{Binding ControlOrientation, RelativeSource={RelativeSource AncestorType=local:ProgressBarTooltipControl}}">
     <StackPanel Orientation="{Binding ControlOrientation, RelativeSource={RelativeSource AncestorType=local:ProgressBarTooltipControl}}" Visibility="{Binding BuildingNoLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
       <StackPanel Orientation="Horizontal">
-        <TextBlock x:Name="CompletionText" Text="Completion: " />
         <TextBlock Text="{Binding Progress}" />
-        <TextBlock x:Name="PercentSignText" Text="% " />
-      </StackPanel>
-      <StackPanel Orientation="Horizontal">
+        <TextBlock x:Name="PercentSignText" Text="% - " />
         <TextBlock>
           <TextBlock.Text>
             <MultiBinding StringFormat="{}{0:00}:{1:00}:{2:00}">

@@ -175,6 +175,10 @@ namespace Soloplan.WhatsON.Composition
     {
       foreach (var assemblyName in assemblies)
       {
+        if(!assemblyName.Contains("WhatsON"))
+        {
+          continue;
+        }
         var absoluteName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, assemblyName);
         if (!File.Exists(absoluteName))
         {
@@ -220,7 +224,7 @@ namespace Soloplan.WhatsON.Composition
     {
       log.Debug("Initializing {PluginsManager}", nameof(PluginManager));
       var path = System.IO.Path.GetDirectoryName(System.AppContext.BaseDirectory);
-      var plugInPath = Path.Combine(path, "Plugins");
+      var plugInPath = path;
       log.Debug("Paths used {}", new { AppDirectory = path, PluginDirectory = plugInPath });
       if (Directory.Exists(plugInPath))
       {
