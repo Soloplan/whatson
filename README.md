@@ -43,12 +43,12 @@ A build monitoring tool written in C#.
 1. [Download the latest release.](https://github.com/Soloplan/whatson/releases/latest)
 1. Save it to the location from which you will be using it.
 1. Start the app from file *Soloplan.WhatsON.GUI.exe*
-1. If you want the app to start during the system start, open the configuration(gear icon at the top, left corner) and set the option "Run when windows starts"
+1. If you want the app to start during the system start, open the configuration (gear icon at the top, left corner) and set the option "Run when windows starts"
 1. To add a new project build for monitoring, you can use the wizard (plus icon at the top, left corner).
 
 ## Feature requests and bugs
 
-Have a bug or a feature request please search forit in existing and closed issues. If your problem or idea is not addressed yet, please [open a new issue](https://github.com/Soloplan/whatson/issues/new).
+Have a bug or a feature request please search for it in existing and closed issues. If your problem or idea is not addressed yet, please [open a new issue](https://github.com/Soloplan/whatson/issues/new).
 
 ## Plugins
 
@@ -60,7 +60,7 @@ By default, it allows to monitor these servers:
  
  ## Documentation
  
- Documentation is avaliable as a [github WIKI](https://github.com/Soloplan/whatson/wiki)
+ Documentation is available as a [github WIKI](https://github.com/Soloplan/whatson/wiki)
  
  ## Contribution
  
