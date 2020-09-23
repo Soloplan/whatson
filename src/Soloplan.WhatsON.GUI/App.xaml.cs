@@ -8,6 +8,7 @@ using System.Linq;
 namespace Soloplan.WhatsON.GUI
 {
   using System;
+  using System.Globalization;
   using System.Net;
   using System.Windows;
   using System.Windows.Interop;
@@ -70,6 +71,8 @@ namespace Soloplan.WhatsON.GUI
 
     protected override void OnStartup(StartupEventArgs e)
     {
+      System.Globalization.CultureInfo.CurrentCulture = new CultureInfo("en-US");
+      System.Globalization.CultureInfo.CurrentUICulture = new CultureInfo("en-US");
       var configDirArg = e.Args.FirstOrDefault(a => a.ToLower().StartsWith(ConfigDirArgName.ToLower()));
       if (configDirArg != null)
       {

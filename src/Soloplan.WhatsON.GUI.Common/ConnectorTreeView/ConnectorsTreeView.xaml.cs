@@ -21,8 +21,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Windows.Media;
   using System.Windows.Media.Animation;
   using GongSolutions.Wpf.DragDrop;
-  using Humanizer;
-  using Humanizer.Localisation;
   using MaterialDesignThemes.Wpf;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
