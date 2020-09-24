@@ -10,6 +10,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Collections.Generic;
   using System.Collections.ObjectModel;
   using System.Linq;
+  using System.ServiceModel.Configuration;
   using System.Text.RegularExpressions;
   using System.Windows;
   using System.Windows.Controls;
@@ -213,29 +214,41 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       {
         if (this.connectorsToDrop.Count != 0)
         {
-          if (dropInfo.InsertPosition == GongSolutions.Wpf.DragDrop.RelativeInsertPosition.BeforeTargetItem)
+          changesExist = this.DropConnector(dropInfo, draggedConnector);
+          bool found = false;
+          foreach (var connector in this.connectorsToDrop)
           {
-            var targetGroup = this.GetConnectorGroup((ConnectorViewModel)dropInfo.TargetItem);
-            foreach (var element in this.connectorsToDrop.Reverse())
+            if (draggedConnector.Identifier == connector.Identifier)
             {
-              var sourceGroup = this.GetConnectorGroup(element);
-              MoveObject(sourceGroup, targetGroup, dropInfo.InsertPosition);
-              targetGroup = this.GetConnectorGroup(element);
+              found = true;
             }
           }
-          else
+
+          if (found == true)
           {
-            var targetGroup = this.GetConnectorGroup((ConnectorViewModel)dropInfo.TargetItem);
-            foreach (var element in this.connectorsToDrop)
+            if (dropInfo.InsertPosition == GongSolutions.Wpf.DragDrop.RelativeInsertPosition.BeforeTargetItem)
             {
-              var sourceGroup = this.GetConnectorGroup(element);
-              MoveObject(sourceGroup, targetGroup, dropInfo.InsertPosition);
-              targetGroup = this.GetConnectorGroup(element);
+              var targetGroup = this.GetConnectorGroup((ConnectorViewModel)dropInfo.TargetItem);
+              foreach (var element in this.connectorsToDrop.Reverse())
+              {
+                var sourceGroup = this.GetConnectorGroup(element);
+                MoveObject(sourceGroup, targetGroup, dropInfo.InsertPosition);
+                targetGroup = this.GetConnectorGroup(element);
+              }
+            }
+            else
+            {
+              var targetGroup = this.GetConnectorGroup((ConnectorViewModel)dropInfo.TargetItem);
+              foreach (var element in this.connectorsToDrop)
+              {
+                var sourceGroup = this.GetConnectorGroup(element);
+                MoveObject(sourceGroup, targetGroup, dropInfo.InsertPosition);
+                targetGroup = this.GetConnectorGroup(element);
+              }
             }
           }
 
           this.connectorsToDrop = new Collection<ConnectorViewModel>();
-          this.OnConfigurationChanged(this, EventArgs.Empty);
         }
         else
         {
