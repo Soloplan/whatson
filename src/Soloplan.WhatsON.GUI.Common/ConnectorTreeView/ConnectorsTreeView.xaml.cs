@@ -816,6 +816,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
       this.DeselectAllConnectors();
       this.model.UpdateSelectedConnectors(this.selectedConnectors);
+      this.ManageContextMenuAvailability();
     }
 
     /// <summary>
