@@ -13,7 +13,6 @@ namespace Soloplan.WhatsON.GUI.Configuration
   using System.Windows.Data;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.Converters;
-  using Soloplan.WhatsON.GUI.Configuration.ViewModel;
 
   /// <summary>
   /// The control builder for checkbox.

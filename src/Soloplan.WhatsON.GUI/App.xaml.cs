@@ -3,12 +3,11 @@
 // Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 
-using System.Linq;
-
 namespace Soloplan.WhatsON.GUI
 {
   using System;
   using System.Globalization;
+  using System.Linq;
   using System.Net;
   using System.Windows;
   using System.Windows.Interop;
@@ -16,7 +15,6 @@ namespace Soloplan.WhatsON.GUI
   using NLog;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
-  using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.GUI.Logging;
 
   /// <summary>
@@ -24,6 +22,11 @@ namespace Soloplan.WhatsON.GUI
   /// </summary>
   public partial class App : Application
   {
+    /// <summary>
+    /// The argument name for the configuration directory.
+    /// </summary>
+    private const string ConfigDirArgName = @"/configDir:";
+
     /// <summary>
     /// Logger instance used by this class.
     /// </summary>
@@ -63,11 +66,6 @@ namespace Soloplan.WhatsON.GUI
       this.IsDarkThemeEnabled = isDark.Value;
       this.themeHelper.ApplyLightDarkMode(isDark.Value);
     }
-
-    /// <summary>
-    /// The argument name for the configuration directory.
-    /// </summary>
-    private static string ConfigDirArgName = @"/configDir:";
 
     protected override void OnStartup(StartupEventArgs e)
     {

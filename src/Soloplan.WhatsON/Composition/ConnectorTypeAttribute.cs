@@ -14,6 +14,7 @@ namespace Soloplan.WhatsON.Composition
     {
       this.Name = name;
     }
+
     public ConnectorTypeAttribute(string name, string displayName)
     {
       this.Name = name;

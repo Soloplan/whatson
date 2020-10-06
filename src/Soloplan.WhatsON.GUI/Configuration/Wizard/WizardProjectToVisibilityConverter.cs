@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="InvertBooleanConverter.cs" company="Soloplan GmbH">
+// <copyright file="WizardProjectToVisibilityConverter.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
@@ -7,13 +7,10 @@
 
 namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 {
-  using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
-  using Soloplan.WhatsON.Model;
   using System;
   using System.Globalization;
   using System.Windows;
   using System.Windows.Data;
-  using System.Windows.Navigation;
 
   /// <summary>
   /// Converter for wizard project tooltips. Uses method from ProjectViewModel to determine visibility.

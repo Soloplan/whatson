@@ -5,14 +5,13 @@
 
 namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
-  using System;
   using System.Collections.Generic;
   using System.Linq;
   using NLog;
   using Soloplan.WhatsON.Composition;
 
   /// <summary>
-  /// Extension class for accessing plugIns of <see cref="ITreeViewPresentationPlugIn"/> type.
+  /// Extension class for accessing plugIns of <see cref="PresentationPlugin"/> type.
   /// </summary>
   public static class PluginManagerExtensions
   {
@@ -30,7 +29,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// Gets all found plugIns.
     /// </summary>
     /// <param name="manager">Plugin manager.</param>
-    /// <returns>List of all <see cref="ITreeViewPresentationPlugIn"/>.</returns>
+    /// <returns>List of all <see cref="PresentationPlugin"/>.</returns>
     public static IEnumerable<PresentationPlugin> GetPresentationPlugins(this PluginManager manager)
     {
       return manager.Plugins.OfType<PresentationPlugin>();
@@ -41,7 +40,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     /// <param name="manager">Plugin manager.</param>
     /// <param name="connectorType">Type of connector.</param>
-    /// <returns>Appropriate <see cref="ITreeViewPresentationPlugIn"/>.</returns>
+    /// <returns>Appropriate <see cref="PresentationPlugin"/>.</returns>
     public static PresentationPlugin GetPresentationPlugin(this PluginManager manager, string connectorType)
     {
       if (presentationPlugins.TryGetValue(connectorType, out var presentationPlugin))

@@ -7,9 +7,6 @@
 
 namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 {
-  using System.ComponentModel;
-  using System.ServiceModel.Description;
-  using System.Windows;
   using System.Windows.Controls;
   using System.Windows.Input;
 

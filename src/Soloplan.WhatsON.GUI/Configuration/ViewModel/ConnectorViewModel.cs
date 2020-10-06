@@ -84,8 +84,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
       }
     }
 
-
-
     /// <summary>
     /// Gets the full name of this connector including the category (if set).
     /// </summary>

@@ -7,13 +7,7 @@
 
 namespace Soloplan.WhatsON.GUI
 {
-  using System;
-  using System.Collections.Generic;
-  using System.Linq;
-  using System.Text.RegularExpressions;
-  using System.Windows;
   using System.Windows.Media;
-  using MaterialDesignColors;
   using MaterialDesignThemes.Wpf;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
 

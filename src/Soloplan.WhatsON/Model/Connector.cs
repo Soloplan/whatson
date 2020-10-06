@@ -7,11 +7,11 @@
 
 namespace Soloplan.WhatsON.Model
 {
-    using System;
-    using System.Collections.Generic;
+  using System;
+  using System.Collections.Generic;
   using System.Linq;
-    using System.Net;
-    using System.Text;
+  using System.Net;
+  using System.Text;
   using System.Threading;
   using System.Threading.Tasks;
   using NLog;
@@ -24,7 +24,7 @@ namespace Soloplan.WhatsON.Model
   [ConfigurationItem(Category, typeof(string), Priority = 1000000000)]
   [ConfigurationItem(ServerAddress, typeof(string), Optional = false, Priority = 100)]
   [ConfigurationItem(ProjectName, typeof(string), Optional = false, Priority = 300)]
-  [ConfigurationItem(DirectAddress, typeof(string),Optional = true, Priority = 0)]
+  [ConfigurationItem(DirectAddress, typeof(string), Optional = true, Priority = 0)]
   public abstract class Connector
   {
     /// <summary>
@@ -134,7 +134,7 @@ namespace Soloplan.WhatsON.Model
       var url = urlInput;
       bool testStatus;
       WebRequest request = WebRequest.Create(url);
-      request.Timeout = 50; //in ms.
+      request.Timeout = 50; // in ms.
       try
       {
         using (WebResponse response = await request.GetResponseAsync())

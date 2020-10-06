@@ -48,6 +48,7 @@ namespace Soloplan.WhatsON.CruiseControl
       {
         throw ex;
       }
+
       if (allProjects == null)
       {
         throw new Exception();
@@ -56,7 +57,7 @@ namespace Soloplan.WhatsON.CruiseControl
       var serverProjects = new List<Project>();
       foreach (var project in allProjects.CruiseControlProject)
       {
-        var serverProjectTreeItem = new Project(address, project.Name, address + "server/" + project.ServerName + "/project/" + project.Name + "/ViewProjectReport.aspx"); ;
+        var serverProjectTreeItem = new Project(address, project.Name, address + "server/" + project.ServerName + "/project/" + project.Name + "/ViewProjectReport.aspx");
         if (string.IsNullOrWhiteSpace(project.ServerName))
         {
           result.Add(serverProjectTreeItem);
@@ -66,7 +67,7 @@ namespace Soloplan.WhatsON.CruiseControl
           var serverProject = serverProjects.FirstOrDefault(s => s.Name == project.ServerName);
           if (serverProject == null)
           {
-            serverProject = new Project(null, project.ServerName, address+"server/"+project.ServerName+"/viewServerReport.aspx", project.Name, address + "server/" + project.ServerName + "/project/" + project.Name);
+            serverProject = new Project(null, project.ServerName, address + "server/" + project.ServerName + "/viewServerReport.aspx", project.Name, address + "server/" + project.ServerName + "/project/" + project.Name);
             serverProjects.Add(serverProject);
             result.Add(serverProject);
           }
@@ -85,7 +86,7 @@ namespace Soloplan.WhatsON.CruiseControl
     /// <param name="project">The server project.</param>
     /// <param name="configurationItemsSupport">The configuration items provider.</param>
     /// <param name="serverAddress">The server address.</param>
-    public override void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress=null)
+    public override void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress = null)
     {
       configurationItemsSupport.GetConfigurationByKey(Connector.ProjectName).Value = project.Name;
       configurationItemsSupport.GetConfigurationByKey(Connector.ServerAddress).Value = project.Address;

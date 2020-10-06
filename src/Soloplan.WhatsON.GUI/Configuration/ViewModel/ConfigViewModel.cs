@@ -19,11 +19,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
   public class ConfigViewModel : ViewModelBase
   {
     /// <summary>
-    /// Logger instance used by this class.
-    /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
-
-    /// <summary>
     /// The Windows Startup Keys registry location.
     /// </summary>
     private const string StartupSubKeyPath = "Software\\Microsoft\\Windows\\CurrentVersion\\Run";
@@ -32,6 +27,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// The registry startup key name.
     /// </summary>
     private const string StartupKey = "WhatsON";
+
+    /// <summary>
+    /// Logger instance used by this class.
+    /// </summary>
+    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
     /// <summary>
     /// The dark theme enabled.

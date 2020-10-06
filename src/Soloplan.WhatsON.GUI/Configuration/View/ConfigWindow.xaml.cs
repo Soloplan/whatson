@@ -8,7 +8,6 @@
 namespace Soloplan.WhatsON.GUI.Configuration.View
 {
   using System;
-  using System.ComponentModel;
   using System.Linq;
   using System.Windows;
   using System.Windows.Controls;
@@ -17,7 +16,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.GUI.Configuration.ViewModel;
   using Soloplan.WhatsON.Model;
-  using Application = System.Windows.Application;
 
   /// <summary>
   /// Interaction logic for ConfigWindow.xaml.
@@ -43,11 +41,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// The configuration view model.
     /// </summary>
     private readonly ConfigViewModel configurationViewModel = new ConfigViewModel();
-
-    public ConfigViewModel ConfigurationViewModel
-    {
-            get { return configurationViewModel; }
-    }
 
     /// <summary>
     /// The connector which should be focused during initialization.
@@ -152,6 +145,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// Occurs when configuration is about to be applied.
     /// </summary>
     public event EventHandler<EventArgs> ConfigurationApplying;
+
+    public ConfigViewModel ConfigurationViewModel
+    {
+      get { return this.configurationViewModel; }
+    }
 
     /// <summary>
     /// Raises the <see cref="E:ContentRendered" /> event.

@@ -149,6 +149,40 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     public bool CurrentConnectorIsNull => this.CurrentConnector == null;
 
+    public void OnConfigurationIsModified()
+    {
+      ConfigWindow configWindow = (ConfigWindow)this.ownerWindow;
+      if (configWindow == null)
+      {
+        return;
+      }
+
+      if (configWindow.ConfigurationViewModel.ConfigurationIsModified == false)
+      {
+        if (this.AddButton != null)
+        {
+          this.AddButton.IsEnabled = true;
+        }
+
+        if (this.WizardButton != null)
+        {
+          this.WizardButton.IsEnabled = true;
+        }
+      }
+      else
+      {
+        if (this.AddButton != null)
+        {
+          this.AddButton.IsEnabled = false;
+        }
+
+        if (this.WizardButton != null)
+        {
+          this.WizardButton.IsEnabled = false;
+        }
+      }
+    }
+
     /// <summary>
     /// Called when property was changed.
     /// </summary>
@@ -320,38 +354,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
             this.Connectors.Add(newConnector);
             this.CurrentConnector = newConnector;
           }
-        }
-      }
-    }
-
-    public void OnConfigurationIsModified()
-    {
-      ConfigWindow configWindow = (ConfigWindow)this.ownerWindow;
-      if (configWindow == null)
-      {
-        return;
-      }
-
-      if (configWindow.ConfigurationViewModel.ConfigurationIsModified==false)
-      {
-        if (this.AddButton != null) 
-        { 
-            this.AddButton.IsEnabled = true; 
-        }
-        if (this.WizardButton != null) 
-        { 
-            this.WizardButton.IsEnabled = true; 
-        }
-      }
-      else
-      {
-        if (this.AddButton != null) 
-        { 
-            this.AddButton.IsEnabled = false; 
-        }
-        if (this.WizardButton != null) 
-        { 
-            this.WizardButton.IsEnabled = false; 
         }
       }
     }

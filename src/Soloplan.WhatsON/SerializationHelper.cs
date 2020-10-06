@@ -65,6 +65,12 @@ namespace Soloplan.WhatsON
 
     public string ConfigFile => this.ConfigFolder + "\\configuration." + ConfigFileExtension;
 
+    public static T Load<T>(string file)
+    {
+      var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
+      return JsonConvert.DeserializeObject<T>(File.ReadAllText(file), settings);
+    }
+
     /// <summary>
     /// Saves the configuration to specified file.
     /// </summary>
@@ -84,12 +90,6 @@ namespace Soloplan.WhatsON
       var json = JsonConvert.SerializeObject(configuration, settings);
       File.WriteAllText(file, json);
       log.Debug("Configuration saved.");
-    }
-
-    public static T Load<T>(string file)
-    {
-      var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
-      return JsonConvert.DeserializeObject<T>(File.ReadAllText(file), settings);
     }
 
     public ApplicationConfiguration LoadConfiguration()
@@ -137,10 +137,10 @@ namespace Soloplan.WhatsON
     {
       if (File.Exists(this.ConfigFile))
       {
-        return LoadConfiguration();
+        return this.LoadConfiguration();
       }
 
-      log.Debug("Configuration file {file} doesn't exist. Create new default configuration.", ConfigFile);
+      log.Debug("Configuration file {file} doesn't exist. Create new default configuration.", this.ConfigFile);
       return new ApplicationConfiguration();
     }
 
@@ -154,7 +154,7 @@ namespace Soloplan.WhatsON
     {
       if (configFilePath == null)
       {
-        var configFileDirecory = Path.GetDirectoryName(ConfigFile);
+        var configFileDirecory = Path.GetDirectoryName(this.ConfigFile);
         if (configFileDirecory == null)
         {
           throw new InvalidOperationException("Couldn't get the directory for configuration file.");
@@ -163,7 +163,7 @@ namespace Soloplan.WhatsON
         Directory.CreateDirectory(configFileDirecory);
       }
 
-      Save(configuration, configFilePath ?? ConfigFile);
+      this.Save(configuration, configFilePath ?? this.ConfigFile);
     }
 
     public async Task<TModel> GetJsonModel<TModel>(string requestUrl, CancellationToken token = default(CancellationToken), Action<WebRequest> requestCallback = null)

@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="InvertBooleanConverter.cs" company="Soloplan GmbH">
+// <copyright file="MainStatusToVisibilityConverter.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
@@ -7,13 +7,11 @@
 
 namespace Soloplan.WhatsON.GUI.Common.Converters
 {
-  using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
-  using Soloplan.WhatsON.Model;
   using System;
   using System.Globalization;
   using System.Windows;
   using System.Windows.Data;
-  using System.Windows.Navigation;
+  using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
 
   /// <summary>
   /// Converter for projects DataTemplates. Determines visibility of a project tooltips. Uses StatusViewmodel method to find out if tooltip should be visible or not.

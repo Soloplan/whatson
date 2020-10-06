@@ -179,6 +179,7 @@ namespace Soloplan.WhatsON.Composition
         {
           continue;
         }
+
         var absoluteName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, assemblyName);
         if (!File.Exists(absoluteName))
         {

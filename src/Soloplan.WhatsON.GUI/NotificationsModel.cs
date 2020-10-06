@@ -17,6 +17,7 @@ namespace Soloplan.WhatsON.GUI
   {
     private readonly ObservableCollection<ConnectorViewModel> connectors;
     private object lockObj = new object();
+
     public NotificationsModel(ObservationScheduler scheduler)
     {
       this.connectors = new ObservableCollection<ConnectorViewModel>();

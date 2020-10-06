@@ -11,17 +11,12 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.ComponentModel;
   using System.Globalization;
   using System.Linq;
-  using System.ServiceModel.Security.Tokens;
-  using System.Text.RegularExpressions;
   using System.Windows;
   using System.Windows.Controls;
   using System.Windows.Data;
   using System.Windows.Input;
   using System.Windows.Markup;
   using System.Windows.Media;
-  using System.Windows.Media.Animation;
-  using GongSolutions.Wpf.DragDrop;
-  using MaterialDesignThemes.Wpf;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
@@ -40,6 +35,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// Backing field for <see cref="DeleteSelectedObject"/>.
     /// </summary>
     private CustomCommand deleteFocusedObject;
+
+    /// <summary>
+    /// Bool needed for double mouse up event firing problem. If there was an item clicked then, there will be no group clicked event handling succeeding the mentioned one.
+    /// </summary>
+    private bool connectorItemEventFired = false;
 
     public ConnectorsTreeView()
     {
@@ -159,6 +159,43 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       BindingOperations.ClearBinding(this.mainTreeView, TreeView.ItemsSourceProperty);
     }
 
+    /// <summary>
+    /// Converts Hex to RGBA.
+    /// </summary>
+    /// <param name="hexColor">Color in hex as string.</param>
+    /// <returns>RGBA color.</returns>
+    private static Color HexToColor(string hexColor)
+    {
+      if (hexColor.IndexOf('#') != -1)
+      {
+        hexColor = hexColor.Replace("#", string.Empty);
+      }
+
+      byte red = 0;
+      byte green = 0;
+      byte blue = 0;
+
+      if (hexColor.Length == 8)
+      {
+        hexColor = hexColor.Substring(2);
+      }
+
+      if (hexColor.Length == 6)
+      {
+        red = byte.Parse(hexColor.Substring(0, 2), NumberStyles.AllowHexSpecifier);
+        green = byte.Parse(hexColor.Substring(2, 2), NumberStyles.AllowHexSpecifier);
+        blue = byte.Parse(hexColor.Substring(4, 2), NumberStyles.AllowHexSpecifier);
+      }
+      else if (hexColor.Length == 3)
+      {
+        red = byte.Parse(hexColor[0].ToString() + hexColor[0].ToString(), NumberStyles.AllowHexSpecifier);
+        green = byte.Parse(hexColor[1].ToString() + hexColor[1].ToString(), NumberStyles.AllowHexSpecifier);
+        blue = byte.Parse(hexColor[2].ToString() + hexColor[2].ToString(), NumberStyles.AllowHexSpecifier);
+      }
+
+      return Color.FromRgb(red, green, blue);
+    }
+
     private void SetupDataContext()
     {
       BindingOperations.ClearBinding(this.mainTreeView, TreeView.ItemsSourceProperty);
@@ -242,46 +279,9 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Converts Hex to RGBA.
-    /// </summary>
-    /// <param name="hexColor">Color in hex as string</param>
-    /// <returns>RGBA color.</returns>
-    private static Color HexToColor(string hexColor)
-    {
-      if (hexColor.IndexOf('#') != -1)
-      {
-        hexColor = hexColor.Replace("#", "");
-      }
-
-      byte red = 0;
-      byte green = 0;
-      byte blue = 0;
-
-      if (hexColor.Length == 8)
-      {
-        hexColor = hexColor.Substring(2);
-      }
-
-      if (hexColor.Length == 6)
-      {
-        red = byte.Parse(hexColor.Substring(0, 2), NumberStyles.AllowHexSpecifier);
-        green = byte.Parse(hexColor.Substring(2, 2), NumberStyles.AllowHexSpecifier);
-        blue = byte.Parse(hexColor.Substring(4, 2), NumberStyles.AllowHexSpecifier);
-      }
-      else if (hexColor.Length == 3)
-      {
-        red = byte.Parse(hexColor[0].ToString() + hexColor[0].ToString(), NumberStyles.AllowHexSpecifier);
-        green = byte.Parse(hexColor[1].ToString() + hexColor[1].ToString(), NumberStyles.AllowHexSpecifier);
-        blue = byte.Parse(hexColor[2].ToString() + hexColor[2].ToString(), NumberStyles.AllowHexSpecifier);
-      }
-
-      return Color.FromRgb(red, green, blue);
-    }
-
-    /// <summary>
     /// Iverts color given in HEX and returns a Color.
     /// </summary>
-    /// <param name="value">Color value to invert, as string</param>
+    /// <param name="value">Color value to invert, as string.</param>
     /// <returns>Converted SolidColorBrush.</returns>
     private Brush InvertColor(string value)
     {
@@ -570,7 +570,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Defines behoaviour when a group is clicked. If not all connectors in the group are selected, then it selects them. 
+    /// Defines behoaviour when a group is clicked. If not all connectors in the group are selected, then it selects them.
     /// If there are all connectors in the group selected, then the funcion deselects them.
     /// </summary>
     /// <param name="group">Group to check and de/select items in.</param>
@@ -623,7 +623,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       else
       {
         var group = new ConnectorGroupViewModel();
-        if(item.Header is ConnectorGroupViewModel)
+        if (item.Header is ConnectorGroupViewModel)
         {
           group = (ConnectorGroupViewModel)item.Header;
           this.OnGroupClicked(group);
@@ -672,7 +672,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       return;
     }
 
-
     /// <summary>
     /// Based on items selected count informs all items if there is only one item selected or not.
     /// </summary>
@@ -699,11 +698,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         }
       }
     }
-
-    /// <summary>
-    /// Bool needed for double mouse up event firing problem. If there was an item clicked then, there will be no group clicked event handling succeeding the mentioned one.
-    /// </summary>
-    private bool connectorItemEventFired = false;
 
     /// <summary>
     /// Defines behaviour when LMB is released.
@@ -744,6 +738,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
           }
         }
       }
+
       this.model.UpdateSelectedConnectors(this.selectedConnectors);
     }
 

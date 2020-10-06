@@ -17,8 +17,8 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
     /// </summary>
     public class RGBToRGBAConverter : IValueConverter
     {
-        /// <summary>Converts SolidColorBrush from RGBA to RGB, if RGB given it returns RGB. F ex, when given "#FFDDFFDD" returns "#DDFFDD"</summary>
-        /// <param name="value">SolidColorBrush is the given brush to convert from rgba to rgb</param>
+        /// <summary>Converts SolidColorBrush from RGBA to RGB, if RGB given it returns RGB. F ex, when given "#FFDDFFDD" returns "#DDFFDD".</summary>
+        /// <param name="value">SolidColorBrush is the given brush to convert from rgba to rgb.</param>
         /// <param name="targetType">This parameter is not used.</param>
         /// <param name="parameter">This parameter is not used.</param>
         /// <param name="culture">This parameter is not used.</param>

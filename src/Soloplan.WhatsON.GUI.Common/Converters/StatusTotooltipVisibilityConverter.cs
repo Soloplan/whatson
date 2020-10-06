@@ -7,11 +7,11 @@
 
 namespace Soloplan.WhatsON.GUI.Common.Converters
 {
-  using Soloplan.WhatsON.Model;
   using System;
   using System.Globalization;
   using System.Windows;
   using System.Windows.Data;
+  using Soloplan.WhatsON.Model;
 
   /// <summary>
   /// This converter is only for debug purposes to check what is going on in xaml.

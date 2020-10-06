@@ -99,7 +99,7 @@
     <Compile Include="Configuration\Wizard\ProjectViewModel.cs" />
     <Compile Include="Configuration\Wizard\ProjectViewModelList.cs" />
     <Compile Include="Configuration\Wizard\WizardController.cs" />
-    <Compile Include="Configuration\Wizard\Converters\WizardProjectToVisibilityConverter.cs" />
+    <Compile Include="Configuration\Wizard\WizardProjectToVisibilityConverter.cs" />
     <Compile Include="Configuration\Wizard\WizardWindow.xaml.cs">
       <DependentUpon>WizardWindow.xaml</DependentUpon>
     </Compile>
@@ -301,6 +301,7 @@
   <ItemGroup>
     <Resource Include="Resources\whatsONx16.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\config\Soloplan.WhatsON.targets" />
 </Project>

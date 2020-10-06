@@ -66,8 +66,8 @@ namespace Soloplan.WhatsON.Jenkins
       }
       catch (Exception ex)
       {
-
       }
+
       return builds?.Builds ?? new List<JenkinsBuild>();
     }
 

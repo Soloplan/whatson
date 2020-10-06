@@ -1,7 +1,9 @@
-﻿// <copyright file="JenkinsApiTest.cs" company="Soloplan GmbH">
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="JenkinsApiTests.cs" company="Soloplan GmbH">
 // Copyright (c) Soloplan GmbH. All rights reserved.
 // Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.Jenkins.Tests
 {
@@ -63,7 +65,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         start = 8 + state;
         end = 4 + state;
 
-        for(int i = start; i >= end; i--)
+        for (int i = start; i >= end; i--)
         {
           e.Builds.Add(ApiHelper.GetBuild(buildsStates[i], i));
         }

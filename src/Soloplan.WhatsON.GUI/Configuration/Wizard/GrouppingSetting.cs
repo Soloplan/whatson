@@ -1,6 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="GrouppingSetting.cs" company="Soloplan GmbH">
-//   Copyright (c) Soloplan GmbH. All rights reserved.
+//  Copyright (c) Soloplan GmbH. All rights reserved.
+//  Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 

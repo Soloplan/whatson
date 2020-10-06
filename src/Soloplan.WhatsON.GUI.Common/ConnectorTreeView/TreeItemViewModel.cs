@@ -9,8 +9,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
   using System;
   using System.Collections.Generic;
-  using System.Runtime.CompilerServices;
-  using System.ServiceModel.Configuration;
   using System.Threading.Tasks;
   using System.Windows.Input;
 
@@ -103,7 +101,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     public virtual CustomCommand ExportCommand => this.exportCommand ?? (this.exportCommand = this.CreateExportCommand());
 
     /// <summary>
-    /// Gets or sets a value indicating whether configuration was modified from main window.s
+    /// Gets or sets a value indicating whether configuration was modified from main window.
     /// </summary>
     public virtual bool ConfigurationModifiedInTree
     {
@@ -178,7 +176,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     protected virtual CustomCommand CreateRenameCommand()
     {
       var command = new CustomCommand();
-      command.OnExecute += (s,e )=> this.OnEditItem(this, new EditTreeItemViewModelEventArgs { Model = this, EditType = EditType.Rename });
+      command.OnExecute += (s, e) => this.OnEditItem(this, new EditTreeItemViewModelEventArgs { Model = this, EditType = EditType.Rename });
       command.CanExecuteExternal += (s, e) => { e.Cancel = !this.IsOnlyOneSelected; };
       return command;
     }
@@ -250,21 +248,21 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private bool noOtherSelection = true;
 
     /// <summary>
-    /// Gets or sets a value indicating whether there are no other selected connectots.
-    /// </summary>
-    public bool NoOtherSelections
-    {
-      get { return noOtherSelection; }
-      set { noOtherSelection = value; }
-    }
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="DeleteTreeItemEventArgs"/> class.
     /// </summary>
     /// <param name="deleteItem">The item about to be deleted.</param>
     public DeleteTreeItemEventArgs(TreeItemViewModel deleteItem)
     {
       this.DeleteItem = deleteItem;
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether there are no other selected connectots.
+    /// </summary>
+    public bool NoOtherSelections
+    {
+      get { return this.noOtherSelection; }
+      set { this.noOtherSelection = value; }
     }
 
     /// <summary>

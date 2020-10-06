@@ -44,7 +44,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
     private void OkButtonClick(object sender, RoutedEventArgs e)
     {
-
     }
 
     /// <summary>

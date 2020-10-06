@@ -10,7 +10,6 @@ namespace Soloplan.WhatsON.Jenkins
   using System;
   using System.Collections.Generic;
   using System.Threading.Tasks;
-  using System.Xml.Serialization;
   using NLog;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
@@ -88,6 +87,7 @@ namespace Soloplan.WhatsON.Jenkins
       {
         throw ex;
       }
+
       return serverProjects;
     }
 

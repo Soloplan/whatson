@@ -5,9 +5,7 @@
 
 namespace Soloplan.WhatsON.GUI.Common.BuildServer
 {
-  using System.Windows;
   using System.Windows.Controls;
-  using System.Windows.Data;
 
   /// <summary>
   /// Control representing single historic build.

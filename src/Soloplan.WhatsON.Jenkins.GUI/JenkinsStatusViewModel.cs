@@ -10,7 +10,6 @@ namespace Soloplan.WhatsON.Jenkins.GUI
   using System;
   using System.Collections.ObjectModel;
   using System.Linq;
-  using Soloplan.WhatsON.GUI.Common;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Jenkins.Model;

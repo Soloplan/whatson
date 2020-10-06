@@ -9,8 +9,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 {
   using System;
   using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.ComponentModel;
+  using System.Collections.ObjectModel;
+  using System.ComponentModel;
   using System.Linq;
   using System.Runtime.CompilerServices;
   using System.Threading.Tasks;
@@ -297,7 +297,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       }
     }
 
-
     public ConnectorPlugin SelectedConnectorType
     {
       get
@@ -351,11 +350,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// Gets the wizard frame.
     /// </summary>
     private Frame WizardFrame => this.wizardWindow?.Frame;
-
-    /// <summary>
-    /// The wizard page title.
-    /// </summary>
-    private string wizardPageTitle;
 
     /// <summary>
     /// Starts the wizard.
@@ -414,22 +408,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       }
 
       return false;
-    }
-
-    /// <summary>
-    /// Creates the parent project structure.
-    /// </summary>
-    /// <param name="viewModel">The view model.</param>
-    /// <returns>Parent project.</returns>
-    private Project CreateParentProjectStructure(ProjectViewModel viewModel)
-    {
-      if (viewModel.Parent == null)
-      {
-        return null;
-      }
-
-      var newParent = new Project(viewModel.Parent.Address, viewModel.Parent.Name, viewModel.Parent.DirectAddress, viewModel.Parent.FullName, viewModel.Parent.Description, this.Projects.PlugIn, this.CreateParentProjectStructure(viewModel.Parent));
-      return newParent;
     }
 
     /// <summary>
@@ -569,7 +547,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 
         configurationViewModel.Connectors.Add(newConnector);
 
-        selectedProject.Plugin.Configure(selectedProject, newConnector, proposedServerAddress);
+        selectedProject.Plugin.Configure(selectedProject, newConnector, this.proposedServerAddress);
       }
 
       if (configurationViewModel.ConfigurationIsModified)
@@ -735,7 +713,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         }
         catch (Exception ex)
         {
-
         }
       }
 
@@ -854,6 +831,22 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       grouppingSettings.Add(new GrouppingSetting("Add hierarchy to project name", WizardWindow.AddProjectPathToProjectName));
       grouppingSettings.Add(new GrouppingSetting("No automatic grouping", WizardWindow.DoNotAssignAnyGroups));
       return grouppingSettings;
+    }
+
+    /// <summary>
+    /// Creates the parent project structure.
+    /// </summary>
+    /// <param name="viewModel">The view model.</param>
+    /// <returns>Parent project.</returns>
+    private Project CreateParentProjectStructure(ProjectViewModel viewModel)
+    {
+      if (viewModel.Parent == null)
+      {
+        return null;
+      }
+
+      var newParent = new Project(viewModel.Parent.Address, viewModel.Parent.Name, viewModel.Parent.DirectAddress, viewModel.Parent.FullName, viewModel.Parent.Description, this.Projects.PlugIn, this.CreateParentProjectStructure(viewModel.Parent));
+      return newParent;
     }
   }
 }

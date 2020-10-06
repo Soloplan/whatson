@@ -125,6 +125,52 @@ namespace Soloplan.WhatsON.GUI
     }
 
     /// <summary>
+    /// Handles showing and hiding main window.
+    /// </summary>
+    public void ShowOrHideWindow()
+    {
+      if (this.MainWindowVisible)
+      {
+        if (this.MainWindow.WindowState == System.Windows.WindowState.Minimized)
+        {
+          this.MainWindow.WindowState = System.Windows.WindowState.Normal;
+        }
+        else if ((DateTime.Now - this.lastWindowFocused).TotalMilliseconds > 250)
+        {
+          this.VisualSettings = this.mainWindow.GetVisualSettings();
+          if (this.VisualSettings != null)
+          {
+            SerializationHelper.Instance.Save(this.VisualSettings, Path.Combine(SerializationHelper.Instance.ConfigFolder, MainWindow.VisualSettingsFile));
+          }
+
+          this.MainWindow.Hide();
+        }
+        else
+        {
+          this.BringToFront(false);
+        }
+      }
+      else
+      {
+        bool firstShow = false;
+        if (Application.Current.MainWindow != this.MainWindow)
+        {
+          Application.Current.MainWindow = this.MainWindow;
+          firstShow = true;
+        }
+
+        this.MainWindow.Show();
+        this.MainWindow.Activate();
+        if (firstShow)
+        {
+          this.MainWindow.FinishDrawing();
+        }
+
+        this.MainWindow.IsTreeInitialized = true;
+      }
+    }
+
+    /// <summary>
     /// Checks if the notification should be shown.
     /// </summary>
     /// <param name="currentStatus">The current status.</param>
@@ -209,52 +255,6 @@ namespace Soloplan.WhatsON.GUI
     private void OnCloseApplicationClick(object sender, EventArgs e)
     {
       Application.Current.Shutdown();
-    }
-
-    /// <summary>
-    /// Handles showing and hiding main window.
-    /// </summary>
-    public void ShowOrHideWindow()
-    {
-      if (this.MainWindowVisible)
-      {
-        if (this.MainWindow.WindowState == System.Windows.WindowState.Minimized)
-        {
-          this.MainWindow.WindowState = System.Windows.WindowState.Normal;
-        }
-        else if ((DateTime.Now - this.lastWindowFocused).TotalMilliseconds > 250)
-        {
-          this.VisualSettings = this.mainWindow.GetVisualSettings();
-          if (this.VisualSettings != null)
-          {
-            SerializationHelper.Instance.Save(this.VisualSettings, Path.Combine(SerializationHelper.Instance.ConfigFolder, MainWindow.VisualSettingsFile));
-          }
-
-          this.MainWindow.Hide();
-        }
-        else
-        {
-          this.BringToFront(false);
-        }
-      }
-      else
-      {
-        bool firstShow = false;
-        if (Application.Current.MainWindow != this.MainWindow)
-        {
-          Application.Current.MainWindow = this.MainWindow;
-          firstShow = true;
-        }
-
-        this.MainWindow.Show();
-        this.MainWindow.Activate();
-        if (firstShow)
-        {
-          this.MainWindow.FinishDrawing();
-        }
-
-        this.MainWindow.IsTreeInitialized = true;
-      }
     }
 
     /// <summary>

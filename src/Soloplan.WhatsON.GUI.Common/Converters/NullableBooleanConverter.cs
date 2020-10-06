@@ -9,7 +9,6 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
 {
   using System;
   using System.Globalization;
-  using System.Windows;
   using System.Windows.Data;
 
   [ValueConversion(typeof(bool), typeof(bool))]

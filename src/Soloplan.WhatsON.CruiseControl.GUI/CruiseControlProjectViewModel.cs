@@ -7,8 +7,6 @@
 
 namespace Soloplan.WhatsON.CruiseControl.GUI
 {
-  using System;
-  using System.Windows.Navigation;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
@@ -19,12 +17,7 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
     public CruiseControlProjectViewModel(CruiseControlConnector connector)
       : base(connector)
     {
-      this.Url = CruiseControlServer.UrlHelper.GetReportUrl(connector.directAddress, Connector?.Project);
-    }
-
-    protected override BuildStatusViewModel GetStatusViewModel()
-    {
-      return new CruiseControlStatusViewModel(this);
+      this.Url = CruiseControlServer.UrlHelper.GetReportUrl(connector.directAddress, this.Connector?.Project);
     }
 
     /// <summary>
@@ -45,6 +38,11 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
     {
       base.ApplyConfiguration(configuration);
       this.Url = CruiseControlServer.UrlHelper.GetReportUrl(this.Connector.directAddress, this.Connector?.Project);
+    }
+
+    protected override BuildStatusViewModel GetStatusViewModel()
+    {
+      return new CruiseControlStatusViewModel(this);
     }
   }
 }

@@ -10,7 +10,6 @@ namespace Soloplan.WhatsON.GUI.Configuration
   using System.Text.RegularExpressions;
   using System.Windows;
   using Soloplan.WhatsON.Configuration;
-  using Soloplan.WhatsON.GUI.Configuration.ViewModel;
 
   /// <summary>
   /// The numeric control builder with a numeric mask for input.
