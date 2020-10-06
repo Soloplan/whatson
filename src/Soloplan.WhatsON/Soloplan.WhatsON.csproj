@@ -8,6 +8,7 @@
     <RepositoryUrl>https://github.com/Soloplan/whatson</RepositoryUrl>
     <PackageTags>monitoring, jenkins, tray-application, build-jobs, dektop-notifications</PackageTags>
     <PackageVersion>1.0.0-RC8</PackageVersion>
+    <PackageIcon>whatson-icon.png</PackageIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Steffen Wilke, Krzysztof Lorenc, Dominik Gołda</Authors>
     <DebugType>full</DebugType>
@@ -35,5 +36,6 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+    <None Include="whatson-icon.png" Pack="true" PackagePath=""/>
   </ItemGroup>
 </Project>
