@@ -85,7 +85,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
 
     private string GetProjectsInterchangeFileFilter()
     {
-      return $"{Properties.Resources.JsonFilesFilterName}|*.{SerializationHelper.Instance.ConfigFileExtension}";
+      return $"{Properties.Resources.JsonFilesFilterName}|*.{SerializationHelper.ConfigFileExtension}";
     }
 
     /// <summary>
