@@ -31,6 +31,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
   public class WizardController : INotifyPropertyChanged
   {
     /// <summary>
+    /// The timeout used to detect timeouts when querying build servers.
+    /// </summary>
+    private const int QueryTimeout = 10000;
+
+    /// <summary>
     /// Logger instance used by this class.
     /// </summary>
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
@@ -633,7 +638,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       }
 
       var taskList = new Dictionary<Task, ProjectViewModelList>();
-      var timeoutTask = Task.Delay(25000);
+      var timeoutTask = Task.Delay(QueryTimeout);
       taskList.Add(timeoutTask, null);
       var task = this.LoadProjectsFromPlugin(pluginToQueryWithModel);
       taskList.Add(task, pluginToQueryWithModel.Item2);
@@ -683,7 +688,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       }
 
       var taskList = new Dictionary<Task, ProjectViewModelList>();
-      var timeoutTask = Task.Delay(25000);
+      var timeoutTask = Task.Delay(QueryTimeout);
       taskList.Add(timeoutTask, null);
       foreach (var pluginToQueryWithModel in pluginToQueryWithModels)
       {

@@ -12,12 +12,19 @@
       TextElement.Foreground="{DynamicResource MaterialDesignBody}"
       mc:Ignorable="d">
   <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-    <TextBlock  Height="100"
-             Margin="10,50,10,0"
+    <TextBlock  Height="52
+                "
+             Margin="10,10,10,0"
              DockPanel.Dock="Top"
-             FontSize="16"
-             Text="Welcome to the project wizard.&#xD;&#xA;&#xA;Please select the project type that you would like to add and provide the URL to the build server."
+             FontSize="32"
+             Text="Welcome to the project wizard"
              TextWrapping="Wrap" />
+    <TextBlock  Height="104"
+                Margin="10,10,10,0"
+                DockPanel.Dock="Top"
+                FontSize="16"
+                Text="Please select the project type that you would like to add and provide the URL to the build server."
+                TextWrapping="Wrap" />
     <StackPanel Margin="6"
                 VerticalAlignment="Center"
                 DockPanel.Dock="Bottom"
@@ -42,7 +49,7 @@
                   ItemsSource="{Binding AvailableServers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                   KeyUp="ConnectionAdressKeyUp"
                   Text="{Binding ProposedServerAddress}" />
-        <CheckBox x:Name="AutoDetectionCheckbox" Content="Automatically detect type " IsChecked="{Binding IsAutoDetectionEnabled, Mode=TwoWay}" Margin="10,20,10,10" HorizontalAlignment="Center"/>
+        <CheckBox x:Name="AutoDetectionCheckbox" Content="Automatically recognize build system type" IsChecked="{Binding IsAutoDetectionEnabled, Mode=TwoWay}" Margin="0,20,0,10" HorizontalAlignment="Left"/>
       </StackPanel>
     </StackPanel>
   </DockPanel>
