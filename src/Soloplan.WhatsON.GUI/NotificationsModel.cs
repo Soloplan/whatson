@@ -8,6 +8,7 @@
 namespace Soloplan.WhatsON.GUI
 {
   using System.Collections.ObjectModel;
+  using System.ComponentModel;
   using System.Linq;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
@@ -32,6 +33,7 @@ namespace Soloplan.WhatsON.GUI
       modelToUpdate.Update(connector);
       modelToUpdate.CurrentStatus.PropertyChanged -= this.OnPropertyChanged;
       modelToUpdate.CurrentStatus.PropertyChanged += this.OnPropertyChanged;
+      this.OnPropertyChanged(modelToUpdate.CurrentStatus, new PropertyChangedEventArgs(nameof(ConnectorViewModel.CurrentStatus)));
     }
 
     private ConnectorViewModel GetModelToUpdate(Connector connector)
