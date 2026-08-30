@@ -7,13 +7,16 @@ namespace Soloplan.WhatsON.GUI
 {
   using System;
   using System.Drawing;
+  using System.Drawing.Drawing2D;
   using System.IO;
   using System.Linq;
+  using System.Runtime.InteropServices;
   using System.Windows.Forms;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
+  using Soloplan.WhatsON.GUI.Properties;
   using Soloplan.WhatsON.Model;
   using Application = System.Windows.Application;
 
@@ -42,6 +45,26 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     private NotifyIcon icon;
 
+    /// <summary>
+    /// The icon displayed when build-status is pending.
+    /// </summary>
+    private Icon loadingIcon;
+
+    /// <summary>
+    /// The icon displayed when build-status is normal.
+    /// </summary>
+    private Icon normalIcon;
+
+    /// <summary>
+    /// The icon displayed when build-status is unstable.
+    /// </summary>
+    private Icon unstableIcon;
+
+    /// <summary>
+    /// The icon displayed when build-status is broken.
+    /// </summary>
+    private Icon failureIcon;
+
     private MainWindow mainWindow;
 
     private NotificationsModel model;
@@ -53,8 +76,14 @@ namespace Soloplan.WhatsON.GUI
 
     public TrayHandler(ObservationScheduler scheduler, ApplicationConfiguration configuration)
     {
+      this.loadingIcon = new Icon(Properties.Resources.Whatson, new Size(16, 16));
+      this.normalIcon = CreateStatusIcon(this.loadingIcon, Color.LimeGreen);
+      this.unstableIcon = CreateStatusIcon(this.loadingIcon, Color.Gold);
+      this.failureIcon = CreateStatusIcon(this.loadingIcon, Color.Red);
+
       this.icon = new System.Windows.Forms.NotifyIcon();
-      this.icon.Icon = new Icon(Properties.Resources.Whatson, new Size(16, 16));
+      this.icon.Icon = this.loadingIcon;
+      this.icon.Text = Resources.TrayHandler_UpdateTrayIcon_Pending;
       this.icon.Visible = true;
       this.scheduler = scheduler;
       this.configuration = configuration;
@@ -68,6 +97,7 @@ namespace Soloplan.WhatsON.GUI
 
       this.model = new NotificationsModel(this.scheduler);
       this.model.PropertyChanged += this.CurrentStatusPropertyChanged;
+      this.UpdateTrayIcon();
 
       if (File.Exists(Path.Combine(SerializationHelper.Instance.ConfigFolder, MainWindow.VisualSettingsFile)))
       {
@@ -110,6 +140,14 @@ namespace Soloplan.WhatsON.GUI
       this.contextMenu = null;
       this.icon?.Dispose();
       this.icon = null;
+      this.loadingIcon?.Dispose();
+      this.loadingIcon = null;
+      this.normalIcon?.Dispose();
+      this.normalIcon = null;
+      this.unstableIcon?.Dispose();
+      this.unstableIcon = null;
+      this.failureIcon?.Dispose();
+      this.failureIcon = null;
     }
 
     /// <summary>
@@ -171,6 +209,48 @@ namespace Soloplan.WhatsON.GUI
     }
 
     /// <summary>
+    /// Gets the overall build state displayed by the tray icon.
+    /// </summary>
+    /// <param name="states">Current connector states.</param>
+    /// <param name="configuredConnectorCount">Number of configured connectors expected to report a state.</param>
+    /// <returns>Failure if any build is failing, unstable if any build is unstable, unknown while statuses are pending, otherwise success.</returns>
+    internal static ObservationState GetOverallState(System.Collections.Generic.IEnumerable<ObservationState> states, int configuredConnectorCount)
+    {
+      var currentStates = states.ToList();
+      if (currentStates.Contains(ObservationState.Failure))
+      {
+        return ObservationState.Failure;
+      }
+
+      if (currentStates.Contains(ObservationState.Unstable))
+      {
+        return ObservationState.Unstable;
+      }
+
+      return currentStates.Count < configuredConnectorCount || currentStates.Contains(ObservationState.Unknown) ? ObservationState.Unknown : ObservationState.Success;
+    }
+
+    /// <summary>
+    /// Gets the state used for the tray icon, falling back to the newest completed build when necessary.
+    /// </summary>
+    /// <param name="currentState">The current connector state.</param>
+    /// <param name="snapshotStates">History states ordered from newest to oldest.</param>
+    /// <returns>The current state, or the newest completed history state while the current state is unknown or running.</returns>
+    internal static ObservationState GetEffectiveState(ObservationState currentState, System.Collections.Generic.IEnumerable<ObservationState> snapshotStates)
+    {
+      if (currentState != ObservationState.Unknown && currentState != ObservationState.Running)
+      {
+        return currentState;
+      }
+
+      var completedState = snapshotStates
+        .Where(state => state != ObservationState.Unknown && state != ObservationState.Running)
+        .Select(state => (ObservationState?)state)
+        .FirstOrDefault();
+      return completedState ?? currentState;
+    }
+
+    /// <summary>
     /// Checks if the notification should be shown.
     /// </summary>
     /// <param name="currentStatus">The current status.</param>
@@ -208,6 +288,41 @@ namespace Soloplan.WhatsON.GUI
 
       return false;
     }
+
+    /// <summary>
+    /// Creates a copy of the application icon with a colored status badge.
+    /// </summary>
+    private static Icon CreateStatusIcon(Icon baseIcon, Color statusColor)
+    {
+      using (var bitmap = new Bitmap(16, 16))
+      {
+        using (var graphics = Graphics.FromImage(bitmap))
+        {
+          graphics.DrawIcon(baseIcon, new Rectangle(0, 0, 16, 16));
+          graphics.SmoothingMode = SmoothingMode.AntiAlias;
+          using (var outline = new SolidBrush(Color.FromArgb(230, 255, 255, 255)))
+          using (var badge = new SolidBrush(statusColor))
+          {
+            graphics.FillEllipse(outline, 7, 7, 9, 9);
+            graphics.FillEllipse(badge, 8, 8, 7, 7);
+          }
+        }
+
+        var iconHandle = bitmap.GetHicon();
+        try
+        {
+          return (Icon)Icon.FromHandle(iconHandle).Clone();
+        }
+        finally
+        {
+          DestroyIcon(iconHandle);
+        }
+      }
+    }
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool DestroyIcon(IntPtr handle);
 
     /// <summary>
     /// Called when user attempts to close <see cref="MainWindow"/>. It prevents window being closed and hides it instead.
@@ -301,6 +416,7 @@ namespace Soloplan.WhatsON.GUI
       this.model.PropertyChanged -= this.CurrentStatusPropertyChanged;
       this.model = new NotificationsModel(this.scheduler);
       this.model.PropertyChanged += this.CurrentStatusPropertyChanged;
+      this.UpdateTrayIcon();
 
       this.scheduler.Start();
     }
@@ -345,8 +461,15 @@ namespace Soloplan.WhatsON.GUI
     /// <param name="e">The <see cref="System.ComponentModel.PropertyChangedEventArgs"/> instance containing the event data.</param>
     private void CurrentStatusPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-      if (sender is StatusViewModel statusViewModel && e.PropertyName == nameof(StatusViewModel.State))
+      if (sender is StatusViewModel statusViewModel && (e.PropertyName == nameof(StatusViewModel.State) || e.PropertyName == nameof(ConnectorViewModel.CurrentStatus)))
       {
+        this.UpdateTrayIcon();
+
+        if (e.PropertyName != nameof(StatusViewModel.State))
+        {
+          return;
+        }
+
         var connectorConfiguration = this.configuration.ConnectorsConfiguration.FirstOrDefault(s => s.Identifier == statusViewModel.Parent.Identifier);
         var notificationConfiguration = this.configuration.GetNotificationConfiguration(connectorConfiguration);
 
@@ -371,6 +494,33 @@ namespace Soloplan.WhatsON.GUI
         {
           this.ShowBaloon("Build interrupted", description, System.Windows.Forms.ToolTipIcon.Warning);
         }
+      }
+    }
+
+    private void UpdateTrayIcon()
+    {
+      var connectorStates = this.model.Connectors
+        .Select(connector => GetEffectiveState(connector.CurrentStatus.State, connector.ConnectorSnapshots.Select(snapshot => snapshot.State)))
+        .ToList();
+      var overallState = GetOverallState(connectorStates, this.configuration.ConnectorsConfiguration.Count);
+      switch (overallState)
+      {
+        case ObservationState.Failure:
+          this.icon.Icon = this.failureIcon;
+          this.icon.Text = Resources.TrayHandler_UpdateTrayIcon_BuildFailing;
+          break;
+        case ObservationState.Unstable:
+          this.icon.Icon = this.unstableIcon;
+          this.icon.Text = Resources.TrayHandler_UpdateTrayIcon_Unstable;
+          break;
+        case ObservationState.Unknown:
+          this.icon.Icon = this.loadingIcon;
+          this.icon.Text = Resources.TrayHandler_UpdateTrayIcon_Pending;
+          break;
+        default:
+          this.icon.Icon = this.normalIcon;
+          this.icon.Text = Resources.TrayHandler_UpdateTrayIcon_Normal;
+          break;
       }
     }
   }
