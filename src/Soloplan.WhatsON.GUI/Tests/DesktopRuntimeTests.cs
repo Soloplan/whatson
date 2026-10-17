@@ -175,6 +175,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       VerifyGermanViews(app);
       VerifyNotificationBindings();
       VerifyTrayNotificationForwarding();
+      VerifyHandledExceptionsAreNotLoggedAsErrors();
 
       using (var stream = Application.GetResourceStream(new Uri("/Soloplan.WhatsON.GUI;component/Logging/LogConfig.xml", UriKind.Relative)).Stream)
       using (var reader = new StreamReader(stream))
@@ -182,6 +183,28 @@ namespace Soloplan.WhatsON.GUI.Tests
       {
         var loggingConfiguration = XmlLoggingConfiguration.CreateFromXmlString(reader.ReadToEnd(), factory);
         Assert.That(loggingConfiguration.AllTargets.Select(target => target.Name), Is.EquivalentTo(new[] { "whatsONMainLog", "whatsONConsoleLog" }));
+      }
+    }
+
+    private static void VerifyHandledExceptionsAreNotLoggedAsErrors()
+    {
+      var previous = LogManager.Configuration;
+      var target = new NLog.Targets.MemoryTarget("handled-exceptions");
+      var configuration = new LoggingConfiguration();
+      configuration.AddRule(LogLevel.Error, LogLevel.Fatal, target, typeof(Logging.ExceptionHandlingInitialization).FullName);
+      try
+      {
+        LogManager.Configuration = configuration;
+        Logging.ExceptionHandlingInitialization.Initialize();
+
+        Assert.Throws<System.Threading.Tasks.TaskCanceledException>(() => throw new System.Threading.Tasks.TaskCanceledException("Handled request cancellation"));
+        Assert.Throws<System.Net.WebException>(() => throw new System.Net.WebException("Handled request timeout", System.Net.WebExceptionStatus.Timeout));
+
+        Assert.That(target.Logs, Is.Empty, "Handled network failures must not be logged as unhandled application errors.");
+      }
+      finally
+      {
+        LogManager.Configuration = previous;
       }
     }
 

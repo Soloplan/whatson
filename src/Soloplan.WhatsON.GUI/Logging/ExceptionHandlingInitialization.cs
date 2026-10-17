@@ -12,7 +12,7 @@ namespace Soloplan.WhatsON.GUI.Logging
   using NLog;
 
   /// <summary>
-  /// Class used to log all exceptions thrown by application.
+  /// Logs unhandled application exceptions.
   /// </summary>
   public static class ExceptionHandlingInitialization
   {
@@ -45,8 +45,6 @@ namespace Soloplan.WhatsON.GUI.Logging
       {
         log.Fatal(e.Exception, "An unhandled asynchronous exception occurred in the main thread:");
       };
-
-      AppDomain.CurrentDomain.FirstChanceException += (sender, args) => { log.Error(args.Exception, "A first-chance exception occurred"); };
     }
   }
 }

@@ -35,20 +35,15 @@ namespace Soloplan.WhatsON.Jenkins
       log.Debug("Creating new JenkinsProject based on configuration {configuration}", new { configuration.Name, configuration.Identifier });
       var jenkinsProject = new JenkinsConnector(configuration, new JenkinsApi());
 
-      if (checkRedirect == null)
-      {
-        return jenkinsProject;
-      }
-
-      if (checkRedirect == false)
+      if (checkRedirect != true || bool.TryParse(configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin).Value, out _))
       {
         return jenkinsProject;
       }
 
       if (blueOceanCache.ContainsKey(jenkinsProject.Address))
       {
-        jenkinsProject.Configuration.GetConfigurationByKey("RedirectPlugin").Value = blueOceanCache[jenkinsProject.Address].ToString();
-        configuration.GetConfigurationByKey("RedirectPlugin").Value = blueOceanCache[jenkinsProject.Address].ToString();
+        jenkinsProject.Configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin).Value = blueOceanCache[jenkinsProject.Address].ToString();
+        configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin).Value = blueOceanCache[jenkinsProject.Address].ToString();
         return jenkinsProject;
       }
 
@@ -58,8 +53,8 @@ namespace Soloplan.WhatsON.Jenkins
       var result = task.Result;
       if (result)
       {
-        jenkinsProject.Configuration.GetConfigurationByKey("RedirectPlugin").Value = "True";
-        configuration.GetConfigurationByKey("RedirectPlugin").Value = "True";
+        jenkinsProject.Configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin).Value = "True";
+        configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin).Value = "True";
         blueOceanCache.Add(jenkinsProject.Address, true);
       }
       else
