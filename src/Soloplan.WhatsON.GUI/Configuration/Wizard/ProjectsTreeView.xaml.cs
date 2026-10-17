@@ -61,7 +61,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <param name="e">The <see cref="RequestNavigateEventArgs"/> instance containing the event data.</param>
     private void HyperlinkRequestNavigate(object sender, RequestNavigateEventArgs e)
     {
-      Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+      Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
       e.Handled = true;
     }
 

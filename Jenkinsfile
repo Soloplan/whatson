@@ -7,6 +7,7 @@ def outputDir = "src/bin/Release"
 
 pipeline {
   agent {
+    // This Windows agent must have the .NET 10 SDK installed.
     label 'dotnet-framework'
   } 
 
@@ -19,13 +20,30 @@ pipeline {
 
     stage('Build') {
       steps {
-        stepMSBuild(project: 'src/Soloplan.WhatsON.slnx', outputDir: outputDir)
+        bat 'dotnet build src/Soloplan.WhatsON.slnx --configuration Release'
       }
     }
 
     stage('Test') {
       steps {
-        stepNunit(folder: outputDir)
+        dir('src/bin/TestResults') {
+          deleteDir()
+        }
+        bat 'dotnet test src/Soloplan.WhatsON.slnx --configuration Release --no-build --logger trx --results-directory src/bin/TestResults'
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: 'src/bin/TestResults/*.trx', allowEmptyArchive: true
+        }
+      }
+    }
+
+    stage('Package') {
+      steps {
+        dir(outputDir) {
+          deleteDir()
+        }
+        bat "dotnet publish src/Soloplan.WhatsON.GUI/Soloplan.WhatsON.GUI.csproj --configuration Release --no-build --output ${outputDir}"
       }
     }
 
@@ -35,7 +53,7 @@ pipeline {
       }
       
       steps {
-        stepPublishArtifacts(bucket: Bucket, targetFolder: "whatson/master", folder: outputDir,  exclude: ['*.deps.json', '*.Tests.dll', '.nupkg'], excludeSubfolders: false)
+        stepPublishArtifacts(bucket: Bucket, targetFolder: "whatson/master", folder: outputDir, exclude: ['*.pdb'], excludeSubfolders: false)
       }
     }
 
@@ -45,7 +63,7 @@ pipeline {
       }
       
       steps {
-        stepPublishArtifacts(bucket: Bucket, targetFolder: "whatson/${env.TAG_NAME}", folder: outputDir, exclude: ['*.deps.json', '*.pdb', '*.Tests.dll', '.nupkg'], excludeSubfolders: false)
+        stepPublishArtifacts(bucket: Bucket, targetFolder: "whatson/${env.TAG_NAME}", folder: outputDir, exclude: ['*.pdb'], excludeSubfolders: false)
       }
     }
   }

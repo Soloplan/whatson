@@ -7,53 +7,53 @@ CruiseControl.NET builds. Keep changes focused and follow the existing patterns.
 
 - `src/Soloplan.WhatsON.slnx`: the solution, including all four test projects.
 - `src/Soloplan.WhatsON/`: shared models, configuration, plugin composition,
-  serialization, and observation scheduling; targets .NET Standard 2.0.
-- `src/Soloplan.WhatsON.Jenkins/`: Jenkins API and connector; targets .NET Standard 2.0.
-- `src/Soloplan.WhatsON.CruiseControl/`: CruiseControl.NET connector; targets .NET Framework 4.7.2.
+  serialization, and observation scheduling; targets .NET 10.
+- `src/Soloplan.WhatsON.Jenkins/`: Jenkins API and connector; targets .NET 10.
+- `src/Soloplan.WhatsON.CruiseControl/`: CruiseControl.NET connector; targets .NET 10.
 - `src/Soloplan.WhatsON.GUI/`: WPF application, configuration UI, wizard, tray,
-  and notifications; targets .NET Framework 4.7.2.
+  and notifications; targets .NET 10 for Windows.
 - `src/Soloplan.WhatsON.GUI.Common/`: shared WPF controls and view models.
 - `src/Soloplan.WhatsON.Jenkins.GUI/` and
   `src/Soloplan.WhatsON.CruiseControl.GUI/`: connector presentation plugins.
-- `src/Soloplan.WhatsON.Jenkins.Tests/`: NUnit tests with fake API helpers and RhinoMocks.
+- `src/Soloplan.WhatsON.Jenkins.Tests/`: NUnit tests with fake API helpers.
 - `src/Soloplan.WhatsON.Tests/`: configuration persistence, notification settings,
   connector history, and scheduler tests.
 - `src/Soloplan.WhatsON.CruiseControl.Tests/`: report parsing, status mapping, cache, and history tests.
 - `src/Soloplan.WhatsON.GUI/Tests/`: NUnit GUI tests.
-- `config/`: shared MSBuild targets, assembly metadata, and StyleCop settings.
+- `src/Directory.Build.props`, `src/Directory.Build.targets`, and
+  `src/Directory.Packages.props`: shared SDK project settings and package versions.
+- `config/`: shared assembly metadata and StyleCop settings.
 - `Jenkinsfile`: CI build, NUnit execution, and artifact publishing.
 
 ## Build and test
 
-Run commands from the repository root in a Visual Studio Developer PowerShell.
-The full solution requires Windows, Visual Studio 2022 17.14 or newer with .NET desktop
-build tools, the .NET Framework 4.7.2 targeting pack, and a .NET SDK for the
-SDK-style projects. Restore requires access to the referenced NuGet packages.
-Use Visual Studio MSBuild for the full WPF solution.
-The Jenkins build agent must also use MSBuild 17.12 or newer to read `.slnx` files.
+Run commands from the repository root on Windows with the .NET 10 SDK.
+`global.json` selects the .NET 10 SDK and permits newer feature bands within
+that version. Restore requires access to the referenced NuGet packages.
+The Jenkins Windows build agent needs the same SDK.
 
 ```powershell
-msbuild src/Soloplan.WhatsON.slnx -restore -m -p:Configuration=Debug '-p:Platform=Any CPU'
+dotnet build src/Soloplan.WhatsON.slnx -c Debug
+dotnet test src/Soloplan.WhatsON.slnx -c Debug --no-build
 ```
 
-Use `Configuration=Release` for the configuration used by CI. The application
-and plugin projects share `src/bin/<Configuration>/`; the entry point is
-`Soloplan.WhatsON.GUI.exe`. Test projects use their own `bin/<Configuration>/`.
+Use `-c Release` for the configuration used by CI. SDK outputs are per project:
+`bin/<Configuration>/<TargetFramework>/`. The application entry point is
+`src/Soloplan.WhatsON.GUI/bin/Debug/net10.0-windows/Soloplan.WhatsON.GUI.exe`.
+All four test projects use the .NET test SDK and NUnit adapter; confirm discovery
+and executed test counts. A single test project can be passed to `dotnet test`
+instead of the solution.
 
-Run the affected NUnit assembly using Visual Studio Test Explorer or an
-installed NUnit 3 console runner. For example, after the Debug build:
+Publish the application and its built-in connector/presentation plugins into
+an empty output directory with:
 
 ```powershell
-nunit3-console src/Soloplan.WhatsON.Jenkins.Tests/bin/Debug/Soloplan.WhatsON.Jenkins.Tests.dll
-nunit3-console src/Soloplan.WhatsON.Tests/bin/Debug/Soloplan.WhatsON.Tests.dll
-nunit3-console src/Soloplan.WhatsON.CruiseControl.Tests/bin/Debug/Soloplan.WhatsON.CruiseControl.Tests.dll
-nunit3-console src/Soloplan.WhatsON.GUI/Tests/bin/Debug/Soloplan.WhatsON.GUI.Tests.dll
+dotnet publish src/Soloplan.WhatsON.GUI/Soloplan.WhatsON.GUI.csproj -c Release -o src/bin/Release
 ```
 
-The console runner is an external prerequisite, not bundled in this repository.
-The test projects reference NUnit and its adapter but do not reference
-`Microsoft.NET.Test.Sdk`; do not treat a successful `dotnet test` exit alone as
-evidence that tests ran. Confirm discovery and executed test counts.
+Distribute the entire publish directory, including `.deps.json` and
+`.runtimeconfig.json`. This framework-dependent build requires the .NET 10
+Desktop Runtime on Windows. External plugins must also be rebuilt for .NET 10.
 
 For a core-only change, a narrower build is:
 
@@ -77,8 +77,9 @@ could not run; do not change frameworks or packages just to bypass them.
   a shared model or interface.
 - Follow `config/stylecop.json`, `config/whatson.ruleset`, and neighboring code:
   two-space indentation, spaces instead of tabs, existing naming and brace style.
-- Some WPF projects use explicit `Compile` and `Page` entries in their project
-  files; update those entries when adding, moving, or deleting source or XAML.
+- SDK projects include C# and WPF pages automatically. The main GUI excludes
+  its nested `Tests` directory; plugin data templates remain raw WPF resources.
+  Preserve those exceptions when changing project items.
 - Edit resource/settings inputs rather than generated `*.Designer.cs` files.
   Keep saved configuration compatible unless the task explicitly changes its format.
 - Keep credentials and live server details out of source, fixtures, and logs.

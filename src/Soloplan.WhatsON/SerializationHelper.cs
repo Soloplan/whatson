@@ -181,7 +181,7 @@ namespace Soloplan.WhatsON
       {
         log.Trace($"Fetching JSON object ({typeof(TModel)}) from \"{requestUrl}\" ...");
         using (token.Register(() => request.Abort(), false))
-        using (var response = (HttpWebResponse)request.GetResponse())
+        using (var response = (HttpWebResponse)await request.GetResponseAsync().WaitAsync(token).ConfigureAwait(false))
         {
           if (response.StatusCode != HttpStatusCode.OK)
           {
@@ -198,7 +198,7 @@ namespace Soloplan.WhatsON
           using (var dataStream = response.GetResponseStream())
           using (var reader = new StreamReader(dataStream))
           {
-            var responseFromServer = reader.ReadToEnd();
+            var responseFromServer = await reader.ReadToEndAsync(token).ConfigureAwait(false);
             try
             {
               return JsonConvert.DeserializeObject<TModel>(responseFromServer);

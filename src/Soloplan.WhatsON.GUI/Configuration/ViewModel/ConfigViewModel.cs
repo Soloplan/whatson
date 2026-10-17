@@ -292,7 +292,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
               return false;
             }
 
-            if (startUpKeyValueString != System.Reflection.Assembly.GetEntryAssembly().Location)
+            if (!string.Equals(startUpKeyValueString.Trim('"'), Environment.ProcessPath, StringComparison.OrdinalIgnoreCase))
             {
               return false;
             }
@@ -601,7 +601,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
           var startUpKeyValue = startUpKey.GetValue(StartupKey);
           if (this.OpenOnSystemStart)
           {
-            startUpKey.SetValue(StartupKey, System.Reflection.Assembly.GetEntryAssembly().Location);
+            startUpKey.SetValue(StartupKey, $"\"{Environment.ProcessPath}\"");
           }
           else if (startUpKeyValue != null)
           {

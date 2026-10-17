@@ -1,29 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>..\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>..\bin\Release\</OutputPath>
-  </PropertyGroup>
-
-  <Import Project="..\..\config\Soloplan.WhatsON.targets" />
-
   <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.24" />
-    <PackageReference Include="NLog" Version="4.7.5" />
+    <PackageReference Include="HtmlAgilityPack" />
+    <PackageReference Include="NLog" />
   </ItemGroup>
-  
   <ItemGroup>
-    <ProjectReference Include="..\Soloplan.WhatsON\Soloplan.WhatsON.csproj">
-      <Private>false</Private>
-    </ProjectReference>
+    <ProjectReference Include="..\Soloplan.WhatsON\Soloplan.WhatsON.csproj" />
   </ItemGroup>
-
 </Project>

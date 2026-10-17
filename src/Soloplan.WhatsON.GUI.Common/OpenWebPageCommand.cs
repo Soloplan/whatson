@@ -21,7 +21,7 @@ namespace Soloplan.WhatsON.GUI.Common
       if (parameter is string url)
       {
         log.Debug("Opening web page {@address}.", url);
-        System.Diagnostics.Process.Start(url);
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true });
         return;
       }
 

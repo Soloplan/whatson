@@ -38,7 +38,7 @@ namespace Soloplan.WhatsON.GUI
     /// <summary>
     /// The context menu displayed by tray icon.
     /// </summary>
-    private ContextMenu contextMenu;
+    private ContextMenuStrip contextMenu;
 
     /// <summary>
     /// The icon.
@@ -88,9 +88,9 @@ namespace Soloplan.WhatsON.GUI
       this.scheduler = scheduler;
       this.configuration = configuration;
 
-      this.contextMenu = new ContextMenu();
-      this.icon.ContextMenu = this.contextMenu;
-      this.contextMenu.Popup += this.OnContextMenuPopup;
+      this.contextMenu = new ContextMenuStrip();
+      this.icon.ContextMenuStrip = this.contextMenu;
+      this.contextMenu.Opening += this.OnContextMenuPopup;
       this.icon.DoubleClick += (s, e) => this.ShowOrHideWindow();
       this.icon.BalloonTipClicked += (s, e) => this.BringToFront(true);
       this.icon.Click += (s, e) => this.BringToFront(false);
@@ -349,19 +349,19 @@ namespace Soloplan.WhatsON.GUI
     /// <summary>
     /// Creates context menu whenever it is opened.
     /// </summary>
-    private void OnContextMenuPopup(object sender, EventArgs e)
+    private void OnContextMenuPopup(object sender, System.ComponentModel.CancelEventArgs e)
     {
-      this.contextMenu.MenuItems.Clear();
-      var openCloseWindow = new MenuItem();
+      this.contextMenu.Items.Clear();
+      var openCloseWindow = new ToolStripMenuItem();
       openCloseWindow.Text = this.MainWindowVisible ? "Close window" : "Open window";
       openCloseWindow.Click += (s, args) => this.ShowOrHideWindow();
 
-      var closeApplication = new MenuItem();
+      var closeApplication = new ToolStripMenuItem();
       closeApplication.Text = "Exit";
       closeApplication.Click += this.OnCloseApplicationClick;
 
-      this.contextMenu.MenuItems.Add(openCloseWindow);
-      this.contextMenu.MenuItems.Add(closeApplication);
+      this.contextMenu.Items.Add(openCloseWindow);
+      this.contextMenu.Items.Add(closeApplication);
     }
 
     /// <summary>

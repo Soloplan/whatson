@@ -22,6 +22,7 @@ A build monitoring tool written in C#.
 
 - [Features](#features)
 - [Quick start](#quick-start)
+- [Build from source](#build-from-source)
 - [Feature requests and bugs](#feature-requests-and-bugs)
 - [Plugins](#plugins)
 - [Documentation](#documentation)
@@ -46,6 +47,24 @@ A build monitoring tool written in C#.
 1. Start the app from file *Soloplan.WhatsON.GUI.exe*
 1. If you want the app to start during the system start, open the configuration (gear icon at the top, left corner) and set the option "Run when windows starts"
 1. To add a new project build for monitoring, you can use the wizard (plus icon at the top, left corner).
+
+## Build from source
+
+Install the .NET 10 SDK on Windows, then run from the repository root:
+
+```powershell
+dotnet build src/Soloplan.WhatsON.slnx -c Release
+dotnet test src/Soloplan.WhatsON.slnx -c Release --no-build
+dotnet publish src/Soloplan.WhatsON.GUI/Soloplan.WhatsON.GUI.csproj -c Release --no-build -o src/bin/Release
+```
+
+Run `src/bin/Release/Soloplan.WhatsON.GUI.exe`. Copy the entire publish directory
+when deploying, including the runtime configuration, dependencies, and plugins.
+Use an empty publish directory to avoid mixing in old .NET Framework binaries.
+These builds require the [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
+on Windows. Custom plugins built for .NET Framework must be rebuilt for .NET 10.
+Project settings and package versions are shared in `src/Directory.Build.*`
+and `src/Directory.Packages.props`.
 
 ## Feature requests and bugs
 

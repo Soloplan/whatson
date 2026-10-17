@@ -123,7 +123,7 @@ namespace Soloplan.WhatsON.Tests
         cancellation.Cancel();
 
         Assert.That(await Task.WhenAny(query, Task.Delay(5000)), Is.SameAs(query), "Cancelled request did not finish.");
-        var exception = Assert.ThrowsAsync<OperationCanceledException>(async () => await query);
+        var exception = Assert.CatchAsync<OperationCanceledException>(async () => await query);
         Assert.That(exception.CancellationToken, Is.EqualTo(cancellation.Token));
       }
     }

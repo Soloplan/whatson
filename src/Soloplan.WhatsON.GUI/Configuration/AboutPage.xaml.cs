@@ -76,7 +76,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     {
       if (e.LeftButton == MouseButtonState.Released && sender is TextBlock textBlock)
       {
-        System.Diagnostics.Process.Start(textBlock.Text);
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(textBlock.Text) { UseShellExecute = true });
       }
     }
 
@@ -89,7 +89,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     {
       if (e.LeftButton == MouseButtonState.Released)
       {
-        System.Diagnostics.Process.Start("https://www.soloplan.de");
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("https://www.soloplan.de") { UseShellExecute = true });
       }
     }
 
@@ -102,7 +102,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     {
       if (e.LeftButton == MouseButtonState.Released)
       {
-        System.Diagnostics.Process.Start("https://github.com/Soloplan/whatson/issues");
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("https://github.com/Soloplan/whatson/issues") { UseShellExecute = true });
       }
     }
 
