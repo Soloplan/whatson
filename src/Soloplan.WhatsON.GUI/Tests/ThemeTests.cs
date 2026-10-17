@@ -7,29 +7,13 @@
 
 namespace Soloplan.WhatsON.GUI.Tests
 {
-  using System.Reflection;
-  using System.Windows.Media;
   using NUnit.Framework;
   using Soloplan.WhatsON.Configuration;
-  using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.GUI.Configuration.ViewModel;
 
   [TestFixture]
   public class ThemeTests
   {
-    [TestCase("#000", 0, 0, 0)]
-    [TestCase("#fff", 255, 255, 255)]
-    [TestCase("1aF", 17, 170, 255)]
-    [TestCase("#123456", 18, 52, 86)]
-    [TestCase("#80123456", 18, 52, 86)]
-    public void SelectionColorParsesEachRgbChannel(string hexColor, int red, int green, int blue)
-    {
-      var method = typeof(ConnectorsTreeView).GetMethod("HexToColor", BindingFlags.NonPublic | BindingFlags.Static);
-      Assert.That(method, Is.Not.Null);
-      var color = (Color)method.Invoke(null, new object[] { hexColor });
-      Assert.That(color, Is.EqualTo(Color.FromRgb((byte)red, (byte)green, (byte)blue)));
-    }
-
     [TestCase(ApplicationTheme.System, false, false)]
     [TestCase(ApplicationTheme.System, true, true)]
     [TestCase(ApplicationTheme.Light, false, false)]

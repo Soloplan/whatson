@@ -30,7 +30,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     public bool First { get; set; }
 
-    public int Size => this.First ? 6 : 4;
+    public int Size => this.First ? 8 : 6;
 
     public string Name { get; protected set; }
 

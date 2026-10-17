@@ -12,11 +12,11 @@
         Height="450"
         MinWidth="300"
         MinHeight="200"
-        Background="{DynamicResource MaterialDesignPaper}"
-        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
+        Background="{DynamicResource SettingsBackground}"
+        FontFamily="Segoe UI"
         Style="{StaticResource BorderLessWindowStyle}"
         TextElement.FontSize="14"
-        TextElement.FontWeight="Medium"
+        TextElement.FontWeight="Normal"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         mc:Ignorable="d">
   <Window.Resources>
@@ -38,7 +38,7 @@
       </Storyboard>
     </ResourceDictionary>
   </Window.Resources>
-  <DockPanel>
+  <DockPanel Background="{DynamicResource SettingsBackground}">
     <local:CustomTitleBar
       AddConnectorClicked="NewConnectorClick"
       AddGroupClicked="NewGroupClick"
@@ -75,7 +75,7 @@
     <materialDesign:DialogHost DockPanel.Dock="Bottom" Identifier="MainWindowPageHost">
       <Grid>
         <connectorTreeView:ConnectorsTreeView x:Name="mainTreeView"
-                                              Margin="0,3,0,0"
+                                              Margin="12,8,12,12"
                                               HorizontalAlignment="Stretch" />
         <TextBlock HorizontalAlignment="Center"
                    VerticalAlignment="Center"

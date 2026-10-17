@@ -11,7 +11,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Collections.Generic;
   using System.Collections.ObjectModel;
   using System.ComponentModel;
-  using System.Globalization;
   using System.Linq;
   using System.Windows;
   using System.Windows.Controls;
@@ -153,43 +152,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       BindingOperations.ClearBinding(this.mainTreeView, TreeView.ItemsSourceProperty);
     }
 
-    /// <summary>
-    /// Converts Hex to RGBA.
-    /// </summary>
-    /// <param name="hexColor">Color in hex as string.</param>
-    /// <returns>RGBA color.</returns>
-    private static Color HexToColor(string hexColor)
-    {
-      if (hexColor.IndexOf('#') != -1)
-      {
-        hexColor = hexColor.Replace("#", string.Empty);
-      }
-
-      byte red = 0;
-      byte green = 0;
-      byte blue = 0;
-
-      if (hexColor.Length == 8)
-      {
-        hexColor = hexColor.Substring(2);
-      }
-
-      if (hexColor.Length == 6)
-      {
-        red = byte.Parse(hexColor.Substring(0, 2), NumberStyles.AllowHexSpecifier);
-        green = byte.Parse(hexColor.Substring(2, 2), NumberStyles.AllowHexSpecifier);
-        blue = byte.Parse(hexColor.Substring(4, 2), NumberStyles.AllowHexSpecifier);
-      }
-      else if (hexColor.Length == 3)
-      {
-        red = byte.Parse(new string(hexColor[0], 2), NumberStyles.AllowHexSpecifier);
-        green = byte.Parse(new string(hexColor[1], 2), NumberStyles.AllowHexSpecifier);
-        blue = byte.Parse(new string(hexColor[2], 2), NumberStyles.AllowHexSpecifier);
-      }
-
-      return Color.FromRgb(red, green, blue);
-    }
-
     private void SetupDataContext()
     {
       BindingOperations.ClearBinding(this.mainTreeView, TreeView.ItemsSourceProperty);
@@ -285,31 +247,13 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Iverts color given in HEX and returns a Color.
-    /// </summary>
-    /// <param name="value">Color value to invert, as string.</param>
-    /// <returns>Converted SolidColorBrush.</returns>
-    private Brush InvertColor(string value)
-    {
-      if (value != null)
-      {
-        Color colorToConvert = HexToColor(value);
-        Color invertedColor = Color.FromRgb((byte)~colorToConvert.R, (byte)~colorToConvert.G, (byte)~colorToConvert.B);
-        return new SolidColorBrush(invertedColor);
-      }
-
-      return new SolidColorBrush(Color.FromRgb(0, 0, 0));
-    }
-
-    /// <summary>
-    /// Resets a selection style for a tree view item. Uses MaterialDesignBackground to determine font color and as
-    /// consequence is compatible with night mode.
+    /// Restores the themed appearance of a tree view item.
     /// </summary>
     /// <param name="treeViewItem">Item to reset its style.</param>
     private void ResetStyle(ref TreeViewItem treeViewItem)
     {
-      var style = this.FindResource("MaterialDesignBackground");
-      treeViewItem.Foreground = this.InvertColor(style.ToString());
+      treeViewItem.ClearValue(BackgroundProperty);
+      treeViewItem.ClearValue(BorderBrushProperty);
       treeViewItem.IsSelected = false;
     }
 
@@ -317,7 +261,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// Sets style for a tree view item.
     /// </summary>
     /// <param name="treeViewItem">Item to set its style.</param>
-    private void SetStyle(ref TreeViewItem treeViewItem) => treeViewItem.Foreground = Brushes.MediumVioletRed;
+    private void SetStyle(ref TreeViewItem treeViewItem)
+    {
+      treeViewItem.SetResourceReference(BackgroundProperty, "SettingsSelection");
+      treeViewItem.SetResourceReference(BorderBrushProperty, "SettingsAccent");
+    }
 
     /// <summary>
     /// Finds a group where a connector is located and calls style reset for him.

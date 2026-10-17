@@ -39,8 +39,8 @@
     </ContextMenu>
   </UserControl.Resources>
   <DockPanel ContextMenu="{StaticResource ContextMenuBuild}">
-    <Button Width="13"
-            Height="10"
+    <Button Width="16"
+            Height="24"
             Padding="0"
             Background="Transparent"
             BorderBrush="Transparent"

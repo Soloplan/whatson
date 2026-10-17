@@ -1,0 +1,73 @@
+<UserControl x:Class="Soloplan.WhatsON.GUI.Common.BuildServer.ProjectRowControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer"
+             xmlns:tree="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView"
+             xmlns:converters="clr-namespace:Soloplan.WhatsON.GUI.Common.Converters"
+             xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
+             HorizontalContentAlignment="Stretch">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="../BuildStateColors.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+      <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+      <converters:NullOrDefaultToVisibilityConverter x:Key="HasValue" />
+      <converters:TimeToApproximateTimeConverter x:Key="RelativeTime" />
+      <Style x:Key="Metadata" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource SettingsMuted}" />
+        <Setter Property="FontSize" Value="{Binding DataContext.FontSizeSmall, RelativeSource={RelativeSource AncestorType=tree:ConnectorsTreeView}}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+      </Style>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <Grid MinHeight="24">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="Auto" />
+    </Grid.ColumnDefinitions>
+    <local:BuildInformationIconControl DataContext="{Binding CurrentStatus}"
+                                       Width="{Binding DataContext.BuildIconSize, RelativeSource={RelativeSource AncestorType=tree:ConnectorsTreeView}}"
+                                       Margin="0,0,10,0" VerticalAlignment="Center" />
+    <TextBlock Grid.Column="1" x:Name="ProjectName" Text="{Binding Name}" ToolTip="{Binding Name}"
+               FontSize="{Binding DataContext.FontSize, RelativeSource={RelativeSource AncestorType=tree:ConnectorsTreeView}}"
+               FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,12,0" />
+    <Border Grid.Column="2" Background="{DynamicResource SettingsBackground}" CornerRadius="5" Padding="6,3"
+            Margin="0,0,12,0" VerticalAlignment="Center"
+            Visibility="{Binding CurrentStatus.BuildNumber, Converter={StaticResource HasValue}}">
+      <local:BuildNumberControl x:Name="BuildNumber" BuildNumber="{Binding DataContext.CurrentStatus.BuildNumber, RelativeSource={RelativeSource AncestorType=local:ProjectRowControl}}"
+                                Foreground="{DynamicResource SettingsMuted}" />
+    </Border>
+    <Grid Grid.Column="3" x:Name="BuildTiming" Width="112">
+      <TextBlock Text="{Binding CurrentStatus.FinishTime, Converter={StaticResource RelativeTime}}"
+                 HorizontalAlignment="Right"
+                 Visibility="{Binding CurrentStatus.FinishTime, Converter={StaticResource HasValue}}">
+        <TextBlock.Style>
+          <Style TargetType="TextBlock" BasedOn="{StaticResource Metadata}">
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding CurrentStatus.Building}" Value="True">
+                <Setter Property="Opacity" Value="0" />
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </TextBlock.Style>
+      </TextBlock>
+      <StackPanel VerticalAlignment="Center"
+                  Visibility="{Binding CurrentStatus.Building, Converter={StaticResource BoolToVisibility}}">
+        <DockPanel>
+          <TextBlock Text="{x:Static loc:Strings.Running}" Style="{StaticResource Metadata}" />
+          <TextBlock Text="{Binding CurrentStatus.Progress, StringFormat={}{0}%}" Style="{StaticResource Metadata}"
+                     HorizontalAlignment="Right" />
+        </DockPanel>
+        <ProgressBar x:Name="BuildProgress" Height="3" Margin="0,4,0,0" Minimum="0" Maximum="100" Value="{Binding CurrentStatus.Progress, Mode=OneWay}"
+                     IsIndeterminate="{Binding CurrentStatus.BuildingLongerThenExpected}"
+                     Foreground="{StaticResource Running}" Background="{DynamicResource SettingsBorder}"
+                     AutomationProperties.Name="{x:Static loc:Strings.Running}" />
+      </StackPanel>
+    </Grid>
+    <local:HistoryBuildList Grid.Column="4" x:Name="BuildHistory" DataContext="{Binding ConnectorSnapshots}" VerticalAlignment="Center" />
+  </Grid>
+</UserControl>
