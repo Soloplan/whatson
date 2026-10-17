@@ -10,6 +10,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
   using System;
   using System.Collections.Generic;
   using System.IO;
+  using System.Linq;
   using System.Windows;
   using System.Windows.Forms;
   using NLog;
@@ -67,11 +68,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
 
       try
       {
-        var importedProjectsConfig = SerializationHelper.Load<IList<ConnectorConfiguration>>(filePath);
-        foreach (var importedProjecConfig in importedProjectsConfig)
-        {
-          appConfiguration.ConnectorsConfiguration.Add(importedProjecConfig);
-        }
+        this.Import(appConfiguration, filePath);
       }
       catch (Exception e)
       {
@@ -83,6 +80,35 @@ namespace Soloplan.WhatsON.GUI.Configuration
       }
 
       return true;
+    }
+
+    internal void Import(ApplicationConfiguration appConfiguration, string filePath)
+    {
+      var importedProjectsConfig = SerializationHelper.Load<IList<ConnectorConfiguration>>(filePath);
+      if (importedProjectsConfig == null || importedProjectsConfig.Any(project => project == null))
+      {
+        throw new InvalidDataException();
+      }
+
+      var originalCount = appConfiguration.ConnectorsConfiguration.Count;
+      try
+      {
+        foreach (var project in importedProjectsConfig)
+        {
+          appConfiguration.ConnectorsConfiguration.Add(project);
+        }
+
+        SerializationHelper.Instance.SaveConfiguration(appConfiguration);
+      }
+      catch
+      {
+        while (appConfiguration.ConnectorsConfiguration.Count > originalCount)
+        {
+          appConfiguration.ConnectorsConfiguration.RemoveAt(appConfiguration.ConnectorsConfiguration.Count - 1);
+        }
+
+        throw;
+      }
     }
 
     private string GetProjectsInterchangeFileFilter() => $"{Properties.Resources.JsonFilesFilterName}|*.{SerializationHelper.ConfigFileExtension}";
