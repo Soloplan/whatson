@@ -21,7 +21,7 @@
           <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /><RowDefinition /><RowDefinition Height="Auto" />
           </Grid.RowDefinitions>
-          <StackPanel Orientation="Horizontal" Margin="24,20,24,20">
+          <StackPanel Orientation="Horizontal" Margin="20,16">
             <Border CornerRadius="6" Padding="12,8">
               <Border.Style>
                 <Style TargetType="Border">
@@ -54,10 +54,8 @@
               <TextBlock Text="{live:Text loc:Strings.ProjectsStep}" FontWeight="SemiBold" FontSize="13" />
             </Border>
           </StackPanel>
-          <Frame x:Name="Frame" Grid.Row="1" Margin="24,0,24,20" NavigationUIVisibility="Hidden" />
-          <Border Grid.Row="2" Background="{DynamicResource SettingsSurface}"
-                  BorderBrush="{DynamicResource SettingsBorder}"
-                  BorderThickness="0,1,0,0" Padding="24,16">
+          <Frame x:Name="Frame" Grid.Row="1" Margin="20,0,20,16" NavigationUIVisibility="Hidden" />
+          <Border Grid.Row="2" Style="{StaticResource SettingsFooter}">
             <DockPanel LastChildFill="False">
               <Button Content="{live:Text loc:Strings.Cancel}" DockPanel.Dock="Left" IsCancel="True"
                       Style="{StaticResource SettingsSecondaryButton}" />

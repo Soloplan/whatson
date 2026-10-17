@@ -7,10 +7,9 @@
       Title="{live:Text loc:Strings.About}" FontFamily="Segoe UI" FontSize="14" Background="Transparent"
       TextElement.Foreground="{DynamicResource MaterialDesignBody}">
   <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,0,16">
-    <StackPanel Margin="0,0,20,0">
+    <StackPanel Margin="{StaticResource SettingsScrollGap}">
       <TextBlock Text="{live:Text loc:Strings.AboutWhatsON}" Style="{StaticResource SettingsHeading}" />
-      <TextBlock Text="{live:Text loc:Strings.BuildMonitoringDescription}" Style="{StaticResource SettingsDescription}"
-                 Margin="0,0,0,22" />
+      <TextBlock Text="{live:Text loc:Strings.BuildMonitoringDescription}" Style="{StaticResource SettingsIntro}" />
       <Border Style="{StaticResource SettingsCard}">
         <StackPanel>
           <DockPanel Margin="0,0,0,14">

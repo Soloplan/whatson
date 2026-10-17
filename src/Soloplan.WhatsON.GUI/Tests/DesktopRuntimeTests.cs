@@ -377,7 +377,7 @@ namespace Soloplan.WhatsON.GUI.Tests
           if (!scrollbarVisible)
           {
             var contentRight = content.TransformToAncestor(root).Transform(new Point(content.ActualWidth, 0)).X;
-            Assert.That(root.ActualWidth - contentRight, Is.EqualTo(29).Within(1), "Pages without scrollbars must retain their content gutter.");
+            Assert.That(root.ActualWidth - contentRight, Is.EqualTo(21).Within(1), "Pages without scrollbars must retain their content gutter.");
           }
         }
       }
@@ -398,7 +398,7 @@ namespace Soloplan.WhatsON.GUI.Tests
         viewer.UpdateLayout();
         viewer.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
         Assert.That(viewer.ComputedVerticalScrollBarVisibility, Is.EqualTo(height < 400 ? Visibility.Visible : Visibility.Collapsed));
-        Assert.That(content.Margin, Is.EqualTo(height < 400 ? new Thickness(0, 0, 20, 0) : new Thickness(0)));
+        Assert.That(content.Margin, Is.EqualTo(height < 400 ? new Thickness(0, 0, 12, 0) : new Thickness(0)));
       }
     }
 

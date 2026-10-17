@@ -9,13 +9,13 @@
       TextElement.Foreground="{DynamicResource MaterialDesignBody}">
   <materialDesign:DialogHost Identifier="ConnectorsConfigPageHost"
                              Style="{StaticResource MaterialDesignEmbeddedDialogHost}">
-    <Grid Margin="0,0,20,16">
+    <Grid Margin="0,0,12,12">
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto" />
         <RowDefinition Height="*" />
       </Grid.RowDefinitions>
-      <DockPanel Margin="0,0,0,22">
+      <DockPanel Margin="0,0,0,16">
         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top"
                     Visibility="{Binding SingleConnectorMode, Converter={StaticResource InvertBoolToVis}}">
           <Button x:Name="AddButton" Content="{live:Text loc:Strings.AddManually}" Click="AddConnectorClick"

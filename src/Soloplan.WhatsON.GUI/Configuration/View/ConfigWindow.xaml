@@ -39,11 +39,11 @@
                 BorderBrush="{DynamicResource SettingsBorder}"
                 BorderThickness="0,0,1,0"
                 Visibility="{Binding SingleConnectorMode, Converter={StaticResource InvertBoolToVis}}">
-          <DockPanel Margin="14,24,14,16">
+          <DockPanel Margin="12,16,12,12">
             <TextBlock DockPanel.Dock="Top" Text="{live:Text loc:Strings.SettingsUppercase}" FontSize="11"
                        FontWeight="SemiBold"
-                       Foreground="{DynamicResource SettingsMuted}" Margin="14,0,0,18" />
-            <TextBlock DockPanel.Dock="Bottom" Text="whatsON" Margin="14,16,0,0"
+                       Foreground="{DynamicResource SettingsMuted}" Margin="12,0,0,12" />
+            <TextBlock DockPanel.Dock="Bottom" Text="whatsON" Margin="12,12,0,0"
                        Foreground="{DynamicResource SettingsMuted}" FontSize="12" />
             <ListBox x:Name="ConfigTopicsListBox" BorderThickness="0" Background="Transparent"
                      ItemContainerStyle="{StaticResource SettingsNavigationItem}"
@@ -74,11 +74,9 @@
             </ListBox>
           </DockPanel>
         </Border>
-        <Frame x:Name="ConfigFrame" Grid.Column="1" Margin="28,24,8,0"
+        <Frame x:Name="ConfigFrame" Grid.Column="1" Margin="20,16,8,0"
                NavigationUIVisibility="Hidden" Background="Transparent" />
-        <Border x:Name="HideableStackPanel" Grid.Row="1" Grid.Column="1"
-                Background="{DynamicResource SettingsSurface}" BorderBrush="{DynamicResource SettingsBorder}"
-                BorderThickness="0,1,0,0" Padding="24,14"
+        <Border x:Name="HideableStackPanel" Grid.Row="1" Grid.Column="1" Style="{StaticResource SettingsFooter}"
                 Visibility="{Binding ConfigurationIsModified, Converter={StaticResource BoolToVis}}">
           <DockPanel LastChildFill="True">
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">

@@ -9,7 +9,7 @@
     <StackPanel Style="{StaticResource SettingsScrollContent}">
       <TextBlock Text="{live:Text loc:Strings.ConnectBuildServer}" Style="{StaticResource SettingsHeading}" />
       <TextBlock Text="{live:Text loc:Strings.EnterServerAddressDescription}"
-                 Style="{StaticResource SettingsDescription}" Margin="0,0,0,22" />
+                 Style="{StaticResource SettingsIntro}" />
       <Border Style="{StaticResource SettingsCard}">
         <StackPanel>
           <TextBlock Text="{live:Text loc:Strings.ServerConnection}" Style="{StaticResource SettingsSectionHeading}" />

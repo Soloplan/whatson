@@ -11,9 +11,9 @@
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" /><RowDefinition /><RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
-    <Grid Margin="0,0,0,20">
+    <Grid Margin="0,0,0,16">
       <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="200" /></Grid.ColumnDefinitions>
-      <StackPanel Margin="0,0,20,0">
+      <StackPanel Margin="0,0,16,0">
         <TextBlock Text="{live:Text loc:Strings.ChooseProjects}" Style="{StaticResource SettingsHeading}" />
         <TextBlock Text="{Binding ProposedServerAddress}" Style="{StaticResource SettingsDescription}"
                    TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" />

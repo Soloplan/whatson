@@ -130,7 +130,7 @@ namespace Soloplan.WhatsON.GUI.Tests
         Assert.That(hiddenScrollbar.IsVisible, Is.False);
         firstJob = (ListBoxItem)jobs.ItemContainerGenerator.ContainerFromIndex(0);
         var unusedSpace = jobs.ActualWidth - firstJob.TranslatePoint(new Point(firstJob.ActualWidth, 0), jobs).X;
-        Assert.That(unusedSpace, Is.InRange(7, 20), "Do not reserve a scrollbar gutter when there is no scrollbar.");
+        Assert.That(unusedSpace, Is.InRange(3, 12), "Do not reserve a scrollbar gutter when there is no scrollbar.");
         search.Text = string.Empty;
         search.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
 
