@@ -5,7 +5,7 @@ CruiseControl.NET builds. Keep changes focused and follow the existing patterns.
 
 ## Repository layout
 
-- `src/Soloplan.WhatsON.sln`: the solution, including both test projects.
+- `src/Soloplan.WhatsON.slnx`: the solution, including both test projects.
 - `src/Soloplan.WhatsON/`: shared models, configuration, plugin composition,
   serialization, and observation scheduling; targets .NET Standard 2.0.
 - `src/Soloplan.WhatsON.Jenkins/`: Jenkins API and connector; targets .NET Standard 2.0.
@@ -23,13 +23,14 @@ CruiseControl.NET builds. Keep changes focused and follow the existing patterns.
 ## Build and test
 
 Run commands from the repository root in a Visual Studio Developer PowerShell.
-The full solution requires Windows, Visual Studio/MSBuild with .NET desktop
+The full solution requires Windows, Visual Studio 2022 17.14 or newer with .NET desktop
 build tools, the .NET Framework 4.7.2 targeting pack, and a .NET SDK for the
 SDK-style projects. Restore requires access to the referenced NuGet packages.
 Use Visual Studio MSBuild for the full WPF solution.
+The Jenkins build agent must also use MSBuild 17.12 or newer to read `.slnx` files.
 
 ```powershell
-msbuild src/Soloplan.WhatsON.sln -restore -m -p:Configuration=Debug '-p:Platform=Any CPU'
+msbuild src/Soloplan.WhatsON.slnx -restore -m -p:Configuration=Debug '-p:Platform=Any CPU'
 ```
 
 Use `Configuration=Release` for the configuration used by CI. The application

@@ -19,7 +19,7 @@ pipeline {
 
     stage('Build') {
       steps {
-        stepMSBuild(project: 'src/Soloplan.WhatsON.sln', outputDir: outputDir)
+        stepMSBuild(project: 'src/Soloplan.WhatsON.slnx', outputDir: outputDir)
       }
     }
 
