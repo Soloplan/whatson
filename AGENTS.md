@@ -32,6 +32,12 @@ Run commands from the repository root on Windows with the .NET 10 SDK.
 that version. Restore requires access to the referenced NuGet packages.
 The Jenkins Windows build agent needs the same SDK.
 
+Jenkins uses `SoloPipeline@1.7` and tests the full solution with the `Integration`
+and `UI` NUnit categories excluded in the Windows build container. Categorize
+tests that need external services as `Integration` and desktop tests as `UI`.
+The GUI test assembly has an inherited `UI` category. Snapshot publishing
+includes both `master` and `develop`.
+
 ```powershell
 dotnet build src/Soloplan.WhatsON.slnx -c Debug
 dotnet test src/Soloplan.WhatsON.slnx -c Debug --no-build

@@ -1,15 +1,24 @@
 #!groovy
-@Library('SoloPipeline@1.0-rc11')
+@Library('SoloPipeline@1.7')
 import com.soloplan.*
 
 def Bucket = "tools"
 def outputDir = "src/bin/Release"
+def solution = "src/Soloplan.WhatsON.slnx"
 
 pipeline {
   agent {
     // This Windows agent must have the .NET 10 SDK installed.
     label 'dotnet-framework'
-  } 
+  }
+
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '100'))
+    disableConcurrentBuilds()
+    disableResume()
+    skipStagesAfterUnstable()
+    timestamps()
+  }
 
   stages {
     stage('Agent info') {
@@ -20,20 +29,23 @@ pipeline {
 
     stage('Build') {
       steps {
-        bat 'dotnet build src/Soloplan.WhatsON.slnx --configuration Release'
+        stepMSBuild(project: solution, useCommonOutput: false)
       }
     }
 
     stage('Test') {
       steps {
-        dir('src/bin/TestResults') {
+        dir('TestResults') {
           deleteDir()
         }
-        bat 'dotnet test src/Soloplan.WhatsON.slnx --configuration Release --no-build --logger trx --results-directory src/bin/TestResults'
+        stepDotNetTest(tests: [solution],
+                       exclude: ['Integration', 'UI'],
+                       resultFilePrefix: 'NUnit',
+                       formats: ['nunit'])
       }
       post {
         always {
-          archiveArtifacts artifacts: 'src/bin/TestResults/*.trx', allowEmptyArchive: true
+          archiveArtifacts artifacts: 'TestResults/NUnit/*.xml', allowEmptyArchive: true
         }
       }
     }
@@ -43,17 +55,23 @@ pipeline {
         dir(outputDir) {
           deleteDir()
         }
-        bat "dotnet publish src/Soloplan.WhatsON.GUI/Soloplan.WhatsON.GUI.csproj --configuration Release --no-build --output ${outputDir}"
+        stepMSBuild(project: 'src/Soloplan.WhatsON.GUI/Soloplan.WhatsON.GUI.csproj',
+                    buildTargets: 'Publish',
+                    useCommonOutput: false,
+                    publishDir: outputDir)
       }
     }
 
     stage('Publish Snapshot') {
       when {
-        branch 'master'
+        anyOf {
+          branch 'master'
+          branch 'develop'
+        }
       }
       
       steps {
-        stepPublishArtifacts(bucket: Bucket, targetFolder: "whatson/master", folder: outputDir, exclude: ['*.pdb'], excludeSubfolders: false)
+        stepPublishArtifacts(bucket: Bucket, targetFolder: "whatson/${env.BRANCH_NAME}", folder: outputDir, exclude: ['*.pdb'], excludeSubfolders: false)
       }
     }
 

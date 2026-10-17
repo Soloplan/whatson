@@ -70,6 +70,21 @@ on Windows. Custom plugins built for .NET Framework must be rebuilt for .NET 10.
 Project settings and package versions are shared in `src/Directory.Build.*`
 and `src/Directory.Packages.props`.
 
+Jenkins uses `SoloPipeline@1.7` on the Windows `dotnet-framework` build container.
+It builds and tests the full solution, excluding the NUnit categories
+`Integration` and `UI`. The GUI test assembly is categorized as `UI` because it
+needs the Windows desktop runtime and includes desktop interactions. Run the
+same container-compatible test selection locally with:
+
+```powershell
+dotnet test src/Soloplan.WhatsON.slnx -c Release --no-build --filter "TestCategory!=Integration&TestCategory!=UI"
+```
+
+The unfiltered command above still runs every test. CI records and archives
+NUnit results and skips packaging and publishing after test failures.
+Snapshots are published to `whatson/master` or `whatson/develop`; `v*` tags are
+published to their own release folder.
+
 View-model property notifications use PropertyChanged.Fody with the shared
 `src/FodyWeavers.xml` configuration. Notification roots are partial classes
 implementing `INotifyPropertyChanged`; Fody generates the events and invokers.
