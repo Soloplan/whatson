@@ -9,6 +9,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 {
   using System.Windows;
   using System.Windows.Controls;
+  using Soloplan.WhatsON.GUI.Common.Localization;
   using Soloplan.WhatsON.Localization;
 
   /// <summary>
@@ -38,7 +39,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
     private static void OnCurrentReadingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-      if (d is ProgressBarTooltipControl control)
+      if (d is ProgressBarControl control)
       {
         control.UpdateTexts();
       }
@@ -60,12 +61,12 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     {
       if (this.CompactDisplay)
       {
-        this.EstimatedRemainingText.Text = Strings.EstimatedArrival;
+        this.EstimatedRemainingText.SetBinding(TextBlock.TextProperty, TextExtension.CreateBinding(() => Strings.EstimatedArrival));
         this.PercentSignText.Text = "%/";
       }
       else
       {
-        this.EstimatedRemainingText.Text = Strings.EstimatedRemaining;
+        this.EstimatedRemainingText.SetBinding(TextBlock.TextProperty, TextExtension.CreateBinding(() => Strings.EstimatedRemaining));
         this.PercentSignText.Text = "% ";
       }
     }

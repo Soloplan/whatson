@@ -9,6 +9,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
 {
   using System.Linq;
   using System.Windows.Controls;
+  using MaterialDesignThemes.Wpf;
+  using Soloplan.WhatsON.GUI.Common.Localization;
   using Soloplan.WhatsON.GUI.Configuration.ViewModel;
 
   /// <summary>
@@ -58,6 +60,23 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
         }
 
         var editor = builder.GetControl(configItem, configAttribute);
+        var captionBinding = TextExtension.CreateBinding(() =>
+        {
+          ConfigResourcesHelper.ApplyConfigResources(configAttribute, connector.SourceConnectorPlugin.ConnectorType);
+          return configAttribute.Caption;
+        });
+        if (editor is TextBox or ComboBox)
+        {
+          editor.SetBinding(HintAssist.HintProperty, captionBinding);
+        }
+        else if (editor is Panel panel)
+        {
+          foreach (var label in panel.Children.OfType<Label>())
+          {
+            label.SetBinding(ContentControl.ContentProperty, captionBinding);
+          }
+        }
+
         this.StackPanel.Children.Add(editor);
       }
     }

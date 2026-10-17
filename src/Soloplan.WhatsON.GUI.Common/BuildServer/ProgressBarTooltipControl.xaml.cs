@@ -9,6 +9,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 {
   using System.Windows;
   using System.Windows.Controls;
+  using Soloplan.WhatsON.GUI.Common.Localization;
   using Soloplan.WhatsON.Localization;
 
   /// <summary>
@@ -61,13 +62,13 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
       if (this.CompactDisplay)
       {
         this.CompletionText.Text = string.Empty;
-        this.EstimatedRemainingText.Text = Strings.EstimatedArrival;
+        this.EstimatedRemainingText.SetBinding(TextBlock.TextProperty, TextExtension.CreateBinding(() => Strings.EstimatedArrival));
         this.PercentSignText.Text = "%/";
       }
       else
       {
-        this.CompletionText.Text = Strings.CompletionPrefix;
-        this.EstimatedRemainingText.Text = Strings.EstimatedRemaining;
+        this.CompletionText.SetBinding(TextBlock.TextProperty, TextExtension.CreateBinding(() => Strings.CompletionPrefix));
+        this.EstimatedRemainingText.SetBinding(TextBlock.TextProperty, TextExtension.CreateBinding(() => Strings.EstimatedRemaining));
         this.PercentSignText.Text = "% ";
       }
     }

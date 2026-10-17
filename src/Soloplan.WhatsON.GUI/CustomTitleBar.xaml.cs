@@ -11,6 +11,7 @@ namespace Soloplan.WhatsON.GUI
   using System.IO;
   using System.Windows;
   using System.Windows.Controls;
+  using System.Windows.Data;
   using System.Windows.Input;
   using MaterialDesignThemes.Wpf;
   using NLog;
@@ -100,7 +101,7 @@ namespace Soloplan.WhatsON.GUI
     /// Gets or sets text displayed on title bar.
     /// </summary>
     /// <remarks>
-    /// By default the property is set to <see cref="Window.Title" /> when <see cref="Window" /> is assigned.
+    /// By default the property follows <see cref="Window.Title" /> when <see cref="Window" /> is assigned.
     /// </remarks>
     public string Text
     {
@@ -138,7 +139,7 @@ namespace Soloplan.WhatsON.GUI
     {
       if (e.Property.Name == nameof(this.Window) && this.EnsureWindow())
       {
-        this.Text = this.Window.Title;
+        this.SetBinding(TextProperty, new Binding(nameof(System.Windows.Window.Title)) { Source = this.Window, Mode = BindingMode.OneWay });
       }
 
       base.OnPropertyChanged(e);

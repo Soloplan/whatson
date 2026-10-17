@@ -102,6 +102,7 @@ namespace Soloplan.WhatsON.GUI
       this.model = new NotificationsModel(this.scheduler);
       this.model.StatusChanged += this.CurrentStatusPropertyChanged;
       this.UpdateTrayIcon();
+      Localizer.LanguageChanged += this.LanguageChanged;
 
       if (File.Exists(Path.Combine(SerializationHelper.Instance.ConfigFolder, MainWindow.VisualSettingsFile)))
       {
@@ -141,6 +142,7 @@ namespace Soloplan.WhatsON.GUI
 
     public void Dispose()
     {
+      Localizer.LanguageChanged -= this.LanguageChanged;
       this.contextMenu?.Dispose();
       this.contextMenu = null;
       this.icon?.Dispose();
@@ -382,6 +384,12 @@ namespace Soloplan.WhatsON.GUI
       this.contextMenu.Items.Add(openCloseWindow);
       this.contextMenu.Items.Add(closeApplication);
     }
+
+    private void LanguageChanged(object sender, EventArgs args) => Application.Current.Dispatcher.Invoke(() =>
+    {
+      this.UpdateTrayIcon();
+      this.OnContextMenuPopup(this.contextMenu, new System.ComponentModel.CancelEventArgs());
+    });
 
     /// <summary>
     /// Handles closing application.

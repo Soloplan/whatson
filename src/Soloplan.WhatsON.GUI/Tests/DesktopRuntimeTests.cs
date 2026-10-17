@@ -177,6 +177,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       VerifyTrayNotificationForwarding();
       ProjectListChecks.Verify(app);
       ToolTipChecks.Verify(app);
+      LiveLocalizationChecks.Verify(app);
       VerifyHandledExceptionsAreNotLoggedAsErrors();
 
       using (var stream = Application.GetResourceStream(new Uri("/Soloplan.WhatsON.GUI;component/Logging/LogConfig.xml", UriKind.Relative)).Stream)
@@ -480,7 +481,9 @@ namespace Soloplan.WhatsON.GUI.Tests
                   configuration.Language,
                   Is.EqualTo(ApplicationLanguage.German),
                   "The language must remain unsaved until Save changes is used.");
-                Assert.That(CultureInfo.CurrentUICulture.Name, Is.EqualTo("de-DE"));
+                Assert.That(CultureInfo.CurrentUICulture.Name, Is.EqualTo("en-US"));
+                Assert.That(settings.Title, Is.EqualTo("Settings"));
+                selector.SelectedValue = ApplicationLanguage.German;
               }
               else if (section == 1)
               {

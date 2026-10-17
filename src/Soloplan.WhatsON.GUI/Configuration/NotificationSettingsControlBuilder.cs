@@ -18,6 +18,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
   using MaterialDesignThemes.Wpf;
   using Newtonsoft.Json;
   using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.GUI.Common.Localization;
   using Soloplan.WhatsON.Localization;
   using Soloplan.WhatsON.Model;
 
@@ -119,7 +120,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
       toggleButton.SetBinding(ToggleButton.IsCheckedProperty, toogleButtonBinding);
       itemStackPanel.Children.Add(toggleButton);
       var label = new Label();
-      label.Content = notificationStateItem.Caption;
+      label.SetBinding(ContentControl.ContentProperty, TextExtension.CreateBinding(() => notificationStateItem.Caption));
 
       if (assignGlobalSettingsEnabledDependency)
       {
@@ -197,10 +198,9 @@ namespace Soloplan.WhatsON.GUI.Configuration
         var notificationStateItem = notificationsState.ItemsState.FirstOrDefault(n => n.ObservationState == observationState);
         if (notificationStateItem == null)
         {
-          notificationStateItem = new NotificationStateItem(notificationsState);
+          notificationStateItem = new NotificationStateItem(notificationsState, () => Localizer.GetStateName(observationState));
           notificationStateItem.IsActive = configItemValue.AsObservationStateFlag(observationState);
           notificationStateItem.ObservationState = observationState;
-          notificationStateItem.Caption = Localizer.GetStateName(observationState);
           notificationStateItem.PropertyChanged += (s, e) => this.NotificationStateChanged(notificationStateItem, configItem, e.PropertyName);
           notificationStateItem.PropertyChanged += (s, e) => this.UpdateExpanderHeader(expander, notificationsState);
           notificationsState.ItemsState.Add(notificationStateItem);
@@ -221,7 +221,9 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// </summary>
     /// <param name="expander">The expander.</param>
     /// <param name="notificationsState">The notification state.</param>
-    private void UpdateExpanderHeader(Expander expander, NotificationsState notificationsState) => expander.Header = Localizer.NotificationSettings(this.GetNotificationsStateTextRepresentation(notificationsState));
+    private void UpdateExpanderHeader(Expander expander, NotificationsState notificationsState) => expander.SetBinding(
+      HeaderedContentControl.HeaderProperty,
+      TextExtension.CreateBinding(() => Localizer.NotificationSettings(this.GetNotificationsStateTextRepresentation(notificationsState))));
 
     /// <summary>
     /// Gets the notifications state text representation.
@@ -293,8 +295,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
       /// </summary>
       public NotificationsState()
       {
-        this.UseGlobalSettings = new NotificationStateItem(this);
-        this.UseGlobalSettings.Caption = Strings.UseMainConfiguration;
+        this.UseGlobalSettings = new NotificationStateItem(this, () => Strings.UseMainConfiguration);
         this.UseGlobalSettings.PropertyChanged += (s, e) =>
         {
           foreach (var listItem in this.ItemsState)
@@ -305,8 +306,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
           this.OnlyIfStateChanged.RefreshGlobalSettings();
         };
 
-        this.OnlyIfStateChanged = new NotificationStateItem(this);
-        this.OnlyIfStateChanged.Caption = Strings.OnlyIfStatusChanged;
+        this.OnlyIfStateChanged = new NotificationStateItem(this, () => Strings.OnlyIfStatusChanged);
       }
 
       /// <summary>
@@ -331,13 +331,17 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
     private partial class NotificationStateItem : INotifyPropertyChanged
     {
+      private readonly Func<string> caption;
+
       /// <summary>
       /// Initializes a new instance of the <see cref="NotificationStateItem" /> class.
       /// </summary>
       /// <param name="notificationsState">The notification state.</param>
-      public NotificationStateItem(NotificationsState notificationsState)
+      /// <param name="caption">Reads the caption in the current language.</param>
+      public NotificationStateItem(NotificationsState notificationsState, Func<string> caption)
       {
         this.NotificationsState = notificationsState;
+        this.caption = caption;
       }
 
       /// <summary>
@@ -361,9 +365,9 @@ namespace Soloplan.WhatsON.GUI.Configuration
       public bool IsActive { get; set; }
 
       /// <summary>
-      /// Gets or sets the caption.
+      /// Gets the caption in the current language.
       /// </summary>
-      public string Caption { get; set; }
+      public string Caption => this.caption();
 
       public void RefreshGlobalSettings() => this.OnPropertyChanged(nameof(this.IsNotUseGlobalSettingsForParentListActive));
     }

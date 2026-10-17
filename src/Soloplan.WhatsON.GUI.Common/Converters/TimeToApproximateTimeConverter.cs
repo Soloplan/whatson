@@ -13,7 +13,7 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
   using Humanizer;
   using Soloplan.WhatsON.Localization;
 
-  public class TimeToApproximateTimeConverter : IValueConverter
+  public class TimeToApproximateTimeConverter : IValueConverter, IMultiValueConverter
   {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
@@ -31,5 +31,9 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException("Can't convert from approximate time to exact time.");
+
+    object IMultiValueConverter.Convert(object[] values, Type targetType, object parameter, CultureInfo culture) => this.Convert(values[0], targetType, parameter, culture);
+
+    object[] IMultiValueConverter.ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => throw new NotSupportedException();
   }
 }

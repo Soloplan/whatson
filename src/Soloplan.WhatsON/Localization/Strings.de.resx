@@ -393,8 +393,8 @@
   <data xml:space="preserve" name="Language">
     <value>Sprache</value>
   </data>
-  <data xml:space="preserve" name="LanguageRestartDescription">
-    <value>Speichern Sie die Änderungen und starten Sie whatsON neu, um die Sprache zu übernehmen.</value>
+  <data xml:space="preserve" name="LanguageChangeDescription">
+    <value>Änderungen werden sofort übernommen. Speichern Sie Ihre Auswahl, um sie beizubehalten.</value>
   </data>
   <data xml:space="preserve" name="BuildLabelCopied">
     <value>Build-Kennung kopiert</value>

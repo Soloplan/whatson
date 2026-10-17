@@ -2,6 +2,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
+             xmlns:live="clr-namespace:Soloplan.WhatsON.GUI.Common.Localization"
              xmlns:connectorTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
@@ -24,7 +25,7 @@
         <MenuItem.Header>
           <StackPanel Orientation="Horizontal">
             <materialDesign:PackIcon Kind="TagOutline" />
-            <TextBlock Padding="10,0,0,0" Text="{x:Static loc:Strings.CopyBuildLabel}" />
+            <TextBlock Padding="10,0,0,0" Text="{live:Text loc:Strings.CopyBuildLabel}" />
           </StackPanel>
         </MenuItem.Header>
       </MenuItem>
@@ -32,7 +33,7 @@
         <MenuItem.Header>
           <StackPanel Orientation="Horizontal">
             <materialDesign:PackIcon Kind="Link" />
-            <TextBlock Padding="10,0,0,0" Text="{x:Static loc:Strings.OpenBuildWebsite}" />
+            <TextBlock Padding="10,0,0,0" Text="{live:Text loc:Strings.OpenBuildWebsite}" />
           </StackPanel>
         </MenuItem.Header>
       </MenuItem>

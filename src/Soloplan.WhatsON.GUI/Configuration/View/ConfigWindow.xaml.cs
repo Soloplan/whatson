@@ -285,6 +285,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
       }
 
       ((App)Application.Current).ApplyTheme(this.configurationSource.ThemeMode);
+      Localizer.ApplyLanguage(this.configurationSource.Language);
     }
 
     /// <summary>
@@ -296,6 +297,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     {
       this.ConfigurationViewModel.Load(this.configurationSource);
       ((App)Application.Current).ApplyTheme(this.configurationSource.ThemeMode);
+      Localizer.ApplyLanguage(this.configurationSource.Language);
       if (this.ConfigurationViewModel.SingleConnectorMode && this.newConnectorPlugin != null)
       {
         this.Close();

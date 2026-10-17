@@ -2,6 +2,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
+             xmlns:live="clr-namespace:Soloplan.WhatsON.GUI.Common.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -29,12 +30,12 @@
             </MultiBinding>
           </TextBlock.Text>
         </TextBlock>
-        <TextBlock Name="EstimatedRemainingText" Text="{x:Static loc:Strings.EstimatedRemaining}" />
+        <TextBlock Name="EstimatedRemainingText" Text="{live:Text loc:Strings.EstimatedRemaining}" />
       </StackPanel>
     </StackPanel>
     <StackPanel Orientation="Horizontal"
                 Visibility="{Binding BuildingLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
-      <TextBlock Text="{x:Static loc:Strings.TakingPrefix}" />
+      <TextBlock Text="{live:Text loc:Strings.TakingPrefix}" />
       <TextBlock>
         <TextBlock.Text>
           <MultiBinding StringFormat="{}{0:00}:{1:00}:{2:00}">
@@ -44,7 +45,7 @@
           </MultiBinding>
         </TextBlock.Text>
       </TextBlock>
-      <TextBlock Text="{x:Static loc:Strings.LongerThanEstimatedSuffix}" />
+      <TextBlock Text="{live:Text loc:Strings.LongerThanEstimatedSuffix}" />
     </StackPanel>
   </StackPanel>
 </UserControl>

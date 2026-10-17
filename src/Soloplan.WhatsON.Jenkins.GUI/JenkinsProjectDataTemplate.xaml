@@ -1,5 +1,6 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
+                    xmlns:live="clr-namespace:Soloplan.WhatsON.GUI.Common.Localization;assembly=Soloplan.WhatsON.GUI.Common"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:buildServer="clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer;assembly=Soloplan.WhatsON.GUI.Common"
                     xmlns:connectorTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView;assembly=Soloplan.WhatsON.GUI.Common"
@@ -19,10 +20,10 @@
     <StackPanel>
       <buildServer:HistoryBuildTooltipControl DataContext="{Binding}" />
       <StackPanel Visibility="{Binding CulpritsAndLastCommittedDifferent, Converter={StaticResource BoolToVisibility}}">
-        <buildServer:CulpritsControl Caption="{x:Static loc:Strings.CommitsByCaption}"
+        <buildServer:CulpritsControl Caption="{live:Text loc:Strings.CommitsByCaption}"
                                      CulpritsProp="{Binding DataContext.CommittedToThisBuild, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
       </StackPanel>
-      <buildServer:CulpritsControl Caption="{x:Static loc:Strings.BuildContributorsCaption}"
+      <buildServer:CulpritsControl Caption="{live:Text loc:Strings.BuildContributorsCaption}"
                                    CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
     </StackPanel>
   </ToolTip>
@@ -32,10 +33,10 @@
     <StackPanel>
       <buildServer:ProgressBarTooltipControl DataContext="{Binding}" />
       <StackPanel Visibility="{Binding CulpritsAndLastCommittedDifferent, Converter={StaticResource BoolToVisibility}}">
-        <buildServer:CulpritsControl Caption="{x:Static loc:Strings.CommitsByCaption}"
+        <buildServer:CulpritsControl Caption="{live:Text loc:Strings.CommitsByCaption}"
                                      CulpritsProp="{Binding DataContext.CommittedToThisBuild, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
       </StackPanel>
-      <buildServer:CulpritsControl Caption="{x:Static loc:Strings.BuildContributorsCaption}"
+      <buildServer:CulpritsControl Caption="{live:Text loc:Strings.BuildContributorsCaption}"
                                    CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
       <TextBlock Text="{Binding ErrorMessage}" Style="{DynamicResource ToolTipMessage}" />
     </StackPanel>
@@ -46,10 +47,10 @@
     <StackPanel DataContext="{Binding CurrentStatus}">
       <buildServer:ProgressBarTooltipControl DataContext="{Binding}" />
       <StackPanel Visibility="{Binding CulpritsAndLastCommittedDifferent, Converter={StaticResource BoolToVisibility}}">
-        <buildServer:CulpritsControl Caption="{x:Static loc:Strings.CommitsByCaption}"
+        <buildServer:CulpritsControl Caption="{live:Text loc:Strings.CommitsByCaption}"
                                      CulpritsProp="{Binding DataContext.CommittedToThisBuild, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
       </StackPanel>
-      <buildServer:CulpritsControl Caption="{x:Static loc:Strings.BuildContributorsCaption}"
+      <buildServer:CulpritsControl Caption="{live:Text loc:Strings.BuildContributorsCaption}"
                                    CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
       <TextBlock Text="{Binding ErrorMessage}" Style="{DynamicResource ToolTipMessage}" />
     </StackPanel>

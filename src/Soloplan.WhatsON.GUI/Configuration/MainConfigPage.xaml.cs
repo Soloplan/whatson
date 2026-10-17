@@ -35,5 +35,13 @@ namespace Soloplan.WhatsON.GUI.Configuration
         app.ApplyTheme(mode);
       }
     }
+
+    private void LanguageSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+      if (((ComboBox)sender).SelectedValue is ApplicationLanguage language)
+      {
+        Localizer.ApplyLanguage(language);
+      }
+    }
   }
 }

@@ -2,23 +2,24 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
+      xmlns:live="clr-namespace:Soloplan.WhatsON.GUI.Common.Localization;assembly=Soloplan.WhatsON.GUI.Common"
       xmlns:wizard="clr-namespace:Soloplan.WhatsON.GUI.Configuration.Wizard"
-      Title="{x:Static loc:Strings.ChooseProjects}" Background="Transparent" FontFamily="Segoe UI" FontSize="14"
+      Title="{live:Text loc:Strings.ChooseProjects}" Background="Transparent" FontFamily="Segoe UI" FontSize="14"
       TextElement.Foreground="{DynamicResource MaterialDesignBody}">
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition /><RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
     <StackPanel Margin="0,0,0,20">
-      <TextBlock Text="{x:Static loc:Strings.ChooseProjects}" Style="{StaticResource SettingsHeading}" />
+      <TextBlock Text="{live:Text loc:Strings.ChooseProjects}" Style="{StaticResource SettingsHeading}" />
       <TextBlock Text="{Binding ProposedServerAddress}" Style="{StaticResource SettingsDescription}" />
     </StackPanel>
     <Border Grid.Row="1" Style="{StaticResource SettingsCard}" Padding="16">
       <StackPanel>
-        <Label Content="{x:Static loc:Strings.FindProject}" Target="{Binding ElementName=searchTextBox}" Padding="0"
+        <Label Content="{live:Text loc:Strings.FindProject}" Target="{Binding ElementName=searchTextBox}" Padding="0"
                FontWeight="SemiBold" Margin="0,0,0,6" />
         <TextBox x:Name="searchTextBox" MinHeight="36" TextChanged="SearchTextBoxTextChanged"
-                 AutomationProperties.Name="{x:Static loc:Strings.FindProject}" />
+                 AutomationProperties.Name="{live:Text loc:Strings.FindProject}" />
       </StackPanel>
     </Border>
     <Border Grid.Row="2" Style="{StaticResource SettingsCard}" Padding="12">
@@ -36,9 +37,9 @@
               </Style.Triggers>
             </Style>
           </StackPanel.Style>
-          <TextBlock Text="{x:Static loc:Strings.NoProjectsFound}" FontWeight="SemiBold" TextAlignment="Center"
+          <TextBlock Text="{live:Text loc:Strings.NoProjectsFound}" FontWeight="SemiBold" TextAlignment="Center"
                      Margin="0,0,0,6" />
-          <TextBlock Text="{x:Static loc:Strings.CheckAddressDescription}"
+          <TextBlock Text="{live:Text loc:Strings.CheckAddressDescription}"
                      Style="{StaticResource SettingsDescription}" TextAlignment="Center" />
         </StackPanel>
       </Grid>
@@ -48,12 +49,12 @@
         <Grid.ColumnDefinitions>
           <ColumnDefinition /><ColumnDefinition Width="230" />
         </Grid.ColumnDefinitions>
-        <TextBlock Text="{x:Static loc:Strings.OrganizeProjects}" FontWeight="SemiBold" VerticalAlignment="Center"
+        <TextBlock Text="{live:Text loc:Strings.OrganizeProjects}" FontWeight="SemiBold" VerticalAlignment="Center"
                    Margin="0,0,16,0" />
         <ComboBox x:Name="uxGrouppingSettings" Grid.Column="1" MinHeight="36" DisplayMemberPath="Caption"
                   ItemsSource="{Binding GroupingSettings}" IsSynchronizedWithCurrentItem="True"
                   Loaded="UxGrouppingSettingsLoaded" SelectedItem="{Binding SelectedGroupingSetting, Mode=TwoWay}"
-                  AutomationProperties.Name="{x:Static loc:Strings.OrganizeProjects}" />
+                  AutomationProperties.Name="{live:Text loc:Strings.OrganizeProjects}" />
       </Grid>
     </Border>
   </Grid>

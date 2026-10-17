@@ -66,11 +66,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     public ApplicationLanguage Language { get; set; }
 
     /// <summary>
-    /// Gets the snackbar action caption.
-    /// </summary>
-    public string SnackbarActionCaption => this.SingleNewConnectorMode ? Strings.Cancel : Strings.Reset;
-
-    /// <summary>
     /// Gets or sets a value indicating whether a single new connector configuration mode is active.
     /// </summary>
     public bool SingleNewConnectorMode { get; set; }

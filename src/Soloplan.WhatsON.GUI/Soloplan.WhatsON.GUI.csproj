@@ -8,6 +8,9 @@
     <DefaultItemExcludes>$(DefaultItemExcludes);Tests\**</DefaultItemExcludes>
   </PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="Soloplan.WhatsON.GUI.Tests" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="HtmlRenderer.WPF" />
     <PackageReference Include="Humanizer.Core" />
     <PackageReference Include="MaterialDesignThemes" />

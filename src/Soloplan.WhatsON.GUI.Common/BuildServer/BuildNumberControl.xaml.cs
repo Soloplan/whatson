@@ -12,6 +12,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
   using System.Windows;
   using System.Windows.Controls;
   using System.Windows.Input;
+  using Soloplan.WhatsON.GUI.Common.Localization;
   using Soloplan.WhatsON.Localization;
 
   /// <summary>
@@ -56,13 +57,13 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     private async void OnPreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
       Clipboard.SetText(this.BuildNumber.ToString());
-      this.ToolTipText.Text = Strings.BuildLabelCopied;
+      this.ToolTipText.SetBinding(TextBlock.TextProperty, TextExtension.CreateBinding(() => Strings.BuildLabelCopied));
       this.ControlToolTip.IsOpen = true;
       e.Handled = true;
       await Task.Delay(1000);
 
       this.ControlToolTip.IsOpen = false;
-      this.ToolTipText.Text = Strings.CopyBuildLabelHelp;
+      this.ToolTipText.SetBinding(TextBlock.TextProperty, TextExtension.CreateBinding(() => Strings.CopyBuildLabelHelp));
     }
   }
 }

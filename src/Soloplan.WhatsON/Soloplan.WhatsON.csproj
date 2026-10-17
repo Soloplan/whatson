@@ -13,6 +13,9 @@
     <LocalizationSource>$(BaseIntermediateOutputPath)$(Configuration)\$(TargetFramework)\Strings.g.cs</LocalizationSource>
   </PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="Soloplan.WhatsON.Tests" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="NLog" />
   </ItemGroup>

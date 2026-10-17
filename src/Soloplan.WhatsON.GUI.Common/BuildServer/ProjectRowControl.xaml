@@ -5,6 +5,7 @@
              xmlns:tree="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView"
              xmlns:converters="clr-namespace:Soloplan.WhatsON.GUI.Common.Converters"
              xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
+             xmlns:live="clr-namespace:Soloplan.WhatsON.GUI.Common.Localization"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              HorizontalContentAlignment="Stretch">
   <UserControl.Resources>
@@ -48,8 +49,8 @@
                                Height="{Binding Width, RelativeSource={RelativeSource Self}}"
                                Foreground="{DynamicResource SettingsMuted}"
                                Visibility="{Binding IsDisabled, Converter={StaticResource BoolToVisibility}}"
-                               ToolTip="{x:Static loc:Strings.JobDisabledDescription}"
-                               AutomationProperties.Name="{x:Static loc:Strings.JobDisabled}" />
+                               ToolTip="{live:Text loc:Strings.JobDisabledDescription}"
+                               AutomationProperties.Name="{live:Text loc:Strings.JobDisabled}" />
     </Grid>
     <TextBlock Grid.Column="1" x:Name="ProjectName" Text="{Binding Name}" ToolTip="{Binding Name}"
                FontSize="{Binding DataContext.FontSize, RelativeSource={RelativeSource AncestorType=tree:ConnectorsTreeView}}"
@@ -83,13 +84,19 @@
             BorderBrush="{DynamicResource SettingsBorder}" BorderThickness="1" CornerRadius="5" Padding="6,2"
             Margin="0,0,12,0" VerticalAlignment="Center"
             Visibility="{Binding IsDisabled, Converter={StaticResource BoolToVisibility}}"
-            ToolTip="{x:Static loc:Strings.JobDisabledDescription}">
-      <TextBlock Text="{x:Static loc:Strings.JobDisabled}" Style="{StaticResource Metadata}" />
+            ToolTip="{live:Text loc:Strings.JobDisabledDescription}">
+      <TextBlock Text="{live:Text loc:Strings.JobDisabled}" Style="{StaticResource Metadata}" />
     </Border>
     <Grid Grid.Column="3" x:Name="BuildTiming" Width="112">
-      <TextBlock Text="{Binding CurrentStatus.FinishTime, Converter={StaticResource RelativeTime}}"
+      <TextBlock
                  HorizontalAlignment="Right"
                  Visibility="{Binding CurrentStatus.FinishTime, Converter={StaticResource HasValue}}">
+        <TextBlock.Text>
+          <MultiBinding Converter="{StaticResource RelativeTime}">
+            <Binding Path="CurrentStatus.FinishTime" />
+            <Binding Path="Culture" Source="{x:Static live:LanguageSource.Instance}" />
+          </MultiBinding>
+        </TextBlock.Text>
         <TextBlock.Style>
           <Style TargetType="TextBlock" BasedOn="{StaticResource Metadata}">
             <Style.Triggers>
@@ -103,14 +110,14 @@
       <StackPanel VerticalAlignment="Center"
                   Visibility="{Binding CurrentStatus.Building, Converter={StaticResource BoolToVisibility}}">
         <DockPanel>
-          <TextBlock Text="{x:Static loc:Strings.Running}" Style="{StaticResource Metadata}" />
+          <TextBlock Text="{live:Text loc:Strings.Running}" Style="{StaticResource Metadata}" />
           <TextBlock Text="{Binding CurrentStatus.Progress, StringFormat={}{0}%}" Style="{StaticResource Metadata}"
                      HorizontalAlignment="Right" />
         </DockPanel>
         <ProgressBar x:Name="BuildProgress" Height="3" Margin="0,4,0,0" Minimum="0" Maximum="100" Value="{Binding CurrentStatus.Progress, Mode=OneWay}"
                      IsIndeterminate="{Binding CurrentStatus.BuildingLongerThenExpected}"
                      Foreground="{StaticResource Running}" Background="{DynamicResource SettingsBorder}"
-                     AutomationProperties.Name="{x:Static loc:Strings.Running}" />
+                     AutomationProperties.Name="{live:Text loc:Strings.Running}" />
       </StackPanel>
     </Grid>
     <local:HistoryBuildList Grid.Column="4" x:Name="BuildHistory" DataContext="{Binding ConnectorSnapshots}" VerticalAlignment="Center" />

@@ -730,9 +730,9 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     private List<GrouppingSetting> InitializeGrouppingSettings()
     {
       var grouppingSettings = new List<GrouppingSetting>();
-      grouppingSettings.Add(new GrouppingSetting(Strings.AssignParentAsGroup, WizardWindow.AssignGroupsForAddedProjects));
-      grouppingSettings.Add(new GrouppingSetting(Strings.AddHierarchyToProjectName, WizardWindow.AddProjectPathToProjectName));
-      grouppingSettings.Add(new GrouppingSetting(Strings.NoAutomaticGrouping, WizardWindow.DoNotAssignAnyGroups));
+      grouppingSettings.Add(new GrouppingSetting(() => Strings.AssignParentAsGroup, WizardWindow.AssignGroupsForAddedProjects));
+      grouppingSettings.Add(new GrouppingSetting(() => Strings.AddHierarchyToProjectName, WizardWindow.AddProjectPathToProjectName));
+      grouppingSettings.Add(new GrouppingSetting(() => Strings.NoAutomaticGrouping, WizardWindow.DoNotAssignAnyGroups));
       return grouppingSettings;
     }
 

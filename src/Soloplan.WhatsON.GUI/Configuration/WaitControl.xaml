@@ -2,13 +2,14 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
+             xmlns:live="clr-namespace:Soloplan.WhatsON.GUI.Common.Localization;assembly=Soloplan.WhatsON.GUI.Common"
              FontFamily="Segoe UI" FontSize="14" TextElement.Foreground="{DynamicResource MaterialDesignBody}">
   <Border Style="{StaticResource SettingsDialog}">
     <StackPanel Orientation="Horizontal">
       <ProgressBar Width="28" Height="28" Margin="0,0,16,0" IsIndeterminate="True"
                    Style="{StaticResource MaterialDesignCircularProgressBar}"
-                   AutomationProperties.Name="{x:Static loc:Strings.LoadingProjects}" />
-      <TextBlock Text="{x:Static loc:Strings.LoadingProjectsEllipsis}" VerticalAlignment="Center" FontWeight="SemiBold" />
+                   AutomationProperties.Name="{live:Text loc:Strings.LoadingProjects}" />
+      <TextBlock Text="{live:Text loc:Strings.LoadingProjectsEllipsis}" VerticalAlignment="Center" FontWeight="SemiBold" />
     </StackPanel>
   </Border>
 </UserControl>

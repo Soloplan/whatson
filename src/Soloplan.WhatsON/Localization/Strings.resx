@@ -393,8 +393,8 @@
   <data xml:space="preserve" name="Language">
     <value>Language</value>
   </data>
-  <data xml:space="preserve" name="LanguageRestartDescription">
-    <value>Save your changes and restart whatsON to apply the language.</value>
+  <data xml:space="preserve" name="LanguageChangeDescription">
+    <value>Changes apply immediately. Save to keep your choice.</value>
   </data>
   <data xml:space="preserve" name="BuildLabelCopied">
     <value>Build label copied</value>

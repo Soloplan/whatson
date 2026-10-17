@@ -1,11 +1,12 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
+                    xmlns:live="clr-namespace:Soloplan.WhatsON.GUI.Common.Localization"
                     xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
 
   <ContextMenu x:Key="copyData">
-    <MenuItem Header="{x:Static loc:Strings.CopyData}" Command="{Binding CopyData}" />
+    <MenuItem Header="{live:Text loc:Strings.CopyData}" Command="{Binding CopyData}" />
   </ContextMenu>
 
   <DataTemplate DataType="{x:Type local:ConnectorMissingViewModel}">
@@ -13,19 +14,19 @@
       <StackPanel.ToolTip>
         <StackPanel>
           <StackPanel Orientation="Horizontal">
-            <TextBlock Text="{x:Static loc:Strings.IdentifierPrefix}" />
+            <TextBlock Text="{live:Text loc:Strings.IdentifierPrefix}" />
             <TextBlock Text="{Binding Identifier, Mode=OneWay}" />
           </StackPanel>
           <StackPanel Orientation="Horizontal">
-            <TextBlock Text="{x:Static loc:Strings.NamePrefix}" />
+            <TextBlock Text="{live:Text loc:Strings.NamePrefix}" />
             <TextBlock Text="{Binding Name, Mode=OneWay}" />
           </StackPanel>
           <StackPanel Orientation="Horizontal">
-            <TextBlock Text="{x:Static loc:Strings.ExpectedConnectorTypePrefix}" />
+            <TextBlock Text="{live:Text loc:Strings.ExpectedConnectorTypePrefix}" />
             <TextBlock FontWeight="Bold" Text="{Binding ExpectedConnectorType, Mode=OneWay}" />
           </StackPanel>
           <StackPanel Orientation="Horizontal">
-            <TextBlock Text="{x:Static loc:Strings.MissingPluginHelp}" />
+            <TextBlock Text="{live:Text loc:Strings.MissingPluginHelp}" />
           </StackPanel>
         </StackPanel>
       </StackPanel.ToolTip>
@@ -35,7 +36,7 @@
         Height="14"
         Kind="Puzzle" />
       <TextBlock FontSize="12" VerticalAlignment="Center" Margin="3,0,0,0" FontWeight="Normal"
-                 Text="{x:Static loc:Strings.MissingPluginPrefix}" />
+                 Text="{live:Text loc:Strings.MissingPluginPrefix}" />
       <TextBlock FontSize="12" VerticalAlignment="Center" FontWeight="Bold"
                  Text="{Binding ExpectedConnectorType, Mode=OneWay}" />
       <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" FontWeight="Normal" FontSize="12" Text="-" />

@@ -15,19 +15,26 @@ namespace Soloplan.WhatsON
 
   public static class Localizer
   {
+    private static readonly CultureInfo systemCulture = CultureInfo.CurrentUICulture;
+
+    public static event EventHandler LanguageChanged;
+
     public static void ApplyLanguage(ApplicationLanguage language)
     {
-      var culture = language switch
-      {
-        ApplicationLanguage.System when CultureInfo.CurrentUICulture.TwoLetterISOLanguageName is "en" or "de" => CultureInfo.CurrentUICulture,
-        ApplicationLanguage.German => CultureInfo.GetCultureInfo("de-DE"),
-        _ => CultureInfo.GetCultureInfo("en-US"),
-      };
+      var culture = ResolveCulture(language, systemCulture);
       CultureInfo.DefaultThreadCurrentCulture = culture;
       CultureInfo.DefaultThreadCurrentUICulture = culture;
       CultureInfo.CurrentCulture = culture;
       CultureInfo.CurrentUICulture = culture;
+      LanguageChanged?.Invoke(null, EventArgs.Empty);
     }
+
+    internal static CultureInfo ResolveCulture(ApplicationLanguage language, CultureInfo systemLanguage) => language switch
+    {
+      ApplicationLanguage.System when systemLanguage.TwoLetterISOLanguageName is "en" or "de" => systemLanguage,
+      ApplicationLanguage.German => CultureInfo.GetCultureInfo("de-DE"),
+      _ => CultureInfo.GetCultureInfo("en-US"),
+    };
 
     public static string DeleteGroup(string groupName) => string.Format(CultureInfo.CurrentCulture, Strings.DeleteGroupFormat, groupName);
 

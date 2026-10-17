@@ -160,7 +160,13 @@ namespace Soloplan.WhatsON.Tests
     [TestCase(ApplicationLanguage.English, "de-DE", "en-US")]
     [TestCase(ApplicationLanguage.German, "en-US", "de-DE")]
     [TestCase((ApplicationLanguage)99, "de-DE", "en-US")]
-    public void SavedLanguageAppliesToUIFormattingAndBackgroundThreads(ApplicationLanguage language, string systemCulture, string cultureName)
+    public void LanguageResolutionUsesSupportedSystemCulturesOrEnglish(ApplicationLanguage language, string systemCulture, string cultureName)
+    {
+      Assert.That(Localizer.ResolveCulture(language, CultureInfo.GetCultureInfo(systemCulture)).Name, Is.EqualTo(cultureName));
+    }
+
+    [Test]
+    public void ChangingLanguageUpdatesFormattingAndBackgroundThreadsAndCanReturnToSystem()
     {
       var currentCulture = CultureInfo.CurrentCulture;
       var currentUICulture = CultureInfo.CurrentUICulture;
@@ -168,12 +174,17 @@ namespace Soloplan.WhatsON.Tests
       var defaultUICulture = CultureInfo.DefaultThreadCurrentUICulture;
       try
       {
-        CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(systemCulture);
-        Localizer.ApplyLanguage(language);
-        Assert.That(CultureInfo.CurrentCulture.Name, Is.EqualTo(cultureName));
-        Assert.That(CultureInfo.CurrentUICulture.Name, Is.EqualTo(cultureName));
-        Assert.That(CultureInfo.DefaultThreadCurrentCulture.Name, Is.EqualTo(cultureName));
-        Assert.That(CultureInfo.DefaultThreadCurrentUICulture.Name, Is.EqualTo(cultureName));
+        Localizer.ApplyLanguage(ApplicationLanguage.System);
+        var systemLanguage = CultureInfo.CurrentUICulture;
+        foreach (var language in new[] { ApplicationLanguage.German, ApplicationLanguage.English, ApplicationLanguage.System })
+        {
+          var expected = language == ApplicationLanguage.System ? systemLanguage.Name : language == ApplicationLanguage.German ? "de-DE" : "en-US";
+          Localizer.ApplyLanguage(language);
+          Assert.That(CultureInfo.CurrentCulture.Name, Is.EqualTo(expected));
+          Assert.That(CultureInfo.CurrentUICulture.Name, Is.EqualTo(expected));
+          Assert.That(CultureInfo.DefaultThreadCurrentCulture.Name, Is.EqualTo(expected));
+          Assert.That(CultureInfo.DefaultThreadCurrentUICulture.Name, Is.EqualTo(expected));
+        }
       }
       finally
       {

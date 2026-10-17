@@ -2,13 +2,14 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
-      Title="{x:Static loc:Strings.ProjectSettings}" Background="Transparent" FontFamily="Segoe UI" FontSize="14"
+      xmlns:live="clr-namespace:Soloplan.WhatsON.GUI.Common.Localization;assembly=Soloplan.WhatsON.GUI.Common"
+      Title="{live:Text loc:Strings.ProjectSettings}" Background="Transparent" FontFamily="Segoe UI" FontSize="14"
       TextElement.Foreground="{DynamicResource MaterialDesignBody}">
   <Grid x:Name="MainGrid">
     <Border Style="{StaticResource SettingsCard}" Margin="0">
       <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <StackPanel Style="{StaticResource SettingsScrollContent}">
-          <TextBlock Text="{x:Static loc:Strings.ProjectSettings}" Style="{StaticResource SettingsSectionHeading}" />
+          <TextBlock Text="{live:Text loc:Strings.ProjectSettings}" Style="{StaticResource SettingsSectionHeading}" />
           <StackPanel x:Name="StackPanel" />
         </StackPanel>
       </ScrollViewer>
