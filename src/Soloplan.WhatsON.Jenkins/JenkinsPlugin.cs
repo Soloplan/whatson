@@ -9,7 +9,11 @@ namespace Soloplan.WhatsON.Jenkins
 {
   using System;
   using System.Collections.Generic;
+  using System.Net;
+  using System.Net.Http;
+  using System.Net.Mime;
   using System.Threading.Tasks;
+  using Newtonsoft.Json;
   using NLog;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
@@ -22,6 +26,8 @@ namespace Soloplan.WhatsON.Jenkins
     /// Logger instance used by this class.
     /// </summary>
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+
+    private static readonly HttpClient discoveryClient = new HttpClient();
 
     private static Dictionary<string, bool> blueOceanCache = new Dictionary<string, bool>();
 
@@ -48,9 +54,19 @@ namespace Soloplan.WhatsON.Jenkins
       }
 
       var task = Task.Run(async () =>
-        await jenkinsProject.IsReachableUrl(JenkinsApi.UrlHelper.ProjectUrl(jenkinsProject) + JenkinsApi.UrlHelper.RedirectPluginUrlSuffix));
-      task.Wait();
-      var result = task.Result;
+      {
+        try
+        {
+          using var response = await discoveryClient.GetAsync(JenkinsApi.UrlHelper.ProjectUrl(jenkinsProject) + JenkinsApi.UrlHelper.RedirectPluginUrlSuffix);
+          return response.IsSuccessStatusCode;
+        }
+        catch (Exception exception)
+        {
+          log.Debug(exception, "Could not detect the optional Blue Ocean redirect.");
+          return false;
+        }
+      });
+      var result = task.GetAwaiter().GetResult();
       if (result)
       {
         jenkinsProject.Configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin).Value = "True";
@@ -74,18 +90,8 @@ namespace Soloplan.WhatsON.Jenkins
     /// </returns>
     public override async Task<IList<Project>> GetProjects(string address)
     {
-      var api = new JenkinsApi();
       var serverProjects = new List<Project>();
-      try
-      {
-        await this.GetProjectsLists(address, serverProjects, api);
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
-
-      return serverProjects;
+      return await this.GetProjectsLists(address, serverProjects) ? serverProjects : null;
     }
 
     /// <summary>
@@ -118,48 +124,51 @@ namespace Soloplan.WhatsON.Jenkins
     /// </summary>
     /// <param name="address">The server address.</param>
     /// <param name="projects">The list of projects to update.</param>
-    /// <param name="jenkinsApi">Jenkins Api instance.</param>
     /// <returns>A task representing the job.</returns>
-    private async Task GetProjectsLists(string address, IList<Project> projects, JenkinsApi jenkinsApi)
+    private async Task<bool> GetProjectsLists(string address, IList<Project> projects)
     {
-      JenkinsJobs jenkinsJobs;
-      try
+      using var response = await discoveryClient.GetAsync(JenkinsApi.UrlHelper.JobsRequest(address));
+      if (response.StatusCode == HttpStatusCode.NotFound)
       {
-        jenkinsJobs = await jenkinsApi.GetJenkinsJobs(address, default);
-      }
-      catch (Exception ex)
-      {
-        throw ex;
+        return false;
       }
 
-      if (jenkinsJobs == null)
+      response.EnsureSuccessStatusCode();
+      if (!string.Equals(response.Content.Headers.ContentType?.MediaType, MediaTypeNames.Application.Json, StringComparison.OrdinalIgnoreCase))
       {
-        return;
+        return false;
       }
 
+      var jenkinsJobs = JsonConvert.DeserializeObject<JenkinsJobs>(await response.Content.ReadAsStringAsync());
       if (jenkinsJobs?.Jobs == null)
       {
-        return;
+        return false;
       }
 
       foreach (var jenkinsJob in jenkinsJobs.Jobs)
       {
         var newServerProject = this.AddProject(projects, jenkinsJob);
         if (string.Equals(
-              jenkinsJob.ClassName.Trim(),
-              "com.cloudbees.hudson.plugins.folder.Folder".Trim(),
+              jenkinsJob.ClassName?.Trim(),
+              "com.cloudbees.hudson.plugins.folder.Folder",
               StringComparison.InvariantCultureIgnoreCase) || string.Equals(
-              jenkinsJob.ClassName.Trim(),
-              "org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject".Trim(),
+              jenkinsJob.ClassName?.Trim(),
+              "org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject",
               StringComparison.InvariantCultureIgnoreCase))
         {
-          await this.GetProjectsLists(jenkinsJob.Url, newServerProject.Children, jenkinsApi);
+          if (!await this.GetProjectsLists(jenkinsJob.Url, newServerProject.Children))
+          {
+            return false;
+          }
+
           foreach (var child in newServerProject.Children)
           {
             child.Parent = newServerProject;
           }
         }
       }
+
+      return true;
     }
 
     /// <summary>

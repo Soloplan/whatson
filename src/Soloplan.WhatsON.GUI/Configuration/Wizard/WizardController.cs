@@ -9,7 +9,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 {
   using System;
   using System.Collections.Generic;
-  using System.Collections.ObjectModel;
   using System.ComponentModel;
   using System.Linq;
   using System.Threading.Tasks;
@@ -381,6 +380,44 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       }
     }
 
+    internal static async Task<(ConnectorPlugin Plugin, IList<Project> Projects)> DiscoverProjects(
+      IEnumerable<ConnectorPlugin> plugins, string address, TimeSpan timeout)
+    {
+      var pending = plugins.Select(plugin => (Plugin: plugin, Task: QueryProjects(plugin, address))).ToList();
+      var deadline = Task.Delay(timeout);
+      while (pending.Count > 0)
+      {
+        var completed = await Task.WhenAny(pending.Select(candidate => (Task)candidate.Task).Append(deadline));
+        if (completed == deadline)
+        {
+          throw new TimeoutException(Strings.DiscoveryTimedOut);
+        }
+
+        var candidate = pending.First(candidate => candidate.Task == completed);
+        pending.Remove(candidate);
+        var projects = await candidate.Task;
+        if (projects != null)
+        {
+          return (candidate.Plugin, projects);
+        }
+      }
+
+      throw new InvalidOperationException(Strings.InvalidServerOrPlugin);
+    }
+
+    private static async Task<IList<Project>> QueryProjects(ConnectorPlugin plugin, string address)
+    {
+      try
+      {
+        return await plugin.GetProjects(address);
+      }
+      catch (Exception exception)
+      {
+        log.Debug(exception, "Project discovery did not match plugin {plugin}.", plugin.Name);
+        return null;
+      }
+    }
+
     /// <summary>
     /// Called when property was changed.
     /// </summary>
@@ -513,143 +550,20 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <returns>The task.</returns>
     private async Task PrepareProjectsList()
     {
-      Tuple<ConnectorPlugin, ProjectViewModelList> pluginToQueryWithModel;
-      if (this.editedConnectorViewModel != null)
+      var plugins = this.editedConnectorViewModel != null
+        ? new[] { this.editedConnectorViewModel.SourceConnectorPlugin }
+        : this.IsAutoDetectionEnabled ? PluginManager.Instance.ConnectorPlugins : new[] { this.SelectedConnectorType };
+      var discovered = await DiscoverProjects(plugins, this.ProposedServerAddress.TrimEnd('/') + "/", TimeSpan.FromMilliseconds(QueryTimeout));
+      this.projects = new ProjectViewModelList { MultiSelectionMode = this.MultiSelectionMode, PlugIn = discovered.Plugin };
+      foreach (var serverProject in discovered.Projects.OrderBy(project => project.Name))
       {
-        pluginToQueryWithModel = new Tuple<ConnectorPlugin, ProjectViewModelList>(
-          this.editedConnectorViewModel.SourceConnectorPlugin,
-          new ProjectViewModelList { MultiSelectionMode = this.MultiSelectionMode, PlugIn = this.editedConnectorViewModel.SourceConnectorPlugin });
-      }
-      else
-      {
-        var plugin = PluginManager.Instance.ConnectorPlugins.FirstOrDefault(x => x.Name.Equals(this.SelectedConnectorType.Name));
-        pluginToQueryWithModel = new Tuple<ConnectorPlugin, ProjectViewModelList>(
-          plugin,
-          new ProjectViewModelList { MultiSelectionMode = this.MultiSelectionMode, PlugIn = plugin });
+        var project = this.projects.AddProject(serverProject);
+        project.Address = serverProject.Address;
+        project.DirectAddress = serverProject.DirectAddress;
+        this.ProcessServerSubProjects(serverProject.Children, project);
       }
 
-      var taskList = new Dictionary<Task, ProjectViewModelList>();
-      var timeoutTask = Task.Delay(QueryTimeout);
-      taskList.Add(timeoutTask, null);
-      var task = this.LoadProjectsFromPlugin(pluginToQueryWithModel);
-      taskList.Add(task, pluginToQueryWithModel.Item2);
-
-      while (taskList.Count > 0)
-      {
-        var completedTask = await Task.WhenAny(taskList.Keys.ToArray());
-        if (completedTask == timeoutTask)
-        {
-          throw new Exception(Strings.DiscoveryTimedOut);
-        }
-
-        if (completedTask.Status == TaskStatus.RanToCompletion)
-        {
-          this.projects = taskList.First(tkv => tkv.Key == completedTask).Value;
-          this.AttachToProjectsPropertyChanged();
-          break;
-        }
-
-        log.Debug(
-          $"Projects discovery for a plugin task completed not successfully. Status:{completedTask.Status}; Exception: {completedTask.Exception}");
-        taskList.Remove(completedTask);
-      }
-
-      if (taskList.Count == 0)
-      {
-        throw new Exception(Strings.InvalidServerOrPlugin);
-      }
-    }
-
-    /// <summary>
-    /// Prepares the projects list. Uses all available plugins to try to get correct result from the server.
-    /// </summary>
-    /// <returns>The task.</returns>
-    private async Task PrepareProjectsListWithTypeDetection()
-    {
-      Collection<Tuple<ConnectorPlugin, ProjectViewModelList>> pluginToQueryWithModels =
-        new Collection<Tuple<ConnectorPlugin, ProjectViewModelList>>();
-      if (this.editedConnectorViewModel != null)
-      {
-        pluginToQueryWithModels.Add(
-          new Tuple<ConnectorPlugin, ProjectViewModelList>(
-            this.editedConnectorViewModel.SourceConnectorPlugin,
-            new ProjectViewModelList { MultiSelectionMode = this.MultiSelectionMode, PlugIn = this.editedConnectorViewModel.SourceConnectorPlugin }));
-      }
-      else
-      {
-        foreach (var plugin in PluginManager.Instance.ConnectorPlugins)
-        {
-          pluginToQueryWithModels.Add(
-            new Tuple<ConnectorPlugin, ProjectViewModelList>(
-              plugin,
-              new ProjectViewModelList { MultiSelectionMode = this.MultiSelectionMode, PlugIn = plugin }));
-        }
-      }
-
-      var taskList = new Dictionary<Task, ProjectViewModelList>();
-      var timeoutTask = Task.Delay(QueryTimeout);
-      taskList.Add(timeoutTask, null);
-      foreach (var pluginToQueryWithModel in pluginToQueryWithModels)
-      {
-        var task = this.LoadProjectsFromPlugin(pluginToQueryWithModel);
-        taskList.Add(task, pluginToQueryWithModel.Item2);
-      }
-
-      while (taskList.Count > 0)
-      {
-        try
-        {
-          var completedTask = await Task.WhenAny(taskList.Keys.ToArray());
-          if (completedTask == timeoutTask)
-          {
-            throw new Exception(Strings.DiscoveryTimedOut);
-          }
-
-          if (completedTask.Status == TaskStatus.RanToCompletion)
-          {
-            this.projects = taskList.First(tkv => tkv.Key == completedTask).Value;
-            this.AttachToProjectsPropertyChanged();
-            break;
-          }
-
-          log.Debug(
-            $"Projects discovery for a plugin task completed not successfully. Status:{completedTask.Status}; Exception: {completedTask.Exception}");
-          taskList.Remove(completedTask);
-        }
-        catch (Exception ex)
-        {
-        }
-      }
-
-      if (taskList.Count == 0)
-      {
-        throw new Exception(Strings.InvalidServerOrPlugin);
-      }
-    }
-
-    /// <summary>
-    /// Loads the projects from plugin.
-    /// </summary>
-    /// <param name="listQueryingPlugin">The list querying plugin.</param>
-    /// <returns>The task.</returns>
-    private async Task LoadProjectsFromPlugin(Tuple<ConnectorPlugin, ProjectViewModelList> listQueryingPlugin)
-    {
-      try
-      {
-        var serverProjects = await listQueryingPlugin.Item1.GetProjects(
-          this.ProposedServerAddress.Last() != '/' ? this.ProposedServerAddress += '/' : this.ProposedServerAddress);
-        foreach (var serverProject in serverProjects.OrderBy(x => x.Name))
-        {
-          var newProject = listQueryingPlugin.Item2.AddProject(serverProject);
-          newProject.Address = serverProject.Address;
-          newProject.DirectAddress = serverProject.DirectAddress;
-          this.ProcessServerSubProjects(serverProject.Children, newProject);
-        }
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
+      this.AttachToProjectsPropertyChanged();
     }
 
     /// <summary>
@@ -689,14 +603,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       var waitDailogTask = DialogHost.Show(waitControl, "WizardWaitDialogHostId");
       try
       {
-        if (this.IsAutoDetectionEnabled)
-        {
-          await this.PrepareProjectsListWithTypeDetection();
-        }
-        else
-        {
-          await this.PrepareProjectsList();
-        }
+        await this.PrepareProjectsList();
       }
       catch (Exception e)
       {

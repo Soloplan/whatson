@@ -172,6 +172,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       VerifyScrollSpacing();
       VerifyWizardLayouts(app);
       VerifyWizardNavigationNotifications();
+      ProjectDiscoveryTests.VerifyWizardNextButton();
       VerifyGermanViews(app);
       VerifyNotificationBindings();
       VerifyTrayNotificationForwarding();
