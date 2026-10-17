@@ -1,7 +1,9 @@
-﻿// <copyright file="ConnectorViewModel.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ConnectorViewModel.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
@@ -11,6 +13,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Windows.Controls;
   using System.Windows.Input;
   using NLog;
+  using PropertyChanged;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.Model;
@@ -20,97 +23,50 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// The logger.
     /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
-    private ObservableCollection<BuildStatusViewModel> connectorSnapshots;
-
-    private string name;
-
-    private string description;
-
-    private BuildStatusViewModel currentStatus;
-
-    private string url;
+    private ObservableCollection<BuildStatusViewModel>? connectorSnapshots;
 
     public ConnectorViewModel()
+      : this(null)
     {
     }
 
-    public ConnectorViewModel(Connector connector)
+    public ConnectorViewModel(Connector? connector)
     {
+      this.Connector = connector;
+      this.CurrentStatus = this.GetStatusViewModel();
       if (connector != null)
       {
         this.Identifier = connector.Configuration.Identifier;
         this.Name = connector.Configuration.Name;
-        this.CurrentStatus = this.GetStatusViewModel();
       }
     }
 
-    public string Name
-    {
-      get => this.name;
-      set
-      {
-        if (this.name != value)
-        {
-          this.name = value;
-          this.OnConfigurationChanged(this, EventArgs.Empty);
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    [OnChangedMethod(nameof(NameChanged))]
+    public string Name { get; set; } = string.Empty;
 
-    public string Description
-    {
-      get => this.description;
-      protected set
-      {
-        if (this.description != value)
-        {
-          this.description = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public string? Description { get; protected set; }
 
-    public BuildStatusViewModel CurrentStatus
-    {
-      get => this.currentStatus;
-      private set
-      {
-        if (!object.ReferenceEquals(this.currentStatus, value))
-        {
-          this.currentStatus = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public bool IsDisabled { get; private set; }
 
-    public string Url
-    {
-      get => this.url;
-      protected set
-      {
-        if (this.url != value)
-        {
-          this.url = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public BuildStatusViewModel CurrentStatus { get; }
 
-    public Guid Identifier { get; private set; }
+    public string? Url { get; protected set; }
 
-    public ObservableCollection<BuildStatusViewModel> ConnectorSnapshots => this.connectorSnapshots ?? (this.connectorSnapshots = new ObservableCollection<BuildStatusViewModel>());
+    public Guid Identifier { get; protected set; }
 
-    public Connector Connector { get; private set; }
+    public ObservableCollection<BuildStatusViewModel> ConnectorSnapshots =>
+      this.connectorSnapshots ?? (this.connectorSnapshots = new ObservableCollection<BuildStatusViewModel>());
+
+    public Connector? Connector { get; private set; }
 
     /// <summary>
     /// Gets command for opening builds webPage.
     /// </summary>
     public virtual OpenWebPageCommand OpenWebPage { get; } = new OpenWebPageCommand();
 
-    public override void OnDoubleClick(object sender, MouseButtonEventArgs e)
+    public override void OnDoubleClick(object? sender, MouseButtonEventArgs e)
     {
       base.OnDoubleClick(sender, e);
       if (sender is TreeViewItem treeViewItem && treeViewItem.DataContext == this && this.OpenWebPage.CanExecute(this.Url))
@@ -123,14 +79,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// Applies configuration (currently just name) without firing property changed.
     /// </summary>
     /// <param name="configuration">The configuration to apply.</param>
-    public virtual void ApplyConfiguration(ConnectorConfiguration configuration)
-    {
-      this.name = configuration.Name;
-    }
+    public virtual void ApplyConfiguration(ConnectorConfiguration configuration) => this.Name = configuration.Name;
 
-    public virtual void Update(Connector changedConnector)
+    public virtual void Update(Connector? changedConnector)
     {
-      Application.Current.Dispatcher.Invoke(new Action(() =>
+      Application.Current.Dispatcher.Invoke(() =>
       {
         log.Trace("Updating model {model}", new { this.Name, this.Identifier });
 
@@ -175,23 +128,18 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         }
 
         this.Description = changedConnector.Description;
+        this.IsDisabled = changedConnector.IsDisabled;
         this.CurrentStatus.Update(changedConnector.CurrentStatus);
-      }));
+      });
     }
 
     /// <summary>
     /// Implements function that decides if a tooltip should be visible.
     /// </summary>
     /// <returns>Base returns always true.</returns>
-    public virtual bool ShouldDisplayTooltip()
-    {
-      return true;
-    }
+    public virtual bool ShouldDisplayTooltip() => true;
 
-    protected virtual BuildStatusViewModel GetStatusViewModel()
-    {
-      return new BuildStatusViewModel(this);
-    }
+    protected virtual BuildStatusViewModel GetStatusViewModel() => new BuildStatusViewModel(this);
 
     /// <summary>
     /// Creates command used for editing this tree item.
@@ -203,5 +151,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       command.CanExecuteExternal += (s, e) => { e.Cancel = this.ConfigurationModifiedInTree || !this.IsOnlyOneSelected; };
       return command;
     }
+
+    private void NameChanged() => this.OnConfigurationChanged(this, EventArgs.Empty);
   }
 }

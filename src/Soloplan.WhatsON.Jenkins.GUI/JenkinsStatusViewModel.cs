@@ -17,31 +17,19 @@ namespace Soloplan.WhatsON.Jenkins.GUI
 
   public class JenkinsStatusViewModel : BuildStatusViewModel
   {
-    private ObservableCollection<UserViewModel> committedToThisBuild;
-
-    private bool culpritsAndLastCommittedDifferent;
+    private ObservableCollection<UserViewModel>? committedToThisBuild;
 
     public JenkinsStatusViewModel(ConnectorViewModel model)
       : base(model)
     {
     }
 
-    public bool CulpritsAndLastCommittedDifferent
-    {
-      get => this.culpritsAndLastCommittedDifferent;
-      set
-      {
-        if (this.culpritsAndLastCommittedDifferent != value)
-        {
-          this.culpritsAndLastCommittedDifferent = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public bool CulpritsAndLastCommittedDifferent { get; set; }
 
-    public ObservableCollection<UserViewModel> CommittedToThisBuild => this.committedToThisBuild ?? (this.committedToThisBuild = new ObservableCollection<UserViewModel>());
+    public ObservableCollection<UserViewModel> CommittedToThisBuild =>
+      this.committedToThisBuild ?? (this.committedToThisBuild = new ObservableCollection<UserViewModel>());
 
-    public override void Update(Status newStatus)
+    public override void Update(Status? newStatus)
     {
       base.Update(newStatus);
       if (!(newStatus is JenkinsStatus jenkinsStatus))
@@ -69,17 +57,19 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       this.Culprits.Clear();
       foreach (var culprit in jenkinsStatus.Culprits)
       {
-        var culpritModel = new UserViewModel() { FullName = culprit.FullName, Url = culprit.AbsoluteUrl };
+        var culpritModel = new UserViewModel { FullName = culprit.FullName, Url = culprit.AbsoluteUrl };
         this.Culprits.Add(culpritModel);
       }
 
       foreach (var culprit in jenkinsStatus.CommittedToThisBuild ?? Enumerable.Empty<JenkinsUser>())
       {
-        var culpritModel = new UserViewModel() { FullName = culprit.FullName, Url = culprit.AbsoluteUrl };
+        var culpritModel = new UserViewModel { FullName = culprit.FullName, Url = culprit.AbsoluteUrl };
         this.CommittedToThisBuild.Add(culpritModel);
       }
 
-      this.CulpritsAndLastCommittedDifferent = this.Culprits.Count != this.CommittedToThisBuild.Count || this.Culprits.Any(culprit => this.CommittedToThisBuild.All(committer => committer.FullName != culprit.FullName));
+      this.CulpritsAndLastCommittedDifferent = this.Culprits.Count != this.CommittedToThisBuild.Count
+                                               || this.Culprits.Any(culprit =>
+                                                 this.CommittedToThisBuild.All(committer => committer.FullName != culprit.FullName));
 
       this.UpdateCalculatedFields();
     }

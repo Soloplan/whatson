@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="FakeJenkinsApi.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -11,19 +11,23 @@ namespace Soloplan.WhatsON.Jenkins.Tests
   using System.Collections.Generic;
   using System.Threading;
   using System.Threading.Tasks;
-  using Soloplan.WhatsON.Jenkins;
   using Soloplan.WhatsON.Jenkins.Model;
   using Soloplan.WhatsON.Model;
 
   public class FakeJenkinsApi : IJenkinsApi
   {
-    public event EventHandler<JobEventArgs> JobRequest;
+    public event EventHandler<JobEventArgs>? JobRequest;
 
-    public event EventHandler<BuildEventArgs> BuildRequest;
+    public event EventHandler<BuildEventArgs>? BuildRequest;
 
-    public event EventHandler<BuildsEventArgs> BuildsRequest;
+    public event EventHandler<BuildsEventArgs>? BuildsRequest;
 
-    public async Task<JenkinsJob> GetJenkinsJob(JenkinsConnector connector, CancellationToken token)
+    public Func<IReadOnlyCollection<JenkinsConnector>, CancellationToken, Task<JenkinsPollingResult>>? PollingQuery { get; set; }
+
+    public Task<JenkinsPollingResult> GetPollingJobs(IReadOnlyCollection<JenkinsConnector> connectors, CancellationToken token) =>
+      this.PollingQuery?.Invoke(connectors, token) ?? throw new InvalidOperationException($"{nameof(this.PollingQuery)} must be set for server batching.");
+
+    public async Task<JenkinsJob?> GetJenkinsJob(JenkinsConnector connector, CancellationToken token)
     {
       if (this.JobRequest == null)
       {
@@ -40,7 +44,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       return eventArgs.Result;
     }
 
-    public async Task<JenkinsBuild> GetJenkinsBuild(JenkinsConnector connector, int buildNumber, CancellationToken token)
+    public async Task<JenkinsBuild?> GetJenkinsBuild(JenkinsConnector connector, int buildNumber, CancellationToken token)
     {
       if (this.BuildRequest == null)
       {
@@ -57,14 +61,18 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       return eventArgs.Result;
     }
 
-    public async Task<IList<JenkinsBuild>> GetBuilds(JenkinsConnector connector, CancellationToken token, int @from = 0, int to = Connector.MaxSnapshots)
+    public async Task<IList<JenkinsBuild>> GetBuilds(
+      JenkinsConnector connector,
+      CancellationToken token,
+      int from = 0,
+      int to = Connector.MaxSnapshots)
     {
       if (this.BuildsRequest == null)
       {
         throw new InvalidOperationException($"{nameof(this.BuildsRequest)} must be handled for {nameof(FakeJenkinsApi)} to work.");
       }
 
-      var eventArgs = new BuildsEventArgs(connector);
+      var eventArgs = new BuildsEventArgs(connector, from, to);
       this.BuildsRequest(this, eventArgs);
       if (eventArgs.ResponseDelay > 0)
       {
@@ -94,7 +102,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     {
     }
 
-    public JenkinsJob Result { get; set; }
+    public JenkinsJob? Result { get; set; }
   }
 
   public class BuildEventArgs : FakeApiEventArgs
@@ -107,16 +115,22 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
     public int BuildNumber { get; }
 
-    public JenkinsBuild Result { get; set; }
+    public JenkinsBuild? Result { get; set; }
   }
 
   public class BuildsEventArgs : FakeApiEventArgs
   {
-    public BuildsEventArgs(JenkinsConnector connector)
+    public BuildsEventArgs(JenkinsConnector connector, int from, int to)
       : base(connector)
     {
+      this.From = from;
+      this.To = to;
       this.Builds = new List<JenkinsBuild>();
     }
+
+    public int From { get; }
+
+    public int To { get; }
 
     public IList<JenkinsBuild> Builds { get; }
   }

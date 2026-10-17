@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ConfigurationItemAttribute.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -19,10 +19,10 @@ namespace Soloplan.WhatsON.Configuration
     /// <summary>
     /// The caption.
     /// </summary>
-    private string caption;
+    private string? caption;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ConfigurationItemAttribute"/> class.
+    /// Initializes a new instance of the <see cref="ConfigurationItemAttribute" /> class.
     /// </summary>
     /// <param name="key">The key.</param>
     /// <param name="type">The type.</param>
@@ -32,26 +32,6 @@ namespace Soloplan.WhatsON.Configuration
       this.Type = type;
       this.Optional = true;
     }
-
-    /// <summary>
-    /// Gets the key.
-    /// </summary>
-    public string Key { get; }
-
-    /// <summary>
-    /// Gets the type.
-    /// </summary>
-    public Type Type { get; }
-
-    /// <summary>
-    /// Gets or sets a value indicating whether this <see cref="ConfigurationItemAttribute"/> is optional.
-    /// </summary>
-    public bool Optional { get; set; }
-
-    /// <summary>
-    /// Gets or sets the priority.
-    /// </summary>
-    public int Priority { get; set; }
 
     /// <summary>
     /// Gets or sets the caption.
@@ -68,10 +48,27 @@ namespace Soloplan.WhatsON.Configuration
         return this.caption;
       }
 
-      set
-      {
-        this.caption = value;
-      }
+      set => this.caption = value;
     }
+
+    /// <summary>
+    /// Gets the key.
+    /// </summary>
+    public string Key { get; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether this <see cref="ConfigurationItemAttribute" /> is optional.
+    /// </summary>
+    public bool Optional { get; set; }
+
+    /// <summary>
+    /// Gets or sets the priority.
+    /// </summary>
+    public int Priority { get; set; }
+
+    /// <summary>
+    /// Gets the type.
+    /// </summary>
+    public Type Type { get; }
   }
 }

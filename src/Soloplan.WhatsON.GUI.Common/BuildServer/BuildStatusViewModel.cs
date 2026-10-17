@@ -14,27 +14,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
   public class BuildStatusViewModel : StatusViewModel
   {
-    private TimeSpan estimatedDuration;
-    private TimeSpan duration;
-    private bool building;
-    private int? buildNumber;
-    private string displayName;
-
-    private int progress;
-
-    private int rawProgress;
-
-    private bool buildingNoLongerThenExpected;
-
-    private bool buildingLongerThenExpected;
-
-    private TimeSpan estimatedRemaining;
-
-    private TimeSpan buildTimeExcedingEstimation;
-
-    private ObservableCollection<UserViewModel> culprits;
-
-    private string url;
+    private ObservableCollection<UserViewModel>? culprits;
 
     public BuildStatusViewModel(ConnectorViewModel model)
       : base(model)
@@ -50,41 +30,11 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
     public ObservableCollection<UserViewModel> Culprits => this.culprits ?? (this.culprits = new ObservableCollection<UserViewModel>());
 
-    public int? BuildNumber
-    {
-      get
-      {
-        return this.buildNumber;
-      }
+    public int? BuildNumber { get; protected set; }
 
-      protected set
-      {
-        if (this.buildNumber != value)
-        {
-          this.buildNumber = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public string? DisplayName { get; protected set; }
 
-    public string DisplayName
-    {
-      get
-      {
-        return this.displayName;
-      }
-
-      protected set
-      {
-        if (this.displayName != value)
-        {
-          this.displayName = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
-
-    public override string Label
+    public override string? Label
     {
       get
       {
@@ -118,181 +68,47 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
       protected set => base.Label = value;
     }
 
-    public string Url
-    {
-      get => this.url;
-      set
-      {
-        if (this.url != value)
-        {
-          this.url = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public string? Url { get; set; }
 
-    public bool Building
-    {
-      get => this.building;
+    public bool Building { get; protected set; }
 
-      protected set
-      {
-        if (this.building != value)
-        {
-          this.building = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
-
-    public DateTime FinishTime
-    {
-      get
-      {
-        return this.Time + this.Duration;
-      }
-    }
+    public DateTime FinishTime => this.Time + this.Duration;
 
     public override DateTime Time
     {
       get => base.Time;
-      protected set
-      {
-        if (base.Time != value)
-        {
-          base.Time = value;
-          this.OnPropertyChanged(nameof(this.FinishTime));
-        }
-      }
+      protected set => base.Time = value;
     }
 
-    public TimeSpan Duration
-    {
-      get
-      {
-        return this.duration;
-      }
+    public TimeSpan Duration { get; protected set; }
 
-      protected set
-      {
-        if (this.duration != value)
-        {
-          this.duration = value;
-          this.OnPropertyChanged();
-          this.OnPropertyChanged(nameof(this.FinishTime));
-        }
-      }
-    }
+    public TimeSpan EstimatedDuration { get; protected set; }
 
-    public TimeSpan EstimatedDuration
-    {
-      get
-      {
-        return this.estimatedDuration;
-      }
+    public TimeSpan EstimatedRemaining { get; set; }
 
-      protected set
-      {
-        if (this.estimatedDuration != value)
-        {
-          this.estimatedDuration = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
-
-    public TimeSpan EstimatedRemaining
-    {
-      get => this.estimatedRemaining;
-      set
-      {
-        if (this.estimatedRemaining != value)
-        {
-          this.estimatedRemaining = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
-
-    public TimeSpan BuildTimeExcedingEstimation
-    {
-      get => this.buildTimeExcedingEstimation;
-      set
-      {
-        if (this.buildTimeExcedingEstimation != value)
-        {
-          this.buildTimeExcedingEstimation = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public TimeSpan BuildTimeExcedingEstimation { get; set; }
 
     /// <summary>
     /// Gets or sets progress shown in progress bar and displayed in GUI.
     /// The value is processed:
     /// <list type="">
-    /// <item>0 is changed to 1 to prevent progress bar showing unknown value.</item>
-    /// <item>Changed to 0 if build is taking longer then expected to show unknown value.</item>
-    /// <item>Otherwise the value from build server is shown.</item>
+    ///   <item>0 is changed to 1 to prevent progress bar showing unknown value.</item>
+    ///   <item>Changed to 0 if build is taking longer then expected to show unknown value.</item>
+    ///   <item>Otherwise the value from build server is shown.</item>
     /// </list>
     /// </summary>
-    public int Progress
-    {
-      get
-      {
-        return this.progress;
-      }
-
-      protected set
-      {
-        if (this.progress != value)
-        {
-          this.progress = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public int Progress { get; protected set; }
 
     /// <summary>
     /// Gets or sets the true value of progress. Can get above 100% if the build takes longer then expected.
     /// </summary>
-    public int RawProgress
-    {
-      get => this.rawProgress;
-      protected set
-      {
-        this.rawProgress = value;
-        this.OnPropertyChanged();
-      }
-    }
+    public int RawProgress { get; protected set; }
 
-    public bool BuildingNoLongerThenExpected
-    {
-      get => this.buildingNoLongerThenExpected;
-      set
-      {
-        if (this.buildingNoLongerThenExpected != value)
-        {
-          this.buildingNoLongerThenExpected = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public bool BuildingNoLongerThenExpected { get; set; }
 
-    public bool BuildingLongerThenExpected
-    {
-      get => this.buildingLongerThenExpected;
-      set
-      {
-        if (this.buildingLongerThenExpected != value)
-        {
-          this.buildingLongerThenExpected = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public bool BuildingLongerThenExpected { get; set; }
 
-    public override void Update(Status newStatus)
+    public override void Update(Status? newStatus)
     {
       base.Update(newStatus);
       if (newStatus == null)
@@ -319,7 +135,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     }
 
     /// <summary>
-    /// Updates flags used to control visibility of controls based on <see cref="State"/>.
+    /// Updates flags used to control visibility of controls based on <see cref="State" />.
     /// </summary>
     protected override void UpdateStateFlags()
     {
@@ -362,11 +178,13 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     }
 
     /// <summary>
-    /// Updates <see cref="Progress"/> based on other parameters.
+    /// Updates <see cref="Progress" /> based on other parameters.
     /// </summary>
     /// <remarks>
-    /// Must be called when <see cref="BuildingNoLongerThenExpected"/>, <see cref="BuildingLongerThenExpected"/> and <see cref="RawProgress"/> are calculated
-    /// and won't change. It is important not to change values when <see cref="BuildingLongerThenExpected"/> because it resets the indeterminate progress bar
+    /// Must be called when <see cref="BuildingNoLongerThenExpected" />, <see cref="BuildingLongerThenExpected" /> and
+    /// <see cref="RawProgress" /> are calculated
+    /// and won't change. It is important not to change values when <see cref="BuildingLongerThenExpected" /> because it
+    /// resets the indeterminate progress bar
     /// and the animation looks bad.
     /// </remarks>
     private void UpdateProgress()

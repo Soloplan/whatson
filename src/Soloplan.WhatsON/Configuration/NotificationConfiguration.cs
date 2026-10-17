@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="NotificationConfiguration.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -11,24 +11,25 @@ namespace Soloplan.WhatsON.Configuration
   using Soloplan.WhatsON.Model;
 
   /// <summary>
-  /// The notification configuration used for global options and as base type for <see cref="ConnectorNotificationConfiguration"/>.
+  /// The notification configuration used for global options and as base type for
+  /// <see cref="ConnectorNotificationConfiguration" />.
   /// </summary>
   public class NotificationConfiguration
   {
     /// <summary>
-    /// Gets or sets a value indicating whether unstable notifications are enabled.
+    /// Gets or sets a value indicating whether failure notifications are enabled.
     /// </summary>
-    public bool UnstableNotificationEnabled { get; set; } = true;
+    public bool FailureNotificationEnabled { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the notification should be executed only if status is changed.
+    /// </summary>
+    public bool OnlyIfChanged { get; set; } = false;
 
     /// <summary>
     /// Gets or sets a value indicating whether running notifications are enabled.
     /// </summary>
     public bool RunningNotificationEnabled { get; set; } = true;
-
-    /// <summary>
-    /// Gets or sets a value indicating whether failure notifications are enabled.
-    /// </summary>
-    public bool FailureNotificationEnabled { get; set; } = true;
 
     /// <summary>
     /// Gets or sets a value indicating whether success notifications are enabled.
@@ -41,15 +42,15 @@ namespace Soloplan.WhatsON.Configuration
     public bool UnknownNotificationEnabled { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets a value indicating whether the notification should be executed only if status is changed.
+    /// Gets or sets a value indicating whether unstable notifications are enabled.
     /// </summary>
-    public bool OnlyIfChanged { get; set; } = false;
+    public bool UnstableNotificationEnabled { get; set; } = true;
 
     /// <summary>
-    /// RTeturns flag of <see cref="ObservationState"/> enabled state in the configuration.
+    /// RTeturns flag of <see cref="ObservationState" /> enabled state in the configuration.
     /// </summary>
     /// <param name="observationState">State of the observation.</param>
-    /// <returns>True if given <see cref="ObservationState"/> is activated in the configuration, otherwise false.</returns>
+    /// <returns>True if given <see cref="ObservationState" /> is activated in the configuration, otherwise false.</returns>
     public bool AsObservationStateFlag(ObservationState observationState)
     {
       switch (observationState)
@@ -70,10 +71,13 @@ namespace Soloplan.WhatsON.Configuration
     }
 
     /// <summary>
-    /// Assigns from configuration setting based on <see cref="ObservationState"/>.
+    /// Assigns from configuration setting based on <see cref="ObservationState" />.
     /// </summary>
-    /// <param name="observationState">The <see cref="ObservationState"/>.</param>
-    /// <param name="isEnabled">if set to <c>true</c> setting related to given <see cref="observationState"/> will be enabled; otherwise disabled.</param>
+    /// <param name="observationState">The <see cref="ObservationState" />.</param>
+    /// <param name="isEnabled">
+    /// if set to <c>true</c> setting related to given <see cref="observationState" /> will be enabled;
+    /// otherwise disabled.
+    /// </param>
     public void AssignFromObeservationStateActivity(ObservationState observationState, bool isEnabled)
     {
       switch (observationState)

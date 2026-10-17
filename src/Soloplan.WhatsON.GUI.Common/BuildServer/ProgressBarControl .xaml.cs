@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ProgressBarTooltipControl.xaml.cs" company="Soloplan GmbH">
+// <copyright file="ProgressBarControl .xaml.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
@@ -9,6 +9,8 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 {
   using System.Windows;
   using System.Windows.Controls;
+  using Soloplan.WhatsON.GUI.Common.Localization;
+  using Soloplan.WhatsON.Localization;
 
   /// <summary>
   /// Control for project build progress.
@@ -16,11 +18,19 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
   public partial class ProgressBarControl : UserControl
   {
     /// <summary>
-    /// Dependency property for <see cref="CulpritsProp"/>.
+    /// Dependency property for <see cref="CulpritsProp" />.
     /// </summary>
-    public static readonly DependencyProperty ControlOrientationProperty = DependencyProperty.Register(nameof(ControlOrientation), typeof(Orientation), typeof(ProgressBarControl), new PropertyMetadata(Orientation.Vertical));
+    public static readonly DependencyProperty ControlOrientationProperty = DependencyProperty.Register(
+      nameof(ControlOrientation),
+      typeof(Orientation),
+      typeof(ProgressBarControl),
+      new PropertyMetadata(Orientation.Vertical));
 
-    public static readonly DependencyProperty CompactDisplayProperty = DependencyProperty.Register(nameof(CompactDisplay), typeof(bool), typeof(ProgressBarControl), new PropertyMetadata(false, new PropertyChangedCallback(OnCurrentReadingChanged)));
+    public static readonly DependencyProperty CompactDisplayProperty = DependencyProperty.Register(
+      nameof(CompactDisplay),
+      typeof(bool),
+      typeof(ProgressBarControl),
+      new PropertyMetadata(false, OnCurrentReadingChanged));
 
     public ProgressBarControl()
     {
@@ -29,7 +39,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
     private static void OnCurrentReadingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-      if (d is ProgressBarTooltipControl control)
+      if (d is ProgressBarControl control)
       {
         control.UpdateTexts();
       }
@@ -51,12 +61,12 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     {
       if (this.CompactDisplay)
       {
-        this.EstimatedRemainingText.Text = " ETA";
+        this.EstimatedRemainingText.SetBinding(TextBlock.TextProperty, TextExtension.CreateBinding(() => Strings.EstimatedArrival));
         this.PercentSignText.Text = "%/";
       }
       else
       {
-        this.EstimatedRemainingText.Text = " estimated remaining";
+        this.EstimatedRemainingText.SetBinding(TextBlock.TextProperty, TextExtension.CreateBinding(() => Strings.EstimatedRemaining));
         this.PercentSignText.Text = "% ";
       }
     }

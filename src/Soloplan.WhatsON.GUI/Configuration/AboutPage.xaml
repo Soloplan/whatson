@@ -1,74 +1,111 @@
-﻿<Page x:Class="Soloplan.WhatsON.GUI.Configuration.AboutPage"
+<Page x:Class="Soloplan.WhatsON.GUI.Configuration.AboutPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Configuration"
+      xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
+      xmlns:live="clr-namespace:Soloplan.WhatsON.GUI.Common.Localization;assembly=Soloplan.WhatsON.GUI.Common"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-      xmlns:properties="clr-namespace:Soloplan.WhatsON.GUI.Properties"
-      mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="AboutPage"
-      Background="{DynamicResource MaterialDesignPaper}"
+      Title="{live:Text loc:Strings.About}" FontFamily="Segoe UI" FontSize="14" Background="Transparent"
       TextElement.Foreground="{DynamicResource MaterialDesignBody}">
-
-  <DockPanel>
-    <StackPanel DockPanel.Dock="Top">
-      <StackPanel Orientation="Horizontal">
-        <TextBlock TextWrapping="Wrap" FontSize="36" Margin="20,0,10,0"><Run Text="WhatsON"/></TextBlock>
-        <TextBlock VerticalAlignment="Bottom" x:Name="VersionLabel" FontSize="20" Text="{}{VERSION}" Width="176"/>
-      </StackPanel>
-
-      <TextBlock Cursor="Hand" Text="https://github.com/Soloplan/whatson" Margin="20,0,20,20" Foreground="#FF2B7AD2" AutomationProperties.Name="projectWebsiteLink" MouseUp="TextBlockLinkMouseUp" MouseEnter="TextBlockMouseEnter" MouseLeave="TextBlockMouseLeave"/>
-
-      <StackPanel Height="16" Orientation="Horizontal" Margin="20,0,20,10">
-        <TextBlock VerticalAlignment="Bottom" TextWrapping="Wrap" Text="MIT license:" Margin="0,0,5,0" FontWeight="Bold" />
-        <TextBlock Cursor="Hand" Width="562" RenderTransformOrigin="0.503,0.479" Text="https://github.com/Soloplan/whatson/blob/master/LICENSE" Margin="0" Foreground="#FF2B7AD2" MouseUp="TextBlockLinkMouseUp" MouseEnter="TextBlockMouseEnter" MouseLeave="TextBlockMouseLeave"/>
-      </StackPanel>
-
-      <StackPanel Orientation="Horizontal" Margin="20,0,20,10">
-        <TextBlock TextWrapping="Wrap" Text="Authors:" Margin="0,0,5,0" FontWeight="Bold" />
-        <TextBlock TextWrapping="Wrap" Text="Steffen Wilke, Dominik Gołda, Krzysztof Lorenc, Christian Heidl" />
-      </StackPanel>
-
-      <StackPanel Height="16" Margin="20,0,20,10" Orientation="Horizontal">
-        <TextBlock TextWrapping="Wrap" Text="MaterialDesign XAML:" Margin="0,0,5,0" FontWeight="Bold"/>
-        <TextBlock x:Name="MDIXVersionLabel" TextWrapping="Wrap" Text="{}{VERSION}" Width="176"/>
-      </StackPanel>
-
-      <TextBlock Cursor="Hand" TextWrapping="Wrap" Text="Made by Soloplan GmbH" Margin="20,0,20,30"  Foreground="#FF2B7AD2" AutomationProperties.Name="MadeBySoloplanLabel" MouseUp="MadeBySoloplanLinkMouseUp" MouseEnter="TextBlockMouseEnter" MouseLeave="TextBlockMouseLeave"/>
-      <TextBlock TextWrapping="Wrap" Text="Configuration:" Margin="20,0,20,10" FontWeight="Bold"/>
-
-      <DockPanel Margin="20,0,20,20">
-        <Button Style="{StaticResource MaterialDesignFlatMidBgButton}" Content="{x:Static properties:Resources.Export}" DockPanel.Dock="Right" VerticalAlignment="Center" Click="ExportButtonClick"/>
-        <Button Style="{StaticResource MaterialDesignFlatMidBgButton}" Content="{x:Static properties:Resources.Import}" Margin="10,0,10,0"  DockPanel.Dock="Right" VerticalAlignment="Center" Click="ImportButtonClick"/>
-        <TextBox x:Name="ConfigFile" Text="{}{CONFIG_FILE}" IsReadOnly="True"  DockPanel.Dock="Left"/>
-      </DockPanel>
-
-      <TextBlock TextWrapping="Wrap" Text="Plugins:" Height="22" Margin="20,0,20,0" FontWeight="Bold"/>
-      <ListView Name="PluginList" Margin="20,0,20,10" FontSize="10">
-        <ListView.Resources>
-          <Style TargetType="GridViewColumnHeader">
-            <Setter Property="Visibility" Value="Collapsed" />
-          </Style>
-        </ListView.Resources>
-        <ListView.View>
-          <GridView>
-            <GridViewColumn
-              DisplayMemberBinding="{Binding Name}"
-              Header="Name" />
-            <GridViewColumn
-              DisplayMemberBinding="{Binding Version}"
-              Header="Version" />
-            <GridViewColumn
-              DisplayMemberBinding="{Binding Description}"
-              Header="Description" />
-          </GridView>
-        </ListView.View>
-      </ListView>
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,0,16">
+    <StackPanel Margin="{StaticResource SettingsScrollGap}">
+      <TextBlock Text="{live:Text loc:Strings.AboutWhatsON}" Style="{StaticResource SettingsHeading}" />
+      <TextBlock Text="{live:Text loc:Strings.BuildMonitoringDescription}" Style="{StaticResource SettingsIntro}" />
+      <Border Style="{StaticResource SettingsCard}">
+        <StackPanel>
+          <DockPanel Margin="0,0,0,14">
+            <Border DockPanel.Dock="Left" Background="{DynamicResource SettingsSelection}" CornerRadius="12"
+                    Padding="12" Margin="0,0,14,0">
+              <materialDesign:PackIcon Kind="Monitor" Width="28" Height="28"
+                                       Foreground="{DynamicResource SettingsAccent}" />
+            </Border>
+            <StackPanel VerticalAlignment="Center">
+              <TextBlock Text="whatsON" FontSize="22" FontWeight="SemiBold" />
+              <TextBlock Style="{StaticResource SettingsDescription}">
+                <Run Text="{live:Text loc:Strings.VersionPrefix}" /><Run x:Name="VersionLabel" />
+              </TextBlock>
+            </StackPanel>
+          </DockPanel>
+          <TextBlock Margin="0,0,0,10">
+            <Hyperlink NavigateUri="https://github.com/Soloplan/whatson" RequestNavigate="OpenLink"
+                       Foreground="{DynamicResource SettingsAccent}"
+                       AutomationProperties.Name="{live:Text loc:Strings.ProjectWebsite}">
+              <Run Text="{live:Text loc:Strings.ProjectWebsite}" />
+            </Hyperlink>
+            <Run Text="   ·   " />
+            <Hyperlink NavigateUri="https://github.com/Soloplan/whatson/blob/master/LICENSE" RequestNavigate="OpenLink"
+                       Foreground="{DynamicResource SettingsAccent}">
+              <Run Text="{live:Text loc:Strings.MITLicense}" />
+            </Hyperlink>
+            <Run Text="   ·   " />
+            <Hyperlink NavigateUri="https://github.com/Soloplan/whatson/issues" RequestNavigate="OpenLink"
+                       Foreground="{DynamicResource SettingsAccent}"
+                       AutomationProperties.Name="{live:Text loc:Strings.ReportAnIssue}">
+              <Run Text="{live:Text loc:Strings.ReportAnIssue}" />
+            </Hyperlink>
+          </TextBlock>
+          <TextBlock Text="{live:Text loc:Strings.Authors}"
+                     Style="{StaticResource SettingsDescription}" Margin="0,0,0,8" />
+          <TextBlock FontSize="12">
+            <Hyperlink NavigateUri="https://www.soloplan.de" RequestNavigate="OpenLink"
+                       Foreground="{DynamicResource SettingsAccent}">
+              <Run Text="{live:Text loc:Strings.MadeBySoloplan}" />
+            </Hyperlink>
+          </TextBlock>
+          <TextBlock Style="{StaticResource SettingsDescription}" Margin="0,12,0,0">
+            <Run Text="Material Design in XAML " /><Run x:Name="MDIXVersionLabel" />
+          </TextBlock>
+        </StackPanel>
+      </Border>
+      <Border Style="{StaticResource SettingsCard}">
+        <StackPanel>
+          <TextBlock Text="{live:Text loc:Strings.Configuration}" Style="{StaticResource SettingsSectionHeading}"
+                     Margin="0,0,0,4" />
+          <TextBlock Text="{live:Text loc:Strings.BackupSettingsDescription}"
+                     Style="{StaticResource SettingsDescription}" Margin="0,0,0,12" />
+          <TextBox x:Name="ConfigFile" IsReadOnly="True" FontSize="12"
+                   AutomationProperties.Name="{live:Text loc:Strings.ConfigurationFileLocation}"
+                   ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
+          <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
+            <Button Content="{live:Text loc:Strings.ImportSettings}" Click="ImportButtonClick"
+                    Style="{StaticResource SettingsSecondaryButton}" Margin="0,0,10,0" />
+            <Button Content="{live:Text loc:Strings.ExportSettings}" Click="ExportButtonClick"
+                    Style="{StaticResource SettingsSecondaryButton}" />
+          </StackPanel>
+        </StackPanel>
+      </Border>
+      <Border Style="{StaticResource SettingsCard}">
+        <StackPanel>
+          <TextBlock Text="{live:Text loc:Strings.InstalledPlugins}" Style="{StaticResource SettingsSectionHeading}" />
+          <ListView x:Name="PluginList" BorderThickness="0" Background="Transparent" FontSize="13"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    AutomationProperties.Name="{live:Text loc:Strings.InstalledPlugins}">
+            <ListView.ItemContainerStyle>
+              <Style TargetType="ListViewItem">
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Setter Property="Padding" Value="12,10" />
+                <Setter Property="Margin" Value="0,2" />
+              </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+              <DataTemplate>
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition /><ColumnDefinition Width="Auto" />
+                  </Grid.ColumnDefinitions>
+                  <Grid.RowDefinitions>
+                    <RowDefinition /><RowDefinition Height="Auto" />
+                  </Grid.RowDefinitions>
+                  <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
+                             Margin="0,0,12,0" />
+                  <TextBlock Grid.Column="1" Text="{Binding Version}" Style="{StaticResource SettingsDescription}" />
+                  <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Description}" Margin="0,4,0,0"
+                             Style="{StaticResource SettingsDescription}" />
+                </Grid>
+              </DataTemplate>
+            </ListView.ItemTemplate>
+          </ListView>
+        </StackPanel>
+      </Border>
     </StackPanel>
-    <DockPanel DockPanel.Dock ="Bottom"  VerticalAlignment="Bottom">
-      <TextBlock Cursor="Hand" DockPanel.Dock="Left" Margin="20,20,20,20" TextWrapping="Wrap" Text="Report a bug...." Foreground="#FF2B7AD2" MouseUp="ReportABugMouseUp" AutomationProperties.Name="ReportABugLabel" Width="760" MouseEnter="TextBlockMouseEnter" MouseLeave="TextBlockMouseLeave"/>
-    </DockPanel>
-  </DockPanel>
+  </ScrollViewer>
 </Page>

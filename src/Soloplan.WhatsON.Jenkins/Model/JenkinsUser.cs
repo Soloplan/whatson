@@ -15,11 +15,11 @@ namespace Soloplan.WhatsON.Jenkins.Model
     /// <summary>
     /// Gets or sets name of user how made modifications in this build.
     /// </summary>
-    public string FullName { get; set; }
+    public string? FullName { get; set; }
 
     /// <summary>
     /// Gets or sets URL to users page.
     /// </summary>
-    public string AbsoluteUrl { get; set; }
+    public string? AbsoluteUrl { get; set; }
   }
 }

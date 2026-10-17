@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="NotEmptyValidationRule.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -19,7 +19,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
   public class NotEmptyValidationRule : ValidationRule
   {
     /// <summary>
-    /// Initializes a new instance of the <see cref="NotEmptyValidationRule"/> class.
+    /// Initializes a new instance of the <see cref="NotEmptyValidationRule" /> class.
     /// </summary>
     public NotEmptyValidationRule()
     {
@@ -32,8 +32,8 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// </summary>
     /// <param name="value">The value.</param>
     /// <param name="cultureInfo">The culture information.</param>
-    /// <returns>True if the <see cref="value"/>is valid.</returns>
-    public override ValidationResult Validate(object value, CultureInfo cultureInfo)
+    /// <returns>True if the <see cref="value" />is valid.</returns>
+    public override ValidationResult Validate(object? value, CultureInfo cultureInfo)
     {
       if (value is BindingExpression bindingExpression)
       {

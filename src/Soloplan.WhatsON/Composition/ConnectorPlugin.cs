@@ -1,19 +1,23 @@
-﻿// <copyright file="ConnectorPlugin.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ConnectorPlugin.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.Composition
 {
   using System;
   using System.Collections.Generic;
+  using System.Globalization;
   using System.Reflection;
   using System.Threading.Tasks;
   using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.Localization;
   using Soloplan.WhatsON.Model;
 
   /// <summary>
-  /// Base implementation for all plugins that provide connectors.
+  ///   Base implementation for all plugins that provide connectors.
   /// </summary>
   public abstract class ConnectorPlugin : IPlugin
   {
@@ -23,38 +27,41 @@ namespace Soloplan.WhatsON.Composition
       var connectorTypeAttribute = this.ConnectorType.GetCustomAttribute<ConnectorTypeAttribute>();
       if (connectorTypeAttribute == null)
       {
-        throw new ArgumentException($"The connector type {this.ConnectorType} doesn't provide meta information. Make sure a ConnectorTypeAttribute is defined on the type.");
+        throw new ArgumentException(
+          $"The connector type {this.ConnectorType} doesn't provide meta information. Make sure a ConnectorTypeAttribute is defined on the type.");
       }
 
       this.Name = connectorTypeAttribute.Name;
       this.DisplayName = connectorTypeAttribute.DisplayName;
-      this.Description = connectorTypeAttribute.Description;
+      this.Description = string.IsNullOrEmpty(connectorTypeAttribute.Description)
+        ? connectorTypeAttribute.Description
+        : Strings.ResourceManager.GetString(connectorTypeAttribute.Description, CultureInfo.CurrentUICulture) ?? connectorTypeAttribute.Description;
     }
 
     public Type ConnectorType { get; }
 
-    public string Name { get; }
+    public string Description { get; }
 
     public string DisplayName { get; }
 
-    public string Description { get; }
-
-    public abstract Connector CreateNew(ConnectorConfiguration configuration, bool? checkRedirect = null);
+    public string Name { get; }
 
     /// <summary>
-    /// Assigns the <see cref="Project"/> to <see cref="ConfigurationItem"/>.
+    ///   Assigns the <see cref="Project" /> to <see cref="ConfigurationItem" />.
     /// </summary>
     /// <param name="project">The server project.</param>
     /// <param name="configurationItemsSupport">The configuration items provider.</param>
     /// <param name="serverAddress">The server address.</param>
-    public abstract void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress = null);
+    public abstract void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string? serverAddress = null);
+
+    public abstract Connector CreateNew(ConnectorConfiguration configuration, bool? checkRedirect = null);
 
     /// <summary>
-    /// Gets the projects.
+    ///   Gets the projects.
     /// </summary>
     /// <param name="address">The address.</param>
-    /// <returns>The projects from the server.</returns>
-    public abstract Task<IList<Project>> GetProjects(string address);
+    /// <returns>The projects from a recognized server, or null when its discovery endpoint is missing or belongs to another build system.</returns>
+    public abstract Task<IList<Project>?> GetProjects(string address);
 
     public virtual void OnStartup(string[] args)
     {

@@ -1,0 +1,23 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Fody" Version="6.9.3" />
+    <PackageVersion Include="gong-wpf-dragdrop" Version="4.0.0" />
+    <PackageVersion Include="HtmlAgilityPack" Version="1.13.1" />
+    <PackageVersion Include="HtmlRenderer.WPF" Version="1.6.1" />
+    <PackageVersion Include="Humanizer.Core" Version="2.14.1" />
+    <PackageVersion Include="Humanizer.Core.de" Version="2.14.1" />
+    <PackageVersion Include="MaterialDesignThemes" Version="4.9.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+    <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.9169" />
+    <PackageVersion Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.161" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageVersion Include="NLog" Version="5.5.1" />
+    <PackageVersion Include="NUnit" Version="4.6.1" />
+    <PackageVersion Include="NUnit3TestAdapter" Version="6.3.1" />
+    <PackageVersion Include="PropertyChanged.Fody" Version="4.1.0" />
+    <PackageVersion Include="StyleCop.Analyzers" Version="1.1.118" />
+  </ItemGroup>
+</Project>

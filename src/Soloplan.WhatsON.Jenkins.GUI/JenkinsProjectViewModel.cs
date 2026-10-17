@@ -29,7 +29,10 @@ namespace Soloplan.WhatsON.Jenkins.GUI
     {
       if (this.CurrentStatus is JenkinsStatusViewModel status)
       {
-        return (status.Culprits.Count == 0 && status.CommittedToThisBuild.Count == 0 && status.State != ObservationState.Running && status.State != ObservationState.Unknown) ? false : true;
+        return (status.Culprits.Count == 0 && status.CommittedToThisBuild.Count == 0 && status.State != ObservationState.Running
+                && status.State != ObservationState.Unknown)
+          ? false
+          : true;
       }
 
       return true;
@@ -38,12 +41,9 @@ namespace Soloplan.WhatsON.Jenkins.GUI
     public override void ApplyConfiguration(ConnectorConfiguration configuration)
     {
       base.ApplyConfiguration(configuration);
-      this.Url = JenkinsApi.UrlHelper.ProjectUrl(this.Connector);
+      this.Url = this.Connector is Connector connector ? JenkinsApi.UrlHelper.ProjectUrl(connector) : null;
     }
 
-    protected override BuildStatusViewModel GetStatusViewModel()
-    {
-      return new JenkinsStatusViewModel(this);
-    }
+    protected override BuildStatusViewModel GetStatusViewModel() => new JenkinsStatusViewModel(this);
   }
 }

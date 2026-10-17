@@ -1,7 +1,7 @@
-﻿// ----------------------------------------------------------------------------------------------------------------
-// <copyright file="JenkinsPresentationPlugin.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="JenkinsPresentationPlugIn.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -18,9 +18,6 @@ namespace Soloplan.WhatsON.Jenkins.GUI
     {
     }
 
-    public override ConnectorViewModel CreateViewModel(Connector connector)
-    {
-      return new JenkinsProjectViewModel(connector);
-    }
+    public override ConnectorViewModel CreateViewModel(Connector connector) => new JenkinsProjectViewModel(connector);
   }
 }

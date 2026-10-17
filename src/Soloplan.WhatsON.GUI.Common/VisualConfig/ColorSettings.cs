@@ -30,10 +30,7 @@ namespace Soloplan.WhatsON.GUI.Common.VisualConfig
 
     public byte Blue { get; set; }
 
-    public Color GetColor()
-    {
-      return Color.FromRgb(this.Red, this.Green, this.Blue);
-    }
+    public Color GetColor() => Color.FromRgb(this.Red, this.Green, this.Blue);
 
     public void Apply(Color color)
     {

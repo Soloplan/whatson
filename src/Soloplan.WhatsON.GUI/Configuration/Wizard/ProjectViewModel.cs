@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ProjectViewModel.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -10,14 +10,14 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
   using System.Collections.Generic;
   using System.ComponentModel;
   using System.Linq;
-  using System.Runtime.CompilerServices;
+  using PropertyChanged;
   using Soloplan.WhatsON.Model;
 
   /// <summary>
   /// The view model for the selectable projects on the wizard.
   /// </summary>
-  /// <seealso cref="System.ComponentModel.INotifyPropertyChanged"/>
-  public class ProjectViewModel : INotifyPropertyChanged
+  /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
+  public partial class ProjectViewModel : INotifyPropertyChanged
   {
     /// <summary>
     /// The root list of the projects.
@@ -27,17 +27,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// The projects.
     /// </summary>
-    private List<ProjectViewModel> projects;
+    private List<ProjectViewModel>? projects;
 
     /// <summary>
     /// Is checked flag.
     /// </summary>
     private bool isChecked;
-
-    /// <summary>
-    /// The is visible flag.
-    /// </summary>
-    private bool isVisible = true;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ProjectViewModel" /> class which will be a root element.
@@ -49,11 +44,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       this.rootList = rootList;
       this.Name = name;
     }
-
-    /// <summary>
-    /// Occurs when project property changed.
-    /// </summary>
-    public event PropertyChangedEventHandler PropertyChanged;
 
     /// <summary>
     /// Gets the projects.
@@ -68,42 +58,47 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// Gets or sets the address of the project.
     /// </summary>
-    public string Address { get; set; }
+    public string? Address { get; set; }
 
     public bool AlreadyAdded { get; set; }
 
-    public string AddedProject { get; set; }
+    public string? AddedProject { get; set; }
 
-    public string FullName { get; set; }
+    public string? FullName { get; set; }
 
-    public string Description { get; set; }
+    public string? Description { get; set; }
 
-    public string DirectAddress { get; set; }
+    public string? DirectAddress { get; set; }
+
+    public bool IsFolder => this.Projects.Count > 0;
+
+    public string ProjectPath => this.Parent == null ? this.Name : $"{this.Parent.ProjectPath} / {this.Name}";
+
+    [DependsOn(nameof(IsChecked))]
+    public bool? SelectionState
+    {
+      get => this.IsChecked ? true : this.IsAnyChecked() ? null : false;
+      set => this.IsChecked = value == true;
+    }
 
     /// <summary>
     /// Gets or sets a value indicating whether this project is visible.
     /// </summary>
-    public bool IsVisible
-    {
-      get => this.isVisible;
-      set
-      {
-        this.isVisible = value;
-        this.OnPropertyChanged();
-        this.UpdateParentGroupsCheckedState();
-      }
-    }
+    [OnChangedMethod(nameof(UpdateParentGroupsCheckedState))]
+    public bool IsVisible { get; set; } = true;
 
     /// <summary>
     /// Gets or sets a value indicating whether this project is checked.
     /// </summary>
+    [DoNotCheckEquality]
     public bool IsChecked
     {
       get
       {
         if (this.rootList.MultiSelectionMode && this.Projects.Count > 0)
         {
-          return this.Projects.Where(p => p.IsVisible).All(p => p.IsChecked);
+          var selectable = this.Projects.Where(p => p.IsCheckable).ToArray();
+          return selectable.Length > 0 && selectable.All(p => p.IsChecked);
         }
 
         return this.isChecked;
@@ -111,10 +106,15 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 
       set
       {
+        if (!this.IsCheckable)
+        {
+          return;
+        }
+
         this.isChecked = value;
         if (this.rootList.MultiSelectionMode)
         {
-          foreach (var project in this.Projects.Where(p => p.IsVisible))
+          foreach (var project in this.Projects.Where(p => p.IsCheckable))
           {
             project.IsChecked = value;
           }
@@ -125,13 +125,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         {
           this.rootList.UncheckAll(this);
         }
-
-        this.OnPropertyChanged();
       }
     }
 
     /// <summary>
-    /// Gets a value indicating whether this project is checkable - supports checking (some items might be only some grouping items).
+    /// Gets a value indicating whether this project is checkable - supports checking (some items might be only some grouping
+    /// items).
     /// </summary>
     public bool IsCheckable
     {
@@ -139,7 +138,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       {
         if (this.rootList.MultiSelectionMode)
         {
-          return true;
+          return this.IsFolder ? this.Projects.Any(project => project.IsCheckable) : !this.AlreadyAdded;
         }
 
         if (this.Projects.Count == 0)
@@ -154,13 +153,13 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// Gets or sets the parent.
     /// </summary>
-    public ProjectViewModel Parent { get; set; }
+    public ProjectViewModel? Parent { get; set; }
 
     /// <summary>
     /// Determines whether is any project checked.
     /// </summary>
     /// <returns>
-    ///   <c>true</c> if any project is checked; otherwise, <c>false</c>.
+    /// <c>true</c> if any project is checked; otherwise, <c>false</c>.
     /// </returns>
     public bool IsAnyChecked()
     {
@@ -187,7 +186,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         this.projects = new List<ProjectViewModel>();
       }
 
-      var newProject = new ProjectViewModel(project.Name, this.rootList) { FullName = project.FullName, Description = project.Description };
+      var newProject = new ProjectViewModel(project.Name, this.rootList) { FullName = project.FullName, Description = project.Description, Parent = this };
       this.projects.Add(newProject);
       return newProject;
     }
@@ -196,19 +195,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// Decides if a tooltip should be visible.
     /// </summary>
     /// <returns>True when should be visible, false when should not be visible.</returns>
-    public bool ShouldDisplayTooltip()
-    {
-      return (this.Description == string.Empty || this.Description == null) ? false : true;
-    }
-
-    /// <summary>
-    /// Called when property was changed.
-    /// </summary>
-    /// <param name="propertyName">Name of the property.</param>
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-      this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
+    public bool ShouldDisplayTooltip() => (this.Description == string.Empty || this.Description == null) ? false : true;
 
     /// <summary>
     /// Updates the checked state of the groups(including parent groups).
@@ -219,6 +206,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       while (currentParent != null)
       {
         currentParent.OnPropertyChanged(nameof(this.IsChecked));
+        currentParent.OnPropertyChanged(nameof(this.SelectionState));
         currentParent = currentParent.Parent;
       }
     }

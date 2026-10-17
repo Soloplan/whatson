@@ -1,7 +1,9 @@
-﻿// <copyright file="Snapshot.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Snapshot.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.Model
 {
@@ -13,10 +15,6 @@ namespace Soloplan.WhatsON.Model
     {
       this.Status = status;
     }
-
-    public string Name { get; set; }
-
-    public Status Status { get; }
 
     public long Age
     {
@@ -30,5 +28,9 @@ namespace Soloplan.WhatsON.Model
         return (long)(DateTime.Now - this.Status.Time).TotalSeconds;
       }
     }
+
+    public string? Name { get; set; }
+
+    public Status Status { get; }
   }
 }

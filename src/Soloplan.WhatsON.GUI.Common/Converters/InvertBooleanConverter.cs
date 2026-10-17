@@ -13,15 +13,9 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
 
   public class InvertBooleanConverter : IValueConverter
   {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-      return Negate(value);
-    }
+    public object Convert(object value, Type targetType, object? parameter, CultureInfo culture) => Negate(value);
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-      return Negate(value);
-    }
+    public object ConvertBack(object value, Type targetType, object? parameter, CultureInfo culture) => Negate(value);
 
     private static object Negate(object value)
     {

@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data xml:space="preserve" name="Settings">
+    <value>Einstellungen</value>
+  </data>
+  <data xml:space="preserve" name="OpenSettings">
+    <value>Einstellungen öffnen</value>
+  </data>
+  <data xml:space="preserve" name="AddOrImportProjects">
+    <value>Projekte hinzufügen oder importieren</value>
+  </data>
+  <data xml:space="preserve" name="AddProjectsMenu">
+    <value>Projekte _hinzufügen</value>
+  </data>
+  <data xml:space="preserve" name="ImportProjectsMenu">
+    <value>Projekte _importieren</value>
+  </data>
+  <data xml:space="preserve" name="AddGroupMenu">
+    <value>_Gruppe hinzufügen</value>
+  </data>
+  <data xml:space="preserve" name="MinimizeWindow">
+    <value>Fenster minimieren</value>
+  </data>
+  <data xml:space="preserve" name="CloseWindow">
+    <value>Fenster schließen</value>
+  </data>
+  <data xml:space="preserve" name="ConfigurationIsModified">
+    <value>Konfiguration wurde geändert</value>
+  </data>
+  <data xml:space="preserve" name="Save">
+    <value>Speichern</value>
+  </data>
+  <data xml:space="preserve" name="Reset">
+    <value>Zurücksetzen</value>
+  </data>
+  <data xml:space="preserve" name="Loading">
+    <value>Wird geladen…</value>
+  </data>
+  <data xml:space="preserve" name="About">
+    <value>Info</value>
+  </data>
+  <data xml:space="preserve" name="AboutWhatsON">
+    <value>Über whatsON</value>
+  </data>
+  <data xml:space="preserve" name="BuildMonitoringDescription">
+    <value>Build-Überwachung, die Ihr Team auf dem Laufenden hält.</value>
+  </data>
+  <data xml:space="preserve" name="VersionPrefix">
+    <value>Version </value>
+  </data>
+  <data xml:space="preserve" name="ProjectWebsite">
+    <value>Projektwebsite</value>
+  </data>
+  <data xml:space="preserve" name="MITLicense">
+    <value>MIT-Lizenz</value>
+  </data>
+  <data xml:space="preserve" name="ReportAnIssue">
+    <value>Problem melden</value>
+  </data>
+  <data xml:space="preserve" name="Authors">
+    <value>Entwickelt von Steffen Wilke, Dominik Gołda, Krzysztof Lorenc und Christian Heidl.</value>
+  </data>
+  <data xml:space="preserve" name="MadeBySoloplan">
+    <value>Entwickelt von Soloplan GmbH</value>
+  </data>
+  <data xml:space="preserve" name="Configuration">
+    <value>Konfiguration</value>
+  </data>
+  <data xml:space="preserve" name="BackupSettingsDescription">
+    <value>Sichern Sie Ihre Einstellungen oder stellen Sie sie aus einer Datei wieder her.</value>
+  </data>
+  <data xml:space="preserve" name="ConfigurationFileLocation">
+    <value>Speicherort der Konfigurationsdatei</value>
+  </data>
+  <data xml:space="preserve" name="ImportSettings">
+    <value>Einstellungen importieren</value>
+  </data>
+  <data xml:space="preserve" name="ExportSettings">
+    <value>Einstellungen exportieren</value>
+  </data>
+  <data xml:space="preserve" name="InstalledPlugins">
+    <value>Installierte Plugins</value>
+  </data>
+  <data xml:space="preserve" name="General">
+    <value>Allgemein</value>
+  </data>
+  <data xml:space="preserve" name="PersonalizeDescription">
+    <value>Passen Sie Ihren Arbeitsbereich an und behalten Sie Ihre Builds im Blick.</value>
+  </data>
+  <data xml:space="preserve" name="Appearance">
+    <value>Darstellung</value>
+  </data>
+  <data xml:space="preserve" name="ColorTheme">
+    <value>Farbschema</value>
+  </data>
+  <data xml:space="preserve" name="SystemThemeDescription">
+    <value>System übernimmt die Windows-Darstellung.</value>
+  </data>
+  <data xml:space="preserve" name="System">
+    <value>System</value>
+  </data>
+  <data xml:space="preserve" name="Light">
+    <value>Hell</value>
+  </data>
+  <data xml:space="preserve" name="Dark">
+    <value>Dunkel</value>
+  </data>
+  <data xml:space="preserve" name="BuildListDensity">
+    <value>Dichte der Build-Liste</value>
+  </data>
+  <data xml:space="preserve" name="DensityDescription">
+    <value>Legen Sie fest, wie kompakt die Liste angezeigt wird.</value>
+  </data>
+  <data xml:space="preserve" name="Standard">
+    <value>Standard</value>
+  </data>
+  <data xml:space="preserve" name="Compact">
+    <value>Kompakt</value>
+  </data>
+  <data xml:space="preserve" name="Compressed">
+    <value>Sehr kompakt</value>
+  </data>
+  <data xml:space="preserve" name="StartupAndWindow">
+    <value>Start und Fenster</value>
+  </data>
+  <data xml:space="preserve" name="RunWhenWindowsStarts">
+    <value>Mit Windows starten</value>
+  </data>
+  <data xml:space="preserve" name="ShowInTaskbar">
+    <value>In der Taskleiste anzeigen</value>
+  </data>
+  <data xml:space="preserve" name="KeepWindowOnTop">
+    <value>Fenster im Vordergrund halten</value>
+  </data>
+  <data xml:space="preserve" name="StartMinimized">
+    <value>Minimiert starten</value>
+  </data>
+  <data xml:space="preserve" name="Notifications">
+    <value>Benachrichtigungen</value>
+  </data>
+  <data xml:space="preserve" name="GlobalNotificationsDescription">
+    <value>Globale Vorgaben. Jedes Projekt kann diese Einstellungen überschreiben.</value>
+  </data>
+  <data xml:space="preserve" name="Unstable">
+    <value>Instabil</value>
+  </data>
+  <data xml:space="preserve" name="Failure">
+    <value>Fehlgeschlagen</value>
+  </data>
+  <data xml:space="preserve" name="Success">
+    <value>Erfolgreich</value>
+  </data>
+  <data xml:space="preserve" name="Running">
+    <value>Läuft</value>
+  </data>
+  <data xml:space="preserve" name="Unknown">
+    <value>Unbekannt</value>
+  </data>
+  <data xml:space="preserve" name="NotifyOnlyWhenStatusChanges">
+    <value>Nur bei Statusänderungen benachrichtigen</value>
+  </data>
+  <data xml:space="preserve" name="OnlyNotifyWhenStatusChanges">
+    <value>Nur bei Statusänderungen benachrichtigen</value>
+  </data>
+  <data xml:space="preserve" name="UnableToLoadProjects">
+    <value>Projekte konnten nicht geladen werden</value>
+  </data>
+  <data xml:space="preserve" name="OK">
+    <value>OK</value>
+  </data>
+  <data xml:space="preserve" name="LoadingProjects">
+    <value>Projekte werden geladen</value>
+  </data>
+  <data xml:space="preserve" name="LoadingProjectsEllipsis">
+    <value>Projekte werden geladen…</value>
+  </data>
+  <data xml:space="preserve" name="SettingsUppercase">
+    <value>EINSTELLUNGEN</value>
+  </data>
+  <data xml:space="preserve" name="SettingsSections">
+    <value>Einstellungsbereiche</value>
+  </data>
+  <data xml:space="preserve" name="Projects">
+    <value>Projekte</value>
+  </data>
+  <data xml:space="preserve" name="SaveChanges">
+    <value>Änderungen speichern</value>
+  </data>
+  <data xml:space="preserve" name="UnsavedChanges">
+    <value>Sie haben ungespeicherte Änderungen</value>
+  </data>
+  <data xml:space="preserve" name="ProjectSettings">
+    <value>Projekteinstellungen</value>
+  </data>
+  <data xml:space="preserve" name="AddManually">
+    <value>Manuell hinzufügen</value>
+  </data>
+  <data xml:space="preserve" name="AddProject">
+    <value>Projekt hinzufügen</value>
+  </data>
+  <data xml:space="preserve" name="ManageBuildsDescription">
+    <value>Verwalten Sie die überwachten Builds und Server.</value>
+  </data>
+  <data xml:space="preserve" name="ProjectName">
+    <value>Projektname</value>
+  </data>
+  <data xml:space="preserve" name="SelectedProject">
+    <value>Ausgewähltes Projekt</value>
+  </data>
+  <data xml:space="preserve" name="Rename">
+    <value>Umbenennen</value>
+  </data>
+  <data xml:space="preserve" name="Remove">
+    <value>Entfernen</value>
+  </data>
+  <data xml:space="preserve" name="YourBuildsInOnePlace">
+    <value>Ihre Builds an einem Ort</value>
+  </data>
+  <data xml:space="preserve" name="EmptyProjectsDescription">
+    <value>Fügen Sie ein Jenkins- oder CruiseControl.NET-Projekt hinzu, um Builds zu überwachen und Benachrichtigungen zu erhalten.</value>
+  </data>
+  <data xml:space="preserve" name="AddFirstBuildDescription">
+    <value>Wählen Sie oben „Projekt hinzufügen“, um Ihren ersten Build zu verbinden.</value>
+  </data>
+  <data xml:space="preserve" name="ProjectDetails">
+    <value>Projektdetails</value>
+  </data>
+  <data xml:space="preserve" name="ChooseBuildSystemDescription">
+    <value>Wählen Sie ein Build-System und geben Sie dem Projekt einen Namen.</value>
+  </data>
+  <data xml:space="preserve" name="BuildSystem">
+    <value>Build-System</value>
+  </data>
+  <data xml:space="preserve" name="Cancel">
+    <value>Abbrechen</value>
+  </data>
+  <data xml:space="preserve" name="Confirm">
+    <value>Bestätigen</value>
+  </data>
+  <data xml:space="preserve" name="GroupDetails">
+    <value>Gruppendetails</value>
+  </data>
+  <data xml:space="preserve" name="GroupName">
+    <value>Gruppenname</value>
+  </data>
+  <data xml:space="preserve" name="SaveName">
+    <value>Namen speichern</value>
+  </data>
+  <data xml:space="preserve" name="RenameProject">
+    <value>Projekt umbenennen</value>
+  </data>
+  <data xml:space="preserve" name="ConnectBuildServer">
+    <value>Build-Server verbinden</value>
+  </data>
+  <data xml:space="preserve" name="EnterServerAddressDescription">
+    <value>Geben Sie eine Jenkins- oder CruiseControl.NET-Adresse ein, um Ihre Projekte zu finden.</value>
+  </data>
+  <data xml:space="preserve" name="ServerConnection">
+    <value>Serververbindung</value>
+  </data>
+  <data xml:space="preserve" name="ServerOrProjectURL">
+    <value>Server- oder Projekt-URL</value>
+  </data>
+  <data xml:space="preserve" name="ServerAddressHelp">
+    <value>Verwenden Sie eine Serveradresse oder einen direkten Projektlink.</value>
+  </data>
+  <data xml:space="preserve" name="DetectBuildSystemAutomatically">
+    <value>Build-System automatisch erkennen</value>
+  </data>
+  <data xml:space="preserve" name="WizardChangesDescription">
+    <value>Ihre bisherigen Projekte und Einstellungen bleiben bis zum Abschluss des Assistenten unverändert.</value>
+  </data>
+  <data xml:space="preserve" name="ChooseProjects">
+    <value>Projekte auswählen</value>
+  </data>
+  <data xml:space="preserve" name="FindProject">
+    <value>Projekt suchen</value>
+  </data>
+  <data xml:space="preserve" name="NoProjectsFound">
+    <value>Keine Projekte gefunden</value>
+  </data>
+  <data xml:space="preserve" name="CheckAddressDescription">
+    <value>Gehen Sie zurück, um die Adresse zu prüfen oder ein anderes Build-System auszuwählen.</value>
+  </data>
+  <data xml:space="preserve" name="OrganizeProjects">
+    <value>Projekte gruppieren</value>
+  </data>
+  <data xml:space="preserve" name="OpenProjectInBrowser">
+    <value>Projekt im Browser öffnen</value>
+  </data>
+  <data xml:space="preserve" name="AlreadyAddedPrefix">
+    <value>Bereits hinzugefügt: </value>
+  </data>
+  <data xml:space="preserve" name="AvailableProjects">
+    <value>Verfügbare Projekte</value>
+  </data>
+  <data xml:space="preserve" name="AddProjects">
+    <value>Projekte hinzufügen</value>
+  </data>
+  <data xml:space="preserve" name="ConnectionStep">
+    <value>1  Verbindung</value>
+  </data>
+  <data xml:space="preserve" name="ProjectsStep">
+    <value>2  Projekte</value>
+  </data>
+  <data xml:space="preserve" name="Back">
+    <value>Zurück</value>
+  </data>
+  <data xml:space="preserve" name="Next">
+    <value>Weiter</value>
+  </data>
+  <data xml:space="preserve" name="AddSelectedProjects">
+    <value>Ausgewählte Projekte hinzufügen</value>
+  </data>
+  <data xml:space="preserve" name="CopyValueHelp">
+    <value>Zum Kopieren des Werts doppelklicken.</value>
+  </data>
+  <data xml:space="preserve" name="CopyLatestBuildLabel">
+    <value>Letzte Build-Kennung kopieren</value>
+  </data>
+  <data xml:space="preserve" name="Edit">
+    <value>Bearbeiten</value>
+  </data>
+  <data xml:space="preserve" name="Delete">
+    <value>Löschen</value>
+  </data>
+  <data xml:space="preserve" name="Export">
+    <value>Exportieren</value>
+  </data>
+  <data xml:space="preserve" name="OpenWebsite">
+    <value>Website öffnen</value>
+  </data>
+  <data xml:space="preserve" name="OpenCurrentBuildWebsite">
+    <value>Website des aktuellen Builds öffnen</value>
+  </data>
+  <data xml:space="preserve" name="CopyBuildLabel">
+    <value>Build-Kennung kopieren</value>
+  </data>
+  <data xml:space="preserve" name="OpenBuildWebsite">
+    <value>Build-Website öffnen</value>
+  </data>
+  <data xml:space="preserve" name="DurationPrefix">
+    <value>Dauer: </value>
+  </data>
+  <data xml:space="preserve" name="FinishedPrefix">
+    <value>Abgeschlossen: </value>
+  </data>
+  <data xml:space="preserve" name="EstimatedRemaining">
+    <value> voraussichtlich verbleibend</value>
+  </data>
+  <data xml:space="preserve" name="TakingPrefix">
+    <value>Dauert </value>
+  </data>
+  <data xml:space="preserve" name="LongerThanEstimatedSuffix">
+    <value> länger als geschätzt.</value>
+  </data>
+  <data xml:space="preserve" name="CompletionPrefix">
+    <value>Fortschritt: </value>
+  </data>
+  <data xml:space="preserve" name="CopyData">
+    <value>Daten kopieren</value>
+  </data>
+  <data xml:space="preserve" name="IdentifierPrefix">
+    <value>Kennung: </value>
+  </data>
+  <data xml:space="preserve" name="NamePrefix">
+    <value>Name: </value>
+  </data>
+  <data xml:space="preserve" name="ExpectedConnectorTypePrefix">
+    <value>Erwarteter Verbindungstyp: </value>
+  </data>
+  <data xml:space="preserve" name="MissingPluginHelp">
+    <value>Stellen Sie sicher, dass ein Plugin für diesen Verbindungstyp installiert ist.</value>
+  </data>
+  <data xml:space="preserve" name="MissingPluginPrefix">
+    <value>Kein Plugin für Projekttyp gefunden: </value>
+  </data>
+  <data xml:space="preserve" name="BuildingForPrefix">
+    <value>Build läuft seit </value>
+  </data>
+  <data xml:space="preserve" name="Language">
+    <value>Sprache</value>
+  </data>
+  <data xml:space="preserve" name="LanguageChangeDescription">
+    <value>Änderungen werden sofort übernommen. Speichern Sie Ihre Auswahl, um sie beizubehalten.</value>
+  </data>
+  <data xml:space="preserve" name="BuildLabelCopied">
+    <value>Build-Kennung kopiert</value>
+  </data>
+  <data xml:space="preserve" name="CopyBuildLabelHelp">
+    <value>Zum Kopieren der Build-Kennung doppelklicken</value>
+  </data>
+  <data xml:space="preserve" name="OpenWindow">
+    <value>Fenster öffnen</value>
+  </data>
+  <data xml:space="preserve" name="Exit">
+    <value>Beenden</value>
+  </data>
+  <data xml:space="preserve" name="BuildStarted">
+    <value>Build gestartet.</value>
+  </data>
+  <data xml:space="preserve" name="BuildFailed">
+    <value>Build fehlgeschlagen.</value>
+  </data>
+  <data xml:space="preserve" name="BuildSuccessful">
+    <value>Build erfolgreich</value>
+  </data>
+  <data xml:space="preserve" name="BuildSuccessfulUnstable">
+    <value>Build erfolgreich (instabil)</value>
+  </data>
+  <data xml:space="preserve" name="BuildInterrupted">
+    <value>Build unterbrochen</value>
+  </data>
+  <data xml:space="preserve" name="UseMainConfiguration">
+    <value>Globale Einstellungen verwenden</value>
+  </data>
+  <data xml:space="preserve" name="UseMainSettings">
+    <value>globale Einstellungen</value>
+  </data>
+  <data xml:space="preserve" name="OnlyIfStatusChanged">
+    <value>Nur bei Statusänderungen</value>
+  </data>
+  <data xml:space="preserve" name="None">
+    <value>keine</value>
+  </data>
+  <data xml:space="preserve" name="DeleteProjectConfirmation">
+    <value>Möchten Sie dieses Projekt wirklich löschen?</value>
+  </data>
+  <data xml:space="preserve" name="GroupNameAlreadyUsed">
+    <value>Dieser Name wird bereits verwendet.</value>
+  </data>
+  <data xml:space="preserve" name="SelectedProjectRequired">
+    <value>Wählen Sie mindestens ein Projekt aus.</value>
+  </data>
+  <data xml:space="preserve" name="DiscoveryTimedOut">
+    <value>Die Suche nach einem passenden Plugin oder die Serverabfrage hat zu lange gedauert.</value>
+  </data>
+  <data xml:space="preserve" name="InvalidServerOrPlugin">
+    <value>Kein passendes Plugin gefunden oder die Adresse ist ungültig.</value>
+  </data>
+  <data xml:space="preserve" name="AssignParentAsGroup">
+    <value>Übergeordnetes als Gruppe</value>
+  </data>
+  <data xml:space="preserve" name="AddHierarchyToProjectName">
+    <value>Hierarchie im Namen</value>
+  </data>
+  <data xml:space="preserve" name="NoAutomaticGrouping">
+    <value>Keine automatische Gruppierung</value>
+  </data>
+  <data xml:space="preserve" name="ImportError">
+    <value>Importfehler</value>
+  </data>
+  <data xml:space="preserve" name="ServerNotAvailable">
+    <value>Server nicht verfügbar</value>
+  </data>
+  <data xml:space="preserve" name="ProjectNotAvailable">
+    <value>Projekt nicht verfügbar</value>
+  </data>
+  <data xml:space="preserve" name="NoBuildsYet">
+    <value>Noch keine Builds vorhanden</value>
+  </data>
+  <data xml:space="preserve" name="NoBuildNumber">
+    <value>Keine Build-Nummer vorhanden</value>
+  </data>
+  <data xml:space="preserve" name="WindowsStartupKeyMissing">
+    <value>Der Windows-Registrierungsschlüssel für den Autostart ist nicht vorhanden.</value>
+  </data>
+  <data xml:space="preserve" name="EstimatedArrival">
+    <value> Restzeit</value>
+  </data>
+  <data xml:space="preserve" name="Never">
+    <value>nie</value>
+  </data>
+  <data xml:space="preserve" name="JenkinsDescription">
+    <value>Aktuellen Status eines Jenkins-Projekts abrufen.</value>
+  </data>
+  <data xml:space="preserve" name="CruiseControlDescription">
+    <value>Aktuellen Status eines CruiseControl-Projekts abrufen.</value>
+  </data>
+  <data xml:space="preserve" name="NotificationSettingsFormat">
+    <value>Benachrichtigungen ({0})</value>
+  </data>
+  <data xml:space="preserve" name="ProjectNotificationFormat">
+    <value>Projektname: {0}.</value>
+  </data>
+  <data xml:space="preserve" name="DeleteGroupFormat">
+    <value>Möchten Sie die Gruppe „{0}“ und alle zugehörigen Projekte wirklich löschen?</value>
+  </data>
+  <data xml:space="preserve" name="DeleteMultipleProjects">
+    <value>Möchten Sie die ausgewählten Projekte wirklich löschen?</value>
+  </data>
+  <data xml:space="preserve" name="DeleteNamedProjectFormat">
+    <value>Möchten Sie das Projekt „{0}“ wirklich löschen?</value>
+  </data>
+  <data xml:space="preserve" name="ProjectErrorFormat">
+    <value>Beim Laden der Projekte ist ein Fehler aufgetreten.
+Details: {0}</value>
+  </data>
+  <data xml:space="preserve" name="ImportFailedFormat">
+    <value>Die Konfiguration konnte nicht aus der JSON-Datei importiert werden. Dateipfad: {0}; Fehler: {1}</value>
+  </data>
+  <data xml:space="preserve" name="ProjectImportFailedFormat">
+    <value>Die Projekte konnten nicht aus der JSON-Datei importiert werden. Dateipfad: {0}; Fehler: {1}</value>
+  </data>
+  <data xml:space="preserve" name="MissingConnectorDataFormat">
+    <value>Kennung: {0}
+Name: {1}
+Beschreibung: {2}
+Erwarteter Verbindungstyp: {3}</value>
+  </data>
+  <data name="CommitsByCaption" xml:space="preserve"><value>Commits von</value></data>
+  <data name="BuildContributorsCaption" xml:space="preserve"><value>Mitwirkende an diesem Build</value></data>
+  <data name="ChangesByCaption" xml:space="preserve"><value>Änderungen von</value></data>
+  <data name="JobDisabled" xml:space="preserve"><value>Deaktiviert</value></data>
+  <data name="JobDisabledDescription" xml:space="preserve"><value>Dieser Job ist auf dem Build-Server deaktiviert. Neue Builds können nicht gestartet werden. Der letzte Build und der Verlauf bleiben verfügbar.</value></data>
+  <data name="SelectAllProjects" xml:space="preserve"><value>Alle Projekte auswählen</value></data>
+  <data name="SelectAllProjectsDescription" xml:space="preserve"><value>Alle verfügbaren Projekte auf diesem Server auswählen, einschließlich anderer Ordner und durch die Suche ausgeblendeter Projekte.</value></data>
+  <data name="ProjectsSelected" xml:space="preserve"><value>ausgewählt</value></data>
+  <data name="ProjectFolders" xml:space="preserve"><value>Projektordner</value></data>
+  <data name="NoMatchingProjects" xml:space="preserve"><value>Keine Projekte entsprechen Ihrer Suche.</value></data>
+  <data name="ProjectServerRoot" xml:space="preserve"><value>Build-Server</value></data>
+  <data name="OpenProjectFolder" xml:space="preserve"><value>Ordner öffnen</value></data>
+  <data name="FilterProjectFolder" xml:space="preserve"><value>Diesen Ordner filtern</value></data>
+</root>

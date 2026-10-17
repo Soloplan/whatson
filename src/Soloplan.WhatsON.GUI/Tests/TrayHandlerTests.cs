@@ -1,12 +1,16 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="TrayHandlerTests.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.GUI.Tests
 {
+  using System.Collections.Generic;
+  using System.Reflection;
+  using System.Threading;
+  using System.Windows.Forms;
   using NUnit.Framework;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
@@ -14,19 +18,22 @@ namespace Soloplan.WhatsON.GUI.Tests
   using Soloplan.WhatsON.Model;
 
   [TestFixture]
+  [SetUICulture("en-US")]
   public class TrayHandlerTests
   {
     private const ObservationState Success = ObservationState.Success;
+
     private const ObservationState Failure = ObservationState.Failure;
+
     private const ObservationState Running = ObservationState.Running;
 
     /// <summary>
-    /// Tests the <see cref="TrayHandler.GetOverallState"/> method.
+    /// Tests the <see cref="TrayHandler.GetOverallState" /> method.
     /// </summary>
     /// <param name="states">The states.</param>
     /// <param name="configuredConnectorCount">The configured connector count.</param>
-    /// <returns>A <see cref="ObservationState"/>.</returns>
-    [TestCase(new ObservationState[0], 0, ExpectedResult = ObservationState.Success)]
+    /// <returns>A <see cref="ObservationState" />.</returns>
+    [TestCase(new ObservationState[0], 0, ExpectedResult = ObservationState.Unknown)]
     [TestCase(new ObservationState[0], 1, ExpectedResult = ObservationState.Unknown)]
     [TestCase(new[] { ObservationState.Success }, 1, ExpectedResult = ObservationState.Success)]
     [TestCase(new[] { ObservationState.Success }, 2, ExpectedResult = ObservationState.Unknown)]
@@ -35,35 +42,95 @@ namespace Soloplan.WhatsON.GUI.Tests
     [TestCase(new[] { ObservationState.Success, ObservationState.Unstable }, 3, ExpectedResult = ObservationState.Unstable)]
     [TestCase(new[] { ObservationState.Unstable, ObservationState.Failure }, 3, ExpectedResult = ObservationState.Failure)]
     [TestCase(new[] { ObservationState.Failure, ObservationState.Unstable, ObservationState.Success }, 3, ExpectedResult = ObservationState.Failure)]
-    public ObservationState GetOverallStateTest(ObservationState[] states, int configuredConnectorCount)
+    public ObservationState GetOverallStateTest(ObservationState[] states, int configuredConnectorCount) => TrayHandler.GetOverallState(states, configuredConnectorCount);
+
+    [Test]
+    [Apartment(ApartmentState.STA)]
+    public void EmptyConfigurationHasANeutralIconAndAnExplicitTooltip()
     {
-      return TrayHandler.GetOverallState(states, configuredConnectorCount);
+      var configuration = new ApplicationConfiguration { OpenMinimized = true };
+      using (var tray = new TrayHandler(new ObservationScheduler(), configuration))
+      {
+        var icon = (typeof(TrayHandler).GetField("icon", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected member was not found.")).GetValue(tray) as NotifyIcon ?? throw new AssertionException("Expected icon.");
+        var neutralIcon = (typeof(TrayHandler).GetField("loadingIcon", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected member was not found.")).GetValue(tray);
+        var update = typeof(TrayHandler).GetMethod("UpdateTrayIcon", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected member was not found.");
+        Assert.That(icon.Icon, Is.SameAs(neutralIcon), "An empty configuration must not show a green success badge.");
+        Assert.That(icon.Text, Is.EqualTo("WhatsON - No projects configured"));
+
+        configuration.ConnectorsConfiguration.Add(new ConnectorConfiguration("Jenkins", "Unloaded project", new List<ConfigurationItem>()));
+        update.Invoke(tray, null);
+        Assert.That(icon.Icon, Is.SameAs(neutralIcon));
+        Assert.That(icon.Text, Is.EqualTo("WhatsON - Checking build status"));
+
+        configuration.ConnectorsConfiguration.Clear();
+        update.Invoke(tray, null);
+        Assert.That(icon.Icon, Is.SameAs(neutralIcon));
+        Assert.That(icon.Text, Is.EqualTo("WhatsON - No projects configured"));
+      }
     }
 
     /// <summary>
-    /// Tests the <see cref="TrayHandler.GetEffectiveState"/> method.
+    /// Tests the <see cref="TrayHandler.GetEffectiveState" /> method.
     /// </summary>
     /// <param name="currentState">The current state.</param>
     /// <param name="snapshotStates">The snapshot states.</param>
-    /// <returns>A <see cref="ObservationState"/>.</returns>
+    /// <returns>A <see cref="ObservationState" />.</returns>
     [TestCase(ObservationState.Success, new[] { ObservationState.Failure }, ExpectedResult = ObservationState.Success)]
     [TestCase(ObservationState.Failure, new[] { ObservationState.Success }, ExpectedResult = ObservationState.Failure)]
     [TestCase(ObservationState.Running, new[] { ObservationState.Unstable, ObservationState.Success }, ExpectedResult = ObservationState.Unstable)]
-    [TestCase(ObservationState.Unknown, new[] { ObservationState.Running, ObservationState.Failure, ObservationState.Success }, ExpectedResult = ObservationState.Failure)]
+    [TestCase(
+      ObservationState.Unknown,
+      new[] { ObservationState.Running, ObservationState.Failure, ObservationState.Success },
+      ExpectedResult = ObservationState.Failure)]
     [TestCase(ObservationState.Unknown, new[] { ObservationState.Unknown, ObservationState.Running }, ExpectedResult = ObservationState.Unknown)]
-    public ObservationState GetEffectiveStateTest(ObservationState currentState, ObservationState[] snapshotStates)
-    {
-      return TrayHandler.GetEffectiveState(currentState, snapshotStates);
-    }
+    public ObservationState GetEffectiveStateTest(ObservationState currentState, ObservationState[] snapshotStates) => TrayHandler.GetEffectiveState(currentState, snapshotStates);
 
     // usually the status queue contains 5 elements but the newest one is the same current, so it is enough to give 4 states. The newest is on the left
     [TestCase(false, Success, Success, Success, Success, Success, ExpectedResult = true, Description = "Simple state update")]
     [TestCase(false, Success, Failure, Failure, Failure, Failure, ExpectedResult = true, Description = "Simple state change")]
-    [TestCase(true, Success, Success, Success, Success, Success, ExpectedResult = false, Description = "Do not show notification if show only on change and the change was not present")]
-    [TestCase(true, Success, Failure, Success, Success, Success, ExpectedResult = true, Description = "Show notification when the change was present and it's configured to show it only on change")]
-    [TestCase(true, Running, Success, Success, Success, Success, ExpectedResult = false, Description = "Do not show notification if we change to inactive state")]
-    [TestCase(false, Running, Success, Success, Success, Success, ExpectedResult = false, Description = "Do not show notification if we change to inactive state")]
-    public bool CheckNotificationShowTest(bool onlyIfChanged, ObservationState currentState, ObservationState historyState1, ObservationState historyState2, ObservationState historyState3, ObservationState historyState4)
+    [TestCase(
+      true,
+      Success,
+      Success,
+      Success,
+      Success,
+      Success,
+      ExpectedResult = false,
+      Description = "Do not show notification if show only on change and the change was not present")]
+    [TestCase(
+      true,
+      Success,
+      Failure,
+      Success,
+      Success,
+      Success,
+      ExpectedResult = true,
+      Description = "Show notification when the change was present and it's configured to show it only on change")]
+    [TestCase(
+      true,
+      Running,
+      Success,
+      Success,
+      Success,
+      Success,
+      ExpectedResult = false,
+      Description = "Do not show notification if we change to inactive state")]
+    [TestCase(
+      false,
+      Running,
+      Success,
+      Success,
+      Success,
+      Success,
+      ExpectedResult = false,
+      Description = "Do not show notification if we change to inactive state")]
+    public bool CheckNotificationShowTest(
+      bool onlyIfChanged,
+      ObservationState currentState,
+      ObservationState historyState1,
+      ObservationState historyState2,
+      ObservationState historyState3,
+      ObservationState historyState4)
     {
       var observationScheduler = new ObservationScheduler();
       var configuration = new ApplicationConfiguration();

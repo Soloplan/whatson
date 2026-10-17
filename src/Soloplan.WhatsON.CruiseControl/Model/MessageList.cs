@@ -9,13 +9,13 @@ namespace Soloplan.WhatsON.CruiseControl.Model
 {
   using System.Xml.Serialization;
 
-  [XmlRoot(ElementName= "messages", Namespace = "", IsNullable = false)]
+  [XmlRoot(ElementName = "messages", Namespace = "", IsNullable = false)]
   public class MessageList
   {
     [XmlElement("message")]
-    public Message[] Messages { get; set; }
+    public Message[]? Messages { get; set; }
 
     [XmlIgnore]
-    public Message[] MessagesSafe => this.Messages ?? new Message[0];
+    public Message[] MessagesSafe => this.Messages ?? [];
   }
 }

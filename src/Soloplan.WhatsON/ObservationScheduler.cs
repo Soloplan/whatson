@@ -28,7 +28,7 @@ namespace Soloplan.WhatsON
     /// <summary>
     /// Logger instance used by this class.
     /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
     /// <summary>
     /// List of currently observed connectors.
@@ -36,17 +36,17 @@ namespace Soloplan.WhatsON
     private readonly IList<ObservationConnector> observedConnectors;
 
     /// <summary>
+    /// Cancellation token used when all open connections should be forcefully closed.
+    /// </summary>
+    private CancellationTokenSource? cancellationTokenSource;
+
+    /// <summary>
     /// Observation is stopping.
     /// </summary>
     private bool stopping;
 
     /// <summary>
-    /// Cancellation token used when all open connections should be forcefully closed.
-    /// </summary>
-    private CancellationTokenSource cancellationTokenSource;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ObservationScheduler"/> class.
+    /// Initializes a new instance of the <see cref="ObservationScheduler" /> class.
     /// </summary>
     public ObservationScheduler()
     {
@@ -54,12 +54,28 @@ namespace Soloplan.WhatsON
       this.observedConnectors = new List<ObservationConnector>();
     }
 
-    /// <summary>
-    /// Fired when connectors status was polled.
-    /// </summary>
-    public event EventHandler<Connector> StatusQueried;
-
     public bool Running => this.observedConnectors.Any(connector => connector.Running);
+
+    public void Observe(Connector? connector, int interval = DefaultPollInterval)
+    {
+      if (connector == null)
+      {
+        return;
+      }
+
+      if (this.observedConnectors.Any(s => s.Connector.Equals(connector)))
+      {
+        // connector is already being observed
+        log.Warn(
+          "Connector {connector} is already being observed, skip adding.",
+          new { Interval = interval, connector.Configuration.Name, connector.CurrentStatus });
+        return;
+      }
+
+      var observationConnector = new ObservationConnector(connector, interval);
+      this.observedConnectors.Add(observationConnector);
+      log.Log(LogLevel.Debug, "Observation connector {@connector} added.", observationConnector);
+    }
 
     public async void Start()
     {
@@ -78,10 +94,13 @@ namespace Soloplan.WhatsON
           this.cancellationTokenSource = new CancellationTokenSource();
         }
 
-        foreach (var observationConnector in this.observedConnectors)
+        foreach (var group in this.observedConnectors.GroupBy(observation =>
+          observation.Connector is IBatchedConnector batch && batch.BatchAddress != null
+            ? (object)(observation.Connector.GetType(), batch.BatchAddress, observation.Interval)
+            : observation))
         {
-          log.Log(LogLevel.Debug, "Starting observation for {@connector}.", observationConnector);
-          Task.Run(() => this.StartObserveSingle(observationConnector, this.cancellationTokenSource.Token));
+          var connectors = group.ToArray();
+          Task.Run(() => this.StartObserveGroup(connectors, this.cancellationTokenSource.Token));
         }
 
         log.Debug("Observation started.");
@@ -92,29 +111,7 @@ namespace Soloplan.WhatsON
     /// Stops observation scheduler.
     /// </summary>
     /// <param name="force">If true forces all tasks to stop; otherwise allows tasks to finish their current run.</param>
-    public void Stop(bool force)
-    {
-      this.Terminate(force);
-    }
-
-    public void Observe(Connector connector, int interval = DefaultPollInterval)
-    {
-      if (connector == null)
-      {
-        return;
-      }
-
-      if (this.observedConnectors.Any(s => s.Connector.Equals(connector)))
-      {
-        // connector is already being observed
-        log.Warn("Connector {connector} is already being observed, skip adding.", new { Interval = interval, Name = connector.Configuration.Name, CurrentStatus = connector.CurrentStatus });
-        return;
-      }
-
-      var observationConnector = new ObservationConnector(connector, interval);
-      this.observedConnectors.Add(observationConnector);
-      log.Log(LogLevel.Debug, "Observation connector {@connector} added.", observationConnector);
-    }
+    public void Stop(bool force) => this.Terminate(force);
 
     /// <summary>
     /// Stops observing all connectors. The scheduler should be stopped before calling this function.
@@ -130,14 +127,19 @@ namespace Soloplan.WhatsON
     }
 
     /// <summary>
-    /// Observes single connector. Creates asynchronous loop.
+    /// Observes a server batch or a single connector in one asynchronous loop.
     /// </summary>
-    /// <param name="connector">Connector to observe.</param>
+    /// <param name="connectors">Connectors sharing a polling interval and, when supported, a server.</param>
     /// <param name="token">Cancellation token passed to connector.</param>
-    /// <remarks>See https://blogs.msdn.microsoft.com/benwilli/2016/06/30/asynchronous-infinite-loops-instead-of-timers/ for look idea description.</remarks>
+    /// <remarks>
+    /// See https://blogs.msdn.microsoft.com/benwilli/2016/06/30/asynchronous-infinite-loops-instead-of-timers/ for
+    /// look idea description.
+    /// </remarks>
     /// <returns>Not used.</returns>
-    private async Task StartObserveSingle(ObservationConnector connector, CancellationToken token)
+    private async Task StartObserveGroup(IReadOnlyList<ObservationConnector> connectors, CancellationToken token)
     {
+      var connector = connectors[0];
+      var batchConnectors = connectors.Select(item => item.Connector).ToArray();
       while (connector.Running)
       {
         try
@@ -146,11 +148,34 @@ namespace Soloplan.WhatsON
           {
             log.Log(LogLevel.Trace, "Observation of {@connector} started.", connector);
 
-            await connector.Connector.QueryStatus(token);
-            connector.LastPoll = DateTime.Now;
-            if (connector.Running)
+            IReadOnlyCollection<Connector> queried;
+            try
             {
-              this.StatusQueried?.Invoke(this, connector.Connector);
+              if (connector.Connector is IBatchedConnector batch)
+              {
+                queried = await batch.QueryStatusBatch(batchConnectors, token);
+              }
+              else
+              {
+                await connector.Connector.QueryStatus(token);
+                queried = batchConnectors;
+              }
+            }
+            finally
+            {
+              // Failed server polls also wait for the next interval instead of retrying in a tight loop.
+              foreach (var item in connectors)
+              {
+                item.LastPoll = DateTime.Now;
+              }
+            }
+
+            foreach (var item in queried)
+            {
+              if (connector.Running)
+              {
+                this.StatusQueried?.Invoke(this, item);
+              }
             }
 
             log.Log(LogLevel.Trace, "Observation of {@connector} ended.", connector);
@@ -163,12 +188,16 @@ namespace Soloplan.WhatsON
             await Task.Delay(millisecondsToWait, token);
           }
         }
-        catch (TaskCanceledException e)
+        catch (OperationCanceledException) when (token.IsCancellationRequested)
         {
+          break;
         }
         catch (Exception e)
         {
-          log.Error(e, "Exception occurred when observing connector {connector}", new { Interval = connector.Interval, Name = connector.Connector.Configuration.Name, CurrentStatus = connector.Connector.CurrentStatus });
+          log.Error(
+            e,
+            "Exception occurred when observing connector {connector}",
+            new { connector.Interval, connector.Connector.Configuration.Name, connector.Connector.CurrentStatus });
         }
       }
 
@@ -178,8 +207,11 @@ namespace Soloplan.WhatsON
     /// <summary>
     /// Stops observation of connectors.
     /// </summary>
-    /// <param name="force">If true cancellation token is used to cancel running observations;
-    /// otherwise the observation are informed that they should stop, but are allowed to run until they end current operation/finish waiting for next poll interval.</param>
+    /// <param name="force">
+    /// If true cancellation token is used to cancel running observations;
+    /// otherwise the observation are informed that they should stop, but are allowed to run until they end current
+    /// operation/finish waiting for next poll interval.
+    /// </param>
     private void Terminate(bool force)
     {
       if (!this.Running)
@@ -200,7 +232,7 @@ namespace Soloplan.WhatsON
         if (force)
         {
           log.Warn("Canceling any still running tasks.");
-          this.cancellationTokenSource.Cancel();
+          this.cancellationTokenSource?.Cancel();
           log.Warn("Task canceled.");
         }
 
@@ -218,7 +250,7 @@ namespace Soloplan.WhatsON
     private class ObservationConnector
     {
       /// <summary>
-      /// Initializes a new instance of the <see cref="ObservationConnector"/> class.
+      /// Initializes a new instance of the <see cref="ObservationConnector" /> class.
       /// </summary>
       /// <param name="connector">The connector which should be observed.</param>
       /// <param name="interval">Observation interval.</param>
@@ -227,15 +259,6 @@ namespace Soloplan.WhatsON
         this.Connector = connector;
         this.Interval = TimeSpan.FromSeconds(interval);
       }
-
-      /// <summary>
-      /// Gets or sets a value indicating whether the connector should currently be observed.
-      /// </summary>
-      /// <remarks>
-      /// The connectors loop may be still running even though this property is false. The connector should not send any events nor trigger new requests
-      /// when this is false.
-      /// </remarks>
-      public bool Running { get; set; }
 
       /// <summary>
       /// Gets the connector being observed.
@@ -251,6 +274,21 @@ namespace Soloplan.WhatsON
       /// Gets or sets date the connector was last polled.
       /// </summary>
       public DateTime LastPoll { get; set; }
+
+      /// <summary>
+      /// Gets or sets a value indicating whether the connector should currently be observed.
+      /// </summary>
+      /// <remarks>
+      /// The connectors loop may be still running even though this property is false. The connector should not send any events
+      /// nor trigger new requests
+      /// when this is false.
+      /// </remarks>
+      public bool Running { get; set; }
     }
+
+    /// <summary>
+    /// Fired when connectors status was polled.
+    /// </summary>
+    public event EventHandler<Connector>? StatusQueried;
   }
 }

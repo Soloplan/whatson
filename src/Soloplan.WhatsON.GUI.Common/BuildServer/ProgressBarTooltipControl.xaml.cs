@@ -9,6 +9,8 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 {
   using System.Windows;
   using System.Windows.Controls;
+  using Soloplan.WhatsON.GUI.Common.Localization;
+  using Soloplan.WhatsON.Localization;
 
   /// <summary>
   /// Control for project tooltips.
@@ -16,11 +18,19 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
   public partial class ProgressBarTooltipControl : UserControl
   {
     /// <summary>
-    /// Dependency property for <see cref="CulpritsProp"/>.
+    /// Dependency property for <see cref="CulpritsProp" />.
     /// </summary>
-    public static readonly DependencyProperty ControlOrientationTooltipProperty = DependencyProperty.Register(nameof(ControlOrientation), typeof(Orientation), typeof(ProgressBarTooltipControl), new PropertyMetadata(Orientation.Vertical));
+    public static readonly DependencyProperty ControlOrientationTooltipProperty = DependencyProperty.Register(
+      nameof(ControlOrientation),
+      typeof(Orientation),
+      typeof(ProgressBarTooltipControl),
+      new PropertyMetadata(Orientation.Vertical));
 
-    public static readonly DependencyProperty CompactDisplayTooltipProperty = DependencyProperty.Register(nameof(CompactDisplay), typeof(bool), typeof(ProgressBarTooltipControl), new PropertyMetadata(false, new PropertyChangedCallback(OnCurrentReadingChanged)));
+    public static readonly DependencyProperty CompactDisplayTooltipProperty = DependencyProperty.Register(
+      nameof(CompactDisplay),
+      typeof(bool),
+      typeof(ProgressBarTooltipControl),
+      new PropertyMetadata(false, OnCurrentReadingChanged));
 
     public ProgressBarTooltipControl()
     {
@@ -52,13 +62,13 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
       if (this.CompactDisplay)
       {
         this.CompletionText.Text = string.Empty;
-        this.EstimatedRemainingText.Text = " ETA";
+        this.EstimatedRemainingText.SetBinding(TextBlock.TextProperty, TextExtension.CreateBinding(() => Strings.EstimatedArrival));
         this.PercentSignText.Text = "%/";
       }
       else
       {
-        this.CompletionText.Text = "Completion: ";
-        this.EstimatedRemainingText.Text = " estimated remaining";
+        this.CompletionText.SetBinding(TextBlock.TextProperty, TextExtension.CreateBinding(() => Strings.CompletionPrefix));
+        this.EstimatedRemainingText.SetBinding(TextBlock.TextProperty, TextExtension.CreateBinding(() => Strings.EstimatedRemaining));
         this.PercentSignText.Text = "% ";
       }
     }

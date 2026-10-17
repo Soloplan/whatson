@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data xml:space="preserve" name="Export">
+    <value>Exportieren</value>
+  </data>
+  <data xml:space="preserve" name="Import">
+    <value>Importieren</value>
+  </data>
+  <data xml:space="preserve" name="ImportExport">
+    <value>Import/Export</value>
+  </data>
+  <data xml:space="preserve" name="JsonFilesFilterName">
+    <value>JSON-Dateien</value>
+  </data>
+  <data xml:space="preserve" name="NotInstalled">
+    <value>nicht installiert</value>
+  </data>
+  <data xml:space="preserve" name="ValueIsRequired">
+    <value>Ein Wert ist erforderlich.</value>
+  </data>
+  <data xml:space="preserve" name="TrayHandler_UpdateTrayIcon_BuildFailing">
+    <value>WhatsON - Mindestens ein Build ist fehlgeschlagen</value>
+  </data>
+  <data xml:space="preserve" name="TrayHandler_UpdateTrayIcon_Unstable">
+    <value>WhatsON - Mindestens ein Build ist instabil</value>
+  </data>
+  <data xml:space="preserve" name="TrayHandler_UpdateTrayIcon_Pending">
+    <value>WhatsON - Build-Status wird geprüft</value>
+  </data>
+  <data xml:space="preserve" name="TrayHandler_UpdateTrayIcon_NoProjects">
+    <value>WhatsON - Keine Projekte konfiguriert</value>
+  </data>
+  <data xml:space="preserve" name="TrayHandler_UpdateTrayIcon_Normal">
+    <value>WhatsON - Alle Builds in Ordnung</value>
+  </data>
+</root>

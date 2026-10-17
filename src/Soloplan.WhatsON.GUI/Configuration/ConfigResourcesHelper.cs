@@ -1,14 +1,13 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ConfigResourcesHelper.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.GUI.Configuration
 {
   using System;
-  using System.Collections;
   using System.Collections.Generic;
   using System.Reflection;
   using System.Resources;
@@ -28,17 +27,14 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// <summary>
     /// The cache for captions. The key is the resource tag.
     /// </summary>
-    private static Dictionary<string, string> captionsCache;
+    private static Dictionary<string, string>? captionsCache;
 
     /// <summary>
     /// Applies the configuration resources.
     /// </summary>
     /// <param name="configurationItemAttribute">The configuration item attribute.</param>
     /// <param name="connectorType">Type of the connector.</param>
-    public static void ApplyConfigResources(ConfigurationItemAttribute configurationItemAttribute, Type connectorType)
-    {
-      ApplyCaptionConfigResources(configurationItemAttribute, connectorType);
-    }
+    public static void ApplyConfigResources(ConfigurationItemAttribute configurationItemAttribute, Type connectorType) => ApplyCaptionConfigResources(configurationItemAttribute, connectorType);
 
     /// <summary>
     /// Applies the caption configuration resources.
@@ -52,9 +48,10 @@ namespace Soloplan.WhatsON.GUI.Configuration
         captionsCache = new Dictionary<string, string>();
       }
 
-      if (captionsCache.ContainsKey(configurationItemAttribute.Key))
+      var cacheKey = $"{System.Globalization.CultureInfo.CurrentUICulture.Name}:{connectorType.FullName}:{configurationItemAttribute.Key}";
+      if (captionsCache.ContainsKey(cacheKey))
       {
-        configurationItemAttribute.Caption = captionsCache[configurationItemAttribute.Key];
+        configurationItemAttribute.Caption = captionsCache[cacheKey];
         return;
       }
 
@@ -64,7 +61,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
       var currentAsemblyResourceResult = GetConfigResourceByName(configurationItemAttribute.Key, typeof(ConnectorViewModel).Assembly);
       if (currentAsemblyResourceResult != null)
       {
-        captionsCache[configurationItemAttribute.Key] = currentAsemblyResourceResult;
+        captionsCache[cacheKey] = currentAsemblyResourceResult;
         configurationItemAttribute.Caption = currentAsemblyResourceResult;
         return;
       }
@@ -79,7 +76,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
         if (connectorsAssemblyResourceResult != null)
         {
           configurationItemAttribute.Caption = connectorsAssemblyResourceResult;
-          captionsCache[configurationItemAttribute.Key] = connectorsAssemblyResourceResult;
+          captionsCache[cacheKey] = connectorsAssemblyResourceResult;
           return;
         }
       }
@@ -95,7 +92,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
           if (parentTypeAsemblyResourceResult != null)
           {
             configurationItemAttribute.Caption = parentTypeAsemblyResourceResult;
-            captionsCache[configurationItemAttribute.Key] = parentTypeAsemblyResourceResult;
+            captionsCache[cacheKey] = parentTypeAsemblyResourceResult;
             return;
           }
         }
@@ -108,28 +105,19 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// <param name="resourceName">Name of the resource.</param>
     /// <param name="assemblyForResourceDiscovery">The assembly for resource discovery.</param>
     /// <returns>The resource from the configuration resource file.</returns>
-    private static string GetConfigResourceByName(string resourceName, Assembly assemblyForResourceDiscovery)
+    private static string? GetConfigResourceByName(string resourceName, Assembly assemblyForResourceDiscovery)
     {
-      using (var resourceStream = assemblyForResourceDiscovery.GetManifestResourceStream($"{assemblyForResourceDiscovery.GetName().Name}.Properties.{ConfigurationItemsFileName}.resources"))
+      try
       {
-        if (resourceStream == null)
-        {
-          return null;
-        }
-
-        using (var resXReader = new ResourceReader(resourceStream))
-        {
-          foreach (DictionaryEntry resEntry in resXReader)
-          {
-            if ((string)resEntry.Key == resourceName)
-            {
-              return (string)resEntry.Value;
-            }
-          }
-        }
+        var resourceManager = new ResourceManager(
+          $"{assemblyForResourceDiscovery.GetName().Name}.Properties.{ConfigurationItemsFileName}",
+          assemblyForResourceDiscovery);
+        return resourceManager.GetString(resourceName);
       }
-
-      return null;
+      catch (MissingManifestResourceException)
+      {
+        return null;
+      }
     }
   }
 }

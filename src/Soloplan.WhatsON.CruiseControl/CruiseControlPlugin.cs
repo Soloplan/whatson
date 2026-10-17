@@ -10,7 +10,11 @@ namespace Soloplan.WhatsON.CruiseControl
   using System;
   using System.Collections.Generic;
   using System.Linq;
+  using System.Net;
+  using System.Net.Http;
   using System.Threading.Tasks;
+  using System.Xml;
+  using System.Xml.Serialization;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.CruiseControl.Model;
@@ -18,15 +22,14 @@ namespace Soloplan.WhatsON.CruiseControl
 
   public class CruiseControlPlugin : ConnectorPlugin
   {
+    private static readonly HttpClient discoveryClient = new HttpClient();
+
     public CruiseControlPlugin()
       : base(typeof(CruiseControlConnector))
     {
     }
 
-    public override Connector CreateNew(ConnectorConfiguration configuration, bool? checkRedirect = null)
-    {
-      return new CruiseControlConnector(configuration);
-    }
+    public override Connector CreateNew(ConnectorConfiguration configuration, bool? checkRedirect = null) => new CruiseControlConnector(configuration);
 
     /// <summary>
     /// Gets the projects.
@@ -35,29 +38,32 @@ namespace Soloplan.WhatsON.CruiseControl
     /// <returns>
     /// The projects from the server.
     /// </returns>
-    public override async Task<IList<Project>> GetProjects(string address)
+    public override async Task<IList<Project>?> GetProjects(string address)
     {
       var result = new List<Project>();
-      var server = CruiseControlManager.GetServer(address, false);
-      CruiseControlJobs allProjects = null;
-      try
+      using var response = await discoveryClient.GetAsync(CruiseControlServer.UrlHelper.GetXmlReportUrl(address));
+      if (response.StatusCode == HttpStatusCode.NotFound)
       {
-        allProjects = await server.GetAllProjects();
-      }
-      catch (Exception ex)
-      {
-        throw ex;
+        return null;
       }
 
-      if (allProjects == null)
+      response.EnsureSuccessStatusCode();
+      using var stream = await response.Content.ReadAsStreamAsync();
+      using var reader = XmlReader.Create(stream);
+      reader.MoveToContent();
+      if (reader.LocalName != "Projects" || reader.NamespaceURI.Length != 0)
       {
-        throw new Exception();
+        return null;
       }
 
+      var allProjects = (CruiseControlJobs?)new XmlSerializer(typeof(CruiseControlJobs)).Deserialize(reader);
       var serverProjects = new List<Project>();
-      foreach (var project in allProjects.CruiseControlProject)
+      foreach (var project in allProjects?.CruiseControlProject ?? Array.Empty<CruiseControlJob>())
       {
-        var serverProjectTreeItem = new Project(address, project.Name, address + "server/" + project.ServerName + "/project/" + project.Name + "/ViewProjectReport.aspx");
+        var serverProjectTreeItem = new Project(
+          address,
+          project.Name ?? string.Empty,
+          address + "server/" + project.ServerName + "/project/" + project.Name + "/ViewProjectReport.aspx");
         if (string.IsNullOrWhiteSpace(project.ServerName))
         {
           result.Add(serverProjectTreeItem);
@@ -67,7 +73,12 @@ namespace Soloplan.WhatsON.CruiseControl
           var serverProject = serverProjects.FirstOrDefault(s => s.Name == project.ServerName);
           if (serverProject == null)
           {
-            serverProject = new Project(null, project.ServerName, address + "server/" + project.ServerName + "/viewServerReport.aspx", project.Name, address + "server/" + project.ServerName + "/project/" + project.Name);
+            serverProject = new Project(
+              null,
+              project.ServerName,
+              address + "server/" + project.ServerName + "/viewServerReport.aspx",
+              project.Name ?? string.Empty,
+              address + "server/" + project.ServerName + "/project/" + project.Name);
             serverProjects.Add(serverProject);
             result.Add(serverProject);
           }
@@ -86,7 +97,7 @@ namespace Soloplan.WhatsON.CruiseControl
     /// <param name="project">The server project.</param>
     /// <param name="configurationItemsSupport">The configuration items provider.</param>
     /// <param name="serverAddress">The server address.</param>
-    public override void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress = null)
+    public override void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string? serverAddress = null)
     {
       configurationItemsSupport.GetConfigurationByKey(Connector.ProjectName).Value = project.Name;
       configurationItemsSupport.GetConfigurationByKey(Connector.ServerAddress).Value = project.Address;

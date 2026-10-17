@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Soloplan.WhatsON.CruiseControl\Soloplan.WhatsON.CruiseControl.csproj" />
+  </ItemGroup>
+</Project>

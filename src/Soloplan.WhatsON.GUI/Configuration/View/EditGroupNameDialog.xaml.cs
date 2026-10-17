@@ -1,7 +1,9 @@
-﻿// <copyright file="EditGroupNameDialog.xaml.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="EditGroupNameDialog.xaml.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.GUI.Configuration.View
 {
@@ -21,12 +23,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     }
 
     public EditGroupNameDialog(GroupViewModel model)
-    : this()
+      : this()
     {
       this.DataContext = model;
     }
 
-    private void OkButtonClick(object sender, System.Windows.RoutedEventArgs e)
+    private void OkButtonClick(object? sender, System.Windows.RoutedEventArgs e)
     {
       foreach (var be in BindingOperations.GetSourceUpdatingBindings(this))
       {
@@ -39,7 +41,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
       }
     }
 
-    private void CancelButtonClick(object sender, System.Windows.RoutedEventArgs e)
+    private void CancelButtonClick(object? sender, System.Windows.RoutedEventArgs e)
     {
       foreach (var be in BindingOperations.GetSourceUpdatingBindings(this))
       {

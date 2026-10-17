@@ -1,7 +1,9 @@
-﻿// <copyright file="ConnectorTypeAttribute.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ConnectorTypeAttribute.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.Composition
 {
@@ -13,6 +15,7 @@ namespace Soloplan.WhatsON.Composition
     public ConnectorTypeAttribute(string name)
     {
       this.Name = name;
+      this.DisplayName = name;
     }
 
     public ConnectorTypeAttribute(string name, string displayName)
@@ -21,10 +24,10 @@ namespace Soloplan.WhatsON.Composition
       this.DisplayName = displayName;
     }
 
-    public string Name { get; }
+    public string Description { get; set; } = string.Empty;
 
     public string DisplayName { get; }
 
-    public string Description { get; set; }
+    public string Name { get; }
   }
 }

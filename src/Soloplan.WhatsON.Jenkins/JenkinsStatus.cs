@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="JenkinsStatus.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -14,13 +14,13 @@ namespace Soloplan.WhatsON.Jenkins
   public class JenkinsStatus : Status
   {
     public JenkinsStatus(ObservationState state)
-    : base(state)
+      : base(state)
     {
     }
 
-    public string DisplayName { get; set; }
+    public string? DisplayName { get; set; }
 
-    public IList<JenkinsUser> CommittedToThisBuild { get; set; }
+    public IList<JenkinsUser> CommittedToThisBuild { get; set; } = new List<JenkinsUser>();
 
     public IList<JenkinsUser> Culprits { get; set; } = new List<JenkinsUser>();
   }

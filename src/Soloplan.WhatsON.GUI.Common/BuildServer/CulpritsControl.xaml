@@ -5,26 +5,26 @@
              xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:common="clr-namespace:Soloplan.WhatsON.GUI.Common"
-             xmlns:converters="clr-namespace:Soloplan.WhatsON.GUI.Common.Converters"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
   <UserControl.Resources>
-    <converters:CountToVisibilityConverter x:Key="CountToVisibility" />
+    <BooleanToVisibilityConverter x:Key="HasContributors" />
   </UserControl.Resources>
 
-  <StackPanel Visibility="{Binding CulpritsProp, Mode=OneWay, Converter={StaticResource CountToVisibility}}">
-    <TextBlock Text="{Binding Caption}" />
-    <ItemsControl ItemsSource="{Binding CulpritsProp}">
+  <StackPanel Margin="0,8,0,0" Visibility="{Binding HasItems, ElementName=Contributors, Converter={StaticResource HasContributors}}">
+    <TextBlock Text="{Binding Caption}" Foreground="{DynamicResource SettingsMuted}" FontSize="11" Margin="0,0,0,3" TextWrapping="Wrap" />
+    <ItemsControl x:Name="Contributors" ItemsSource="{Binding CulpritsProp}">
       <ItemsControl.ItemTemplate>
         <DataTemplate>
-          <StackPanel Orientation="Horizontal">
-            <TextBlock Text="👤 " />
-            <TextBlock Text="{Binding FullName}" />
-          </StackPanel>
+          <DockPanel Margin="0,2,0,0">
+            <materialDesign:PackIcon Kind="AccountOutline" Width="14" Height="14" Margin="0,2,6,0"
+                                     DockPanel.Dock="Left" Foreground="{DynamicResource SettingsMuted}" />
+            <TextBlock Text="{Binding FullName}" TextWrapping="Wrap" />
+          </DockPanel>
         </DataTemplate>
       </ItemsControl.ItemTemplate>
     </ItemsControl>
-    <TextBlock Text="" />
   </StackPanel>
 </UserControl>

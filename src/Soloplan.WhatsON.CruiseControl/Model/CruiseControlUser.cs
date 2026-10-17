@@ -9,6 +9,6 @@ namespace Soloplan.WhatsON.CruiseControl.Model
 {
   public class CruiseControlUser
   {
-    public string Name { get; set; }
+    public string? Name { get; set; }
   }
 }

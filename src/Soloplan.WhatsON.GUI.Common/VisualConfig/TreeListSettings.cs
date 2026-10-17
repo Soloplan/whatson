@@ -11,6 +11,6 @@ namespace Soloplan.WhatsON.GUI.Common.VisualConfig
 
   public class TreeListSettings
   {
-    public IList<GroupExpansionSettings> GroupExpansions { get; set; }
+    public IList<GroupExpansionSettings> GroupExpansions { get; set; } = new List<GroupExpansionSettings>();
   }
 }

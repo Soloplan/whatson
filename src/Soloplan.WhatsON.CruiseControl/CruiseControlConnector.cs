@@ -16,17 +16,22 @@ namespace Soloplan.WhatsON.CruiseControl
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.CruiseControl.Model;
+  using Soloplan.WhatsON.Localization;
   using Soloplan.WhatsON.Model;
 
-  [ConnectorType(ConnectorName, ConnectorDisplayName, Description = "Retrieve the current status of a Cruise Control project.")]
-  [NotificationConfigurationItem(NotificationsVisbility, typeof(ConnectorNotificationConfiguration), SupportsUnstableNotify = false, Priority = 1600000000)]
+  [ConnectorType(ConnectorName, ConnectorDisplayName, Description = nameof(Strings.CruiseControlDescription))]
+  [NotificationConfigurationItem(
+    NotificationsVisbility,
+    typeof(ConnectorNotificationConfiguration),
+    SupportsUnstableNotify = false,
+    Priority = 1600000000)]
   public class CruiseControlConnector : Connector
   {
     public const string ConnectorName = "CruiseControl";
 
     public const string ConnectorDisplayName = "Cruise Control.Net";
 
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
     private TimeSpan estimatedDuration = default;
 
@@ -39,37 +44,32 @@ namespace Soloplan.WhatsON.CruiseControl
     /// Checks correctness of self server URL.
     /// </summary>
     /// <returns>true when fine, false when url is broken.</returns>
-    public override async Task<bool> CheckServerURL()
-    {
-      return await this.IsReachableUrl(this.Address);
-    }
+    public override async Task<bool> CheckServerURL() => await this.IsReachableUrl(this.Address);
 
     /// <summary>
     /// Checks correctness of self project URL.
     /// </summary>
     /// <returns>true when fine, false when url is broken.</returns>
-    public override async Task<bool> CheckProjectURL()
-    {
-      return await this.IsReachableUrl(this.directAddress);
-    }
+    public override async Task<bool> CheckProjectURL() => await this.IsReachableUrl(this.directAddress);
 
-    protected override async Task<Status> GetCurrentStatus(CancellationToken cancellationToken)
+    protected override async Task<Status?> GetCurrentStatus(CancellationToken cancellationToken)
     {
       var server = CruiseControlManager.GetServer(this.directAddress);
       var projectData = await server.GetProjectStatus(cancellationToken, this.Project, 5);
       if (projectData == null)
       {
-        if (await this.CheckServerURL() == false)
+        if (!await this.CheckServerURL())
         {
           var status = new Status();
-          status.ErrorMessage = "Server not available";
+          status.ErrorMessage = Strings.ServerNotAvailable;
           status.InvalidBuild = true;
           return status;
         }
-        else if (await this.CheckProjectURL() == false)
+
+        if (!await this.CheckProjectURL())
         {
           var status = new Status();
-          status.ErrorMessage = "Project not available";
+          status.ErrorMessage = Strings.ProjectNotAvailable;
           status.InvalidBuild = true;
           return status;
         }
@@ -78,7 +78,7 @@ namespace Soloplan.WhatsON.CruiseControl
       if (projectData == null)
       {
         var status = new Status();
-        status.ErrorMessage = "Project not available";
+        status.ErrorMessage = Strings.ProjectNotAvailable;
         status.InvalidBuild = true;
         return status;
       }
@@ -86,7 +86,7 @@ namespace Soloplan.WhatsON.CruiseControl
       if (projectData.LastBuildLabel == null)
       {
         var status = new Status();
-        status.ErrorMessage = "No builds yet";
+        status.ErrorMessage = Strings.NoBuildsYet;
         status.InvalidBuild = true;
         return status;
       }
@@ -95,10 +95,10 @@ namespace Soloplan.WhatsON.CruiseControl
       return this.CreateStatus(projectData);
     }
 
-    protected override async Task<List<Status>> GetHistory(CancellationToken cancellationToken)
+    protected override async Task<List<Status?>> GetHistory(CancellationToken cancellationToken)
     {
       var server = CruiseControlManager.GetServer(this.directAddress);
-      var history = new List<Status>();
+      var history = new List<Status?>();
 
       var builds = await server.GetBuilds(this.Project);
 
@@ -111,18 +111,22 @@ namespace Soloplan.WhatsON.CruiseControl
     }
 
     /// <summary>
-    /// Creates statuses other then <see cref="ObservationState.Running"/> based on <paramref name="projectData"/>. Running build must be handled separately.
+    /// Creates statuses other then <see cref="ObservationState.Running" /> based on <paramref name="projectData" />. Running
+    /// build must be handled separately.
     /// </summary>
     /// <param name="projectData">Data retrieved from server.</param>
-    /// <returns>Appropriate <see cref="ObservationState"/>.</returns>
+    /// <returns>Appropriate <see cref="ObservationState" />.</returns>
     private static ObservationState CcStatusToObservationStatus(CruiseControlJob projectData)
     {
-      if (projectData.LastBuildStatus == CcBuildStatus.Success && projectData.MessageList.MessagesSafe.All(msg => msg.Kind != MessageKind.FailingTasks && msg.Kind != MessageKind.Breakers && msg.Kind != MessageKind.BuildAbortedBy))
+      var messages = projectData.MessageList?.MessagesSafe ?? Array.Empty<Message>();
+      var hasFailureMessages = messages.Any(msg =>
+        msg.Kind == MessageKind.FailingTasks || msg.Kind == MessageKind.Breakers || msg.Kind == MessageKind.BuildAbortedBy);
+      if (projectData.LastBuildStatus == CcBuildStatus.Success && !hasFailureMessages)
       {
         return ObservationState.Success;
       }
 
-      if (projectData.LastBuildStatus == CcBuildStatus.Failure || projectData.LastBuildStatus == CcBuildStatus.Exception || projectData.MessageList.MessagesSafe.Any(msg => msg.Kind != MessageKind.FailingTasks && msg.Kind != MessageKind.Breakers))
+      if (projectData.LastBuildStatus == CcBuildStatus.Failure || projectData.LastBuildStatus == CcBuildStatus.Exception || hasFailureMessages)
       {
         return ObservationState.Failure;
       }
@@ -146,10 +150,10 @@ namespace Soloplan.WhatsON.CruiseControl
 
     private static void SetCulprits(CruiseControlJob job, CruiseControlStatus result)
     {
-      var breakers = job.MessageList.MessagesSafe.Where(msg => msg.Kind == MessageKind.Breakers);
+      var breakers = (job.MessageList?.MessagesSafe ?? Array.Empty<Message>()).Where(msg => msg.Kind == MessageKind.Breakers);
       foreach (var breakersLine in breakers)
       {
-        foreach (var breaker in breakersLine.Text.Split(',').Select(brk => brk.Trim()).Where(brk => !string.IsNullOrEmpty(brk)))
+        foreach (var breaker in (breakersLine.Text ?? string.Empty).Split(',').Select(brk => brk.Trim()).Where(brk => !string.IsNullOrEmpty(brk)))
         {
           if (result.Culprits.Any(brk => brk.Name == breaker))
           {
@@ -222,8 +226,11 @@ namespace Soloplan.WhatsON.CruiseControl
     private class ActivityConstants
     {
       public const string Building = "Building";
+
       public const string Sleeping = "Sleeping";
+
       public const string CheckingModifications = "CheckingModifications";
+
       public const string Pending = "Pending";
     }
   }

@@ -18,7 +18,7 @@ namespace Soloplan.WhatsON.GUI.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.1.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -97,8 +97,8 @@ namespace Soloplan.WhatsON.GUI.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;nlog xmlns=&quot;http://www.nlog-project.org/schemas/NLog.xsd&quot;
-        ///      xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+        ///&lt;nlog xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+        ///      xmlns=&quot;http://www.nlog-project.org/schemas/NLog.xsd&quot;
         ///      autoReload=&quot;true&quot;
         ///      throwExceptions=&quot;true&quot;
         ///      keepVariablesOnReload=&quot;true&quot;&gt;
@@ -131,6 +131,15 @@ namespace Soloplan.WhatsON.GUI.Properties {
         public static string TrayHandler_UpdateTrayIcon_BuildFailing {
             get {
                 return ResourceManager.GetString("TrayHandler_UpdateTrayIcon_BuildFailing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to WhatsON - No projects configured.
+        /// </summary>
+        public static string TrayHandler_UpdateTrayIcon_NoProjects {
+            get {
+                return ResourceManager.GetString("TrayHandler_UpdateTrayIcon_NoProjects", resourceCulture);
             }
         }
         

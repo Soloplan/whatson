@@ -1,14 +1,14 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="IConfigurationItemProvider.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.Configuration
 {
   /// <summary>
-  /// Gives support to access <see cref="IConfigurationItem"/>s.
+  /// Gives support to access <see cref="IConfigurationItem" />s.
   /// </summary>
   public interface IConfigurationItemProvider
   {

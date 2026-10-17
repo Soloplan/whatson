@@ -1,7 +1,9 @@
-﻿// <copyright file="App.xaml.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="App.xaml.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.GUI
 {
@@ -30,47 +32,43 @@ namespace Soloplan.WhatsON.GUI
     /// <summary>
     /// Logger instance used by this class.
     /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
     /// <summary>
     /// The theme helper.
     /// </summary>
     private readonly ThemeHelper themeHelper = new ThemeHelper();
 
-    private ApplicationConfiguration config;
+    private ApplicationConfiguration config = new ApplicationConfiguration();
 
-    private ObservationScheduler scheduler;
+    private ObservationScheduler scheduler = new ObservationScheduler();
 
-    private TrayHandler handler;
+    private TrayHandler? handler;
 
     /// <summary>
     /// Gets a value indicating whether dark theme is enabled.
     /// </summary>
     /// <value>
-    ///   <c>true</c> if dark theme is enabled; otherwise, <c>false</c>.
+    /// <c>true</c> if dark theme is enabled; otherwise, <c>false</c>.
     /// </value>
     public bool IsDarkThemeEnabled { get; private set; }
+
+    public ApplicationTheme CurrentThemeMode { get; private set; } = ApplicationTheme.System;
 
     /// <summary>
     /// Applies the theme in a given mode.
     /// When the mode is not set, it is taken from the current configuration.
     /// </summary>
-    /// <param name="isDark">The is dark.</param>
-    public void ApplyTheme(bool? isDark = null)
+    /// <param name="mode">An optional appearance preference to preview.</param>
+    public void ApplyTheme(ApplicationTheme? mode = null)
     {
-      if (isDark == null)
-      {
-        isDark = this.config.DarkThemeEnabled;
-      }
-
-      this.IsDarkThemeEnabled = isDark.Value;
-      this.themeHelper.ApplyLightDarkMode(isDark.Value);
+      this.CurrentThemeMode = mode ?? this.config?.ThemeMode ?? ApplicationTheme.System;
+      this.IsDarkThemeEnabled = ThemeHelper.IsDarkMode(this.CurrentThemeMode, ThemeHelper.SystemUsesDarkMode());
+      this.themeHelper.ApplyLightDarkMode(this.IsDarkThemeEnabled);
     }
 
     protected override void OnStartup(StartupEventArgs e)
     {
-      System.Globalization.CultureInfo.CurrentCulture = new CultureInfo("en-US");
-      System.Globalization.CultureInfo.CurrentUICulture = new CultureInfo("en-US");
       var configDirArg = e.Args.FirstOrDefault(a => a.ToLower().StartsWith(ConfigDirArgName.ToLower()));
       if (configDirArg != null)
       {
@@ -85,6 +83,10 @@ namespace Soloplan.WhatsON.GUI
       ExceptionHandlingInitialization.Initialize();
 
       this.config = SerializationHelper.Instance.LoadOrCreateConfiguration();
+      Localizer.ApplyLanguage(this.config.Language);
+      FrameworkElement.LanguageProperty.OverrideMetadata(
+        typeof(FrameworkElement),
+        new FrameworkPropertyMetadata(System.Windows.Markup.XmlLanguage.GetLanguage(CultureInfo.CurrentUICulture.IetfLanguageTag)));
       this.scheduler = new ObservationScheduler();
 
       // call the plugins with the application args, so plugins can process them
@@ -110,6 +112,7 @@ namespace Soloplan.WhatsON.GUI
       this.handler = new TrayHandler(this.scheduler, this.config);
       this.themeHelper.Initialize(this.handler.VisualSettings?.ColorSettings);
       this.ApplyTheme();
+      Microsoft.Win32.SystemEvents.UserPreferenceChanged += this.SystemAppearanceChanged;
 
       if (!this.config.OpenMinimized)
       {
@@ -130,16 +133,28 @@ namespace Soloplan.WhatsON.GUI
     /// <param name="e">Event args.</param>
     protected override void OnExit(ExitEventArgs e)
     {
+      Microsoft.Win32.SystemEvents.UserPreferenceChanged -= this.SystemAppearanceChanged;
       this.scheduler.Stop(true);
-      this.handler.Dispose();
+      this.handler?.Dispose();
       base.OnExit(e);
+    }
+
+    private void SystemAppearanceChanged(object? sender, Microsoft.Win32.UserPreferenceChangedEventArgs e)
+    {
+      this.Dispatcher.InvokeAsync(() =>
+      {
+        if (this.CurrentThemeMode == ApplicationTheme.System)
+        {
+          this.ApplyTheme(ApplicationTheme.System);
+        }
+      });
     }
 
     private void ComponentDispatcherThreadPreprocessMessage(ref MSG msg, ref bool handled)
     {
       if (msg.message == 0x10)
       {
-        System.Windows.Application.Current.Shutdown();
+        Current.Shutdown();
       }
     }
   }
