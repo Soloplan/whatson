@@ -26,6 +26,7 @@ A build monitoring tool written in C#.
 - [Plugins](#plugins)
 - [Documentation](#documentation)
 - [Contribiution](#contribution)
+- [Working with coding agents](#working-with-coding-agents)
 - [Creators](#creators)
 - [License](#License)
 
@@ -70,6 +71,11 @@ By default, it allows to monitor these servers:
  
  See also [contribution guidelines](https://github.com/Soloplan/whatson/wiki/Contribiution).
  
+## Working with coding agents
+
+See [AGENTS.md](AGENTS.md) for the repository layout, Windows build prerequisites,
+build and test commands, coding conventions, and agent coordination guidance.
+
  ## Creators
 
 **Christian Heidl**
