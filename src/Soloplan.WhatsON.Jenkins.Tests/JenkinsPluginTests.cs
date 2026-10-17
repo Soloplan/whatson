@@ -33,13 +33,12 @@ namespace Soloplan.WhatsON.Jenkins.Tests
           var configuration = new ConnectorConfiguration(
             "Jenkins",
             name,
-            new List<ConfigurationItem>
-            {
+            [
               new ConfigurationItem(Connector.ProjectName, $"product-releases/{name}"),
               new ConfigurationItem(Connector.ServerAddress, address),
               new ConfigurationItem(JenkinsConnector.RedirectPlugin, redirect),
               new ConfigurationItem(Connector.Category, "Product release"),
-            });
+            ]);
           var saved = JsonConvert.SerializeObject(configuration);
           var imported = JsonConvert.DeserializeObject<ConnectorConfiguration>(saved) ?? throw new AssertionException("Deserialization returned null.");
 

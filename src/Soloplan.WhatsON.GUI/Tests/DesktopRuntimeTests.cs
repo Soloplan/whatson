@@ -56,7 +56,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       Assert.That(app.Resources["MaterialDesignPaper"], Is.Not.Null);
 
       var plugins = PluginManager.Instance.Plugins;
-      Assert.That(plugins.OfType<ConnectorPlugin>().Select(plugin => plugin.Name), Is.EquivalentTo(new[] { "Jenkins", "CruiseControl" }));
+      Assert.That(plugins.OfType<ConnectorPlugin>().Select(plugin => plugin.Name), Is.EquivalentTo(["Jenkins", "CruiseControl"]));
       var presentationPlugins = plugins.OfType<PresentationPlugin>().ToList();
       Assert.That(presentationPlugins, Has.Count.EqualTo(2));
       foreach (var plugin in presentationPlugins)
@@ -144,11 +144,10 @@ namespace Soloplan.WhatsON.GUI.Tests
         new ConnectorConfiguration(
           "Jenkins",
           "Application build",
-          new List<ConfigurationItem>
-          {
+          [
             new ConfigurationItem(Connector.ServerAddress) { Value = "https://ci.example.invalid" },
             new ConfigurationItem(Connector.ProjectName) { Value = "main" },
-          }));
+          ]));
       var populatedSettings = new ConfigWindow(projectSettings, new WindowSettings());
       try
       {
@@ -186,7 +185,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       using (var factory = new LogFactory())
       {
         var loggingConfiguration = XmlLoggingConfiguration.CreateFromXmlString(reader.ReadToEnd(), factory);
-        Assert.That(loggingConfiguration.AllTargets.Select(target => target.Name), Is.EquivalentTo(new[] { "whatsONMainLog", "whatsONConsoleLog" }));
+        Assert.That(loggingConfiguration.AllTargets.Select(target => target.Name), Is.EquivalentTo(["whatsONMainLog", "whatsONConsoleLog"]));
       }
     }
 
@@ -242,11 +241,10 @@ namespace Soloplan.WhatsON.GUI.Tests
         new ConnectorConfiguration(
           "Jenkins",
           "Main",
-          new List<ConfigurationItem>
-          {
+          [
             new ConfigurationItem(Connector.ServerAddress) { Value = "https://build.example.invalid" },
             new ConfigurationItem(Connector.ProjectName) { Value = "main" },
-          })) ?? throw new AssertionException("Expected connector plugin was not found.");
+          ])) ?? throw new AssertionException("Expected connector plugin was not found.");
       connector.CurrentStatus = new Status { Name = "Main", State = ObservationState.Success };
       var queryCompleted = typeof(NotificationsModel).GetMethod(
         "SchedulerStatusQueried",
@@ -255,7 +253,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       notifications.StatusChanged += (sender, args) => changes.Add((sender, args.PropertyName));
       for (var iteration = 0; iteration < 3; iteration++)
       {
-        queryCompleted.Invoke(notifications, new object?[] { null, connector });
+        queryCompleted.Invoke(notifications, [null, connector]);
         Assert.That(changes.Last().Sender, Is.SameAs(notifications.Connectors.Single().CurrentStatus));
         Assert.That(changes.Last().Property, Is.EqualTo(nameof(ConnectorViewModel.CurrentStatus)));
       }
@@ -340,7 +338,7 @@ namespace Soloplan.WhatsON.GUI.Tests
         item.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
       }
 
-      Assert.That(new[] { settingsClicks, projectClicks, importClicks, groupClicks }, Is.EqualTo(new[] { 1, 1, 1, 1 }));
+      Assert.That(new[] { settingsClicks, projectClicks, importClicks, groupClicks }, Is.EqualTo([1, 1, 1, 1]));
       var closed = false;
       System.ComponentModel.CancelEventHandler cancelClose = (_, e) => e.Cancel = true;
       target.Closing += cancelClose;

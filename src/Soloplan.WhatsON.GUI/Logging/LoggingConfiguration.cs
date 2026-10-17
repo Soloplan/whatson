@@ -98,7 +98,7 @@ namespace Soloplan.WhatsON.GUI.Logging
         }
 
         var filePath = Path.Combine(configDir, ConfigFileName);
-        File.WriteAllLines(filePath, new[] { Resources.LogConfig }, Encoding.UTF8);
+        File.WriteAllLines(filePath, [Resources.LogConfig], Encoding.UTF8);
         return filePath;
       }
       catch (Exception)

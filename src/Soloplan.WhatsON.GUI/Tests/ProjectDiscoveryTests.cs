@@ -67,11 +67,10 @@ namespace Soloplan.WhatsON.GUI.Tests
         var jenkinsQuery = new JenkinsPlugin().GetProjects(server.Address);
         var cruiseControlQuery = new CruiseControlPlugin().GetProjects(server.Address);
         var discovered = await WizardController.DiscoverProjects(
-          new[]
-          {
+          [
             new DiscoveryPlugin(() => jenkinsQuery, typeof(JenkinsConnector)),
             new DiscoveryPlugin(() => cruiseControlQuery, typeof(CruiseControlConnector)),
-          },
+          ],
           server.Address,
           TimeSpan.FromSeconds(5));
         await Task.WhenAll(jenkinsQuery, cruiseControlQuery);
@@ -153,7 +152,7 @@ namespace Soloplan.WhatsON.GUI.Tests
 
       await connector.QueryStatus(CancellationToken.None);
 
-      Assert.That(connector.Snapshots.Select(snapshot => snapshot.Status.BuildNumber), Is.EqualTo(new[] { 6, 5, 4, 3, 2 }));
+      Assert.That(connector.Snapshots.Select(snapshot => snapshot.Status.BuildNumber), Is.EqualTo([6, 5, 4, 3, 2]));
       Assert.That(server.Requests, Has.Count.EqualTo(1));
       Assert.That(Uri.UnescapeDataString(server.Requests.Single()), Does.Contain("builds[").And.EndWith("{0,6}"));
 
@@ -247,7 +246,7 @@ namespace Soloplan.WhatsON.GUI.Tests
           ? await shared.GetProjectStatus(CancellationToken.None, "Second", 60)
           : await second.WaitAsync(TimeSpan.FromSeconds(5));
         Assert.That(secondStatus?.LastBuildLabel, Is.EqualTo("2"));
-        Assert.That(server.Requests, Is.EquivalentTo(new[] { "/XmlStatusReport.aspx" }));
+        Assert.That(server.Requests, Is.EquivalentTo(["/XmlStatusReport.aspx"]));
       }
       finally
       {
@@ -290,7 +289,7 @@ namespace Soloplan.WhatsON.GUI.Tests
     {
       await using var server = new DiscoveryServer { Respond = path => ("404 Not Found", "text/plain", "Missing") };
       var query = WizardController.DiscoverProjects(
-        new ConnectorPlugin[] { new JenkinsPlugin(), new CruiseControlPlugin() }, server.Address, TimeSpan.FromSeconds(10));
+        [new JenkinsPlugin(), new CruiseControlPlugin()], server.Address, TimeSpan.FromSeconds(10));
 
       Assert.That(await Task.WhenAny(query, Task.Delay(1000)), Is.SameAs(query));
       Assert.ThrowsAsync<InvalidOperationException>(async () => await query);
@@ -344,7 +343,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       var failure = new DiscoveryPlugin(() => throw new HttpRequestException("Not a matching API"));
       var success = new DiscoveryPlugin(() => Task.FromResult<IList<Project>?>(projects));
 
-      var discovered = await WizardController.DiscoverProjects(new[] { failure, success }, "https://build.example.invalid/", TimeSpan.FromSeconds(1));
+      var discovered = await WizardController.DiscoverProjects([failure, success], "https://build.example.invalid/", TimeSpan.FromSeconds(1));
 
       Assert.That(discovered.Plugin, Is.SameAs(success));
       Assert.That(discovered.Projects, Is.SameAs(projects));
@@ -355,7 +354,7 @@ namespace Soloplan.WhatsON.GUI.Tests
     {
       var completion = new TaskCompletionSource<IList<Project>?>(TaskCreationOptions.RunContinuationsAsynchronously);
       var query = WizardController.DiscoverProjects(
-        new[] { new DiscoveryPlugin(() => completion.Task) }, "https://build.example.invalid/", TimeSpan.FromMilliseconds(30));
+        [new DiscoveryPlugin(() => completion.Task)], "https://build.example.invalid/", TimeSpan.FromMilliseconds(30));
       try
       {
         Assert.That(await Task.WhenAny(query, Task.Delay(1000)), Is.SameAs(query));
@@ -425,7 +424,7 @@ namespace Soloplan.WhatsON.GUI.Tests
 
       public string Address { get; }
 
-      public ConcurrentBag<string> Requests { get; } = new ConcurrentBag<string>();
+      public ConcurrentBag<string> Requests { get; } = [];
 
       public Func<string, (string Status, string ContentType, string Body)> Respond { get; set; } = _ => ("404 Not Found", "text/plain", "Not found");
 

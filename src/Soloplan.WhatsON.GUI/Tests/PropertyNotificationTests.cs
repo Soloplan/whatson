@@ -64,13 +64,13 @@ namespace Soloplan.WhatsON.GUI.Tests
       var jenkinsChanges = Observe(jenkins);
       jenkins.CulpritsAndLastCommittedDifferent = true;
       jenkins.CulpritsAndLastCommittedDifferent = true;
-      Assert.That(jenkinsChanges, Is.EqualTo(new[] { nameof(jenkins.CulpritsAndLastCommittedDifferent) }));
+      Assert.That(jenkinsChanges, Is.EqualTo([nameof(jenkins.CulpritsAndLastCommittedDifferent)]));
 
       var cruiseControl = new CruiseControlStatusViewModel(new ConnectorViewModel());
       var cruiseControlChanges = Observe(cruiseControl);
       cruiseControl.BuildTimeUnknown = true;
       cruiseControl.BuildTimeUnknown = true;
-      Assert.That(cruiseControlChanges, Is.EqualTo(new[] { nameof(cruiseControl.BuildTimeUnknown) }));
+      Assert.That(cruiseControlChanges, Is.EqualTo([nameof(cruiseControl.BuildTimeUnknown)]));
     }
 
     [Test]
@@ -283,7 +283,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       changes.Clear();
       model.ConnectorGroups.Add(second);
       Assert.That(model.OneGroup, Is.False);
-      Assert.That(changes, Is.EqualTo(new[] { nameof(model.OneGroup) }));
+      Assert.That(changes, Is.EqualTo([nameof(model.OneGroup)]));
       changes.Clear();
       model.ConnectorGroups.Remove(first);
       Assert.That(model.OneGroup, Is.True);

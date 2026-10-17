@@ -86,17 +86,17 @@ namespace Soloplan.WhatsON.GUI.Tests
     public void AProjectWithoutCompletedHistoryKeepsItsActualState(ObservationState current)
     {
       Assert.That(TrayHandler.GetEffectiveState(current, new ObservationState[0]), Is.EqualTo(current));
-      Assert.That(TrayHandler.GetEffectiveState(current, new[] { ObservationState.Running, ObservationState.Unknown }), Is.EqualTo(current));
+      Assert.That(TrayHandler.GetEffectiveState(current, [ObservationState.Running, ObservationState.Unknown]), Is.EqualTo(current));
     }
 
     [Test]
-    public void AFailingProjectRemainsVisibleWhileOtherProjectsAreStillLoading() => Assert.That(TrayHandler.GetOverallState(new[] { ObservationState.Unknown, ObservationState.Failure }, 5), Is.EqualTo(ObservationState.Failure));
+    public void AFailingProjectRemainsVisibleWhileOtherProjectsAreStillLoading() => Assert.That(TrayHandler.GetOverallState([ObservationState.Unknown, ObservationState.Failure], 5), Is.EqualTo(ObservationState.Failure));
 
     [Test]
     public void AnUnstableProjectRemainsVisibleWhileOtherProjectsAreStillLoading()
     {
       Assert.That(
-        TrayHandler.GetOverallState(new[] { ObservationState.Unstable, ObservationState.Unknown }, 5),
+        TrayHandler.GetOverallState([ObservationState.Unstable, ObservationState.Unknown], 5),
         Is.EqualTo(ObservationState.Unstable));
     }
 

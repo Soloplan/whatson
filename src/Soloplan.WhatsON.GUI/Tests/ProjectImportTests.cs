@@ -47,13 +47,12 @@ namespace Soloplan.WhatsON.GUI.Tests
         .Select(name => new ConnectorConfiguration(
           "Jenkins",
           name,
-          new List<ConfigurationItem>
-          {
+          [
             new ConfigurationItem(Connector.ServerAddress, "https://build.example.invalid/"),
             new ConfigurationItem(Connector.ProjectName, "product/" + name),
             new ConfigurationItem("RedirectPlugin", "True"),
             new ConfigurationItem(Connector.Category, "Product release"),
-          })).ToList();
+          ])).ToList();
       var filePath = Path.Combine(this.directory, "projects.json");
       SerializationHelper.Instance.Save(importedProjects, filePath, false);
 
@@ -62,7 +61,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       var restartedSerializer = new SerializationHelper();
       restartedSerializer.SetConfigFolder(this.directory);
       var restored = restartedSerializer.LoadOrCreateConfiguration();
-      Assert.That(restored.ConnectorsConfiguration.Select(project => project.Name), Is.EqualTo(new[] { "Existing", "release/net", "release/installer", "release/image" }));
+      Assert.That(restored.ConnectorsConfiguration.Select(project => project.Name), Is.EqualTo(["Existing", "release/net", "release/installer", "release/image"]));
       Assert.That(restored.ConnectorsConfiguration.Select(project => project.Identifier), Is.EqualTo(configuration.ConnectorsConfiguration.Select(project => project.Identifier)));
       Assert.That(restored.ConnectorsConfiguration.Select(project => project.Identifier), Is.Unique);
       Assert.That(restored.ConnectorsConfiguration.First().Identifier, Is.EqualTo(existingProject.Identifier));
@@ -91,7 +90,7 @@ namespace Soloplan.WhatsON.GUI.Tests
 
       Assert.That(() => new ProjectsDataInterchange().Import(configuration, filePath), Throws.Exception);
 
-      Assert.That(configuration.ConnectorsConfiguration, Is.EqualTo(new[] { existingProject }));
+      Assert.That(configuration.ConnectorsConfiguration, Is.EqualTo([existingProject]));
       Assert.That(File.ReadAllText(SerializationHelper.Instance.ConfigFile), Is.EqualTo(saved));
     }
 
@@ -110,7 +109,7 @@ namespace Soloplan.WhatsON.GUI.Tests
         Assert.That(() => new ProjectsDataInterchange().Import(configuration, filePath), Throws.InstanceOf<IOException>());
       }
 
-      Assert.That(configuration.ConnectorsConfiguration, Is.EqualTo(new[] { existingProject }));
+      Assert.That(configuration.ConnectorsConfiguration, Is.EqualTo([existingProject]));
       Assert.That(File.ReadAllText(SerializationHelper.Instance.ConfigFile), Is.EqualTo(saved));
     }
 

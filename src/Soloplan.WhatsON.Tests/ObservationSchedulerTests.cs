@@ -225,7 +225,7 @@ namespace Soloplan.WhatsON.Tests
       this.scheduler.Start();
       await Await(completed.Task);
 
-      Assert.That(observed.Keys, Is.EquivalentTo(new[] { first, second }));
+      Assert.That(observed.Keys, Is.EquivalentTo([first, second]));
     }
 
     private static async Task<T> Await<T>(Task<T> task)

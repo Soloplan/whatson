@@ -128,8 +128,8 @@ namespace Soloplan.WhatsON.Jenkins
           else if (batch.Count > 1)
           {
             var middle = batch.Count / 2;
-            await Load(batch.Take(middle).ToArray(), compact);
-            await Load(batch.Skip(middle).ToArray(), compact);
+            await Load([.. batch.Take(middle)], compact);
+            await Load([.. batch.Skip(middle)], compact);
           }
           else
           {
@@ -165,7 +165,7 @@ namespace Soloplan.WhatsON.Jenkins
         while (queue.Count > 0 && batch.Count < MaximumJobsPerRequest)
         {
           var next = queue.Peek();
-          if (batch.Count > 0 && Encoding.UTF8.GetByteCount(PollingRequest(batch.Append(next).ToArray(), false).AbsoluteUri) > MaximumUrlBytes)
+          if (batch.Count > 0 && Encoding.UTF8.GetByteCount(PollingRequest([.. batch, next], false).AbsoluteUri) > MaximumUrlBytes)
           {
             break;
           }

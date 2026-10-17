@@ -147,12 +147,12 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var alice = new JenkinsUser { FullName = "Alice", AbsoluteUrl = "https://builds.example/user/alice" };
       var bob = new JenkinsUser { FullName = "Bob" };
       var build = ApiHelper.GetBuild(ObservationState.Failure, 1);
-      build.Culprits = new[] { bob };
-      build.ChangeSets = new[]
-      {
-        new ChangeSet { ChangeSetItems = new[] { new ChangeSetItem { Author = alice }, new ChangeSetItem { Author = bob } } },
-        new ChangeSet { ChangeSetItems = new[] { new ChangeSetItem { Author = new JenkinsUser { FullName = "Alice" } } } },
-      };
+      build.Culprits = [bob];
+      build.ChangeSets =
+      [
+        new ChangeSet { ChangeSetItems = [new ChangeSetItem { Author = alice }, new ChangeSetItem { Author = bob }] },
+        new ChangeSet { ChangeSetItems = [new ChangeSetItem { Author = new JenkinsUser { FullName = "Alice" } }] },
+      ];
       var api = new FakeJenkinsApi();
       api.JobRequest += (sender, args) => args.Result = new JenkinsJob { LastBuild = build };
       var connector = new JenkinsConnector(Configuration(), api);
@@ -160,9 +160,9 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       await connector.QueryStatus(CancellationToken.None);
 
       var status = connector.CurrentStatus as JenkinsStatus ?? throw new AssertionException("Expected a JenkinsStatus.");
-      Assert.That(status.CommittedToThisBuild.Select(author => author.FullName), Is.EquivalentTo(new[] { "Alice", "Bob" }));
+      Assert.That(status.CommittedToThisBuild.Select(author => author.FullName), Is.EquivalentTo(["Alice", "Bob"]));
       Assert.That(status.CommittedToThisBuild.Single(author => author.FullName == "Alice").AbsoluteUrl, Is.EqualTo(alice.AbsoluteUrl));
-      Assert.That(status.Culprits, Is.EqualTo(new[] { bob }));
+      Assert.That(status.Culprits, Is.EqualTo([bob]));
     }
 
     [TestCase(false)]
@@ -216,7 +216,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       await connector.QueryStatus(CancellationToken.None);
       await connector.QueryStatus(CancellationToken.None);
 
-      Assert.That(connector.Snapshots.Select(s => s.Status.BuildNumber), Is.EqualTo(new[] { 6, 5, 4, 3, 2 }));
+      Assert.That(connector.Snapshots.Select(s => s.Status.BuildNumber), Is.EqualTo([6, 5, 4, 3, 2]));
       Assert.That(historyRequests, Is.EqualTo(1));
     }
 
@@ -297,14 +297,17 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       api.JobRequest += (sender, args) =>
       {
         args.Result = ApiHelper.GetProject(ObservationState.Running, 8);
-        args.Result.Builds = Enumerable.Range(3, 6).Reverse()
-          .Select(number => ApiHelper.GetBuild(number >= 6 ? ObservationState.Running : ObservationState.Success, number)).ToList();
+        args.Result.Builds =
+        [
+          .. Enumerable.Range(3, 6).Reverse()
+            .Select(number => ApiHelper.GetBuild(number >= 6 ? ObservationState.Running : ObservationState.Success, number)),
+        ];
       };
       var connector = new JenkinsConnector(Configuration(), api);
 
       await connector.QueryStatus(CancellationToken.None);
 
-      Assert.That(connector.Snapshots.Select(snapshot => snapshot.Status.BuildNumber), Is.EqualTo(new[] { 5, 4, 3 }));
+      Assert.That(connector.Snapshots.Select(snapshot => snapshot.Status.BuildNumber), Is.EqualTo([5, 4, 3]));
     }
 
     [Test]

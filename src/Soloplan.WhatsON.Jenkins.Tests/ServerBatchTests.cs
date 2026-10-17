@@ -41,9 +41,9 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       };
       var first = CreateConnector(api, "Broken");
       var second = CreateConnector(api, "Working");
-      var queried = await first.QueryStatusBatch(new Connector[] { first, second }, CancellationToken.None);
+      var queried = await first.QueryStatusBatch([first, second], CancellationToken.None);
 
-      Assert.That(queried, Is.EquivalentTo(new[] { second }));
+      Assert.That(queried, Is.EquivalentTo([second]));
       Assert.That(first.CurrentStatus, Is.Null);
       Assert.That(second.CurrentStatus?.BuildNumber, Is.EqualTo(3));
     }
@@ -100,9 +100,9 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       Assert.That(first.CurrentStatus, Is.Null);
       Assert.That(second.CurrentStatus, Is.Null);
 
-      Assert.That(await first.QueryStatusBatch(batch, CancellationToken.None), Is.EquivalentTo(new[] { second }));
+      Assert.That(await first.QueryStatusBatch(batch, CancellationToken.None), Is.EquivalentTo([second]));
       clock.Advance(TimeSpan.FromSeconds(10));
-      Assert.That(await first.QueryStatusBatch(batch, CancellationToken.None), Is.EquivalentTo(new[] { first }));
+      Assert.That(await first.QueryStatusBatch(batch, CancellationToken.None), Is.EquivalentTo([first]));
     }
 
     [Test]
@@ -119,7 +119,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
           result.Jobs[connector] = new JenkinsJob
           {
             LastBuild = ApiHelper.GetBuild(ObservationState.Success, 8),
-            Builds = Enumerable.Range(3, 6).Reverse().Select(number => ApiHelper.GetBuild(number == 7 && running ? ObservationState.Running : ObservationState.Success, number)).ToList(),
+            Builds = [.. Enumerable.Range(3, 6).Reverse().Select(number => ApiHelper.GetBuild(number == 7 && running ? ObservationState.Running : ObservationState.Success, number))],
           };
         }
 
@@ -128,12 +128,12 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var project = CreateConnector(api, "Release", clock);
       var batch = new Connector[] { project };
       await project.QueryStatusBatch(batch, CancellationToken.None);
-      Assert.That(project.Snapshots.Select(snapshot => snapshot.Status.BuildNumber), Is.EqualTo(new[] { 8, 6, 5, 4, 3 }));
+      Assert.That(project.Snapshots.Select(snapshot => snapshot.Status.BuildNumber), Is.EqualTo([8, 6, 5, 4, 3]));
       running = false;
       clock.Advance(TimeSpan.FromMinutes(5));
       await project.QueryStatusBatch(batch, CancellationToken.None);
 
-      Assert.That(project.Snapshots.Select(snapshot => snapshot.Status.BuildNumber), Is.EqualTo(new[] { 8, 7, 6, 5, 4 }));
+      Assert.That(project.Snapshots.Select(snapshot => snapshot.Status.BuildNumber), Is.EqualTo([8, 7, 6, 5, 4]));
     }
 
     [TestCase(true, 1, 30000, 0, false, 10)]

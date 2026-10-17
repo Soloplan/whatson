@@ -38,13 +38,12 @@ namespace Soloplan.WhatsON.GUI.Tests
             var settings = new ConnectorConfiguration(
               index < 3 ? "Jenkins" : "CruiseControl",
               "Project with a long name that must yield space to build information " + index,
-              new List<ConfigurationItem>
-              {
+              [
                 new ConfigurationItem(Connector.ServerAddress, "https://build.example.invalid/"),
                 new ConfigurationItem(Connector.DirectAddress, "https://build.example.invalid/"),
                 new ConfigurationItem(Connector.ProjectName, "release/main"),
                 new ConfigurationItem(Connector.Category, index < 3 ? "Application" : "Delivery"),
-              });
+              ]);
             configuration.ConnectorsConfiguration.Add(settings);
             var connector = PluginManager.Instance.GetConnector(settings) ?? throw new AssertionException("Expected connector plugin was not found.");
             connector.IsDisabled = index == 0;
@@ -143,18 +142,18 @@ namespace Soloplan.WhatsON.GUI.Tests
             Assert.That(disabledModel.CurrentStatus?.State, Is.EqualTo(ObservationState.Success));
             Assert.That(disabledModel.ConnectorSnapshots.Count, Is.EqualTo(5));
             var toggleSelection = typeof(ConnectorsTreeView).GetMethod("OnCtrlProjectClicked", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected member was not found.");
-            toggleSelection.Invoke(control, new[] { selectedRow.DataContext });
+            toggleSelection.Invoke(control, [selectedRow.DataContext]);
             Assert.That(selectedRow.Background, Is.SameAs(app.Resources["SettingsSelection"]));
             Assert.That(selectedRow.Foreground, Is.SameAs(app.Resources["MaterialDesignBody"]));
             var secondRow = (TreeViewItem)firstGroup.ItemContainerGenerator.ContainerFromIndex(1);
-            toggleSelection.Invoke(control, new[] { secondRow.DataContext });
+            toggleSelection.Invoke(control, [secondRow.DataContext]);
             Assert.That(secondRow.Background, Is.SameAs(selectedRow.Background), "Ctrl-selection keeps both rows highlighted.");
             app.ApplyTheme(theme == ApplicationTheme.Dark ? ApplicationTheme.Light : ApplicationTheme.Dark);
             Assert.That(selectedRow.Background, Is.SameAs(app.Resources["SettingsSelection"]), "Selection follows live theme changes.");
-            toggleSelection.Invoke(control, new[] { selectedRow.DataContext });
+            toggleSelection.Invoke(control, [selectedRow.DataContext]);
             Assert.That(selectedRow.ReadLocalValue(Control.BackgroundProperty), Is.EqualTo(DependencyProperty.UnsetValue));
             Assert.That(secondRow.Background, Is.SameAs(app.Resources["SettingsSelection"]));
-            toggleSelection.Invoke(control, new[] { secondRow.DataContext });
+            toggleSelection.Invoke(control, [secondRow.DataContext]);
             app.ApplyTheme(theme);
           }
           finally

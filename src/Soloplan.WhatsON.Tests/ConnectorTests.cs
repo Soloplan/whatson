@@ -26,7 +26,7 @@ namespace Soloplan.WhatsON.Tests
       await connector.QueryStatus(CancellationToken.None);
       await connector.QueryStatus(CancellationToken.None);
 
-      Assert.That(connector.Snapshots.Select(s => s.Status.BuildNumber), Is.EqualTo(new[] { 1 }));
+      Assert.That(connector.Snapshots.Select(s => s.Status.BuildNumber), Is.EqualTo([1]));
       Assert.That(connector.CurrentStatus, Is.SameAs(status));
     }
 
@@ -84,7 +84,7 @@ namespace Soloplan.WhatsON.Tests
       await connector.QueryStatus(CancellationToken.None);
       await connector.QueryStatus(CancellationToken.None);
 
-      Assert.That(connector.Snapshots.Select(s => s.Status.BuildNumber), Is.EqualTo(new[] { 3, 2, 1 }));
+      Assert.That(connector.Snapshots.Select(s => s.Status.BuildNumber), Is.EqualTo([3, 2, 1]));
       Assert.That(connector.HistoryRequests, Is.EqualTo(1));
     }
 
@@ -97,7 +97,7 @@ namespace Soloplan.WhatsON.Tests
         connector.AddSnapshot(new Status(ObservationState.Success) { BuildNumber = number, Time = new DateTime(2020, 1, number) });
       }
 
-      Assert.That(connector.Snapshots.Select(s => s.Status.BuildNumber), Is.EqualTo(new[] { 4, 3, 2, 1 }));
+      Assert.That(connector.Snapshots.Select(s => s.Status.BuildNumber), Is.EqualTo([4, 3, 2, 1]));
     }
 
     [Test]
@@ -109,7 +109,7 @@ namespace Soloplan.WhatsON.Tests
         connector.AddSnapshot(new Status(ObservationState.Success) { BuildNumber = number, Time = new DateTime(2020, 1, number) });
       }
 
-      Assert.That(connector.Snapshots.Select(s => s.Status.BuildNumber), Is.EqualTo(new[] { 8, 7, 6, 5, 4 }));
+      Assert.That(connector.Snapshots.Select(s => s.Status.BuildNumber), Is.EqualTo([8, 7, 6, 5, 4]));
     }
 
     [Test]

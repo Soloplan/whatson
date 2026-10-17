@@ -164,8 +164,8 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
 
       var history = await this.server.GetBuilds("Release", 2);
 
-      Assert.That(history.Select(b => b.BuildNumber), Is.EqualTo(new[] { 3, 2 }));
-      Assert.That(history.Select(b => b.Status), Is.EqualTo(new[] { CcBuildStatus.Success, CcBuildStatus.Failure }));
+      Assert.That(history.Select(b => b.BuildNumber), Is.EqualTo([3, 2]));
+      Assert.That(history.Select(b => b.Status), Is.EqualTo([CcBuildStatus.Success, CcBuildStatus.Failure]));
     }
 
     [TestCase("Success", ObservationState.Success)]
@@ -242,7 +242,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
 
       await connector.QueryStatus(CancellationToken.None);
 
-      Assert.That((connector.CurrentStatus as CruiseControlStatus ?? throw new AssertionException("Expected a CruiseControlStatus.")).Culprits.Select(c => c.Name), Is.EquivalentTo(new[] { "Alice", "Bob", "Carol" }));
+      Assert.That((connector.CurrentStatus as CruiseControlStatus ?? throw new AssertionException("Expected a CruiseControlStatus.")).Culprits.Select(c => c.Name), Is.EquivalentTo(["Alice", "Bob", "Carol"]));
     }
 
     [TestCase("Breakers")]
@@ -319,10 +319,10 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
 
       await connector.QueryStatus(CancellationToken.None);
 
-      Assert.That(connector.Snapshots.Select(s => s.Status.BuildNumber), Is.EqualTo(new[] { 3, 2, 1 }));
+      Assert.That(connector.Snapshots.Select(s => s.Status.BuildNumber), Is.EqualTo([3, 2, 1]));
       Assert.That(
         connector.Snapshots.Select(s => s.Status.State),
-        Is.EqualTo(new[] { ObservationState.Success, ObservationState.Failure, ObservationState.Success }));
+        Is.EqualTo([ObservationState.Success, ObservationState.Failure, ObservationState.Success]));
     }
 
     private static void WaitForClockTick()

@@ -297,7 +297,7 @@ namespace Soloplan.WhatsON
             {
               if (item.Key == "Address")
               {
-                item.Value = address.Split(new[] { "server/" }, StringSplitOptions.None)[0];
+                item.Value = address.Split(["server/"], StringSplitOptions.None)[0];
               }
             }
           }
@@ -344,7 +344,7 @@ namespace Soloplan.WhatsON
       protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
       {
         var resultProperties = base.CreateProperties(type, memberSerialization);
-        resultProperties = resultProperties.Where(p => !this.properties.Contains(p.PropertyName)).ToList();
+        resultProperties = [.. resultProperties.Where(p => !this.properties.Contains(p.PropertyName))];
         return resultProperties;
       }
     }

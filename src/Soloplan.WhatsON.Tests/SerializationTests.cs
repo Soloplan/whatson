@@ -88,7 +88,7 @@ namespace Soloplan.WhatsON.Tests
         Assert.That(
           imported.ConnectorsConfiguration.Select(c => c.Identifier).Intersect(configuration.ConnectorsConfiguration.Select(c => c.Identifier)),
           Is.Empty);
-        Assert.That(imported.ConnectorsConfiguration.Select(c => c.Name), Is.EqualTo(new[] { "First", "Second" }));
+        Assert.That(imported.ConnectorsConfiguration.Select(c => c.Name), Is.EqualTo(["First", "Second"]));
       });
     }
 
@@ -129,7 +129,7 @@ namespace Soloplan.WhatsON.Tests
 
       var configuration = this.serializer.LoadConfiguration();
 
-      Assert.That(configuration.ConnectorsConfiguration.Select(c => c.Name), Is.EqualTo(new[] { "First", "Second" }));
+      Assert.That(configuration.ConnectorsConfiguration.Select(c => c.Name), Is.EqualTo(["First", "Second"]));
     }
 
     [TestCase("Soloplan.WhatsON.Jenkins.JenkinsPlugin", "Jenkins")]

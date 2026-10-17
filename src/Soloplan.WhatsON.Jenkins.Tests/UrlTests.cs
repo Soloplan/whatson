@@ -115,11 +115,10 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var config = new ConnectorConfiguration(
         JenkinsConnector.ConnectorName,
         "my project",
-        new List<ConfigurationItem>
-        {
+        [
           new ConfigurationItem(Connector.ServerAddress) { Value = "https://www.my-little-jenkins.com" },
           new ConfigurationItem(Connector.ProjectName) { Value = "my-fancy-build-project" },
-        });
+        ]);
 
       var connector = new JenkinsConnector(config, api);
 
@@ -135,11 +134,10 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var config = new ConnectorConfiguration(
         JenkinsConnector.ConnectorName,
         "my project",
-        new List<ConfigurationItem>
-        {
+        [
           new ConfigurationItem(Connector.ServerAddress) { Value = "https://www.my-little-jenkins.com" },
           new ConfigurationItem(Connector.ProjectName) { Value = "folder/my-fancy-build-project" },
-        });
+        ]);
 
       var connector = new JenkinsConnector(config, api);
 
@@ -155,11 +153,10 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var config = new ConnectorConfiguration(
         JenkinsConnector.ConnectorName,
         "my project",
-        new List<ConfigurationItem>
-        {
+        [
           new ConfigurationItem(Connector.ServerAddress) { Value = "https://www.my-little-jenkins.com" },
           new ConfigurationItem(Connector.ProjectName) { Value = "playground/strâng335 sads== Jöb NAME" },
-        });
+        ]);
 
       var connector = new JenkinsConnector(config, api);
 
@@ -175,11 +172,10 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var config = new ConnectorConfiguration(
         JenkinsConnector.ConnectorName,
         "my project",
-        new List<ConfigurationItem>
-        {
+        [
           new ConfigurationItem(Connector.ServerAddress) { Value = "https://www.my-little-jenkins.com" },
           new ConfigurationItem(Connector.ProjectName) { Value = "folder1/job/folder2/job/my-job" },
-        });
+        ]);
 
       var connector = new JenkinsConnector(config, api);
 
