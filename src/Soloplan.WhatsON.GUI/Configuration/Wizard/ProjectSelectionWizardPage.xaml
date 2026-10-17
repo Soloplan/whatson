@@ -18,7 +18,7 @@
         <TextBlock Text="{Binding ProposedServerAddress}" Style="{StaticResource SettingsDescription}"
                    TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" />
       </StackPanel>
-      <TextBox x:Name="searchTextBox" Grid.Column="1" MinHeight="36" VerticalAlignment="Center"
+      <TextBox x:Name="searchTextBox" Grid.Column="1" VerticalAlignment="Center"
                materialDesign:HintAssist.Hint="{live:Text loc:Strings.FilterProjectFolder}"
                Text="{Binding DataContext.SearchText, ElementName=projectsTreeView, UpdateSourceTrigger=PropertyChanged, Delay=250}"
                AutomationProperties.Name="{live:Text loc:Strings.FilterProjectFolder}" />

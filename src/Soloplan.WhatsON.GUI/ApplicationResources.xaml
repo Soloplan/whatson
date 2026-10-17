@@ -12,6 +12,10 @@
       Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Blue.xaml" />
     <ResourceDictionary Source="Configuration/ConfigurationStyles.xaml" />
   </ResourceDictionary.MergedDictionaries>
+  <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignTextBox}">
+    <Setter Property="MinHeight" Value="32" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+  </Style>
   <Style x:Key="ToolTipMessage" TargetType="TextBlock">
     <Setter Property="TextWrapping" Value="Wrap" />
     <Setter Property="Margin" Value="0,6,0,0" />

@@ -63,7 +63,7 @@
                      Margin="0,0,0,4" />
           <TextBlock Text="{live:Text loc:Strings.BackupSettingsDescription}"
                      Style="{StaticResource SettingsDescription}" Margin="0,0,0,12" />
-          <TextBox x:Name="ConfigFile" IsReadOnly="True" MinHeight="36" FontSize="12"
+          <TextBox x:Name="ConfigFile" IsReadOnly="True" FontSize="12"
                    AutomationProperties.Name="{live:Text loc:Strings.ConfigurationFileLocation}"
                    ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
           <StackPanel Orientation="Horizontal" Margin="0,16,0,0">

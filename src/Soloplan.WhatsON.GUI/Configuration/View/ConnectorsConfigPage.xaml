@@ -29,7 +29,7 @@
         </StackPanel>
       </DockPanel>
       <StackPanel Grid.Row="1">
-        <TextBox x:Name="uxName" Margin="0,0,0,20" MinHeight="40"
+        <TextBox x:Name="uxName" Margin="0,0,0,20"
                  materialDesign:HintAssist.Hint="{live:Text loc:Strings.ProjectName}"
                  AutomationProperties.Name="{live:Text loc:Strings.ProjectName}"
                  Style="{StaticResource MaterialDesignFloatingHintTextBox}"

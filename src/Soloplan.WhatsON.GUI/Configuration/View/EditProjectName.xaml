@@ -15,7 +15,7 @@
       <TextBlock Text="{live:Text loc:Strings.RenameProject}" Style="{StaticResource SettingsSectionHeading}" />
       <Label Content="{live:Text loc:Strings.ProjectName}" Target="{Binding ElementName=ProjectName}" Padding="0"
              FontWeight="SemiBold" Margin="0,0,0,6" />
-      <TextBox x:Name="ProjectName" MinHeight="40" AutomationProperties.Name="{live:Text loc:Strings.ProjectName}">
+      <TextBox x:Name="ProjectName" AutomationProperties.Name="{live:Text loc:Strings.ProjectName}">
         <TextBox.Text>
           <Binding Path="Name" UpdateSourceTrigger="PropertyChanged">
             <Binding.ValidationRules>

@@ -11,7 +11,7 @@
       <TextBlock Text="{live:Text loc:Strings.GroupDetails}" Style="{StaticResource SettingsSectionHeading}" />
       <Label Content="{live:Text loc:Strings.GroupName}" Target="{Binding ElementName=uxEditGroupName}" Padding="0"
              FontWeight="SemiBold" Margin="0,0,0,6" />
-      <TextBox x:Name="uxEditGroupName" MinHeight="40" AutomationProperties.Name="{live:Text loc:Strings.GroupName}">
+      <TextBox x:Name="uxEditGroupName" AutomationProperties.Name="{live:Text loc:Strings.GroupName}">
         <TextBox.Text>
           <Binding Path="Name" UpdateSourceTrigger="Explicit">
             <Binding.ValidationRules>
