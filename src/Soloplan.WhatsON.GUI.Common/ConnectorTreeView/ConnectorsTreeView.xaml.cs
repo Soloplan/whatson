@@ -735,31 +735,26 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
+    /// Keeps group menus on the whole header row, including its padding and expander.
+    /// </summary>
+    private void UpdateRowContextMenu(Border row)
+    {
+      row.ContextMenu = row.DataContext is ConnectorGroupViewModel ? (ContextMenu)this.FindResource("BaseTreeMenuImpl") : null;
+    }
+
+    private void OnRowLoaded(object sender, RoutedEventArgs e) => this.UpdateRowContextMenu((Border)sender);
+
+    private void OnRowDataContextChanged(object sender, DependencyPropertyChangedEventArgs e) => this.UpdateRowContextMenu((Border)sender);
+
+    /// <summary>
     /// Defines behavoiour when RMB is used.
     /// </summary>
     /// <param name="sender">sender item.</param>
     /// <param name="e">event args.</param>
     private void OnTreeItemRightMouseDown(object? sender, MouseButtonEventArgs e)
     {
-      var item = sender as TreeViewItem;
-      try
-      {
-        var connector = new ConnectorViewModel();
-        if (item == null)
-        {
-          return;
-        }
-
-        connector = (ConnectorViewModel)item.Header;
-        foreach (var selectedItem in this.selectedConnectors)
-        {
-          if (selectedItem.Identifier == connector.Identifier)
-          {
-            return;
-          }
-        }
-      }
-      catch
+      if (sender is not TreeViewItem { Header: ConnectorViewModel connector } ||
+          this.selectedConnectors.Any(selected => selected.Identifier == connector.Identifier))
       {
         return;
       }

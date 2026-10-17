@@ -177,6 +177,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       VerifyNotificationBindings();
       VerifyTrayNotificationForwarding();
       ProjectListChecks.Verify(app);
+      GroupContextMenuChecks.Verify(app);
       ToolTipChecks.Verify(app);
       LiveLocalizationChecks.Verify(app);
       VerifyHandledExceptionsAreNotLoggedAsErrors();

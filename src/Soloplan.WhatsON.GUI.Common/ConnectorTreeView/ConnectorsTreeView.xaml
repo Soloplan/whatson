@@ -28,7 +28,8 @@
         <Setter Property="TextElement.FontSize" Value="11" />
         <Setter Property="TextElement.FontWeight" Value="SemiBold" />
       </Style>
-      <ContextMenu x:Key="BaseTreeMenuImpl">
+      <ContextMenu x:Key="BaseTreeMenuImpl" x:Shared="False"
+                   DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
         <MenuItem CommandParameter="Rename" Command="{Binding RenameCommand}">
           <MenuItem.Header>
             <StackPanel Orientation="Horizontal">
@@ -57,7 +58,7 @@
 
       <HierarchicalDataTemplate DataType="{x:Type local:ConnectorGroupViewModel}"
                                 ItemsSource="{Binding ConnectorViewModels}">
-        <Grid ContextMenu="{StaticResource BaseTreeMenuImpl}" MinHeight="26">
+        <Grid MinHeight="26">
           <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
           <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
             <TextBlock Text="{Binding GroupName}" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" />
@@ -118,6 +119,7 @@
               <Grid>
                 <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
                 <Border x:Name="Row" Background="{TemplateBinding Background}" CornerRadius="7"
+                        Loaded="OnRowLoaded" DataContextChanged="OnRowDataContextChanged"
                         BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
                         Padding="{TemplateBinding Padding}" Margin="0,2,0,0" SnapsToDevicePixels="True">
                   <Grid>
