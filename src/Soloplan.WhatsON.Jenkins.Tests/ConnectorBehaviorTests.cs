@@ -245,12 +245,14 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       latestNumber = 13;
       await connector.QueryStatus(CancellationToken.None);
 
+      int[] expectedBuildNumbers = middleBuildDeleted ? [12, 10, 9, 8, 7] : [12, 11, 10, 9, 8];
+
       Assert.Multiple(() =>
       {
         Assert.That(connector.CurrentStatus?.State, Is.EqualTo(ObservationState.Running));
         Assert.That(
           connector.Snapshots.Select(s => s.Status.BuildNumber),
-          Is.EqualTo(middleBuildDeleted ? new[] { 12, 10, 9, 8, 7 } : new[] { 12, 11, 10, 9, 8 }));
+          Is.EqualTo(expectedBuildNumbers));
         Assert.That(connector.Snapshots.First().Status.State, Is.EqualTo(ObservationState.Failure));
         Assert.That(connector.Snapshots.All(s => s.Status.State != ObservationState.Running), Is.True);
         Assert.That(historyRequests, Is.EqualTo(2), "Startup and a polling gap each need at most one history batch.");
