@@ -7,6 +7,10 @@
 
 namespace Soloplan.WhatsON.GUI.Tests
 {
+  using System.Collections.Generic;
+  using System.Reflection;
+  using System.Threading;
+  using System.Windows.Forms;
   using NUnit.Framework;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
@@ -26,7 +30,7 @@ namespace Soloplan.WhatsON.GUI.Tests
     /// <param name="states">The states.</param>
     /// <param name="configuredConnectorCount">The configured connector count.</param>
     /// <returns>A <see cref="ObservationState"/>.</returns>
-    [TestCase(new ObservationState[0], 0, ExpectedResult = ObservationState.Success)]
+    [TestCase(new ObservationState[0], 0, ExpectedResult = ObservationState.Unknown)]
     [TestCase(new ObservationState[0], 1, ExpectedResult = ObservationState.Unknown)]
     [TestCase(new[] { ObservationState.Success }, 1, ExpectedResult = ObservationState.Success)]
     [TestCase(new[] { ObservationState.Success }, 2, ExpectedResult = ObservationState.Unknown)]
@@ -38,6 +42,31 @@ namespace Soloplan.WhatsON.GUI.Tests
     public ObservationState GetOverallStateTest(ObservationState[] states, int configuredConnectorCount)
     {
       return TrayHandler.GetOverallState(states, configuredConnectorCount);
+    }
+
+    [Test]
+    [Apartment(ApartmentState.STA)]
+    public void EmptyConfigurationHasANeutralIconAndAnExplicitTooltip()
+    {
+      var configuration = new ApplicationConfiguration { OpenMinimized = true };
+      using (var tray = new TrayHandler(new ObservationScheduler(), configuration))
+      {
+        var icon = (NotifyIcon)typeof(TrayHandler).GetField("icon", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(tray);
+        var neutralIcon = typeof(TrayHandler).GetField("loadingIcon", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(tray);
+        var update = typeof(TrayHandler).GetMethod("UpdateTrayIcon", BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.That(icon.Icon, Is.SameAs(neutralIcon), "An empty configuration must not show a green success badge.");
+        Assert.That(icon.Text, Is.EqualTo("WhatsON - No projects configured"));
+
+        configuration.ConnectorsConfiguration.Add(new ConnectorConfiguration("Jenkins", "Unloaded project", new List<ConfigurationItem>()));
+        update.Invoke(tray, null);
+        Assert.That(icon.Icon, Is.SameAs(neutralIcon));
+        Assert.That(icon.Text, Is.EqualTo("WhatsON - Checking build status"));
+
+        configuration.ConnectorsConfiguration.Clear();
+        update.Invoke(tray, null);
+        Assert.That(icon.Icon, Is.SameAs(neutralIcon));
+        Assert.That(icon.Text, Is.EqualTo("WhatsON - No projects configured"));
+      }
     }
 
     /// <summary>

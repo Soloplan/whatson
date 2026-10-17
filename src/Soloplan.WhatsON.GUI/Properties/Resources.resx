@@ -154,6 +154,9 @@
   <data name="TrayHandler_UpdateTrayIcon_Pending" xml:space="preserve">
       <value>WhatsON - Checking build status</value>
   </data>
+  <data name="TrayHandler_UpdateTrayIcon_NoProjects" xml:space="preserve">
+      <value>WhatsON - No projects configured</value>
+  </data>
   <data name="TrayHandler_UpdateTrayIcon_Normal" xml:space="preserve">
       <value>WhatsON - All builds normal</value>
   </data>

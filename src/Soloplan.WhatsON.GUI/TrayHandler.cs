@@ -46,7 +46,7 @@ namespace Soloplan.WhatsON.GUI
     private NotifyIcon icon;
 
     /// <summary>
-    /// The icon displayed when build-status is pending.
+    /// The unbadged icon displayed when build-status is pending or no projects are configured.
     /// </summary>
     private Icon loadingIcon;
 
@@ -213,10 +213,15 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="states">Current connector states.</param>
     /// <param name="configuredConnectorCount">Number of configured connectors expected to report a state.</param>
-    /// <returns>Failure if any build is failing, unstable if any build is unstable, unknown while statuses are pending, otherwise success.</returns>
+    /// <returns>Failure if any build is failing, unstable if any build is unstable, unknown when no statuses are available or statuses are pending, otherwise success.</returns>
     internal static ObservationState GetOverallState(System.Collections.Generic.IEnumerable<ObservationState> states, int configuredConnectorCount)
     {
       var currentStates = states.ToList();
+      if (currentStates.Count == 0)
+      {
+        return ObservationState.Unknown;
+      }
+
       if (currentStates.Contains(ObservationState.Failure))
       {
         return ObservationState.Failure;
@@ -515,7 +520,9 @@ namespace Soloplan.WhatsON.GUI
           break;
         case ObservationState.Unknown:
           this.icon.Icon = this.loadingIcon;
-          this.icon.Text = Resources.TrayHandler_UpdateTrayIcon_Pending;
+          this.icon.Text = this.configuration.ConnectorsConfiguration.Count == 0
+            ? Resources.ResourceManager.GetString("TrayHandler_UpdateTrayIcon_NoProjects", Resources.Culture)
+            : Resources.TrayHandler_UpdateTrayIcon_Pending;
           break;
         default:
           this.icon.Icon = this.normalIcon;
