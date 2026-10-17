@@ -8,6 +8,7 @@
 namespace Soloplan.WhatsON.CruiseControl.Model
 {
   using System;
+  using System.Globalization;
   using System.Text.RegularExpressions;
   using HtmlAgilityPack;
 
@@ -35,7 +36,7 @@ namespace Soloplan.WhatsON.CruiseControl.Model
       var label = labelMatch.Groups[1].Value;
 
       var timeMatch = Regex.Match(value, @"(.*) \((\w*)\)");
-      var time = DateTime.Parse(timeMatch.Groups[1].Value);
+      var time = DateTime.Parse(timeMatch.Groups[1].Value, CultureInfo.InvariantCulture);
 
       var nameMatch = Regex.Match(url, @".*/project/(.*)/build/(.*\.xml)");
       var name = Uri.UnescapeDataString(nameMatch.Groups[2].Value);

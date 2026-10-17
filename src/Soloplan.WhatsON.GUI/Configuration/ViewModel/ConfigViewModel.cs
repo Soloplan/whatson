@@ -12,6 +12,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
   using NLog;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Configuration.View;
+  using Soloplan.WhatsON.Localization;
 
   /// <summary>
   /// The view model for see <see cref="Configuration"/>.
@@ -37,6 +38,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// The selected appearance preference.
     /// </summary>
     private ApplicationTheme themeMode;
+
+    private ApplicationLanguage language;
 
     /// <summary>
     /// The open on system start.
@@ -136,10 +139,20 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
       }
     }
 
+    public ApplicationLanguage Language
+    {
+      get => this.language;
+      set
+      {
+        this.language = value;
+        this.OnPropertyChanged();
+      }
+    }
+
     /// <summary>
     /// Gets the snackbar action caption.
     /// </summary>
-    public string SnackbarActionCaption => this.SingleNewConnectorMode ? "Cancel" : "Reset"; // TODO resources
+    public string SnackbarActionCaption => this.SingleNewConnectorMode ? Strings.Cancel : Strings.Reset;
 
     /// <summary>
     /// Gets or sets a value indicating whether a single new connector configuration mode is active.
@@ -408,6 +421,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
         }
 
         this.ThemeMode = configurationSource.ThemeMode;
+        this.Language = configurationSource.Language;
         this.ShowInTaskbar = configurationSource.ShowInTaskbar;
         this.UnstableObservationState = configurationSource.NotificationConfiguration.UnstableNotificationEnabled;
         this.RunningObservationState = configurationSource.NotificationConfiguration.RunningNotificationEnabled;
@@ -517,7 +531,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
       }
       catch (Exception e)
       {
-        errorMessage = $"Import of the configuration from JSON file was not successful; file path: {filePath}; exception: {e.Message}";
+        errorMessage = Localizer.ImportFailed(filePath, e.Message);
         log.Error(errorMessage);
         log.Error(e);
         return false;
@@ -550,6 +564,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     private void ApplyMainSettingsToConfiguration(ApplicationConfiguration configuration)
     {
       configuration.ThemeMode = this.ThemeMode;
+      configuration.Language = this.Language;
       configuration.ShowInTaskbar = this.ShowInTaskbar;
       configuration.AlwaysOnTop = this.AlwaysOnTop;
       configuration.OpenMinimized = this.OpenMinimized;
@@ -595,7 +610,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
         {
           if (startUpKey == null)
           {
-            throw new InvalidOperationException("The Windows startup key does not exists.");
+            throw new InvalidOperationException(Strings.WindowsStartupKeyMissing);
           }
 
           var startUpKeyValue = startUpKey.GetValue(StartupKey);

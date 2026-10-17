@@ -1,8 +1,9 @@
 ﻿<Page x:Class="Soloplan.WhatsON.GUI.Configuration.View.ConnectorsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-      Title="Projects" FontFamily="Segoe UI" FontSize="14" Background="Transparent" Initialized="PageInitialized"
+      Title="{x:Static loc:Strings.Projects}" FontFamily="Segoe UI" FontSize="14" Background="Transparent" Initialized="PageInitialized"
       TextElement.Foreground="{DynamicResource MaterialDesignBody}">
   <materialDesign:DialogHost Identifier="ConnectorsConfigPageHost" Style="{StaticResource MaterialDesignEmbeddedDialogHost}">
     <Grid Margin="0,0,20,16">
@@ -14,19 +15,19 @@
       <DockPanel Margin="0,0,0,22">
         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top"
                     Visibility="{Binding SingleConnectorMode, Converter={StaticResource InvertBoolToVis}}">
-          <Button x:Name="AddButton" Content="Add manually" Click="AddConnectorClick"
+          <Button x:Name="AddButton" Content="{x:Static loc:Strings.AddManually}" Click="AddConnectorClick"
                   Style="{StaticResource SettingsSecondaryButton}" Margin="0,0,10,0" />
-          <Button x:Name="WizardButton" Content="Add project" Click="NewInWizardClick"
+          <Button x:Name="WizardButton" Content="{x:Static loc:Strings.AddProject}" Click="NewInWizardClick"
                   Style="{StaticResource SettingsPrimaryButton}" />
         </StackPanel>
         <StackPanel>
-          <TextBlock Text="Projects" Style="{StaticResource SettingsHeading}" />
-          <TextBlock Text="Manage the builds and servers you monitor." Style="{StaticResource SettingsDescription}" />
+          <TextBlock Text="{x:Static loc:Strings.Projects}" Style="{StaticResource SettingsHeading}" />
+          <TextBlock Text="{x:Static loc:Strings.ManageBuildsDescription}" Style="{StaticResource SettingsDescription}" />
         </StackPanel>
       </DockPanel>
       <StackPanel Grid.Row="1">
         <TextBox x:Name="uxName" Margin="0,0,0,20" MinHeight="40"
-                 materialDesign:HintAssist.Hint="Project name" AutomationProperties.Name="Project name"
+                 materialDesign:HintAssist.Hint="{x:Static loc:Strings.ProjectName}" AutomationProperties.Name="{x:Static loc:Strings.ProjectName}"
                  Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                  Visibility="{Binding SingleConnectorMode, Converter={StaticResource BoolToVis}}" />
         <Border>
@@ -39,16 +40,16 @@
             </Style>
           </Border.Style>
           <StackPanel>
-            <TextBlock Text="Selected project" FontWeight="SemiBold" Margin="0,0,0,8" />
+            <TextBlock Text="{x:Static loc:Strings.SelectedProject}" FontWeight="SemiBold" Margin="0,0,0,8" />
             <ComboBox x:Name="uxConnectors" MinHeight="40" DisplayMemberPath="FullName"
                       ItemsSource="{Binding Connectors}" SelectedItem="{Binding CurrentConnector, Mode=TwoWay}"
                       IsSynchronizedWithCurrentItem="True" SelectionChanged="ConnectorsSelectionChanged"
-                      AutomationProperties.Name="Selected project" />
+                      AutomationProperties.Name="{x:Static loc:Strings.SelectedProject}" />
             <WrapPanel Margin="0,16,0,0">
-              <Button x:Name="RenameButtton" Content="Rename" Click="RenameConnectorClick" Margin="0,0,8,0"
+              <Button x:Name="RenameButtton" Content="{x:Static loc:Strings.Rename}" Click="RenameConnectorClick" Margin="0,0,8,0"
                       Style="{StaticResource SettingsSecondaryButton}"
                       IsEnabled="{Binding CurrentConnectorIsNull, Converter={StaticResource InvertBoolConverter}}" />
-              <Button x:Name="DeleteButton" Content="Remove" Click="DeleteConnectorClick"
+              <Button x:Name="DeleteButton" Content="{x:Static loc:Strings.Remove}" Click="DeleteConnectorClick"
                       Style="{StaticResource SettingsSecondaryButton}"
                       IsEnabled="{Binding CurrentConnectorIsNull, Converter={StaticResource InvertBoolConverter}}" />
             </WrapPanel>
@@ -76,10 +77,10 @@
               <materialDesign:PackIcon Kind="Server" Width="32" Height="32" VerticalAlignment="Center"
                                        HorizontalAlignment="Center" Foreground="{DynamicResource SettingsAccent}" />
             </Border>
-            <TextBlock Text="Your builds, in one place" FontSize="20" FontWeight="SemiBold" TextAlignment="Center" />
-            <TextBlock Text="Add a Jenkins or CruiseControl.NET project to start monitoring build status and receiving notifications."
+            <TextBlock Text="{x:Static loc:Strings.YourBuildsInOnePlace}" FontSize="20" FontWeight="SemiBold" TextAlignment="Center" />
+            <TextBlock Text="{x:Static loc:Strings.EmptyProjectsDescription}"
                        TextAlignment="Center" Style="{StaticResource SettingsDescription}" Margin="0,10,0,0" />
-            <TextBlock Text="Choose Add project above to connect your first build."
+            <TextBlock Text="{x:Static loc:Strings.AddFirstBuildDescription}"
                        TextAlignment="Center" Style="{StaticResource SettingsDescription}" Margin="0,16,0,0" />
           </StackPanel>
         </Border>

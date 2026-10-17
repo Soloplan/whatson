@@ -1,10 +1,11 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
                     xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
 
   <ContextMenu x:Key="copyData">
-    <MenuItem Header="Copy data" Command="{Binding CopyData}" />
+    <MenuItem Header="{x:Static loc:Strings.CopyData}" Command="{Binding CopyData}" />
   </ContextMenu>
 
   <DataTemplate DataType="{x:Type local:ConnectorMissingViewModel}">
@@ -12,19 +13,19 @@
       <StackPanel.ToolTip>
         <StackPanel>
           <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Identifier: " />
+            <TextBlock Text="{x:Static loc:Strings.IdentifierPrefix}" />
             <TextBlock Text="{Binding Identifier, Mode=OneWay}" />
           </StackPanel>
           <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Name: " />
+            <TextBlock Text="{x:Static loc:Strings.NamePrefix}" />
             <TextBlock Text="{Binding Name, Mode=OneWay}" />
           </StackPanel>
           <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Expected connector type: " />
+            <TextBlock Text="{x:Static loc:Strings.ExpectedConnectorTypePrefix}" />
             <TextBlock FontWeight="Bold" Text="{Binding ExpectedConnectorType, Mode=OneWay}" />
           </StackPanel>
           <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Make sure there is a plugin that provides a Connector implementation, identified by that name!" />
+            <TextBlock Text="{x:Static loc:Strings.MissingPluginHelp}" />
           </StackPanel>
         </StackPanel>
       </StackPanel.ToolTip>
@@ -33,7 +34,7 @@
       Width="14"
       Height="14"
       Kind="Puzzle" />
-      <TextBlock FontSize="12" VerticalAlignment="Center" Margin="3,0,0,0" FontWeight="Normal" Text="Plugin not found for project type " />
+      <TextBlock FontSize="12" VerticalAlignment="Center" Margin="3,0,0,0" FontWeight="Normal" Text="{x:Static loc:Strings.MissingPluginPrefix}" />
       <TextBlock FontSize="12" VerticalAlignment="Center" FontWeight="Bold" Text="{Binding ExpectedConnectorType, Mode=OneWay}" />
       <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" FontWeight="Normal" FontSize="12" Text="-" />
       <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" FontWeight="Normal" FontSize="12" Text="{Binding Name}" />

@@ -15,6 +15,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
   using System.Windows.Forms;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.GUI.Configuration.ViewModel;
+  using Soloplan.WhatsON.Localization;
 
   /// <summary>
   /// Interaction logic for AboutPage.xaml.
@@ -87,7 +88,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
           var result = this.configurationViewModel.Import(openFileDialog.FileName, out var errorMessage);
           if (!result)
           {
-            System.Windows.MessageBox.Show(errorMessage, "Import error", MessageBoxButton.OK, MessageBoxImage.Error);
+            System.Windows.MessageBox.Show(errorMessage, Strings.ImportError, MessageBoxButton.OK, MessageBoxImage.Error);
           }
         }
       }

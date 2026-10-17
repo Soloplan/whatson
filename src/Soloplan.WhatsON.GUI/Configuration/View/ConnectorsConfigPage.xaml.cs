@@ -20,6 +20,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.GUI.Configuration.ViewModel;
   using Soloplan.WhatsON.GUI.Configuration.Wizard;
+  using Soloplan.WhatsON.Localization;
   using Soloplan.WhatsON.Model;
 
   /// <summary>
@@ -274,7 +275,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private async void DeleteConnectorClick(object sender, System.Windows.RoutedEventArgs e)
     {
-      var result = (bool)await DialogHost.Show(new OkCancelDialog("Are you sure you want to delete this project?"), "ConnectorsConfigPageHost"); // TODO translate
+      var result = (bool)await DialogHost.Show(new OkCancelDialog(Strings.DeleteProjectConfirmation), "ConnectorsConfigPageHost");
       if (result)
       {
         this.Connectors.Remove(this.CurrentConnector);

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data xml:space="preserve" name="Address">
+    <value>Adresse</value>
+  </data>
+  <data xml:space="preserve" name="Category">
+    <value>Gruppe</value>
+  </data>
+  <data xml:space="preserve" name="Port">
+    <value>Port</value>
+  </data>
+  <data xml:space="preserve" name="ProjectName">
+    <value>Projektname</value>
+  </data>
+  <data xml:space="preserve" name="DirectAddress">
+    <value>Direkte Projektadresse</value>
+  </data>
+  <data xml:space="preserve" name="NotificationsVisbility">
+    <value>Benachrichtigungen</value>
+  </data>
+</root>

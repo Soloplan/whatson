@@ -22,6 +22,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.GUI.Configuration.ViewModel;
+  using Soloplan.WhatsON.Localization;
   using Soloplan.WhatsON.Model;
 
   /// <summary>
@@ -528,7 +529,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       var selectedProjects = this.GetSelectedProjects();
       if (selectedProjects.Count < 1)
       {
-        throw new InvalidOperationException("At least one selected project is required.");
+        throw new InvalidOperationException(Strings.SelectedProjectRequired);
       }
 
       var configurationViewModel = new ConfigViewModel();
@@ -648,7 +649,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         var completedTask = await Task.WhenAny(taskList.Keys.ToArray());
         if (completedTask == timeoutTask)
         {
-          throw new Exception("Discovery of suitable plugin or server query timed out");
+          throw new Exception(Strings.DiscoveryTimedOut);
         }
 
         if (completedTask.Status == TaskStatus.RanToCompletion)
@@ -664,7 +665,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 
       if (taskList.Count == 0)
       {
-        throw new Exception("Couldn't find suitable plugin or the address is invalid");
+        throw new Exception(Strings.InvalidServerOrPlugin);
       }
     }
 
@@ -703,7 +704,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
           var completedTask = await Task.WhenAny(taskList.Keys.ToArray());
           if (completedTask == timeoutTask)
           {
-            throw new Exception("Discovery of suitable plugin or server query timed out");
+            throw new Exception(Strings.DiscoveryTimedOut);
           }
 
           if (completedTask.Status == TaskStatus.RanToCompletion)
@@ -723,7 +724,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 
       if (taskList.Count == 0)
       {
-        throw new Exception("Couldn't find suitable plugin or the address is invalid");
+        throw new Exception(Strings.InvalidServerOrPlugin);
       }
     }
 
@@ -802,7 +803,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       catch (Exception e)
       {
         error = true;
-        errorMessage = $"There was a project error,{Environment.NewLine}details: {e.Message}"; // TODO load from resources
+        errorMessage = Localizer.ProjectError(e.Message);
       }
 
       DialogHost.CloseDialogCommand.Execute("WizardWaitDialogHostId", this.wizardWindow.WizardWaitDialogHost);
@@ -832,9 +833,9 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     private List<GrouppingSetting> InitializeGrouppingSettings()
     {
       var grouppingSettings = new List<GrouppingSetting>();
-      grouppingSettings.Add(new GrouppingSetting("Assign parent as group", WizardWindow.AssignGroupsForAddedProjects));
-      grouppingSettings.Add(new GrouppingSetting("Add hierarchy to project name", WizardWindow.AddProjectPathToProjectName));
-      grouppingSettings.Add(new GrouppingSetting("No automatic grouping", WizardWindow.DoNotAssignAnyGroups));
+      grouppingSettings.Add(new GrouppingSetting(Strings.AssignParentAsGroup, WizardWindow.AssignGroupsForAddedProjects));
+      grouppingSettings.Add(new GrouppingSetting(Strings.AddHierarchyToProjectName, WizardWindow.AddProjectPathToProjectName));
+      grouppingSettings.Add(new GrouppingSetting(Strings.NoAutomaticGrouping, WizardWindow.DoNotAssignAnyGroups));
       return grouppingSettings;
     }
 

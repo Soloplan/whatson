@@ -16,9 +16,10 @@ namespace Soloplan.WhatsON.CruiseControl
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.CruiseControl.Model;
+  using Soloplan.WhatsON.Localization;
   using Soloplan.WhatsON.Model;
 
-  [ConnectorType(ConnectorName, ConnectorDisplayName, Description = "Retrieve the current status of a Cruise Control project.")]
+  [ConnectorType(ConnectorName, ConnectorDisplayName, Description = nameof(Strings.CruiseControlDescription))]
   [NotificationConfigurationItem(NotificationsVisbility, typeof(ConnectorNotificationConfiguration), SupportsUnstableNotify = false, Priority = 1600000000)]
   public class CruiseControlConnector : Connector
   {
@@ -62,14 +63,14 @@ namespace Soloplan.WhatsON.CruiseControl
         if (await this.CheckServerURL() == false)
         {
           var status = new Status();
-          status.ErrorMessage = "Server not available";
+          status.ErrorMessage = Strings.ServerNotAvailable;
           status.InvalidBuild = true;
           return status;
         }
         else if (await this.CheckProjectURL() == false)
         {
           var status = new Status();
-          status.ErrorMessage = "Project not available";
+          status.ErrorMessage = Strings.ProjectNotAvailable;
           status.InvalidBuild = true;
           return status;
         }
@@ -78,7 +79,7 @@ namespace Soloplan.WhatsON.CruiseControl
       if (projectData == null)
       {
         var status = new Status();
-        status.ErrorMessage = "Project not available";
+        status.ErrorMessage = Strings.ProjectNotAvailable;
         status.InvalidBuild = true;
         return status;
       }
@@ -86,7 +87,7 @@ namespace Soloplan.WhatsON.CruiseControl
       if (projectData.LastBuildLabel == null)
       {
         var status = new Status();
-        status.ErrorMessage = "No builds yet";
+        status.ErrorMessage = Strings.NoBuildsYet;
         status.InvalidBuild = true;
         return status;
       }

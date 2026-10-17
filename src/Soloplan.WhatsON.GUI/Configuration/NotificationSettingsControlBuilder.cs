@@ -19,6 +19,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
   using MaterialDesignThemes.Wpf;
   using Newtonsoft.Json;
   using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.Localization;
   using Soloplan.WhatsON.Model;
 
   /// <summary>
@@ -184,7 +185,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
           notificationStateItem = new NotificationStateItem(notificationsState);
           notificationStateItem.IsActive = configItemValue.AsObservationStateFlag(observationState);
           notificationStateItem.ObservationState = observationState;
-          notificationStateItem.Caption = observationState.ToString(); // TODO load from resources
+          notificationStateItem.Caption = Localizer.GetStateName(observationState);
           notificationStateItem.PropertyChanged += (s, e) => this.NotificationStateChanged(notificationStateItem, configItem, e.PropertyName);
           notificationStateItem.PropertyChanged += (s, e) => this.UpdateExpanderHeader(expander, notificationsState);
           notificationsState.ItemsState.Add(notificationStateItem);
@@ -207,7 +208,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// <param name="notificationsState">The notification state.</param>
     private void UpdateExpanderHeader(Expander expander, NotificationsState notificationsState)
     {
-      expander.Header = $"Notification settings ({this.GetNotificationsStateTextRepresentation(notificationsState)})"; // TODO resources
+      expander.Header = Localizer.NotificationSettings(this.GetNotificationsStateTextRepresentation(notificationsState));
     }
 
     /// <summary>
@@ -219,7 +220,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     {
       if (notificationsState.UseGlobalSettings.IsActive)
       {
-        return "use main settings"; // TODO resource
+        return Strings.UseMainSettings;
       }
 
       var result = string.Join(", ", notificationsState.ItemsState.Where(n => n.IsActive).Select(n => n.Caption));
@@ -235,7 +236,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
 
       if (string.IsNullOrWhiteSpace(result))
       {
-        return "none"; // TODO resource
+        return Strings.None;
       }
 
       return result;
@@ -278,7 +279,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
       public NotificationsState()
       {
         this.UseGlobalSettings = new NotificationStateItem(this);
-        this.UseGlobalSettings.Caption = "Use main configuration"; // TODO load from resources
+        this.UseGlobalSettings.Caption = Strings.UseMainConfiguration;
         this.UseGlobalSettings.PropertyChanged += (s, e) =>
           {
             foreach (var listItem in this.ItemsState)
@@ -290,7 +291,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
           };
 
         this.OnlyIfStateChanged = new NotificationStateItem(this);
-        this.OnlyIfStateChanged.Caption = "Only if status changed"; // TODO load from resources
+        this.OnlyIfStateChanged.Caption = Strings.OnlyIfStatusChanged;
       }
 
       /// <summary>

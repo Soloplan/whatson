@@ -36,6 +36,18 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
       });
     }
 
+    [TestCase("10/09/2020 12:00:00 PM", 9)]
+    [TestCase("10/17/2020 12:00:00 PM", 17)]
+    [SetCulture("de-DE")]
+    public void GermanInterfaceCultureDoesNotChangeServerTimestampParsing(string timestamp, int day)
+    {
+      var node = HtmlNode.CreateNode($"<a href='/project/Release/build/build.xml' class='passed'>{timestamp} (42)</a>");
+
+      var build = CruiseControlBuild.FromHtmlNode(node, "https://builds.example");
+
+      Assert.That(build.BuildTime, Is.EqualTo(new DateTime(2020, 10, day, 12, 0, 0)));
+    }
+
     [Test]
     public void NonNumericBuildLabelsAreNotReplacedWithZero()
     {

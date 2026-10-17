@@ -6,6 +6,7 @@
   <ItemGroup>
     <PackageReference Include="gong-wpf-dragdrop" />
     <PackageReference Include="Humanizer.Core" />
+    <PackageReference Include="Humanizer.Core.de" />
     <PackageReference Include="MaterialDesignThemes" />
     <PackageReference Include="NLog" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />

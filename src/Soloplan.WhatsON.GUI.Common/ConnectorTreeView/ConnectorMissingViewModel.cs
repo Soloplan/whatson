@@ -7,7 +7,6 @@
 
 namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
-  using System.Text;
   using System.Windows;
   using System.Windows.Input;
   using Microsoft.Xaml.Behaviors.Core;
@@ -20,12 +19,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       void Act()
       {
-        var builder = new StringBuilder();
-        builder.AppendLine($"Identifier: {this.Identifier}");
-        builder.AppendLine($"Name: {this.Name}");
-        builder.AppendLine($"Description: {this.Description}");
-        builder.AppendLine($"Expected connector type: {this.ExpectedConnectorType}");
-        Clipboard.SetText(builder.ToString());
+        Clipboard.SetText(Localizer.MissingConnectorData(this.Identifier, this.Name, this.Description, this.ExpectedConnectorType));
       }
 
       this.CopyData = new ActionCommand(Act);

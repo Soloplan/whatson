@@ -16,9 +16,10 @@ namespace Soloplan.WhatsON.Jenkins
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.Jenkins.Model;
+  using Soloplan.WhatsON.Localization;
   using Soloplan.WhatsON.Model;
 
-  [ConnectorType(ConnectorName, ConnectorDisplayName, Description = "Retrieve the current status of a Jenkins project.")]
+  [ConnectorType(ConnectorName, ConnectorDisplayName, Description = nameof(Strings.JenkinsDescription))]
   [ConfigurationItem(RedirectPlugin, typeof(bool), Priority = 400)] // defines use of Display URL API Plugin https://wiki.jenkins.io/display/JENKINS/Display+URL+API+Plugin
   [NotificationConfigurationItem(NotificationsVisbility, typeof(ConnectorNotificationConfiguration), Priority = 1600000000)]
   public class JenkinsConnector : Connector
@@ -108,7 +109,7 @@ namespace Soloplan.WhatsON.Jenkins
         if (await this.CheckServerURL() == false)
         {
           var status = new Status();
-          status.ErrorMessage = "Server not available";
+          status.ErrorMessage = Strings.ServerNotAvailable;
           status.InvalidBuild = true;
           return status;
         }
@@ -116,7 +117,7 @@ namespace Soloplan.WhatsON.Jenkins
         if (await this.CheckProjectURL() == false)
         {
           var status = new Status();
-          status.ErrorMessage = "Project not available";
+          status.ErrorMessage = Strings.ProjectNotAvailable;
           status.InvalidBuild = true;
           return status;
         }
@@ -125,7 +126,7 @@ namespace Soloplan.WhatsON.Jenkins
       if (job.LastBuild == null)
       {
         var status = new Status();
-        status.ErrorMessage = "No builds yet";
+        status.ErrorMessage = Strings.NoBuildsYet;
         status.InvalidBuild = true;
         return status;
       }
@@ -133,7 +134,7 @@ namespace Soloplan.WhatsON.Jenkins
       if (job?.LastBuild?.Number == null)
       {
         var status = this.CreateStatus(job.LastBuild);
-        status.ErrorMessage = "No build number";
+        status.ErrorMessage = Strings.NoBuildNumber;
         return status;
       }
 

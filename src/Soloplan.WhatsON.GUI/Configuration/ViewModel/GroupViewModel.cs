@@ -9,6 +9,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
 {
   using System.Collections.Generic;
   using System.ComponentModel;
+  using Soloplan.WhatsON.Localization;
 
   /// <summary>
   /// Model for editing group name.
@@ -50,7 +51,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
       {
         if (this.AlreadyUsedNames.Contains(this.Name))
         {
-          return "The name is already used.";
+          return Strings.GroupNameAlreadyUsed;
         }
 
         return string.Empty;

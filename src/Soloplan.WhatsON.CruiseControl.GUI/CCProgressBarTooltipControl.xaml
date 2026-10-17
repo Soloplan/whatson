@@ -1,6 +1,7 @@
 ﻿<UserControl x:Class="Soloplan.WhatsON.CruiseControl.GUI.CCProgressBarTooltipControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
              xmlns:buildServer="clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer;assembly=Soloplan.WhatsON.GUI.Common"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Soloplan.WhatsON.CruiseControl.GUI"
@@ -15,7 +16,7 @@
 
   <StackPanel>
     <StackPanel Orientation="Horizontal" Visibility="{Binding BuildTimeUnknown, Converter={StaticResource BoolToVisibility}}">
-      <TextBlock Text="Building for " />
+      <TextBlock Text="{x:Static loc:Strings.BuildingForPrefix}" />
       <TextBlock>
         <TextBlock.Text>
           <MultiBinding StringFormat="{}{0:00}:{1:00}:{2:00}">

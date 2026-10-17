@@ -17,6 +17,7 @@ namespace Soloplan.WhatsON.GUI
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.GUI.Properties;
+  using Soloplan.WhatsON.Localization;
   using Soloplan.WhatsON.Model;
   using Application = System.Windows.Application;
 
@@ -358,11 +359,11 @@ namespace Soloplan.WhatsON.GUI
     {
       this.contextMenu.Items.Clear();
       var openCloseWindow = new ToolStripMenuItem();
-      openCloseWindow.Text = this.MainWindowVisible ? "Close window" : "Open window";
+      openCloseWindow.Text = this.MainWindowVisible ? Strings.CloseWindow : Strings.OpenWindow;
       openCloseWindow.Click += (s, args) => this.ShowOrHideWindow();
 
       var closeApplication = new ToolStripMenuItem();
-      closeApplication.Text = "Exit";
+      closeApplication.Text = Strings.Exit;
       closeApplication.Click += this.OnCloseApplicationClick;
 
       this.contextMenu.Items.Add(openCloseWindow);
@@ -478,26 +479,26 @@ namespace Soloplan.WhatsON.GUI
         var connectorConfiguration = this.configuration.ConnectorsConfiguration.FirstOrDefault(s => s.Identifier == statusViewModel.Parent.Identifier);
         var notificationConfiguration = this.configuration.GetNotificationConfiguration(connectorConfiguration);
 
-        var description = $"Project name: {statusViewModel.Parent.Name}.";
+        var description = Localizer.ProjectNotification(statusViewModel.Parent.Name);
         if (this.CheckNotificationShow(statusViewModel, ObservationState.Running, notificationConfiguration))
         {
-          this.ShowBaloon("Build started.", description, System.Windows.Forms.ToolTipIcon.None);
+          this.ShowBaloon(Strings.BuildStarted, description, System.Windows.Forms.ToolTipIcon.None);
         }
         else if (this.CheckNotificationShow(statusViewModel, ObservationState.Failure, notificationConfiguration))
         {
-          this.ShowBaloon("Build failed.", description, System.Windows.Forms.ToolTipIcon.Error);
+          this.ShowBaloon(Strings.BuildFailed, description, System.Windows.Forms.ToolTipIcon.Error);
         }
         else if (this.CheckNotificationShow(statusViewModel, ObservationState.Success, notificationConfiguration))
         {
-          this.ShowBaloon("Build successful", description, System.Windows.Forms.ToolTipIcon.Info);
+          this.ShowBaloon(Strings.BuildSuccessful, description, System.Windows.Forms.ToolTipIcon.Info);
         }
         else if (this.CheckNotificationShow(statusViewModel, ObservationState.Unstable, notificationConfiguration))
         {
-          this.ShowBaloon("Build successful (Unstable)", description, System.Windows.Forms.ToolTipIcon.Warning);
+          this.ShowBaloon(Strings.BuildSuccessfulUnstable, description, System.Windows.Forms.ToolTipIcon.Warning);
         }
         else if (this.CheckNotificationShow(statusViewModel, ObservationState.Unknown, notificationConfiguration))
         {
-          this.ShowBaloon("Build interrupted", description, System.Windows.Forms.ToolTipIcon.Warning);
+          this.ShowBaloon(Strings.BuildInterrupted, description, System.Windows.Forms.ToolTipIcon.Warning);
         }
       }
     }
@@ -521,7 +522,7 @@ namespace Soloplan.WhatsON.GUI
         case ObservationState.Unknown:
           this.icon.Icon = this.loadingIcon;
           this.icon.Text = this.configuration.ConnectorsConfiguration.Count == 0
-            ? Resources.ResourceManager.GetString("TrayHandler_UpdateTrayIcon_NoProjects", Resources.Culture)
+            ? Resources.TrayHandler_UpdateTrayIcon_NoProjects
             : Resources.TrayHandler_UpdateTrayIcon_Pending;
           break;
         default:

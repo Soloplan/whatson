@@ -7,6 +7,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
   using System;
   using NLog;
+  using Soloplan.WhatsON.Localization;
   using Soloplan.WhatsON.Model;
 
   /// <summary>
@@ -203,8 +204,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       log.Trace("Updating status model {model}", new { this.Name, Details = this.Details });
       if (newStatus == null)
       {
-        this.Name = "Loading...";
-        this.Details = "Loading...";
+        this.Name = Strings.Loading;
+        this.Details = Strings.Loading;
         this.state = ObservationState.Unknown;
         return;
       }

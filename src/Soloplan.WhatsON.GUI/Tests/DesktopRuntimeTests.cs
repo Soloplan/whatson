@@ -9,6 +9,7 @@ namespace Soloplan.WhatsON.GUI.Tests
 {
   using System;
   using System.Collections.Generic;
+  using System.Globalization;
   using System.IO;
   using System.Linq;
   using System.Threading;
@@ -160,6 +161,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       VerifyTitleBarActionsAndLayout();
       VerifyScrollSpacing();
       VerifyWizardLayouts(app);
+      VerifyGermanViews(app);
 
       using (var stream = Application.GetResourceStream(new Uri("/Soloplan.WhatsON.GUI;component/Logging/LogConfig.xml", UriKind.Relative)).Stream)
       using (var reader = new StreamReader(stream))
@@ -317,6 +319,74 @@ namespace Soloplan.WhatsON.GUI.Tests
       finally
       {
         wizard.Close();
+      }
+    }
+
+    private static void VerifyGermanViews(App app)
+    {
+      var previousCulture = CultureInfo.CurrentUICulture;
+      try
+      {
+        CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("de-DE");
+        foreach (var theme in new[] { ApplicationTheme.Light, ApplicationTheme.Dark })
+        {
+          app.ApplyTheme(theme);
+          var configuration = new ApplicationConfiguration { Language = ApplicationLanguage.German, ThemeMode = theme };
+          var settings = new ConfigWindow(configuration, new WindowSettings());
+          try
+          {
+            Assert.That(settings.Title, Is.EqualTo("Einstellungen"));
+            var sections = (ListBox)settings.FindName("ConfigTopicsListBox");
+            var frame = (Frame)settings.FindName("ConfigFrame");
+            foreach (var section in new[] { 0, 1, 2 })
+            {
+              sections.SelectedIndex = section;
+              settings.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+              var root = (FrameworkElement)settings.Content;
+              root.Measure(new Size(800, 580));
+              root.Arrange(new Rect(0, 0, 800, 580));
+              root.UpdateLayout();
+              if (section == 0)
+              {
+                var selector = (ComboBox)((Page)frame.Content).FindName("LanguageSelector");
+                Assert.That(selector.SelectedValue, Is.EqualTo(ApplicationLanguage.German));
+                selector.SelectedValue = ApplicationLanguage.English;
+                Assert.That(configuration.Language, Is.EqualTo(ApplicationLanguage.German), "The language must remain unsaved until Save changes is used.");
+                Assert.That(CultureInfo.CurrentUICulture.Name, Is.EqualTo("de-DE"));
+              }
+              else if (section == 1)
+              {
+                Assert.That(((Button)((Page)frame.Content).FindName("AddButton")).Content, Is.EqualTo("Manuell hinzufügen"));
+              }
+            }
+          }
+          finally
+          {
+            settings.Close();
+          }
+
+          var controller = new WizardController(null, configuration, new WindowSettings());
+          var wizard = new WizardWindow(controller);
+          try
+          {
+            Assert.That(wizard.Title, Is.EqualTo("Projekte hinzufügen"));
+            Assert.That(((Button)wizard.FindName("NextButton")).Content, Is.EqualTo("Weiter"));
+            wizard.Frame.Content = new ConnectionWizardPage(controller);
+            wizard.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+            var root = (FrameworkElement)wizard.Content;
+            root.Measure(new Size(600, 600));
+            root.Arrange(new Rect(0, 0, 600, 600));
+            root.UpdateLayout();
+          }
+          finally
+          {
+            wizard.Close();
+          }
+        }
+      }
+      finally
+      {
+        CultureInfo.CurrentUICulture = previousCulture;
       }
     }
 

@@ -10,6 +10,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
   using System.Windows;
   using System.Windows.Controls;
   using System.Windows.Input;
+  using Soloplan.WhatsON.Localization;
 
   /// <summary>
   /// Interaction logic for BuildNumberControl.xaml.
@@ -50,13 +51,13 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     private async void OnPreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
       Clipboard.SetText(this.BuildNumber.ToString());
-      this.ToolTipText.Text = "Build label copied";
+      this.ToolTipText.Text = Strings.BuildLabelCopied;
       this.ControlToolTip.IsOpen = true;
       e.Handled = true;
       await Task.Delay(1000);
 
       this.ControlToolTip.IsOpen = false;
-      this.ToolTipText.Text = "Double click to copy build label";
+      this.ToolTipText.Text = Strings.CopyBuildLabelHelp;
     }
   }
 }

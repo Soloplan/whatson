@@ -1,6 +1,7 @@
 ﻿<UserControl x:Class="Soloplan.WhatsON.GUI.Configuration.View.OkCancelDialog"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              FontFamily="Segoe UI" FontSize="14" TextElement.Foreground="{DynamicResource MaterialDesignBody}">
@@ -8,11 +9,11 @@
     <StackPanel>
       <TextBlock x:Name="uxQuestionTextBox" TextWrapping="Wrap" FontSize="16" FontWeight="SemiBold" />
       <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Margin="0,24,0,0">
-        <Button Content="Cancel" IsCancel="True" Margin="0,0,10,0"
+        <Button Content="{x:Static loc:Strings.Cancel}" IsCancel="True" Margin="0,0,10,0"
                 Command="materialDesign:DialogHost.CloseDialogCommand" Style="{StaticResource SettingsSecondaryButton}">
           <Button.CommandParameter><system:Boolean>False</system:Boolean></Button.CommandParameter>
         </Button>
-        <Button Content="Confirm" IsDefault="True" Command="materialDesign:DialogHost.CloseDialogCommand" Style="{StaticResource SettingsPrimaryButton}">
+        <Button Content="{x:Static loc:Strings.Confirm}" IsDefault="True" Command="materialDesign:DialogHost.CloseDialogCommand" Style="{StaticResource SettingsPrimaryButton}">
           <Button.CommandParameter><system:Boolean>True</system:Boolean></Button.CommandParameter>
         </Button>
       </StackPanel>

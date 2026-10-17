@@ -9,6 +9,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 {
   using System.Windows;
   using System.Windows.Controls;
+  using Soloplan.WhatsON.Localization;
 
   /// <summary>
   /// Control for project build progress.
@@ -51,12 +52,12 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     {
       if (this.CompactDisplay)
       {
-        this.EstimatedRemainingText.Text = " ETA";
+        this.EstimatedRemainingText.Text = Strings.EstimatedArrival;
         this.PercentSignText.Text = "%/";
       }
       else
       {
-        this.EstimatedRemainingText.Text = " estimated remaining";
+        this.EstimatedRemainingText.Text = Strings.EstimatedRemaining;
         this.PercentSignText.Text = "% ";
       }
     }

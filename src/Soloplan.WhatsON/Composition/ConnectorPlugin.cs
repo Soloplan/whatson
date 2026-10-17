@@ -7,9 +7,11 @@ namespace Soloplan.WhatsON.Composition
 {
   using System;
   using System.Collections.Generic;
+  using System.Globalization;
   using System.Reflection;
   using System.Threading.Tasks;
   using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.Localization;
   using Soloplan.WhatsON.Model;
 
   /// <summary>
@@ -28,7 +30,9 @@ namespace Soloplan.WhatsON.Composition
 
       this.Name = connectorTypeAttribute.Name;
       this.DisplayName = connectorTypeAttribute.DisplayName;
-      this.Description = connectorTypeAttribute.Description;
+      this.Description = string.IsNullOrEmpty(connectorTypeAttribute.Description)
+        ? connectorTypeAttribute.Description
+        : Strings.ResourceManager.GetString(connectorTypeAttribute.Description, CultureInfo.CurrentUICulture) ?? connectorTypeAttribute.Description;
     }
 
     public Type ConnectorType { get; }

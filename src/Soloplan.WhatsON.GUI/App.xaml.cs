@@ -67,8 +67,6 @@ namespace Soloplan.WhatsON.GUI
 
     protected override void OnStartup(StartupEventArgs e)
     {
-      System.Globalization.CultureInfo.CurrentCulture = new CultureInfo("en-US");
-      System.Globalization.CultureInfo.CurrentUICulture = new CultureInfo("en-US");
       var configDirArg = e.Args.FirstOrDefault(a => a.ToLower().StartsWith(ConfigDirArgName.ToLower()));
       if (configDirArg != null)
       {
@@ -83,6 +81,10 @@ namespace Soloplan.WhatsON.GUI
       ExceptionHandlingInitialization.Initialize();
 
       this.config = SerializationHelper.Instance.LoadOrCreateConfiguration();
+      Localizer.ApplyLanguage(this.config.Language);
+      FrameworkElement.LanguageProperty.OverrideMetadata(
+        typeof(FrameworkElement),
+        new FrameworkPropertyMetadata(System.Windows.Markup.XmlLanguage.GetLanguage(CultureInfo.CurrentUICulture.IetfLanguageTag)));
       this.scheduler = new ObservationScheduler();
 
       // call the plugins with the application args, so plugins can process them

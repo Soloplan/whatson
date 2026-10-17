@@ -126,4 +126,13 @@
   <data name="Port" xml:space="preserve">
     <value>Port</value>
   </data>
+  <data name="ProjectName" xml:space="preserve">
+    <value>Project name</value>
+  </data>
+  <data name="DirectAddress" xml:space="preserve">
+    <value>Direct project address</value>
+  </data>
+  <data name="NotificationsVisbility" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
 </root>

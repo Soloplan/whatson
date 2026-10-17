@@ -18,6 +18,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
   using Soloplan.WhatsON.Model;
 
   [TestFixture]
+  [SetUICulture("en-US")]
   public class ConnectorBehaviorTests
   {
     [TestCase("SUCCESS", ObservationState.Success)]

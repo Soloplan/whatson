@@ -70,6 +70,34 @@ on Windows. Custom plugins built for .NET Framework must be rebuilt for .NET 10.
 Project settings and package versions are shared in `src/Directory.Build.*`
 and `src/Directory.Packages.props`.
 
+## Languages
+
+whatsON supports English and German. The default **System** language follows the
+Windows display language when it is English or German, and falls back to English
+for other languages. Existing configurations without a language preference also
+use **System**. Choose **Settings → General → Language** to select System,
+English, or Deutsch, save your changes, and restart whatsON. Explicit language
+choices are preserved in configuration imports and exports.
+
+Interface text is stored in `src/Soloplan.WhatsON/Localization/Strings.resx`
+and `Strings.de.resx`. The .NET SDK generates the public `Strings` class during
+every build; add or edit resources in the `.resx` files, not generated code.
+Use `Strings.None` in C# and `{x:Static loc:Strings.None}` in WPF, where `loc`
+references `clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON`.
+Use named methods such as `Localizer.DeleteNamedProject(projectName)` for messages
+with arguments, and `Localizer.GetStateName(state)` for build states. Resource
+properties and method arguments are checked by the compiler. Keep the same keys
+and formatting placeholders in both translations.
+English is the fallback when a culture has no translation. Project names, URLs,
+server-provided descriptions, and diagnostic logs retain their original content.
+
+Existing validation/tray resources and connector settings captions use the
+`Properties/Resources*.resx` and `Properties/ConfigurationItems*.resx` files in
+their owning projects. These also use standard .NET satellite resources.
+The publish directory's `de` folder must be distributed with the application.
+Localization tests check translation completeness, formatting placeholders,
+fallback, persistence, and translated controls.
+
 ## Feature requests and bugs
 
 Have a bug or a feature request please search for it in existing and closed issues. If your problem or idea is not addressed yet, please [open a new issue](https://github.com/Soloplan/whatson/issues/new).

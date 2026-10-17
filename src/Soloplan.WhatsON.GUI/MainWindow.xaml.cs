@@ -23,6 +23,7 @@ namespace Soloplan.WhatsON.GUI
   using Soloplan.WhatsON.GUI.Configuration.View;
   using Soloplan.WhatsON.GUI.Configuration.ViewModel;
   using Soloplan.WhatsON.GUI.Configuration.Wizard;
+  using Soloplan.WhatsON.Localization;
   using Soloplan.WhatsON.Model;
 
   /// <summary>
@@ -407,19 +408,19 @@ namespace Soloplan.WhatsON.GUI
       string message;
       if (e.DeleteItem is ConnectorGroupViewModel group)
       {
-        message = $"Are you sure you want to delete the group '{group.GroupName}' and all its items?";
+        message = Localizer.DeleteGroup(group.GroupName);
       }
       else if (e.NoOtherSelections == false && e.DeleteItem is Soloplan.WhatsON.GUI.Common.ConnectorTreeView.ConnectorViewModel)
       {
-        message = $"Are you sure you want to delete multiple connectors?";
+        message = Strings.DeleteMultipleProjects;
       }
       else if (e.DeleteItem is Soloplan.WhatsON.GUI.Common.ConnectorTreeView.ConnectorViewModel connector)
       {
-        message = $"Are you sure you want to delete the project '{connector.Name}'?";
+        message = Localizer.DeleteNamedProject(connector.Name);
       }
       else
       {
-        message = $"Are you sure you want to delete the project '{e.DeleteItem}'";
+        message = Localizer.DeleteNamedProject(e.DeleteItem?.ToString());
       }
 
       var dialog = new OkCancelDialog(message);

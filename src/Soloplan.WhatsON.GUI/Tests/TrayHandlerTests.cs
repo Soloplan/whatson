@@ -18,6 +18,7 @@ namespace Soloplan.WhatsON.GUI.Tests
   using Soloplan.WhatsON.Model;
 
   [TestFixture]
+  [SetUICulture("en-US")]
   public class TrayHandlerTests
   {
     private const ObservationState Success = ObservationState.Success;

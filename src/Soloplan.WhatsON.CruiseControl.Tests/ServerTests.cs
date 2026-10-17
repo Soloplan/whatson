@@ -18,6 +18,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
   using Soloplan.WhatsON.Model;
 
   [TestFixture]
+  [SetUICulture("en-US")]
   [NonParallelizable]
   [SetCulture("en-US")]
   public class ServerTests

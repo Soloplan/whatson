@@ -10,11 +10,27 @@
     <Authors>Steffen Wilke, Krzysztof Lorenc, Dominik Gołda</Authors>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <LocalizationSource>$(BaseIntermediateOutputPath)$(Configuration)\$(TargetFramework)\Strings.g.cs</LocalizationSource>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="NLog" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Localization\Strings.resx"
+                      StronglyTypedLanguage="CSharp"
+                      StronglyTypedNamespace="Soloplan.WhatsON.Localization"
+                      StronglyTypedClassName="Strings"
+                      StronglyTypedFileName="$(LocalizationSource)"
+                      PublicClass="true" />
+    <Compile Include="$(LocalizationSource)" AutoGen="true" DesignTime="true" Visible="false" />
+  </ItemGroup>
+  <!-- IDEs need the source during evaluation; CoreResGen adds it again during a build. -->
+  <Target Name="PrepareLocalizationSource" BeforeTargets="CoreResGen">
+    <ItemGroup>
+      <Compile Remove="$(LocalizationSource)" />
+    </ItemGroup>
+  </Target>
   <ItemGroup>
     <None Include="..\..\LICENSE" Pack="true" PackagePath="" />
     <None Update="whatson-icon.png" Pack="true" PackagePath="" />

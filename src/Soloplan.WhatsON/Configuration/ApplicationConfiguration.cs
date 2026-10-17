@@ -21,6 +21,11 @@ namespace Soloplan.WhatsON.Configuration
     private ApplicationTheme? legacyThemeMode;
 
     /// <summary>
+    /// Gets or sets the interface language. The default follows supported Windows languages.
+    /// </summary>
+    public ApplicationLanguage Language { get; set; } = ApplicationLanguage.System;
+
+    /// <summary>
     /// Gets or sets the appearance preference. New configurations follow Windows.
     /// </summary>
     public ApplicationTheme ThemeMode

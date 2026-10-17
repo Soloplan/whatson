@@ -1,10 +1,11 @@
 ﻿<Window x:Class="Soloplan.WhatsON.GUI.Configuration.Wizard.WizardWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
         xmlns:gui="clr-namespace:Soloplan.WhatsON.GUI"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:wizard="clr-namespace:Soloplan.WhatsON.GUI.Configuration.Wizard"
-        Title="Add projects" Width="760" Height="680" MinWidth="600" MinHeight="600"
+        Title="{x:Static loc:Strings.AddProjects}" Width="760" Height="680" MinWidth="600" MinHeight="600"
         Background="{DynamicResource SettingsBackground}" FontFamily="Segoe UI" FontSize="14"
         ShowInTaskbar="False" Style="{StaticResource BorderLessWindowStyle}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}">
@@ -29,7 +30,7 @@
                   </Style.Triggers>
                 </Style>
               </Border.Style>
-              <TextBlock Text="1  Connection" FontWeight="SemiBold" FontSize="13" />
+              <TextBlock Text="{x:Static loc:Strings.ConnectionStep}" FontWeight="SemiBold" FontSize="13" />
             </Border>
             <materialDesign:PackIcon Kind="ChevronRight" Width="18" Height="18" Margin="12,0" VerticalAlignment="Center"
                                      Foreground="{DynamicResource SettingsMuted}" />
@@ -45,20 +46,20 @@
                   </Style.Triggers>
                 </Style>
               </Border.Style>
-              <TextBlock Text="2  Projects" FontWeight="SemiBold" FontSize="13" />
+              <TextBlock Text="{x:Static loc:Strings.ProjectsStep}" FontWeight="SemiBold" FontSize="13" />
             </Border>
           </StackPanel>
           <Frame x:Name="Frame" Grid.Row="1" Margin="24,0,24,20" NavigationUIVisibility="Hidden" />
           <Border Grid.Row="2" Background="{DynamicResource SettingsSurface}" BorderBrush="{DynamicResource SettingsBorder}"
                   BorderThickness="0,1,0,0" Padding="24,16">
             <DockPanel LastChildFill="False">
-              <Button Content="Cancel" DockPanel.Dock="Left" IsCancel="True" Style="{StaticResource SettingsSecondaryButton}" />
+              <Button Content="{x:Static loc:Strings.Cancel}" DockPanel.Dock="Left" IsCancel="True" Style="{StaticResource SettingsSecondaryButton}" />
               <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                <Button x:Name="BackButton" Content="Back" Click="PrevClick" IsEnabled="{Binding IsPreviousStepEnabled}"
+                <Button x:Name="BackButton" Content="{x:Static loc:Strings.Back}" Click="PrevClick" IsEnabled="{Binding IsPreviousStepEnabled}"
                         Margin="0,0,10,0" Style="{StaticResource SettingsSecondaryButton}" />
-                <Button x:Name="NextButton" Content="Next" Click="NextClick" IsEnabled="{Binding IsNextStepEnabled}"
+                <Button x:Name="NextButton" Content="{x:Static loc:Strings.Next}" Click="NextClick" IsEnabled="{Binding IsNextStepEnabled}"
                         Visibility="{Binding IsNotLastStep, Converter={StaticResource BoolToVis}}" Style="{StaticResource SettingsPrimaryButton}" />
-                <Button x:Name="FinishButton" Content="Add selected projects" Click="FinishClick" IsEnabled="{Binding IsAnyProjectChecked}"
+                <Button x:Name="FinishButton" Content="{x:Static loc:Strings.AddSelectedProjects}" Click="FinishClick" IsEnabled="{Binding IsAnyProjectChecked}"
                         Visibility="{Binding IsLastStep, Converter={StaticResource BoolToVis}}" Style="{StaticResource SettingsPrimaryButton}" />
               </StackPanel>
             </DockPanel>

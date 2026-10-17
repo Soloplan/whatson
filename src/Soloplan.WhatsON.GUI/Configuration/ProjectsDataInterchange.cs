@@ -14,6 +14,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
   using System.Windows.Forms;
   using NLog;
   using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.Localization;
 
   /// <summary>
   /// The projects import/export.
@@ -74,10 +75,10 @@ namespace Soloplan.WhatsON.GUI.Configuration
       }
       catch (Exception e)
       {
-        var errorMessage = $"Import of the projects onfiguration from JSON file was not successful; file path: {filePath}; exception: {e.Message}";
+        var errorMessage = Localizer.ProjectImportFailed(filePath, e.Message);
         log.Error(errorMessage);
         log.Error(e);
-        System.Windows.MessageBox.Show(errorMessage, "Import error", MessageBoxButton.OK, MessageBoxImage.Error);
+        System.Windows.MessageBox.Show(errorMessage, Strings.ImportError, MessageBoxButton.OK, MessageBoxImage.Error);
         return false;
       }
 
