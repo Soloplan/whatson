@@ -42,7 +42,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
-    private void OkButtonClick(object sender, RoutedEventArgs e)
+    private void OkButtonClick(object? sender, RoutedEventArgs e)
     {
     }
 
@@ -51,7 +51,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
-    private void CancelButtonClick(object sender, RoutedEventArgs e)
+    private void CancelButtonClick(object? sender, RoutedEventArgs e)
     {
       foreach (var be in BindingOperations.GetSourceUpdatingBindings(this))
       {

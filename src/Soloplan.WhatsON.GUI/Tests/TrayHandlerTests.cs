@@ -51,9 +51,9 @@ namespace Soloplan.WhatsON.GUI.Tests
       var configuration = new ApplicationConfiguration { OpenMinimized = true };
       using (var tray = new TrayHandler(new ObservationScheduler(), configuration))
       {
-        var icon = (NotifyIcon)typeof(TrayHandler).GetField("icon", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(tray);
-        var neutralIcon = typeof(TrayHandler).GetField("loadingIcon", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(tray);
-        var update = typeof(TrayHandler).GetMethod("UpdateTrayIcon", BindingFlags.Instance | BindingFlags.NonPublic);
+        var icon = (typeof(TrayHandler).GetField("icon", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected member was not found.")).GetValue(tray) as NotifyIcon ?? throw new AssertionException("Expected icon.");
+        var neutralIcon = (typeof(TrayHandler).GetField("loadingIcon", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected member was not found.")).GetValue(tray);
+        var update = typeof(TrayHandler).GetMethod("UpdateTrayIcon", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected member was not found.");
         Assert.That(icon.Icon, Is.SameAs(neutralIcon), "An empty configuration must not show a green success badge.");
         Assert.That(icon.Text, Is.EqualTo("WhatsON - No projects configured"));
 

@@ -21,7 +21,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// The logger.
     /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
     public StatusViewModel(ConnectorViewModel connector)
     {
@@ -32,11 +32,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     public int Size => this.First ? 8 : 6;
 
-    public string Name { get; protected set; }
+    public string? Name { get; protected set; }
 
-    public virtual string Label { get; protected set; }
+    public virtual string? Label { get; protected set; }
 
-    public string Details { get; protected set; }
+    public string? Details { get; protected set; }
 
     public ObservationState State { get; set; }
 
@@ -50,11 +50,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     public bool Unstable { get; set; }
 
-    public string ErrorMessage { get; set; }
+    public string? ErrorMessage { get; set; }
 
     public ConnectorViewModel Parent { get; }
 
-    public virtual void Update(Status newStatus)
+    public virtual void Update(Status? newStatus)
     {
       log.Trace("Updating status model {model}", new { this.Name, this.Details });
       if (newStatus == null)

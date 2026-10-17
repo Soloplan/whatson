@@ -28,7 +28,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     [TestCase("{\"buildable\":false}", false)]
     public void DisabledFlagComesFromTheExplicitJobProperty(string json, bool expected)
     {
-      Assert.That(JsonConvert.DeserializeObject<JenkinsJob>(json).Disabled, Is.EqualTo(expected));
+      Assert.That((JsonConvert.DeserializeObject<JenkinsJob>(json) ?? throw new AssertionException("Deserialization returned null.")).Disabled, Is.EqualTo(expected));
       var connector = new JenkinsConnector(Configuration(), new FakeJenkinsApi());
       Assert.That(JenkinsApi.UrlHelper.JobRequest(connector), Does.Contain("tree=disabled,"));
     }
@@ -50,8 +50,8 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         await connector.QueryStatus(CancellationToken.None);
 
         Assert.That(connector.IsDisabled, Is.EqualTo(disabled));
-        Assert.That(connector.CurrentStatus.State, Is.EqualTo(expected));
-        Assert.That(connector.CurrentStatus.BuildNumber, Is.EqualTo(1));
+        Assert.That(connector.CurrentStatus?.State, Is.EqualTo(expected));
+        Assert.That(connector.CurrentStatus?.BuildNumber, Is.EqualTo(1));
         Assert.That(connector.Snapshots.Single(), Is.SameAs(snapshot));
         Assert.That(snapshot.Status.State, Is.EqualTo(expected));
       }
@@ -71,8 +71,8 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       await connector.QueryStatus(CancellationToken.None);
 
       Assert.That(connector.IsDisabled, Is.True);
-      Assert.That(connector.CurrentStatus.Building, Is.True);
-      Assert.That(connector.CurrentStatus.State, Is.EqualTo(ObservationState.Running));
+      Assert.That(connector.CurrentStatus?.Building, Is.True);
+      Assert.That(connector.CurrentStatus?.State, Is.EqualTo(ObservationState.Running));
       Assert.That(connector.Snapshots, Is.Empty);
     }
 
@@ -91,7 +91,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
       await connector.QueryStatus(CancellationToken.None);
 
-      Assert.That(connector.CurrentStatus.State, Is.EqualTo(expected));
+      Assert.That(connector.CurrentStatus?.State, Is.EqualTo(expected));
       Assert.That(connector.Snapshots.Single().Status.State, Is.EqualTo(expected));
     }
 
@@ -105,7 +105,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
       await connector.QueryStatus(CancellationToken.None);
 
-      Assert.That(connector.CurrentStatus.State, Is.EqualTo(ObservationState.Running));
+      Assert.That(connector.CurrentStatus?.State, Is.EqualTo(ObservationState.Running));
       Assert.That(connector.Snapshots, Is.Empty);
     }
 
@@ -132,12 +132,12 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
       Assert.Multiple(() =>
       {
-        Assert.That(connector.CurrentStatus.Time, Is.EqualTo(new DateTime(2020, 1, 1, 12, 0, 0, 123, DateTimeKind.Utc)));
-        Assert.That(connector.CurrentStatus.Time.Kind, Is.EqualTo(DateTimeKind.Utc));
-        Assert.That(connector.CurrentStatus.Duration, Is.EqualTo(TimeSpan.FromMilliseconds(1234)));
-        Assert.That(connector.CurrentStatus.EstimatedDuration, Is.EqualTo(TimeSpan.FromMilliseconds(5678)));
-        Assert.That(connector.CurrentStatus.Details, Is.EqualTo("Published artifacts"));
-        Assert.That(connector.CurrentStatus.Url, Is.EqualTo("https://builds.example/job/Release/1"));
+        Assert.That(connector.CurrentStatus?.Time, Is.EqualTo(new DateTime(2020, 1, 1, 12, 0, 0, 123, DateTimeKind.Utc)));
+        Assert.That(connector.CurrentStatus?.Time.Kind, Is.EqualTo(DateTimeKind.Utc));
+        Assert.That(connector.CurrentStatus?.Duration, Is.EqualTo(TimeSpan.FromMilliseconds(1234)));
+        Assert.That(connector.CurrentStatus?.EstimatedDuration, Is.EqualTo(TimeSpan.FromMilliseconds(5678)));
+        Assert.That(connector.CurrentStatus?.Details, Is.EqualTo("Published artifacts"));
+        Assert.That(connector.CurrentStatus?.Url, Is.EqualTo("https://builds.example/job/Release/1"));
       });
     }
 
@@ -159,7 +159,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
       await connector.QueryStatus(CancellationToken.None);
 
-      var status = (JenkinsStatus)connector.CurrentStatus;
+      var status = connector.CurrentStatus as JenkinsStatus ?? throw new AssertionException("Expected a JenkinsStatus.");
       Assert.That(status.CommittedToThisBuild.Select(author => author.FullName), Is.EquivalentTo(new[] { "Alice", "Bob" }));
       Assert.That(status.CommittedToThisBuild.Single(author => author.FullName == "Alice").AbsoluteUrl, Is.EqualTo(alice.AbsoluteUrl));
       Assert.That(status.Culprits, Is.EqualTo(new[] { bob }));
@@ -175,14 +175,15 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
       await connector.QueryStatus(CancellationToken.None);
 
-      Assert.That(connector.CurrentStatus.InvalidBuild, Is.True);
-      Assert.That(connector.CurrentStatus.ErrorMessage, Is.EqualTo("No builds yet"));
+      Assert.That(connector.CurrentStatus?.InvalidBuild, Is.True);
+      Assert.That(connector.CurrentStatus?.ErrorMessage, Is.EqualTo("No builds yet"));
       Assert.That(connector.IsDisabled, Is.EqualTo(disabled));
       Assert.That(connector.Snapshots, Is.Empty);
     }
 
     [TestCase(false, true, "Server not available")]
     [TestCase(true, false, "Project not available")]
+    [TestCase(true, true, "Project not available")]
     public async Task MissingJobResponseDistinguishesServerAndProjectFailures(bool serverAvailable, bool projectAvailable, string expectedMessage)
     {
       var api = new FakeJenkinsApi();
@@ -191,8 +192,8 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
       await connector.QueryStatus(CancellationToken.None);
 
-      Assert.That(connector.CurrentStatus.InvalidBuild, Is.True);
-      Assert.That(connector.CurrentStatus.ErrorMessage, Is.EqualTo(expectedMessage));
+      Assert.That(connector.CurrentStatus?.InvalidBuild, Is.True);
+      Assert.That(connector.CurrentStatus?.ErrorMessage, Is.EqualTo(expectedMessage));
       Assert.That(connector.Snapshots, Is.Empty);
     }
 
@@ -246,7 +247,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
       Assert.Multiple(() =>
       {
-        Assert.That(connector.CurrentStatus.State, Is.EqualTo(ObservationState.Running));
+        Assert.That(connector.CurrentStatus?.State, Is.EqualTo(ObservationState.Running));
         Assert.That(
           connector.Snapshots.Select(s => s.Status.BuildNumber),
           Is.EqualTo(middleBuildDeleted ? new[] { 12, 10, 9, 8, 7 } : new[] { 12, 11, 10, 9, 8 }));
@@ -350,7 +351,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       shouldFail = false;
       await connector.QueryStatus(CancellationToken.None);
       Assert.That(connector.Snapshots, Has.Count.EqualTo(1));
-      Assert.That(connector.CurrentStatus.State, Is.EqualTo(ObservationState.Success));
+      Assert.That(connector.CurrentStatus?.State, Is.EqualTo(ObservationState.Success));
     }
 
     private static ConnectorConfiguration Configuration() => new ConnectorConfiguration("Jenkins", "Release", Connector.ServerAddress, "https://builds.example", Connector.ProjectName, "Release");

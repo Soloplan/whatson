@@ -18,7 +18,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// <summary>
     /// Singleton instance.
     /// </summary>
-    private static volatile ConfigControlBuilderFactory instance;
+    private static volatile ConfigControlBuilderFactory? instance;
 
     /// <summary>
     /// Caches control builders that should be used by a given type.
@@ -57,7 +57,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// <returns>
     /// The control builder for this type or null if not found.
     /// </returns>
-    internal IConfigControlBuilder GetControlBuilder(Type type, string configurationItemKey)
+    internal IConfigControlBuilder? GetControlBuilder(Type type, string configurationItemKey)
     {
       this.CheckConfiguration();
       var builder = this.controlBuilderByType.FirstOrDefault(b => b.Key == type && b.Value.SupportedConfigurationItemsKey == configurationItemKey);

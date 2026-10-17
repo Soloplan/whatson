@@ -17,7 +17,7 @@ namespace Soloplan.WhatsON
   {
     private static readonly CultureInfo systemCulture = CultureInfo.CurrentUICulture;
 
-    public static event EventHandler LanguageChanged;
+    public static event EventHandler? LanguageChanged;
 
     public static void ApplyLanguage(ApplicationLanguage language)
     {

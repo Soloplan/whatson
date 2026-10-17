@@ -54,9 +54,9 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     /// </summary>
     /// <param name="sender">Sender.</param>
     /// <param name="e">Event args.</param>
-    private async void OnPreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private async void OnPreviewMouseDoubleClick(object? sender, MouseButtonEventArgs e)
     {
-      Clipboard.SetText(this.BuildNumber.ToString());
+      Clipboard.SetText(this.BuildNumber?.ToString() ?? string.Empty);
       this.ToolTipText.SetBinding(TextBlock.TextProperty, TextExtension.CreateBinding(() => Strings.BuildLabelCopied));
       this.ControlToolTip.IsOpen = true;
       e.Handled = true;

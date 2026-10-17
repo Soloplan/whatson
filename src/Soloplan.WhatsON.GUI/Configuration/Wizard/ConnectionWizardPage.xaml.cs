@@ -46,7 +46,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.Windows.Input.KeyEventArgs" /> instance containing the event data.</param>
-    private void ConnectionAdressKeyUp(object sender, KeyEventArgs e)
+    private void ConnectionAdressKeyUp(object? sender, KeyEventArgs e)
     {
       if (e.Key == Key.Enter)
       {

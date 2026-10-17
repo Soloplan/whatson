@@ -38,15 +38,15 @@ namespace Soloplan.WhatsON.GUI.Configuration
       this.configurationViewModel = configurationViewModel;
       try
       {
-        this.VersionLabel.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        this.VersionLabel.Text = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
       }
       catch (Exception)
       {
         this.VersionLabel.Text = Properties.Resources.NotInstalled;
       }
 
-      var materialDesignAssembly = Assembly.GetAssembly(typeof(MaterialDesignThemes.Wpf.DialogHost));
-      this.MDIXVersionLabel.Text = materialDesignAssembly.GetName().Version.ToString();
+      var materialDesignAssembly = typeof(MaterialDesignThemes.Wpf.DialogHost).Assembly;
+      this.MDIXVersionLabel.Text = materialDesignAssembly.GetName().Version?.ToString() ?? string.Empty;
       this.ConfigFile.Text = SerializationHelper.Instance.ConfigFile;
       this.PluginList.ItemsSource = this.Plugins;
     }
@@ -63,7 +63,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
         return newPlugin;
       }).ToList();
 
-    private void OpenLink(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+    private void OpenLink(object? sender, System.Windows.Navigation.RequestNavigateEventArgs e)
     {
       System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
       e.Handled = true;
@@ -74,7 +74,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
-    private void ImportButtonClick(object sender, RoutedEventArgs e)
+    private void ImportButtonClick(object? sender, RoutedEventArgs e)
     {
       using (var openFileDialog = new OpenFileDialog())
       {
@@ -96,7 +96,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
-    private void ExportButtonClick(object sender, RoutedEventArgs e)
+    private void ExportButtonClick(object? sender, RoutedEventArgs e)
     {
       using (var saveFileDialog = new SaveFileDialog())
       {

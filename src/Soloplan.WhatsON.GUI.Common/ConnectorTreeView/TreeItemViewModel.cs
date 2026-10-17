@@ -19,36 +19,36 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// Backing field for <see cref="EditCommand" />.
     /// </summary>
-    private CustomCommand editCommand;
+    private CustomCommand? editCommand;
 
     /// <summary>
     /// Backing field for <see cref="ExportCommand" />.
     /// </summary>
-    private CustomCommand exportCommand;
+    private CustomCommand? exportCommand;
 
-    private CustomCommand deleteCommand;
+    private CustomCommand? deleteCommand;
 
     /// <summary>
     /// Backing field for <see cref="RenameCommand" />.
     /// </summary>
-    private CustomCommand renameCommand;
+    private CustomCommand? renameCommand;
 
     /// <summary>
     /// Event fired when user requested editing of tree view item in context menu.
     /// </summary>
-    public event EventHandler<EditTreeItemViewModelEventArgs> EditItem;
+    public event EventHandler<EditTreeItemViewModelEventArgs>? EditItem;
 
     /// <summary>
     /// Event fired when item should be deleted.
     /// </summary>
-    public event EventHandler<DeleteTreeItemEventArgs> DeleteItem;
+    public event EventHandler<DeleteTreeItemEventArgs>? DeleteItem;
 
     /// <summary>
     /// Event fired when user requested exporting of tree view item in context menu.
     /// </summary>
-    public event EventHandler<ValueEventArgs<TreeItemViewModel>> ExportItem;
+    public event EventHandler<ValueEventArgs<TreeItemViewModel>>? ExportItem;
 
-    public event EventHandler ConfigurationChanged;
+    public event EventHandler? ConfigurationChanged;
 
     public bool IsNodeExpanded { get; set; }
 
@@ -82,7 +82,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">Event args.</param>
-    public virtual void OnDoubleClick(object sender, MouseButtonEventArgs e)
+    public virtual void OnDoubleClick(object? sender, MouseButtonEventArgs e)
     {
     }
 
@@ -91,7 +91,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="eventArgs">Arguments containing data about edited item.</param>
-    protected virtual void OnEditItem(object sender, EditTreeItemViewModelEventArgs eventArgs)
+    protected virtual void OnEditItem(object? sender, EditTreeItemViewModelEventArgs eventArgs)
     {
       if (!this.IsOnlyOneSelected)
       {
@@ -106,14 +106,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="eventArgs">Arguments containing data about deleted item.</param>
-    protected virtual void OnDeleteItem(object sender, DeleteTreeItemEventArgs eventArgs) => this.DeleteItem?.Invoke(sender, eventArgs);
+    protected virtual void OnDeleteItem(object? sender, DeleteTreeItemEventArgs eventArgs) => this.DeleteItem?.Invoke(sender, eventArgs);
 
     /// <summary>
     /// Called when item is exported.
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="eventArgs">Arguments containing data about exporting item.</param>
-    protected virtual void OnExportItem(object sender, ValueEventArgs<TreeItemViewModel> eventArgs) => this.ExportItem?.Invoke(sender, eventArgs);
+    protected virtual void OnExportItem(object? sender, ValueEventArgs<TreeItemViewModel> eventArgs) => this.ExportItem?.Invoke(sender, eventArgs);
 
     /// <summary>
     /// Creates command used for editing this tree item.
@@ -164,14 +164,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <param name="sender">The sender.</param>
     /// <param name="eventArgs">Event args.</param>
     [SuppressPropertyChangedWarnings]
-    protected virtual void OnConfigurationChanged(object sender, EventArgs eventArgs) => this.ConfigurationChanged?.Invoke(sender, eventArgs);
+    protected virtual void OnConfigurationChanged(object? sender, EventArgs eventArgs) => this.ConfigurationChanged?.Invoke(sender, eventArgs);
 
     /// <summary>
     /// Handles delete command.
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">Event args.</param>
-    private void DeleteCommandOnExecute(object sender, ValueEventArgs<object> e)
+    private void DeleteCommandOnExecute(object? sender, ValueEventArgs<object?> e)
     {
       var data = new DeleteTreeItemEventArgs(this);
       this.OnDeleteItem(this, data);

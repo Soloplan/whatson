@@ -18,13 +18,15 @@ namespace Soloplan.WhatsON.Jenkins
   /// </summary>
   public interface IJenkinsApi
   {
+    Task<JenkinsPollingResult> GetPollingJobs(IReadOnlyCollection<JenkinsConnector> connectors, CancellationToken token);
+
     /// <summary>
     /// Gets information about Jenkins Job.
     /// </summary>
     /// <param name="connector">Job for which informations are retrieved.</param>
     /// <param name="token">Cancellation token.</param>
     /// <returns>Information about Jenkins job. <seealso cref="JenkinsJob" />.</returns>
-    Task<JenkinsJob> GetJenkinsJob(JenkinsConnector connector, CancellationToken token);
+    Task<JenkinsJob?> GetJenkinsJob(JenkinsConnector connector, CancellationToken token);
 
     /// <summary>
     /// Gets information about Jenkins build.
@@ -33,7 +35,7 @@ namespace Soloplan.WhatsON.Jenkins
     /// <param name="buildNumber">Build number.</param>
     /// <param name="token">Cancellation token.</param>
     /// <returns>Information about specific build. <seealso cref="JenkinsBuild" />.</returns>
-    Task<JenkinsBuild> GetJenkinsBuild(JenkinsConnector connector, int buildNumber, CancellationToken token);
+    Task<JenkinsBuild?> GetJenkinsBuild(JenkinsConnector connector, int buildNumber, CancellationToken token);
 
     /// <summary>
     /// Gets information about Jenkins builds. Accesses all builds list between <paramref name="from" /> and

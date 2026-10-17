@@ -18,7 +18,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// <summary>
     /// Gets the supported configuration items key.
     /// </summary>
-    string SupportedConfigurationItemsKey { get; }
+    string? SupportedConfigurationItemsKey { get; }
 
     /// <summary>
     /// Creates a new control and returns it.

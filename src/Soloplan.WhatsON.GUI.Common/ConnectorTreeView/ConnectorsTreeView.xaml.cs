@@ -28,14 +28,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   /// </summary>
   public partial class ConnectorsTreeView : UserControl, IDisposable
   {
-    private ConnectorTreeViewModel model;
+    private ConnectorTreeViewModel model = new ConnectorTreeViewModel();
 
     private Collection<ConnectorViewModel> selectedConnectors = new Collection<ConnectorViewModel>();
 
     /// <summary>
     /// Backing field for <see cref="DeleteSelectedObject" />.
     /// </summary>
-    private CustomCommand deleteFocusedObject;
+    private CustomCommand? deleteFocusedObject;
 
     /// <summary>
     /// Bool needed for double mouse up event firing problem. If there was an item clicked then, there will be no group
@@ -69,22 +69,22 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// Event fired when configuration is changed by user interaction with <see cref="ConnectorsTreeView" />.
     /// </summary>
-    public event EventHandler ConfigurationChanged;
+    public event EventHandler? ConfigurationChanged;
 
     /// <summary>
     /// Event fired when user requested editing of tree view item in context menu.
     /// </summary>
-    public event EventHandler<EditTreeItemViewModelEventArgs> EditItem;
+    public event EventHandler<EditTreeItemViewModelEventArgs>? EditItem;
 
     /// <summary>
     /// Event fired when user requested exporting of tree view item in context menu.
     /// </summary>
-    public event EventHandler<ValueEventArgs<TreeItemViewModel>> ExportItem;
+    public event EventHandler<ValueEventArgs<TreeItemViewModel>>? ExportItem;
 
     /// <summary>
     /// Event fired when user wants to delete item.
     /// </summary>
-    public event EventHandler<DeleteTreeItemEventArgs> DeleteItem;
+    public event EventHandler<DeleteTreeItemEventArgs>? DeleteItem;
 
     /// <summary>
     /// Gets command for deleting selected item.
@@ -114,7 +114,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     public TreeListSettings GetTreeListSettings() => new TreeListSettings { GroupExpansions = this.model.GetGroupExpansionState() };
 
-    public void ApplyTreeListSettings(TreeListSettings treeListSettings)
+    public void ApplyTreeListSettings(TreeListSettings? treeListSettings)
     {
       if (treeListSettings == null)
       {
@@ -147,7 +147,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     public void Dispose()
     {
       this.HookUnhookModelEvents(false);
-      this.model = null;
       this.deleteFocusedObject = null;
       BindingOperations.ClearBinding(this.mainTreeView, TreeView.ItemsSourceProperty);
     }
@@ -155,7 +154,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private void SetupDataContext()
     {
       BindingOperations.ClearBinding(this.mainTreeView, TreeView.ItemsSourceProperty);
-      if (this.model.OneGroup && string.IsNullOrWhiteSpace(this.model.ConnectorGroups.FirstOrDefault().GroupName))
+      if (this.model.OneGroup && string.IsNullOrWhiteSpace(this.model.ConnectorGroups.FirstOrDefault()?.GroupName))
       {
         Binding myBinding = new Binding();
         myBinding.Source = this.model.FirstGroup;
@@ -175,7 +174,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
-    private void OnTreeItemDoubleClick(object sender, MouseButtonEventArgs e) => this.model.OnDoubleClick(sender, e);
+    private void OnTreeItemDoubleClick(object? sender, MouseButtonEventArgs e) => this.model.OnDoubleClick(sender, e);
 
     private CustomCommand CreateDeleteFocusedObjectCommand()
     {
@@ -194,7 +193,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       return command;
     }
 
-    private void ModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+    private void ModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
       if (e.PropertyName == nameof(ConnectorTreeViewModel.OneGroup))
       {
@@ -208,22 +207,22 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <param name="hook">Controls whether the events should be hooked or unhooked.</param>
     private void HookUnhookModelEvents(bool hook)
     {
-      void OnModelOnEditItem(object s, EditTreeItemViewModelEventArgs e)
+      void OnModelOnEditItem(object? s, EditTreeItemViewModelEventArgs e)
       {
         this.EditItem?.Invoke(s, e);
       }
 
-      void OnModelOnExportItem(object s, ValueEventArgs<TreeItemViewModel> e)
+      void OnModelOnExportItem(object? s, ValueEventArgs<TreeItemViewModel> e)
       {
         this.ExportItem?.Invoke(s, e);
       }
 
-      void OnModelOnDeleteItem(object s, DeleteTreeItemEventArgs e)
+      void OnModelOnDeleteItem(object? s, DeleteTreeItemEventArgs e)
       {
         this.DeleteItem?.Invoke(s, e);
       }
 
-      void OnModelOnConfigurationChanged(object s, EventArgs e)
+      void OnModelOnConfigurationChanged(object? s, EventArgs e)
       {
         this.ConfigurationChanged?.Invoke(this, EventArgs.Empty);
       }
@@ -277,7 +276,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       {
         foreach (var itemInGroup in group.ConnectorViewModels)
         {
-          if (itemInGroup.Connector.Configuration.Identifier == connector.Identifier)
+          if (itemInGroup.Identifier == connector.Identifier)
           {
             this.ResetConnectorInGroupStyle(group, itemInGroup);
           }
@@ -295,7 +294,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       {
         foreach (var itemInGroup in group.ConnectorViewModels)
         {
-          if (itemInGroup.Connector.Configuration.Identifier == connector.Identifier)
+          if (itemInGroup.Identifier == connector.Identifier)
           {
             this.SetConnectorInGroupStyle(group, itemInGroup);
           }
@@ -312,7 +311,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private void ResetConnectorInGroupStyle(ConnectorGroupViewModel connectorGroupViewModel, ConnectorViewModel connectorViewModel)
     {
       TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorGroupViewModel);
-      var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(connectorViewModel)
+      var treeViewItemInGroup = groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(connectorViewModel) as TreeViewItem
                                 ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorViewModel);
       if (treeViewItemInGroup != null)
       {
@@ -328,7 +327,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private void SetConnectorInGroupStyle(ConnectorGroupViewModel connectorGroupViewModel, ConnectorViewModel connectorViewModel)
     {
       TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorGroupViewModel);
-      var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(connectorViewModel)
+      var treeViewItemInGroup = groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(connectorViewModel) as TreeViewItem
                                 ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorViewModel);
       if (treeViewItemInGroup != null)
       {
@@ -559,9 +558,9 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     /// <param name="sender">sender item.</param>
     /// <param name="e">event args.</param>
-    private void ControlLeftMouseDownHandler(object sender, MouseButtonEventArgs e)
+    private void ControlLeftMouseDownHandler(object? sender, MouseButtonEventArgs e)
     {
-      TreeViewItem item = (TreeViewItem)sender;
+      var item = sender as TreeViewItem;
       if (item == null)
       {
         return;
@@ -591,9 +590,9 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     /// <param name="sender">sender item.</param>
     /// <param name="e">event args.</param>
-    private void ShiftLeftMouseDownHandler(object sender, MouseButtonEventArgs e)
+    private void ShiftLeftMouseDownHandler(object? sender, MouseButtonEventArgs e)
     {
-      TreeViewItem item = (TreeViewItem)sender;
+      var item = sender as TreeViewItem;
       if (item == null)
       {
         return;
@@ -610,7 +609,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// Event handler for LMB down.
     /// </summary>
-    private void OnTreeItemLeftMouseDown(object sender, MouseButtonEventArgs e)
+    private void OnTreeItemLeftMouseDown(object? sender, MouseButtonEventArgs e)
     {
       if (Keyboard.IsKeyDown(Key.LeftCtrl))
       {
@@ -656,9 +655,9 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     /// <param name="sender">sender item.</param>
     /// <param name="e">event args.</param>
-    private void ControlLeftMouseUpHandler(object sender, MouseButtonEventArgs e)
+    private void ControlLeftMouseUpHandler(object? sender, MouseButtonEventArgs e)
     {
-      TreeViewItem item = (TreeViewItem)sender;
+      var item = sender as TreeViewItem;
 
       var connector = new ConnectorViewModel();
       if (item == null)
@@ -699,7 +698,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     /// <param name="sender">sender item.</param>
     /// <param name="e">event args.</param>
-    private void OnTreeItemLeftMouseUp(object sender, MouseButtonEventArgs e)
+    private void OnTreeItemLeftMouseUp(object? sender, MouseButtonEventArgs e)
     {
       if (Keyboard.IsKeyUp(Key.LeftCtrl) && Keyboard.IsKeyUp(Key.LeftShift))
       {
@@ -715,9 +714,13 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     /// <param name="sender">sender item.</param>
     /// <param name="e">event args.</param>
-    private void OnTreeViewItemDrop(object sender, DragEventArgs e)
+    private void OnTreeViewItemDrop(object? sender, DragEventArgs e)
     {
-      var item = (TreeViewItem)sender;
+      if (sender is not TreeViewItem item)
+      {
+        return;
+      }
+
       if (item.Header is ConnectorGroupViewModel)
       {
       }
@@ -736,9 +739,9 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     /// <param name="sender">sender item.</param>
     /// <param name="e">event args.</param>
-    private void OnTreeItemRightMouseDown(object sender, MouseButtonEventArgs e)
+    private void OnTreeItemRightMouseDown(object? sender, MouseButtonEventArgs e)
     {
-      TreeViewItem item = (TreeViewItem)sender;
+      var item = sender as TreeViewItem;
       try
       {
         var connector = new ConnectorViewModel();
@@ -771,7 +774,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     /// <param name="sender">sender item.</param>
     /// <param name="e">event args.</param>
-    private void OnKeyDown(object sender, KeyEventArgs e)
+    private void OnKeyDown(object? sender, KeyEventArgs e)
     {
       if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.A))
       {
@@ -792,13 +795,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     /// <param name="sender">Sender object.</param>
     /// <param name="e">Args.</param>
-    private void OnScroll(object sender, ScrollChangedEventArgs e)
+    private void OnScroll(object? sender, ScrollChangedEventArgs e)
     {
-      if (this.model == null)
-      {
-        return;
-      }
-
       if (this.model.ConnectorGroups == null)
       {
         return;

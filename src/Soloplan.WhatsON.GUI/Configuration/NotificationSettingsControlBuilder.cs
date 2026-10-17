@@ -31,7 +31,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// <summary>
     /// Gets the supported configuration items key.
     /// </summary>
-    public override string SupportedConfigurationItemsKey => null;
+    public override string? SupportedConfigurationItemsKey => null;
 
     /// <summary>
     /// Creates a new control and returns it.
@@ -263,7 +263,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// <param name="notificationStateItem">State of the notification.</param>
     /// <param name="configItem">The configuration item.</param>
     /// <param name="propertyName">Name of the property.</param>
-    private void NotificationStateChanged(NotificationStateItem notificationStateItem, IConfigurationItem configItem, string propertyName)
+    private void NotificationStateChanged(NotificationStateItem notificationStateItem, IConfigurationItem configItem, string? propertyName)
     {
       if (propertyName == nameof(NotificationStateItem.IsNotUseGlobalSettingsForParentListActive))
       {
@@ -295,6 +295,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
       /// </summary>
       public NotificationsState()
       {
+        this.OnlyIfStateChanged = new NotificationStateItem(this, () => Strings.OnlyIfStatusChanged);
         this.UseGlobalSettings = new NotificationStateItem(this, () => Strings.UseMainConfiguration);
         this.UseGlobalSettings.PropertyChanged += (s, e) =>
         {
@@ -305,8 +306,6 @@ namespace Soloplan.WhatsON.GUI.Configuration
 
           this.OnlyIfStateChanged.RefreshGlobalSettings();
         };
-
-        this.OnlyIfStateChanged = new NotificationStateItem(this, () => Strings.OnlyIfStatusChanged);
       }
 
       /// <summary>

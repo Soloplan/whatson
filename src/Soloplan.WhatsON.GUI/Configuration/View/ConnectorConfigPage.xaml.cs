@@ -22,7 +22,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// Initializes a new instance of the <see cref="ConnectorConfigPage" /> class.
     /// </summary>
     /// <param name="connector">The connector.</param>
-    public ConnectorConfigPage(ConnectorViewModel connector)
+    public ConnectorConfigPage(ConnectorViewModel? connector)
     {
       this.DataContext = connector;
       this.InitializeComponent();
@@ -33,7 +33,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// Dynamically creates the configuration controls.
     /// </summary>
     /// <param name="connector">The connector view model.</param>
-    private void CreateConfigurationControls(ConnectorViewModel connector)
+    private void CreateConfigurationControls(ConnectorViewModel? connector)
     {
       if (connector == null)
       {
@@ -62,7 +62,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
         var editor = builder.GetControl(configItem, configAttribute);
         var captionBinding = TextExtension.CreateBinding(() =>
         {
-          ConfigResourcesHelper.ApplyConfigResources(configAttribute, connector.SourceConnectorPlugin.ConnectorType);
+          ConfigResourcesHelper.ApplyConfigResources(configAttribute, (connector.SourceConnectorPlugin ?? throw new System.InvalidOperationException("No connector plugin is selected.")).ConnectorType);
           return configAttribute.Caption;
         });
         if (editor is TextBox or ComboBox)

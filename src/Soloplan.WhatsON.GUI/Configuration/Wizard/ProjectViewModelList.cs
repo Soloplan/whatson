@@ -39,7 +39,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// Gets or sets the plug in used to retrieve the projects list.
     /// </summary>
-    public ConnectorPlugin PlugIn { get; set; }
+    public ConnectorPlugin? PlugIn { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether multi selection mode is active.

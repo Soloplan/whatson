@@ -18,9 +18,9 @@ namespace Soloplan.WhatsON.Jenkins
     {
     }
 
-    public string DisplayName { get; set; }
+    public string? DisplayName { get; set; }
 
-    public IList<JenkinsUser> CommittedToThisBuild { get; set; }
+    public IList<JenkinsUser> CommittedToThisBuild { get; set; } = new List<JenkinsUser>();
 
     public IList<JenkinsUser> Culprits { get; set; } = new List<JenkinsUser>();
   }

@@ -40,12 +40,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <summary>
     /// The connector which should be focused during initialization.
     /// </summary>
-    private readonly Connector initialFocusedConnector;
+    private readonly Connector? initialFocusedConnector;
 
     /// <summary>
     /// The plugin which should be used for immediate creation of new connector after initialization.
     /// </summary>
-    private readonly ConnectorPlugin newConnectorPlugin;
+    private readonly ConnectorPlugin? newConnectorPlugin;
 
     /// <summary>
     /// The wizard dialog settings.
@@ -60,17 +60,17 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <summary>
     /// The connector page.
     /// </summary>
-    private ConnectorsPage connectorPage;
+    private ConnectorsPage? connectorPage;
 
     /// <summary>
     /// The main page.
     /// </summary>
-    private Page mainPage;
+    private Page? mainPage;
 
     /// <summary>
     /// The about page.
     /// </summary>
-    private AboutPage aboutPage;
+    private AboutPage? aboutPage;
 
     /// <summary>
     /// The window shown flag.
@@ -82,10 +82,10 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     /// <param name="configuration">The configuration.</param>
     /// <param name="wizardDialogSettings">The wizard dialog settings.</param>
-    public ConfigWindow(ApplicationConfiguration configuration, WindowSettings wizardDialogSettings)
+    public ConfigWindow(ApplicationConfiguration configuration, WindowSettings? wizardDialogSettings)
     {
       this.configurationSource = configuration;
-      this.wizardDialogSettings = wizardDialogSettings;
+      this.wizardDialogSettings = wizardDialogSettings ?? new WindowSettings();
       this.ConfigurationViewModel.Load(configuration);
       this.ConfigurationViewModel.SingleConnectorMode = false;
       this.DataContext = this.ConfigurationViewModel;
@@ -106,7 +106,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <param name="configuration">The configuration.</param>
     /// <param name="initialFocusedConnector">The connector focused on initialization.</param>
     /// <param name="wizardDialogSettings">The wizard dialog settings.</param>
-    public ConfigWindow(ApplicationConfiguration configuration, Connector initialFocusedConnector, WindowSettings wizardDialogSettings)
+    public ConfigWindow(ApplicationConfiguration configuration, Connector initialFocusedConnector, WindowSettings? wizardDialogSettings)
       : this(configuration, wizardDialogSettings)
     {
       this.initialFocusedConnector = initialFocusedConnector;
@@ -121,7 +121,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <param name="configuration">The configuration.</param>
     /// <param name="newConnectorPlugin">The new connector plugin.</param>
     /// <param name="wizardDialogSettings">The wizard dialog settings.</param>
-    public ConfigWindow(ApplicationConfiguration configuration, ConnectorPlugin newConnectorPlugin, WindowSettings wizardDialogSettings)
+    public ConfigWindow(ApplicationConfiguration configuration, ConnectorPlugin newConnectorPlugin, WindowSettings? wizardDialogSettings)
       : this(configuration, wizardDialogSettings)
     {
       this.newConnectorPlugin = newConnectorPlugin;
@@ -134,12 +134,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <summary>
     /// Occurs when configuration was applied.
     /// </summary>
-    public event EventHandler<ValueEventArgs<ApplicationConfiguration>> ConfigurationApplied;
+    public event EventHandler<ValueEventArgs<ApplicationConfiguration>>? ConfigurationApplied;
 
     /// <summary>
     /// Occurs when configuration is about to be applied.
     /// </summary>
-    public event EventHandler<EventArgs> ConfigurationApplying;
+    public event EventHandler<EventArgs>? ConfigurationApplying;
 
     /// <summary>
     /// The configuration view model.
@@ -173,7 +173,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     private void FocusConnectorsPage()
     {
       var connectorsConfigurationListBoxItem =
-        this.ConfigTopicsListBox.Items.Cast<ListBoxItem>().FirstOrDefault(i => i.Tag.ToString() == ConnectorsListItemTag);
+        this.ConfigTopicsListBox.Items.Cast<ListBoxItem>().FirstOrDefault(i => i.Tag?.ToString() == ConnectorsListItemTag);
       this.ConfigurationViewModel.InitialFocusedConfigurationListBoxItem = connectorsConfigurationListBoxItem;
     }
 
@@ -182,7 +182,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="SelectionChangedEventArgs" /> instance containing the event data.</param>
-    private void ListBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
+    private void ListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
       if (e.AddedItems.Count != 1)
       {
@@ -204,7 +204,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
         }
       }
 
-      var selectedItemTag = (string)((ListBoxItem)e.AddedItems[0]).Tag;
+      var selectedItemTag = (e.AddedItems[0] as ListBoxItem)?.Tag as string;
       switch (selectedItemTag)
       {
         case MainListItemTag:
@@ -236,7 +236,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
               this.connectorPage = new ConnectorsPage(
                 this.ConfigurationViewModel.Connectors,
                 this,
-                this.newConnectorPlugin,
+                this.newConnectorPlugin ?? throw new InvalidOperationException("No connector plugin was selected."),
                 this.configurationSource,
                 this.wizardDialogSettings);
             }
@@ -259,16 +259,19 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="System.ComponentModel.PropertyChangedEventArgs" /> instance containing the event data.</param>
-    private void ConfigurationViewModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    private void ConfigurationViewModelPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
       if (e.PropertyName == nameof(this.ConfigurationViewModel.SingleConnectorMode))
       {
-        this.connectorPage.SingleConnectorMode = this.ConfigurationViewModel.SingleConnectorMode;
+        if (this.connectorPage != null)
+        {
+          this.connectorPage.SingleConnectorMode = this.ConfigurationViewModel.SingleConnectorMode;
+        }
       }
 
       if (e.PropertyName == nameof(this.ConfigurationViewModel.ConfigurationIsModified))
       {
-        this.connectorPage.OnConfigurationIsModified();
+        this.connectorPage?.OnConfigurationIsModified();
       }
     }
 
@@ -277,7 +280,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="System.ComponentModel.CancelEventArgs" /> instance containing the event data.</param>
-    private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
+    private void WindowClosing(object? sender, System.ComponentModel.CancelEventArgs e)
     {
       if (this.Owner != null)
       {
@@ -293,7 +296,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
-    private void SnackbarResetClick(object sender, RoutedEventArgs e)
+    private void SnackbarResetClick(object? sender, RoutedEventArgs e)
     {
       this.ConfigurationViewModel.Load(this.configurationSource);
       ((App)Application.Current).ApplyTheme(this.configurationSource.ThemeMode);
@@ -309,14 +312,14 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">Event args.</param>
-    private void OwnerClosing(object sender, System.ComponentModel.CancelEventArgs e) => e.Cancel = this.ConfigurationViewModel.ConfigurationIsModified;
+    private void OwnerClosing(object? sender, System.ComponentModel.CancelEventArgs e) => e.Cancel = this.ConfigurationViewModel.ConfigurationIsModified;
 
     /// <summary>
     /// Handles the Save Click on the Snackbar.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
-    private void SnackbarSaveClick(object sender, RoutedEventArgs e)
+    private void SnackbarSaveClick(object? sender, RoutedEventArgs e)
     {
       if (Validation.IsValid(this))
       {

@@ -35,7 +35,7 @@ namespace Soloplan.WhatsON.GUI
     /// <summary>
     /// Initializes this instance.
     /// </summary>
-    public void Initialize(ColorSettings settings)
+    public void Initialize(ColorSettings? settings)
     {
       if (settings != null)
       {

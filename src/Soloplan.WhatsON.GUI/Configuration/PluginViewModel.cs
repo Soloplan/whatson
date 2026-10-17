@@ -11,10 +11,10 @@ namespace Soloplan.WhatsON.GUI.Configuration
 
   public class PluginViewModel
   {
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
-    public Version Version { get; set; }
+    public Version? Version { get; set; }
 
-    public string Description { get; set; }
+    public string? Description { get; set; }
   }
 }

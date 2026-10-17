@@ -15,9 +15,9 @@ namespace Soloplan.WhatsON.Jenkins
   using Soloplan.WhatsON.Jenkins.Model;
   using Soloplan.WhatsON.Model;
 
-  public class JenkinsApi : IJenkinsApi
+  public partial class JenkinsApi : IJenkinsApi
   {
-    public async Task<JenkinsJob> GetJenkinsJob(JenkinsConnector connector, CancellationToken token)
+    public async Task<JenkinsJob?> GetJenkinsJob(JenkinsConnector connector, CancellationToken token)
     {
       var jobRequest = UrlHelper.JobRequest(connector, connector.Snapshots.Count == 0);
       try
@@ -47,7 +47,7 @@ namespace Soloplan.WhatsON.Jenkins
       }
     }
 
-    public async Task<JenkinsBuild> GetJenkinsBuild(JenkinsConnector connector, int buildNumber, CancellationToken token)
+    public async Task<JenkinsBuild?> GetJenkinsBuild(JenkinsConnector connector, int buildNumber, CancellationToken token)
     {
       var buildRequest = UrlHelper.BuildRequest(connector, buildNumber);
       try
@@ -67,7 +67,7 @@ namespace Soloplan.WhatsON.Jenkins
       int to = Connector.MaxSnapshots)
     {
       var buildsRequest = UrlHelper.BuildsRequest(connector, from, to);
-      JenkinsBuilds builds = null;
+      JenkinsBuilds? builds = null;
       try
       {
         builds = await SerializationHelper.Instance.GetJsonModel<JenkinsBuilds>(buildsRequest, token);
@@ -130,17 +130,36 @@ namespace Soloplan.WhatsON.Jenkins
           $"{SanitizeBaseUrl(connector.Address)}/{GetRelativeProjectUrl(connector)}/api/json?tree=builds[{JenkinsBuild.RequestProperties}]{{{from},{to}}}";
       }
 
-      private static string SanitizeBaseUrl(string address) => address.TrimEnd('/');
+      internal static string ProjectFullName(Connector connector) => string.Join(
+        "/", GetRelativeProjectUrl(connector).Split('/').Where((part, index) => index % 2 == 1).Select(Uri.UnescapeDataString));
+
+      internal static string ParentUrl(Connector connector)
+      {
+        var path = GetRelativeProjectUrl(connector);
+        var boundary = path.LastIndexOf("/job/", StringComparison.Ordinal);
+        return SanitizeBaseUrl(connector.Address) + (boundary < 0 ? string.Empty : "/" + path.Substring(0, boundary));
+      }
+
+      internal static string ProjectLeafName(Connector connector) => Uri.UnescapeDataString(GetRelativeProjectUrl(connector).Split('/').Last());
+
+      private static string SanitizeBaseUrl(string? address)
+      {
+        ArgumentException.ThrowIfNullOrWhiteSpace(address);
+        return address.TrimEnd('/');
+      }
 
       private static string GetRelativeProjectUrl(Connector connector)
       {
+        var project = connector.Project;
+        ArgumentException.ThrowIfNullOrWhiteSpace(project);
+
         // support for legacy format connector project names: prior to 0.9.1 the connector project name was extracted from the URL and didn't reflect the actual name of the project (without URL aritfacts)
-        if (connector.Project.Contains($"/{JobUrlPrefix}/"))
+        if (project.Contains($"/{JobUrlPrefix}/"))
         {
-          return $"{JobUrlPrefix}/{connector.Project}";
+          return $"{JobUrlPrefix}/{project}";
         }
 
-        var parts = connector.Project.Split('/').Select(Uri.EscapeDataString);
+        var parts = project.Split('/').Select(Uri.EscapeDataString);
 
         return $"{JobUrlPrefix}/{string.Join($"/{JobUrlPrefix}/", parts).TrimEnd('/')}";
       }

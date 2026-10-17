@@ -11,6 +11,6 @@ namespace Soloplan.WhatsON.Jenkins.Model
 
   public class JenkinsBuilds
   {
-    public IList<JenkinsBuild> Builds { get; set; }
+    public IList<JenkinsBuild>? Builds { get; set; }
   }
 }

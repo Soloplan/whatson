@@ -8,4 +8,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Soloplan.WhatsON\Soloplan.WhatsON.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Soloplan.WhatsON.Jenkins.Tests" />
+    <InternalsVisibleTo Include="Soloplan.WhatsON.GUI.Tests" />
+  </ItemGroup>
 </Project>

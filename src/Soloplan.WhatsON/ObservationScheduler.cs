@@ -28,7 +28,7 @@ namespace Soloplan.WhatsON
     /// <summary>
     /// Logger instance used by this class.
     /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
     /// <summary>
     /// List of currently observed connectors.
@@ -38,7 +38,7 @@ namespace Soloplan.WhatsON
     /// <summary>
     /// Cancellation token used when all open connections should be forcefully closed.
     /// </summary>
-    private CancellationTokenSource cancellationTokenSource;
+    private CancellationTokenSource? cancellationTokenSource;
 
     /// <summary>
     /// Observation is stopping.
@@ -56,7 +56,7 @@ namespace Soloplan.WhatsON
 
     public bool Running => this.observedConnectors.Any(connector => connector.Running);
 
-    public void Observe(Connector connector, int interval = DefaultPollInterval)
+    public void Observe(Connector? connector, int interval = DefaultPollInterval)
     {
       if (connector == null)
       {
@@ -94,10 +94,13 @@ namespace Soloplan.WhatsON
           this.cancellationTokenSource = new CancellationTokenSource();
         }
 
-        foreach (var observationConnector in this.observedConnectors)
+        foreach (var group in this.observedConnectors.GroupBy(observation =>
+          observation.Connector is IBatchedConnector batch && batch.BatchAddress != null
+            ? (object)(observation.Connector.GetType(), batch.BatchAddress, observation.Interval)
+            : observation))
         {
-          log.Log(LogLevel.Debug, "Starting observation for {@connector}.", observationConnector);
-          Task.Run(() => this.StartObserveSingle(observationConnector, this.cancellationTokenSource.Token));
+          var connectors = group.ToArray();
+          Task.Run(() => this.StartObserveGroup(connectors, this.cancellationTokenSource.Token));
         }
 
         log.Debug("Observation started.");
@@ -124,17 +127,19 @@ namespace Soloplan.WhatsON
     }
 
     /// <summary>
-    /// Observes single connector. Creates asynchronous loop.
+    /// Observes a server batch or a single connector in one asynchronous loop.
     /// </summary>
-    /// <param name="connector">Connector to observe.</param>
+    /// <param name="connectors">Connectors sharing a polling interval and, when supported, a server.</param>
     /// <param name="token">Cancellation token passed to connector.</param>
     /// <remarks>
     /// See https://blogs.msdn.microsoft.com/benwilli/2016/06/30/asynchronous-infinite-loops-instead-of-timers/ for
     /// look idea description.
     /// </remarks>
     /// <returns>Not used.</returns>
-    private async Task StartObserveSingle(ObservationConnector connector, CancellationToken token)
+    private async Task StartObserveGroup(IReadOnlyList<ObservationConnector> connectors, CancellationToken token)
     {
+      var connector = connectors[0];
+      var batchConnectors = connectors.Select(item => item.Connector).ToArray();
       while (connector.Running)
       {
         try
@@ -143,11 +148,34 @@ namespace Soloplan.WhatsON
           {
             log.Log(LogLevel.Trace, "Observation of {@connector} started.", connector);
 
-            await connector.Connector.QueryStatus(token);
-            connector.LastPoll = DateTime.Now;
-            if (connector.Running)
+            IReadOnlyCollection<Connector> queried;
+            try
             {
-              this.StatusQueried?.Invoke(this, connector.Connector);
+              if (connector.Connector is IBatchedConnector batch)
+              {
+                queried = await batch.QueryStatusBatch(batchConnectors, token);
+              }
+              else
+              {
+                await connector.Connector.QueryStatus(token);
+                queried = batchConnectors;
+              }
+            }
+            finally
+            {
+              // Failed server polls also wait for the next interval instead of retrying in a tight loop.
+              foreach (var item in connectors)
+              {
+                item.LastPoll = DateTime.Now;
+              }
+            }
+
+            foreach (var item in queried)
+            {
+              if (connector.Running)
+              {
+                this.StatusQueried?.Invoke(this, item);
+              }
             }
 
             log.Log(LogLevel.Trace, "Observation of {@connector} ended.", connector);
@@ -160,8 +188,9 @@ namespace Soloplan.WhatsON
             await Task.Delay(millisecondsToWait, token);
           }
         }
-        catch (TaskCanceledException e)
+        catch (OperationCanceledException) when (token.IsCancellationRequested)
         {
+          break;
         }
         catch (Exception e)
         {
@@ -203,7 +232,7 @@ namespace Soloplan.WhatsON
         if (force)
         {
           log.Warn("Canceling any still running tasks.");
-          this.cancellationTokenSource.Cancel();
+          this.cancellationTokenSource?.Cancel();
           log.Warn("Task canceled.");
         }
 
@@ -260,6 +289,6 @@ namespace Soloplan.WhatsON
     /// <summary>
     /// Fired when connectors status was polled.
     /// </summary>
-    public event EventHandler<Connector> StatusQueried;
+    public event EventHandler<Connector>? StatusQueried;
   }
 }

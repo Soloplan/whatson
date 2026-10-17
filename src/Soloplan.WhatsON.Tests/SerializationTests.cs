@@ -19,15 +19,13 @@ namespace Soloplan.WhatsON.Tests
   [TestFixture]
   public class SerializationTests
   {
-    private string directory;
+    private readonly string directory = Path.Combine(Path.GetTempPath(), "whatson-tests-" + Guid.NewGuid());
 
-    private SerializationHelper serializer;
+    private readonly SerializationHelper serializer = new SerializationHelper();
 
     [SetUp]
     public void SetUp()
     {
-      this.directory = Path.Combine(Path.GetTempPath(), "whatson-tests-" + Guid.NewGuid());
-      this.serializer = new SerializationHelper();
       this.serializer.SetConfigFolder(this.directory);
     }
 
@@ -84,7 +82,7 @@ namespace Soloplan.WhatsON.Tests
 
       Assert.Multiple(() =>
       {
-        Assert.That(exported["ConnectorsConfiguration"].Children().All(c => c["Identifier"] == null), Is.True);
+        Assert.That((exported["ConnectorsConfiguration"] ?? throw new AssertionException("Missing connectors.")).Children().All(c => c["Identifier"] == null), Is.True);
         Assert.That(imported.ConnectorsConfiguration.Select(c => c.Identifier), Is.Unique);
         Assert.That(imported.ConnectorsConfiguration.Select(c => c.Identifier), Has.None.EqualTo(Guid.Empty));
         Assert.That(

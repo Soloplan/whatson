@@ -28,7 +28,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
       this.DataContext = model;
     }
 
-    private void OkButtonClick(object sender, System.Windows.RoutedEventArgs e)
+    private void OkButtonClick(object? sender, System.Windows.RoutedEventArgs e)
     {
       foreach (var be in BindingOperations.GetSourceUpdatingBindings(this))
       {
@@ -41,7 +41,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
       }
     }
 
-    private void CancelButtonClick(object sender, System.Windows.RoutedEventArgs e)
+    private void CancelButtonClick(object? sender, System.Windows.RoutedEventArgs e)
     {
       foreach (var be in BindingOperations.GetSourceUpdatingBindings(this))
       {

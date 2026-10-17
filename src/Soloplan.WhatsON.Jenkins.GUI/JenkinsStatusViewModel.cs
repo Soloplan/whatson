@@ -17,7 +17,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
 
   public class JenkinsStatusViewModel : BuildStatusViewModel
   {
-    private ObservableCollection<UserViewModel> committedToThisBuild;
+    private ObservableCollection<UserViewModel>? committedToThisBuild;
 
     public JenkinsStatusViewModel(ConnectorViewModel model)
       : base(model)
@@ -29,7 +29,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
     public ObservableCollection<UserViewModel> CommittedToThisBuild =>
       this.committedToThisBuild ?? (this.committedToThisBuild = new ObservableCollection<UserViewModel>());
 
-    public override void Update(Status newStatus)
+    public override void Update(Status? newStatus)
     {
       base.Update(newStatus);
       if (!(newStatus is JenkinsStatus jenkinsStatus))

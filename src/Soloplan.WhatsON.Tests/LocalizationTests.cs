@@ -26,7 +26,7 @@ namespace Soloplan.WhatsON.Tests
     public void ExistingAndNewConfigurationsFollowTheSystemLanguage()
     {
       Assert.That(new ApplicationConfiguration().Language, Is.EqualTo(ApplicationLanguage.System));
-      Assert.That(JsonConvert.DeserializeObject<ApplicationConfiguration>("{}").Language, Is.EqualTo(ApplicationLanguage.System));
+      Assert.That((JsonConvert.DeserializeObject<ApplicationConfiguration>("{}") ?? throw new AssertionException("Deserialization returned null.")).Language, Is.EqualTo(ApplicationLanguage.System));
     }
 
     [TestCase(ApplicationLanguage.English)]
@@ -36,24 +36,24 @@ namespace Soloplan.WhatsON.Tests
     {
       var json = JsonConvert.SerializeObject(new ApplicationConfiguration { Language = language });
       Assert.That(json, Does.Contain($"\"Language\":\"{language}\""));
-      Assert.That(JsonConvert.DeserializeObject<ApplicationConfiguration>(json).Language, Is.EqualTo(language));
+      Assert.That((JsonConvert.DeserializeObject<ApplicationConfiguration>(json) ?? throw new AssertionException("Deserialization returned null.")).Language, Is.EqualTo(language));
     }
 
     [Test]
     public void GermanCatalogHasEveryEnglishKeyAndPreservesFormattingArguments()
     {
       var manager = Strings.ResourceManager;
-      var english = manager.GetResourceSet(CultureInfo.InvariantCulture, true, false);
-      var german = manager.GetResourceSet(CultureInfo.GetCultureInfo("de"), true, false);
+      var english = manager.GetResourceSet(CultureInfo.InvariantCulture, true, false) ?? throw new AssertionException("Missing English resources.");
+      var german = manager.GetResourceSet(CultureInfo.GetCultureInfo("de"), true, false) ?? throw new AssertionException("Missing German resources.");
       Assert.That(german, Is.Not.Null, "A German satellite assembly must be deployed.");
       Assert.That(
         german.Cast<DictionaryEntry>().Select(entry => entry.Key),
         Is.EquivalentTo(english.Cast<DictionaryEntry>().Select(entry => entry.Key)));
       foreach (DictionaryEntry entry in english)
       {
-        var translation = german.GetString((string)entry.Key);
+        var translation = german.GetString((string)entry.Key) ?? throw new AssertionException($"Missing translation: {entry.Key}");
         Assert.That(translation, Is.Not.Null.And.Not.Empty, (string)entry.Key);
-        var expectedArguments = Regex.Matches((string)entry.Value, @"\{\d+\}").Select(match => match.Value);
+        var expectedArguments = Regex.Matches(entry.Value as string ?? throw new AssertionException("Resource must be a string."), @"\{\d+\}").Select(match => match.Value);
         var actualArguments = Regex.Matches(translation, @"\{\d+\}").Select(match => match.Value);
         Assert.That(actualArguments, Is.EquivalentTo(expectedArguments), (string)entry.Key);
       }
@@ -182,8 +182,8 @@ namespace Soloplan.WhatsON.Tests
           Localizer.ApplyLanguage(language);
           Assert.That(CultureInfo.CurrentCulture.Name, Is.EqualTo(expected));
           Assert.That(CultureInfo.CurrentUICulture.Name, Is.EqualTo(expected));
-          Assert.That(CultureInfo.DefaultThreadCurrentCulture.Name, Is.EqualTo(expected));
-          Assert.That(CultureInfo.DefaultThreadCurrentUICulture.Name, Is.EqualTo(expected));
+          Assert.That(CultureInfo.DefaultThreadCurrentCulture?.Name, Is.EqualTo(expected));
+          Assert.That(CultureInfo.DefaultThreadCurrentUICulture?.Name, Is.EqualTo(expected));
         }
       }
       finally

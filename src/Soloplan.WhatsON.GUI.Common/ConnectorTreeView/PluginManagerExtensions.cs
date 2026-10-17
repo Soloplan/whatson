@@ -20,7 +20,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// Logger instance used by this class.
     /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
     /// <summary>
     /// The presentation plugins.
@@ -40,7 +40,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <param name="manager">Plugin manager.</param>
     /// <param name="connectorType">Type of connector.</param>
     /// <returns>Appropriate <see cref="PresentationPlugin" />.</returns>
-    public static PresentationPlugin GetPresentationPlugin(this PluginManager manager, string connectorType)
+    public static PresentationPlugin? GetPresentationPlugin(this PluginManager manager, string connectorType)
     {
       if (presentationPlugins.TryGetValue(connectorType, out var presentationPlugin))
       {

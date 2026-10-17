@@ -31,14 +31,14 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
-    private void NullHandler(object sender, RoutedEventArgs e) => e.Handled = true;
+    private void NullHandler(object? sender, RoutedEventArgs e) => e.Handled = true;
 
     /// <summary>
     /// Handles the PreviewKeyUp event of the TreeViewItem control.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="System.Windows.Input.KeyEventArgs" /> instance containing the event data.</param>
-    private void TreeViewItemPreviewKeyUp(object sender, KeyEventArgs e)
+    private void TreeViewItemPreviewKeyUp(object? sender, KeyEventArgs e)
     {
       if (e.Key == Key.Space)
       {
@@ -56,7 +56,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="RequestNavigateEventArgs" /> instance containing the event data.</param>
-    private void HyperlinkRequestNavigate(object sender, RequestNavigateEventArgs e)
+    private void HyperlinkRequestNavigate(object? sender, RequestNavigateEventArgs e)
     {
       Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
       e.Handled = true;
@@ -85,7 +85,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     /// <param name="sender">Sender item.</param>
     /// <param name="e">Event args.</param>
-    private void ProjectsTreeViewKeyDown(object sender, KeyEventArgs e)
+    private void ProjectsTreeViewKeyDown(object? sender, KeyEventArgs e)
     {
       if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.A))
       {

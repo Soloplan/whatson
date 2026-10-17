@@ -23,48 +23,50 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// The logger.
     /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
-    private ObservableCollection<BuildStatusViewModel> connectorSnapshots;
+    private ObservableCollection<BuildStatusViewModel>? connectorSnapshots;
 
     public ConnectorViewModel()
+      : this(null)
     {
     }
 
-    public ConnectorViewModel(Connector connector)
+    public ConnectorViewModel(Connector? connector)
     {
+      this.Connector = connector;
+      this.CurrentStatus = this.GetStatusViewModel();
       if (connector != null)
       {
         this.Identifier = connector.Configuration.Identifier;
         this.Name = connector.Configuration.Name;
-        this.CurrentStatus = this.GetStatusViewModel();
       }
     }
 
     [OnChangedMethod(nameof(NameChanged))]
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
-    public string Description { get; protected set; }
+    public string? Description { get; protected set; }
 
     public bool IsDisabled { get; private set; }
 
     public BuildStatusViewModel CurrentStatus { get; }
 
-    public string Url { get; protected set; }
+    public string? Url { get; protected set; }
 
-    public Guid Identifier { get; }
+    public Guid Identifier { get; protected set; }
 
     public ObservableCollection<BuildStatusViewModel> ConnectorSnapshots =>
       this.connectorSnapshots ?? (this.connectorSnapshots = new ObservableCollection<BuildStatusViewModel>());
 
-    public Connector Connector { get; private set; }
+    public Connector? Connector { get; private set; }
 
     /// <summary>
     /// Gets command for opening builds webPage.
     /// </summary>
     public virtual OpenWebPageCommand OpenWebPage { get; } = new OpenWebPageCommand();
 
-    public override void OnDoubleClick(object sender, MouseButtonEventArgs e)
+    public override void OnDoubleClick(object? sender, MouseButtonEventArgs e)
     {
       base.OnDoubleClick(sender, e);
       if (sender is TreeViewItem treeViewItem && treeViewItem.DataContext == this && this.OpenWebPage.CanExecute(this.Url))
@@ -79,7 +81,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <param name="configuration">The configuration to apply.</param>
     public virtual void ApplyConfiguration(ConnectorConfiguration configuration) => this.Name = configuration.Name;
 
-    public virtual void Update(Connector changedConnector)
+    public virtual void Update(Connector? changedConnector)
     {
       Application.Current.Dispatcher.Invoke(() =>
       {

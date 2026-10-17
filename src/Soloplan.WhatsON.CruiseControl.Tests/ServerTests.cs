@@ -18,28 +18,40 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
   using Soloplan.WhatsON.Model;
 
   [TestFixture]
+  [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
   [SetUICulture("en-US")]
   [NonParallelizable]
   [SetCulture("en-US")]
   public class ServerTests
   {
-    private string directory;
+    private readonly string directory;
 
-    private string statusFile;
+    private readonly string statusFile;
 
-    private CruiseControlServer server;
+    private readonly CruiseControlServer server;
 
-    [SetUp]
-    public void SetUp()
+    public ServerTests()
     {
       this.directory = Path.Combine(Path.GetTempPath(), "whatson-cc-tests-" + Guid.NewGuid());
-      Directory.CreateDirectory(this.directory);
       this.statusFile = Path.Combine(this.directory, "XmlStatusReport.aspx");
       this.server = new CruiseControlServer(new Uri(this.directory + Path.DirectorySeparatorChar).AbsoluteUri);
     }
 
+    [SetUp]
+    public void SetUp() => Directory.CreateDirectory(this.directory);
+
     [TearDown]
     public void TearDown() => Directory.Delete(this.directory, true);
+
+    [Test]
+    public async Task AHistoryPageWithoutABuildTableReturnsNoBuilds()
+    {
+      var projectDirectory = Path.Combine(this.directory, "project", "Release");
+      Directory.CreateDirectory(projectDirectory);
+      File.WriteAllText(Path.Combine(projectDirectory, "ViewAllBuilds.aspx"), "<html><body>No builds available</body></html>");
+
+      Assert.That(await this.server.GetBuilds("Release"), Is.Empty);
+    }
 
     [Test]
     public async Task XmlStatusReportPreservesProjectIdentityResultAndServer()
@@ -49,7 +61,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
         "<Projects><Project name='Release &amp; QA' category='Tools' activity='Sleeping' lastBuildStatus='Failure' lastBuildLabel='42' lastBuildTime='2020-10-17T12:00:00' nextBuildTime='2020-10-18T12:00:00' webUrl='https://builds.example/release' serverName='local' description='Compile &amp; test'/></Projects>");
 
       var projects = await this.server.GetAllProjects();
-      var project = projects.CruiseControlProject.Single();
+      var project = (projects.CruiseControlProject ?? throw new AssertionException("Missing projects.")).Single();
 
       Assert.Multiple(() =>
       {
@@ -67,7 +79,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
     {
       File.WriteAllText(this.statusFile, "<Projects><Project name='Release'/><Project name='Release-Linux'/></Projects>");
 
-      Assert.That((await this.server.GetProjectStatus(CancellationToken.None, "Release-Linux", int.MaxValue)).Name, Is.EqualTo("Release-Linux"));
+      Assert.That((await this.server.GetProjectStatus(CancellationToken.None, "Release-Linux", int.MaxValue))?.Name, Is.EqualTo("Release-Linux"));
       Assert.That(await this.server.GetProjectStatus(CancellationToken.None, "Missing", int.MaxValue), Is.Null);
     }
 
@@ -82,7 +94,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
 
       var second = await this.server.GetProjectStatus(CancellationToken.None, "Second", int.MaxValue);
 
-      Assert.That(second.LastBuildLabel, Is.EqualTo("2"));
+      Assert.That(second?.LastBuildLabel, Is.EqualTo("2"));
     }
 
     [Test]
@@ -105,7 +117,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
       File.WriteAllText(this.statusFile, "<Projects><Project name='Release' lastBuildLabel='2'/></Projects>");
       WaitForClockTick();
 
-      Assert.That((await this.server.GetProjectStatus(CancellationToken.None, "Release", 0)).LastBuildLabel, Is.EqualTo("2"));
+      Assert.That((await this.server.GetProjectStatus(CancellationToken.None, "Release", 0))?.LastBuildLabel, Is.EqualTo("2"));
     }
 
     [Test]
@@ -119,7 +131,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
       Assert.That(await this.server.GetProjectStatus(CancellationToken.None, "Release", 0), Is.Null);
       File.WriteAllText(this.statusFile, "<Projects><Project name='Release' lastBuildLabel='2'/></Projects>");
       WaitForClockTick();
-      Assert.That((await this.server.GetProjectStatus(CancellationToken.None, "Release", 0)).LastBuildLabel, Is.EqualTo("2"));
+      Assert.That((await this.server.GetProjectStatus(CancellationToken.None, "Release", 0))?.LastBuildLabel, Is.EqualTo("2"));
     }
 
     [TestCase("<broken")]
@@ -170,7 +182,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
 
       await connector.QueryStatus(CancellationToken.None);
 
-      Assert.That(connector.CurrentStatus.State, Is.EqualTo(expected));
+      Assert.That(connector.CurrentStatus?.State, Is.EqualTo(expected));
       Assert.That(connector.Snapshots.Single().Status.State, Is.EqualTo(expected));
     }
 
@@ -184,8 +196,8 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
 
       await connector.QueryStatus(CancellationToken.None);
 
-      Assert.That(connector.CurrentStatus.State, Is.EqualTo(ObservationState.Running));
-      Assert.That(connector.CurrentStatus.Building, Is.True);
+      Assert.That(connector.CurrentStatus?.State, Is.EqualTo(ObservationState.Running));
+      Assert.That(connector.CurrentStatus?.Building, Is.True);
       Assert.That(connector.Snapshots, Is.Empty);
     }
 
@@ -200,7 +212,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
 
       await connector.QueryStatus(CancellationToken.None);
 
-      var status = (CruiseControlStatus)connector.CurrentStatus;
+      var status = connector.CurrentStatus as CruiseControlStatus ?? throw new AssertionException("Expected a CruiseControlStatus.");
       Assert.That(status.State, Is.EqualTo(ObservationState.Failure));
       Assert.That(status.Pending, Is.EqualTo(pending));
       Assert.That(status.CheckingModifications, Is.EqualTo(checking));
@@ -216,8 +228,8 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
 
       await connector.QueryStatus(CancellationToken.None);
 
-      Assert.That(connector.CurrentStatus.State, Is.EqualTo(ObservationState.Success));
-      Assert.That(((CruiseControlStatus)connector.CurrentStatus).Culprits, Is.Empty);
+      Assert.That(connector.CurrentStatus?.State, Is.EqualTo(ObservationState.Success));
+      Assert.That((connector.CurrentStatus as CruiseControlStatus ?? throw new AssertionException("Expected a CruiseControlStatus.")).Culprits, Is.Empty);
     }
 
     [Test]
@@ -230,7 +242,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
 
       await connector.QueryStatus(CancellationToken.None);
 
-      Assert.That(((CruiseControlStatus)connector.CurrentStatus).Culprits.Select(c => c.Name), Is.EquivalentTo(new[] { "Alice", "Bob", "Carol" }));
+      Assert.That((connector.CurrentStatus as CruiseControlStatus ?? throw new AssertionException("Expected a CruiseControlStatus.")).Culprits.Select(c => c.Name), Is.EquivalentTo(new[] { "Alice", "Bob", "Carol" }));
     }
 
     [TestCase("Breakers")]
@@ -245,7 +257,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
 
       await connector.QueryStatus(CancellationToken.None);
 
-      Assert.That(connector.CurrentStatus.State, Is.EqualTo(ObservationState.Failure));
+      Assert.That(connector.CurrentStatus?.State, Is.EqualTo(ObservationState.Failure));
     }
 
     [TestCase("Fixer")]
@@ -260,7 +272,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
 
       await connector.QueryStatus(CancellationToken.None);
 
-      Assert.That(connector.CurrentStatus.State, Is.EqualTo(ObservationState.Unknown));
+      Assert.That(connector.CurrentStatus?.State, Is.EqualTo(ObservationState.Unknown));
     }
 
     [Test]
@@ -271,8 +283,8 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
 
       await connector.QueryStatus(CancellationToken.None);
 
-      Assert.That(connector.CurrentStatus.InvalidBuild, Is.True);
-      Assert.That(connector.CurrentStatus.ErrorMessage, Is.EqualTo("No builds yet"));
+      Assert.That(connector.CurrentStatus?.InvalidBuild, Is.True);
+      Assert.That(connector.CurrentStatus?.ErrorMessage, Is.EqualTo("No builds yet"));
       Assert.That(connector.Snapshots, Is.Empty);
     }
 
@@ -286,8 +298,8 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
 
       await connector.QueryStatus(CancellationToken.None);
 
-      Assert.That(connector.CurrentStatus.InvalidBuild, Is.True);
-      Assert.That(connector.CurrentStatus.ErrorMessage, Is.EqualTo(expected));
+      Assert.That(connector.CurrentStatus?.InvalidBuild, Is.True);
+      Assert.That(connector.CurrentStatus?.ErrorMessage, Is.EqualTo(expected));
       Assert.That(connector.Snapshots, Is.Empty);
     }
 

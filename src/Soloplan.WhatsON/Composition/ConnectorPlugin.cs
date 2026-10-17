@@ -52,7 +52,7 @@ namespace Soloplan.WhatsON.Composition
     /// <param name="project">The server project.</param>
     /// <param name="configurationItemsSupport">The configuration items provider.</param>
     /// <param name="serverAddress">The server address.</param>
-    public abstract void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress = null);
+    public abstract void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string? serverAddress = null);
 
     public abstract Connector CreateNew(ConnectorConfiguration configuration, bool? checkRedirect = null);
 
@@ -61,7 +61,7 @@ namespace Soloplan.WhatsON.Composition
     /// </summary>
     /// <param name="address">The address.</param>
     /// <returns>The projects from a recognized server, or null when its discovery endpoint is missing or belongs to another build system.</returns>
-    public abstract Task<IList<Project>> GetProjects(string address);
+    public abstract Task<IList<Project>?> GetProjects(string address);
 
     public virtual void OnStartup(string[] args)
     {

@@ -14,10 +14,10 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
 
   public class NullOrDefaultToVisibilityConverter : IValueConverter
   {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object value, Type targetType, object? parameter, CultureInfo culture)
     {
       var isDefault = value == null;
-      if (!isDefault && value.GetType().IsValueType)
+      if (value != null && value.GetType().IsValueType)
       {
         var def = Activator.CreateInstance(value.GetType());
         isDefault = value.Equals(def);
@@ -26,6 +26,6 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
       return isDefault ? Visibility.Collapsed : Visibility.Visible;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
+    public object ConvertBack(object value, Type targetType, object? parameter, CultureInfo culture) => throw new NotImplementedException();
   }
 }

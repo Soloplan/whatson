@@ -33,7 +33,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// <param name="value">The value.</param>
     /// <param name="cultureInfo">The culture information.</param>
     /// <returns>True if the <see cref="value" />is valid.</returns>
-    public override ValidationResult Validate(object value, CultureInfo cultureInfo)
+    public override ValidationResult Validate(object? value, CultureInfo cultureInfo)
     {
       if (value is BindingExpression bindingExpression)
       {

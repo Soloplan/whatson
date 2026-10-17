@@ -52,7 +52,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
       Window ownerWindow,
       Connector initialFocusedConnector,
       ApplicationConfiguration config,
-      WindowSettings wizardDialogSettings)
+      WindowSettings? wizardDialogSettings)
       : this(connectors, ownerWindow, config, wizardDialogSettings)
     {
       this.CurrentConnector = this.Connectors.FirstOrDefault(c => c.SourceConnectorConfiguration == initialFocusedConnector.Configuration);
@@ -73,16 +73,16 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
       Window ownerWindow,
       ConnectorPlugin newConnectorPlugin,
       ApplicationConfiguration config,
-      WindowSettings wizardDialogSettings)
+      WindowSettings? wizardDialogSettings)
       : this(connectors, ownerWindow, config, wizardDialogSettings)
     {
       var newConnector = new ConnectorViewModel();
 
       // TODO move to connector view model/model
-      this.CurrentConnector.SourceConnectorPlugin = newConnectorPlugin;
-      this.CurrentConnector.Name = string.Empty;
-      this.CurrentConnector.Load(null);
-      this.Connectors.Add(this.CurrentConnector);
+      newConnector.SourceConnectorPlugin = newConnectorPlugin;
+      newConnector.Name = string.Empty;
+      newConnector.Load(null);
+      this.Connectors.Add(newConnector);
       this.CurrentConnector = newConnector;
 
       this.InitilizeConnectorNameTextEditBinding();
@@ -99,12 +99,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
       ConnectorViewModelCollection connectors,
       Window ownerWindow,
       ApplicationConfiguration config,
-      WindowSettings wizardDialogSettings)
+      WindowSettings? wizardDialogSettings)
     {
       this.ownerWindow = ownerWindow;
       this.Connectors = connectors;
       this.config = config;
-      this.wizardDialogSettings = wizardDialogSettings;
+      this.wizardDialogSettings = wizardDialogSettings ?? new WindowSettings();
       this.DataContext = this;
       this.InitializeComponent();
       this.Connectors.Loaded -= this.ConnectorsLoaded;
@@ -124,7 +124,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <summary>
     /// Gets or sets the current connector.
     /// </summary>
-    public ConnectorViewModel CurrentConnector { get; set; }
+    public ConnectorViewModel? CurrentConnector { get; set; }
 
     /// <summary>
     /// Gets a value indicating whether current connector is null.
@@ -182,7 +182,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
-    private void ConnectorsLoaded(object sender, EventArgs e)
+    private void ConnectorsLoaded(object? sender, EventArgs e)
     {
       if (this.uxConnectors.Items.Count > 0 && this.uxConnectors.SelectedItem == null)
       {
@@ -195,7 +195,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="SelectionChangedEventArgs" /> instance containing the event data.</param>
-    private void ConnectorsSelectionChanged(object sender, SelectionChangedEventArgs e)
+    private void ConnectorsSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
       if (!Validation.IsValid(this) && e.RemovedItems.Count > 0)
       {
@@ -218,7 +218,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
         return;
       }
 
-      this.SetConnectorFrameContent(e.AddedItems.Count != 0 ? (ConnectorViewModel)e.AddedItems[0] : null);
+      this.SetConnectorFrameContent(e.AddedItems.Count != 0 ? e.AddedItems[0] as ConnectorViewModel : null);
     }
 
     /// <summary>
@@ -226,23 +226,23 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
-    private void PageInitialized(object sender, EventArgs e) => this.SetConnectorFrameContent((ConnectorViewModel)this.uxConnectors.SelectedItem);
+    private void PageInitialized(object? sender, EventArgs e) => this.SetConnectorFrameContent((ConnectorViewModel)this.uxConnectors.SelectedItem);
 
     /// <summary>
     /// Sets the content of the connector frame.
     /// </summary>
     /// <param name="connector">The connector.</param>
-    private void SetConnectorFrameContent(ConnectorViewModel connector) => this.uxConnectorFrame.Content = new ConnectorConfigPage(connector);
+    private void SetConnectorFrameContent(ConnectorViewModel? connector) => this.uxConnectorFrame.Content = new ConnectorConfigPage(connector);
 
     /// <summary>
     /// Handles the request for connector deletion.
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs" /> instance containing the event data.</param>
-    private async void DeleteConnectorClick(object sender, RoutedEventArgs e)
+    private async void DeleteConnectorClick(object? sender, RoutedEventArgs e)
     {
-      var result = (bool)await DialogHost.Show(new OkCancelDialog(Strings.DeleteProjectConfirmation), "ConnectorsConfigPageHost");
-      if (result)
+      var result = await DialogHost.Show(new OkCancelDialog(Strings.DeleteProjectConfirmation), "ConnectorsConfigPageHost");
+      if (result is true && this.CurrentConnector != null)
       {
         this.Connectors.Remove(this.CurrentConnector);
       }
@@ -253,7 +253,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs" /> instance containing the event data.</param>
-    private async void RenameConnectorClick(object sender, RoutedEventArgs e)
+    private async void RenameConnectorClick(object? sender, RoutedEventArgs e)
     {
       if (this.uxConnectors.SelectedItem == null)
       {
@@ -268,7 +268,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs" /> instance containing the event data.</param>
-    private async void AddConnectorClick(object sender, RoutedEventArgs e)
+    private async void AddConnectorClick(object? sender, RoutedEventArgs e)
     {
       if (!Validation.IsValid(this))
       {
@@ -277,8 +277,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
 
       var newConnector = new ConnectorViewModel();
       var createEditDialod = new CreateEditConnectorDialog(newConnector, true);
-      var result = (bool)await DialogHost.Show(createEditDialod, "ConnectorsConfigPageHost");
-      if (result)
+      var result = await DialogHost.Show(createEditDialod, "ConnectorsConfigPageHost");
+      if (result is true)
       {
         // TODO move to connector view model/model
         newConnector.SourceConnectorPlugin = (ConnectorPlugin)createEditDialod.uxPluginType.SelectedItem;
@@ -294,7 +294,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs" /> instance containing the event data.</param>
-    private void NewInWizardClick(object sender, RoutedEventArgs e)
+    private void NewInWizardClick(object? sender, RoutedEventArgs e)
     {
       var wizardController = new WizardController(this.ownerWindow, this.config, this.wizardDialogSettings);
       wizardController.MultiSelectionMode = false;
@@ -305,7 +305,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
       }
       finally
       {
-        if (result)
+        if (result is true)
         {
           var selectedProjects = wizardController.GetSelectedProjects();
           if (selectedProjects != null && selectedProjects.Count == 1)

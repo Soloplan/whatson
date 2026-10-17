@@ -16,13 +16,18 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
   public class FakeJenkinsApi : IJenkinsApi
   {
-    public event EventHandler<JobEventArgs> JobRequest;
+    public event EventHandler<JobEventArgs>? JobRequest;
 
-    public event EventHandler<BuildEventArgs> BuildRequest;
+    public event EventHandler<BuildEventArgs>? BuildRequest;
 
-    public event EventHandler<BuildsEventArgs> BuildsRequest;
+    public event EventHandler<BuildsEventArgs>? BuildsRequest;
 
-    public async Task<JenkinsJob> GetJenkinsJob(JenkinsConnector connector, CancellationToken token)
+    public Func<IReadOnlyCollection<JenkinsConnector>, CancellationToken, Task<JenkinsPollingResult>>? PollingQuery { get; set; }
+
+    public Task<JenkinsPollingResult> GetPollingJobs(IReadOnlyCollection<JenkinsConnector> connectors, CancellationToken token) =>
+      this.PollingQuery?.Invoke(connectors, token) ?? throw new InvalidOperationException($"{nameof(this.PollingQuery)} must be set for server batching.");
+
+    public async Task<JenkinsJob?> GetJenkinsJob(JenkinsConnector connector, CancellationToken token)
     {
       if (this.JobRequest == null)
       {
@@ -39,7 +44,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       return eventArgs.Result;
     }
 
-    public async Task<JenkinsBuild> GetJenkinsBuild(JenkinsConnector connector, int buildNumber, CancellationToken token)
+    public async Task<JenkinsBuild?> GetJenkinsBuild(JenkinsConnector connector, int buildNumber, CancellationToken token)
     {
       if (this.BuildRequest == null)
       {
@@ -97,7 +102,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     {
     }
 
-    public JenkinsJob Result { get; set; }
+    public JenkinsJob? Result { get; set; }
   }
 
   public class BuildEventArgs : FakeApiEventArgs
@@ -110,7 +115,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
     public int BuildNumber { get; }
 
-    public JenkinsBuild Result { get; set; }
+    public JenkinsBuild? Result { get; set; }
   }
 
   public class BuildsEventArgs : FakeApiEventArgs

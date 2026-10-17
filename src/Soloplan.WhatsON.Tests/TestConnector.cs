@@ -21,15 +21,15 @@ namespace Soloplan.WhatsON.Tests
     {
     }
 
-    public Func<CancellationToken, Task<Status>> Query { get; set; } = token => Task.FromResult<Status>(null);
+    public Func<CancellationToken, Task<Status?>> Query { get; set; } = token => Task.FromResult<Status?>(null);
 
-    public List<Status> History { get; } = new List<Status>();
+    public List<Status?> History { get; } = new List<Status?>();
 
     public int HistoryRequests { get; private set; }
 
-    protected override Task<Status> GetCurrentStatus(CancellationToken cancellationToken) => this.Query(cancellationToken);
+    protected override Task<Status?> GetCurrentStatus(CancellationToken cancellationToken) => this.Query(cancellationToken);
 
-    protected override Task<List<Status>> GetHistory(CancellationToken cancellationToken)
+    protected override Task<List<Status?>> GetHistory(CancellationToken cancellationToken)
     {
       this.HistoryRequests++;
       return Task.FromResult(this.History);

@@ -25,13 +25,13 @@ namespace Soloplan.WhatsON.Model
     /// <param name="projectPlugIn">The project plug in.</param>
     /// <param name="parent">The parent.</param>
     public Project(
-      string address,
+      string? address,
       string name,
-      string directAddress,
-      string fullName = null,
-      string description = null,
-      ConnectorPlugin projectPlugIn = null,
-      Project parent = null)
+      string? directAddress,
+      string? fullName = null,
+      string? description = null,
+      ConnectorPlugin? projectPlugIn = null,
+      Project? parent = null)
     {
       this.Address = address;
       this.Name = name;
@@ -45,18 +45,18 @@ namespace Soloplan.WhatsON.Model
     /// <summary>
     /// Gets or sets the address of the project.
     /// </summary>
-    public string Address { get; set; }
+    public string? Address { get; set; }
 
     /// <summary>
     /// Gets the server projects.
     /// </summary>
     public List<Project> Children { get; } = new List<Project>();
 
-    public string Description { get; set; }
+    public string? Description { get; set; }
 
-    public string DirectAddress { get; set; }
+    public string? DirectAddress { get; set; }
 
-    public string FullName { get; set; }
+    public string? FullName { get; set; }
 
     /// <summary>
     /// Gets or sets the name of the project.
@@ -66,11 +66,11 @@ namespace Soloplan.WhatsON.Model
     /// <summary>
     /// Gets or sets the parent.
     /// </summary>
-    public Project Parent { get; set; }
+    public Project? Parent { get; set; }
 
     /// <summary>
     /// Gets or sets the plugin.
     /// </summary>
-    public ConnectorPlugin Plugin { get; set; }
+    public ConnectorPlugin? Plugin { get; set; }
   }
 }

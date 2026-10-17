@@ -17,7 +17,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
   /// </summary>
   public class WizardProjectToVisibilityConverter : IValueConverter
   {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object value, Type targetType, object? parameter, CultureInfo culture)
     {
       if (value is ProjectViewModel project)
       {
@@ -27,6 +27,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       return Visibility.Visible;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
+    public object ConvertBack(object value, Type targetType, object? parameter, CultureInfo culture) => throw new NotImplementedException();
   }
 }

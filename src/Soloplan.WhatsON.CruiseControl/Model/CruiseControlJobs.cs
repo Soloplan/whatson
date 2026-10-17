@@ -16,6 +16,6 @@ namespace Soloplan.WhatsON.CruiseControl.Model
   public class CruiseControlJobs
   {
     [XmlElement("Project")]
-    public CruiseControlJob[] CruiseControlProject { get; set; }
+    public CruiseControlJob[]? CruiseControlProject { get; set; }
   }
 }

@@ -32,18 +32,18 @@ namespace Soloplan.WhatsON.GUI
     /// <summary>
     /// Logger instance used by this class.
     /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
     /// <summary>
     /// The theme helper.
     /// </summary>
     private readonly ThemeHelper themeHelper = new ThemeHelper();
 
-    private ApplicationConfiguration config;
+    private ApplicationConfiguration config = new ApplicationConfiguration();
 
-    private ObservationScheduler scheduler;
+    private ObservationScheduler scheduler = new ObservationScheduler();
 
-    private TrayHandler handler;
+    private TrayHandler? handler;
 
     /// <summary>
     /// Gets a value indicating whether dark theme is enabled.
@@ -135,11 +135,11 @@ namespace Soloplan.WhatsON.GUI
     {
       Microsoft.Win32.SystemEvents.UserPreferenceChanged -= this.SystemAppearanceChanged;
       this.scheduler.Stop(true);
-      this.handler.Dispose();
+      this.handler?.Dispose();
       base.OnExit(e);
     }
 
-    private void SystemAppearanceChanged(object sender, Microsoft.Win32.UserPreferenceChangedEventArgs e)
+    private void SystemAppearanceChanged(object? sender, Microsoft.Win32.UserPreferenceChangedEventArgs e)
     {
       this.Dispatcher.InvokeAsync(() =>
       {

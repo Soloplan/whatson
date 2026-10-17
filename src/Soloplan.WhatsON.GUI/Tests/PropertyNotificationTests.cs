@@ -131,8 +131,8 @@ namespace Soloplan.WhatsON.GUI.Tests
       var model = new ConfigViewModel();
       model.Load(new ApplicationConfiguration());
       var changes = Observe(model);
-      var property = typeof(ConfigViewModel).GetProperty(propertyName);
-      var originalValue = property.GetValue(model);
+      var property = typeof(ConfigViewModel).GetProperty(propertyName) ?? throw new AssertionException("Expected member was not found.");
+      var originalValue = property.GetValue(model) ?? throw new AssertionException("Expected a property value.");
       var editedValue = property.PropertyType == typeof(bool) ? !(bool)originalValue :
         property.PropertyType.IsEnum ? Enum.GetValues(property.PropertyType).Cast<object>().First(value => !Equals(value, originalValue)) :
         (int)originalValue + 1;
@@ -167,6 +167,66 @@ namespace Soloplan.WhatsON.GUI.Tests
       wizard.IsAutoDetectionEnabled = true;
       Assert.That(wizard.IsAutoDetectionDisabled, Is.False);
       Assert.That(changes, Does.Contain(nameof(wizard.IsAutoDetectionDisabled)).And.Contain(nameof(wizard.AvailableServers)));
+    }
+
+    [TestCase(true)]
+    [TestCase(false)]
+    public void SavedServerChoicesIgnoreMissingAndInvalidAddresses(bool autoDetect)
+    {
+      var configuration = new ApplicationConfiguration();
+      foreach (var address in new[] { null, string.Empty, " ", "not a server", "https://build.example.invalid", "https://build.example.invalid/" })
+      {
+        configuration.ConnectorsConfiguration.Add(new ConnectorConfiguration("Jenkins", "Release", Connector.ServerAddress, address));
+      }
+
+      configuration.ConnectorsConfiguration.Add(new ConnectorConfiguration("CruiseControl", "Other", Connector.ServerAddress, "https://other.example.invalid/"));
+      var wizard = new WizardController(null, configuration, null)
+      {
+        SelectedConnectorType = new Soloplan.WhatsON.Jenkins.JenkinsPlugin(),
+        IsAutoDetectionEnabled = autoDetect,
+      };
+
+      Assert.That(wizard.AvailableServers, Is.EquivalentTo(autoDetect
+        ? new[] { "https://build.example.invalid/", "https://other.example.invalid/" }
+        : new[] { "https://build.example.invalid/" }));
+    }
+
+    [Test]
+    public void MissingPluginsHaveNoEditorsAndPreserveTheirSavedConfiguration()
+    {
+      var original = new ConnectorConfiguration("UnavailablePlugin", "Release", "CustomKey", "Saved value");
+      var model = new Configuration.ViewModel.ConnectorViewModel();
+      model.Load(original);
+
+      Assert.That(model.GetConnectorConfigAttributes(), Is.Empty);
+      Assert.That(model.ApplyToSourceConnectorConfiguration(out var created), Is.SameAs(original));
+      Assert.That(created, Is.False);
+      Assert.That(original.GetConfigurationByKey("CustomKey").Value, Is.EqualTo("Saved value"));
+    }
+
+    [Test]
+    public void MissingPluginsKeepTheirIdentityAndSettingsWhenTheProjectListIsSaved()
+    {
+      var configuration = new ApplicationConfiguration();
+      var original = new ConnectorConfiguration("UnavailablePlugin", "Release", "CustomKey", "Saved value", Connector.Category, "Tools");
+      configuration.ConnectorsConfiguration.Add(original);
+      var tree = new ConnectorTreeViewModel();
+      tree.Update(configuration);
+      var group = tree.ConnectorGroups.Single();
+      var project = group.ConnectorViewModels.Single();
+
+      Assert.That(project, Is.InstanceOf<ConnectorMissingViewModel>());
+      Assert.That(project.Identifier, Is.EqualTo(original.Identifier));
+      Assert.That(project.Name, Is.EqualTo("Release"));
+      Assert.That(((ConnectorMissingViewModel)project).ExpectedConnectorType, Is.EqualTo("UnavailablePlugin"));
+      group.GroupName = "Renamed group";
+      tree.WriteToConfiguration(configuration);
+
+      Assert.That(configuration.ConnectorsConfiguration.Single(), Is.SameAs(original));
+      Assert.That(original.GetConfigurationByKey("CustomKey").Value, Is.EqualTo("Saved value"));
+      Assert.That(original.GetConfigurationByKey(Connector.Category).Value, Is.EqualTo("Renamed group"));
+      tree.Update(configuration);
+      Assert.That(tree.ConnectorGroups.Single().ConnectorViewModels.Single().Identifier, Is.EqualTo(original.Identifier));
     }
 
     [Test]
@@ -270,7 +330,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       model.PropertyChanged += (sender, args) =>
       {
         Assert.That(sender, Is.SameAs(model));
-        changes.Add(args.PropertyName);
+        changes.Add(args.PropertyName ?? throw new AssertionException("Expected a property name."));
       };
       return changes;
     }

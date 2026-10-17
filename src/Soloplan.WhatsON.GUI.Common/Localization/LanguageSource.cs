@@ -44,7 +44,7 @@ namespace Soloplan.WhatsON.GUI.Common.Localization
 
     public XmlLanguage Language => XmlLanguage.GetLanguage(this.Culture.IetfLanguageTag);
 
-    private void ElementLoaded(object sender, RoutedEventArgs args)
+    private void ElementLoaded(object? sender, RoutedEventArgs args)
     {
       if (ReferenceEquals(sender, args.OriginalSource))
       {

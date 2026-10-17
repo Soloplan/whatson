@@ -24,7 +24,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
       var node = HtmlNode.CreateNode(
         $"<a href='/ccnet/server/local/project/Release/build/log20201017120000L42.xml' class='{cssClass}'>10/17/2020 12:00:00 PM (42)</a>");
 
-      var build = CruiseControlBuild.FromHtmlNode(node, "https://builds.example");
+      var build = CruiseControlBuild.FromHtmlNode(node, "https://builds.example") ?? throw new AssertionException("Expected a parsed build.");
 
       Assert.Multiple(() =>
       {
@@ -44,7 +44,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
     {
       var node = HtmlNode.CreateNode($"<a href='/project/Release/build/build.xml' class='passed'>{timestamp} (42)</a>");
 
-      var build = CruiseControlBuild.FromHtmlNode(node, "https://builds.example");
+      var build = CruiseControlBuild.FromHtmlNode(node, "https://builds.example") ?? throw new AssertionException("Expected a parsed build.");
 
       Assert.That(build.BuildTime, Is.EqualTo(new DateTime(2020, 10, day, 12, 0, 0)));
     }
@@ -54,7 +54,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
     {
       var node = HtmlNode.CreateNode("<a href='/project/Release/build/release.xml' class='passed'>10/17/2020 12:00:00 PM (release_2020)</a>");
 
-      var build = CruiseControlBuild.FromHtmlNode(node, "https://builds.example");
+      var build = CruiseControlBuild.FromHtmlNode(node, "https://builds.example") ?? throw new AssertionException("Expected a parsed build.");
 
       Assert.That(build.BuildLabel, Is.EqualTo("release_2020"));
       Assert.That(build.BuildNumber, Is.Zero);
@@ -65,7 +65,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
     {
       var node = HtmlNode.CreateNode("<a href='/project/Release/build/build%20log.xml' class='passed'>10/17/2020 12:00:00 PM (42)</a>");
 
-      var build = CruiseControlBuild.FromHtmlNode(node, "https://builds.example");
+      var build = CruiseControlBuild.FromHtmlNode(node, "https://builds.example") ?? throw new AssertionException("Expected a parsed build.");
 
       Assert.That(build.Name, Is.EqualTo("build log.xml"));
       Assert.That(build.Url, Does.EndWith("build%20log.xml"));
@@ -79,10 +79,17 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
       Assert.That(() => CruiseControlBuild.FromHtmlNode(node, "https://builds.example"), Throws.TypeOf<FormatException>());
     }
 
+    [TestCase("<a class='passed'>2020-10-17 12:00:00 (42)</a>")]
+    [TestCase("<a href='/project/Release/build/build.xml'>2020-10-17 12:00:00 (42)</a>")]
+    public void IncompleteBuildLinksAreSkipped(string html)
+    {
+      Assert.That(CruiseControlBuild.FromHtmlNode(HtmlNode.CreateNode(html), "https://builds.example"), Is.Null);
+    }
+
     [TestCase("https://builds.example/ccnet", "Release 1", "https://builds.example/ccnet/project/Release%201/ViewProjectReport.aspx")]
     [TestCase("https://builds.example/ccnet///", "A/B #1?", "https://builds.example/ccnet/project/A%2FB%20%231%3F/ViewProjectReport.aspx")]
     [TestCase("https://builds.example/ccnet/", null, "https://builds.example/ccnet")]
-    public void ProjectLinksPreserveServerPathAndEscapeProjectNames(string server, string project, string expected) => Assert.That(CruiseControlServer.UrlHelper.GetReportUrl(server, project), Is.EqualTo(expected));
+    public void ProjectLinksPreserveServerPathAndEscapeProjectNames(string server, string? project, string expected) => Assert.That(CruiseControlServer.UrlHelper.GetReportUrl(server, project), Is.EqualTo(expected));
 
     [Test]
     public void StatusAndHistoryUrlsUseTheServerPathWithoutDuplicateSlashes()

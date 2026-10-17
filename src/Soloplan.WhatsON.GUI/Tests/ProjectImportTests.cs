@@ -20,15 +20,14 @@ namespace Soloplan.WhatsON.GUI.Tests
   [NonParallelizable]
   public class ProjectImportTests
   {
-    private string directory;
+    private readonly string directory = Path.Combine(Path.GetTempPath(), "whatson-import-tests-" + Guid.NewGuid());
 
-    private string previousConfigFolder;
+    private string previousConfigFolder = SerializationHelper.Instance.ConfigFolder;
 
     [SetUp]
     public void SetUp()
     {
       this.previousConfigFolder = SerializationHelper.Instance.ConfigFolder;
-      this.directory = Path.Combine(Path.GetTempPath(), "whatson-import-tests-" + Guid.NewGuid());
       SerializationHelper.Instance.SetConfigFolder(this.directory);
     }
 

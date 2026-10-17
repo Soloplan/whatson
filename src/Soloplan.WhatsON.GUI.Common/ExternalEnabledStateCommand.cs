@@ -17,26 +17,26 @@ namespace Soloplan.WhatsON.GUI.Common
     /// <summary>
     /// The logger.
     /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
     private bool? canExecuteState;
 
     /// <summary>
     /// Called to check if command can be executed.
     /// </summary>
-    public event CancelEventHandler CanExecuteExternal;
+    public event CancelEventHandler? CanExecuteExternal;
 
     /// <summary>
     /// Called when can execute state of the command has changed.
     /// </summary>
-    public event EventHandler CanExecuteChanged;
+    public event EventHandler? CanExecuteChanged;
 
     /// <summary>
     /// Checks if command can be executed.
     /// </summary>
     /// <param name="parameter">Parameter.</param>
     /// <returns>True if it can be executd; false otherwise.</returns>
-    public bool CanExecute(object parameter)
+    public bool CanExecute(object? parameter)
     {
       var result = this.CanExecuteInternal(parameter);
       if (this.canExecuteState.HasValue && this.canExecuteState != result)
@@ -53,16 +53,16 @@ namespace Soloplan.WhatsON.GUI.Common
     /// Handles command logic.
     /// </summary>
     /// <param name="parameter">Parameter.</param>
-    public abstract void Execute(object parameter);
+    public abstract void Execute(object? parameter);
 
     /// <summary>
     /// Called when CanExecute has changed.
     /// </summary>
     /// <param name="sender">Sender.</param>
     /// <param name="args">Event args.</param>
-    protected virtual void OnCanExecuteChanged(object sender, EventArgs args) => this.CanExecuteChanged?.Invoke(sender, args);
+    protected virtual void OnCanExecuteChanged(object? sender, EventArgs args) => this.CanExecuteChanged?.Invoke(sender, args);
 
-    protected virtual bool CanExecuteInternal(object parameter)
+    protected virtual bool CanExecuteInternal(object? parameter)
     {
       var cancelEventArgs = new CancelEventArgs();
       this.CanExecuteExternal?.Invoke(this, cancelEventArgs);

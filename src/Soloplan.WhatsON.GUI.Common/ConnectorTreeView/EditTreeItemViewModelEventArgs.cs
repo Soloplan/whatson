@@ -20,10 +20,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
   public class EditTreeItemViewModelEventArgs : EventArgs
   {
-    private object commandParameters;
-
     public EditType EditType { get; set; }
 
-    public TreeItemViewModel Model { get; set; }
+    public required TreeItemViewModel Model { get; set; }
   }
 }

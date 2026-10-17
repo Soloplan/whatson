@@ -27,7 +27,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// The projects.
     /// </summary>
-    private List<ProjectViewModel> projects;
+    private List<ProjectViewModel>? projects;
 
     /// <summary>
     /// Is checked flag.
@@ -58,17 +58,17 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// Gets or sets the address of the project.
     /// </summary>
-    public string Address { get; set; }
+    public string? Address { get; set; }
 
     public bool AlreadyAdded { get; set; }
 
-    public string AddedProject { get; set; }
+    public string? AddedProject { get; set; }
 
-    public string FullName { get; set; }
+    public string? FullName { get; set; }
 
-    public string Description { get; set; }
+    public string? Description { get; set; }
 
-    public string DirectAddress { get; set; }
+    public string? DirectAddress { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether this project is visible.
@@ -136,7 +136,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// Gets or sets the parent.
     /// </summary>
-    public ProjectViewModel Parent { get; set; }
+    public ProjectViewModel? Parent { get; set; }
 
     /// <summary>
     /// Determines whether is any project checked.

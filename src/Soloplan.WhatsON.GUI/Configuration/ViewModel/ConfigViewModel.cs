@@ -34,7 +34,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// Logger instance used by this class.
     /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
     /// <summary>
     /// The open on system start.
@@ -44,17 +44,17 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// Occurs when configuration was applied.
     /// </summary>
-    public event EventHandler<ValueEventArgs<ApplicationConfiguration>> ConfigurationApplied;
+    public event EventHandler<ValueEventArgs<ApplicationConfiguration>>? ConfigurationApplied;
 
     /// <summary>
     /// Occurs when configuration is about to be applied.
     /// </summary>
-    public event EventHandler<EventArgs> ConfigurationApplying;
+    public event EventHandler<EventArgs>? ConfigurationApplying;
 
     /// <summary>
     /// Gets the connectors list.
     /// </summary>
-    public ConnectorViewModelCollection Connectors { get; private set; }
+    public ConnectorViewModelCollection Connectors { get; private set; } = new ConnectorViewModelCollection();
 
     /// <summary>
     /// Gets or sets the appearance preference.
@@ -187,7 +187,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// Gets or sets the initial focused configuration <see cref="ListBoxItem" />.
     /// </summary>
-    public ListBoxItem InitialFocusedConfigurationListBoxItem { get; set; }
+    public ListBoxItem? InitialFocusedConfigurationListBoxItem { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether single connector mode is active.
@@ -197,7 +197,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// Gets the original configuration.
     /// </summary>
-    public ApplicationConfiguration Configuration { get; private set; }
+    public ApplicationConfiguration Configuration { get; private set; } = new ApplicationConfiguration();
 
     /// <summary>
     /// Gets a value indicating whether configuration is modified.
@@ -319,7 +319,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// </summary>
     /// <param name="filePath">The file path.</param>
     /// <returns>True if import was successful.</returns>
-    public bool Import(string filePath, out string errorMessage)
+    public bool Import(string filePath, out string? errorMessage)
     {
       errorMessage = null;
       try
@@ -378,7 +378,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="System.ComponentModel.PropertyChangedEventArgs" /> instance containing the event data.</param>
-    private void ConnectorsCollectionItemPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    private void ConnectorsCollectionItemPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
       this.MarkModified();
       this.OnPropertyChanged(nameof(this.Connectors));
@@ -392,7 +392,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// The <see cref="System.Collections.Specialized.NotifyCollectionChangedEventArgs" /> instance containing
     /// the event data.
     /// </param>
-    private void ConnectorsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e) => this.MarkModified();
+    private void ConnectorsCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e) => this.MarkModified();
 
     /// <summary>
     /// Applies the start with Windows option.

@@ -100,20 +100,20 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
-    private void NextClick(object sender, RoutedEventArgs e) => this.wizardController.GoToNextPage();
+    private void NextClick(object? sender, RoutedEventArgs e) => this.wizardController.GoToNextPage();
 
     /// <summary>
     /// Previous page click.
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
-    private void PrevClick(object sender, RoutedEventArgs e) => this.wizardController.GoToPrevPage();
+    private void PrevClick(object? sender, RoutedEventArgs e) => this.wizardController.GoToPrevPage();
 
     /// <summary>
     /// Finish click.
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
-    private void FinishClick(object sender, RoutedEventArgs e) => this.wizardController.Finish();
+    private void FinishClick(object? sender, RoutedEventArgs e) => this.wizardController.Finish();
   }
 }

@@ -18,8 +18,8 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
   /// </summary>
   public class StatusTotooltipVisibilityConverter : IValueConverter
   {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => ((ObservationState)value) != ObservationState.Unknown ? Visibility.Collapsed : Visibility.Visible;
+    public object Convert(object value, Type targetType, object? parameter, CultureInfo culture) => ((ObservationState)value) != ObservationState.Unknown ? Visibility.Collapsed : Visibility.Visible;
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => value;
+    public object ConvertBack(object value, Type targetType, object? parameter, CultureInfo culture) => value;
   }
 }

@@ -11,7 +11,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
   public class CopyBuildLabelCommand : ExternalEnabledStateCommand
   {
-    public override void Execute(object parameter)
+    public override void Execute(object? parameter)
     {
       if (parameter is BuildStatusViewModel buildStatus && !string.IsNullOrEmpty(buildStatus.Label))
       {

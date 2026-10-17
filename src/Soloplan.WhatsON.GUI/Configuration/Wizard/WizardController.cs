@@ -37,12 +37,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// Logger instance used by this class.
     /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
     /// <summary>
     /// The owner window.
     /// </summary>
-    private readonly Window ownerWindow;
+    private readonly Window? ownerWindow;
 
     private readonly ApplicationConfiguration config;
 
@@ -54,24 +54,24 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// The wizard window.
     /// </summary>
-    private WizardWindow wizardWindow;
+    private WizardWindow? wizardWindow;
 
     /// <summary>
     /// The projects view model.
     /// </summary>
-    private ProjectViewModelList projects;
+    private ProjectViewModelList? projects;
 
     /// <summary>
     /// The proposed server address.
     /// </summary>
-    private string proposedServerAddress;
+    private string? proposedServerAddress;
 
-    private ConnectorPlugin selectedConnectorType;
+    private ConnectorPlugin? selectedConnectorType;
 
     /// <summary>
     /// The connector view model.
     /// </summary>
-    private ConnectorViewModel editedConnectorViewModel;
+    private ConnectorViewModel? editedConnectorViewModel;
 
     /// <summary>
     /// The force of <see cref="IsPreviousStepEnabled" /> flag.
@@ -84,12 +84,13 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <param name="ownerWindow">The owner window.</param>
     /// <param name="config">The configuration.</param>
     /// <param name="wizardDialogSettings">The wizard dialog settings.</param>
-    public WizardController(Window ownerWindow, ApplicationConfiguration config, WindowSettings wizardDialogSettings)
+    public WizardController(Window? ownerWindow, ApplicationConfiguration config, WindowSettings? wizardDialogSettings)
     {
       this.ownerWindow = ownerWindow;
       this.config = config;
-      this.wizardDialogSettings = wizardDialogSettings;
+      this.wizardDialogSettings = wizardDialogSettings ?? new WindowSettings();
       this.GroupingSettings = this.InitializeGrouppingSettings();
+      this.SelectedGroupingSetting = this.GroupingSettings[0];
     }
 
     /// <summary>
@@ -172,7 +173,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// Gets or sets the proposed server address.
     /// </summary>
-    public string ProposedServerAddress
+    public string? ProposedServerAddress
     {
       get
       {
@@ -187,34 +188,16 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       set => this.proposedServerAddress = value;
     }
 
-    public List<string> AvailableServers
-    {
-      get
-      {
-        if (this.IsAutoDetectionEnabled)
-        {
-          return this.config.ConnectorsConfiguration
-            .Where(x => x.GetConfigurationByKey(Connector.ServerAddress) != null
-                        && !string.IsNullOrEmpty(x.GetConfigurationByKey(Connector.ServerAddress).Value))
-            .Select(x => new Uri(x.GetConfigurationByKey(Connector.ServerAddress).Value).AbsoluteUri).Distinct().ToList();
-        }
-
-        if (this.SelectedConnectorType == null)
-        {
-          return new List<string>();
-        }
-
-        return this.config.ConnectorsConfiguration.Where(x =>
-          x.Type == this.SelectedConnectorType.Name && x.GetConfigurationByKey(Connector.ServerAddress) != null
-                                                    && !string.IsNullOrEmpty(x.GetConfigurationByKey(Connector.ServerAddress).Value)).Select(x =>
-          new Uri(x.GetConfigurationByKey(Connector.ServerAddress).Value).AbsoluteUri).Distinct().ToList();
-      }
-    }
+    public List<string> AvailableServers => this.config.ConnectorsConfiguration
+      .Where(configuration => this.IsAutoDetectionEnabled || configuration.Type == this.SelectedConnectorType?.Name)
+      .Select(configuration => configuration.GetConfigurationByKey(Connector.ServerAddress).Value)
+      .Select(address => Uri.TryCreate(address, UriKind.Absolute, out var uri) ? uri : null)
+      .OfType<Uri>().Select(uri => uri.AbsoluteUri).Distinct().ToList();
 
     public List<ConnectorPlugin> AvailableConnectorTypes =>
       PluginManager.Instance.ConnectorPlugins.OrderByDescending(x => this.config.ConnectorsConfiguration.Count(y => y.Type == x.Name)).ToList();
 
-    public ConnectorPlugin SelectedConnectorType
+    public ConnectorPlugin? SelectedConnectorType
     {
       get
       {
@@ -245,12 +228,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// The current page.
     /// </summary>
-    private Page CurrentPage { get; set; }
+    private Page? CurrentPage { get; set; }
 
     /// <summary>
     /// Gets the wizard frame.
     /// </summary>
-    private Frame WizardFrame => this.wizardWindow?.Frame;
+    private Frame WizardFrame => this.wizardWindow?.Frame ?? throw new InvalidOperationException("The wizard has not been started.");
 
     /// <summary>
     /// Starts the wizard.
@@ -287,7 +270,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       {
         this.ProposedServerAddress = this.editedConnectorViewModel.GetConfigurationByKey(Connector.ServerAddress)?.Value;
 
-        void OnActivated(object sender, EventArgs e)
+        void OnActivated(object? sender, EventArgs e)
         {
           this.GoToProjectSelectionStep();
           this.wizardWindow.Activated -= OnActivated;
@@ -373,7 +356,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     public void Finish()
     {
-      if (this.IsAnyProjectChecked)
+      if (this.IsAnyProjectChecked && this.wizardWindow != null)
       {
         this.wizardWindow.DialogResult = true;
         this.wizardWindow.Close();
@@ -405,7 +388,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       throw new InvalidOperationException(Strings.InvalidServerOrPlugin);
     }
 
-    private static async Task<IList<Project>> QueryProjects(ConnectorPlugin plugin, string address)
+    private static async Task<IList<Project>?> QueryProjects(ConnectorPlugin plugin, string address)
     {
       try
       {
@@ -435,7 +418,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <param name="project">The project.</param>
     /// <param name="currentName">Name of the current.</param>
     /// <returns>Group name.</returns>
-    private string CreateGroupNameFromProjectTree(Project project, string currentName = null)
+    private string? CreateGroupNameFromProjectTree(Project? project, string? currentName = null)
     {
       if (project == null)
       {
@@ -489,7 +472,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 
         configurationViewModel.Connectors.Add(newConnector);
 
-        selectedProject.Plugin.Configure(selectedProject, newConnector, this.proposedServerAddress);
+        (selectedProject.Plugin ?? throw new InvalidOperationException("The selected project has no plugin.")).Configure(selectedProject, newConnector, this.proposedServerAddress);
       }
 
       if (configurationViewModel.ConfigurationIsModified)
@@ -530,7 +513,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
             return false;
           }
 
-          return x.Type == this.SelectedConnectorType.Name && new Uri(address).AbsoluteUri.Equals(this.ProposedServerAddress)
+          return x.Type == this.SelectedConnectorType?.Name && Uri.TryCreate(address, UriKind.Absolute, out var uri) && uri.AbsoluteUri.Equals(this.ProposedServerAddress)
                                                            && x.GetConfigurationByKey(Connector.ProjectName)?.Value
                                                            == (!string.IsNullOrWhiteSpace(project.FullName) ? project.FullName : project.Name);
         }).ToList();
@@ -550,10 +533,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <returns>The task.</returns>
     private async Task PrepareProjectsList()
     {
-      var plugins = this.editedConnectorViewModel != null
-        ? new[] { this.editedConnectorViewModel.SourceConnectorPlugin }
-        : this.IsAutoDetectionEnabled ? PluginManager.Instance.ConnectorPlugins : new[] { this.SelectedConnectorType };
-      var discovered = await DiscoverProjects(plugins, this.ProposedServerAddress.TrimEnd('/') + "/", TimeSpan.FromMilliseconds(QueryTimeout));
+      IEnumerable<ConnectorPlugin> plugins = this.editedConnectorViewModel != null
+        ? new[] { this.editedConnectorViewModel.SourceConnectorPlugin }.OfType<ConnectorPlugin>()
+        : this.IsAutoDetectionEnabled ? PluginManager.Instance.ConnectorPlugins : new[] { this.SelectedConnectorType }.OfType<ConnectorPlugin>();
+      var address = this.ProposedServerAddress;
+      ArgumentException.ThrowIfNullOrWhiteSpace(address);
+      var discovered = await DiscoverProjects(plugins, address.TrimEnd('/') + "/", TimeSpan.FromMilliseconds(QueryTimeout));
       this.projects = new ProjectViewModelList { MultiSelectionMode = this.MultiSelectionMode, PlugIn = discovered.Plugin };
       foreach (var serverProject in discovered.Projects.OrderBy(project => project.Name))
       {
@@ -597,6 +582,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     private async void GoToProjectSelectionStep()
     {
+      var window = this.wizardWindow;
+      if (window == null)
+      {
+        return;
+      }
+
       var error = false;
       var errorMessage = string.Empty;
       var waitControl = new WaitControl();
@@ -611,7 +602,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         errorMessage = Localizer.ProjectError(e.Message);
       }
 
-      DialogHost.CloseDialogCommand.Execute("WizardWaitDialogHostId", this.wizardWindow.WizardWaitDialogHost);
+      if (!window.IsVisible)
+      {
+        return;
+      }
+
+      DialogHost.CloseDialogCommand.Execute("WizardWaitDialogHostId", window.WizardWaitDialogHost);
 
       if (!error)
       {
@@ -619,13 +615,13 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         this.CurrentPage.DataContext = this;
         this.WizardFrame.Content = this.CurrentPage;
       }
-      else if (this.wizardWindow.IsVisible)
+      else if (window.IsVisible)
       {
         var errorDialog = new MessageControl(errorMessage);
         await DialogHost.Show(errorDialog, "WizardWaitDialogHostId");
         if (this.editedConnectorViewModel != null)
         {
-          this.wizardWindow.Close();
+          window.Close();
         }
       }
     }
@@ -648,7 +644,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     /// <param name="viewModel">The view model.</param>
     /// <returns>Parent project.</returns>
-    private Project CreateParentProjectStructure(ProjectViewModel viewModel)
+    private Project? CreateParentProjectStructure(ProjectViewModel viewModel)
     {
       if (viewModel.Parent == null)
       {

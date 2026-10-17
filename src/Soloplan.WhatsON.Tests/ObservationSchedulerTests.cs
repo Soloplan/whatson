@@ -17,7 +17,7 @@ namespace Soloplan.WhatsON.Tests
   [TestFixture]
   public class ObservationSchedulerTests
   {
-    private ObservationScheduler scheduler;
+    private ObservationScheduler scheduler = new ObservationScheduler();
 
     [SetUp]
     public void SetUp() => this.scheduler = new ObservationScheduler();
@@ -29,7 +29,7 @@ namespace Soloplan.WhatsON.Tests
     public async Task DuplicateObservationAndRepeatedStartDoNotCreateDuplicateQueries()
     {
       var started = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-      var release = new TaskCompletionSource<Status>(TaskCreationOptions.RunContinuationsAsynchronously);
+      var release = new TaskCompletionSource<Status?>(TaskCreationOptions.RunContinuationsAsynchronously);
       var queries = 0;
       var connector = new TestConnector
       {
@@ -97,7 +97,7 @@ namespace Soloplan.WhatsON.Tests
     public async Task GracefulStopLetsTheCurrentQueryFinishWithoutCancellation()
     {
       var started = new TaskCompletionSource<CancellationToken>(TaskCreationOptions.RunContinuationsAsynchronously);
-      var release = new TaskCompletionSource<Status>(TaskCreationOptions.RunContinuationsAsynchronously);
+      var release = new TaskCompletionSource<Status?>(TaskCreationOptions.RunContinuationsAsynchronously);
       var finished = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
       var connector = new TestConnector
       {
@@ -150,7 +150,7 @@ namespace Soloplan.WhatsON.Tests
         Query = token =>
         {
           Interlocked.Increment(ref oldQueries);
-          return Task.FromResult(new Status(ObservationState.Running));
+          return Task.FromResult<Status?>(new Status(ObservationState.Running));
         },
       };
       var completed = new TaskCompletionSource<Connector>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -186,7 +186,7 @@ namespace Soloplan.WhatsON.Tests
             throw new InvalidOperationException("Temporary API failure");
           }
 
-          return Task.FromResult(new Status(ObservationState.Running));
+          return Task.FromResult<Status?>(new Status(ObservationState.Running));
         },
       };
       var published = new TaskCompletionSource<Connector>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -195,7 +195,7 @@ namespace Soloplan.WhatsON.Tests
         this.scheduler.Stop(false);
         published.TrySetResult(value);
       };
-      this.scheduler.Observe(connector);
+      this.scheduler.Observe(connector, 1);
 
       this.scheduler.Start();
 

@@ -27,7 +27,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// <summary>
     /// The cache for captions. The key is the resource tag.
     /// </summary>
-    private static Dictionary<string, string> captionsCache;
+    private static Dictionary<string, string>? captionsCache;
 
     /// <summary>
     /// Applies the configuration resources.
@@ -105,7 +105,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// <param name="resourceName">Name of the resource.</param>
     /// <param name="assemblyForResourceDiscovery">The assembly for resource discovery.</param>
     /// <returns>The resource from the configuration resource file.</returns>
-    private static string GetConfigResourceByName(string resourceName, Assembly assemblyForResourceDiscovery)
+    private static string? GetConfigResourceByName(string resourceName, Assembly assemblyForResourceDiscovery)
     {
       try
       {

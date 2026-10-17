@@ -11,6 +11,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
   public interface IHandleDoubleClick
   {
-    void OnDoubleClick(object sender, MouseButtonEventArgs e);
+    void OnDoubleClick(object? sender, MouseButtonEventArgs e);
   }
 }

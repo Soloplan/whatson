@@ -28,7 +28,7 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
     /// <returns>
     /// String with rgb />.
     /// </returns>
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? Convert(object value, Type targetType, object? parameter, CultureInfo culture)
     {
       if (value is SolidColorBrush)
       {
@@ -55,6 +55,6 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
       return null;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => value;
+    public object? ConvertBack(object value, Type targetType, object? parameter, CultureInfo culture) => value;
   }
 }

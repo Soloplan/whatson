@@ -21,7 +21,7 @@ namespace Soloplan.WhatsON.CruiseControl
 
   public class CruiseControlServer
   {
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
     private readonly string baseUrl;
 
@@ -29,7 +29,7 @@ namespace Soloplan.WhatsON.CruiseControl
 
     private DateTime lastPolled;
 
-    private CruiseControlJobs cache;
+    private CruiseControlJobs? cache;
 
     public CruiseControlServer(string address)
     {
@@ -38,7 +38,7 @@ namespace Soloplan.WhatsON.CruiseControl
 
     public string ReportUrl => UrlHelper.GetXmlReportUrl(this.baseUrl);
 
-    public async Task<CruiseControlJob> GetProjectStatus(CancellationToken cancellationToken, string projectName, int interval)
+    public async Task<CruiseControlJob?> GetProjectStatus(CancellationToken cancellationToken, string? projectName, int interval)
     {
       await this.reportLock.WaitAsync(cancellationToken);
       try
@@ -71,10 +71,11 @@ namespace Soloplan.WhatsON.CruiseControl
       }
     }
 
-    public async Task<List<CruiseControlBuild>> GetBuilds(string projectName, int limit = Connector.MaxSnapshots)
+    public async Task<List<CruiseControlBuild>> GetBuilds(string? projectName, int limit = Connector.MaxSnapshots)
     {
       var history = new List<CruiseControlBuild>();
 
+      ArgumentException.ThrowIfNullOrWhiteSpace(projectName);
       var projectReportUrl = UrlHelper.GetAllBuildsUrl(this.baseUrl, projectName);
       using (var client = new WebClient())
       {
@@ -84,7 +85,7 @@ namespace Soloplan.WhatsON.CruiseControl
           var doc = new HtmlDocument();
           doc.LoadHtml(html);
           var recentBuilds = doc.DocumentNode.SelectNodes("//table[@class='RecentBuildsPanel']/tr/td/a[@class]");
-          foreach (var b in recentBuilds.Take(limit))
+          foreach (var b in (recentBuilds?.Take(limit) ?? Enumerable.Empty<HtmlNode>()))
           {
             var authority = new Uri(projectReportUrl).GetLeftPart(UriPartial.Authority);
             var build = CruiseControlBuild.FromHtmlNode(b, authority);
@@ -135,7 +136,8 @@ namespace Soloplan.WhatsON.CruiseControl
           using (var dataStream = response.GetResponseStream())
           {
             var xmlSerializer = new XmlSerializer(typeof(TModel));
-            return xmlSerializer.Deserialize(dataStream) as TModel;
+            return xmlSerializer.Deserialize(dataStream) as TModel
+              ?? throw new InvalidPlugInApiResponseException("The XML response contains no model.");
           }
         }
       }
@@ -153,7 +155,7 @@ namespace Soloplan.WhatsON.CruiseControl
 
     public static class UrlHelper
     {
-      public static string GetReportUrl(string baseUrl, string project = null) => $"{SanitizeBaseUri(baseUrl)}" + (project != null ? $"/project/{Uri.EscapeDataString(project)}/ViewProjectReport.aspx" : string.Empty);
+      public static string GetReportUrl(string baseUrl, string? project = null) => $"{SanitizeBaseUri(baseUrl)}" + (project != null ? $"/project/{Uri.EscapeDataString(project)}/ViewProjectReport.aspx" : string.Empty);
 
       public static string GetXmlReportUrl(string baseUrl) => $"{SanitizeBaseUri(baseUrl)}/XmlStatusReport.aspx";
 

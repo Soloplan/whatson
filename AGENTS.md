@@ -77,6 +77,10 @@ could not run; do not change frameworks or packages just to bypass them.
   a shared model or interface.
 - Follow `config/stylecop.json`, `config/whatson.ruleset`, and neighboring code:
   two-space indentation, spaces instead of tabs, existing naming and brace style.
+- Nullable reference types are enabled in every project and nullable diagnostics
+  are build errors. Represent missing values with nullable types, initialize
+  required state, and validate external data; do not suppress checks with `!`
+  or `#nullable disable`.
 - SDK projects include C# and WPF pages automatically. The main GUI excludes
   its nested `Tests` directory; plugin data templates remain raw WPF resources.
   Preserve those exceptions when changing project items.

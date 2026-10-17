@@ -18,7 +18,7 @@ namespace Soloplan.WhatsON.Tests
     public void NewConfigurationFollowsSystemAppearance()
     {
       Assert.That(new ApplicationConfiguration().ThemeMode, Is.EqualTo(ApplicationTheme.System));
-      Assert.That(JsonConvert.DeserializeObject<ApplicationConfiguration>("{}").ThemeMode, Is.EqualTo(ApplicationTheme.System));
+      Assert.That((JsonConvert.DeserializeObject<ApplicationConfiguration>("{}") ?? throw new AssertionException("Deserialization returned null.")).ThemeMode, Is.EqualTo(ApplicationTheme.System));
     }
 
     [TestCase("{\"DarkThemeEnabled\":true}", ApplicationTheme.Dark)]
@@ -26,7 +26,7 @@ namespace Soloplan.WhatsON.Tests
     [TestCase("{\"ThemeMode\":\"System\",\"DarkThemeEnabled\":true}", ApplicationTheme.System)]
     [TestCase("{\"DarkThemeEnabled\":true,\"ThemeMode\":\"Light\"}", ApplicationTheme.Light)]
     [TestCase("{\"ThemeMode\":\"Dark\",\"DarkThemeEnabled\":false}", ApplicationTheme.Dark)]
-    public void LegacyPreferenceIsMigratedWithoutOverridingAnExplicitTheme(string json, ApplicationTheme expected) => Assert.That(JsonConvert.DeserializeObject<ApplicationConfiguration>(json).ThemeMode, Is.EqualTo(expected));
+    public void LegacyPreferenceIsMigratedWithoutOverridingAnExplicitTheme(string json, ApplicationTheme expected) => Assert.That((JsonConvert.DeserializeObject<ApplicationConfiguration>(json) ?? throw new AssertionException("Deserialization returned null.")).ThemeMode, Is.EqualTo(expected));
 
     [TestCase(ApplicationTheme.System)]
     [TestCase(ApplicationTheme.Light)]
@@ -36,7 +36,7 @@ namespace Soloplan.WhatsON.Tests
       var json = JsonConvert.SerializeObject(new ApplicationConfiguration { ThemeMode = mode });
       Assert.That(json, Does.Contain($"\"ThemeMode\":\"{mode}\""));
       Assert.That(json, Does.Not.Contain("DarkThemeEnabled"));
-      Assert.That(JsonConvert.DeserializeObject<ApplicationConfiguration>(json).ThemeMode, Is.EqualTo(mode));
+      Assert.That((JsonConvert.DeserializeObject<ApplicationConfiguration>(json) ?? throw new AssertionException("Deserialization returned null.")).ThemeMode, Is.EqualTo(mode));
     }
   }
 }

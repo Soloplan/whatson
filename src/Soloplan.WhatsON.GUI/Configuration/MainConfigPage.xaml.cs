@@ -28,17 +28,17 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
-    private void ThemeModeSelectionChanged(object sender, SelectionChangedEventArgs e)
+    private void ThemeModeSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-      if (((ComboBox)sender).SelectedValue is ApplicationTheme mode && Application.Current is App app)
+      if ((sender as ComboBox)?.SelectedValue is ApplicationTheme mode && Application.Current is App app)
       {
         app.ApplyTheme(mode);
       }
     }
 
-    private void LanguageSelectionChanged(object sender, SelectionChangedEventArgs e)
+    private void LanguageSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-      if (((ComboBox)sender).SelectedValue is ApplicationLanguage language)
+      if ((sender as ComboBox)?.SelectedValue is ApplicationLanguage language)
       {
         Localizer.ApplyLanguage(language);
       }

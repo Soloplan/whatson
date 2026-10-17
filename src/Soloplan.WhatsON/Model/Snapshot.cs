@@ -29,7 +29,7 @@ namespace Soloplan.WhatsON.Model
       }
     }
 
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     public Status Status { get; }
   }

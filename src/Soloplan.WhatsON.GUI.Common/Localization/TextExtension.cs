@@ -19,7 +19,7 @@ namespace Soloplan.WhatsON.GUI.Common.Localization
   /// </summary>
   public class TextExtension : StaticExtension, IValueConverter
   {
-    private Func<string> readValue;
+    private Func<string>? readValue;
 
     public TextExtension(string member)
       : base(member)
@@ -41,15 +41,15 @@ namespace Soloplan.WhatsON.GUI.Common.Localization
     public override object ProvideValue(IServiceProvider serviceProvider)
     {
       var separator = this.Member.LastIndexOf('.');
-      var resolver = (IXamlTypeResolver)serviceProvider.GetService(typeof(IXamlTypeResolver));
-      var type = this.MemberType ?? resolver.Resolve(this.Member.Substring(0, separator));
+      var resolver = serviceProvider.GetService(typeof(IXamlTypeResolver)) as IXamlTypeResolver;
+      var type = this.MemberType ?? (resolver ?? throw new InvalidOperationException("No XAML type resolver is available.")).Resolve(this.Member.Substring(0, separator));
       var property = type.GetProperty(this.Member.Substring(separator + 1), BindingFlags.Public | BindingFlags.Static)
         ?? throw new InvalidOperationException($"Unknown localized resource: {this.Member}");
-      return CreateBinding(() => (string)property.GetValue(null)).ProvideValue(serviceProvider);
+      return CreateBinding(() => property.GetValue(null) as string ?? throw new InvalidOperationException($"Localized resource {this.Member} is not a string.")).ProvideValue(serviceProvider);
     }
 
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => this.readValue();
+    public object Convert(object value, Type targetType, object? parameter, CultureInfo culture) => (this.readValue ?? throw new InvalidOperationException("The localization converter has not been initialized."))();
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => DependencyProperty.UnsetValue;
+    public object ConvertBack(object value, Type targetType, object? parameter, CultureInfo culture) => DependencyProperty.UnsetValue;
   }
 }

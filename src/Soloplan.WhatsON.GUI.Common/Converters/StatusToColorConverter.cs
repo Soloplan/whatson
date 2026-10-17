@@ -16,7 +16,7 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
 
   public class StatusToColorConverter : IValueConverter
   {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object value, Type targetType, object? parameter, CultureInfo culture)
     {
       if (value is StatusViewModel status)
       {
@@ -32,7 +32,7 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
       return new SolidColorBrush(Colors.White);
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
+    public object? ConvertBack(object value, Type targetType, object? parameter, CultureInfo culture) => null;
 
     private static Color GetColor(ObservationState state)
     {

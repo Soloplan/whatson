@@ -11,6 +11,7 @@ namespace Soloplan.WhatsON.GUI.Tests
   using System.Collections.Concurrent;
   using System.Collections.Generic;
   using System.IO;
+  using System.IO.Compression;
   using System.Linq;
   using System.Net;
   using System.Net.Http;
@@ -98,7 +99,7 @@ namespace Soloplan.WhatsON.GUI.Tests
         ? "{\"jobs\":[{\"name\":\"Release\",\"fullName\":\"Folder/Release\",\"url\":\"" + server.Address + "job/Folder/job/Release/\"}]}"
         : "{\"jobs\":[{\"name\":\"Folder\",\"_class\":\"com.cloudbees.hudson.plugins.folder.Folder\",\"url\":\"" + server.Address + "job/Folder/\"}]}");
 
-      var projects = await new JenkinsPlugin().GetProjects(server.Address);
+      var projects = await new JenkinsPlugin().GetProjects(server.Address) ?? throw new AssertionException("Expected discovered projects.");
 
       var folder = projects.Single();
       var child = folder.Children.Single();
@@ -123,7 +124,7 @@ namespace Soloplan.WhatsON.GUI.Tests
         ]}
         """);
 
-      var projects = await new JenkinsPlugin().GetProjects(server.Address);
+      var projects = await new JenkinsPlugin().GetProjects(server.Address) ?? throw new AssertionException("Expected discovered projects.");
 
       var folder = projects.First();
       var pipeline = folder.Children.Single();
@@ -176,7 +177,7 @@ namespace Soloplan.WhatsON.GUI.Tests
         {"jobs":[{"name":"Release","fullName":"Top/Middle/Deep/Release","url":"{{server.Address}}job/Top/job/Middle/job/Deep/job/Release/"}]}
         """);
 
-      var top = (await new JenkinsPlugin().GetProjects(server.Address)).Single();
+      var top = (await new JenkinsPlugin().GetProjects(server.Address) ?? throw new AssertionException("Expected discovered projects.")).Single();
       var middle = top.Children.Single();
       var deep = middle.Children.Single();
       var project = deep.Children.Single();
@@ -241,11 +242,11 @@ namespace Soloplan.WhatsON.GUI.Tests
         }
 
         release.TrySetResult();
-        Assert.That((await first.WaitAsync(TimeSpan.FromSeconds(5))).LastBuildLabel, Is.EqualTo("1"));
+        Assert.That((await first.WaitAsync(TimeSpan.FromSeconds(5)))?.LastBuildLabel, Is.EqualTo("1"));
         var secondStatus = cancelWaitingProject
           ? await shared.GetProjectStatus(CancellationToken.None, "Second", 60)
           : await second.WaitAsync(TimeSpan.FromSeconds(5));
-        Assert.That(secondStatus.LastBuildLabel, Is.EqualTo("2"));
+        Assert.That(secondStatus?.LastBuildLabel, Is.EqualTo("2"));
         Assert.That(server.Requests, Is.EquivalentTo(new[] { "/XmlStatusReport.aspx" }));
       }
       finally
@@ -314,7 +315,7 @@ namespace Soloplan.WhatsON.GUI.Tests
 
       var exception = Assert.ThrowsAsync<HttpRequestException>(async () => await plugin.GetProjects(server.Address));
 
-      Assert.That(exception.StatusCode, Is.EqualTo(expected));
+      Assert.That(exception?.StatusCode, Is.EqualTo(expected));
     }
 
     [Test]
@@ -329,7 +330,7 @@ namespace Soloplan.WhatsON.GUI.Tests
     [Test]
     public async Task AllUnrecognizedPluginsFailPromptlyEvenWhenTheyShareACompletedTask()
     {
-      var plugins = new[] { new DiscoveryPlugin(() => Task.FromResult<IList<Project>>(null)), new DiscoveryPlugin(() => Task.FromResult<IList<Project>>(null)) };
+      var plugins = new[] { new DiscoveryPlugin(() => Task.FromResult<IList<Project>?>(null)), new DiscoveryPlugin(() => Task.FromResult<IList<Project>?>(null)) };
       var query = WizardController.DiscoverProjects(plugins, "https://build.example.invalid/", TimeSpan.FromSeconds(10));
 
       Assert.That(await Task.WhenAny(query, Task.Delay(1000)), Is.SameAs(query));
@@ -341,7 +342,7 @@ namespace Soloplan.WhatsON.GUI.Tests
     {
       var projects = new List<Project> { new Project("https://build.example.invalid/", "Release", "https://build.example.invalid/job/Release/") };
       var failure = new DiscoveryPlugin(() => throw new HttpRequestException("Not a matching API"));
-      var success = new DiscoveryPlugin(() => Task.FromResult<IList<Project>>(projects));
+      var success = new DiscoveryPlugin(() => Task.FromResult<IList<Project>?>(projects));
 
       var discovered = await WizardController.DiscoverProjects(new[] { failure, success }, "https://build.example.invalid/", TimeSpan.FromSeconds(1));
 
@@ -352,7 +353,7 @@ namespace Soloplan.WhatsON.GUI.Tests
     [Test]
     public async Task AStalledProbeTimesOutInsteadOfSpinningOrKeepingTheWizardBusyForever()
     {
-      var completion = new TaskCompletionSource<IList<Project>>(TaskCreationOptions.RunContinuationsAsynchronously);
+      var completion = new TaskCompletionSource<IList<Project>?>(TaskCreationOptions.RunContinuationsAsynchronously);
       var query = WizardController.DiscoverProjects(
         new[] { new DiscoveryPlugin(() => completion.Task) }, "https://build.example.invalid/", TimeSpan.FromMilliseconds(30));
       try
@@ -378,8 +379,8 @@ namespace Soloplan.WhatsON.GUI.Tests
       var previousContext = SynchronizationContext.Current;
       try
       {
-        typeof(WizardController).GetField("wizardWindow", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(controller, window);
-        typeof(WizardController).GetMethod("GoToConnectionStep", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(controller, null);
+        (typeof(WizardController).GetField("wizardWindow", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected member was not found.")).SetValue(controller, window);
+        (typeof(WizardController).GetMethod("GoToConnectionStep", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected member was not found.")).Invoke(controller, null);
         window.Show();
         window.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
         SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(window.Dispatcher));
@@ -409,21 +410,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       }
     }
 
-    private class DiscoveryPlugin : ConnectorPlugin
-    {
-      private readonly Func<Task<IList<Project>>> query;
-
-      public DiscoveryPlugin(Func<Task<IList<Project>>> query, Type connectorType = null)
-        : base(connectorType ?? typeof(JenkinsConnector)) => this.query = query;
-
-      public override Task<IList<Project>> GetProjects(string address) => this.query();
-
-      public override Connector CreateNew(ConnectorConfiguration configuration, bool? checkRedirect = null) => throw new NotSupportedException();
-
-      public override void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress = null) => throw new NotSupportedException();
-    }
-
-    private sealed class DiscoveryServer : IAsyncDisposable
+    internal sealed class DiscoveryServer : IAsyncDisposable
     {
       private readonly TcpListener listener = new TcpListener(IPAddress.Loopback, 0);
       private readonly CancellationTokenSource stopping = new CancellationTokenSource();
@@ -440,9 +427,13 @@ namespace Soloplan.WhatsON.GUI.Tests
 
       public ConcurrentBag<string> Requests { get; } = new ConcurrentBag<string>();
 
-      public Func<string, (string Status, string ContentType, string Body)> Respond { get; set; }
+      public Func<string, (string Status, string ContentType, string Body)> Respond { get; set; } = _ => ("404 Not Found", "text/plain", "Not found");
 
       public Task ResponseGate { get; set; } = Task.CompletedTask;
+
+      public bool Chunked { get; set; }
+
+      public bool Gzip { get; set; }
 
       public async ValueTask DisposeAsync()
       {
@@ -466,14 +457,48 @@ namespace Soloplan.WhatsON.GUI.Tests
             {
             }
 
+            if (string.IsNullOrEmpty(request))
+            {
+              continue;
+            }
+
             var path = request.Split(' ')[1];
             this.Requests.Add(path);
             var response = this.Respond(path);
             await this.ResponseGate.WaitAsync(this.stopping.Token).ConfigureAwait(false);
             var body = Encoding.UTF8.GetBytes(response.Body);
-            var headers = Encoding.ASCII.GetBytes($"HTTP/1.1 {response.Status}\r\nContent-Type: {response.ContentType}\r\nContent-Length: {body.Length}\r\nConnection: close\r\n\r\n");
-            await stream.WriteAsync(headers, this.stopping.Token).ConfigureAwait(false);
-            await stream.WriteAsync(body, this.stopping.Token).ConfigureAwait(false);
+            if (this.Gzip)
+            {
+              using var compressed = new MemoryStream();
+              using (var gzip = new GZipStream(compressed, CompressionLevel.Fastest, true))
+              {
+                gzip.Write(body);
+              }
+
+              body = compressed.ToArray();
+            }
+
+            var length = this.Chunked ? "Transfer-Encoding: chunked" : $"Content-Length: {body.Length}";
+            var encoding = this.Gzip ? "Content-Encoding: gzip\r\n" : string.Empty;
+            var headers = Encoding.ASCII.GetBytes($"HTTP/1.1 {response.Status}\r\nContent-Type: {response.ContentType}\r\n{length}\r\n{encoding}Connection: close\r\n\r\n");
+            try
+            {
+              await stream.WriteAsync(headers, this.stopping.Token).ConfigureAwait(false);
+              if (this.Chunked)
+              {
+                await stream.WriteAsync(Encoding.ASCII.GetBytes(body.Length.ToString("X", System.Globalization.CultureInfo.InvariantCulture) + "\r\n"), this.stopping.Token).ConfigureAwait(false);
+              }
+
+              await stream.WriteAsync(body, this.stopping.Token).ConfigureAwait(false);
+              if (this.Chunked)
+              {
+                await stream.WriteAsync(Encoding.ASCII.GetBytes("\r\n0\r\n\r\n"), this.stopping.Token).ConfigureAwait(false);
+              }
+            }
+            catch (IOException)
+            {
+              // Size-limited clients may close the connection before the entire test response is written.
+            }
           }
         }
         catch (OperationCanceledException) when (this.stopping.IsCancellationRequested)
@@ -483,6 +508,20 @@ namespace Soloplan.WhatsON.GUI.Tests
         {
         }
       }
+    }
+
+    private class DiscoveryPlugin : ConnectorPlugin
+    {
+      private readonly Func<Task<IList<Project>?>> query;
+
+      public DiscoveryPlugin(Func<Task<IList<Project>?>> query, Type? connectorType = null)
+        : base(connectorType ?? typeof(JenkinsConnector)) => this.query = query;
+
+      public override Task<IList<Project>?> GetProjects(string address) => this.query();
+
+      public override Connector CreateNew(ConnectorConfiguration configuration, bool? checkRedirect = null) => throw new NotSupportedException();
+
+      public override void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string? serverAddress = null) => throw new NotSupportedException();
     }
   }
 }

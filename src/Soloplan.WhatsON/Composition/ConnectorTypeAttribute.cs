@@ -15,6 +15,7 @@ namespace Soloplan.WhatsON.Composition
     public ConnectorTypeAttribute(string name)
     {
       this.Name = name;
+      this.DisplayName = name;
     }
 
     public ConnectorTypeAttribute(string name, string displayName)
@@ -23,7 +24,7 @@ namespace Soloplan.WhatsON.Composition
       this.DisplayName = displayName;
     }
 
-    public string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
 
     public string DisplayName { get; }
 

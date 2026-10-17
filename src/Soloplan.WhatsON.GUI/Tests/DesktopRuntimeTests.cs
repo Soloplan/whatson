@@ -216,10 +216,10 @@ namespace Soloplan.WhatsON.GUI.Tests
     {
       var wizard = new WizardController(null, new ApplicationConfiguration(), new WindowSettings());
       var changes = new List<string>();
-      wizard.PropertyChanged += (sender, args) => changes.Add(args.PropertyName);
+      wizard.PropertyChanged += (sender, args) => changes.Add(args.PropertyName ?? throw new AssertionException("Expected a property name."));
       var currentPage = typeof(WizardController).GetProperty(
         "CurrentPage",
-        System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic) ?? throw new AssertionException("Expected member was not found.");
       currentPage.SetValue(wizard, new ProjectSelectionWizardPage(wizard));
       Assert.That(wizard.IsLastStep, Is.True);
       Assert.That(wizard.IsPreviousStepEnabled, Is.True);
@@ -246,16 +246,16 @@ namespace Soloplan.WhatsON.GUI.Tests
           {
             new ConfigurationItem(Connector.ServerAddress) { Value = "https://build.example.invalid" },
             new ConfigurationItem(Connector.ProjectName) { Value = "main" },
-          }));
+          })) ?? throw new AssertionException("Expected connector plugin was not found.");
       connector.CurrentStatus = new Status { Name = "Main", State = ObservationState.Success };
       var queryCompleted = typeof(NotificationsModel).GetMethod(
         "SchedulerStatusQueried",
-        System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-      var changes = new List<(object Sender, string Property)>();
+        System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic) ?? throw new AssertionException("Expected member was not found.");
+      var changes = new List<(object? Sender, string? Property)>();
       notifications.StatusChanged += (sender, args) => changes.Add((sender, args.PropertyName));
       for (var iteration = 0; iteration < 3; iteration++)
       {
-        queryCompleted.Invoke(notifications, new object[] { null, connector });
+        queryCompleted.Invoke(notifications, new object?[] { null, connector });
         Assert.That(changes.Last().Sender, Is.SameAs(notifications.Connectors.Single().CurrentStatus));
         Assert.That(changes.Last().Property, Is.EqualTo(nameof(ConnectorViewModel.CurrentStatus)));
       }
@@ -297,7 +297,7 @@ namespace Soloplan.WhatsON.GUI.Tests
         }
 
         Assert.That(
-          Newtonsoft.Json.JsonConvert.DeserializeObject<ConnectorNotificationConfiguration>(item.Value).UseGlobalNotificationSettings,
+          Newtonsoft.Json.JsonConvert.DeserializeObject<ConnectorNotificationConfiguration>(item.Value ?? throw new AssertionException("Expected settings."))?.UseGlobalNotificationSettings,
           Is.EqualTo(useGlobal));
       }
     }

@@ -45,7 +45,7 @@ namespace Soloplan.WhatsON.GUI.Logging
     public void Initialize()
     {
 #if DEBUG
-      var rootDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+      var rootDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) ?? AppContext.BaseDirectory;
 #else
       var rootDir = SerializationHelper.Instance.ConfigFolder;
 #endif
@@ -62,7 +62,7 @@ namespace Soloplan.WhatsON.GUI.Logging
       this.LogInitialized = true;
     }
 
-    private static string GetOrCreateLogFiledirectory(string rootDir)
+    private static string? GetOrCreateLogFiledirectory(string rootDir)
     {
       var logsPath = Path.Combine(rootDir, "Log");
       try
@@ -80,7 +80,7 @@ namespace Soloplan.WhatsON.GUI.Logging
       }
     }
 
-    private static string GetConfigFilePath(string configDir)
+    private static string? GetConfigFilePath(string configDir)
     {
       try
       {

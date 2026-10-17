@@ -41,34 +41,34 @@ namespace Soloplan.WhatsON.GUI
     /// <summary>
     /// The context menu displayed by tray icon.
     /// </summary>
-    private ContextMenuStrip contextMenu;
+    private ContextMenuStrip? contextMenu;
 
     /// <summary>
     /// The icon.
     /// </summary>
-    private NotifyIcon icon;
+    private NotifyIcon? icon;
 
     /// <summary>
     /// The unbadged icon displayed when build-status is pending or no projects are configured.
     /// </summary>
-    private Icon loadingIcon;
+    private Icon? loadingIcon;
 
     /// <summary>
     /// The icon displayed when build-status is normal.
     /// </summary>
-    private Icon normalIcon;
+    private Icon? normalIcon;
 
     /// <summary>
     /// The icon displayed when build-status is unstable.
     /// </summary>
-    private Icon unstableIcon;
+    private Icon? unstableIcon;
 
     /// <summary>
     /// The icon displayed when build-status is broken.
     /// </summary>
-    private Icon failureIcon;
+    private Icon? failureIcon;
 
-    private MainWindow mainWindow;
+    private MainWindow? mainWindow;
 
     private NotificationsModel model;
 
@@ -111,7 +111,7 @@ namespace Soloplan.WhatsON.GUI
       }
     }
 
-    public MainWindowSettings VisualSettings { get; private set; }
+    public MainWindowSettings VisualSettings { get; private set; } = new MainWindowSettings();
 
     /// <summary>
     /// Gets a value indicating whether the main window is visible.
@@ -127,7 +127,7 @@ namespace Soloplan.WhatsON.GUI
       {
         if (this.mainWindow == null)
         {
-          this.mainWindow = new MainWindow(this.scheduler, this.configuration, this.model.Connectors.Select(sub => sub.Connector).ToList());
+          this.mainWindow = new MainWindow(this.scheduler, this.configuration, this.model.Connectors.Select(sub => sub.Connector).OfType<Connector>().ToList());
 
           this.mainWindow.ApplyVisualSettings(this.VisualSettings);
 
@@ -166,7 +166,7 @@ namespace Soloplan.WhatsON.GUI
     public void ShowBaloon(string title, string tipText, ToolTipIcon i)
     {
       tipText = string.IsNullOrEmpty(tipText) ? " " : tipText;
-      this.icon.ShowBalloonTip(1000, title, tipText, i);
+      this.icon?.ShowBalloonTip(1000, title, tipText, i);
     }
 
     /// <summary>
@@ -182,7 +182,7 @@ namespace Soloplan.WhatsON.GUI
         }
         else if ((DateTime.Now - this.lastWindowFocused).TotalMilliseconds > 250)
         {
-          this.VisualSettings = this.mainWindow.GetVisualSettings();
+          this.VisualSettings = this.MainWindow.GetVisualSettings();
           if (this.VisualSettings != null)
           {
             SerializationHelper.Instance.Save(
@@ -351,9 +351,15 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The event args.</param>
-    private void MainWindowClosing(object sender, System.ComponentModel.CancelEventArgs e) => this.VisualSettings = this.mainWindow.GetVisualSettings();
+    private void MainWindowClosing(object? sender, System.ComponentModel.CancelEventArgs e)
+    {
+      if (sender is MainWindow window)
+      {
+        this.VisualSettings = window.GetVisualSettings();
+      }
+    }
 
-    private void MainWindowClosed(object sender, EventArgs e)
+    private void MainWindowClosed(object? sender, EventArgs e)
     {
       if (this.VisualSettings != null)
       {
@@ -362,16 +368,25 @@ namespace Soloplan.WhatsON.GUI
           Path.Combine(SerializationHelper.Instance.ConfigFolder, MainWindow.VisualSettingsFile));
       }
 
-      this.mainWindow.Closing -= this.MainWindowClosing;
-      this.mainWindow.Closed -= this.MainWindowClosed;
+      if (this.mainWindow != null)
+      {
+        this.mainWindow.Closing -= this.MainWindowClosing;
+        this.mainWindow.Closed -= this.MainWindowClosed;
+      }
+
       this.mainWindow = null;
     }
 
     /// <summary>
     /// Creates context menu whenever it is opened.
     /// </summary>
-    private void OnContextMenuPopup(object sender, System.ComponentModel.CancelEventArgs e)
+    private void OnContextMenuPopup(object? sender, System.ComponentModel.CancelEventArgs e)
     {
+      if (this.contextMenu == null)
+      {
+        return;
+      }
+
       this.contextMenu.Items.Clear();
       var openCloseWindow = new ToolStripMenuItem();
       openCloseWindow.Text = this.MainWindowVisible ? Strings.CloseWindow : Strings.OpenWindow;
@@ -385,7 +400,7 @@ namespace Soloplan.WhatsON.GUI
       this.contextMenu.Items.Add(closeApplication);
     }
 
-    private void LanguageChanged(object sender, EventArgs args) => Application.Current.Dispatcher.Invoke(() =>
+    private void LanguageChanged(object? sender, EventArgs args) => Application.Current.Dispatcher.Invoke(() =>
     {
       this.UpdateTrayIcon();
       this.OnContextMenuPopup(this.contextMenu, new System.ComponentModel.CancelEventArgs());
@@ -394,7 +409,7 @@ namespace Soloplan.WhatsON.GUI
     /// <summary>
     /// Handles closing application.
     /// </summary>
-    private void OnCloseApplicationClick(object sender, EventArgs e) => Application.Current.Shutdown();
+    private void OnCloseApplicationClick(object? sender, EventArgs e) => Application.Current.Shutdown();
 
     /// <summary>
     /// Brings the window to front.
@@ -421,7 +436,7 @@ namespace Soloplan.WhatsON.GUI
       }
     }
 
-    private void MainWindowConfigurationApplied(object sender, ValueEventArgs<ApplicationConfiguration> e)
+    private void MainWindowConfigurationApplied(object? sender, ValueEventArgs<ApplicationConfiguration> e)
     {
       this.configuration = e.Value;
       if (this.scheduler.Running)
@@ -483,7 +498,7 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.ComponentModel.PropertyChangedEventArgs" /> instance containing the event data.</param>
-    private void CurrentStatusPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    private void CurrentStatusPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
       if (sender is StatusViewModel statusViewModel
           && (e.PropertyName == nameof(StatusViewModel.State) || e.PropertyName == nameof(ConnectorViewModel.CurrentStatus)))
@@ -497,6 +512,11 @@ namespace Soloplan.WhatsON.GUI
 
         var connectorConfiguration =
           this.configuration.ConnectorsConfiguration.FirstOrDefault(s => s.Identifier == statusViewModel.Parent.Identifier);
+        if (connectorConfiguration == null)
+        {
+          return;
+        }
+
         var notificationConfiguration = this.configuration.GetNotificationConfiguration(connectorConfiguration);
 
         var description = Localizer.ProjectNotification(statusViewModel.Parent.Name);
@@ -525,6 +545,11 @@ namespace Soloplan.WhatsON.GUI
 
     private void UpdateTrayIcon()
     {
+      if (this.icon == null)
+      {
+        return;
+      }
+
       var connectorStates = this.model.Connectors.Select(connector => GetEffectiveState(
         connector.CurrentStatus.State,
         connector.ConnectorSnapshots.Select(snapshot => snapshot.State))).ToList();

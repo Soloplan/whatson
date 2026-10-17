@@ -14,22 +14,27 @@ namespace Soloplan.WhatsON.CruiseControl.Model
 
   public class CruiseControlBuild
   {
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     public int BuildNumber { get; set; }
 
-    public string BuildLabel { get; set; }
+    public string BuildLabel { get; set; } = string.Empty;
 
     public CcBuildStatus Status { get; set; }
 
     public DateTime BuildTime { get; set; }
 
-    public string Url { get; set; }
+    public string Url { get; set; } = string.Empty;
 
-    public static CruiseControlBuild FromHtmlNode(HtmlNode node, string serverUrl)
+    public static CruiseControlBuild? FromHtmlNode(HtmlNode node, string serverUrl)
     {
-      var url = node.Attributes["href"].Value;
-      var clazz = node.Attributes["class"].Value;
+      var url = node.Attributes["href"]?.Value;
+      var clazz = node.Attributes["class"]?.Value;
+      if (string.IsNullOrWhiteSpace(url) || clazz == null)
+      {
+        return null;
+      }
+
       var value = node.InnerHtml;
 
       var labelMatch = Regex.Match(value, @"\((\w*)\)");

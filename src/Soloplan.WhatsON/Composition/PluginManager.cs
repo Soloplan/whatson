@@ -25,12 +25,12 @@ namespace Soloplan.WhatsON.Composition
     /// <summary>
     /// Logger instance used by this class.
     /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
     /// <summary>
     /// Singleton instance.
     /// </summary>
-    private static volatile PluginManager instance;
+    private static volatile PluginManager? instance;
 
     /// <summary>
     /// The connectors.
@@ -40,7 +40,7 @@ namespace Soloplan.WhatsON.Composition
     /// <summary>
     /// The connector plugins list.
     /// </summary>
-    private List<ConnectorPlugin> connectorPlugins;
+    private List<ConnectorPlugin>? connectorPlugins;
 
     /// <summary>
     /// Registered plugins.
@@ -103,7 +103,7 @@ namespace Soloplan.WhatsON.Composition
     /// <param name="connectorConfiguration">The connector configuration.</param>
     /// <returns>Creates new connector with given configuration.</returns>
     /// <exception cref="InvalidOperationException">Couldn't find plugin for a type: {connectorConfiguration.TypeName}.</exception>
-    public Connector CreateNewConnector(ConnectorConfiguration connectorConfiguration, bool? checkRedirect = null)
+    public Connector? CreateNewConnector(ConnectorConfiguration connectorConfiguration, bool? checkRedirect = null)
     {
       var plugin = this.ConnectorPlugins.FirstOrDefault(p => p.Name == connectorConfiguration.Type);
       if (plugin == null)
@@ -133,7 +133,7 @@ namespace Soloplan.WhatsON.Composition
     /// <param name="connectorConfiguration">The connector configuration.</param>
     /// <returns>A new connector with given configuration.</returns>
     /// <exception cref="InvalidOperationException">Couldn't find plugin for a type: {connectorConfiguration.TypeName}.</exception>
-    public Connector GetConnector(ConnectorConfiguration connectorConfiguration, bool? checkRedirect = null)
+    public Connector? GetConnector(ConnectorConfiguration connectorConfiguration, bool? checkRedirect = null)
     {
       var connector = this.connectors.FirstOrDefault(s => s != null && s.Configuration.Identifier == connectorConfiguration.Identifier);
       if (connector != null)
@@ -149,14 +149,14 @@ namespace Soloplan.WhatsON.Composition
     /// </summary>
     /// <param name="connector">The connector.</param>
     /// <returns>The Plugin instance.</returns>
-    public ConnectorPlugin GetPlugin(Connector connector) => this.ConnectorPlugins.FirstOrDefault(sp => sp.ConnectorType == connector.GetType());
+    public ConnectorPlugin? GetPlugin(Connector connector) => this.ConnectorPlugins.FirstOrDefault(sp => sp.ConnectorType == connector.GetType());
 
     /// <summary>
     /// Gets the Plugin instance of a Connector Configuration.
     /// </summary>
     /// <param name="connectorConfiguration">The connector configuration.</param>
     /// <returns>The Plugin instance.</returns>
-    public ConnectorPlugin GetPlugin(ConnectorConfiguration connectorConfiguration) => this.ConnectorPlugins.FirstOrDefault(sp => sp.Name == connectorConfiguration.Type);
+    public ConnectorPlugin? GetPlugin(ConnectorConfiguration connectorConfiguration) => this.ConnectorPlugins.FirstOrDefault(sp => sp.Name == connectorConfiguration.Type);
 
     /// <summary>
     /// Finds all the <see cref="T:Soloplan.WhatsON.Composition.IPlugin" />s that are provided by the specified assemblies.
@@ -204,7 +204,10 @@ namespace Soloplan.WhatsON.Composition
           if (typeof(IPlugin).IsAssignableFrom(type) && !type.IsAbstract)
           {
             log.Debug("Found plugin {plugin}", new { Assembly = absoluteName, PluginType = type });
-            yield return Activator.CreateInstance(type) as IPlugin;
+            if (Activator.CreateInstance(type) is IPlugin plugin)
+            {
+              yield return plugin;
+            }
           }
         }
 

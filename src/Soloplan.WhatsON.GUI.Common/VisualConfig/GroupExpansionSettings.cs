@@ -9,7 +9,7 @@ namespace Soloplan.WhatsON.GUI.Common.VisualConfig
 {
   public class GroupExpansionSettings
   {
-    public string GroupName { get; set; }
+    public string GroupName { get; set; } = string.Empty;
 
     public bool Expanded { get; set; }
   }

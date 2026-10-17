@@ -25,7 +25,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// <summary>
     /// Logger instance used by this class.
     /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
     /// <summary>
     /// Exports the specified connector configuration.
@@ -117,7 +117,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// Gets the export file path.
     /// </summary>
     /// <returns>The export file path.</returns>
-    private string GetExportFilePath(string fileName)
+    private string? GetExportFilePath(string fileName)
     {
       using (var saveFileDialog = new SaveFileDialog())
       {
@@ -137,7 +137,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// Gets the import file path.
     /// </summary>
     /// <returns>The import file path.</returns>
-    private string GetImportFilePath()
+    private string? GetImportFilePath()
     {
       using (var openFileDialog = new OpenFileDialog())
       {

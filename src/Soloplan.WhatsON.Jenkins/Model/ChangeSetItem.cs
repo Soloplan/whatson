@@ -12,6 +12,6 @@ namespace Soloplan.WhatsON.Jenkins.Model
   public class ChangeSetItem
   {
     [JsonProperty("author")]
-    public JenkinsUser Author { get; set; }
+    public JenkinsUser? Author { get; set; }
   }
 }

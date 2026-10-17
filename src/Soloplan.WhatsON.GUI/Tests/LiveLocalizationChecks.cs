@@ -105,8 +105,8 @@ namespace Soloplan.WhatsON.GUI.Tests
           Flush(settings);
           var finished = Descendants<TextBlock>(history).Single(text => text.Text == "Finished: ");
           var relativeTime = Descendants<TextBlock>(history).Single(text => text.Text.Contains("ago", StringComparison.Ordinal));
-          var icon = (System.Windows.Forms.NotifyIcon)typeof(TrayHandler).GetField("icon", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(tray);
-          var menu = (System.Windows.Forms.ContextMenuStrip)typeof(TrayHandler).GetField("contextMenu", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(tray);
+          var icon = (typeof(TrayHandler).GetField("icon", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected member was not found.")).GetValue(tray) as System.Windows.Forms.NotifyIcon ?? throw new AssertionException("Expected icon.");
+          var menu = (typeof(TrayHandler).GetField("contextMenu", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected member was not found.")).GetValue(tray) as System.Windows.Forms.ContextMenuStrip ?? throw new AssertionException("Expected menu.");
 
           foreach (var language in new[] { ApplicationLanguage.German, ApplicationLanguage.English, ApplicationLanguage.German, ApplicationLanguage.System })
           {
@@ -139,7 +139,7 @@ namespace Soloplan.WhatsON.GUI.Tests
           selector.SelectedValue = ApplicationLanguage.German;
           var exported = new ApplicationConfiguration();
           settings.ConfigurationViewModel.ApplyToConfiguration(exported);
-          Assert.That(JsonConvert.DeserializeObject<ApplicationConfiguration>(JsonConvert.SerializeObject(exported)).Language, Is.EqualTo(ApplicationLanguage.German));
+          Assert.That(JsonConvert.DeserializeObject<ApplicationConfiguration>(JsonConvert.SerializeObject(exported))?.Language, Is.EqualTo(ApplicationLanguage.German));
           ((Button)settings.FindName("ResetButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
           Flush(settings);
           Assert.That(settings.Title, Is.EqualTo("Settings"));

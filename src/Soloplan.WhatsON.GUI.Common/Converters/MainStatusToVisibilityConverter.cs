@@ -19,7 +19,7 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
   /// </summary>
   public class MainStatusToVisibilityConverter : IValueConverter
   {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object value, Type targetType, object? parameter, CultureInfo culture)
     {
       if (value is StatusViewModel status)
       {
@@ -34,6 +34,6 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
       return Visibility.Visible;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
+    public object ConvertBack(object value, Type targetType, object? parameter, CultureInfo culture) => throw new NotImplementedException();
   }
 }

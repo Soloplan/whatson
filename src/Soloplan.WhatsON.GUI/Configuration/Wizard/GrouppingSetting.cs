@@ -40,6 +40,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     public string Id { get; }
 
-    private void LanguageChanged(object sender, PropertyChangedEventArgs args) => this.OnPropertyChanged(nameof(this.Caption));
+    private void LanguageChanged(object? sender, PropertyChangedEventArgs args) => this.OnPropertyChanged(nameof(this.Caption));
   }
 }

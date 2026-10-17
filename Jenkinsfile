@@ -1,4 +1,4 @@
-#!groovy​
+#!groovy
 @Library('SoloPipeline@1.0-rc11')
 import com.soloplan.*
 

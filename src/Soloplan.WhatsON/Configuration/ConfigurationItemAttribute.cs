@@ -19,7 +19,7 @@ namespace Soloplan.WhatsON.Configuration
     /// <summary>
     /// The caption.
     /// </summary>
-    private string caption;
+    private string? caption;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ConfigurationItemAttribute" /> class.

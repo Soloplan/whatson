@@ -48,7 +48,7 @@ namespace Soloplan.WhatsON.GUI
     /// <summary>
     /// App settings.
     /// </summary>
-    private MainWindowSettings settings;
+    private MainWindowSettings settings = new MainWindowSettings();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MainWindow" /> class.
@@ -74,7 +74,7 @@ namespace Soloplan.WhatsON.GUI
     /// <summary>
     /// Occurs when configuration was applied.
     /// </summary>
-    public event EventHandler<ValueEventArgs<ApplicationConfiguration>> ConfigurationApplied;
+    public event EventHandler<ValueEventArgs<ApplicationConfiguration>>? ConfigurationApplied;
 
     public bool IsTreeInitialized { get; set; }
 
@@ -149,7 +149,7 @@ namespace Soloplan.WhatsON.GUI
       this.mainTreeView = null;
     }
 
-    private void OpenConfig(object sender, EventArgs e)
+    private void OpenConfig(object? sender, EventArgs e)
     {
       var configWindow = new ConfigWindow(this.config, this.settings.WizardDialogSettings);
       this.OpenConfig(configWindow);
@@ -160,7 +160,7 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-    private void NewConnectorClick(object sender, EventArgs e)
+    private void NewConnectorClick(object? sender, EventArgs e)
     {
       var wizardController = new WizardController(this, this.config, this.settings.WizardDialogSettings);
       var result = false;
@@ -182,7 +182,7 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-    private void ImportClick(object sender, EventArgs e)
+    private void ImportClick(object? sender, EventArgs e)
     {
       var interchange = new ProjectsDataInterchange();
       if (interchange.Import(this.config))
@@ -191,7 +191,7 @@ namespace Soloplan.WhatsON.GUI
       }
     }
 
-    private void MainTreeViewOnConfigurationChanged(object sender, EventArgs e)
+    private void MainTreeViewOnConfigurationChanged(object? sender, EventArgs e)
     {
       var showAnimation = !this.ConfigurationModifiedFromTree;
       this.ConfigurationModifiedFromTree = true;
@@ -204,13 +204,13 @@ namespace Soloplan.WhatsON.GUI
       }
     }
 
-    private void ResetClick(object sender, RoutedEventArgs e)
+    private void ResetClick(object? sender, RoutedEventArgs e)
     {
       this.HideChangesPanel();
       this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.config));
     }
 
-    private void SaveClick(object sender, RoutedEventArgs e)
+    private void SaveClick(object? sender, RoutedEventArgs e)
     {
       this.HideChangesPanel();
 
@@ -223,7 +223,7 @@ namespace Soloplan.WhatsON.GUI
     {
       if (this.FindResource("hideStorBoard") is Storyboard sb)
       {
-        void ChangePanelVisibility(object sender, EventArgs eventArgs)
+        void ChangePanelVisibility(object? sender, EventArgs eventArgs)
         {
           this.ConfigurationModifiedFromTree = false;
           sb.Completed -= ChangePanelVisibility;
@@ -244,7 +244,7 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">Event args.</param>
-    private async void NewGroupClick(object sender, EventArgs e)
+    private async void NewGroupClick(object? sender, EventArgs e)
     {
       var model = new GroupViewModel { AlreadyUsedNames = this.mainTreeView.GetGroupNames(), };
 
@@ -292,14 +292,17 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">Event args.</param>
-    private void ExportTreeItem(object sender, ValueEventArgs<TreeItemViewModel> e)
+    private void ExportTreeItem(object? sender, ValueEventArgs<TreeItemViewModel> e)
     {
       if (e.Value is ConnectorGroupViewModel groupTreeViewModel)
       {
         var connectors = new List<ConnectorConfiguration>();
         foreach (var connectorViewModelItem in groupTreeViewModel.ConnectorViewModels)
         {
-          connectors.Add(connectorViewModelItem.Connector.Configuration);
+          if (connectorViewModelItem.Connector is Connector connector)
+          {
+            connectors.Add(connector.Configuration);
+          }
         }
 
         var projectsDataInterchange = new ProjectsDataInterchange();
@@ -309,7 +312,10 @@ namespace Soloplan.WhatsON.GUI
       if (e.Value is Common.ConnectorTreeView.ConnectorViewModel connectorViewModel)
       {
         var projectsDataInterchange = new ProjectsDataInterchange();
-        projectsDataInterchange.Export(connectorViewModel.Connector.Configuration, connectorViewModel.Name);
+        if (connectorViewModel.Connector is Connector connector)
+        {
+          projectsDataInterchange.Export(connector.Configuration, connectorViewModel.Name);
+        }
       }
     }
 
@@ -318,7 +324,7 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">Event args.</param>
-    private async void EditTreeItem(object sender, EditTreeItemViewModelEventArgs e)
+    private async void EditTreeItem(object? sender, EditTreeItemViewModelEventArgs e)
     {
       if (e.Model is ConnectorGroupViewModel groupTreeViewModel)
       {
@@ -354,7 +360,10 @@ namespace Soloplan.WhatsON.GUI
         }
         else
         {
-          this.OpenConfig(connectorViewModel.Connector);
+          if (connectorViewModel.Connector is Connector connector)
+          {
+            this.OpenConfig(connector);
+          }
         }
       }
     }
@@ -364,7 +373,7 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">Event args containing object which should be deleted.</param>
-    private void OnItemDeleted(object sender, DeleteTreeItemEventArgs e)
+    private void OnItemDeleted(object? sender, DeleteTreeItemEventArgs e)
     {
       string message;
       if (e.DeleteItem is ConnectorGroupViewModel group)
@@ -381,7 +390,7 @@ namespace Soloplan.WhatsON.GUI
       }
       else
       {
-        message = Localizer.DeleteNamedProject(e.DeleteItem?.ToString());
+        message = Localizer.DeleteNamedProject(e.DeleteItem?.ToString() ?? string.Empty);
       }
 
       var dialog = new OkCancelDialog(message);

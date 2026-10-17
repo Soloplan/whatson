@@ -31,7 +31,7 @@ namespace Soloplan.WhatsON.CruiseControl
 
     public const string ConnectorDisplayName = "Cruise Control.Net";
 
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
     private TimeSpan estimatedDuration = default;
 
@@ -52,7 +52,7 @@ namespace Soloplan.WhatsON.CruiseControl
     /// <returns>true when fine, false when url is broken.</returns>
     public override async Task<bool> CheckProjectURL() => await this.IsReachableUrl(this.directAddress);
 
-    protected override async Task<Status> GetCurrentStatus(CancellationToken cancellationToken)
+    protected override async Task<Status?> GetCurrentStatus(CancellationToken cancellationToken)
     {
       var server = CruiseControlManager.GetServer(this.directAddress);
       var projectData = await server.GetProjectStatus(cancellationToken, this.Project, 5);
@@ -95,10 +95,10 @@ namespace Soloplan.WhatsON.CruiseControl
       return this.CreateStatus(projectData);
     }
 
-    protected override async Task<List<Status>> GetHistory(CancellationToken cancellationToken)
+    protected override async Task<List<Status?>> GetHistory(CancellationToken cancellationToken)
     {
       var server = CruiseControlManager.GetServer(this.directAddress);
-      var history = new List<Status>();
+      var history = new List<Status?>();
 
       var builds = await server.GetBuilds(this.Project);
 
@@ -153,7 +153,7 @@ namespace Soloplan.WhatsON.CruiseControl
       var breakers = (job.MessageList?.MessagesSafe ?? Array.Empty<Message>()).Where(msg => msg.Kind == MessageKind.Breakers);
       foreach (var breakersLine in breakers)
       {
-        foreach (var breaker in breakersLine.Text.Split(',').Select(brk => brk.Trim()).Where(brk => !string.IsNullOrEmpty(brk)))
+        foreach (var breaker in (breakersLine.Text ?? string.Empty).Split(',').Select(brk => brk.Trim()).Where(brk => !string.IsNullOrEmpty(brk)))
         {
           if (result.Culprits.Any(brk => brk.Name == breaker))
           {

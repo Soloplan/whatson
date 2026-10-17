@@ -21,15 +21,15 @@ namespace Soloplan.WhatsON.Tests
   [NonParallelizable]
   public class JsonApiTests
   {
-    private TcpListener listener;
+    private TcpListener? listener;
 
-    private Task responseTask;
+    private Task? responseTask;
 
-    private TaskCompletionSource<string> receivedRequest;
+    private TaskCompletionSource<string> receivedRequest = new TaskCompletionSource<string>();
 
-    private TaskCompletionSource<bool> sendResponse;
+    private TaskCompletionSource<bool> sendResponse = new TaskCompletionSource<bool>();
 
-    private IWebProxy originalProxy;
+    private IWebProxy? originalProxy;
 
     private bool disposing;
 
@@ -89,6 +89,7 @@ namespace Soloplan.WhatsON.Tests
     }
 
     [TestCase("{broken")]
+    [TestCase("null")]
     [TestCase("{\"build\":\"not-a-number\"}")]
     [TestCase("[1,2,3]")]
     public void MalformedOrIncompatibleJsonIsReportedAsAnInvalidApiResponse(string json)
@@ -99,7 +100,7 @@ namespace Soloplan.WhatsON.Tests
         Assert.ThrowsAsync<InvalidPlugInApiResponseException>(async () =>
           await new SerializationHelper().GetJsonModel<Dictionary<string, int>>(address));
 
-      Assert.That(exception.InnerException, Is.InstanceOf<Newtonsoft.Json.JsonException>());
+      Assert.That(exception?.InnerException, Is.InstanceOf<Newtonsoft.Json.JsonException>());
     }
 
     [TestCase("401 Unauthorized")]
@@ -110,8 +111,8 @@ namespace Soloplan.WhatsON.Tests
 
       var exception = Assert.ThrowsAsync<WebException>(async () => await new SerializationHelper().GetJsonModel<Dictionary<string, int>>(address));
 
-      Assert.That(exception.Status, Is.EqualTo(WebExceptionStatus.ProtocolError));
-      exception.Response?.Dispose();
+      Assert.That(exception?.Status, Is.EqualTo(WebExceptionStatus.ProtocolError));
+      exception?.Response?.Dispose();
     }
 
     [Test]
@@ -140,7 +141,7 @@ namespace Soloplan.WhatsON.Tests
 
         Assert.That(await Task.WhenAny(query, Task.Delay(5000)), Is.SameAs(query), "Cancelled request did not finish.");
         var exception = Assert.CatchAsync<OperationCanceledException>(async () => await query);
-        Assert.That(exception.CancellationToken, Is.EqualTo(cancellation.Token));
+        Assert.That(exception?.CancellationToken, Is.EqualTo(cancellation.Token));
       }
     }
 
@@ -162,7 +163,7 @@ namespace Soloplan.WhatsON.Tests
           using (var reader = new StreamReader(stream, Encoding.ASCII, false, 1024, true))
           {
             var headers = new StringBuilder();
-            string line;
+            string? line;
             while (!string.IsNullOrEmpty(line = await reader.ReadLineAsync()))
             {
               headers.AppendLine(line);

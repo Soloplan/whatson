@@ -20,6 +20,6 @@ namespace Soloplan.WhatsON.Configuration
     /// <summary>
     /// Gets or sets the value.
     /// </summary>
-    string Value { get; set; }
+    string? Value { get; set; }
   }
 }

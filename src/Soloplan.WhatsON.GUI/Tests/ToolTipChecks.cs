@@ -53,11 +53,11 @@ namespace Soloplan.WhatsON.GUI.Tests
                   new ConfigurationItem(Connector.DirectAddress, "https://build.example.invalid/"),
                   new ConfigurationItem(Connector.ProjectName, "release/image"),
                 });
-              var connector = PluginManager.Instance.GetConnector(configuration);
+              var connector = PluginManager.Instance.GetConnector(configuration) ?? throw new AssertionException("Expected connector plugin was not found.");
               connector.CurrentStatus = new Status { State = ObservationState.Unknown, BuildNumber = 108, Time = DateTime.UtcNow.AddHours(-1), Duration = TimeSpan.FromMinutes(3) };
               var model = plugin.CreateViewModel(connector);
               model.Update(connector);
-              model.CurrentStatus.Culprits.Add(new UserViewModel { FullName = "A contributor with a very long display name that should wrap inside the tooltip instead of overflowing" });
+              model.CurrentStatus?.Culprits.Add(new UserViewModel { FullName = "A contributor with a very long display name that should wrap inside the tooltip instead of overflowing" });
               using (var reader = plugin.GetDataTempletXaml())
               {
                 var resources = (ResourceDictionary)XamlReader.Load(reader);

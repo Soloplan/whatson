@@ -17,17 +17,17 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// Gets the key.
     /// </summary>
-    public string Key { get; private set; }
+    public string Key { get; private set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the value.
     /// </summary>
-    public string Value { get; set; }
+    public string? Value { get; set; }
 
     /// <summary>
     /// Gets the original configuration item.
     /// </summary>
-    public ConfigurationItem ConfigurationItem { get; private set; }
+    public ConfigurationItem? ConfigurationItem { get; private set; }
 
     /// <summary>
     /// Loads the configuration item view model from the source object.

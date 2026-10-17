@@ -29,7 +29,7 @@ namespace Soloplan.WhatsON.Configuration
     /// </summary>
     /// <param name="key">The key.</param>
     /// <param name="value">The value.</param>
-    public ConfigurationItem(string key, string value)
+    public ConfigurationItem(string key, string? value)
     {
       this.Key = key;
       this.Value = value;
@@ -43,6 +43,6 @@ namespace Soloplan.WhatsON.Configuration
     /// <summary>
     /// Gets or sets the value.
     /// </summary>
-    public string Value { get; set; }
+    public string? Value { get; set; }
   }
 }

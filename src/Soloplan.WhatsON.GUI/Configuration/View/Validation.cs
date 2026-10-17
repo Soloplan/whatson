@@ -105,7 +105,10 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
       {
         if (field.FieldType == typeof(DependencyProperty))
         {
-          dps.Add((DependencyProperty)field.GetValue(null));
+          if (field.GetValue(null) is DependencyProperty property)
+          {
+            dps.Add(property);
+          }
         }
       }
 

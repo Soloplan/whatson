@@ -29,7 +29,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// The search typing timer.
     /// </summary>
-    private DispatcherTimer searchTypingTimer;
+    private DispatcherTimer? searchTypingTimer;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ProjectSelectionWizardPage" /> class.
@@ -57,7 +57,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="System.Windows.Input.KeyEventArgs" /> instance containing the event data.</param>
-    private void MainTreeViewPreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+    private void MainTreeViewPreviewKeyUp(object? sender, System.Windows.Input.KeyEventArgs e)
     {
       if (e.Key == System.Windows.Input.Key.Enter)
       {
@@ -71,9 +71,9 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
-    private void UxGrouppingSettingsLoaded(object sender, RoutedEventArgs e)
+    private void UxGrouppingSettingsLoaded(object? sender, RoutedEventArgs e)
     {
-      var bindingExpressionbase = BindingOperations.GetBindingExpressionBase((ComboBox)sender, Selector.SelectedItemProperty);
+      var bindingExpressionbase = BindingOperations.GetBindingExpressionBase(sender as ComboBox, Selector.SelectedItemProperty);
       bindingExpressionbase?.UpdateTarget();
     }
 
@@ -83,7 +83,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <param name="project">The project.</param>
     /// <param name="searchTextLowercase">The search text lowercase.</param>
     /// <returns>True if the project should be visible.</returns>
-    private bool ShouldBeVisibileDueToParents(ProjectViewModel project, string searchTextLowercase)
+    private bool ShouldBeVisibileDueToParents(ProjectViewModel? project, string searchTextLowercase)
     {
       if (project == null)
       {
@@ -180,7 +180,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="TextChangedEventArgs" /> instance containing the event data.</param>
-    private void SearchTextBoxTextChanged(object sender, TextChangedEventArgs e)
+    private void SearchTextBoxTextChanged(object? sender, TextChangedEventArgs e)
     {
       if (this.searchTypingTimer == null)
       {
@@ -189,8 +189,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         this.searchTypingTimer.Tick += this.SearchTypingTimerTick;
       }
 
-      this.searchTypingTimer.Stop();
-      this.searchTypingTimer.Start();
+      this.searchTypingTimer?.Stop();
+      this.searchTypingTimer?.Start();
     }
 
     /// <summary>
@@ -198,9 +198,9 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-    private void SearchTypingTimerTick(object sender, EventArgs e)
+    private void SearchTypingTimerTick(object? sender, EventArgs e)
     {
-      this.searchTypingTimer.Stop();
+      this.searchTypingTimer?.Stop();
 
       if (this.wizardController.Projects == null)
       {

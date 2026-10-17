@@ -19,12 +19,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// Gets or sets the name of the group.
     /// </summary>
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets names of other groups.
     /// </summary>
-    public IList<string> AlreadyUsedNames { get; set; }
+    public IList<string> AlreadyUsedNames { get; set; } = new List<string>();
 
     /// <summary>
     /// Gets error message.

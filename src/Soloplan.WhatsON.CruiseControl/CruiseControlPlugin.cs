@@ -38,7 +38,7 @@ namespace Soloplan.WhatsON.CruiseControl
     /// <returns>
     /// The projects from the server.
     /// </returns>
-    public override async Task<IList<Project>> GetProjects(string address)
+    public override async Task<IList<Project>?> GetProjects(string address)
     {
       var result = new List<Project>();
       using var response = await discoveryClient.GetAsync(CruiseControlServer.UrlHelper.GetXmlReportUrl(address));
@@ -56,13 +56,13 @@ namespace Soloplan.WhatsON.CruiseControl
         return null;
       }
 
-      var allProjects = (CruiseControlJobs)new XmlSerializer(typeof(CruiseControlJobs)).Deserialize(reader);
+      var allProjects = (CruiseControlJobs?)new XmlSerializer(typeof(CruiseControlJobs)).Deserialize(reader);
       var serverProjects = new List<Project>();
-      foreach (var project in allProjects.CruiseControlProject ?? Array.Empty<CruiseControlJob>())
+      foreach (var project in allProjects?.CruiseControlProject ?? Array.Empty<CruiseControlJob>())
       {
         var serverProjectTreeItem = new Project(
           address,
-          project.Name,
+          project.Name ?? string.Empty,
           address + "server/" + project.ServerName + "/project/" + project.Name + "/ViewProjectReport.aspx");
         if (string.IsNullOrWhiteSpace(project.ServerName))
         {
@@ -77,7 +77,7 @@ namespace Soloplan.WhatsON.CruiseControl
               null,
               project.ServerName,
               address + "server/" + project.ServerName + "/viewServerReport.aspx",
-              project.Name,
+              project.Name ?? string.Empty,
               address + "server/" + project.ServerName + "/project/" + project.Name);
             serverProjects.Add(serverProject);
             result.Add(serverProject);
@@ -97,7 +97,7 @@ namespace Soloplan.WhatsON.CruiseControl
     /// <param name="project">The server project.</param>
     /// <param name="configurationItemsSupport">The configuration items provider.</param>
     /// <param name="serverAddress">The server address.</param>
-    public override void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress = null)
+    public override void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string? serverAddress = null)
     {
       configurationItemsSupport.GetConfigurationByKey(Connector.ProjectName).Value = project.Name;
       configurationItemsSupport.GetConfigurationByKey(Connector.ServerAddress).Value = project.Address;

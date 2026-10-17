@@ -26,6 +26,6 @@ namespace Soloplan.WhatsON.Jenkins.Model
     /// <summary>
     /// Gets or sets the jobs list.
     /// </summary>
-    public IList<JenkinsJob> Jobs { get; set; }
+    public IList<JenkinsJob>? Jobs { get; set; }
   }
 }

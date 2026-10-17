@@ -25,12 +25,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <summary>
     /// Occurs when connectors were loaded.
     /// </summary>
-    public event EventHandler<EventArgs> Loaded;
+    public event EventHandler<EventArgs>? Loaded;
 
     /// <summary>
     /// Occurs when collection item property changed.
     /// </summary>
-    public event EventHandler<PropertyChangedEventArgs> CollectionItemPropertyChanged;
+    public event EventHandler<PropertyChangedEventArgs>? CollectionItemPropertyChanged;
 
     /// <summary>
     /// Should be called when connectors were loaded by external code.

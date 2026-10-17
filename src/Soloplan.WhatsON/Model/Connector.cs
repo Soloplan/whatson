@@ -51,19 +51,19 @@ namespace Soloplan.WhatsON.Model
     /// <summary>
     /// Logger instance used by this class.
     /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Connector" /> class.
     /// </summary>
     /// <param name="configuration">The configuration.</param>
-    protected Connector(ConnectorConfiguration configuration)
+    protected Connector(ConnectorConfiguration? configuration)
     {
       this.Snapshots = new List<Snapshot>();
       if (configuration == null)
       {
         var plugin = PluginManager.Instance.GetPlugin(this);
-        configuration = new ConnectorConfiguration(plugin.Name);
+        configuration = new ConnectorConfiguration(plugin?.Name ?? throw new InvalidOperationException("No plugin is registered for this connector."));
       }
 
       this.Configuration = configuration;
@@ -72,7 +72,7 @@ namespace Soloplan.WhatsON.Model
     /// <summary>
     /// Gets or sets the address.
     /// </summary>
-    public string Address
+    public string? Address
     {
       get => this.Configuration.GetConfigurationByKey(ServerAddress).Value;
       set => this.Configuration.GetConfigurationByKey(ServerAddress).Value = value;
@@ -83,19 +83,19 @@ namespace Soloplan.WhatsON.Model
     /// </summary>
     public ConnectorConfiguration Configuration { get; set; }
 
-    public Status CurrentStatus { get; set; }
+    public Status? CurrentStatus { get; set; }
 
     /// <summary>
     /// Gets or sets the description of the connector.
     /// </summary>
-    public string Description { get; set; }
+    public string? Description { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether the job is disabled on the build server.
     /// </summary>
     public bool IsDisabled { get; set; }
 
-    public string Project
+    public string? Project
     {
       get => this.Configuration.GetConfigurationByKey(ProjectName).Value;
       set => this.Configuration.GetConfigurationByKey(ProjectName).Value = value;
@@ -103,7 +103,7 @@ namespace Soloplan.WhatsON.Model
 
     public List<Snapshot> Snapshots { get; set; }
 
-    public string directAddress
+    public string? directAddress
     {
       get => this.Configuration.GetConfigurationByKey(DirectAddress).Value;
       set => this.Configuration.GetConfigurationByKey(DirectAddress).Value = value;
@@ -133,14 +133,19 @@ namespace Soloplan.WhatsON.Model
     /// <returns>true when fine, false when url is broken.</returns>
     public virtual async Task<bool> CheckServerURL() => false;
 
-    public virtual async Task<bool> IsReachableUrl(string urlInput)
+    public virtual async Task<bool> IsReachableUrl(string? urlInput)
     {
-      var url = urlInput;
+      if (!Uri.TryCreate(urlInput, UriKind.Absolute, out var uri))
+      {
+        return false;
+      }
+
+      var url = uri.AbsoluteUri;
       bool testStatus;
-      WebRequest request = WebRequest.Create(url);
-      request.Timeout = 50; // in ms.
       try
       {
+        WebRequest request = WebRequest.Create(url);
+        request.Timeout = 50; // in ms.
         using (WebResponse response = await request.GetResponseAsync())
         {
           testStatus = true;
@@ -205,17 +210,17 @@ namespace Soloplan.WhatsON.Model
       }
 
       // push current state to the history because it's done building
-      if (this.ShouldTakeSnapshot(this.CurrentStatus))
+      if (this.CurrentStatus != null && this.ShouldTakeSnapshot(this.CurrentStatus))
       {
         this.AddSnapshot(this.CurrentStatus);
       }
     }
 
-    protected abstract Task<Status> GetCurrentStatus(CancellationToken cancellationToken);
+    protected abstract Task<Status?> GetCurrentStatus(CancellationToken cancellationToken);
 
-    protected abstract Task<List<Status>> GetHistory(CancellationToken cancellationToken);
+    protected abstract Task<List<Status?>> GetHistory(CancellationToken cancellationToken);
 
-    protected virtual bool ShouldTakeSnapshot(Status status)
+    protected virtual bool ShouldTakeSnapshot(Status? status)
     {
       log.Trace("Checking if snapshot should be taken...");
 

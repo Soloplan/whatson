@@ -24,7 +24,7 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
     /// </summary>
     public bool BuildTimeUnknown { get; set; }
 
-    public override void Update(Status newStatus)
+    public override void Update(Status? newStatus)
     {
       base.Update(newStatus);
       var ccStatus = newStatus as CruiseControlStatus;

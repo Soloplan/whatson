@@ -54,7 +54,7 @@ namespace Soloplan.WhatsON.GUI
     /// <summary>
     /// Logger used by this class.
     /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CustomTitleBar" /> class.
@@ -68,16 +68,16 @@ namespace Soloplan.WhatsON.GUI
     /// <summary>
     /// Called when custom button was clicked.
     /// </summary>
-    public event EventHandler ButtonClicked;
+    public event EventHandler? ButtonClicked;
 
-    public event EventHandler AddConnectorClicked;
+    public event EventHandler? AddConnectorClicked;
 
-    public event EventHandler AddGroupClicked;
+    public event EventHandler? AddGroupClicked;
 
     /// <summary>
     /// Occurs when import button was clicked.
     /// </summary>
-    public event EventHandler ImportClicked;
+    public event EventHandler? ImportClicked;
 
     /// <summary>
     /// Gets or sets the window handled by this instance.
@@ -150,7 +150,7 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.Windows.Input.MouseButtonEventArgs" /> instance containing the event data.</param>
-    private void MainWindowBarMouseDown(object sender, MouseButtonEventArgs e)
+    private void MainWindowBarMouseDown(object? sender, MouseButtonEventArgs e)
     {
       if (!this.EnsureWindow())
       {
@@ -177,7 +177,7 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="MouseButtonEventArgs" /> instance containing the event data.</param>
-    private void MinimizeButonClick(object sender, RoutedEventArgs e)
+    private void MinimizeButonClick(object? sender, RoutedEventArgs e)
     {
       if (!this.EnsureWindow())
       {
@@ -192,7 +192,7 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
-    private void CloseButtonClick(object sender, RoutedEventArgs e)
+    private void CloseButtonClick(object? sender, RoutedEventArgs e)
     {
       if (!this.EnsureWindow())
       {
@@ -234,23 +234,23 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">Event args.</param>
-    private void OnButtonClicked(object sender, RoutedEventArgs e) => this.ButtonClicked?.Invoke(sender, e);
+    private void OnButtonClicked(object? sender, RoutedEventArgs e) => this.ButtonClicked?.Invoke(sender, e);
 
-    private void ShowAddMenu(object sender, RoutedEventArgs e)
+    private void ShowAddMenu(object? sender, RoutedEventArgs e)
     {
       this.AddMenuButton.ContextMenu.PlacementTarget = this.AddMenuButton;
       this.AddMenuButton.ContextMenu.IsOpen = true;
     }
 
-    private void NewGroupClick(object sender, RoutedEventArgs e) => this.AddGroupClicked?.Invoke(sender, e);
+    private void NewGroupClick(object? sender, RoutedEventArgs e) => this.AddGroupClicked?.Invoke(sender, e);
 
-    private void NewConnectorClick(object sender, RoutedEventArgs e) => this.AddConnectorClicked?.Invoke(sender, e);
+    private void NewConnectorClick(object? sender, RoutedEventArgs e) => this.AddConnectorClicked?.Invoke(sender, e);
 
     /// <summary>
     /// Import click handler.
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
-    private void ImportClick(object sender, RoutedEventArgs e) => this.ImportClicked?.Invoke(sender, e);
+    private void ImportClick(object? sender, RoutedEventArgs e) => this.ImportClicked?.Invoke(sender, e);
   }
 }

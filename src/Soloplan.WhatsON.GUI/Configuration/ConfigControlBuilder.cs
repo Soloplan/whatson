@@ -22,7 +22,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// <summary>
     /// Gets the supported configuration items key.
     /// </summary>
-    public abstract string SupportedConfigurationItemsKey { get; }
+    public abstract string? SupportedConfigurationItemsKey { get; }
 
     /// <summary>
     /// Gets the required bottom margin for built control.
@@ -33,7 +33,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// Gets the value binding dependency property.
     /// If set, value binding will be initialized.
     /// </summary>
-    public virtual DependencyProperty ValueBindingDependencyProperty { get; } = null;
+    public virtual DependencyProperty? ValueBindingDependencyProperty { get; } = null;
 
     /// <summary>
     /// Creates a new control and returns it.
@@ -92,7 +92,11 @@ namespace Soloplan.WhatsON.GUI.Configuration
         valueBinding.ValidationRules.Add(notEmptyValidationRule);
       }
 
-      this.SetValueBinding(control, this.ValueBindingDependencyProperty, valueBinding);
+      if (this.ValueBindingDependencyProperty is DependencyProperty property)
+      {
+        this.SetValueBinding(control, property, valueBinding);
+      }
+
       return valueBinding;
     }
 

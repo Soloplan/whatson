@@ -41,7 +41,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
               new ConfigurationItem(Connector.Category, "Product release"),
             });
           var saved = JsonConvert.SerializeObject(configuration);
-          var imported = JsonConvert.DeserializeObject<ConnectorConfiguration>(saved);
+          var imported = JsonConvert.DeserializeObject<ConnectorConfiguration>(saved) ?? throw new AssertionException("Deserialization returned null.");
 
           var connector = plugin.CreateNew(imported, true);
 

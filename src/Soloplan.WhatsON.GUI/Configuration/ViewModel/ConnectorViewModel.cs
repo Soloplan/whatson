@@ -22,17 +22,17 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// The source connector Plugin.
     /// </summary>
-    private ConnectorPlugin sourceConnectorPlugin;
+    private ConnectorPlugin? sourceConnectorPlugin;
 
     /// <summary>
     /// Gets the connector source configuration.
     /// </summary>
-    public ConnectorConfiguration SourceConnectorConfiguration { get; private set; }
+    public ConnectorConfiguration? SourceConnectorConfiguration { get; private set; }
 
     /// <summary>
     /// Gets or sets the source connector plugin.
     /// </summary>
-    public ConnectorPlugin SourceConnectorPlugin
+    public ConnectorPlugin? SourceConnectorPlugin
     {
       get
       {
@@ -55,7 +55,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// Gets or sets the name of the connector.
     /// </summary>
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets the full name of this connector including the category (if set).
@@ -77,13 +77,13 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// Gets the configuration.
     /// </summary>
-    public List<ConfigurationItemViewModel> ConfigurationItems { get; private set; }
+    public List<ConfigurationItemViewModel> ConfigurationItems { get; private set; } = new List<ConfigurationItemViewModel>();
 
     /// <summary>
     /// Loads the connector view model from the source object.
     /// </summary>
     /// <param name="connectorSource">The connector source.</param>
-    public void Load(ConnectorConfiguration connectorSource)
+    public void Load(ConnectorConfiguration? connectorSource)
     {
       this.IsLoaded = false;
       try
@@ -99,7 +99,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
           this.Name = connectorSource.Name;
           this.Identifier = connectorSource.Identifier;
           var configurationItemsToNull =
-            this.ConfigurationItems.Where(cvm => this.SourceConnectorConfiguration.ConfigurationItems.All(c => c.Key != cvm.Key));
+            this.ConfigurationItems.Where(cvm => connectorSource.ConfigurationItems.All(c => c.Key != cvm.Key));
           foreach (var configurationItemToNull in configurationItemsToNull)
           {
             configurationItemToNull.Value = null;
@@ -124,11 +124,17 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <returns>The connector attributes.</returns>
     public IList<ConfigurationItemAttribute> GetConnectorConfigAttributes()
     {
-      var configurationItemAttributes = this.SourceConnectorPlugin.ConnectorType.GetCustomAttributes(typeof(ConfigurationItemAttribute), true)
+      var plugin = this.SourceConnectorPlugin;
+      if (plugin == null)
+      {
+        return Array.Empty<ConfigurationItemAttribute>();
+      }
+
+      var configurationItemAttributes = plugin.ConnectorType.GetCustomAttributes(typeof(ConfigurationItemAttribute), true)
         .Cast<ConfigurationItemAttribute>().ToList();
       foreach (var configurationItemAttribute in configurationItemAttributes)
       {
-        ConfigResourcesHelper.ApplyConfigResources(configurationItemAttribute, this.SourceConnectorPlugin.ConnectorType);
+        ConfigResourcesHelper.ApplyConfigResources(configurationItemAttribute, plugin.ConnectorType);
       }
 
       return configurationItemAttributes;
@@ -182,7 +188,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <returns>New instance of <see cref="ConnectorConfiguration" />.</returns>
     public ConnectorConfiguration CreateNewConnectorConfiguration()
     {
-      var sourceConnectorConfig = new ConnectorConfiguration(this.SourceConnectorPlugin.Name);
+      var sourceConnectorConfig = new ConnectorConfiguration(this.SourceConnectorPlugin?.Name ?? throw new InvalidOperationException("No connector plugin is selected."));
       sourceConnectorConfig.Name = this.Name;
       foreach (var configurationItem in this.ConfigurationItems)
       {

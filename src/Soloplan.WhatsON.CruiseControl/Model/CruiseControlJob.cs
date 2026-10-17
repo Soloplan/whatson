@@ -28,22 +28,22 @@ namespace Soloplan.WhatsON.CruiseControl.Model
   public class CruiseControlJob
   {
     [XmlElement("messages", IsNullable = false)]
-    public MessageList MessageList { get; set; }
+    public MessageList? MessageList { get; set; }
 
     [XmlAttribute("name")]
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     [XmlAttribute("category")]
-    public string Category { get; set; }
+    public string? Category { get; set; }
 
     [XmlAttribute("activity")]
-    public string Activity { get; set; }
+    public string? Activity { get; set; }
 
     [XmlAttribute("lastBuildStatus")]
     public CcBuildStatus LastBuildStatus { get; set; }
 
     [XmlAttribute("lastBuildLabel")]
-    public string LastBuildLabel { get; set; }
+    public string? LastBuildLabel { get; set; }
 
     [XmlAttribute("lastBuildTime")]
     public System.DateTime LastBuildTime { get; set; }
@@ -52,18 +52,18 @@ namespace Soloplan.WhatsON.CruiseControl.Model
     public System.DateTime NextBuildTime { get; set; }
 
     [XmlAttribute("webUrl")]
-    public string WebUrl { get; set; }
+    public string? WebUrl { get; set; }
 
     [XmlAttribute("CurrentMessage")]
-    public string CurrentMessage { get; set; }
+    public string? CurrentMessage { get; set; }
 
     [XmlAttribute("BuildStage")]
-    public string BuildStage { get; set; }
+    public string? BuildStage { get; set; }
 
     [XmlAttribute("serverName")]
-    public string ServerName { get; set; }
+    public string? ServerName { get; set; }
 
     [XmlAttribute("description")]
-    public string Description { get; set; }
+    public string? Description { get; set; }
   }
 }

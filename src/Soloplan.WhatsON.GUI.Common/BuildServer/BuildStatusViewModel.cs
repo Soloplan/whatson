@@ -14,7 +14,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
   public class BuildStatusViewModel : StatusViewModel
   {
-    private ObservableCollection<UserViewModel> culprits;
+    private ObservableCollection<UserViewModel>? culprits;
 
     public BuildStatusViewModel(ConnectorViewModel model)
       : base(model)
@@ -32,9 +32,9 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
     public int? BuildNumber { get; protected set; }
 
-    public string DisplayName { get; protected set; }
+    public string? DisplayName { get; protected set; }
 
-    public override string Label
+    public override string? Label
     {
       get
       {
@@ -68,7 +68,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
       protected set => base.Label = value;
     }
 
-    public string Url { get; set; }
+    public string? Url { get; set; }
 
     public bool Building { get; protected set; }
 
@@ -108,7 +108,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
     public bool BuildingLongerThenExpected { get; set; }
 
-    public override void Update(Status newStatus)
+    public override void Update(Status? newStatus)
     {
       base.Update(newStatus);
       if (newStatus == null)

@@ -32,7 +32,7 @@ namespace Soloplan.WhatsON.GUI.Common.VisualConfig
 
     public double? Height { get; set; }
 
-    public IList<KeyValuePair<string, string>> AdditionalSettingsStore { get; set; }
+    public IList<KeyValuePair<string, string>> AdditionalSettingsStore { get; set; } = new List<KeyValuePair<string, string>>();
 
     public void Apply(Window window)
     {

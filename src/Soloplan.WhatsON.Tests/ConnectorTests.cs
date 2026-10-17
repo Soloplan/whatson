@@ -21,7 +21,7 @@ namespace Soloplan.WhatsON.Tests
     public async Task RepeatedPollingOfTheSameBuildDoesNotDuplicateHistory()
     {
       var status = new Status(ObservationState.Success) { BuildNumber = 1 };
-      var connector = new TestConnector { Query = token => Task.FromResult(status) };
+      var connector = new TestConnector { Query = token => Task.FromResult<Status?>(status) };
 
       await connector.QueryStatus(CancellationToken.None);
       await connector.QueryStatus(CancellationToken.None);
@@ -34,7 +34,7 @@ namespace Soloplan.WhatsON.Tests
     public async Task RunningBuildIsRecordedExactlyOnceWhenItFinishes()
     {
       var status = new Status(ObservationState.Running) { BuildNumber = 1 };
-      var connector = new TestConnector { Query = token => Task.FromResult(status) };
+      var connector = new TestConnector { Query = token => Task.FromResult<Status?>(status) };
       await connector.QueryStatus(CancellationToken.None);
       Assert.That(connector.Snapshots, Is.Empty);
 
@@ -52,7 +52,7 @@ namespace Soloplan.WhatsON.Tests
     public async Task InvalidBuildsNeverPolluteHistory(ObservationState state)
     {
       var status = new Status(state) { BuildNumber = 1, InvalidBuild = true };
-      var connector = new TestConnector { Query = token => Task.FromResult(status) };
+      var connector = new TestConnector { Query = token => Task.FromResult<Status?>(status) };
 
       await connector.QueryStatus(CancellationToken.None);
 
@@ -76,7 +76,7 @@ namespace Soloplan.WhatsON.Tests
     public async Task InitialHistoryIgnoresMissingBuildsAndIsFetchedOnlyOnce()
     {
       var status = new Status(ObservationState.Success) { BuildNumber = 3, Time = new DateTime(2020, 1, 3) };
-      var connector = new TestConnector { Query = token => Task.FromResult(status) };
+      var connector = new TestConnector { Query = token => Task.FromResult<Status?>(status) };
       connector.History.Add(new Status(ObservationState.Failure) { BuildNumber = 2, Time = new DateTime(2020, 1, 2) });
       connector.History.Add(null);
       connector.History.Add(new Status(ObservationState.Success) { BuildNumber = 1, Time = new DateTime(2020, 1, 1) });
@@ -116,7 +116,7 @@ namespace Soloplan.WhatsON.Tests
     public async Task FailedQueryPreservesTheLastKnownStatusAndHistory()
     {
       var status = new Status(ObservationState.Success) { BuildNumber = 1 };
-      var connector = new TestConnector { Query = token => Task.FromResult(status) };
+      var connector = new TestConnector { Query = token => Task.FromResult<Status?>(status) };
       await connector.QueryStatus(CancellationToken.None);
       connector.Query = token => throw new InvalidOperationException("Server response failed");
 

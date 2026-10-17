@@ -15,7 +15,7 @@ namespace Soloplan.WhatsON
   /// <seealso cref="System.Exception" />
   public class InvalidPlugInApiResponseException : Exception
   {
-    public InvalidPlugInApiResponseException(string message, Exception innerException = null)
+    public InvalidPlugInApiResponseException(string message, Exception? innerException = null)
       : base(message, innerException)
     {
     }

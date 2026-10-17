@@ -13,6 +13,6 @@ namespace Soloplan.WhatsON.Jenkins.Model
   public class ChangeSet
   {
     [JsonProperty("items")]
-    public IList<ChangeSetItem> ChangeSetItems { get; set; }
+    public IList<ChangeSetItem>? ChangeSetItems { get; set; }
   }
 }

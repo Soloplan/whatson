@@ -46,7 +46,7 @@ namespace Soloplan.WhatsON.GUI.Tests
                 new ConfigurationItem(Connector.Category, index < 3 ? "Application" : "Delivery"),
               });
             configuration.ConnectorsConfiguration.Add(settings);
-            var connector = PluginManager.Instance.GetConnector(settings);
+            var connector = PluginManager.Instance.GetConnector(settings) ?? throw new AssertionException("Expected connector plugin was not found.");
             connector.IsDisabled = index == 0;
             connector.CurrentStatus = new Status
             {
@@ -80,7 +80,7 @@ namespace Soloplan.WhatsON.GUI.Tests
               window.Width = width;
               window.UpdateLayout();
               window.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
-              var viewer = FindVisualChild<ScrollViewer>(tree);
+              var viewer = FindVisualChild<ScrollViewer>(tree) ?? throw new AssertionException("Missing scroll viewer.");
               Assert.That(viewer.ExtentWidth, Is.LessThanOrEqualTo(viewer.ViewportWidth + 1), "Narrow windows must not require horizontal scrolling.");
               for (var groupIndex = 0; groupIndex < 2; groupIndex++)
               {
@@ -106,18 +106,18 @@ namespace Soloplan.WhatsON.GUI.Tests
                     Assert.That(badge.Background, Is.SameAs(app.Resources["SettingsBackground"]));
                   }
 
-                  Assert.That(((BuildNumberControl)row.FindName("BuildNumber")).BuildNumber, Is.EqualTo(model.CurrentStatus.BuildNumber));
+                  Assert.That(((BuildNumberControl)row.FindName("BuildNumber")).BuildNumber, Is.EqualTo(model.CurrentStatus?.BuildNumber));
                   Assert.That(row.ContextMenu, Is.Not.Null, "Both plugins must retain project commands.");
                   Assert.That(((TextBlock)row.FindName("ProjectName")).ActualWidth, Is.GreaterThan(35), "Project names take priority over optional metadata.");
                   Assert.That(((FrameworkElement)row.FindName("BuildHistory")).Visibility, Is.EqualTo(width == 800 ? Visibility.Visible : Visibility.Collapsed));
                   Assert.That(((FrameworkElement)row.FindName("BuildTiming")).Visibility, Is.EqualTo(width == 300 ? Visibility.Collapsed : Visibility.Visible));
-                  Assert.That(((ProgressBar)row.FindName("BuildProgress")).Value, Is.EqualTo(model.CurrentStatus.Progress));
-                  var historyList = FindVisualChild<ItemsControl>((HistoryBuildList)row.FindName("BuildHistory"));
+                  Assert.That(((ProgressBar)row.FindName("BuildProgress")).Value, Is.EqualTo(model.CurrentStatus?.Progress));
+                  var historyList = FindVisualChild<ItemsControl>((HistoryBuildList)row.FindName("BuildHistory")) ?? throw new AssertionException("Missing history list.");
                   Assert.That(historyList.Items.Count, Is.EqualTo(5));
                   if (width == 800)
                   {
-                    var historyControl = FindVisualChild<HistoryBuildControl>(historyList);
-                    var historyMenu = FindVisualChild<DockPanel>(historyControl).ContextMenu;
+                    var historyControl = FindVisualChild<HistoryBuildControl>(historyList) ?? throw new AssertionException("Missing history control.");
+                    var historyMenu = (FindVisualChild<DockPanel>(historyControl) ?? throw new AssertionException("Missing history panel.")).ContextMenu;
                     historyMenu.DataContext = historyControl.DataContext;
                     Assert.That(((MenuItem)historyMenu.Items[0]).Command, Is.Not.Null, "History keeps the copy-build command.");
                     Assert.That(((MenuItem)historyMenu.Items[1]).Command, Is.Not.Null, "History keeps the open-build command.");
@@ -140,9 +140,9 @@ namespace Soloplan.WhatsON.GUI.Tests
             window.UpdateLayout();
             Assert.That(((FrameworkElement)disabledRow.FindName("DisabledBadge")).Visibility, Is.EqualTo(Visibility.Collapsed));
             Assert.That(((FrameworkElement)disabledRow.FindName("BuildStateIcon")).Visibility, Is.EqualTo(Visibility.Visible));
-            Assert.That(disabledModel.CurrentStatus.State, Is.EqualTo(ObservationState.Success));
+            Assert.That(disabledModel.CurrentStatus?.State, Is.EqualTo(ObservationState.Success));
             Assert.That(disabledModel.ConnectorSnapshots.Count, Is.EqualTo(5));
-            var toggleSelection = typeof(ConnectorsTreeView).GetMethod("OnCtrlProjectClicked", BindingFlags.Instance | BindingFlags.NonPublic);
+            var toggleSelection = typeof(ConnectorsTreeView).GetMethod("OnCtrlProjectClicked", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected member was not found.");
             toggleSelection.Invoke(control, new[] { selectedRow.DataContext });
             Assert.That(selectedRow.Background, Is.SameAs(app.Resources["SettingsSelection"]));
             Assert.That(selectedRow.Foreground, Is.SameAs(app.Resources["MaterialDesignBody"]));
@@ -165,7 +165,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       }
     }
 
-    private static T FindVisualChild<T>(DependencyObject parent)
+    private static T? FindVisualChild<T>(DependencyObject parent)
       where T : DependencyObject
     {
       for (var index = 0; index < VisualTreeHelper.GetChildrenCount(parent); index++)

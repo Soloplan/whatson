@@ -25,7 +25,7 @@ namespace Soloplan.WhatsON.Jenkins
     typeof(bool),
     Priority = 400)] // defines use of Display URL API Plugin https://wiki.jenkins.io/display/JENKINS/Display+URL+API+Plugin
   [NotificationConfigurationItem(NotificationsVisbility, typeof(ConnectorNotificationConfiguration), Priority = 1600000000)]
-  public class JenkinsConnector : Connector
+  public class JenkinsConnector : Connector, IBatchedConnector
   {
     public const string ConnectorName = "Jenkins";
 
@@ -41,14 +41,22 @@ namespace Soloplan.WhatsON.Jenkins
     /// <summary>
     /// Logger instance used by this class.
     /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
     /// <summary>
     /// API class for accessing Jenkins.
     /// </summary>
     private readonly IJenkinsApi api;
 
-    private IList<JenkinsBuild> recentBuilds;
+    private readonly TimeProvider timeProvider;
+
+    private readonly JenkinsPollingPolicy polling = new JenkinsPollingPolicy();
+
+    private IList<JenkinsBuild>? recentBuilds;
+
+    private JenkinsJob? batchJob;
+
+    private bool usingBatch;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="JenkinsConnector" /> class.
@@ -56,12 +64,88 @@ namespace Soloplan.WhatsON.Jenkins
     /// <param name="configuration">The configuration.</param>
     /// <param name="api">API for Jenkins.</param>
     public JenkinsConnector(ConnectorConfiguration configuration, IJenkinsApi api)
+      : this(configuration, api, TimeProvider.System)
+    {
+    }
+
+    internal JenkinsConnector(ConnectorConfiguration configuration, IJenkinsApi api, TimeProvider timeProvider)
       : base(configuration)
     {
       this.api = api;
+      this.timeProvider = timeProvider;
     }
 
-    private JenkinsStatus PreviousCheckStatus { get; set; }
+    public Uri? BatchAddress => Uri.TryCreate(this.Address?.TrimEnd('/') + "/", UriKind.Absolute, out var address) ? address : null;
+
+    private JenkinsStatus? PreviousCheckStatus { get; set; }
+
+    public async Task<IReadOnlyCollection<Connector>> QueryStatusBatch(IReadOnlyCollection<Connector> connectors, CancellationToken token)
+    {
+      var now = this.timeProvider.GetUtcNow();
+      var due = connectors.Cast<JenkinsConnector>().Where(connector => connector.polling.NextDue <= now).OrderBy(connector => connector.polling.NextDue).ToList();
+      var active = new Queue<JenkinsConnector>(due.Where(connector => connector.polling.Priority));
+      var idle = new Queue<JenkinsConnector>(due.Where(connector => !connector.polling.Priority));
+      var batch = new List<JenkinsConnector>();
+
+      // Reserve every fourth place for the oldest idle job, even while active jobs keep running.
+      while (active.Count > 0 || idle.Count > 0)
+      {
+        for (var index = 0; index < 3 && active.Count > 0; index++)
+        {
+          batch.Add(active.Dequeue());
+        }
+
+        if (idle.Count > 0)
+        {
+          batch.Add(idle.Dequeue());
+        }
+      }
+
+      if (batch.Count == 0)
+      {
+        return Array.Empty<Connector>();
+      }
+
+      var response = await this.api.GetPollingJobs(batch, token);
+      var queried = new List<Connector>();
+      foreach (var connector in batch)
+      {
+        token.ThrowIfCancellationRequested();
+        if (!response.Jobs.TryGetValue(connector, out connector.batchJob))
+        {
+          if (response.Failed.Contains(connector))
+          {
+            connector.polling.Failed(this.timeProvider.GetUtcNow());
+          }
+
+          continue;
+        }
+
+        connector.usingBatch = true;
+        try
+        {
+          await connector.QueryStatus(token);
+          connector.polling.Succeeded(connector.batchJob, this.timeProvider.GetUtcNow());
+          queried.Add(connector);
+        }
+        catch (OperationCanceledException) when (token.IsCancellationRequested)
+        {
+          throw;
+        }
+        catch (Exception exception)
+        {
+          connector.polling.Failed(this.timeProvider.GetUtcNow());
+          log.Error(exception, "Could not apply Jenkins status for project {project}", connector.Project);
+        }
+        finally
+        {
+          connector.batchJob = null;
+          connector.usingBatch = false;
+        }
+      }
+
+      return queried;
+    }
 
     /// <summary>
     /// Checks correctness of self server URL.
@@ -80,6 +164,21 @@ namespace Soloplan.WhatsON.Jenkins
       var previousBuildNumber = this.PreviousCheckStatus?.BuildNumber;
       await base.ExecuteQuery(cancellationToken);
 
+      if (this.recentBuilds != null)
+      {
+        foreach (var build in this.recentBuilds.Where(build => !build.Building).OrderByDescending(build => build.Number).Take(MaxSnapshots))
+        {
+          if (this.Snapshots.All(snapshot => snapshot.Status.BuildNumber != build.Number)
+              && (this.Snapshots.Count < MaxSnapshots || build.Number > this.Snapshots.Min(snapshot => snapshot.Status.BuildNumber)))
+          {
+            this.AddSnapshot(this.CreateStatus(build));
+          }
+        }
+
+        this.PreviousCheckStatus = this.Snapshots.FirstOrDefault()?.Status as JenkinsStatus;
+        return;
+      }
+
       if (previousBuildNumber.HasValue && this.CurrentStatus is JenkinsStatus currentStatus && this.Snapshots.Count != 0)
       {
         if (currentStatus.BuildNumber - previousBuildNumber.Value <= 1)
@@ -89,7 +188,7 @@ namespace Soloplan.WhatsON.Jenkins
 
         log.Error(
           $"It was necessary to reevaluate history of jenkins job {this.Configuration.GetConfigurationByKey(Category)?.Value?.Trim()} / {this.Configuration.Name}, prev build number {previousBuildNumber.Value}, current build number {currentStatus.BuildNumber}");
-        var builds = this.recentBuilds ?? await this.api.GetBuilds(this, cancellationToken, 0, MaxSnapshots + 1);
+        var builds = await this.api.GetBuilds(this, cancellationToken, 0, MaxSnapshots + 1);
         foreach (var build in builds
           .Where(build => !build.Building && build.Number > previousBuildNumber.Value && build.Number < currentStatus.BuildNumber)
           .OrderByDescending(build => build.Number)
@@ -105,12 +204,17 @@ namespace Soloplan.WhatsON.Jenkins
       }
     }
 
-    protected override async Task<Status> GetCurrentStatus(CancellationToken cancellationToken)
+    protected override async Task<Status?> GetCurrentStatus(CancellationToken cancellationToken)
     {
-      var job = await this.api.GetJenkinsJob(this, cancellationToken);
-      this.recentBuilds = job?.Builds;
+      var job = this.usingBatch ? this.batchJob : await this.api.GetJenkinsJob(this, cancellationToken);
+      this.recentBuilds = job?.Builds ?? (this.usingBatch ? Array.Empty<JenkinsBuild>() : null);
       if (job == null)
       {
+        if (this.usingBatch)
+        {
+          return new Status { ErrorMessage = Strings.ProjectNotAvailable, InvalidBuild = true };
+        }
+
         if (!await this.CheckServerURL())
         {
           var status = new Status();
@@ -128,6 +232,11 @@ namespace Soloplan.WhatsON.Jenkins
         }
       }
 
+      if (job == null)
+      {
+        return new Status { ErrorMessage = Strings.ProjectNotAvailable, InvalidBuild = true };
+      }
+
       this.IsDisabled = job.Disabled;
 
       if (job.LastBuild == null)
@@ -138,7 +247,7 @@ namespace Soloplan.WhatsON.Jenkins
         return status;
       }
 
-      if (job?.LastBuild?.Number == null)
+      if (job.LastBuild.Number <= 0)
       {
         var status = this.CreateStatus(job.LastBuild);
         status.ErrorMessage = Strings.NoBuildNumber;
@@ -148,19 +257,19 @@ namespace Soloplan.WhatsON.Jenkins
       return this.CreateStatus(job.LastBuild);
     }
 
-    protected override async Task<List<Status>> GetHistory(CancellationToken cancellationToken)
+    protected override async Task<List<Status?>> GetHistory(CancellationToken cancellationToken)
     {
       var builds = this.recentBuilds ?? await this.api.GetBuilds(this, cancellationToken, 1, MaxSnapshots + 1);
       var statuses = builds
-        .Where(build => !build.Building && build.Number != this.CurrentStatus.BuildNumber)
+        .Where(build => !build.Building && build.Number != this.CurrentStatus?.BuildNumber)
         .OrderByDescending(build => build.Number)
         .Take(MaxSnapshots)
-        .Select(this.CreateStatus).ToList();
+        .Select(build => (Status?)this.CreateStatus(build)).ToList();
       this.PreviousCheckStatus = statuses.OfType<JenkinsStatus>().FirstOrDefault();
       return statuses;
     }
 
-    protected override bool ShouldTakeSnapshot(Status status)
+    protected override bool ShouldTakeSnapshot(Status? status)
     {
       var shouldTakeSnapshot = base.ShouldTakeSnapshot(status);
       if (shouldTakeSnapshot && status is JenkinsStatus jenkinsStatus)
@@ -205,12 +314,24 @@ namespace Soloplan.WhatsON.Jenkins
       newStatus.Building = latestBuild.Building;
       newStatus.Duration = new TimeSpan(latestBuild.Duration * TicksInMillisecond);
       newStatus.EstimatedDuration = new TimeSpan(latestBuild.EstimatedDuration * TicksInMillisecond);
-      newStatus.Culprits = latestBuild.Culprits;
+      newStatus.Culprits = latestBuild.Culprits?.OfType<JenkinsUser>().ToList() ?? new List<JenkinsUser>();
       newStatus.Url = JenkinsApi.UrlHelper.BuildUrl(this, newStatus.BuildNumber);
       newStatus.ErrorMessage = latestBuild.Result;
 
-      newStatus.CommittedToThisBuild = latestBuild.ChangeSets?.SelectMany(p => p.ChangeSetItems).Select(p => p.Author).GroupBy(p => p.FullName)
-        .Select(p => p.FirstOrDefault()).ToList();
+      newStatus.CommittedToThisBuild = latestBuild.ChangeSets?.OfType<ChangeSet>().SelectMany(p => p.ChangeSetItems ?? Array.Empty<ChangeSetItem>())
+        .OfType<ChangeSetItem>().Select(p => p.Author).OfType<JenkinsUser>().GroupBy(p => p.FullName)
+        .Select(p => p.First()).ToList() ?? new List<JenkinsUser>();
+
+      if (this.batchJob?.DetailsOmitted == true)
+      {
+        var previous = this.CurrentStatus is JenkinsStatus current && current.BuildNumber == latestBuild.Number
+          ? current : this.Snapshots.Select(snapshot => snapshot.Status).OfType<JenkinsStatus>().FirstOrDefault(status => status.BuildNumber == latestBuild.Number);
+        newStatus.Details = previous?.Details;
+        newStatus.DisplayName = previous?.DisplayName;
+        newStatus.Name = previous?.Name ?? $"#{latestBuild.Number}";
+        newStatus.Culprits = previous?.Culprits ?? new List<JenkinsUser>();
+        newStatus.CommittedToThisBuild = previous?.CommittedToThisBuild ?? new List<JenkinsUser>();
+      }
 
       return newStatus;
     }

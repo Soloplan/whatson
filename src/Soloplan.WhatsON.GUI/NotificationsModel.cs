@@ -24,11 +24,11 @@ namespace Soloplan.WhatsON.GUI
       scheduler.StatusQueried += this.SchedulerStatusQueried;
     }
 
-    public event PropertyChangedEventHandler StatusChanged;
+    public event PropertyChangedEventHandler? StatusChanged;
 
     public ObservableCollection<ConnectorViewModel> Connectors { get; }
 
-    private void SchedulerStatusQueried(object sender, Connector connector)
+    private void SchedulerStatusQueried(object? sender, Connector connector)
     {
       var modelToUpdate = this.GetModelToUpdate(connector);
       modelToUpdate.Update(connector);
@@ -37,7 +37,7 @@ namespace Soloplan.WhatsON.GUI
       this.ForwardStatusChanged(modelToUpdate.CurrentStatus, new PropertyChangedEventArgs(nameof(ConnectorViewModel.CurrentStatus)));
     }
 
-    private void ForwardStatusChanged(object sender, PropertyChangedEventArgs eventArgs) => this.StatusChanged?.Invoke(sender, eventArgs);
+    private void ForwardStatusChanged(object? sender, PropertyChangedEventArgs eventArgs) => this.StatusChanged?.Invoke(sender, eventArgs);
 
     private ConnectorViewModel GetModelToUpdate(Connector connector)
     {

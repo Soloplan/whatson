@@ -14,10 +14,11 @@ namespace Soloplan.WhatsON.CruiseControl
   {
     private static readonly ConcurrentDictionary<Uri, CruiseControlServer> servers = new ConcurrentDictionary<Uri, CruiseControlServer>();
 
-    public static CruiseControlServer GetServer(string address, bool addToCache = true)
+    public static CruiseControlServer GetServer(string? address, bool addToCache = true)
     {
+      ArgumentException.ThrowIfNullOrWhiteSpace(address);
       var uri = new Uri(address);
-      if (servers.TryGetValue(uri, out CruiseControlServer server))
+      if (servers.TryGetValue(uri, out var server))
       {
         return server;
       }

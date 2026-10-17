@@ -22,12 +22,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// Singleton instance.
     /// </summary>
-    private static volatile GlobalConfigDataViewModel instance;
+    private static volatile GlobalConfigDataViewModel? instance;
 
     /// <summary>
     /// The configuration view model.
     /// </summary>
-    private ConfigViewModel configuration;
+    private ConfigViewModel configuration = new ConfigViewModel();
 
     /// <summary>
     /// Gets the singleton instance.

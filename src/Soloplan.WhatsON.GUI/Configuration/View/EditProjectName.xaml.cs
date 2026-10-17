@@ -28,15 +28,15 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
       this.DataContext = model;
     }
 
-    private void OkButtonClick(object sender, RoutedEventArgs e)
+    private void OkButtonClick(object? sender, RoutedEventArgs e)
     {
     }
 
-    private void CancelButtonClick(object sender, RoutedEventArgs e)
+    private void CancelButtonClick(object? sender, RoutedEventArgs e)
     {
     }
 
-    private void CanCloseDialog(object sender, CanExecuteRoutedEventArgs e)
+    private void CanCloseDialog(object? sender, CanExecuteRoutedEventArgs e)
     {
       if (e.Parameter is bool param)
       {

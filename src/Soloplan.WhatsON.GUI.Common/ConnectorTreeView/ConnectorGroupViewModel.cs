@@ -27,9 +27,9 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// The logger.
     /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
-    private ObservableCollection<ConnectorViewModel> statusViewModels;
+    private ObservableCollection<ConnectorViewModel>? statusViewModels;
 
     public ConnectorGroupViewModel()
     {
@@ -40,7 +40,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.statusViewModels ?? (this.statusViewModels = new ObservableCollection<ConnectorViewModel>());
 
     [OnChangedMethod(nameof(GroupNameChanged))]
-    public string GroupName { get; set; }
+    public string GroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets a value indicating whether configuration was modified from main window.
@@ -176,7 +176,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.ConnectorViewModels.CollectionChanged += this.ConnectorViewModelsCollectionChanged;
     }
 
-    public override void OnDoubleClick(object sender, MouseButtonEventArgs e)
+    public override void OnDoubleClick(object? sender, MouseButtonEventArgs e)
     {
       foreach (var connectorViewModel in this.ConnectorViewModels)
       {
@@ -209,7 +209,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">Event args.</param>
-    private void ConnectorViewModelsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    private void ConnectorViewModelsCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
       this.UpdateConnectorWithGivenStatusCount();
       this.SetRunningColumnVisible();
@@ -220,16 +220,18 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private void UpdateConnectorWithGivenStatusCount()
     {
-      this.FailingConnectors = this.statusViewModels.Count(stat => stat.CurrentStatus.State == ObservationState.Failure);
-      this.RunningConnectors = this.statusViewModels.Count(stat => stat.CurrentStatus.State == ObservationState.Running);
-      this.UnstableConnectors = this.statusViewModels.Count(stat => stat.CurrentStatus.State == ObservationState.Unstable);
-      this.UnknownConnectors = this.statusViewModels.Count(stat => stat.CurrentStatus.State == ObservationState.Unknown);
+      this.FailingConnectors = this.ConnectorViewModels.Count(stat => stat.CurrentStatus.State == ObservationState.Failure);
+      this.RunningConnectors = this.ConnectorViewModels.Count(stat => stat.CurrentStatus.State == ObservationState.Running);
+      this.UnstableConnectors = this.ConnectorViewModels.Count(stat => stat.CurrentStatus.State == ObservationState.Unstable);
+      this.UnknownConnectors = this.ConnectorViewModels.Count(stat => stat.CurrentStatus.State == ObservationState.Unknown);
     }
 
     private void CreateViewModelForConnectorConfiguration(ConnectorConfiguration connectorConfiguration)
     {
       var connector = PluginManager.Instance.GetConnector(connectorConfiguration);
-      ConnectorViewModel connectorViewModel = this.GetConnectorViewModel(connector);
+      ConnectorViewModel connectorViewModel = connector == null
+        ? new ConnectorMissingViewModel(connectorConfiguration)
+        : this.GetConnectorViewModel(connector);
       connectorViewModel.EditItem += this.OnSubItemEdit;
       connectorViewModel.DeleteItem += this.DeleteConnector;
       connectorViewModel.ExportItem += this.ExportItemHandler;
@@ -238,22 +240,17 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.ConnectorViewModels.Add(connectorViewModel);
     }
 
-    private void ConnectorViewModelConfigurationChanged(object sender, EventArgs e) => this.OnConfigurationChanged(sender, e);
+    private void ConnectorViewModelConfigurationChanged(object? sender, EventArgs e) => this.OnConfigurationChanged(sender, e);
 
     /// <summary>
     /// Handles the export of a project item.
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="ValueEventArgs{TreeItemViewModel}" /> instance containing the event data.</param>
-    private void ExportItemHandler(object sender, ValueEventArgs<TreeItemViewModel> e) => this.OnExportItem(this, e);
+    private void ExportItemHandler(object? sender, ValueEventArgs<TreeItemViewModel> e) => this.OnExportItem(this, e);
 
     private ConnectorViewModel GetConnectorViewModel(Connector connector)
     {
-      if (connector == null)
-      {
-        return new ConnectorMissingViewModel(connector);
-      }
-
       var presentationPlugIn = PluginManager.Instance.GetPresentationPlugin(connector.Configuration.Type);
       if (presentationPlugIn != null)
       {
@@ -263,9 +260,9 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       return new ConnectorViewModel(connector);
     }
 
-    private void OnSubItemEdit(object sender, EditTreeItemViewModelEventArgs e) => this.OnEditItem(sender, e);
+    private void OnSubItemEdit(object? sender, EditTreeItemViewModelEventArgs e) => this.OnEditItem(sender, e);
 
-    private async void DeleteConnector(object sender, DeleteTreeItemEventArgs e)
+    private async void DeleteConnector(object? sender, DeleteTreeItemEventArgs e)
     {
       if (e.DeleteItem is ConnectorViewModel model)
       {

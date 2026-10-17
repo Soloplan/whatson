@@ -39,7 +39,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.Windows.Input.TextCompositionEventArgs" /> instance containing the event data.</param>
-    private void NumberValidationTextBox(object sender, System.Windows.Input.TextCompositionEventArgs e)
+    private void NumberValidationTextBox(object? sender, System.Windows.Input.TextCompositionEventArgs e)
     {
       var regex = new Regex("[^0-9]+");
       e.Handled = regex.IsMatch(e.Text);

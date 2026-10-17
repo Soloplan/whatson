@@ -38,7 +38,7 @@ namespace Soloplan.WhatsON
     /// <summary>
     /// Logger instance used by this class.
     /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SerializationHelper" /> class.
@@ -68,13 +68,14 @@ namespace Soloplan.WhatsON
     public static T Load<T>(string file)
     {
       var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
-      return JsonConvert.DeserializeObject<T>(File.ReadAllText(file), settings);
+      return JsonConvert.DeserializeObject<T>(File.ReadAllText(file), settings)
+        ?? throw new JsonSerializationException("The file contains a null model.");
     }
 
     public async Task<TModel> GetJsonModel<TModel>(
       string requestUrl,
       CancellationToken token = default(CancellationToken),
-      Action<WebRequest> requestCallback = null)
+      Action<WebRequest>? requestCallback = null)
       where TModel : class
     {
       const string JSON_CONTENT_TYPE = "application/json";
@@ -111,7 +112,8 @@ namespace Soloplan.WhatsON
             var responseFromServer = await reader.ReadToEndAsync(token).ConfigureAwait(false);
             try
             {
-              return JsonConvert.DeserializeObject<TModel>(responseFromServer);
+              return JsonConvert.DeserializeObject<TModel>(responseFromServer)
+                ?? throw new JsonSerializationException("The API returned a null model.");
             }
             catch (JsonException ex)
             {
@@ -185,7 +187,7 @@ namespace Soloplan.WhatsON
     /// <param name="configuration">The configuration.</param>
     /// <param name="configFilePath">The configuration file path.</param>
     /// <exception cref="InvalidOperationException">Couldn't get the directory for configuration file.</exception>
-    public void SaveConfiguration(ApplicationConfiguration configuration, string configFilePath = null)
+    public void SaveConfiguration(ApplicationConfiguration configuration, string? configFilePath = null)
     {
       if (configFilePath == null)
       {
@@ -283,7 +285,7 @@ namespace Soloplan.WhatsON
 
             if (item.Key == "Address")
             {
-              address = item.Value;
+              address = item.Value ?? string.Empty;
             }
           }
 

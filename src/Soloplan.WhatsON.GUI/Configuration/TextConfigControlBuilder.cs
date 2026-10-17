@@ -21,7 +21,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// <summary>
     /// Gets the supported configuration items key.
     /// </summary>
-    public override string SupportedConfigurationItemsKey => null;
+    public override string? SupportedConfigurationItemsKey => null;
 
     public override DependencyProperty ValueBindingDependencyProperty => TextBox.TextProperty;
 

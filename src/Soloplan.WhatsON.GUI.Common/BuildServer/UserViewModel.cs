@@ -14,11 +14,11 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     /// <summary>
     /// Gets or sets name of user how made modifications in this build.
     /// </summary>
-    public string FullName { get; set; }
+    public string? FullName { get; set; }
 
     /// <summary>
     /// Gets or sets URL to user.
     /// </summary>
-    public string Url { get; set; }
+    public string? Url { get; set; }
   }
 }

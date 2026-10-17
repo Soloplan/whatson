@@ -30,17 +30,17 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// The logger.
     /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
     /// <summary>
     /// Backing field for <see cref="ConnectorGroups" />.
     /// </summary>
-    private ObservableCollection<ConnectorGroupViewModel> connectorGroups;
+    private ObservableCollection<ConnectorGroupViewModel>? connectorGroups;
 
     /// <summary>
     /// Copy of currently selected connectors in case of multiple actions on viewmodel/>.
     /// </summary>
-    private Collection<ConnectorViewModel> selectedConnectors;
+    private Collection<ConnectorViewModel> selectedConnectors = new Collection<ConnectorViewModel>();
 
     /// <summary>
     /// Flag indicating that <see cref="ConfigurationChanged" /> event is triggered - used to ignore updates of model.
@@ -55,22 +55,22 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// Called when configuration has changed due to user input.
     /// </summary>
-    public event EventHandler ConfigurationChanged;
+    public event EventHandler? ConfigurationChanged;
 
     /// <summary>
     /// Event fired when user requested editing of tree view item in context menu.
     /// </summary>
-    public event EventHandler<EditTreeItemViewModelEventArgs> EditItem;
+    public event EventHandler<EditTreeItemViewModelEventArgs>? EditItem;
 
     /// <summary>
     /// Event fired when user requested exporting of tree view item in context menu.
     /// </summary>
-    public event EventHandler<ValueEventArgs<TreeItemViewModel>> ExportItem;
+    public event EventHandler<ValueEventArgs<TreeItemViewModel>>? ExportItem;
 
     /// <summary>
     /// Event fired when item should be deleted.
     /// </summary>
-    public event EventHandler<DeleteTreeItemEventArgs> DeleteItem;
+    public event EventHandler<DeleteTreeItemEventArgs>? DeleteItem;
 
     /// <summary>
     /// Gets observable collection of connector groups, the top level object in tree view binding.
@@ -82,7 +82,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// Gets first group from <see cref="ConnectorGroups" />, used for binding when there is just one group
     /// <see cref="OneGroup" />.
     /// </summary>
-    public ConnectorGroupViewModel FirstGroup { get; private set; }
+    public ConnectorGroupViewModel? FirstGroup { get; private set; }
 
     /// <summary>
     /// Gets a value indicating whether there is only one group.
@@ -277,7 +277,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       {
         foreach (var projectViewModel in group.ConnectorViewModels)
         {
-          projectViewModel.ApplyConfiguration(projectViewModel.Connector.Configuration);
+          if (projectViewModel.Connector is Connector connector)
+          {
+            projectViewModel.ApplyConfiguration(connector.Configuration);
+          }
         }
       }
 
@@ -323,14 +326,13 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
           {
             config.GetConfigurationByKey(Connector.Category).Value = connectorGroupViewModel.GroupName;
             config.Name = connectorViewModel.Name;
+            configuration.ConnectorsConfiguration.Add(config);
           }
-
-          configuration.ConnectorsConfiguration.Add(config);
         }
       }
     }
 
-    public void OnDoubleClick(object sender, MouseButtonEventArgs e)
+    public void OnDoubleClick(object? sender, MouseButtonEventArgs e)
     {
       foreach (var connectorGroupViewModel in this.ConnectorGroups)
       {
@@ -385,7 +387,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       return true;
     }
 
-    public async void DeleteGroup(object sender, DeleteTreeItemEventArgs e)
+    public async void DeleteGroup(object? sender, DeleteTreeItemEventArgs e)
     {
       if (e.DeleteItem is ConnectorViewModel clickedConnector)
       {
@@ -436,7 +438,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <param name="sender">The sender.</param>
     /// <param name="args">Event args.</param>
     [SuppressPropertyChangedWarnings]
-    protected void OnConfigurationChanged(object sender, EventArgs args)
+    protected void OnConfigurationChanged(object? sender, EventArgs args)
     {
       try
       {
@@ -460,8 +462,13 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// should be placed.
     /// </param>
     /// <returns>True if operation caused changes; false otherwise.</returns>
-    private static bool MoveObject(MovedObjectLocation source, MovedObjectLocation target, RelativeInsertPosition insertPosition)
+    private static bool MoveObject(MovedObjectLocation? source, MovedObjectLocation? target, RelativeInsertPosition insertPosition)
     {
+      if (source == null || target == null)
+      {
+        return false;
+      }
+
       var insertPositionInternal = insertPosition;
       if ((insertPositionInternal & RelativeInsertPosition.TargetItemCenter) != 0)
       {
@@ -505,6 +512,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private bool DropConnector(IDropInfo dropInfo, ConnectorViewModel droppedConnector)
     {
       var currentConnectorGroupModel = this.GetConnectorGroup(droppedConnector);
+      if (currentConnectorGroupModel == null)
+      {
+        return false;
+      }
+
       if (dropInfo.TargetItem is ConnectorGroupViewModel model)
       {
         if (ReferenceEquals(currentConnectorGroupModel.List, model.ConnectorViewModels))
@@ -554,7 +566,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     /// <param name="connectorViewModel">The connector view model.</param>
     /// <returns>The information about location in target collection.</returns>
-    private MovedObjectLocation GetConnectorGroup(ConnectorViewModel connectorViewModel)
+    private MovedObjectLocation? GetConnectorGroup(ConnectorViewModel connectorViewModel)
     {
       foreach (var connectorGroupViewModel in this.ConnectorGroups)
       {
@@ -570,7 +582,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       return null;
     }
 
-    private void SchedulerStatusQueried(object sender, Connector e)
+    private void SchedulerStatusQueried(object? sender, Connector e)
     {
       foreach (var connectorGroupViewModel in this.ConnectorGroups)
       {
@@ -610,18 +622,18 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="ValueEventArgs{TreeItemViewModel}" /> instance containing the event data.</param>
-    private void ExportHandler(object sender, ValueEventArgs<TreeItemViewModel> e) => this.ExportItem?.Invoke(sender, e);
+    private void ExportHandler(object? sender, ValueEventArgs<TreeItemViewModel> e) => this.ExportItem?.Invoke(sender, e);
 
     /// <summary>
     /// Removes any empty rpesent groups.
     /// </summary>
     private void ClearEmptyGroups()
     {
-      foreach (var group in this.connectorGroups.ToList())
+      foreach (var group in this.ConnectorGroups.ToList())
       {
         if (group.ConnectorViewModels.Count == 0)
         {
-          this.connectorGroups.Remove(group);
+          this.ConnectorGroups.Remove(group);
         }
       }
     }
@@ -632,7 +644,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private void DeleteSelectedConnectors()
     {
       bool madeChanges = false;
-      foreach (var connectorGroup in this.connectorGroups.ToList())
+      foreach (var connectorGroup in this.ConnectorGroups.ToList())
       {
         foreach (var connector in connectorGroup.ConnectorViewModels.ToList())
         {
@@ -665,7 +677,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private void DeleteConnector(ConnectorViewModel connectorViewModel)
     {
       bool madeChanges = false;
-      foreach (var connectorGroup in this.connectorGroups.ToList())
+      foreach (var connectorGroup in this.ConnectorGroups.ToList())
       {
         foreach (var connector in connectorGroup.ConnectorViewModels.ToList())
         {
