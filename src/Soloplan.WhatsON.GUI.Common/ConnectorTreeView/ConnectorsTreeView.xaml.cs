@@ -93,6 +93,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     public void Init(ObservationScheduler scheduler, ApplicationConfiguration configuration, IList<Connector> initialConnectorState)
     {
+      this.Dispose();
       this.model = new ConnectorTreeViewModel();
       this.HookUnhookModelEvents(true);
       this.model.Init(scheduler, configuration, initialConnectorState);
@@ -147,6 +148,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     public void Dispose()
     {
       this.HookUnhookModelEvents(false);
+      this.model.Dispose();
+      this.selectedConnectors.Clear();
       this.deleteFocusedObject = null;
       BindingOperations.ClearBinding(this.mainTreeView, TreeView.ItemsSourceProperty);
     }

@@ -25,7 +25,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   /// <summary>
   /// Top level viewmodel used to bind to <see cref="ConnectorTreeView" />.
   /// </summary>
-  public partial class ConnectorTreeViewModel : INotifyPropertyChanged, IHandleDoubleClick, IDropTarget
+  public partial class ConnectorTreeViewModel : INotifyPropertyChanged, IHandleDoubleClick, IDropTarget, IDisposable
   {
     /// <summary>
     /// The logger.
@@ -46,6 +46,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// Flag indicating that <see cref="ConfigurationChanged" /> event is triggered - used to ignore updates of model.
     /// </summary>
     private bool configurationChanging;
+
+    private ObservationScheduler? scheduler;
 
     /// <summary>
     /// Previous value of relative instert position.
@@ -218,15 +220,24 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     public void Init(ObservationScheduler scheduler, ApplicationConfiguration configuration, IList<Connector> initialConnectorState)
     {
       log.Trace("Initializing {name}", nameof(ConnectorTreeViewModel));
+      this.Dispose();
       this.Update(configuration);
+      this.scheduler = scheduler;
       foreach (var connector in initialConnectorState)
       {
-        log.Trace("Applying status for connector {@connector}", connector);
-        this.SchedulerStatusQueried(this, connector);
+        this.SchedulerStatusQueried(scheduler, connector);
       }
 
-      scheduler.StatusQueried -= this.SchedulerStatusQueried;
       scheduler.StatusQueried += this.SchedulerStatusQueried;
+    }
+
+    public void Dispose()
+    {
+      if (this.scheduler is ObservationScheduler scheduler)
+      {
+        this.scheduler = null;
+        scheduler.StatusQueried -= this.SchedulerStatusQueried;
+      }
     }
 
     /// <summary>
@@ -584,15 +595,22 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private void SchedulerStatusQueried(object? sender, Connector e)
     {
-      foreach (var connectorGroupViewModel in this.ConnectorGroups)
+      Application.Current.Dispatcher.Invoke(() =>
       {
-        if (connectorGroupViewModel.Update(e))
+        if (this.scheduler == null || !ReferenceEquals(sender, this.scheduler))
         {
           return;
         }
-      }
 
-      log.Warn("No viewmodel found for connector {@Connector}", e);
+        // A request can finish after its project or group has been removed from the view.
+        foreach (var connectorGroupViewModel in this.ConnectorGroups)
+        {
+          if (connectorGroupViewModel.Update(e))
+          {
+            return;
+          }
+        }
+      });
     }
 
     private ObservableCollection<ConnectorGroupViewModel> CreateConnectorGroupViewModelCollection()
