@@ -199,16 +199,14 @@ namespace Soloplan.WhatsON
           using (var reader = new StreamReader(dataStream))
           {
             var responseFromServer = reader.ReadToEnd();
-            var settings = new JsonSerializerSettings
+            try
             {
-              Error = (s, e) =>
-              {
-                e.ErrorContext.Handled = true;
-                throw new InvalidPlugInApiResponseException($"Error during model deserialization for type {typeof(TModel).Name}");
-              },
-            };
-
-            return JsonConvert.DeserializeObject<TModel>(responseFromServer, settings);
+              return JsonConvert.DeserializeObject<TModel>(responseFromServer);
+            }
+            catch (JsonException ex)
+            {
+              throw new InvalidPlugInApiResponseException($"Error during model deserialization for type {typeof(TModel).Name}", ex);
+            }
           }
         }
       }

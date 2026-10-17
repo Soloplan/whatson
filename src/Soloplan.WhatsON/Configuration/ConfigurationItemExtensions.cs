@@ -29,7 +29,7 @@ namespace Soloplan.WhatsON.Configuration
       try
       {
         var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
-        return JsonConvert.DeserializeObject<ConnectorNotificationConfiguration>(configItem.Value, settings);
+        return JsonConvert.DeserializeObject<ConnectorNotificationConfiguration>(configItem.Value, settings) ?? new ConnectorNotificationConfiguration();
       }
       catch
       {

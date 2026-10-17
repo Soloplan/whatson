@@ -102,7 +102,7 @@ namespace Soloplan.WhatsON.Jenkins
       {
         var url = $"{SanitizeBaseUrl(connector.Address)}/{GetRelativeProjectUrl(connector)}";
 
-        if (bool.TryParse(connector.Configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin)?.Value, out var redirect) && redirect)
+        if (appendRedirect && bool.TryParse(connector.Configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin)?.Value, out var redirect) && redirect)
         {
           return $"{url}{RedirectPluginUrlSuffix}";
         }
@@ -128,12 +128,12 @@ namespace Soloplan.WhatsON.Jenkins
       private static string GetRelativeProjectUrl(Connector connector)
       {
         // support for legacy format connector project names: prior to 0.9.1 the connector project name was extracted from the URL and didn't reflect the actual name of the project (without URL aritfacts)
-        if (connector.Project.Contains(JobUrlPrefix))
+        if (connector.Project.Contains($"/{JobUrlPrefix}/"))
         {
           return $"{JobUrlPrefix}/{connector.Project}";
         }
 
-        var parts = connector.Project.Split('/').Select(Uri.EscapeUriString);
+        var parts = connector.Project.Split('/').Select(Uri.EscapeDataString);
 
         return $"{JobUrlPrefix}/{string.Join($"/{JobUrlPrefix}/", parts).TrimEnd('/')}";
       }

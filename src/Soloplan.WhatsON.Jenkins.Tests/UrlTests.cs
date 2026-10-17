@@ -16,6 +16,34 @@ namespace Soloplan.WhatsON.Jenkins.Tests
   [TestFixture]
   public class UrlTests
   {
+    [TestCase("build-jobs/Release", "https://builds.example/job/build-jobs/job/Release")]
+    [TestCase("folder/Release #1?", "https://builds.example/job/folder/job/Release%20%231%3F")]
+    public void NestedProjectNamesRemainPathSegments(string project, string expected)
+    {
+      var connector = new JenkinsConnector(new ConnectorConfiguration("Jenkins", "Release", Connector.ServerAddress, "https://builds.example/", Connector.ProjectName, project), new FakeJenkinsApi());
+
+      Assert.That(JenkinsApi.UrlHelper.ProjectUrl(connector), Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void RedirectPluginCanBeDisabledForAProjectLink()
+    {
+      var connector = new JenkinsConnector(new ConnectorConfiguration("Jenkins", "Release", Connector.ServerAddress, "https://builds.example", Connector.ProjectName, "Release", JenkinsConnector.RedirectPlugin, "true"), new FakeJenkinsApi());
+
+      Assert.That(JenkinsApi.UrlHelper.ProjectUrl(connector), Is.EqualTo("https://builds.example/job/Release/display/redirect"));
+      Assert.That(JenkinsApi.UrlHelper.ProjectUrl(connector, false), Is.EqualTo("https://builds.example/job/Release"));
+    }
+
+    [Test]
+    public void ApiBuildRequestsNeverUseBrowserRedirectUrls()
+    {
+      var connector = new JenkinsConnector(new ConnectorConfiguration("Jenkins", "Release", Connector.ServerAddress, "https://builds.example", Connector.ProjectName, "Release", JenkinsConnector.RedirectPlugin, "true"), new FakeJenkinsApi());
+
+      Assert.That(JenkinsApi.UrlHelper.BuildUrl(connector, 42), Is.EqualTo("https://builds.example/job/Release/42/display/redirect"));
+      Assert.That(JenkinsApi.UrlHelper.BuildRequest(connector, 42), Does.StartWith("https://builds.example/job/Release/42/api/json?"));
+      Assert.That(JenkinsApi.UrlHelper.JobRequest(connector), Does.StartWith("https://builds.example/job/Release/api/json?"));
+    }
+
     [Test]
     public void EnsureThatInsecureUrlIsSupported()
     {
@@ -107,7 +135,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
       var url = JenkinsApi.UrlHelper.ProjectUrl(connector);
 
-      Assert.AreEqual("https://www.my-little-jenkins.com/job/playground/job/str%C3%A2ng335%20sads==%20J%C3%B6b%20NAME", url);
+      Assert.AreEqual("https://www.my-little-jenkins.com/job/playground/job/str%C3%A2ng335%20sads%3D%3D%20J%C3%B6b%20NAME", url);
     }
 
     [Test]

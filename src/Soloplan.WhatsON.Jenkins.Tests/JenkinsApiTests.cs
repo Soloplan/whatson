@@ -10,8 +10,9 @@ namespace Soloplan.WhatsON.Jenkins.Tests
   using System;
   using System.Collections.Generic;
   using System.Linq;
+  using System.Threading;
+  using System.Threading.Tasks;
   using NUnit.Framework;
-  using Soloplan.WhatsON;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.Model;
 
@@ -19,9 +20,8 @@ namespace Soloplan.WhatsON.Jenkins.Tests
   public class JenkinsApiTests
   {
     [Test]
-    public void BuildsShouldNotBeMissedWhenBuildsAreRunningOneAfterAnother()
+    public async Task BuildsShouldNotBeMissedWhenBuildsAreRunningOneAfterAnother()
     {
-      var scheduler = new ObservationScheduler();
       var api = new FakeJenkinsApi();
 
       int state = 0;
@@ -41,7 +41,6 @@ namespace Soloplan.WhatsON.Jenkins.Tests
          {
            e.Result = ApiHelper.GetProject(ObservationState.Running, 12);
            state++;
-           scheduler.Stop(false);
          }
        };
 
@@ -107,10 +106,9 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       };
 
       var subj = new JenkinsConnector(new ConnectorConfiguration("Jenkins", "name", "Address", "MyAddress", "ProjectName", "MyProject"), api);
-      scheduler.Observe(subj, 0);
-      scheduler.Start();
-      while (scheduler.Running)
+      for (var poll = 0; poll < 3; poll++)
       {
+        await subj.QueryStatus(CancellationToken.None);
       }
 
       var jenkinsStatuses = subj.Snapshots.Select(snap => snap.Status).OfType<JenkinsStatus>().ToList();

@@ -5,7 +5,7 @@ CruiseControl.NET builds. Keep changes focused and follow the existing patterns.
 
 ## Repository layout
 
-- `src/Soloplan.WhatsON.slnx`: the solution, including both test projects.
+- `src/Soloplan.WhatsON.slnx`: the solution, including all four test projects.
 - `src/Soloplan.WhatsON/`: shared models, configuration, plugin composition,
   serialization, and observation scheduling; targets .NET Standard 2.0.
 - `src/Soloplan.WhatsON.Jenkins/`: Jenkins API and connector; targets .NET Standard 2.0.
@@ -16,6 +16,9 @@ CruiseControl.NET builds. Keep changes focused and follow the existing patterns.
 - `src/Soloplan.WhatsON.Jenkins.GUI/` and
   `src/Soloplan.WhatsON.CruiseControl.GUI/`: connector presentation plugins.
 - `src/Soloplan.WhatsON.Jenkins.Tests/`: NUnit tests with fake API helpers and RhinoMocks.
+- `src/Soloplan.WhatsON.Tests/`: configuration persistence, notification settings,
+  connector history, and scheduler tests.
+- `src/Soloplan.WhatsON.CruiseControl.Tests/`: report parsing, status mapping, cache, and history tests.
 - `src/Soloplan.WhatsON.GUI/Tests/`: NUnit GUI tests.
 - `config/`: shared MSBuild targets, assembly metadata, and StyleCop settings.
 - `Jenkinsfile`: CI build, NUnit execution, and artifact publishing.
@@ -42,11 +45,13 @@ installed NUnit 3 console runner. For example, after the Debug build:
 
 ```powershell
 nunit3-console src/Soloplan.WhatsON.Jenkins.Tests/bin/Debug/Soloplan.WhatsON.Jenkins.Tests.dll
+nunit3-console src/Soloplan.WhatsON.Tests/bin/Debug/Soloplan.WhatsON.Tests.dll
+nunit3-console src/Soloplan.WhatsON.CruiseControl.Tests/bin/Debug/Soloplan.WhatsON.CruiseControl.Tests.dll
 nunit3-console src/Soloplan.WhatsON.GUI/Tests/bin/Debug/Soloplan.WhatsON.GUI.Tests.dll
 ```
 
 The console runner is an external prerequisite, not bundled in this repository.
-Both test projects reference NUnit and its adapter but do not reference
+The test projects reference NUnit and its adapter but do not reference
 `Microsoft.NET.Test.Sdk`; do not treat a successful `dotnet test` exit alone as
 evidence that tests ran. Confirm discovery and executed test counts.
 
