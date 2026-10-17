@@ -170,6 +170,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       VerifyTitleBarActionsAndLayout();
       VerifyScrollSpacing();
       VerifyWizardLayouts(app);
+      ProjectPickerChecks.Verify(app);
       VerifyWizardNavigationNotifications();
       ProjectDiscoveryTests.VerifyWizardNextButton();
       VerifyGermanViews(app);
@@ -433,8 +434,8 @@ namespace Soloplan.WhatsON.GUI.Tests
           content.Arrange(new Rect(0, 0, 600, 600));
           content.UpdateLayout();
           var projects = (ProjectsTreeView)selection.FindName("projectsTreeView");
-          var tree = (TreeView)projects.FindName("mainTreeView");
-          var firstProject = (TreeViewItem)tree.ItemContainerGenerator.ContainerFromIndex(0);
+          var list = ProjectPickerChecks.GetProjectList(projects, 0);
+          var firstProject = (ListBoxItem)list.ItemContainerGenerator.ContainerFromIndex(0);
           Assert.That(firstProject, Is.Not.Null);
           Assert.That(firstProject.ActualHeight, Is.GreaterThan(0));
           Assert.That(projects.ActualHeight, Is.GreaterThan(50), "The project list must remain usable at minimum window size.");

@@ -230,7 +230,7 @@ namespace Soloplan.WhatsON.GUI.Tests
     }
 
     [Test]
-    public void GroupSelectionUpdatesVisibleChildrenAndNotifiesAncestors()
+    public void GroupSelectionIncludesHiddenChildrenAndNotifiesAncestors()
     {
       var projects = new ProjectViewModelList { MultiSelectionMode = true };
       var parent = projects.AddProject(CreateProject("Group"));
@@ -242,10 +242,11 @@ namespace Soloplan.WhatsON.GUI.Tests
       var parentChanges = Observe(parent);
       parent.IsChecked = true;
       Assert.That(visible.IsChecked, Is.True);
-      Assert.That(hidden.IsChecked, Is.False);
+      Assert.That(hidden.IsChecked, Is.True, "Selecting a whole folder must include projects hidden by search.");
       parentChanges.Clear();
       visible.IsChecked = false;
       Assert.That(parent.IsChecked, Is.False);
+      Assert.That(parent.SelectionState, Is.Null);
       Assert.That(parentChanges, Does.Contain(nameof(parent.IsChecked)));
       hidden.IsChecked = true;
       hidden.IsVisible = true;

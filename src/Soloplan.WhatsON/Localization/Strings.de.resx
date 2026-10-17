@@ -525,4 +525,12 @@ Erwarteter Verbindungstyp: {3}</value>
   <data name="ChangesByCaption" xml:space="preserve"><value>Änderungen von</value></data>
   <data name="JobDisabled" xml:space="preserve"><value>Deaktiviert</value></data>
   <data name="JobDisabledDescription" xml:space="preserve"><value>Dieser Job ist auf dem Build-Server deaktiviert. Neue Builds können nicht gestartet werden. Der letzte Build und der Verlauf bleiben verfügbar.</value></data>
+  <data name="SelectAllProjects" xml:space="preserve"><value>Alle Projekte auswählen</value></data>
+  <data name="SelectAllProjectsDescription" xml:space="preserve"><value>Alle verfügbaren Projekte auf diesem Server auswählen, einschließlich anderer Ordner und durch die Suche ausgeblendeter Projekte.</value></data>
+  <data name="ProjectsSelected" xml:space="preserve"><value>ausgewählt</value></data>
+  <data name="ProjectFolders" xml:space="preserve"><value>Projektordner</value></data>
+  <data name="NoMatchingProjects" xml:space="preserve"><value>Keine Projekte entsprechen Ihrer Suche.</value></data>
+  <data name="ProjectServerRoot" xml:space="preserve"><value>Build-Server</value></data>
+  <data name="OpenProjectFolder" xml:space="preserve"><value>Ordner öffnen</value></data>
+  <data name="FilterProjectFolder" xml:space="preserve"><value>Diesen Ordner filtern</value></data>
 </root>

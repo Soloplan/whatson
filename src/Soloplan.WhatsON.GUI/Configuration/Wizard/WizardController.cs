@@ -308,7 +308,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 
       var serverProjects = new List<Project>();
       var checkedProjects = this.Projects.GetChecked();
-      foreach (var checkedProject in checkedProjects.Where(p => p.Projects.Count == 0))
+      foreach (var checkedProject in checkedProjects.Where(p => p.Projects.Count == 0 && (!this.MultiSelectionMode || !p.AlreadyAdded)))
       {
         var newProject = new Project(
           checkedProject.Address,
@@ -496,11 +496,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       }
     }
 
-    private void ProcessServerSubProjects(IList<Project> projects, ProjectViewModel projectViewModel)
+    private void ProcessServerSubProjects(IList<Project> projects, ProjectViewModel? projectViewModel)
     {
       foreach (var project in projects.OrderBy(x => x.Name))
       {
-        var newProject = projectViewModel.AddProject(project);
+        var newProject = projectViewModel == null ? this.Projects.AddProject(project) : projectViewModel.AddProject(project);
         newProject.Parent = projectViewModel;
         newProject.Address = project.Address;
         newProject.DirectAddress = project.DirectAddress;
@@ -513,7 +513,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
             return false;
           }
 
-          return x.Type == this.SelectedConnectorType?.Name && Uri.TryCreate(address, UriKind.Absolute, out var uri) && uri.AbsoluteUri.Equals(this.ProposedServerAddress)
+          return x.Type == this.Projects.PlugIn?.Name && Uri.TryCreate(address, UriKind.Absolute, out var uri) && uri.AbsoluteUri.Equals(this.ProposedServerAddress)
                                                            && x.GetConfigurationByKey(Connector.ProjectName)?.Value
                                                            == (!string.IsNullOrWhiteSpace(project.FullName) ? project.FullName : project.Name);
         }).ToList();
@@ -540,13 +540,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       ArgumentException.ThrowIfNullOrWhiteSpace(address);
       var discovered = await DiscoverProjects(plugins, address.TrimEnd('/') + "/", TimeSpan.FromMilliseconds(QueryTimeout));
       this.projects = new ProjectViewModelList { MultiSelectionMode = this.MultiSelectionMode, PlugIn = discovered.Plugin };
-      foreach (var serverProject in discovered.Projects.OrderBy(project => project.Name))
-      {
-        var project = this.projects.AddProject(serverProject);
-        project.Address = serverProject.Address;
-        project.DirectAddress = serverProject.DirectAddress;
-        this.ProcessServerSubProjects(serverProject.Children, project);
-      }
+      this.ProcessServerSubProjects(discovered.Projects, null);
 
       this.AttachToProjectsPropertyChanged();
     }

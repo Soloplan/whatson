@@ -70,6 +70,17 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 
     public string? DirectAddress { get; set; }
 
+    public bool IsFolder => this.Projects.Count > 0;
+
+    public string ProjectPath => this.Parent == null ? this.Name : $"{this.Parent.ProjectPath} / {this.Name}";
+
+    [DependsOn(nameof(IsChecked))]
+    public bool? SelectionState
+    {
+      get => this.IsChecked ? true : this.IsAnyChecked() ? null : false;
+      set => this.IsChecked = value == true;
+    }
+
     /// <summary>
     /// Gets or sets a value indicating whether this project is visible.
     /// </summary>
@@ -86,7 +97,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       {
         if (this.rootList.MultiSelectionMode && this.Projects.Count > 0)
         {
-          return this.Projects.Where(p => p.IsVisible).All(p => p.IsChecked);
+          var selectable = this.Projects.Where(p => p.IsCheckable).ToArray();
+          return selectable.Length > 0 && selectable.All(p => p.IsChecked);
         }
 
         return this.isChecked;
@@ -94,10 +106,15 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 
       set
       {
+        if (!this.IsCheckable)
+        {
+          return;
+        }
+
         this.isChecked = value;
         if (this.rootList.MultiSelectionMode)
         {
-          foreach (var project in this.Projects.Where(p => p.IsVisible))
+          foreach (var project in this.Projects.Where(p => p.IsCheckable))
           {
             project.IsChecked = value;
           }
@@ -121,7 +138,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       {
         if (this.rootList.MultiSelectionMode)
         {
-          return true;
+          return this.IsFolder ? this.Projects.Any(project => project.IsCheckable) : !this.AlreadyAdded;
         }
 
         if (this.Projects.Count == 0)
@@ -169,7 +186,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         this.projects = new List<ProjectViewModel>();
       }
 
-      var newProject = new ProjectViewModel(project.Name, this.rootList) { FullName = project.FullName, Description = project.Description };
+      var newProject = new ProjectViewModel(project.Name, this.rootList) { FullName = project.FullName, Description = project.Description, Parent = this };
       this.projects.Add(newProject);
       return newProject;
     }
@@ -189,6 +206,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       while (currentParent != null)
       {
         currentParent.OnPropertyChanged(nameof(this.IsChecked));
+        currentParent.OnPropertyChanged(nameof(this.SelectionState));
         currentParent = currentParent.Parent;
       }
     }

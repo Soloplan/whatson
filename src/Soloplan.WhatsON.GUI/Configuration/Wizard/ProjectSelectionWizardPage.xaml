@@ -4,28 +4,37 @@
       xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
       xmlns:live="clr-namespace:Soloplan.WhatsON.GUI.Common.Localization;assembly=Soloplan.WhatsON.GUI.Common"
       xmlns:wizard="clr-namespace:Soloplan.WhatsON.GUI.Configuration.Wizard"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       Title="{live:Text loc:Strings.ChooseProjects}" Background="Transparent" FontFamily="Segoe UI" FontSize="14"
       TextElement.Foreground="{DynamicResource MaterialDesignBody}">
   <Grid>
     <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition /><RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" /><RowDefinition /><RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
-    <StackPanel Margin="0,0,0,20">
-      <TextBlock Text="{live:Text loc:Strings.ChooseProjects}" Style="{StaticResource SettingsHeading}" />
-      <TextBlock Text="{Binding ProposedServerAddress}" Style="{StaticResource SettingsDescription}" />
-    </StackPanel>
-    <Border Grid.Row="1" Style="{StaticResource SettingsCard}" Padding="16">
-      <StackPanel>
-        <Label Content="{live:Text loc:Strings.FindProject}" Target="{Binding ElementName=searchTextBox}" Padding="0"
-               FontWeight="SemiBold" Margin="0,0,0,6" />
-        <TextBox x:Name="searchTextBox" MinHeight="36" TextChanged="SearchTextBoxTextChanged"
-                 AutomationProperties.Name="{live:Text loc:Strings.FindProject}" />
+    <Grid Margin="0,0,0,20">
+      <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="200" /></Grid.ColumnDefinitions>
+      <StackPanel Margin="0,0,20,0">
+        <TextBlock Text="{live:Text loc:Strings.ChooseProjects}" Style="{StaticResource SettingsHeading}" />
+        <TextBlock Text="{Binding ProposedServerAddress}" Style="{StaticResource SettingsDescription}"
+                   TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" />
       </StackPanel>
-    </Border>
-    <Border Grid.Row="2" Style="{StaticResource SettingsCard}" Padding="12">
+      <TextBox x:Name="searchTextBox" Grid.Column="1" MinHeight="36" VerticalAlignment="Center"
+               materialDesign:HintAssist.Hint="{live:Text loc:Strings.FilterProjectFolder}"
+               Text="{Binding DataContext.SearchText, ElementName=projectsTreeView, UpdateSourceTrigger=PropertyChanged, Delay=250}"
+               AutomationProperties.Name="{live:Text loc:Strings.FilterProjectFolder}" />
+    </Grid>
+    <Border Grid.Row="1" Style="{StaticResource SettingsCard}" Padding="12">
       <Grid>
-        <wizard:ProjectsTreeView x:Name="projectsTreeView" DataContext="{Binding Projects}"
-                                 PreviewKeyUp="MainTreeViewPreviewKeyUp" />
+        <wizard:ProjectsTreeView x:Name="projectsTreeView"
+                                 KeyDown="ProjectsKeyDown">
+          <wizard:ProjectsTreeView.Style>
+            <Style TargetType="wizard:ProjectsTreeView"><Style.Triggers>
+              <DataTrigger Binding="{Binding DataContext.Projects.Count, RelativeSource={RelativeSource AncestorType=Page}}" Value="0">
+                <Setter Property="Visibility" Value="Collapsed" />
+              </DataTrigger>
+            </Style.Triggers></Style>
+          </wizard:ProjectsTreeView.Style>
+        </wizard:ProjectsTreeView>
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20">
           <StackPanel.Style>
             <Style TargetType="StackPanel">
@@ -44,7 +53,7 @@
         </StackPanel>
       </Grid>
     </Border>
-    <Border Grid.Row="3" Style="{StaticResource SettingsCard}" Margin="0" Padding="16">
+    <Border Grid.Row="2" Style="{StaticResource SettingsCard}" Margin="0" Padding="12">
       <Grid>
         <Grid.ColumnDefinitions>
           <ColumnDefinition /><ColumnDefinition Width="230" />
