@@ -23,6 +23,7 @@ namespace Soloplan.WhatsON.GUI.Tests
   using System.Windows;
   using System.Windows.Controls;
   using System.Windows.Threading;
+  using Newtonsoft.Json;
   using NUnit.Framework;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
@@ -30,6 +31,7 @@ namespace Soloplan.WhatsON.GUI.Tests
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.GUI.Configuration.Wizard;
   using Soloplan.WhatsON.Jenkins;
+  using Soloplan.WhatsON.Jenkins.Model;
   using Soloplan.WhatsON.Model;
 
   [TestFixture]
@@ -103,6 +105,153 @@ namespace Soloplan.WhatsON.GUI.Tests
       Assert.That(child.Name, Is.EqualTo("Release"));
       Assert.That(child.FullName, Is.EqualTo("Folder/Release"));
       Assert.That(child.Parent, Is.SameAs(folder));
+      Assert.That(server.Requests, Has.Count.EqualTo(2), "Older servers can omit nested data and must still be traversed.");
+    }
+
+    [Test]
+    public async Task JenkinsNestedFoldersAndEmptyFoldersAreDiscoveredInOneRequest()
+    {
+      await using var server = new DiscoveryServer();
+      server.Respond = path => ("200 OK", "application/json", $$"""
+        {"jobs":[
+          {"name":"Folder","_class":"com.cloudbees.hudson.plugins.folder.Folder","url":"{{server.Address}}job/Folder/","jobs":[
+            {"name":"Pipeline","_class":"org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject","url":"{{server.Address}}job/Folder/job/Pipeline/","jobs":[
+              {"name":"main","fullName":"Folder/Pipeline/main","url":"{{server.Address}}job/Folder/job/Pipeline/job/main/"}
+            ]}
+          ]},
+          {"name":"Empty","_class":"com.cloudbees.hudson.plugins.folder.Folder","url":"{{server.Address}}job/Empty/","jobs":[]}
+        ]}
+        """);
+
+      var projects = await new JenkinsPlugin().GetProjects(server.Address);
+
+      var folder = projects.First();
+      var pipeline = folder.Children.Single();
+      var branch = pipeline.Children.Single();
+      Assert.That(branch.FullName, Is.EqualTo("Folder/Pipeline/main"));
+      Assert.That(branch.Parent, Is.SameAs(pipeline));
+      Assert.That(pipeline.Parent, Is.SameAs(folder));
+      Assert.That(projects.Last().Children, Is.Empty);
+      Assert.That(server.Requests, Has.Count.EqualTo(1));
+      Assert.That(Uri.UnescapeDataString(server.Requests.Single()), Does.Contain("jobs[_class,url,name,fullName,displayName,description,jobs["));
+    }
+
+    [Test]
+    public async Task JenkinsStartupFetchesStatusAndHistoryTogetherAndLaterPollsStaySmall()
+    {
+      await using var server = new DiscoveryServer();
+      var builds = Enumerable.Range(1, 6).Reverse().Select(number => new JenkinsBuild
+      {
+        Number = number,
+        Result = "SUCCESS",
+        Timestamp = number * 60000L,
+      }).ToList();
+      server.Respond = path => ("200 OK", "application/json", JsonConvert.SerializeObject(new JenkinsJob { LastBuild = builds.First(), Builds = builds }));
+      var connector = new JenkinsConnector(
+        new ConnectorConfiguration("Jenkins", "Release", Connector.ServerAddress, server.Address, Connector.ProjectName, "Release"), new JenkinsApi());
+
+      await connector.QueryStatus(CancellationToken.None);
+
+      Assert.That(connector.Snapshots.Select(snapshot => snapshot.Status.BuildNumber), Is.EqualTo(new[] { 6, 5, 4, 3, 2 }));
+      Assert.That(server.Requests, Has.Count.EqualTo(1));
+      Assert.That(Uri.UnescapeDataString(server.Requests.Single()), Does.Contain("builds[").And.EndWith("{0,6}"));
+
+      await connector.QueryStatus(CancellationToken.None);
+
+      Assert.That(server.Requests, Has.Count.EqualTo(2));
+      Assert.That(server.Requests.Select(Uri.UnescapeDataString).Count(path => path.Contains("builds[", StringComparison.Ordinal)), Is.EqualTo(1));
+    }
+
+    [Test]
+    public async Task JenkinsFoldersBeyondTheBatchedDepthAreStillDiscovered()
+    {
+      await using var server = new DiscoveryServer();
+      server.Respond = path => ("200 OK", "application/json", path.StartsWith("/api/", StringComparison.Ordinal) ? $$"""
+        {"jobs":[{"name":"Top","_class":"com.cloudbees.hudson.plugins.folder.Folder","url":"{{server.Address}}job/Top/","jobs":[
+          {"name":"Middle","_class":"com.cloudbees.hudson.plugins.folder.Folder","url":"{{server.Address}}job/Top/job/Middle/","jobs":[
+            {"name":"Deep","_class":"com.cloudbees.hudson.plugins.folder.Folder","url":"{{server.Address}}job/Top/job/Middle/job/Deep/"}
+          ]}
+        ]}]}
+        """ : $$"""
+        {"jobs":[{"name":"Release","fullName":"Top/Middle/Deep/Release","url":"{{server.Address}}job/Top/job/Middle/job/Deep/job/Release/"}]}
+        """);
+
+      var top = (await new JenkinsPlugin().GetProjects(server.Address)).Single();
+      var middle = top.Children.Single();
+      var deep = middle.Children.Single();
+      var project = deep.Children.Single();
+
+      Assert.That(project.FullName, Is.EqualTo("Top/Middle/Deep/Release"));
+      Assert.That(project.Parent, Is.SameAs(deep));
+      Assert.That(deep.Parent, Is.SameAs(middle));
+      Assert.That(middle.Parent, Is.SameAs(top));
+      Assert.That(server.Requests, Has.Count.EqualTo(2));
+      Assert.That(server.Requests.Count(path => path.StartsWith("/job/Top/job/Middle/job/Deep/api/", StringComparison.Ordinal)), Is.EqualTo(1));
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public async Task JenkinsBatchRequestsRespectCancellation(bool history)
+    {
+      await using var server = new DiscoveryServer();
+      var received = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+      server.ResponseGate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously).Task;
+      server.Respond = path =>
+      {
+        received.TrySetResult();
+        return ("200 OK", "application/json", "{}");
+      };
+      var api = new JenkinsApi();
+      var connector = new JenkinsConnector(
+        new ConnectorConfiguration("Jenkins", "Release", Connector.ServerAddress, server.Address, Connector.ProjectName, "Release"), api);
+      using var cancellation = new CancellationTokenSource();
+      Task request = history ? api.GetBuilds(connector, cancellation.Token) : api.GetJenkinsJob(connector, cancellation.Token);
+      await received.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+      cancellation.Cancel();
+
+      Assert.That(async () => await request.WaitAsync(TimeSpan.FromSeconds(5)), Throws.InstanceOf<OperationCanceledException>());
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public async Task ConcurrentCruiseControlProjectsWaitForOneSharedReport(bool cancelWaitingProject)
+    {
+      await using var server = new DiscoveryServer();
+      var received = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+      var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+      server.ResponseGate = release.Task;
+      server.Respond = path =>
+      {
+        received.TrySetResult();
+        return ("200 OK", "text/xml", "<Projects><Project name='First' lastBuildLabel='1'/><Project name='Second' lastBuildLabel='2'/></Projects>");
+      };
+      var shared = CruiseControlManager.GetServer(server.Address);
+      using var cancellation = new CancellationTokenSource();
+      var first = shared.GetProjectStatus(CancellationToken.None, "First", 60);
+      try
+      {
+        await received.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        var second = CruiseControlManager.GetServer(server.Address).GetProjectStatus(cancellation.Token, "Second", 60);
+        Assert.That(second.IsCompleted, Is.False, "A project must await the pending server report rather than read an empty cache.");
+        if (cancelWaitingProject)
+        {
+          cancellation.Cancel();
+          Assert.ThrowsAsync<OperationCanceledException>(async () => await second);
+        }
+
+        release.TrySetResult();
+        Assert.That((await first.WaitAsync(TimeSpan.FromSeconds(5))).LastBuildLabel, Is.EqualTo("1"));
+        var secondStatus = cancelWaitingProject
+          ? await shared.GetProjectStatus(CancellationToken.None, "Second", 60)
+          : await second.WaitAsync(TimeSpan.FromSeconds(5));
+        Assert.That(secondStatus.LastBuildLabel, Is.EqualTo("2"));
+        Assert.That(server.Requests, Is.EquivalentTo(new[] { "/XmlStatusReport.aspx" }));
+      }
+      finally
+      {
+        release.TrySetResult();
+      }
     }
 
     [Test]
@@ -293,6 +442,8 @@ namespace Soloplan.WhatsON.GUI.Tests
 
       public Func<string, (string Status, string ContentType, string Body)> Respond { get; set; }
 
+      public Task ResponseGate { get; set; } = Task.CompletedTask;
+
       public async ValueTask DisposeAsync()
       {
         this.stopping.Cancel();
@@ -318,6 +469,7 @@ namespace Soloplan.WhatsON.GUI.Tests
             var path = request.Split(' ')[1];
             this.Requests.Add(path);
             var response = this.Respond(path);
+            await this.ResponseGate.WaitAsync(this.stopping.Token).ConfigureAwait(false);
             var body = Encoding.UTF8.GetBytes(response.Body);
             var headers = Encoding.ASCII.GetBytes($"HTTP/1.1 {response.Status}\r\nContent-Type: {response.ContentType}\r\nContent-Length: {body.Length}\r\nConnection: close\r\n\r\n");
             await stream.WriteAsync(headers, this.stopping.Token).ConfigureAwait(false);

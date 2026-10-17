@@ -20,7 +20,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         Number = number,
         Result = state.ToString(),
         Building = state == ObservationState.Running,
-        Timestamp = (long)(new DateTime(2020, 1, 1, 12, number, 0, 0) - new DateTime(1970, 1, 1)).TotalMilliseconds,
+        Timestamp = (long)(new DateTime(2020, 1, 1, 12, 0, 0, 0).AddMinutes(number) - new DateTime(1970, 1, 1)).TotalMilliseconds,
       };
     }
 

@@ -70,41 +70,6 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         }
       };
 
-      api.BuildRequest += (s, e) =>
-      {
-        if (e.BuildNumber < 10)
-        {
-          e.Result = ApiHelper.GetBuild(ObservationState.Unstable, e.BuildNumber);
-        }
-        else if (state == 0)
-        {
-          e.Result = ApiHelper.GetBuild(ObservationState.Running, e.BuildNumber);
-        }
-        else if (state == 1)
-        {
-          var buildSt = e.BuildNumber == 10 ? ObservationState.Success : ObservationState.Running;
-          e.Result = ApiHelper.GetBuild(buildSt, e.BuildNumber);
-        }
-        else
-        {
-          ObservationState buildSt;
-          if (e.BuildNumber == 10)
-          {
-            buildSt = ObservationState.Success;
-          }
-          else if (e.BuildNumber == 11)
-          {
-            buildSt = ObservationState.Failure;
-          }
-          else
-          {
-            buildSt = ObservationState.Running;
-          }
-
-          e.Result = ApiHelper.GetBuild(buildSt, e.BuildNumber);
-        }
-      };
-
       var subj = new JenkinsConnector(new ConnectorConfiguration("Jenkins", "name", "Address", "MyAddress", "ProjectName", "MyProject"), api);
       for (var poll = 0; poll < 3; poll++)
       {

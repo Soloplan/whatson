@@ -8,11 +8,11 @@
 namespace Soloplan.WhatsON.CruiseControl
 {
   using System;
-  using System.Collections.Generic;
+  using System.Collections.Concurrent;
 
   public static class CruiseControlManager
   {
-    private static readonly IDictionary<Uri, CruiseControlServer> servers = new Dictionary<Uri, CruiseControlServer>();
+    private static readonly ConcurrentDictionary<Uri, CruiseControlServer> servers = new ConcurrentDictionary<Uri, CruiseControlServer>();
 
     public static CruiseControlServer GetServer(string address, bool addToCache = true)
     {
@@ -22,16 +22,9 @@ namespace Soloplan.WhatsON.CruiseControl
         return server;
       }
 
-      server = new CruiseControlServer(uri.AbsoluteUri);
-      if (addToCache)
-      {
-        if (server != null)
-        {
-          servers[uri] = server;
-        }
-      }
-
-      return server;
+      return addToCache
+        ? servers.GetOrAdd(uri, key => new CruiseControlServer(key.AbsoluteUri))
+        : new CruiseControlServer(uri.AbsoluteUri);
     }
   }
 }

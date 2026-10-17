@@ -17,7 +17,11 @@ namespace Soloplan.WhatsON.Jenkins.Model
     /// <summary>
     /// The definition of properties used as query parameters.
     /// </summary>
-    public const string RequestProperties = "jobs[url,name,fullName,displayName,description]";
+    // Deeper folders are queried separately when their children are omitted from these three levels.
+    public const string RequestProperties =
+      "jobs[" + JobProperties + ",jobs[" + JobProperties + ",jobs[" + JobProperties + "]]]";
+
+    private const string JobProperties = "_class,url,name,fullName,displayName,description";
 
     /// <summary>
     /// Gets or sets the jobs list.

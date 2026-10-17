@@ -19,10 +19,14 @@ namespace Soloplan.WhatsON.Jenkins
   {
     public async Task<JenkinsJob> GetJenkinsJob(JenkinsConnector connector, CancellationToken token)
     {
-      var jobRequest = UrlHelper.JobRequest(connector);
+      var jobRequest = UrlHelper.JobRequest(connector, connector.Snapshots.Count == 0);
       try
       {
         return await SerializationHelper.Instance.GetJsonModel<JenkinsJob>(jobRequest, token);
+      }
+      catch (OperationCanceledException) when (token.IsCancellationRequested)
+      {
+        throw;
       }
       catch (Exception)
       {
@@ -68,6 +72,10 @@ namespace Soloplan.WhatsON.Jenkins
       {
         builds = await SerializationHelper.Instance.GetJsonModel<JenkinsBuilds>(buildsRequest, token);
       }
+      catch (OperationCanceledException) when (token.IsCancellationRequested)
+      {
+        throw;
+      }
       catch (Exception ex)
       {
       }
@@ -83,7 +91,11 @@ namespace Soloplan.WhatsON.Jenkins
 
       public static string JobsRequest(string address) => $"{SanitizeBaseUrl(address)}/api/json?tree={JenkinsJobs.RequestProperties}";
 
-      public static string JobRequest(JenkinsConnector connector) => $"{SanitizeBaseUrl(connector.Address)}/{GetRelativeProjectUrl(connector)}/api/json?tree={JenkinsJob.RequestProperties}";
+      public static string JobRequest(JenkinsConnector connector) => JobRequest(connector, false);
+
+      public static string JobRequest(JenkinsConnector connector, bool includeBuilds) =>
+        $"{SanitizeBaseUrl(connector.Address)}/{GetRelativeProjectUrl(connector)}/api/json?tree={JenkinsJob.RequestProperties}"
+        + (includeBuilds ? $",builds[{JenkinsBuild.RequestProperties}]{{0,{Connector.MaxSnapshots + 1}}}" : string.Empty);
 
       public static string BuildUrl(JenkinsConnector connector, int buildNumber, bool appendRedirect = true)
       {

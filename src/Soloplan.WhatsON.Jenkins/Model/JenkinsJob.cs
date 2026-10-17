@@ -56,5 +56,7 @@ namespace Soloplan.WhatsON.Jenkins.Model
     public string ClassName { get; set; }
 
     public IList<JenkinsBuild> Builds { get; set; }
+
+    public IList<JenkinsJob> Jobs { get; set; }
   }
 }

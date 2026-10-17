@@ -145,10 +145,15 @@ namespace Soloplan.WhatsON.Jenkins
         return false;
       }
 
-      foreach (var jenkinsJob in jenkinsJobs.Jobs)
+      return await this.AddProjects(jenkinsJobs.Jobs, projects);
+    }
+
+    private async Task<bool> AddProjects(IList<JenkinsJob> jobs, IList<Project> projects)
+    {
+      foreach (var jenkinsJob in jobs)
       {
         var newServerProject = this.AddProject(projects, jenkinsJob);
-        if (string.Equals(
+        if (jenkinsJob.Jobs != null || string.Equals(
               jenkinsJob.ClassName?.Trim(),
               "com.cloudbees.hudson.plugins.folder.Folder",
               StringComparison.InvariantCultureIgnoreCase) || string.Equals(
@@ -156,7 +161,10 @@ namespace Soloplan.WhatsON.Jenkins
               "org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject",
               StringComparison.InvariantCultureIgnoreCase))
         {
-          if (!await this.GetProjectsLists(jenkinsJob.Url, newServerProject.Children))
+          var loaded = jenkinsJob.Jobs != null
+            ? await this.AddProjects(jenkinsJob.Jobs, newServerProject.Children)
+            : await this.GetProjectsLists(jenkinsJob.Url, newServerProject.Children);
+          if (!loaded)
           {
             return false;
           }

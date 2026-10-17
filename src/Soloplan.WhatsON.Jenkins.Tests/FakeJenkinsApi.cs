@@ -67,7 +67,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         throw new InvalidOperationException($"{nameof(this.BuildsRequest)} must be handled for {nameof(FakeJenkinsApi)} to work.");
       }
 
-      var eventArgs = new BuildsEventArgs(connector);
+      var eventArgs = new BuildsEventArgs(connector, from, to);
       this.BuildsRequest(this, eventArgs);
       if (eventArgs.ResponseDelay > 0)
       {
@@ -115,11 +115,17 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
   public class BuildsEventArgs : FakeApiEventArgs
   {
-    public BuildsEventArgs(JenkinsConnector connector)
+    public BuildsEventArgs(JenkinsConnector connector, int from, int to)
       : base(connector)
     {
+      this.From = from;
+      this.To = to;
       this.Builds = new List<JenkinsBuild>();
     }
+
+    public int From { get; }
+
+    public int To { get; }
 
     public IList<JenkinsBuild> Builds { get; }
   }

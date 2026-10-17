@@ -25,6 +25,8 @@ namespace Soloplan.WhatsON.CruiseControl
 
     private readonly string baseUrl;
 
+    private readonly SemaphoreSlim reportLock = new SemaphoreSlim(1, 1);
+
     private DateTime lastPolled;
 
     private CruiseControlJobs cache;
@@ -38,23 +40,35 @@ namespace Soloplan.WhatsON.CruiseControl
 
     public async Task<CruiseControlJob> GetProjectStatus(CancellationToken cancellationToken, string projectName, int interval)
     {
-      var pollInterval = new TimeSpan(0, 0, 0, interval, 0);
-      if (DateTime.Now - this.lastPolled > pollInterval)
+      await this.reportLock.WaitAsync(cancellationToken);
+      try
       {
-        log.Trace("Polling server {@server}", new { Address = this.ReportUrl, LastPolled = this.lastPolled, CallingProject = projectName });
-        this.lastPolled = DateTime.Now;
-        try
+        if (DateTime.UtcNow - this.lastPolled > TimeSpan.FromSeconds(interval))
         {
-          this.cache = await this.GetStatusAsync<CruiseControlJobs>(cancellationToken, this.ReportUrl);
-        }
-        catch (Exception ex)
-        {
-          this.cache = null;
-        }
-      }
+          log.Trace("Polling server {@server}", new { Address = this.ReportUrl, LastPolled = this.lastPolled, CallingProject = projectName });
+          try
+          {
+            this.cache = await this.GetStatusAsync<CruiseControlJobs>(cancellationToken, this.ReportUrl);
+          }
+          catch (OperationCanceledException)
+          {
+            throw;
+          }
+          catch (Exception ex)
+          {
+            this.cache = null;
+          }
 
-      log.Trace("Retrieving value from cache for project {projectName}", projectName);
-      return this.cache?.CruiseControlProject?.FirstOrDefault(job => job.Name == projectName);
+          this.lastPolled = DateTime.UtcNow;
+        }
+
+        log.Trace("Retrieving value from cache for project {projectName}", projectName);
+        return this.cache?.CruiseControlProject?.FirstOrDefault(job => job.Name == projectName);
+      }
+      finally
+      {
+        this.reportLock.Release();
+      }
     }
 
     public async Task<List<CruiseControlBuild>> GetBuilds(string projectName, int limit = Connector.MaxSnapshots)

@@ -48,6 +48,8 @@ namespace Soloplan.WhatsON.Jenkins
     /// </summary>
     private readonly IJenkinsApi api;
 
+    private IList<JenkinsBuild> recentBuilds;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="JenkinsConnector" /> class.
     /// </summary>
@@ -75,21 +77,25 @@ namespace Soloplan.WhatsON.Jenkins
 
     protected override async Task ExecuteQuery(CancellationToken cancellationToken)
     {
+      var previousBuildNumber = this.PreviousCheckStatus?.BuildNumber;
       await base.ExecuteQuery(cancellationToken);
 
-      if (this.PreviousCheckStatus != null && this.CurrentStatus is JenkinsStatus currentStatus && this.Snapshots.Count != 0)
+      if (previousBuildNumber.HasValue && this.CurrentStatus is JenkinsStatus currentStatus && this.Snapshots.Count != 0)
       {
-        if (currentStatus.BuildNumber - this.PreviousCheckStatus.BuildNumber <= 1)
+        if (currentStatus.BuildNumber - previousBuildNumber.Value <= 1)
         {
           return;
         }
 
         log.Error(
-          $"It was necessary to reevaluate history of jenkins job {this.Configuration.GetConfigurationByKey(Category)?.Value?.Trim()} / {this.Configuration.Name}, prev build number {this.PreviousCheckStatus.BuildNumber}, current build number {currentStatus.BuildNumber}");
-        for (var i = currentStatus.BuildNumber - 1; i > this.PreviousCheckStatus.BuildNumber; i--)
+          $"It was necessary to reevaluate history of jenkins job {this.Configuration.GetConfigurationByKey(Category)?.Value?.Trim()} / {this.Configuration.Name}, prev build number {previousBuildNumber.Value}, current build number {currentStatus.BuildNumber}");
+        var builds = this.recentBuilds ?? await this.api.GetBuilds(this, cancellationToken, 0, MaxSnapshots + 1);
+        foreach (var build in builds
+          .Where(build => !build.Building && build.Number > previousBuildNumber.Value && build.Number < currentStatus.BuildNumber)
+          .OrderByDescending(build => build.Number)
+          .Take(MaxSnapshots - (currentStatus.State == ObservationState.Running ? 0 : 1)))
         {
-          var build = await this.api.GetJenkinsBuild(this, i, cancellationToken);
-          if (build != null)
+          if (this.Snapshots.All(snapshot => snapshot.Status.BuildNumber != build.Number))
           {
             this.AddSnapshot(this.CreateStatus(build));
           }
@@ -102,6 +108,7 @@ namespace Soloplan.WhatsON.Jenkins
     protected override async Task<Status> GetCurrentStatus(CancellationToken cancellationToken)
     {
       var job = await this.api.GetJenkinsJob(this, cancellationToken);
+      this.recentBuilds = job?.Builds;
       if (job == null)
       {
         if (!await this.CheckServerURL())
@@ -143,8 +150,12 @@ namespace Soloplan.WhatsON.Jenkins
 
     protected override async Task<List<Status>> GetHistory(CancellationToken cancellationToken)
     {
-      var builds = await this.api.GetBuilds(this, cancellationToken, 1, MaxSnapshots + 1);
-      var statuses = builds.Select(this.CreateStatus).ToList();
+      var builds = this.recentBuilds ?? await this.api.GetBuilds(this, cancellationToken, 1, MaxSnapshots + 1);
+      var statuses = builds
+        .Where(build => !build.Building && build.Number != this.CurrentStatus.BuildNumber)
+        .OrderByDescending(build => build.Number)
+        .Take(MaxSnapshots)
+        .Select(this.CreateStatus).ToList();
       this.PreviousCheckStatus = statuses.OfType<JenkinsStatus>().FirstOrDefault();
       return statuses;
     }

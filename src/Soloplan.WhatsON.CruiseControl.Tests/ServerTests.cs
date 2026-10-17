@@ -86,6 +86,18 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
     }
 
     [Test]
+    public void ConcurrentServerLookupsShareOneCache()
+    {
+      var address = new Uri(this.directory + Path.DirectorySeparatorChar).AbsoluteUri;
+      var servers = new CruiseControlServer[32];
+
+      Parallel.For(0, servers.Length, index => servers[index] = CruiseControlManager.GetServer(address));
+
+      Assert.That(servers.Distinct().Count(), Is.EqualTo(1));
+      Assert.That(CruiseControlManager.GetServer(address, false), Is.SameAs(servers[0]));
+    }
+
+    [Test]
     public async Task ExpiredPollIntervalRefreshesTheReport()
     {
       File.WriteAllText(this.statusFile, "<Projects><Project name='Release' lastBuildLabel='1'/></Projects>");

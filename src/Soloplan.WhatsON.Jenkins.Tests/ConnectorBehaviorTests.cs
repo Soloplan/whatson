@@ -225,17 +225,19 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     {
       var latestNumber = 10;
       var api = new FakeJenkinsApi();
+      var historyRequests = 0;
       api.JobRequest += (sender, args) => args.Result = ApiHelper.GetProject(ObservationState.Running, latestNumber);
       api.BuildsRequest += (sender, args) =>
       {
-        for (var number = 9; number >= 5; number--)
+        historyRequests++;
+        for (var number = latestNumber - 1; number >= latestNumber - 5; number--)
         {
-          args.Builds.Add(ApiHelper.GetBuild(ObservationState.Success, number));
+          if (!middleBuildDeleted || number != 11)
+          {
+            args.Builds.Add(ApiHelper.GetBuild(number == 12 ? ObservationState.Failure : ObservationState.Success, number));
+          }
         }
       };
-      api.BuildRequest += (sender, args) => args.Result = middleBuildDeleted && args.BuildNumber == 11
-        ? null
-        : ApiHelper.GetBuild(args.BuildNumber == 12 ? ObservationState.Failure : ObservationState.Success, args.BuildNumber);
       var connector = new JenkinsConnector(Configuration(), api);
       await connector.QueryStatus(CancellationToken.None);
 
@@ -250,7 +252,56 @@ namespace Soloplan.WhatsON.Jenkins.Tests
           Is.EqualTo(middleBuildDeleted ? new[] { 12, 10, 9, 8, 7 } : new[] { 12, 11, 10, 9, 8 }));
         Assert.That(connector.Snapshots.First().Status.State, Is.EqualTo(ObservationState.Failure));
         Assert.That(connector.Snapshots.All(s => s.Status.State != ObservationState.Running), Is.True);
+        Assert.That(historyRequests, Is.EqualTo(2), "Startup and a polling gap each need at most one history batch.");
       });
+    }
+
+    [TestCase(ObservationState.Running)]
+    [TestCase(ObservationState.Success)]
+    public async Task LargePollingGapsUseOneBoundedBatchEvenWhenTheLatestBuildHasFinished(ObservationState latestState)
+    {
+      var latestNumber = 1;
+      var api = new FakeJenkinsApi();
+      api.JobRequest += (sender, args) => args.Result = ApiHelper.GetProject(latestNumber == 1 ? ObservationState.Success : latestState, latestNumber);
+      var batches = 0;
+      api.BuildsRequest += (sender, args) =>
+      {
+        batches++;
+        Assert.That(args.From, Is.Zero);
+        Assert.That(args.To, Is.EqualTo(Connector.MaxSnapshots + 1));
+        for (var number = latestNumber; number >= latestNumber - Connector.MaxSnapshots; number--)
+        {
+          args.Builds.Add(ApiHelper.GetBuild(number == latestNumber ? latestState : ObservationState.Failure, number));
+        }
+      };
+      var connector = new JenkinsConnector(Configuration(), api);
+      await connector.QueryStatus(CancellationToken.None);
+
+      latestNumber = 1000;
+      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatus(CancellationToken.None);
+
+      var newestCompleted = latestState == ObservationState.Running ? 999 : 1000;
+      Assert.That(connector.Snapshots.Select(snapshot => snapshot.Status.BuildNumber), Is.EqualTo(Enumerable.Range(newestCompleted - 4, 5).Reverse()));
+      Assert.That(batches, Is.EqualTo(1));
+      Assert.That(connector.Snapshots.All(snapshot => snapshot.Status.State != ObservationState.Running), Is.True);
+    }
+
+    [Test]
+    public async Task StartupReusesBundledHistoryAndIgnoresConcurrentRunningBuilds()
+    {
+      var api = new FakeJenkinsApi();
+      api.JobRequest += (sender, args) =>
+      {
+        args.Result = ApiHelper.GetProject(ObservationState.Running, 8);
+        args.Result.Builds = Enumerable.Range(3, 6).Reverse()
+          .Select(number => ApiHelper.GetBuild(number >= 6 ? ObservationState.Running : ObservationState.Success, number)).ToList();
+      };
+      var connector = new JenkinsConnector(Configuration(), api);
+
+      await connector.QueryStatus(CancellationToken.None);
+
+      Assert.That(connector.Snapshots.Select(snapshot => snapshot.Status.BuildNumber), Is.EqualTo(new[] { 5, 4, 3 }));
     }
 
     [Test]
