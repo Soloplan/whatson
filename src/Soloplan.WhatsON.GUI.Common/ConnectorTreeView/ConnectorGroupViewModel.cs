@@ -124,10 +124,17 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// Should be called when configuration changed.
     /// </summary>
     /// <param name="connectorGroup">Grouping of connectors by group name.</param>
-    public void Init(IGrouping<string, ConnectorConfiguration> connectorGroup)
+    public void Init(IGrouping<string, ConnectorConfiguration> connectorGroup) => this.Init(connectorGroup.Key ?? string.Empty, connectorGroup);
+
+    /// <summary>
+    /// Initializes a group, including a named group without projects.
+    /// </summary>
+    /// <param name="groupName">The group name.</param>
+    /// <param name="connectorGroup">The projects belonging to the group.</param>
+    public void Init(string groupName, IEnumerable<ConnectorConfiguration> connectorGroup)
     {
       this.ConnectorViewModels.CollectionChanged -= this.ConnectorViewModelsCollectionChanged;
-      this.GroupName = connectorGroup.Key ?? string.Empty;
+      this.GroupName = groupName;
       log.Debug("Initializing group {GroupName}", this.GroupName);
 
       var connectorsNoLongerPresent = this.ConnectorViewModels

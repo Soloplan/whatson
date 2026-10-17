@@ -178,6 +178,8 @@ namespace Soloplan.WhatsON.GUI.Tests
       VerifyTrayNotificationForwarding();
       ProjectListChecks.Verify(app);
       GroupContextMenuChecks.Verify(app);
+      GroupPersistenceTests.VerifyEmptyGroupHeaders();
+      GroupPersistenceTests.VerifyGroupCreation();
       ProjectPollingChecks.Verify();
       ToolTipChecks.Verify(app);
       LiveLocalizationChecks.Verify(app);

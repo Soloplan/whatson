@@ -8,6 +8,8 @@
 namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
 {
   using System;
+  using System.Collections.Generic;
+  using System.Linq;
   using System.Windows.Controls;
   using Microsoft.Win32;
   using NLog;
@@ -55,6 +57,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// Gets the connectors list.
     /// </summary>
     public ConnectorViewModelCollection Connectors { get; private set; } = new ConnectorViewModelCollection();
+
+    /// <summary>
+    /// Gets the groups retained independently of the projects being edited.
+    /// </summary>
+    public IList<string> Groups { get; private set; } = new List<string>();
 
     /// <summary>
     /// Gets or sets the appearance preference.
@@ -225,6 +232,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
       try
       {
         this.Configuration = configurationSource;
+        this.Groups = configurationSource.GetGroupNames().ToList();
         if (this.Connectors == null)
         {
           this.Connectors = new ConnectorViewModelCollection();
@@ -359,6 +367,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <param name="configuration">The configuration.</param>
     private void ApplyMainSettingsToConfiguration(ApplicationConfiguration configuration)
     {
+      configuration.Groups.Clear();
+      foreach (var group in this.Groups)
+      {
+        configuration.Groups.Add(group);
+      }
+
       configuration.ThemeMode = this.ThemeMode;
       configuration.Language = this.Language;
       configuration.ShowInTaskbar = this.ShowInTaskbar;

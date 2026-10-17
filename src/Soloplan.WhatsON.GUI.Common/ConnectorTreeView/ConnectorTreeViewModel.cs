@@ -252,16 +252,17 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
 
       log.Debug("Initializing {name}", nameof(ConnectorTreeViewModel));
-      var grouping = this.ParseConfiguration(configuration).ToList();
+      var grouping = configuration.ConnectorsConfiguration.ToLookup(config => config.GetConfigurationByKey(Connector.Category).Value?.Trim() ?? string.Empty);
+      var groupNames = configuration.GetGroupNames().ToList();
       int index = 0;
-      foreach (var group in grouping)
+      foreach (var groupName in groupNames)
       {
-        log.Debug("Applying settings for group {group}", group.Key);
-        var connectorGroupViewModel = this.ConnectorGroups.FirstOrDefault(grp => grp.GroupName == group.Key);
+        log.Debug("Applying settings for group {group}", groupName);
+        var connectorGroupViewModel = this.ConnectorGroups.FirstOrDefault(grp => grp.GroupName == groupName);
         if (connectorGroupViewModel == null)
         {
           log.Debug("{model} doesn't exist, creating...", nameof(ConnectorGroupViewModel));
-          connectorGroupViewModel = this.CreateNewGroupModel(group.Key);
+          connectorGroupViewModel = this.CreateNewGroupModel(groupName);
           this.ConnectorGroups.Insert(index, connectorGroupViewModel);
         }
         else
@@ -274,10 +275,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         }
 
         index++;
-        connectorGroupViewModel.Init(group);
+        connectorGroupViewModel.Init(groupName, grouping[groupName]);
       }
 
-      var noLongerAvailable = this.ConnectorGroups.Where(grp => grouping.All(group => group.Key != grp.GroupName)).ToList();
+      var noLongerAvailable = this.ConnectorGroups.Where(grp => !groupNames.Contains(grp.GroupName)).ToList();
       foreach (var connectorGroupViewModel in noLongerAvailable)
       {
         log.Debug("Removing group no longer present in configuration: {connectorGroupViewModel}", connectorGroupViewModel.GroupName);
@@ -328,8 +329,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       var connectorConfigurations = configuration.ConnectorsConfiguration.ToList();
       configuration.ConnectorsConfiguration.Clear();
+      configuration.Groups.Clear();
       foreach (var connectorGroupViewModel in this.ConnectorGroups)
       {
+        if (!string.IsNullOrWhiteSpace(connectorGroupViewModel.GroupName) || connectorGroupViewModel.ConnectorViewModels.Count > 0)
+        {
+          configuration.Groups.Add(connectorGroupViewModel.GroupName);
+        }
+
         foreach (var connectorViewModel in connectorGroupViewModel.ConnectorViewModels)
         {
           var config = connectorConfigurations.FirstOrDefault(cfg => cfg.Identifier == connectorViewModel.Identifier);
@@ -512,8 +519,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       return true;
     }
 
-    private IEnumerable<IGrouping<string, ConnectorConfiguration>> ParseConfiguration(ApplicationConfiguration configuration) => configuration.ConnectorsConfiguration.GroupBy(config => config.GetConfigurationByKey(Connector.Category)?.Value?.Trim() ?? string.Empty);
-
     /// <summary>
     /// Handles dropping of <see cref="ConnectorViewModel" />.
     /// </summary>
@@ -643,13 +648,13 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private void ExportHandler(object? sender, ValueEventArgs<TreeItemViewModel> e) => this.ExportItem?.Invoke(sender, e);
 
     /// <summary>
-    /// Removes any empty rpesent groups.
+    /// Removes the ungrouped section when empty, preserving named groups until explicitly deleted.
     /// </summary>
     private void ClearEmptyGroups()
     {
       foreach (var group in this.ConnectorGroups.ToList())
       {
-        if (group.ConnectorViewModels.Count == 0)
+        if (group.ConnectorViewModels.Count == 0 && string.IsNullOrWhiteSpace(group.GroupName))
         {
           this.ConnectorGroups.Remove(group);
         }

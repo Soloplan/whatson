@@ -32,6 +32,11 @@ namespace Soloplan.WhatsON.Configuration
     public IList<ConnectorConfiguration> ConnectorsConfiguration { get; } = new List<ConnectorConfiguration>();
 
     /// <summary>
+    /// Gets the saved groups in display order, including named groups without projects.
+    /// </summary>
+    public IList<string> Groups { get; } = new List<string>();
+
+    /// <summary>
     /// Gets or sets the interface language. The default follows supported Windows languages.
     /// </summary>
     public ApplicationLanguage Language { get; set; } = ApplicationLanguage.System;
@@ -70,6 +75,21 @@ namespace Soloplan.WhatsON.Configuration
     private bool LegacyDarkThemeEnabled
     {
       set => this.legacyThemeMode = value ? ApplicationTheme.Dark : ApplicationTheme.Light;
+    }
+
+    /// <summary>
+    /// Gets saved groups together with groups inferred from projects in older configurations.
+    /// </summary>
+    /// <returns>The distinct group names in display order.</returns>
+    public IEnumerable<string> GetGroupNames()
+    {
+      var projectGroups = this.ConnectorsConfiguration
+        .Select(configuration => configuration.GetConfigurationByKey(Connector.Category).Value?.Trim() ?? string.Empty).ToList();
+      return this.Groups
+        .Where(name => !string.IsNullOrWhiteSpace(name) || (name == string.Empty && projectGroups.Contains(string.Empty)))
+        .Select(name => name.Trim())
+        .Concat(projectGroups)
+        .Distinct();
     }
 
     /// <summary>

@@ -9,6 +9,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
 {
   using System.Collections.Generic;
   using System.ComponentModel;
+  using System.Linq;
   using System.Runtime.CompilerServices;
   using Soloplan.WhatsON.Model;
 
@@ -48,7 +49,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     {
       get
       {
-        var result = new List<string>();
+        var result = new List<string>(this.configuration.Groups.Where(name => !string.IsNullOrWhiteSpace(name)));
         foreach (var connector in this.configuration.Connectors)
         {
           var configItemViewModel = connector.GetConfigurationByKey(Connector.Category);

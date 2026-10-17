@@ -8,6 +8,7 @@
 namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
   using System;
+  using System.Collections;
   using System.Collections.Generic;
   using System.Collections.ObjectModel;
   using System.ComponentModel;
@@ -132,8 +133,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     public void CreateGroup(string groupName)
     {
       var groupModel = this.model.CreateGroup(groupName);
-      TreeViewItem groupViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(groupModel);
-      groupViewItem.BringIntoView(new Rect(100, 100, 100, 100));
+      this.mainTreeView.UpdateLayout();
+      if (this.mainTreeView.ItemContainerGenerator.ContainerFromItem(groupModel) is TreeViewItem groupViewItem)
+      {
+        groupViewItem.BringIntoView(new Rect(100, 100, 100, 100));
+      }
     }
 
     /// <summary>
@@ -156,6 +160,16 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private void SetupDataContext()
     {
+      IEnumerable? items = this.model.OneGroup && string.IsNullOrWhiteSpace(this.model.FirstGroup?.GroupName)
+        ? this.model.FirstGroup?.ConnectorViewModels
+        : this.model.ConnectorGroups;
+
+      // Rebinding the same collection during its change event can duplicate generated rows.
+      if (ReferenceEquals(this.mainTreeView.ItemsSource, items))
+      {
+        return;
+      }
+
       BindingOperations.ClearBinding(this.mainTreeView, TreeView.ItemsSourceProperty);
       if (this.model.OneGroup && string.IsNullOrWhiteSpace(this.model.ConnectorGroups.FirstOrDefault()?.GroupName))
       {

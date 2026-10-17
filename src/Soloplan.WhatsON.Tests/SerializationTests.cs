@@ -70,6 +70,49 @@ namespace Soloplan.WhatsON.Tests
     }
 
     [Test]
+    public void EmptyGroupsSurviveSavingAndLoadingInDisplayOrder()
+    {
+      var configuration = new ApplicationConfiguration();
+      configuration.Groups.Add("Release – 日本語");
+      configuration.Groups.Add("Future projects");
+      this.serializer.SaveConfiguration(configuration);
+
+      var restored = this.serializer.LoadConfiguration();
+
+      Assert.That(restored.Groups, Is.EqualTo(configuration.Groups));
+      Assert.That(restored.GetGroupNames(), Is.EqualTo(configuration.Groups));
+      Assert.That(restored.ConnectorsConfiguration, Is.Empty);
+    }
+
+    [Test]
+    public void LegacyGroupsAreInferredFromProjectsWithoutInventingEmptyGroups()
+    {
+      var configuration = new ApplicationConfiguration();
+      configuration.ConnectorsConfiguration.Add(new ConnectorConfiguration("Jenkins", "Release", Connector.Category, "Delivery"));
+      configuration.ConnectorsConfiguration.Add(new ConnectorConfiguration("Jenkins", "Installer", Connector.Category, "Delivery"));
+      configuration.ConnectorsConfiguration.Add(new ConnectorConfiguration("Jenkins", "Ungrouped"));
+      this.serializer.SaveConfiguration(configuration);
+      var json = JObject.Parse(File.ReadAllText(this.serializer.ConfigFile));
+      json.Remove(nameof(ApplicationConfiguration.Groups));
+      File.WriteAllText(this.serializer.ConfigFile, json.ToString());
+
+      var restored = this.serializer.LoadConfiguration();
+
+      Assert.That(restored.Groups, Is.Empty);
+      Assert.That(restored.GetGroupNames(), Is.EqualTo(new[] { "Delivery", string.Empty }));
+      Assert.That(new ApplicationConfiguration().GetGroupNames(), Is.Empty);
+    }
+
+    [Test]
+    public void GroupNamesFromImportedConfigurationsIgnoreBlankAndDuplicateEntries()
+    {
+      var configuration = JsonConvert.DeserializeObject<ApplicationConfiguration>("{\"Groups\":[null,\" \",\" Delivery \",\"Delivery\"]}")
+        ?? throw new AssertionException("Expected configuration.");
+
+      Assert.That(configuration.GetGroupNames(), Is.EqualTo(new[] { "Delivery" }));
+    }
+
+    [Test]
     public void ExportWithoutIdentifiersCreatesIndependentProjectsOnImport()
     {
       var configuration = new ApplicationConfiguration();
