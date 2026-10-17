@@ -26,6 +26,7 @@ namespace Soloplan.WhatsON.GUI.Tests
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.GUI.Configuration;
   using Soloplan.WhatsON.GUI.Configuration.View;
+  using Soloplan.WhatsON.GUI.Configuration.Wizard;
   using Soloplan.WhatsON.Model;
 
   [TestFixture]
@@ -107,6 +108,7 @@ namespace Soloplan.WhatsON.GUI.Tests
           }
         }
 
+        VerifySettingsPageEdges(settings, sections, frame);
         sections.SelectedIndex = 0;
         settings.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
         var selector = (ComboBox)((Page)frame.Content).FindName("ThemeModeSelector");
@@ -155,6 +157,10 @@ namespace Soloplan.WhatsON.GUI.Tests
         populatedSettings.Close();
       }
 
+      VerifyTitleBarActionsAndLayout();
+      VerifyScrollSpacing();
+      VerifyWizardLayouts(app);
+
       using (var stream = Application.GetResourceStream(new Uri("/Soloplan.WhatsON.GUI;component/Logging/LogConfig.xml", UriKind.Relative)).Stream)
       using (var reader = new StreamReader(stream))
       using (var factory = new LogFactory())
@@ -163,6 +169,154 @@ namespace Soloplan.WhatsON.GUI.Tests
         Assert.That(
           loggingConfiguration.AllTargets.Select(target => target.Name),
           Is.EquivalentTo(new[] { "whatsONMainLog", "whatsONConsoleLog" }));
+      }
+    }
+
+    private static void VerifyTitleBarActionsAndLayout()
+    {
+      var target = new Window { Title = "A long window title that must not overlap its controls" };
+      var header = new CustomTitleBar { Window = target, CustomButtonVisible = true, ShowMinimizeButton = true };
+      foreach (var width in new[] { 300, 760 })
+      {
+        header.Measure(new Size(width, 44));
+        header.Arrange(new Rect(0, 0, width, 44));
+        header.UpdateLayout();
+        foreach (var name in new[] { "SettingsButton", "AddMenuButton", "MinimizeButton", "CloseButton" })
+        {
+          var button = (Button)header.FindName(name);
+          var bounds = button.TransformToAncestor(header).TransformBounds(new Rect(button.RenderSize));
+          Assert.That(bounds.Width, Is.EqualTo(36), name);
+          Assert.That(bounds.Height, Is.EqualTo(32), name);
+          Assert.That(bounds.Top, Is.GreaterThanOrEqualTo(4), name);
+          Assert.That(bounds.Bottom, Is.LessThanOrEqualTo(40), name);
+          Assert.That(bounds.Left, Is.GreaterThanOrEqualTo(0), name);
+          Assert.That(bounds.Right, Is.LessThanOrEqualTo(width), name);
+          Assert.That(button.Focusable, Is.True, name);
+        }
+      }
+
+      var settingsClicks = 0;
+      var projectClicks = 0;
+      var importClicks = 0;
+      var groupClicks = 0;
+      header.ButtonClicked += (_, _) => settingsClicks++;
+      header.AddConnectorClicked += (_, _) => projectClicks++;
+      header.ImportClicked += (_, _) => importClicks++;
+      header.AddGroupClicked += (_, _) => groupClicks++;
+      ((Button)header.FindName("SettingsButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+      var menu = ((Button)header.FindName("AddMenuButton")).ContextMenu;
+      foreach (MenuItem item in menu.Items)
+      {
+        item.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+      }
+
+      Assert.That(new[] { settingsClicks, projectClicks, importClicks, groupClicks }, Is.EqualTo(new[] { 1, 1, 1, 1 }));
+      var closed = false;
+      System.ComponentModel.CancelEventHandler cancelClose = (_, e) => e.Cancel = true;
+      target.Closing += cancelClose;
+      target.Closed += (_, _) => closed = true;
+      var closeButton = (Button)header.FindName("CloseButton");
+      closeButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+      Assert.That(closed, Is.False, "The shared close button must respect a window's close cancellation.");
+      target.Closing -= cancelClose;
+      closeButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+      Assert.That(closed, Is.True);
+    }
+
+    private static void VerifySettingsPageEdges(ConfigWindow settings, ListBox sections, Frame frame)
+    {
+      var root = (FrameworkElement)settings.Content;
+      foreach (var section in new[] { 0, 2 })
+      {
+        sections.SelectedIndex = section;
+        settings.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+        var viewer = (ScrollViewer)((Page)frame.Content).Content;
+        var content = (StackPanel)viewer.Content;
+        foreach (var height in new[] { 580, 1000, 580 })
+        {
+          root.Measure(new Size(850, height));
+          root.Arrange(new Rect(0, 0, 850, height));
+          root.UpdateLayout();
+          var scrollbarVisible = height == 580;
+          Assert.That(viewer.ComputedVerticalScrollBarVisibility, Is.EqualTo(scrollbarVisible ? Visibility.Visible : Visibility.Collapsed));
+          var viewerRight = viewer.TransformToAncestor(root).Transform(new Point(viewer.ActualWidth, 0)).X;
+          Assert.That(root.ActualWidth - viewerRight, Is.EqualTo(9).Within(1), "The scrollbar must stay near the window edge.");
+          if (!scrollbarVisible)
+          {
+            var contentRight = content.TransformToAncestor(root).Transform(new Point(content.ActualWidth, 0)).X;
+            Assert.That(root.ActualWidth - contentRight, Is.EqualTo(29).Within(1), "Pages without scrollbars must retain their content gutter.");
+          }
+        }
+      }
+    }
+
+    private static void VerifyScrollSpacing()
+    {
+      var content = new StackPanel { Style = (Style)Application.Current.FindResource("SettingsScrollContent") };
+      content.Children.Add(new Border { Height = 400 });
+      var viewer = new ScrollViewer
+      {
+        Content = content,
+        VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+        HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+      };
+      foreach (var height in new[] { 600, 200, 600 })
+      {
+        viewer.Measure(new Size(500, height));
+        viewer.Arrange(new Rect(0, 0, 500, height));
+        viewer.UpdateLayout();
+        viewer.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+        Assert.That(viewer.ComputedVerticalScrollBarVisibility, Is.EqualTo(height < 400 ? Visibility.Visible : Visibility.Collapsed));
+        Assert.That(content.Margin, Is.EqualTo(height < 400 ? new Thickness(0, 0, 20, 0) : new Thickness(0)));
+      }
+    }
+
+    private static void VerifyWizardLayouts(App app)
+    {
+      var controller = new WizardController(null, new ApplicationConfiguration(), new WindowSettings());
+      var wizard = new WizardWindow(controller);
+      try
+      {
+        foreach (var theme in new[] { ApplicationTheme.Light, ApplicationTheme.Dark })
+        {
+          app.ApplyTheme(theme);
+          var connection = new ConnectionWizardPage(controller);
+          wizard.Frame.Content = connection;
+          wizard.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+          var content = (FrameworkElement)wizard.Content;
+          content.Measure(new Size(600, 600));
+          content.Arrange(new Rect(0, 0, 600, 600));
+          content.UpdateLayout();
+          var next = (Button)wizard.FindName("NextButton");
+          var address = (ComboBox)connection.FindName("AddressComboBox");
+          address.Text = string.Empty;
+          Assert.That(next.IsEnabled, Is.False);
+          address.Text = "h";
+          Assert.That(address.Text, Is.EqualTo("h"), "Partial addresses must remain editable.");
+          address.Text = "https://ci.example.invalid";
+          Assert.That(next.IsEnabled, Is.True);
+          Assert.That(controller.ProposedServerAddress, Is.EqualTo("https://ci.example.invalid/"));
+          Assert.That(address.ActualHeight, Is.GreaterThanOrEqualTo(40));
+
+          controller.Projects.AddProject(new Project("https://ci.example.invalid", "Application build", "https://ci.example.invalid/job/app", "Application build"));
+          var selection = new ProjectSelectionWizardPage(controller) { DataContext = controller };
+          wizard.Frame.Content = selection;
+          wizard.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+          content.Measure(new Size(600, 600));
+          content.Arrange(new Rect(0, 0, 600, 600));
+          content.UpdateLayout();
+          var projects = (ProjectsTreeView)selection.FindName("projectsTreeView");
+          var tree = (TreeView)projects.FindName("mainTreeView");
+          var firstProject = (TreeViewItem)tree.ItemContainerGenerator.ContainerFromIndex(0);
+          Assert.That(firstProject, Is.Not.Null);
+          Assert.That(firstProject.ActualHeight, Is.GreaterThan(0));
+          Assert.That(projects.ActualHeight, Is.GreaterThan(50), "The project list must remain usable at minimum window size.");
+          Assert.That(((ComboBox)selection.FindName("uxGrouppingSettings")).ActualHeight, Is.GreaterThanOrEqualTo(36));
+        }
+      }
+      finally
+      {
+        wizard.Close();
       }
     }
 

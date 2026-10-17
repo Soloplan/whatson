@@ -255,9 +255,9 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     {
       get
       {
-        if (!this.IsProposedAddressEmpty)
+        if (Uri.TryCreate(this.proposedServerAddress, UriKind.Absolute, out var address))
         {
-          return new Uri(this.proposedServerAddress).AbsoluteUri;
+          return address.AbsoluteUri;
         }
 
         return this.proposedServerAddress;

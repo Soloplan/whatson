@@ -220,9 +220,15 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">Event args.</param>
-    private void OnButtonClicked(object sender, MouseButtonEventArgs e)
+    private void OnButtonClicked(object sender, RoutedEventArgs e)
     {
       this.ButtonClicked?.Invoke(sender, e);
+    }
+
+    private void ShowAddMenu(object sender, RoutedEventArgs e)
+    {
+      this.AddMenuButton.ContextMenu.PlacementTarget = this.AddMenuButton;
+      this.AddMenuButton.ContextMenu.IsOpen = true;
     }
 
     private void NewGroupClick(object sender, RoutedEventArgs e)

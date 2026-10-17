@@ -6,7 +6,7 @@
   <Grid x:Name="MainGrid">
     <Border Style="{StaticResource SettingsCard}" Margin="0">
       <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-        <StackPanel Margin="0,0,20,0">
+        <StackPanel Style="{StaticResource SettingsScrollContent}">
           <TextBlock Text="Project settings" Style="{StaticResource SettingsSectionHeading}" />
           <StackPanel x:Name="StackPanel" />
         </StackPanel>

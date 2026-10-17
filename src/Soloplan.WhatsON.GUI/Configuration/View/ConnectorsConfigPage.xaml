@@ -5,7 +5,7 @@
       Title="Projects" FontFamily="Segoe UI" FontSize="14" Background="Transparent" Initialized="PageInitialized"
       TextElement.Foreground="{DynamicResource MaterialDesignBody}">
   <materialDesign:DialogHost Identifier="ConnectorsConfigPageHost" Style="{StaticResource MaterialDesignEmbeddedDialogHost}">
-    <Grid Margin="0,0,8,16">
+    <Grid Margin="0,0,20,16">
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto" />

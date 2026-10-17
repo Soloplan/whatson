@@ -1,49 +1,29 @@
 ﻿<UserControl x:Class="Soloplan.WhatsON.GUI.Configuration.View.EditGroupNameDialog"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
-             d:DesignHeight="450"
-             d:DesignWidth="800"
-             Background="{DynamicResource MaterialDesignPaper}"
-             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             mc:Ignorable="d">
-  <StackPanel MinWidth="300" Margin="8">
-    <TextBox x:Name="uxEditGroupName"
-             Margin="0,8,0,0"
-             HorizontalAlignment="Stretch"
-             materialDesign:HintAssist.Hint="Group name"
-             Style="{StaticResource MaterialDesignFloatingHintTextBox}">
-      <TextBox.Text>
-        <Binding Path="Name" UpdateSourceTrigger="Explicit">
-          <Binding.ValidationRules>
-            <DataErrorValidationRule />
-          </Binding.ValidationRules>
-        </Binding>
-      </TextBox.Text>
-    </TextBox>
-
-    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-      <Button Margin="0,8,8,0"
-              Click="OkButtonClick"
-              IsDefault="True">
-        <Button.CommandParameter>
-          <system:Boolean>True</system:Boolean>
-        </Button.CommandParameter>
-        Ok
-      </Button>
-      <Button Width="80"
-              Margin="0,8,8,0"
-              Click="CancelButtonClick"
-              IsCancel="True"
-              Command="materialDesign:DialogHost.CloseDialogCommand">
-        <Button.CommandParameter>
-          <system:Boolean>False</system:Boolean>
-        </Button.CommandParameter>
-        Cancel
-      </Button>
+             FontFamily="Segoe UI" FontSize="14" TextElement.Foreground="{DynamicResource MaterialDesignBody}">
+  <Border Style="{StaticResource SettingsDialog}">
+    <StackPanel>
+      <TextBlock Text="Group details" Style="{StaticResource SettingsSectionHeading}" />
+      <Label Content="Group name" Target="{Binding ElementName=uxEditGroupName}" Padding="0" FontWeight="SemiBold" Margin="0,0,0,6" />
+      <TextBox x:Name="uxEditGroupName" MinHeight="40" AutomationProperties.Name="Group name">
+        <TextBox.Text>
+          <Binding Path="Name" UpdateSourceTrigger="Explicit">
+            <Binding.ValidationRules><DataErrorValidationRule /></Binding.ValidationRules>
+          </Binding>
+        </TextBox.Text>
+      </TextBox>
+      <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Margin="0,24,0,0">
+        <Button Content="Cancel" Click="CancelButtonClick" IsCancel="True" Margin="0,0,10,0"
+                Command="materialDesign:DialogHost.CloseDialogCommand" Style="{StaticResource SettingsSecondaryButton}">
+          <Button.CommandParameter><system:Boolean>False</system:Boolean></Button.CommandParameter>
+        </Button>
+        <Button Content="Save name" Click="OkButtonClick" IsDefault="True" Style="{StaticResource SettingsPrimaryButton}">
+          <Button.CommandParameter><system:Boolean>True</system:Boolean></Button.CommandParameter>
+        </Button>
+      </StackPanel>
     </StackPanel>
-  </StackPanel>
+  </Border>
 </UserControl>

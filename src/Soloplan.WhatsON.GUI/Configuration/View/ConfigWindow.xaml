@@ -10,10 +10,8 @@
         Closing="WindowClosing" ShowInTaskbar="False" Style="{StaticResource BorderLessWindowStyle}">
   <Border Background="{DynamicResource SettingsBackground}" BorderBrush="{DynamicResource SettingsBorder}" BorderThickness="1">
     <DockPanel>
-      <Border DockPanel.Dock="Top" BorderBrush="{DynamicResource SettingsBorder}" BorderThickness="0,0,0,1">
-        <gui:CustomTitleBar Height="44" CustomButtonVisible="False" ShowMinimizeButton="False"
-                            Window="{Binding RelativeSource={RelativeSource AncestorType={x:Type view:ConfigWindow}}}" />
-      </Border>
+      <gui:CustomTitleBar DockPanel.Dock="Top" CustomButtonVisible="False" ShowMinimizeButton="False"
+                          Window="{Binding RelativeSource={RelativeSource AncestorType={x:Type view:ConfigWindow}}}" />
       <Grid>
         <Grid.RowDefinitions>
           <RowDefinition Height="*" />
@@ -65,7 +63,7 @@
             </ListBox>
           </DockPanel>
         </Border>
-        <Frame x:Name="ConfigFrame" Grid.Column="1" Margin="28,24,20,0"
+        <Frame x:Name="ConfigFrame" Grid.Column="1" Margin="28,24,8,0"
                NavigationUIVisibility="Hidden" Background="Transparent" />
         <Border x:Name="HideableStackPanel" Grid.Row="1" Grid.Column="1"
                 Background="{DynamicResource SettingsSurface}" BorderBrush="{DynamicResource SettingsBorder}"

@@ -1,84 +1,62 @@
 ﻿<UserControl x:Class="Soloplan.WhatsON.GUI.Configuration.Wizard.ProjectsTreeView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Configuration.Wizard"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:wpf="clr-namespace:TheArtOfDev.HtmlRenderer.WPF;assembly=HtmlRenderer.WPF"
-             xmlns:converters="clr-namespace:Soloplan.WhatsON.GUI.Configuration.Wizard"
-             d:DesignHeight="450"
-             d:DesignWidth="800"
-             Background="{DynamicResource MaterialDesignPaper}"
-             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             mc:Ignorable="d"
-             KeyDown="ProjectsTreeViewKeyDown">
-
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
-            <converters:WizardProjectToVisibilityConverter x:Key="WizardProjectToVisibilityConverter"/>
-            <HierarchicalDataTemplate DataType="{x:Type local:ProjectViewModel}" ItemsSource="{Binding Path=Projects}">
-                <DockPanel Width="400">
-                    <DockPanel.ToolTip>
-                        <ToolTip Visibility="{Binding Path=. , Converter={StaticResource WizardProjectToVisibilityConverter}}">
-                            <wpf:HtmlPanel Background="Transparent" MaxWidth="600">
-                                <wpf:HtmlPanel.Text>
-                                    <MultiBinding StringFormat='{}&lt;font size=&quot;6&quot; face=&quot;arial&quot; color=&quot;{1}&quot;&gt; {0} &lt;/font&gt;'>
-                                        <Binding Path="Description"></Binding>
-                                        <Binding Source="{StaticResource MaterialDesignPaper}" Converter="{StaticResource RGBAToRGBConverter}"></Binding>
-                                    </MultiBinding>
-                                </wpf:HtmlPanel.Text>
-                            </wpf:HtmlPanel>
-                        </ToolTip>
-                    </DockPanel.ToolTip>
-                    <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
-                        <CheckBox Focusable="False"
-                      IsChecked="{Binding IsChecked}"
-                      Style="{StaticResource MaterialDesignAccentCheckBox}"
-                      Visibility="{Binding Path=IsCheckable, Converter={StaticResource BoolToVis}}" />
-                        <TextBlock Margin="10,0,0,0"
-                       Focusable="False"
-                       Text="{Binding Name}" />
-                        <TextBlock Margin="5,0,0,0">
-              <Hyperlink NavigateUri="{Binding DirectAddress}"
-                         RequestNavigate="HyperlinkRequestNavigate"
-                         Style="{StaticResource MaterialDesignHeadline4Hyperlink}">
-                <TextBlock>
-                  <materialDesign:PackIcon Width="14" Kind="Link" />
-                </TextBlock>
-              </Hyperlink>
-            </TextBlock>
-                    </StackPanel>
-                    <StackPanel DockPanel.Dock="Right"
-                      Opacity="0.5"
-                      Orientation="Horizontal"
-                      Visibility="{Binding AlreadyAdded, Converter={StaticResource BoolToVisibility}}">
-                        <TextBlock Margin="10,0,0,0"
-                       VerticalAlignment="Center"
-                       FontSize="10"
-                       Text="Already added: " />
-                        <TextBlock Margin="3,0,0,0"
-                       VerticalAlignment="Center"
-                       FontSize="10"
-                       FontWeight="Bold"
-                       Text="{Binding AddedProject}" />
-                    </StackPanel>
-                </DockPanel>
-            </HierarchicalDataTemplate>
-        </ResourceDictionary>
-    </UserControl.Resources>
-
-    <TreeView Name="mainTreeView" ItemsSource="{Binding}"
-              VirtualizingPanel.IsVirtualizing="True">
-        <TreeView.ItemContainerStyle>
-            <Style BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="{x:Type TreeViewItem}">
-                <Setter Property="IsExpanded" Value="True" />
-                <Setter Property="Visibility" Value="{Binding IsVisible, Converter={StaticResource BoolToVisibility}}" />
-                <EventSetter Event="RequestBringIntoView" Handler="NullHandler" />
-                <EventSetter Event="PreviewKeyUp" Handler="TreeViewItemPreviewKeyUp" />
-                <Setter Property="Padding" Value="0" />
-            </Style>
-        </TreeView.ItemContainerStyle>
-    </TreeView>
+             Background="Transparent" FontFamily="Segoe UI" FontSize="14"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}" KeyDown="ProjectsTreeViewKeyDown">
+  <UserControl.Resources>
+    <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+    <local:WizardProjectToVisibilityConverter x:Key="WizardProjectToVisibilityConverter" />
+    <HierarchicalDataTemplate DataType="{x:Type local:ProjectViewModel}" ItemsSource="{Binding Projects}">
+      <Grid Margin="0,2,4,2">
+        <Grid.ToolTip>
+          <ToolTip Visibility="{Binding Path=., Converter={StaticResource WizardProjectToVisibilityConverter}}"
+                   Background="{DynamicResource SettingsSurface}" BorderBrush="{DynamicResource SettingsBorder}" Padding="12">
+            <wpf:HtmlPanel Background="Transparent" MaxWidth="600">
+              <wpf:HtmlPanel.Text>
+                <MultiBinding StringFormat='{}&lt;font size=&quot;6&quot; face=&quot;Segoe UI&quot; color=&quot;{1}&quot;&gt; {0} &lt;/font&gt;'>
+                  <Binding Path="Description" />
+                  <Binding Source="{StaticResource MaterialDesignBody}" Converter="{StaticResource RGBAToRGBConverter}" />
+                </MultiBinding>
+              </wpf:HtmlPanel.Text>
+            </wpf:HtmlPanel>
+          </ToolTip>
+        </Grid.ToolTip>
+        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+        <Grid.RowDefinitions><RowDefinition /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+        <CheckBox Focusable="False" IsChecked="{Binding IsChecked}" Margin="0,0,10,0" VerticalAlignment="Center"
+                  Visibility="{Binding IsCheckable, Converter={StaticResource BoolToVis}}" AutomationProperties.Name="{Binding Name}" />
+        <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+        <TextBlock Grid.Column="2" Margin="10,0,0,0" VerticalAlignment="Center">
+          <Hyperlink NavigateUri="{Binding DirectAddress}" RequestNavigate="HyperlinkRequestNavigate"
+                     Foreground="{DynamicResource SettingsAccent}" AutomationProperties.Name="Open project in browser">
+            <materialDesign:PackIcon Kind="OpenInNew" Width="16" Height="16" />
+          </Hyperlink>
+        </TextBlock>
+        <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,4,0,0"
+                   Foreground="{DynamicResource SettingsMuted}" FontSize="11"
+                   Visibility="{Binding AlreadyAdded, Converter={StaticResource BoolToVisibility}}" TextTrimming="CharacterEllipsis">
+          <Run Text="Already added: " /><Run Text="{Binding AddedProject}" />
+        </TextBlock>
+      </Grid>
+    </HierarchicalDataTemplate>
+  </UserControl.Resources>
+  <TreeView x:Name="mainTreeView" ItemsSource="{Binding}" Background="Transparent" BorderThickness="0" Padding="0,0,12,0"
+            VirtualizingPanel.IsVirtualizing="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+            ScrollViewer.VerticalScrollBarVisibility="Auto" AutomationProperties.Name="Available projects">
+    <TreeView.ItemContainerStyle>
+      <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+        <Setter Property="IsExpanded" Value="True" />
+        <Setter Property="Visibility" Value="{Binding IsVisible, Converter={StaticResource BoolToVisibility}}" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="materialDesign:TreeViewAssist.HasNoItemsExpanderVisibility" Value="Collapsed" />
+        <Setter Property="Padding" Value="4,6" />
+        <Setter Property="Margin" Value="0,2,12,2" />
+        <EventSetter Event="RequestBringIntoView" Handler="NullHandler" />
+        <EventSetter Event="PreviewKeyUp" Handler="TreeViewItemPreviewKeyUp" />
+      </Style>
+    </TreeView.ItemContainerStyle>
+  </TreeView>
 </UserControl>

@@ -38,14 +38,13 @@
     </ResourceDictionary>
   </Window.Resources>
   <DockPanel>
-    <local:CustomTitleBar Height="32"
+    <local:CustomTitleBar
                           AddConnectorClicked="NewConnectorClick"
                           AddGroupClicked="NewGroupClick"
                           ButtonClicked="OpenConfig"
                           CustomButtonIcon="SettingsOutline"
                           CustomButtonVisible="{Binding ConfigurationModifiedFromTree, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Converter={StaticResource InvertBoolConverter}}"
                           DockPanel.Dock="Top"
-                          FontSize="12"
                           ImportClicked="ImportClick"
                           ShowMinimizeButton="{Binding Path=ShowInTaskbar, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}"
                           Window="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" />

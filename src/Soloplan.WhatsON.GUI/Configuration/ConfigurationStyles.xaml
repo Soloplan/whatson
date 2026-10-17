@@ -10,6 +10,14 @@
   <SolidColorBrush x:Key="SettingsAccent" Color="#315FC8" />
   <SolidColorBrush x:Key="SettingsSelection" Color="#EAF0FE" />
 
+  <Style x:Key="SettingsScrollContent" TargetType="StackPanel">
+    <Setter Property="Margin" Value="0" />
+    <Style.Triggers>
+      <DataTrigger Binding="{Binding ComputedVerticalScrollBarVisibility, RelativeSource={RelativeSource AncestorType=ScrollViewer}}" Value="Visible">
+        <Setter Property="Margin" Value="0,0,20,0" />
+      </DataTrigger>
+    </Style.Triggers>
+  </Style>
   <Style x:Key="SettingsCard" TargetType="Border">
     <Setter Property="Background" Value="{DynamicResource SettingsSurface}" />
     <Setter Property="BorderBrush" Value="{DynamicResource SettingsBorder}" />
@@ -79,5 +87,96 @@
         </ControlTemplate>
       </Setter.Value>
     </Setter>
+  </Style>
+
+  <Style x:Key="HeaderIconButton" TargetType="Button">
+    <Setter Property="Width" Value="36" />
+    <Setter Property="Height" Value="32" />
+    <Setter Property="MinWidth" Value="0" />
+    <Setter Property="MinHeight" Value="0" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Margin" Value="2,0" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource SettingsMuted}" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Button">
+          <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="1" CornerRadius="6">
+            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+    <Style.Triggers>
+      <Trigger Property="IsMouseOver" Value="True">
+        <Setter Property="Background" Value="{DynamicResource SettingsSelection}" />
+        <Setter Property="Foreground" Value="{DynamicResource SettingsAccent}" />
+      </Trigger>
+      <Trigger Property="IsPressed" Value="True">
+        <Setter Property="Background" Value="{DynamicResource SettingsBorder}" />
+      </Trigger>
+      <Trigger Property="IsKeyboardFocused" Value="True">
+        <Setter Property="BorderBrush" Value="{DynamicResource SettingsAccent}" />
+      </Trigger>
+      <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.45" /></Trigger>
+    </Style.Triggers>
+  </Style>
+  <Style x:Key="HeaderCloseButton" TargetType="Button" BasedOn="{StaticResource HeaderIconButton}">
+    <Style.Triggers>
+      <Trigger Property="IsMouseOver" Value="True">
+        <Setter Property="Background" Value="#C42B1C" />
+        <Setter Property="Foreground" Value="White" />
+      </Trigger>
+    </Style.Triggers>
+  </Style>
+  <Style x:Key="HeaderMenu" TargetType="ContextMenu">
+    <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />
+    <Setter Property="FontFamily" Value="Segoe UI" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ContextMenu">
+          <Border Background="{DynamicResource SettingsSurface}" BorderBrush="{DynamicResource SettingsBorder}"
+                  BorderThickness="1" CornerRadius="10" Padding="6">
+            <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Cycle" />
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="HeaderMenuItem" TargetType="MenuItem">
+    <Setter Property="Padding" Value="12,10" />
+    <Setter Property="MinWidth" Value="216" />
+    <Setter Property="Margin" Value="0,2" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="MenuItem">
+          <Border x:Name="MenuItemBorder" Background="Transparent" CornerRadius="6" Padding="{TemplateBinding Padding}">
+            <Grid>
+              <Grid.ColumnDefinitions><ColumnDefinition Width="28" /><ColumnDefinition /></Grid.ColumnDefinitions>
+              <ContentPresenter ContentSource="Icon" VerticalAlignment="Center" />
+              <ContentPresenter Grid.Column="1" ContentSource="Header" RecognizesAccessKey="True" VerticalAlignment="Center" />
+            </Grid>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsHighlighted" Value="True">
+              <Setter TargetName="MenuItemBorder" Property="Background" Value="{DynamicResource SettingsSelection}" />
+              <Setter Property="Foreground" Value="{DynamicResource SettingsAccent}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.45" /></Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="SettingsDialog" TargetType="Border" BasedOn="{StaticResource SettingsCard}">
+    <Setter Property="Margin" Value="0" />
+    <Setter Property="Padding" Value="24" />
+    <Setter Property="MinWidth" Value="320" />
+    <Setter Property="MaxWidth" Value="440" />
   </Style>
 </ResourceDictionary>
