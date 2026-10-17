@@ -4,6 +4,7 @@
     <File Path="Directory.Build.props" />
     <File Path="Directory.Build.targets" />
     <File Path="Directory.Packages.props" />
+    <File Path="Soloplan.WhatsON.Package/WhatsON.wapproj" />
   </Folder>
   <Project Path="Soloplan.WhatsON.CruiseControl.GUI/Soloplan.WhatsON.CruiseControl.GUI.csproj" />
   <Project Path="Soloplan.WhatsON.CruiseControl.Tests/Soloplan.WhatsON.CruiseControl.Tests.csproj" />

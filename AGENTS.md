@@ -13,6 +13,8 @@ CruiseControl.NET builds. Keep changes focused and follow the existing patterns.
 - `src/Soloplan.WhatsON.GUI/`: WPF application, configuration UI, wizard, tray,
   and notifications; targets .NET 10 for Windows.
 - `src/Soloplan.WhatsON.GUI.Common/`: shared WPF controls and view models.
+- `src/Soloplan.WhatsON.Package/`: standalone Visual Studio MSIX packaging project,
+  self-contained x64 publish profile integration, and App Installer update feeds.
 - `src/Soloplan.WhatsON.Jenkins.GUI/` and
   `src/Soloplan.WhatsON.CruiseControl.GUI/`: connector presentation plugins.
 - `src/Soloplan.WhatsON.Jenkins.Tests/`: NUnit tests with fake API helpers.
@@ -36,14 +38,22 @@ Jenkins uses `SoloPipeline@1.7` and tests the full solution with the `Integratio
 and `UI` NUnit categories excluded in the Windows build container. Categorize
 tests that need external services as `Integration` and desktop tests as `UI`.
 The GUI test assembly has an inherited `UI` category. Snapshot publishing
-includes both `master` and `develop`.
+includes `master` as beta and `develop` as alpha.
 
 Versioning uses the SDK `Version` property, set in the Jenkins environment as
-`1.yyMM.build-branch` (UTC build start month), or the complete `TAG_NAME`.
+`1.yyMM.build-channel` (UTC build start month), or the complete `TAG_NAME`.
+Develop and feature branches use alpha; master uses beta; tags use stable.
 `Directory.Build.props` removes an optional leading `v` from the version.
 Release tags must otherwise be valid SDK versions, e.g. `v1.2610.42`.
 Local builds default to `1.yyMM.0-local`.
 Keep the About dialog on `AssemblyInformationalVersion` to display the suffix.
+
+MSIX packaging is separate from the normal solution build because it requires
+Visual Studio's Desktop Bridge/MSIX targets. Follow
+`src/Soloplan.WhatsON.Package/README.md`; pass `RuntimeIdentifier=win-x64` during
+restore and build, and verify the copied manifest and feed when changing packaging.
+Jenkins signs master/develop/tag packages using Azure signing
+and archives them. GitHub publishing is manual; do not add automatic uploads.
 
 ```powershell
 dotnet build src/Soloplan.WhatsON.slnx -c Debug

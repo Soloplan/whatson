@@ -1,6 +1,7 @@
 # .NET build, package, test, and coverage output at any project depth.
 [Bb]in/
 [Oo]bj/
+BundleArtifacts/
 /artifacts/
 TestResults/
 coverage/
