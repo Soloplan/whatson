@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <Description>The library containing presentation definition of CruiseControl build tree node.</Description>
     <TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
   </PropertyGroup>

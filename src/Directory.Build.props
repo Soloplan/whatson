@@ -1,22 +1,18 @@
 <Project>
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <!-- Keep manual assembly metadata; let the SDK generate project-declared attributes. -->
-    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
-    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
-    <GenerateAssemblyTrademarkAttribute>false</GenerateAssemblyTrademarkAttribute>
-    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
-    <GenerateRepositoryUrlAttribute>false</GenerateRepositoryUrlAttribute>
-    <GenerateSupportedOSPlatformAttribute>false</GenerateSupportedOSPlatformAttribute>
-    <GenerateTargetPlatformAttribute>false</GenerateTargetPlatformAttribute>
     <IsPackable>false</IsPackable>
     <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)..\config\whatson.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <Company>Soloplan GmbH</Company>
+    <Copyright>Copyright © Soloplan GmbH 2020</Copyright>
+    <Product>whatsON</Product>
+    <Version>1.0.0.2</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.InteropServices.ComVisibleAttribute">
+      <_Parameter1>false</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
 </Project>

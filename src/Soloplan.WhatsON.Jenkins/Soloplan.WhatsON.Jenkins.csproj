@@ -1,4 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>The library that observes Jenkins build jobs for the whatsON build and infrastructure monitoring tool.</Description>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="NLog" />
   </ItemGroup>

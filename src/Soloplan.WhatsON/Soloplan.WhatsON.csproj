@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <Description>The core library for the whatsON build and infrastructure monitoring tool.</Description>
     <IsPackable>true</IsPackable>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/Soloplan/whatson</PackageProjectUrl>

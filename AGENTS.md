@@ -22,7 +22,7 @@ CruiseControl.NET builds. Keep changes focused and follow the existing patterns.
 - `src/Soloplan.WhatsON.GUI/Tests/`: NUnit GUI tests.
 - `src/Directory.Build.props`, `src/Directory.Build.targets`, and
   `src/Directory.Packages.props`: shared SDK project settings and package versions.
-- `config/`: shared assembly metadata and StyleCop settings.
+- `config/`: shared StyleCop settings; assembly metadata is in `src/Directory.Build.props`.
 - `Jenkinsfile`: CI build, NUnit execution, and artifact publishing.
 
 ## Build and test

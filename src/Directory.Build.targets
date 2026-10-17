@@ -4,7 +4,6 @@
     <FodyGenerateXsd>false</FodyGenerateXsd>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)..\config\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs"/>
     <AdditionalFiles Include="$(MSBuildThisFileDirectory)..\config\stylecop.json" Link="stylecop.json"/>
     <PackageReference Include="StyleCop.Analyzers" PrivateAssets="all"/>
   </ItemGroup>
