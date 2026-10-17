@@ -523,4 +523,6 @@ Erwarteter Verbindungstyp: {3}</value>
   <data name="CommitsByCaption" xml:space="preserve"><value>Commits von</value></data>
   <data name="BuildContributorsCaption" xml:space="preserve"><value>Mitwirkende an diesem Build</value></data>
   <data name="ChangesByCaption" xml:space="preserve"><value>Änderungen von</value></data>
+  <data name="JobDisabled" xml:space="preserve"><value>Deaktiviert</value></data>
+  <data name="JobDisabledDescription" xml:space="preserve"><value>Dieser Job ist auf dem Build-Server deaktiviert. Neue Builds können nicht gestartet werden. Der letzte Build und der Verlauf bleiben verfügbar.</value></data>
 </root>

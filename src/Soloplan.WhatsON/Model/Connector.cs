@@ -90,6 +90,11 @@ namespace Soloplan.WhatsON.Model
     /// </summary>
     public string Description { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the job is disabled on the build server.
+    /// </summary>
+    public bool IsDisabled { get; set; }
+
     public string Project
     {
       get => this.Configuration.GetConfigurationByKey(ProjectName).Value;

@@ -523,4 +523,6 @@ Expected connector type: {3}</value>
   <data name="CommitsByCaption" xml:space="preserve"><value>Commits by</value></data>
   <data name="BuildContributorsCaption" xml:space="preserve"><value>Contributors to this build</value></data>
   <data name="ChangesByCaption" xml:space="preserve"><value>Changes by</value></data>
+  <data name="JobDisabled" xml:space="preserve"><value>Disabled</value></data>
+  <data name="JobDisabledDescription" xml:space="preserve"><value>This job is disabled on the build server. New builds cannot be started. The last build and history remain available.</value></data>
 </root>

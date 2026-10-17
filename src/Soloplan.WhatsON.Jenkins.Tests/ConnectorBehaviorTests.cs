@@ -12,6 +12,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
   using System.Net;
   using System.Threading;
   using System.Threading.Tasks;
+  using Newtonsoft.Json;
   using NUnit.Framework;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.Jenkins.Model;
@@ -21,6 +22,60 @@ namespace Soloplan.WhatsON.Jenkins.Tests
   [SetUICulture("en-US")]
   public class ConnectorBehaviorTests
   {
+    [TestCase("{\"disabled\":true}", true)]
+    [TestCase("{\"disabled\":false}", false)]
+    [TestCase("{}", false)]
+    [TestCase("{\"buildable\":false}", false)]
+    public void DisabledFlagComesFromTheExplicitJobProperty(string json, bool expected)
+    {
+      Assert.That(JsonConvert.DeserializeObject<JenkinsJob>(json).Disabled, Is.EqualTo(expected));
+      var connector = new JenkinsConnector(Configuration(), new FakeJenkinsApi());
+      Assert.That(JenkinsApi.UrlHelper.JobRequest(connector), Does.Contain("tree=disabled,"));
+    }
+
+    [TestCase("SUCCESS", ObservationState.Success)]
+    [TestCase("FAILURE", ObservationState.Failure)]
+    public async Task DisablingAndReenablingAJobPreservesItsLastBuildAndHistory(string result, ObservationState expected)
+    {
+      var job = new JenkinsJob { LastBuild = new JenkinsBuild { Number = 1, Result = result } };
+      var api = new FakeJenkinsApi();
+      api.JobRequest += (sender, args) => args.Result = job;
+      var connector = new JenkinsConnector(Configuration(), api);
+      await connector.QueryStatus(CancellationToken.None);
+      var snapshot = connector.Snapshots.Single();
+
+      foreach (var disabled in new[] { true, false })
+      {
+        job.Disabled = disabled;
+        await connector.QueryStatus(CancellationToken.None);
+
+        Assert.That(connector.IsDisabled, Is.EqualTo(disabled));
+        Assert.That(connector.CurrentStatus.State, Is.EqualTo(expected));
+        Assert.That(connector.CurrentStatus.BuildNumber, Is.EqualTo(1));
+        Assert.That(connector.Snapshots.Single(), Is.SameAs(snapshot));
+        Assert.That(snapshot.Status.State, Is.EqualTo(expected));
+      }
+    }
+
+    [Test]
+    public async Task DisablingAJobDoesNotHideAnAlreadyRunningBuild()
+    {
+      var api = new FakeJenkinsApi();
+      api.JobRequest += (sender, args) => args.Result = new JenkinsJob
+      {
+        Disabled = true,
+        LastBuild = new JenkinsBuild { Number = 1, Building = true },
+      };
+      var connector = new JenkinsConnector(Configuration(), api);
+
+      await connector.QueryStatus(CancellationToken.None);
+
+      Assert.That(connector.IsDisabled, Is.True);
+      Assert.That(connector.CurrentStatus.Building, Is.True);
+      Assert.That(connector.CurrentStatus.State, Is.EqualTo(ObservationState.Running));
+      Assert.That(connector.Snapshots, Is.Empty);
+    }
+
     [TestCase("SUCCESS", ObservationState.Success)]
     [TestCase("failure", ObservationState.Failure)]
     [TestCase("UNSTABLE", ObservationState.Unstable)]
@@ -110,17 +165,19 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       Assert.That(status.Culprits, Is.EqualTo(new[] { bob }));
     }
 
-    [Test]
-    public async Task ProjectWithoutBuildsReportsTheProblemWithoutInventingHistory()
+    [TestCase(false)]
+    [TestCase(true)]
+    public async Task ProjectWithoutBuildsReportsTheProblemWithoutInventingHistory(bool disabled)
     {
       var api = new FakeJenkinsApi();
-      api.JobRequest += (sender, args) => args.Result = new JenkinsJob();
+      api.JobRequest += (sender, args) => args.Result = new JenkinsJob { Disabled = disabled };
       var connector = new JenkinsConnector(Configuration(), api);
 
       await connector.QueryStatus(CancellationToken.None);
 
       Assert.That(connector.CurrentStatus.InvalidBuild, Is.True);
       Assert.That(connector.CurrentStatus.ErrorMessage, Is.EqualTo("No builds yet"));
+      Assert.That(connector.IsDisabled, Is.EqualTo(disabled));
       Assert.That(connector.Snapshots, Is.Empty);
     }
 
@@ -230,12 +287,14 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         }
 
         args.Result = ApiHelper.GetProject(ObservationState.Success, 1);
+        args.Result.Disabled = true;
       };
       var connector = new JenkinsConnector(Configuration(), api);
       await connector.QueryStatus(CancellationToken.None);
       shouldFail = true;
 
       Assert.That(async () => await connector.QueryStatus(CancellationToken.None), Throws.TypeOf<WebException>());
+      Assert.That(connector.IsDisabled, Is.True, "A failed poll must preserve the last known job availability.");
       Assert.That(connector.Snapshots.Single().Status.State, Is.EqualTo(ObservationState.Success));
       shouldFail = false;
       await connector.QueryStatus(CancellationToken.None);

@@ -19,6 +19,7 @@ namespace Soloplan.WhatsON.GUI.Tests
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
+  using Soloplan.WhatsON.Localization;
   using Soloplan.WhatsON.Model;
 
   internal static class ProjectListChecks
@@ -46,6 +47,7 @@ namespace Soloplan.WhatsON.GUI.Tests
               });
             configuration.ConnectorsConfiguration.Add(settings);
             var connector = PluginManager.Instance.GetConnector(settings);
+            connector.IsDisabled = index == 0;
             connector.CurrentStatus = new Status
             {
               State = index == 1 ? ObservationState.Running : ObservationState.Success,
@@ -89,6 +91,21 @@ namespace Soloplan.WhatsON.GUI.Tests
                   var presenter = (ContentPresenter)item.Template.FindName("PART_Header", item);
                   var row = (ProjectRowControl)VisualTreeHelper.GetChild(presenter, 0);
                   var model = (ConnectorViewModel)item.DataContext;
+                  var disabled = groupIndex == 0 && index == 0;
+                  Assert.That(model.IsDisabled, Is.EqualTo(disabled));
+                  Assert.That(((FrameworkElement)row.FindName("DisabledIcon")).Visibility, Is.EqualTo(disabled ? Visibility.Visible : Visibility.Collapsed));
+                  Assert.That(((FrameworkElement)row.FindName("BuildStateIcon")).Visibility, Is.EqualTo(disabled ? Visibility.Collapsed : Visibility.Visible));
+                  var badge = (Border)row.FindName("DisabledBadge");
+                  Assert.That(badge.Visibility, Is.EqualTo(disabled ? Visibility.Visible : Visibility.Collapsed));
+                  Assert.That(((TextBlock)badge.Child).Text, Is.EqualTo(Strings.JobDisabled));
+                  Assert.That(badge.ToolTip, Is.EqualTo(Strings.JobDisabledDescription));
+                  Assert.That(row.IsEnabled, Is.True, "Disabled jobs retain their project and history actions.");
+                  if (disabled)
+                  {
+                    Assert.That(((TextBlock)row.FindName("ProjectName")).Foreground, Is.SameAs(app.Resources["SettingsMuted"]));
+                    Assert.That(badge.Background, Is.SameAs(app.Resources["SettingsBackground"]));
+                  }
+
                   Assert.That(((BuildNumberControl)row.FindName("BuildNumber")).BuildNumber, Is.EqualTo(model.CurrentStatus.BuildNumber));
                   Assert.That(row.ContextMenu, Is.Not.Null, "Both plugins must retain project commands.");
                   Assert.That(((TextBlock)row.FindName("ProjectName")).ActualWidth, Is.GreaterThan(35), "Project names take priority over optional metadata.");
@@ -115,6 +132,16 @@ namespace Soloplan.WhatsON.GUI.Tests
             firstGroup.IsExpanded = true;
             window.UpdateLayout();
             var selectedRow = (TreeViewItem)firstGroup.ItemContainerGenerator.ContainerFromIndex(0);
+            var selectedPresenter = (ContentPresenter)selectedRow.Template.FindName("PART_Header", selectedRow);
+            var disabledRow = (ProjectRowControl)VisualTreeHelper.GetChild(selectedPresenter, 0);
+            var disabledModel = (ConnectorViewModel)selectedRow.DataContext;
+            connectors[0].IsDisabled = false;
+            disabledModel.Update(connectors[0]);
+            window.UpdateLayout();
+            Assert.That(((FrameworkElement)disabledRow.FindName("DisabledBadge")).Visibility, Is.EqualTo(Visibility.Collapsed));
+            Assert.That(((FrameworkElement)disabledRow.FindName("BuildStateIcon")).Visibility, Is.EqualTo(Visibility.Visible));
+            Assert.That(disabledModel.CurrentStatus.State, Is.EqualTo(ObservationState.Success));
+            Assert.That(disabledModel.ConnectorSnapshots.Count, Is.EqualTo(5));
             var toggleSelection = typeof(ConnectorsTreeView).GetMethod("OnCtrlProjectClicked", BindingFlags.Instance | BindingFlags.NonPublic);
             toggleSelection.Invoke(control, new[] { selectedRow.DataContext });
             Assert.That(selectedRow.Background, Is.SameAs(app.Resources["SettingsSelection"]));

@@ -19,7 +19,9 @@ namespace Soloplan.WhatsON.Jenkins.Model
     /// The request properties for the server query.
     /// </summary>
     public const string RequestProperties =
-      "displayName,fullDisplayName,lastBuild[number,displayName,description,building,duration,estimatedDuration,result,timestamp,culprits[fullName,absoluteUrl],changeSets[items[author[fullName,absoluteUrl]]]],name,fullName,url";
+      "disabled,displayName,fullDisplayName,lastBuild[number,displayName,description,building,duration,estimatedDuration,result,timestamp,culprits[fullName,absoluteUrl],changeSets[items[author[fullName,absoluteUrl]]]],name,fullName,url";
+
+    public bool Disabled { get; set; }
 
     /// <summary>
     /// Gets or sets the job display name.

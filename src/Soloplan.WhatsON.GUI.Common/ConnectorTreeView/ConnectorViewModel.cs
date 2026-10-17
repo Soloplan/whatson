@@ -46,6 +46,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     public string Description { get; protected set; }
 
+    public bool IsDisabled { get; private set; }
+
     public BuildStatusViewModel CurrentStatus { get; }
 
     public string Url { get; protected set; }
@@ -124,6 +126,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         }
 
         this.Description = changedConnector.Description;
+        this.IsDisabled = changedConnector.IsDisabled;
         this.CurrentStatus.Update(changedConnector.CurrentStatus);
       });
     }

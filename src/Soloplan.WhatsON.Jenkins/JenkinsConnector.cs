@@ -121,6 +121,8 @@ namespace Soloplan.WhatsON.Jenkins
         }
       }
 
+      this.IsDisabled = job.Disabled;
+
       if (job.LastBuild == null)
       {
         var status = new Status();
