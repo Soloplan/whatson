@@ -50,6 +50,7 @@ namespace Soloplan.WhatsON.GUI
     /// <param name="isDark">if set to <c>true</c> dark mode will be applied.</param>
     public void ApplyLightDarkMode(bool isDark)
     {
+      System.Windows.Forms.Application.SetColorMode(isDark ? System.Windows.Forms.SystemColorMode.Dark : System.Windows.Forms.SystemColorMode.Classic);
       var baseTheme = isDark ? Theme.Dark : Theme.Light;
       ITheme theme = Theme.Create(baseTheme, isDark ? PrimaryColor : SecondaryColor, Color.FromRgb(49, 95, 200));
       var paletteHelper = new PaletteHelper();

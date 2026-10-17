@@ -77,6 +77,7 @@ namespace Soloplan.WhatsON.GUI
 
     public TrayHandler(ObservationScheduler scheduler, ApplicationConfiguration configuration)
     {
+      System.Windows.Forms.Application.EnableVisualStyles();
       this.loadingIcon = new Icon(Properties.Resources.Whatson, new Size(16, 16));
       this.normalIcon = CreateStatusIcon(this.loadingIcon, Color.LimeGreen);
       this.unstableIcon = CreateStatusIcon(this.loadingIcon, Color.Gold);
@@ -89,7 +90,7 @@ namespace Soloplan.WhatsON.GUI
       this.scheduler = scheduler;
       this.configuration = configuration;
 
-      this.contextMenu = new ContextMenuStrip();
+      this.contextMenu = new ContextMenuStrip { RenderMode = ToolStripRenderMode.System };
       this.icon.ContextMenuStrip = this.contextMenu;
       this.contextMenu.Opening += this.OnContextMenuPopup;
       this.icon.DoubleClick += (s, e) => this.ShowOrHideWindow();

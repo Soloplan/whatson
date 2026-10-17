@@ -41,10 +41,14 @@ namespace Soloplan.WhatsON.GUI.Tests
       // WPF queues startup even without Run; keep rendering isolated from real servers.
       var app = new ResourceTestApp { ShutdownMode = ShutdownMode.OnExplicitShutdown };
       app.Resources = (ResourceDictionary)Application.LoadComponent(new Uri("/Soloplan.WhatsON.GUI;component/ApplicationResources.xaml", UriKind.Relative));
+      app.ApplyTheme(ApplicationTheme.System);
+      Assert.That(System.Windows.Forms.Application.ColorMode, Is.EqualTo(app.IsDarkThemeEnabled ? System.Windows.Forms.SystemColorMode.Dark : System.Windows.Forms.SystemColorMode.Classic));
       app.ApplyTheme(ApplicationTheme.Light);
       Assert.That(app.IsDarkThemeEnabled, Is.False);
+      Assert.That(System.Windows.Forms.Application.ColorMode, Is.EqualTo(System.Windows.Forms.SystemColorMode.Classic));
       app.ApplyTheme(ApplicationTheme.Dark);
       Assert.That(app.IsDarkThemeEnabled, Is.True);
+      Assert.That(System.Windows.Forms.Application.ColorMode, Is.EqualTo(System.Windows.Forms.SystemColorMode.Dark));
       Assert.That(app.Resources["MaterialDesignPaper"], Is.Not.Null);
 
       var plugins = PluginManager.Instance.Plugins;
