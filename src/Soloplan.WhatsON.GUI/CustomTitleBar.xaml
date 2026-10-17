@@ -13,9 +13,10 @@
   </UserControl.Resources>
   <materialDesign:ColorZone Margin="0"
                             Padding="6"
-                            materialDesign:ShadowAssist.ShadowDepth="Depth2"
+                            Background="{DynamicResource SettingsSurface}"
+                            Foreground="{DynamicResource MaterialDesignBody}"
                             DockPanel.Dock="Top"
-                            Mode="PrimaryMid"
+                            Mode="Standard"
                             MouseDown="MainWindowBarMouseDown">
     <DockPanel DockPanel.Dock="Top">
 
@@ -72,28 +73,34 @@
 
       <ContentControl Width="30" Height="30" Visibility="{Binding CustomButtonVisible, Converter={StaticResource InvertBoolToVis}}"/>
 
-      <Button Width="20"
-              Height="20"
+      <Button Width="32"
+              Height="28"
               Margin="1"
               Padding="0"
+              Style="{StaticResource MaterialDesignFlatButton}"
+              Foreground="{DynamicResource SettingsMuted}"
               Click="CloseButtonClick"
               Cursor="Hand"
               DockPanel.Dock="Right"
-              IsTabStop="False">
+              ToolTip="Close window"
+              AutomationProperties.Name="Close window">
         <materialDesign:PackIcon Width="20"
                                  Height="20"
                                  Kind="WindowClose" />
       </Button>
 
       <Button x:Name="MinimizeButton"
-              Width="20"
-              Height="20"
+              Width="32"
+              Height="28"
               Margin="1"
               Padding="0,6,0,0"
+              Style="{StaticResource MaterialDesignFlatButton}"
+              Foreground="{DynamicResource SettingsMuted}"
               Click="MinimizeButonClick"
               Cursor="Hand"
               DockPanel.Dock="Right"
-              IsTabStop="False"
+              ToolTip="Minimize window"
+              AutomationProperties.Name="Minimize window"
               Visibility="{Binding Path=ShowMinimizeButton, Converter={StaticResource BoolToVis}}">
         <materialDesign:PackIcon Width="20"
                                  Height="20"
@@ -111,8 +118,8 @@
             </Style.Triggers>
           </Style>
         </StackPanel.Style>
-        <Image Source="pack://application:,,,/Resources/whatsONx16.png" Width="16" Height="16"/>
-        <TextBlock Name="appName" VerticalAlignment="Center" FontSize="13" FontWeight="Light" Margin="5,0,0,0" Text="{Binding Path=Text}" />
+        <Image Source="pack://application:,,,/Soloplan.WhatsON.GUI;component/Resources/whatsONx16.png" Width="16" Height="16"/>
+        <TextBlock Name="appName" VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold" Margin="8,0,0,0" Text="{Binding Path=Text}" />
       </StackPanel>
     </DockPanel>
   </materialDesign:ColorZone>

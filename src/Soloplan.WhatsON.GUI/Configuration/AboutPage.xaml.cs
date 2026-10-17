@@ -13,10 +13,8 @@ namespace Soloplan.WhatsON.GUI.Configuration
   using System.Windows;
   using System.Windows.Controls;
   using System.Windows.Forms;
-  using System.Windows.Input;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.GUI.Configuration.ViewModel;
-  using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 
   /// <summary>
   /// Interaction logic for AboutPage.xaml.
@@ -67,69 +65,10 @@ namespace Soloplan.WhatsON.GUI.Configuration
       }
     }
 
-    /// <summary>
-    /// Texts block link mouse up.
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="MouseButtonEventArgs"/> instance containing the event data.</param>
-    private void TextBlockLinkMouseUp(object sender, MouseButtonEventArgs e)
+    private void OpenLink(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
     {
-      if (e.LeftButton == MouseButtonState.Released && sender is TextBlock textBlock)
-      {
-        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(textBlock.Text) { UseShellExecute = true });
-      }
-    }
-
-    /// <summary>
-    /// Made by Soloplan link mouse up.
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="MouseButtonEventArgs"/> instance containing the event data.</param>
-    private void MadeBySoloplanLinkMouseUp(object sender, MouseButtonEventArgs e)
-    {
-      if (e.LeftButton == MouseButtonState.Released)
-      {
-        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("https://www.soloplan.de") { UseShellExecute = true });
-      }
-    }
-
-    /// <summary>
-    /// Report an issue link mouse up.
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="MouseButtonEventArgs"/> instance containing the event data.</param>
-    private void ReportABugMouseUp(object sender, MouseButtonEventArgs e)
-    {
-      if (e.LeftButton == MouseButtonState.Released)
-      {
-        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("https://github.com/Soloplan/whatson/issues") { UseShellExecute = true });
-      }
-    }
-
-    /// <summary>
-    /// Handles the MouseEnter event of the TextBlock control.
-    /// </summary>
-    /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The <see cref="System.Windows.Input.MouseEventArgs"/> instance containing the event data.</param>
-    private void TextBlockMouseEnter(object sender, MouseEventArgs e)
-    {
-      if (sender is TextBlock textBlock)
-      {
-        textBlock.TextDecorations = TextDecorations.Underline;
-      }
-    }
-
-    /// <summary>
-    /// Handles the MouseLeave event of the TextBlock control.
-    /// </summary>
-    /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The <see cref="MouseEventArgs"/> instance containing the event data.</param>
-    private void TextBlockMouseLeave(object sender, MouseEventArgs e)
-    {
-      if (sender is TextBlock textBlock)
-      {
-        textBlock.TextDecorations = null;
-      }
+      System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+      e.Handled = true;
     }
 
     /// <summary>

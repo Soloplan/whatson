@@ -38,7 +38,7 @@ A build monitoring tool written in C#.
 - Easy configuration directly on main window.
 - Wizard to add new projects.
 - Configurable Windows notifications.
-- Dark and light theme
+- System, light, and dark appearance, with automatic updates when Windows changes theme.
 
 ## Quick start
 
@@ -47,6 +47,10 @@ A build monitoring tool written in C#.
 1. Start the app from file *Soloplan.WhatsON.GUI.exe*
 1. If you want the app to start during the system start, open the configuration (gear icon at the top, left corner) and set the option "Run when windows starts"
 1. To add a new project build for monitoring, you can use the wizard (plus icon at the top, left corner).
+
+Choose **Settings → General → Color theme** to follow Windows or select Light or
+Dark. Changes preview immediately; select **Save changes** to keep them. Reset
+or close Settings to return to the saved appearance.
 
 ## Build from source
 

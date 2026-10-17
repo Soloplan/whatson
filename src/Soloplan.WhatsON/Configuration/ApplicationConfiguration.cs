@@ -9,6 +9,7 @@ namespace Soloplan.WhatsON.Configuration
 {
   using System.Collections.Generic;
   using System.Linq;
+  using Newtonsoft.Json;
   using Soloplan.WhatsON.Model;
 
   /// <summary>
@@ -16,10 +17,17 @@ namespace Soloplan.WhatsON.Configuration
   /// </summary>
   public class ApplicationConfiguration
   {
+    private ApplicationTheme? themeMode;
+    private ApplicationTheme? legacyThemeMode;
+
     /// <summary>
-    /// Gets or sets a value indicating whether dark theme is enabled.
+    /// Gets or sets the appearance preference. New configurations follow Windows.
     /// </summary>
-    public bool DarkThemeEnabled { get; set; }
+    public ApplicationTheme ThemeMode
+    {
+      get => this.themeMode ?? this.legacyThemeMode ?? ApplicationTheme.System;
+      set => this.themeMode = value;
+    }
 
     /// <summary>
     /// Gets or sets a value indicating whether icon on taskbar should be shown.
@@ -50,6 +58,13 @@ namespace Soloplan.WhatsON.Configuration
     /// Gets the notification configuration.
     /// </summary>
     public NotificationConfiguration NotificationConfiguration { get; } = new NotificationConfiguration();
+
+    // Read old files without writing the retired setting or overriding an explicit theme.
+    [JsonProperty("DarkThemeEnabled")]
+    private bool LegacyDarkThemeEnabled
+    {
+      set => this.legacyThemeMode = value ? ApplicationTheme.Dark : ApplicationTheme.Light;
+    }
 
     /// <summary>
     /// Gets the notification configuration from the per connector settings or the global settings..

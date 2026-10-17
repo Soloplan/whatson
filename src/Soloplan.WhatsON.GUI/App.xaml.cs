@@ -51,20 +51,18 @@ namespace Soloplan.WhatsON.GUI
     /// </value>
     public bool IsDarkThemeEnabled { get; private set; }
 
+    public ApplicationTheme CurrentThemeMode { get; private set; } = ApplicationTheme.System;
+
     /// <summary>
     /// Applies the theme in a given mode.
     /// When the mode is not set, it is taken from the current configuration.
     /// </summary>
-    /// <param name="isDark">The is dark.</param>
-    public void ApplyTheme(bool? isDark = null)
+    /// <param name="mode">An optional appearance preference to preview.</param>
+    public void ApplyTheme(ApplicationTheme? mode = null)
     {
-      if (isDark == null)
-      {
-        isDark = this.config.DarkThemeEnabled;
-      }
-
-      this.IsDarkThemeEnabled = isDark.Value;
-      this.themeHelper.ApplyLightDarkMode(isDark.Value);
+      this.CurrentThemeMode = mode ?? this.config?.ThemeMode ?? ApplicationTheme.System;
+      this.IsDarkThemeEnabled = ThemeHelper.IsDarkMode(this.CurrentThemeMode, ThemeHelper.SystemUsesDarkMode());
+      this.themeHelper.ApplyLightDarkMode(this.IsDarkThemeEnabled);
     }
 
     protected override void OnStartup(StartupEventArgs e)
@@ -110,6 +108,7 @@ namespace Soloplan.WhatsON.GUI
       this.handler = new TrayHandler(this.scheduler, this.config);
       this.themeHelper.Initialize(this.handler.VisualSettings?.ColorSettings);
       this.ApplyTheme();
+      Microsoft.Win32.SystemEvents.UserPreferenceChanged += this.SystemAppearanceChanged;
 
       if (!this.config.OpenMinimized)
       {
@@ -130,9 +129,21 @@ namespace Soloplan.WhatsON.GUI
     /// <param name="e">Event args.</param>
     protected override void OnExit(ExitEventArgs e)
     {
+      Microsoft.Win32.SystemEvents.UserPreferenceChanged -= this.SystemAppearanceChanged;
       this.scheduler.Stop(true);
       this.handler.Dispose();
       base.OnExit(e);
+    }
+
+    private void SystemAppearanceChanged(object sender, Microsoft.Win32.UserPreferenceChangedEventArgs e)
+    {
+      this.Dispatcher.InvokeAsync(() =>
+      {
+        if (this.CurrentThemeMode == ApplicationTheme.System)
+        {
+          this.ApplyTheme(ApplicationTheme.System);
+        }
+      });
     }
 
     private void ComponentDispatcherThreadPreprocessMessage(ref MSG msg, ref bool handled)

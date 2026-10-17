@@ -159,7 +159,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     {
       base.OnContentRendered(e);
 
-      this.Owner.Closing += this.OwnerClosing;
+      if (this.Owner != null)
+      {
+        this.Owner.Closing += this.OwnerClosing;
+      }
+
       if (this.windowShown)
       {
         return;
@@ -265,7 +269,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <param name="e">The <see cref="System.ComponentModel.CancelEventArgs"/> instance containing the event data.</param>
     private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
     {
-      this.Owner.Closing -= this.OwnerClosing;
+      if (this.Owner != null)
+      {
+        this.Owner.Closing -= this.OwnerClosing;
+      }
+
+      ((App)Application.Current).ApplyTheme(this.configurationSource.ThemeMode);
     }
 
     /// <summary>
@@ -276,6 +285,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     private void SnackbarResetClick(object sender, RoutedEventArgs e)
     {
       this.configurationViewModel.Load(this.configurationSource);
+      ((App)Application.Current).ApplyTheme(this.configurationSource.ThemeMode);
       if (this.configurationViewModel.SingleConnectorMode && this.newConnectorPlugin != null)
       {
         this.Close();

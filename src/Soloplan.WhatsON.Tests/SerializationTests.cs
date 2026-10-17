@@ -39,7 +39,7 @@ namespace Soloplan.WhatsON.Tests
     [Test]
     public void SaveAndLoadPreserveProjectsIdentitiesAndNotificationPreferences()
     {
-      var configuration = new ApplicationConfiguration { DarkThemeEnabled = true, AlwaysOnTop = true, OpenMinimized = true };
+      var configuration = new ApplicationConfiguration { ThemeMode = ApplicationTheme.Dark, AlwaysOnTop = true, OpenMinimized = true };
       configuration.NotificationConfiguration.OnlyIfChanged = true;
       configuration.NotificationConfiguration.SuccessNotificationEnabled = false;
       var connector = new ConnectorConfiguration("Jenkins", "Release – 日本語", Connector.ServerAddress, "https://builds.example/", Connector.ProjectName, "folder/release");
@@ -53,7 +53,7 @@ namespace Soloplan.WhatsON.Tests
 
       Assert.Multiple(() =>
       {
-        Assert.That(restored.DarkThemeEnabled, Is.True);
+        Assert.That(restored.ThemeMode, Is.EqualTo(ApplicationTheme.Dark));
         Assert.That(restored.AlwaysOnTop, Is.True);
         Assert.That(restored.OpenMinimized, Is.True);
         Assert.That(restored.NotificationConfiguration.OnlyIfChanged, Is.True);
@@ -99,9 +99,9 @@ namespace Soloplan.WhatsON.Tests
     [Test]
     public void LoadingExistingConfigurationDoesNotReplaceItWithDefaults()
     {
-      this.serializer.SaveConfiguration(new ApplicationConfiguration { DarkThemeEnabled = true });
+      this.serializer.SaveConfiguration(new ApplicationConfiguration { ThemeMode = ApplicationTheme.Dark });
 
-      Assert.That(this.serializer.LoadOrCreateConfiguration().DarkThemeEnabled, Is.True);
+      Assert.That(this.serializer.LoadOrCreateConfiguration().ThemeMode, Is.EqualTo(ApplicationTheme.Dark));
     }
 
     [TestCase("{broken json")]
@@ -185,22 +185,22 @@ namespace Soloplan.WhatsON.Tests
     [Test]
     public void SavingToAnExplicitFileDoesNotOverwriteTheActiveConfiguration()
     {
-      this.serializer.SaveConfiguration(new ApplicationConfiguration { DarkThemeEnabled = true });
+      this.serializer.SaveConfiguration(new ApplicationConfiguration { ThemeMode = ApplicationTheme.Dark });
       var exportFile = Path.Combine(this.directory, "export.json");
 
-      this.serializer.SaveConfiguration(new ApplicationConfiguration { DarkThemeEnabled = false }, exportFile);
+      this.serializer.SaveConfiguration(new ApplicationConfiguration { ThemeMode = ApplicationTheme.Light }, exportFile);
 
-      Assert.That(this.serializer.LoadConfiguration().DarkThemeEnabled, Is.True);
-      Assert.That(SerializationHelper.Load<ApplicationConfiguration>(exportFile).DarkThemeEnabled, Is.False);
+      Assert.That(this.serializer.LoadConfiguration().ThemeMode, Is.EqualTo(ApplicationTheme.Dark));
+      Assert.That(SerializationHelper.Load<ApplicationConfiguration>(exportFile).ThemeMode, Is.EqualTo(ApplicationTheme.Light));
     }
 
     [Test]
     public void SaveFailureIsReportedWithoutDamagingOtherConfigurationFiles()
     {
-      this.serializer.SaveConfiguration(new ApplicationConfiguration { DarkThemeEnabled = true });
+      this.serializer.SaveConfiguration(new ApplicationConfiguration { ThemeMode = ApplicationTheme.Dark });
 
       Assert.That(() => this.serializer.SaveConfiguration(new ApplicationConfiguration(), this.directory), Throws.InstanceOf<IOException>().Or.InstanceOf<UnauthorizedAccessException>());
-      Assert.That(this.serializer.LoadConfiguration().DarkThemeEnabled, Is.True);
+      Assert.That(this.serializer.LoadConfiguration().ThemeMode, Is.EqualTo(ApplicationTheme.Dark));
     }
   }
 }

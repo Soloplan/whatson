@@ -34,9 +34,9 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
     /// <summary>
-    /// The dark theme enabled.
+    /// The selected appearance preference.
     /// </summary>
-    private bool darkThemeEnabled;
+    private ApplicationTheme themeMode;
 
     /// <summary>
     /// The open on system start.
@@ -124,14 +124,14 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     public ConnectorViewModelCollection Connectors { get; private set; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether dark theme is enabled.
+    /// Gets or sets the appearance preference.
     /// </summary>
-    public bool DarkThemeEnabled
+    public ApplicationTheme ThemeMode
     {
-      get => this.darkThemeEnabled;
+      get => this.themeMode;
       set
       {
-        this.darkThemeEnabled = value;
+        this.themeMode = value;
         this.OnPropertyChanged();
       }
     }
@@ -407,7 +407,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
           this.Connectors = new ConnectorViewModelCollection();
         }
 
-        this.DarkThemeEnabled = configurationSource.DarkThemeEnabled;
+        this.ThemeMode = configurationSource.ThemeMode;
         this.ShowInTaskbar = configurationSource.ShowInTaskbar;
         this.UnstableObservationState = configurationSource.NotificationConfiguration.UnstableNotificationEnabled;
         this.RunningObservationState = configurationSource.NotificationConfiguration.RunningNotificationEnabled;
@@ -549,7 +549,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <param name="configuration">The configuration.</param>
     private void ApplyMainSettingsToConfiguration(ApplicationConfiguration configuration)
     {
-      configuration.DarkThemeEnabled = this.DarkThemeEnabled;
+      configuration.ThemeMode = this.ThemeMode;
       configuration.ShowInTaskbar = this.ShowInTaskbar;
       configuration.AlwaysOnTop = this.AlwaysOnTop;
       configuration.OpenMinimized = this.OpenMinimized;
