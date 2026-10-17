@@ -352,10 +352,10 @@
     <value>Build-Website öffnen</value>
   </data>
   <data xml:space="preserve" name="DurationPrefix">
-    <value>🕓 Dauer: </value>
+    <value>Dauer: </value>
   </data>
   <data xml:space="preserve" name="FinishedPrefix">
-    <value>🏁 Abgeschlossen: </value>
+    <value>Abgeschlossen: </value>
   </data>
   <data xml:space="preserve" name="EstimatedRemaining">
     <value> voraussichtlich verbleibend</value>
@@ -520,4 +520,7 @@ Name: {1}
 Beschreibung: {2}
 Erwarteter Verbindungstyp: {3}</value>
   </data>
+  <data name="CommitsByCaption" xml:space="preserve"><value>Commits von</value></data>
+  <data name="BuildContributorsCaption" xml:space="preserve"><value>Mitwirkende an diesem Build</value></data>
+  <data name="ChangesByCaption" xml:space="preserve"><value>Änderungen von</value></data>
 </root>

@@ -352,10 +352,10 @@
     <value>Open build website</value>
   </data>
   <data xml:space="preserve" name="DurationPrefix">
-    <value>🕓 Duration: </value>
+    <value>Duration: </value>
   </data>
   <data xml:space="preserve" name="FinishedPrefix">
-    <value>🏴󠁧󠁢󠁥󠁮󠁧󠁿 Finished: </value>
+    <value>Finished: </value>
   </data>
   <data xml:space="preserve" name="EstimatedRemaining">
     <value> estimated remaining</value>
@@ -520,4 +520,7 @@ Name: {1}
 Description: {2}
 Expected connector type: {3}</value>
   </data>
+  <data name="CommitsByCaption" xml:space="preserve"><value>Commits by</value></data>
+  <data name="BuildContributorsCaption" xml:space="preserve"><value>Contributors to this build</value></data>
+  <data name="ChangesByCaption" xml:space="preserve"><value>Changes by</value></data>
 </root>

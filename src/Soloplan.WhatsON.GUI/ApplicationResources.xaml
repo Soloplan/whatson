@@ -12,6 +12,38 @@
       Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Blue.xaml" />
     <ResourceDictionary Source="Configuration/ConfigurationStyles.xaml" />
   </ResourceDictionary.MergedDictionaries>
+  <Style x:Key="ToolTipMessage" TargetType="TextBlock">
+    <Setter Property="TextWrapping" Value="Wrap" />
+    <Setter Property="Margin" Value="0,6,0,0" />
+    <Style.Triggers>
+      <Trigger Property="Text" Value=""><Setter Property="Visibility" Value="Collapsed" /></Trigger>
+    </Style.Triggers>
+  </Style>
+  <Style TargetType="{x:Type ToolTip}">
+    <Style.Resources>
+      <Style TargetType="TextBlock"><Setter Property="TextWrapping" Value="Wrap" /></Style>
+    </Style.Resources>
+    <Setter Property="Background" Value="{DynamicResource SettingsSurface}" />
+    <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource SettingsBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Padding" Value="12,10" />
+    <Setter Property="FontFamily" Value="Segoe UI" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="FontWeight" Value="Normal" />
+    <Setter Property="MaxWidth" Value="440" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ToolTip}">
+          <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="7"
+                  Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+            <ContentPresenter ContentSource="Content" RecognizesAccessKey="False" />
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
   <Style x:Key="BorderLessWindowStyle" TargetType="{x:Type Window}">
     <Setter Property="WindowChrome.WindowChrome">
       <Setter.Value>

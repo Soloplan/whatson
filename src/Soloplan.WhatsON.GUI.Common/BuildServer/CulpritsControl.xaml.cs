@@ -10,7 +10,6 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
   using System.Collections;
   using System.Windows;
   using System.Windows.Controls;
-  using Soloplan.WhatsON.GUI.Common.Converters;
 
   /// <summary>
   /// Interaction logic for CulpritsControl.xaml.
@@ -33,8 +32,6 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     public CulpritsControl()
     {
       this.InitializeComponent();
-      var converter = this.Resources["CountToVisibility"] as CountToVisibilityConverter;
-      converter.ValueForFalse = Visibility.Collapsed;
       this.DataContext = this;
     }
 
@@ -48,15 +45,6 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     {
       get => (string)this.GetValue(CaptionProperty);
       set => this.SetValue(CaptionProperty, value);
-    }
-
-    protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
-    {
-      if (e.Property.Name == nameof(this.CulpritsProp))
-      {
-      }
-
-      base.OnPropertyChanged(e);
     }
   }
 }

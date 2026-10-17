@@ -176,6 +176,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       VerifyNotificationBindings();
       VerifyTrayNotificationForwarding();
       ProjectListChecks.Verify(app);
+      ToolTipChecks.Verify(app);
       VerifyHandledExceptionsAreNotLoggedAsErrors();
 
       using (var stream = Application.GetResourceStream(new Uri("/Soloplan.WhatsON.GUI;component/Logging/LogConfig.xml", UriKind.Relative)).Stream)

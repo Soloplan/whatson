@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Soloplan.WhatsON.GUI.Common.BuildServer.ProgressBarTooltipControl"
+<UserControl x:Class="Soloplan.WhatsON.GUI.Common.BuildServer.ProgressBarTooltipControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
@@ -33,9 +33,6 @@
           </TextBlock.Text>
         </TextBlock>
         <TextBlock Name="EstimatedRemainingText" Text="{x:Static loc:Strings.EstimatedRemaining}" />
-        <TextBlock>
-          <LineBreak />
-        </TextBlock>
       </StackPanel>
     </StackPanel>
     <StackPanel Orientation="Horizontal"
@@ -51,9 +48,6 @@
         </TextBlock.Text>
       </TextBlock>
       <TextBlock Text="{x:Static loc:Strings.LongerThanEstimatedSuffix}" />
-      <TextBlock>
-        <LineBreak />
-      </TextBlock>
     </StackPanel>
   </StackPanel>
 </UserControl>
