@@ -19,7 +19,9 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     [TestCase("folder/Release #1?", "https://builds.example/job/folder/job/Release%20%231%3F")]
     public void NestedProjectNamesRemainPathSegments(string project, string expected)
     {
-      var connector = new JenkinsConnector(new ConnectorConfiguration("Jenkins", "Release", Connector.ServerAddress, "https://builds.example/", Connector.ProjectName, project), new FakeJenkinsApi());
+      var connector = new JenkinsConnector(
+        new ConnectorConfiguration("Jenkins", "Release", Connector.ServerAddress, "https://builds.example/", Connector.ProjectName, project),
+        new FakeJenkinsApi());
 
       Assert.That(JenkinsApi.UrlHelper.ProjectUrl(connector), Is.EqualTo(expected));
     }
@@ -27,7 +29,17 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     [Test]
     public void RedirectPluginCanBeDisabledForAProjectLink()
     {
-      var connector = new JenkinsConnector(new ConnectorConfiguration("Jenkins", "Release", Connector.ServerAddress, "https://builds.example", Connector.ProjectName, "Release", JenkinsConnector.RedirectPlugin, "true"), new FakeJenkinsApi());
+      var connector = new JenkinsConnector(
+        new ConnectorConfiguration(
+          "Jenkins",
+          "Release",
+          Connector.ServerAddress,
+          "https://builds.example",
+          Connector.ProjectName,
+          "Release",
+          JenkinsConnector.RedirectPlugin,
+          "true"),
+        new FakeJenkinsApi());
 
       Assert.That(JenkinsApi.UrlHelper.ProjectUrl(connector), Is.EqualTo("https://builds.example/job/Release/display/redirect"));
       Assert.That(JenkinsApi.UrlHelper.ProjectUrl(connector, false), Is.EqualTo("https://builds.example/job/Release"));
@@ -36,7 +48,17 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     [Test]
     public void ApiBuildRequestsNeverUseBrowserRedirectUrls()
     {
-      var connector = new JenkinsConnector(new ConnectorConfiguration("Jenkins", "Release", Connector.ServerAddress, "https://builds.example", Connector.ProjectName, "Release", JenkinsConnector.RedirectPlugin, "true"), new FakeJenkinsApi());
+      var connector = new JenkinsConnector(
+        new ConnectorConfiguration(
+          "Jenkins",
+          "Release",
+          Connector.ServerAddress,
+          "https://builds.example",
+          Connector.ProjectName,
+          "Release",
+          JenkinsConnector.RedirectPlugin,
+          "true"),
+        new FakeJenkinsApi());
 
       Assert.That(JenkinsApi.UrlHelper.BuildUrl(connector, 42), Is.EqualTo("https://builds.example/job/Release/42/display/redirect"));
       Assert.That(JenkinsApi.UrlHelper.BuildRequest(connector, 42), Does.StartWith("https://builds.example/job/Release/42/api/json?"));
@@ -90,7 +112,10 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     public void EnsureProjectNamesAreProperlyConvertedToUrl()
     {
       var api = new FakeJenkinsApi();
-      var config = new ConnectorConfiguration(JenkinsConnector.ConnectorName, "my project", new List<ConfigurationItem>
+      var config = new ConnectorConfiguration(
+        JenkinsConnector.ConnectorName,
+        "my project",
+        new List<ConfigurationItem>
         {
           new ConfigurationItem(Connector.ServerAddress) { Value = "https://www.my-little-jenkins.com" },
           new ConfigurationItem(Connector.ProjectName) { Value = "my-fancy-build-project" },
@@ -107,11 +132,14 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     public void EnsureProjectsInFoldersAreProperlyConvertedToUrl()
     {
       var api = new FakeJenkinsApi();
-      var config = new ConnectorConfiguration(JenkinsConnector.ConnectorName, "my project", new List<ConfigurationItem>
-      {
-        new ConfigurationItem(Connector.ServerAddress) { Value = "https://www.my-little-jenkins.com" },
-        new ConfigurationItem(Connector.ProjectName) { Value = "folder/my-fancy-build-project" },
-      });
+      var config = new ConnectorConfiguration(
+        JenkinsConnector.ConnectorName,
+        "my project",
+        new List<ConfigurationItem>
+        {
+          new ConfigurationItem(Connector.ServerAddress) { Value = "https://www.my-little-jenkins.com" },
+          new ConfigurationItem(Connector.ProjectName) { Value = "folder/my-fancy-build-project" },
+        });
 
       var connector = new JenkinsConnector(config, api);
 
@@ -124,11 +152,14 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     public void EnsureProjectsWithSpecialCharsAreProperlyConvertedToUrl()
     {
       var api = new FakeJenkinsApi();
-      var config = new ConnectorConfiguration(JenkinsConnector.ConnectorName, "my project", new List<ConfigurationItem>
-      {
-        new ConfigurationItem(Connector.ServerAddress) { Value = "https://www.my-little-jenkins.com" },
-        new ConfigurationItem(Connector.ProjectName) { Value = "playground/strâng335 sads== Jöb NAME" },
-      });
+      var config = new ConnectorConfiguration(
+        JenkinsConnector.ConnectorName,
+        "my project",
+        new List<ConfigurationItem>
+        {
+          new ConfigurationItem(Connector.ServerAddress) { Value = "https://www.my-little-jenkins.com" },
+          new ConfigurationItem(Connector.ProjectName) { Value = "playground/strâng335 sads== Jöb NAME" },
+        });
 
       var connector = new JenkinsConnector(config, api);
 
@@ -141,11 +172,14 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     public void EnsureLegacyProjectNameFormatPriorTo_0_9_1_Works()
     {
       var api = new FakeJenkinsApi();
-      var config = new ConnectorConfiguration(JenkinsConnector.ConnectorName, "my project", new List<ConfigurationItem>
-      {
-        new ConfigurationItem(Connector.ServerAddress) { Value = "https://www.my-little-jenkins.com" },
-        new ConfigurationItem(Connector.ProjectName) { Value = "folder1/job/folder2/job/my-job" },
-      });
+      var config = new ConnectorConfiguration(
+        JenkinsConnector.ConnectorName,
+        "my project",
+        new List<ConfigurationItem>
+        {
+          new ConfigurationItem(Connector.ServerAddress) { Value = "https://www.my-little-jenkins.com" },
+          new ConfigurationItem(Connector.ProjectName) { Value = "folder1/job/folder2/job/my-job" },
+        });
 
       var connector = new JenkinsConnector(config, api);
 

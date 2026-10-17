@@ -26,7 +26,8 @@ namespace Soloplan.WhatsON.Jenkins.GUI
 
     public bool CulpritsAndLastCommittedDifferent { get; set; }
 
-    public ObservableCollection<UserViewModel> CommittedToThisBuild => this.committedToThisBuild ?? (this.committedToThisBuild = new ObservableCollection<UserViewModel>());
+    public ObservableCollection<UserViewModel> CommittedToThisBuild =>
+      this.committedToThisBuild ?? (this.committedToThisBuild = new ObservableCollection<UserViewModel>());
 
     public override void Update(Status newStatus)
     {
@@ -56,17 +57,19 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       this.Culprits.Clear();
       foreach (var culprit in jenkinsStatus.Culprits)
       {
-        var culpritModel = new UserViewModel() { FullName = culprit.FullName, Url = culprit.AbsoluteUrl };
+        var culpritModel = new UserViewModel { FullName = culprit.FullName, Url = culprit.AbsoluteUrl };
         this.Culprits.Add(culpritModel);
       }
 
       foreach (var culprit in jenkinsStatus.CommittedToThisBuild ?? Enumerable.Empty<JenkinsUser>())
       {
-        var culpritModel = new UserViewModel() { FullName = culprit.FullName, Url = culprit.AbsoluteUrl };
+        var culpritModel = new UserViewModel { FullName = culprit.FullName, Url = culprit.AbsoluteUrl };
         this.CommittedToThisBuild.Add(culpritModel);
       }
 
-      this.CulpritsAndLastCommittedDifferent = this.Culprits.Count != this.CommittedToThisBuild.Count || this.Culprits.Any(culprit => this.CommittedToThisBuild.All(committer => committer.FullName != culprit.FullName));
+      this.CulpritsAndLastCommittedDifferent = this.Culprits.Count != this.CommittedToThisBuild.Count
+                                               || this.Culprits.Any(culprit =>
+                                                 this.CommittedToThisBuild.All(committer => committer.FullName != culprit.FullName));
 
       this.UpdateCalculatedFields();
     }

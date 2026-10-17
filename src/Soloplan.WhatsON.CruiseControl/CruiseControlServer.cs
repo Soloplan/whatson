@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="CruiseControlServer.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -22,6 +22,7 @@ namespace Soloplan.WhatsON.CruiseControl
   public class CruiseControlServer
   {
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+
     private readonly string baseUrl;
 
     private DateTime lastPolled;
@@ -71,7 +72,7 @@ namespace Soloplan.WhatsON.CruiseControl
           var recentBuilds = doc.DocumentNode.SelectNodes("//table[@class='RecentBuildsPanel']/tr/td/a[@class]");
           foreach (var b in recentBuilds.Take(limit))
           {
-            var authority = new Uri(projectReportUrl).GetLeftPart(System.UriPartial.Authority);
+            var authority = new Uri(projectReportUrl).GetLeftPart(UriPartial.Authority);
             var build = CruiseControlBuild.FromHtmlNode(b, authority);
             if (build == null)
             {
@@ -107,7 +108,7 @@ namespace Soloplan.WhatsON.CruiseControl
     }
 
     private async Task<TModel> GetStatusAsync<TModel>(CancellationToken cancellationToken, string requestUrl)
-    where TModel : class
+      where TModel : class
     {
       var request = WebRequest.Create(requestUrl);
       try
@@ -138,25 +139,13 @@ namespace Soloplan.WhatsON.CruiseControl
 
     public static class UrlHelper
     {
-      public static string GetReportUrl(string baseUrl, string project = null)
-      {
-        return $"{SanitizeBaseUri(baseUrl)}" + (project != null ? $"/project/{Uri.EscapeDataString(project)}/ViewProjectReport.aspx" : string.Empty);
-      }
+      public static string GetReportUrl(string baseUrl, string project = null) => $"{SanitizeBaseUri(baseUrl)}" + (project != null ? $"/project/{Uri.EscapeDataString(project)}/ViewProjectReport.aspx" : string.Empty);
 
-      public static string GetXmlReportUrl(string baseUrl)
-      {
-        return $"{SanitizeBaseUri(baseUrl)}/XmlStatusReport.aspx";
-      }
+      public static string GetXmlReportUrl(string baseUrl) => $"{SanitizeBaseUri(baseUrl)}/XmlStatusReport.aspx";
 
-      public static string GetAllBuildsUrl(string baseUrl, string project)
-      {
-        return $"{SanitizeBaseUri(baseUrl)}/project/{Uri.EscapeDataString(project)}/ViewAllBuilds.aspx";
-      }
+      public static string GetAllBuildsUrl(string baseUrl, string project) => $"{SanitizeBaseUri(baseUrl)}/project/{Uri.EscapeDataString(project)}/ViewAllBuilds.aspx";
 
-      private static string SanitizeBaseUri(string baseUrl)
-      {
-        return baseUrl.TrimEnd('/');
-      }
+      private static string SanitizeBaseUri(string baseUrl) => baseUrl.TrimEnd('/');
     }
   }
 }

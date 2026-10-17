@@ -18,9 +18,6 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
     {
     }
 
-    public override ConnectorViewModel CreateViewModel(Connector connector)
-    {
-      return new CruiseControlProjectViewModel(connector as CruiseControlConnector);
-    }
+    public override ConnectorViewModel CreateViewModel(Connector connector) => new CruiseControlProjectViewModel(connector as CruiseControlConnector);
   }
 }

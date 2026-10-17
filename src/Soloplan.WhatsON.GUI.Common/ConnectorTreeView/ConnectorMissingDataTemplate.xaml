@@ -29,13 +29,15 @@
           </StackPanel>
         </StackPanel>
       </StackPanel.ToolTip>
-      <materialDesign:PackIcon 
-      Foreground="DarkSalmon"
-      Width="14"
-      Height="14"
-      Kind="Puzzle" />
-      <TextBlock FontSize="12" VerticalAlignment="Center" Margin="3,0,0,0" FontWeight="Normal" Text="{x:Static loc:Strings.MissingPluginPrefix}" />
-      <TextBlock FontSize="12" VerticalAlignment="Center" FontWeight="Bold" Text="{Binding ExpectedConnectorType, Mode=OneWay}" />
+      <materialDesign:PackIcon
+        Foreground="DarkSalmon"
+        Width="14"
+        Height="14"
+        Kind="Puzzle" />
+      <TextBlock FontSize="12" VerticalAlignment="Center" Margin="3,0,0,0" FontWeight="Normal"
+                 Text="{x:Static loc:Strings.MissingPluginPrefix}" />
+      <TextBlock FontSize="12" VerticalAlignment="Center" FontWeight="Bold"
+                 Text="{Binding ExpectedConnectorType, Mode=OneWay}" />
       <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" FontWeight="Normal" FontSize="12" Text="-" />
       <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" FontWeight="Normal" FontSize="12" Text="{Binding Name}" />
     </StackPanel>

@@ -31,17 +31,17 @@ namespace Soloplan.WhatsON
     public const string ConfigFileExtension = "json";
 
     /// <summary>
-    /// Logger instance used by this class.
-    /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
-
-    /// <summary>
-    /// The  <see cref="Lazy{T}"/> instance for the singleton.
+    /// The  <see cref="Lazy{T}" /> instance for the singleton.
     /// </summary>
     private static readonly Lazy<SerializationHelper> lazy = new Lazy<SerializationHelper>(() => new SerializationHelper());
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SerializationHelper"/> class.
+    /// Logger instance used by this class.
+    /// </summary>
+    private static readonly Logger log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SerializationHelper" /> class.
     /// </summary>
     public SerializationHelper()
     {
@@ -54,16 +54,16 @@ namespace Soloplan.WhatsON
     }
 
     /// <summary>
-    /// Gets the instance of the <see cref="SerializationHelper"/>.
+    /// Gets the instance of the <see cref="SerializationHelper" />.
     /// </summary>
     public static SerializationHelper Instance => lazy.Value;
+
+    public string ConfigFile => this.ConfigFolder + "\\configuration." + ConfigFileExtension;
 
     /// <summary>
     /// Gets the configuration folder path, without the back slash.
     /// </summary>
     public string ConfigFolder { get; private set; }
-
-    public string ConfigFile => this.ConfigFolder + "\\configuration." + ConfigFileExtension;
 
     public static T Load<T>(string file)
     {
@@ -71,103 +71,11 @@ namespace Soloplan.WhatsON
       return JsonConvert.DeserializeObject<T>(File.ReadAllText(file), settings);
     }
 
-    /// <summary>
-    /// Saves the configuration to specified file.
-    /// </summary>
-    /// <typeparam name="T">The type of configuration.</typeparam>
-    /// <param name="configuration">The configuration.</param>
-    /// <param name="file">The file path.</param>
-    /// <param name="serializeIdentifier">if set to <c>true</c> serialize the identifier.</param>
-    public void Save<T>(T configuration, string file, bool serializeIdentifier = true)
-    {
-      log.Debug("Saving configuration {configuration} to file {file}.", configuration, file);
-      var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto, NullValueHandling = NullValueHandling.Ignore, Formatting = Formatting.Indented };
-      if (!serializeIdentifier)
-      {
-        settings.ContractResolver = new WhatsOnContractResolver(nameof(ConnectorConfiguration.Identifier));
-      }
-
-      var json = JsonConvert.SerializeObject(configuration, settings);
-      File.WriteAllText(file, json);
-      log.Debug("Configuration saved.");
-    }
-
-    public ApplicationConfiguration LoadConfiguration()
-    {
-      log.Debug("Loading configuration form file {file}", this.ConfigFile);
-      var result = Load<ApplicationConfiguration>(this.ConfigFile);
-      this.HandleConfigurationErrors(result);
-      return result;
-    }
-
-    /// <summary>
-    /// Sets the configuration folder to given path.
-    /// </summary>
-    /// <param name="configDir">The new configuration Directory Path. Can be null, then default is used. The ending slash will be trimmed.</param>
-    public void SetConfigFolder(string configDir)
-    {
-      if (configDir == null)
-      {
-        return;
-      }
-
-      try
-      {
-        configDir = configDir.TrimEnd('\\');
-        if (!Directory.Exists(configDir))
-        {
-          Directory.CreateDirectory(configDir);
-        }
-      }
-      catch (Exception e)
-      {
-        log.Error($"Couldn't set the configuration directory to: {configDir}, Error message: {e.Message}");
-      }
-      finally
-      {
-        this.ConfigFolder = configDir;
-      }
-    }
-
-    /// <summary>
-    /// Loads the or creates the configuration.
-    /// </summary>
-    /// <returns>The existing or new configuration.</returns>
-    public ApplicationConfiguration LoadOrCreateConfiguration()
-    {
-      if (File.Exists(this.ConfigFile))
-      {
-        return this.LoadConfiguration();
-      }
-
-      log.Debug("Configuration file {file} doesn't exist. Create new default configuration.", this.ConfigFile);
-      return new ApplicationConfiguration();
-    }
-
-    /// <summary>
-    /// Saves the configuration.
-    /// </summary>
-    /// <param name="configuration">The configuration.</param>
-    /// <param name="configFilePath">The configuration file path.</param>
-    /// <exception cref="InvalidOperationException">Couldn't get the directory for configuration file.</exception>
-    public void SaveConfiguration(ApplicationConfiguration configuration, string configFilePath = null)
-    {
-      if (configFilePath == null)
-      {
-        var configFileDirecory = Path.GetDirectoryName(this.ConfigFile);
-        if (configFileDirecory == null)
-        {
-          throw new InvalidOperationException("Couldn't get the directory for configuration file.");
-        }
-
-        Directory.CreateDirectory(configFileDirecory);
-      }
-
-      this.Save(configuration, configFilePath ?? this.ConfigFile);
-    }
-
-    public async Task<TModel> GetJsonModel<TModel>(string requestUrl, CancellationToken token = default(CancellationToken), Action<WebRequest> requestCallback = null)
-     where TModel : class
+    public async Task<TModel> GetJsonModel<TModel>(
+      string requestUrl,
+      CancellationToken token = default(CancellationToken),
+      Action<WebRequest> requestCallback = null)
+      where TModel : class
     {
       const string JSON_CONTENT_TYPE = "application/json";
       WebRequest.DefaultWebProxy = null;
@@ -185,12 +93,14 @@ namespace Soloplan.WhatsON
         {
           if (response.StatusCode != HttpStatusCode.OK)
           {
-            throw new InvalidPlugInApiResponseException($"Error while accessing the API via \"{requestUrl}\": The server returned the error code: {response.StatusCode}: {response.StatusDescription}. ");
+            throw new InvalidPlugInApiResponseException(
+              $"Error while accessing the API via \"{requestUrl}\": The server returned the error code: {response.StatusCode}: {response.StatusDescription}. ");
           }
 
           if (!response.ContentType.Contains(JSON_CONTENT_TYPE))
           {
-            throw new InvalidPlugInApiResponseException($"The API didn't return JSON content from the requested url \"{requestUrl}\". Content type was \"{response.ContentType}\".");
+            throw new InvalidPlugInApiResponseException(
+              $"The API didn't return JSON content from the requested url \"{requestUrl}\". Content type was \"{response.ContentType}\".");
           }
 
           // Get the stream containing content returned by the server
@@ -219,6 +129,124 @@ namespace Soloplan.WhatsON
 
         log.Error($"Could not fetch JSON data from {requestUrl}.", ex);
         throw ex;
+      }
+    }
+
+    public ApplicationConfiguration LoadConfiguration()
+    {
+      log.Debug("Loading configuration form file {file}", this.ConfigFile);
+      var result = Load<ApplicationConfiguration>(this.ConfigFile);
+      this.HandleConfigurationErrors(result);
+      return result;
+    }
+
+    /// <summary>
+    /// Loads the or creates the configuration.
+    /// </summary>
+    /// <returns>The existing or new configuration.</returns>
+    public ApplicationConfiguration LoadOrCreateConfiguration()
+    {
+      if (File.Exists(this.ConfigFile))
+      {
+        return this.LoadConfiguration();
+      }
+
+      log.Debug("Configuration file {file} doesn't exist. Create new default configuration.", this.ConfigFile);
+      return new ApplicationConfiguration();
+    }
+
+    /// <summary>
+    /// Saves the configuration to specified file.
+    /// </summary>
+    /// <typeparam name="T">The type of configuration.</typeparam>
+    /// <param name="configuration">The configuration.</param>
+    /// <param name="file">The file path.</param>
+    /// <param name="serializeIdentifier">if set to <c>true</c> serialize the identifier.</param>
+    public void Save<T>(T configuration, string file, bool serializeIdentifier = true)
+    {
+      log.Debug("Saving configuration {configuration} to file {file}.", configuration, file);
+      var settings = new JsonSerializerSettings
+      {
+        TypeNameHandling = TypeNameHandling.Auto, NullValueHandling = NullValueHandling.Ignore, Formatting = Formatting.Indented,
+      };
+      if (!serializeIdentifier)
+      {
+        settings.ContractResolver = new WhatsOnContractResolver(nameof(ConnectorConfiguration.Identifier));
+      }
+
+      var json = JsonConvert.SerializeObject(configuration, settings);
+      File.WriteAllText(file, json);
+      log.Debug("Configuration saved.");
+    }
+
+    /// <summary>
+    /// Saves the configuration.
+    /// </summary>
+    /// <param name="configuration">The configuration.</param>
+    /// <param name="configFilePath">The configuration file path.</param>
+    /// <exception cref="InvalidOperationException">Couldn't get the directory for configuration file.</exception>
+    public void SaveConfiguration(ApplicationConfiguration configuration, string configFilePath = null)
+    {
+      if (configFilePath == null)
+      {
+        var configFileDirecory = Path.GetDirectoryName(this.ConfigFile);
+        if (configFileDirecory == null)
+        {
+          throw new InvalidOperationException("Couldn't get the directory for configuration file.");
+        }
+
+        Directory.CreateDirectory(configFileDirecory);
+      }
+
+      this.Save(configuration, configFilePath ?? this.ConfigFile);
+    }
+
+    /// <summary>
+    /// Sets the configuration folder to given path.
+    /// </summary>
+    /// <param name="configDir">
+    /// The new configuration Directory Path. Can be null, then default is used. The ending slash will
+    /// be trimmed.
+    /// </param>
+    public void SetConfigFolder(string configDir)
+    {
+      if (configDir == null)
+      {
+        return;
+      }
+
+      try
+      {
+        configDir = configDir.TrimEnd('\\');
+        if (!Directory.Exists(configDir))
+        {
+          Directory.CreateDirectory(configDir);
+        }
+      }
+      catch (Exception e)
+      {
+        log.Error($"Couldn't set the configuration directory to: {configDir}, Error message: {e.Message}");
+      }
+      finally
+      {
+        this.ConfigFolder = configDir;
+      }
+    }
+
+    /// <summary>
+    /// Checks the connectors configuration do not contain null and removes the configuration if it was null.
+    /// </summary>
+    /// <param name="appConfiguration">The application configuration.</param>
+    private void CheckConnectorsConfigurationDoNotContainNull(ApplicationConfiguration appConfiguration)
+    {
+      for (var i = 0; i < appConfiguration.ConnectorsConfiguration.Count; i++)
+      {
+        if (appConfiguration.ConnectorsConfiguration[i] == null)
+        {
+          log.Error("One of the project configuration entries was null");
+          appConfiguration.ConnectorsConfiguration.RemoveAt(i);
+          i--;
+        }
       }
     }
 
@@ -267,7 +295,7 @@ namespace Soloplan.WhatsON
             {
               if (item.Key == "Address")
               {
-                item.Value = address.Split(new string[] { "server/" }, StringSplitOptions.None)[0];
+                item.Value = address.Split(new[] { "server/" }, StringSplitOptions.None)[0];
               }
             }
           }
@@ -281,28 +309,7 @@ namespace Soloplan.WhatsON
     /// Checks if configuration is old/deprecated and calls functions that make changes to those config versions.
     /// </summary>
     /// <param name="applicationConfiguration">Configuration to be checked.</param>
-    private void HandleOlderConfigurationFiles(ApplicationConfiguration applicationConfiguration)
-    {
-      this.HandleCruiseControlNewProperties(applicationConfiguration);
-      return;
-    }
-
-    /// <summary>
-    /// Checks the connectors configuration do not contain null and removes the configuration if it was null.
-    /// </summary>
-    /// <param name="appConfiguration">The application configuration.</param>
-    private void CheckConnectorsConfigurationDoNotContainNull(ApplicationConfiguration appConfiguration)
-    {
-      for (var i = 0; i < appConfiguration.ConnectorsConfiguration.Count; i++)
-      {
-        if (appConfiguration.ConnectorsConfiguration[i] == null)
-        {
-          log.Error("One of the project configuration entries was null");
-          appConfiguration.ConnectorsConfiguration.RemoveAt(i);
-          i--;
-        }
-      }
-    }
+    private void HandleOlderConfigurationFiles(ApplicationConfiguration applicationConfiguration) => this.HandleCruiseControlNewProperties(applicationConfiguration);
 
     /// <summary>
     /// The contract resolver capable of ignoring certain properties.
@@ -316,7 +323,7 @@ namespace Soloplan.WhatsON
       private readonly string[] properties;
 
       /// <summary>
-      /// Initializes a new instance of the <see cref="WhatsOnContractResolver"/> class.
+      /// Initializes a new instance of the <see cref="WhatsOnContractResolver" /> class.
       /// </summary>
       /// <param name="properties">The properties.</param>
       public WhatsOnContractResolver(params string[] properties)

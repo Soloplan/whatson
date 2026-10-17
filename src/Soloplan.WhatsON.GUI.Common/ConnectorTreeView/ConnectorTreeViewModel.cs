@@ -1,7 +1,9 @@
-﻿// <copyright file="ConnectorTreeViewModel.cs" company="Soloplan GmbH">
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ConnectorTreeViewModel.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
@@ -21,7 +23,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using Soloplan.WhatsON.Model;
 
   /// <summary>
-  /// Top level viewmodel used to bind to <see cref="ConnectorTreeView"/>.
+  /// Top level viewmodel used to bind to <see cref="ConnectorTreeView" />.
   /// </summary>
   public partial class ConnectorTreeViewModel : INotifyPropertyChanged, IHandleDoubleClick, IDropTarget
   {
@@ -31,7 +33,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
     /// <summary>
-    /// Backing field for <see cref="ConnectorGroups"/>.
+    /// Backing field for <see cref="ConnectorGroups" />.
     /// </summary>
     private ObservableCollection<ConnectorGroupViewModel> connectorGroups;
 
@@ -41,7 +43,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private Collection<ConnectorViewModel> selectedConnectors;
 
     /// <summary>
-    /// Flag indicating that <see cref="ConfigurationChanged"/> event is triggered - used to ignore updates of model.
+    /// Flag indicating that <see cref="ConfigurationChanged" /> event is triggered - used to ignore updates of model.
     /// </summary>
     private bool configurationChanging;
 
@@ -73,10 +75,12 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// Gets observable collection of connector groups, the top level object in tree view binding.
     /// </summary>
-    public ObservableCollection<ConnectorGroupViewModel> ConnectorGroups => this.connectorGroups ?? (this.connectorGroups = this.CreateConnectorGroupViewModelCollection());
+    public ObservableCollection<ConnectorGroupViewModel> ConnectorGroups =>
+      this.connectorGroups ?? (this.connectorGroups = this.CreateConnectorGroupViewModelCollection());
 
     /// <summary>
-    /// Gets first group from <see cref="ConnectorGroups"/>, used for binding when there is just one group <see cref="OneGroup"/>.
+    /// Gets first group from <see cref="ConnectorGroups" />, used for binding when there is just one group
+    /// <see cref="OneGroup" />.
     /// </summary>
     public ConnectorGroupViewModel FirstGroup { get; private set; }
 
@@ -99,13 +103,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>Updates the current drag state.</summary>
     /// <param name="dropInfo">Information about the drag.</param>
     /// <remarks>
-    /// To allow a drop at the current drag position, the <see cref="P:GongSolutions.Wpf.DragDrop.DropInfo.Effects" /> property on
+    /// To allow a drop at the current drag position, the <see cref="P:GongSolutions.Wpf.DragDrop.DropInfo.Effects" />
+    /// property on
     /// <paramref name="dropInfo" /> should be set to a value other than <see cref="F:System.Windows.DragDropEffects.None" />
     /// and <see cref="P:GongSolutions.Wpf.DragDrop.DropInfo.Data" /> should be set to a non-null value.
     /// </remarks>
     public void DragOver(IDropInfo dropInfo)
     {
-      if (object.ReferenceEquals(dropInfo.TargetItem, dropInfo.Data))
+      if (ReferenceEquals(dropInfo.TargetItem, dropInfo.Data))
       {
         return;
       }
@@ -120,7 +125,9 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         else if (dropInfo.TargetItem is ConnectorViewModel)
         {
           dropInfo.Effects = DragDropEffects.Move;
-          dropInfo.DropTargetAdorner = (dropInfo.InsertPosition & RelativeInsertPosition.TargetItemCenter) != 0 ? DropTargetAdorners.Highlight : DropTargetAdorners.Insert;
+          dropInfo.DropTargetAdorner = (dropInfo.InsertPosition & RelativeInsertPosition.TargetItemCenter) != 0
+            ? DropTargetAdorners.Highlight
+            : DropTargetAdorners.Insert;
         }
       }
       else if (dropInfo.Data is ConnectorGroupViewModel)
@@ -128,7 +135,9 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         if (dropInfo.TargetItem is ConnectorGroupViewModel)
         {
           dropInfo.Effects = DragDropEffects.Move;
-          dropInfo.DropTargetAdorner = (dropInfo.InsertPosition & RelativeInsertPosition.TargetItemCenter) != 0 ? DropTargetAdorners.Highlight : DropTargetAdorners.Insert;
+          dropInfo.DropTargetAdorner = (dropInfo.InsertPosition & RelativeInsertPosition.TargetItemCenter) != 0
+            ? DropTargetAdorners.Highlight
+            : DropTargetAdorners.Insert;
         }
       }
     }
@@ -162,9 +171,9 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
             }
           }
 
-          if (found == true)
+          if (found)
           {
-            if (dropInfo.InsertPosition == GongSolutions.Wpf.DragDrop.RelativeInsertPosition.BeforeTargetItem)
+            if (dropInfo.InsertPosition == RelativeInsertPosition.BeforeTargetItem)
             {
               var targetGroup = this.GetConnectorGroup((ConnectorViewModel)dropInfo.TargetItem);
               foreach (var element in this.connectorsToDrop.Reverse())
@@ -298,7 +307,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Writes model settings to <paramref name="configuration"/>.
+    /// Writes model settings to <paramref name="configuration" />.
     /// </summary>
     /// <param name="configuration">Application configuration.</param>
     public void WriteToConfiguration(ApplicationConfiguration configuration)
@@ -330,20 +339,17 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Pares current expansion state of groups to <see cref="GroupExpansionSettings"/> list.
+    /// Pares current expansion state of groups to <see cref="GroupExpansionSettings" /> list.
     /// </summary>
-    /// <returns>List of <see cref="GroupExpansionSettings"/>.</returns>
+    /// <returns>List of <see cref="GroupExpansionSettings" />.</returns>
     public IList<GroupExpansionSettings> GetGroupExpansionState()
     {
-      return this.ConnectorGroups.Select(group => new GroupExpansionSettings
-      {
-        GroupName = group.GroupName,
-        Expanded = group.IsNodeExpanded,
-      }).ToList();
+      return this.ConnectorGroups.Select(group => new GroupExpansionSettings { GroupName = group.GroupName, Expanded = group.IsNodeExpanded, })
+        .ToList();
     }
 
     /// <summary>
-    /// Applies <see cref="GroupExpansionSettings"/> for groups in this model.
+    /// Applies <see cref="GroupExpansionSettings" /> for groups in this model.
     /// </summary>
     /// <param name="groupExpansion">Group expansion settings.</param>
     public void ApplyGroupExpansionState(IList<GroupExpansionSettings> groupExpansion)
@@ -422,13 +428,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// Updates the currently selected items form view.
     /// </summary>
-    public void UpdateSelectedConnectors(Collection<ConnectorViewModel> selectedConnectors)
-    {
-      this.selectedConnectors = selectedConnectors;
-    }
+    public void UpdateSelectedConnectors(Collection<ConnectorViewModel> selectedConnectors) => this.selectedConnectors = selectedConnectors;
 
     /// <summary>
-    /// Calls <see cref="ConfigurationChanged"/> event.
+    /// Calls <see cref="ConfigurationChanged" /> event.
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="args">Event args.</param>
@@ -448,11 +451,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Moves object given by <paramref name="source"/> to <paramref name="target"/>.
+    /// Moves object given by <paramref name="source" /> to <paramref name="target" />.
     /// </summary>
     /// <param name="source">Information about source location of moved object.</param>
     /// <param name="target">Information about desired location of moved object.</param>
-    /// <param name="insertPosition">Additional information about where in relation to <paramref name="target"/> the object should be placed.</param>
+    /// <param name="insertPosition">
+    /// Additional information about where in relation to <paramref name="target" /> the object
+    /// should be placed.
+    /// </param>
     /// <returns>True if operation caused changes; false otherwise.</returns>
     private static bool MoveObject(MovedObjectLocation source, MovedObjectLocation target, RelativeInsertPosition insertPosition)
     {
@@ -468,7 +474,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         targetIndex = targetIndex + 1;
       }
 
-      if (object.ReferenceEquals(target.List, source.List))
+      if (ReferenceEquals(target.List, source.List))
       {
         if (targetIndex > source.Index)
         {
@@ -488,13 +494,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       return true;
     }
 
-    private IEnumerable<IGrouping<string, ConnectorConfiguration>> ParseConfiguration(ApplicationConfiguration configuration)
-    {
-      return configuration.ConnectorsConfiguration.GroupBy(config => config.GetConfigurationByKey(Connector.Category)?.Value?.Trim() ?? string.Empty);
-    }
+    private IEnumerable<IGrouping<string, ConnectorConfiguration>> ParseConfiguration(ApplicationConfiguration configuration) => configuration.ConnectorsConfiguration.GroupBy(config => config.GetConfigurationByKey(Connector.Category)?.Value?.Trim() ?? string.Empty);
 
     /// <summary>
-    /// Handles dropping of <see cref="ConnectorViewModel"/>.
+    /// Handles dropping of <see cref="ConnectorViewModel" />.
     /// </summary>
     /// <param name="dropInfo">All drop information.</param>
     /// <param name="droppedConnector">The dropped connector.</param>
@@ -504,12 +507,15 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       var currentConnectorGroupModel = this.GetConnectorGroup(droppedConnector);
       if (dropInfo.TargetItem is ConnectorGroupViewModel model)
       {
-        if (object.ReferenceEquals(currentConnectorGroupModel.List, model.ConnectorViewModels))
+        if (ReferenceEquals(currentConnectorGroupModel.List, model.ConnectorViewModels))
         {
           return false;
         }
 
-        return MoveObject(currentConnectorGroupModel, new MovedObjectLocation(model.ConnectorViewModels, model.ConnectorViewModels.Count - 1), RelativeInsertPosition.AfterTargetItem);
+        return MoveObject(
+          currentConnectorGroupModel,
+          new MovedObjectLocation(model.ConnectorViewModels, model.ConnectorViewModels.Count - 1),
+          RelativeInsertPosition.AfterTargetItem);
       }
 
       if (dropInfo.TargetItem is ConnectorViewModel targetModel)
@@ -522,9 +528,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Handles dropping of <see cref="ConnectorGroupViewModel"/>.
+    /// Handles dropping of <see cref="ConnectorGroupViewModel" />.
     /// </summary>
-    /// <param name="dropInfo">All drop information.</param>.
+    /// <param name="dropInfo">All drop information.</param>
+    /// .
     /// <param name="droppedGroup">The dropped group.</param>
     /// <returns>True if operation caused changes; false otherwise.</returns>
     private bool DropGrup(IDropInfo dropInfo, ConnectorGroupViewModel droppedGroup)
@@ -533,7 +540,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       {
         var index = this.ConnectorGroups.IndexOf(droppedGroup);
         var targetIndex = this.ConnectorGroups.IndexOf(targetModel);
-        return MoveObject(new MovedObjectLocation(this.ConnectorGroups, index), new MovedObjectLocation(this.ConnectorGroups, targetIndex), dropInfo.InsertPosition);
+        return MoveObject(
+          new MovedObjectLocation(this.ConnectorGroups, index),
+          new MovedObjectLocation(this.ConnectorGroups, targetIndex),
+          dropInfo.InsertPosition);
       }
 
       return false;
@@ -586,10 +596,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private ConnectorGroupViewModel CreateNewGroupModel(string groupName)
     {
-      var model = new ConnectorGroupViewModel
-      {
-        GroupName = groupName,
-      };
+      var model = new ConnectorGroupViewModel { GroupName = groupName, };
 
       model.EditItem += (s, e) => this.EditItem?.Invoke(s, e);
       model.DeleteItem += this.DeleteGroup;
@@ -602,11 +609,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// Handles the export of a project.
     /// </summary>
     /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="ValueEventArgs{TreeItemViewModel}"/> instance containing the event data.</param>
-    private void ExportHandler(object sender, ValueEventArgs<TreeItemViewModel> e)
-    {
-      this.ExportItem?.Invoke(sender, e);
-    }
+    /// <param name="e">The <see cref="ValueEventArgs{TreeItemViewModel}" /> instance containing the event data.</param>
+    private void ExportHandler(object sender, ValueEventArgs<TreeItemViewModel> e) => this.ExportItem?.Invoke(sender, e);
 
     /// <summary>
     /// Removes any empty rpesent groups.
@@ -682,7 +686,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Sets <see cref="TreeItemViewModel.ConfigurationModifiedInTree"/> of groups.
+    /// Sets <see cref="TreeItemViewModel.ConfigurationModifiedInTree" /> of groups.
     /// </summary>
     /// <param name="value">The value which should be set.</param>
     private void SetConnectionModifiedInTree(bool value)
@@ -694,7 +698,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Helper class with information about where the moved object is or should be in <see cref="List"/>.
+    /// Helper class with information about where the moved object is or should be in <see cref="List" />.
     /// </summary>
     public class MovedObjectLocation
     {

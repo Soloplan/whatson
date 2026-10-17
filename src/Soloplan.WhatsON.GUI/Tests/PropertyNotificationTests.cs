@@ -1,7 +1,9 @@
-﻿// <copyright file="PropertyNotificationTests.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="PropertyNotificationTests.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.GUI.Tests
 {
@@ -131,11 +133,9 @@ namespace Soloplan.WhatsON.GUI.Tests
       var changes = Observe(model);
       var property = typeof(ConfigViewModel).GetProperty(propertyName);
       var originalValue = property.GetValue(model);
-      var editedValue = property.PropertyType == typeof(bool)
-        ? (object)!(bool)originalValue
-        : property.PropertyType.IsEnum
-          ? Enum.GetValues(property.PropertyType).Cast<object>().First(value => !Equals(value, originalValue))
-          : (int)originalValue + 1;
+      var editedValue = property.PropertyType == typeof(bool) ? !(bool)originalValue :
+        property.PropertyType.IsEnum ? Enum.GetValues(property.PropertyType).Cast<object>().First(value => !Equals(value, originalValue)) :
+        (int)originalValue + 1;
       property.SetValue(model, editedValue);
       Assert.That(model.ConfigurationIsModified, Is.True, propertyName);
       Assert.That(model.ConfigurationIsNotModified, Is.False, propertyName);
@@ -151,7 +151,10 @@ namespace Soloplan.WhatsON.GUI.Tests
       var changes = Observe(wizard);
       wizard.IsAutoDetectionEnabled = false;
       Assert.That(wizard.IsAutoDetectionDisabled, Is.True);
-      Assert.That(changes, Does.Contain(nameof(wizard.IsAutoDetectionEnabled)).And.Contain(nameof(wizard.IsAutoDetectionDisabled)).And.Contain(nameof(wizard.AvailableServers)));
+      Assert.That(
+        changes,
+        Does.Contain(nameof(wizard.IsAutoDetectionEnabled)).And.Contain(nameof(wizard.IsAutoDetectionDisabled)).And
+          .Contain(nameof(wizard.AvailableServers)));
       changes.Clear();
       wizard.ProposedServerAddress = "https://build.example.invalid";
       Assert.That(wizard.IsNextStepEnabled, Is.True);
@@ -259,7 +262,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       }
     }
 
-    private static Project CreateProject(string name) => new Project("https://build.example.invalid", name, null, name, null);
+    private static Project CreateProject(string name) => new Project("https://build.example.invalid", name, null, name);
 
     private static List<string> Observe(INotifyPropertyChanged model)
     {

@@ -22,10 +22,10 @@
                FontWeight="Normal"
                Text="#" />
     <TextBlock Margin="2,0,0,0"
-             HorizontalAlignment="Right"
-             VerticalAlignment="Center"
-             FontSize="{Binding DataContext.FontSizeSmall, Mode=OneWay, RelativeSource={RelativeSource AncestorType=connectorTreeView:ConnectorsTreeView}}"
-             FontWeight="Normal"
-             Text="{Binding BuildNumber, Mode=OneWay}" />
+               HorizontalAlignment="Right"
+               VerticalAlignment="Center"
+               FontSize="{Binding DataContext.FontSizeSmall, Mode=OneWay, RelativeSource={RelativeSource AncestorType=connectorTreeView:ConnectorsTreeView}}"
+               FontWeight="Normal"
+               Text="{Binding BuildNumber, Mode=OneWay}" />
   </StackPanel>
 </UserControl>

@@ -14,7 +14,8 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
 
   /// <summary>
-  /// Converter for projects DataTemplates. Determines visibility of a project tooltips. Uses StatusViewmodel method to find out if tooltip should be visible or not.
+  /// Converter for projects DataTemplates. Determines visibility of a project tooltips. Uses StatusViewmodel method to
+  /// find out if tooltip should be visible or not.
   /// </summary>
   public class MainStatusToVisibilityConverter : IValueConverter
   {
@@ -33,9 +34,6 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
       return Visibility.Visible;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-      throw new NotImplementedException();
-    }
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
   }
 }

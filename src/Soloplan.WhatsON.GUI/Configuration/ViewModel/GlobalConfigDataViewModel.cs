@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="GlobalConfigDataViewModel.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -13,7 +13,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
   using Soloplan.WhatsON.Model;
 
   /// <summary>
-  /// Some data of the configuration has to be globally accessible for binding purposes, otherwise configuration data structure would have to refer to it's parent object.
+  /// Some data of the configuration has to be globally accessible for binding purposes, otherwise configuration data
+  /// structure would have to refer to it's parent object.
   /// </summary>
   /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
   public partial class GlobalConfigDataViewModel : INotifyPropertyChanged
@@ -74,9 +75,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// Configurations was reset or updated.
     /// </summary>
-    public void ConfigurationResetOrUpdated()
-    {
-      this.OnPropertyChanged(nameof(this.UsedCategories));
-    }
+    public void ConfigurationResetOrUpdated() => this.OnPropertyChanged(nameof(this.UsedCategories));
   }
 }

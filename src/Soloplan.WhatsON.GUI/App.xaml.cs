@@ -1,7 +1,9 @@
-﻿// <copyright file="App.xaml.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="App.xaml.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.GUI
 {
@@ -47,7 +49,7 @@ namespace Soloplan.WhatsON.GUI
     /// Gets a value indicating whether dark theme is enabled.
     /// </summary>
     /// <value>
-    ///   <c>true</c> if dark theme is enabled; otherwise, <c>false</c>.
+    /// <c>true</c> if dark theme is enabled; otherwise, <c>false</c>.
     /// </value>
     public bool IsDarkThemeEnabled { get; private set; }
 
@@ -152,7 +154,7 @@ namespace Soloplan.WhatsON.GUI
     {
       if (msg.message == 0x10)
       {
-        System.Windows.Application.Current.Shutdown();
+        Current.Shutdown();
       }
     }
   }

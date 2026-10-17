@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="BuildParsingTests.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -21,7 +21,8 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
     [TestCase("build-pending-link", CcBuildStatus.Unknown)]
     public void RecentBuildLinksPreserveResultNumberTimestampAndReportUrl(string cssClass, CcBuildStatus expectedStatus)
     {
-      var node = HtmlNode.CreateNode($"<a href='/ccnet/server/local/project/Release/build/log20201017120000L42.xml' class='{cssClass}'>10/17/2020 12:00:00 PM (42)</a>");
+      var node = HtmlNode.CreateNode(
+        $"<a href='/ccnet/server/local/project/Release/build/log20201017120000L42.xml' class='{cssClass}'>10/17/2020 12:00:00 PM (42)</a>");
 
       var build = CruiseControlBuild.FromHtmlNode(node, "https://builds.example");
 
@@ -81,16 +82,17 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
     [TestCase("https://builds.example/ccnet", "Release 1", "https://builds.example/ccnet/project/Release%201/ViewProjectReport.aspx")]
     [TestCase("https://builds.example/ccnet///", "A/B #1?", "https://builds.example/ccnet/project/A%2FB%20%231%3F/ViewProjectReport.aspx")]
     [TestCase("https://builds.example/ccnet/", null, "https://builds.example/ccnet")]
-    public void ProjectLinksPreserveServerPathAndEscapeProjectNames(string server, string project, string expected)
-    {
-      Assert.That(CruiseControlServer.UrlHelper.GetReportUrl(server, project), Is.EqualTo(expected));
-    }
+    public void ProjectLinksPreserveServerPathAndEscapeProjectNames(string server, string project, string expected) => Assert.That(CruiseControlServer.UrlHelper.GetReportUrl(server, project), Is.EqualTo(expected));
 
     [Test]
     public void StatusAndHistoryUrlsUseTheServerPathWithoutDuplicateSlashes()
     {
-      Assert.That(CruiseControlServer.UrlHelper.GetXmlReportUrl("https://builds.example/ccnet///"), Is.EqualTo("https://builds.example/ccnet/XmlStatusReport.aspx"));
-      Assert.That(CruiseControlServer.UrlHelper.GetAllBuildsUrl("https://builds.example/ccnet///", "Release #1"), Is.EqualTo("https://builds.example/ccnet/project/Release%20%231/ViewAllBuilds.aspx"));
+      Assert.That(
+        CruiseControlServer.UrlHelper.GetXmlReportUrl("https://builds.example/ccnet///"),
+        Is.EqualTo("https://builds.example/ccnet/XmlStatusReport.aspx"));
+      Assert.That(
+        CruiseControlServer.UrlHelper.GetAllBuildsUrl("https://builds.example/ccnet///", "Release #1"),
+        Is.EqualTo("https://builds.example/ccnet/project/Release%20%231/ViewAllBuilds.aspx"));
     }
   }
 }

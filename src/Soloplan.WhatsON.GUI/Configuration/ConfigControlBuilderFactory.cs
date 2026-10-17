@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ConfigControlBuilderFactory.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -43,14 +43,11 @@ namespace Soloplan.WhatsON.GUI.Configuration
     }
 
     /// <summary>
-    /// Registers the specified <paramref name="controlBuilder"/>for the specified <paramref name="type"/>.
+    /// Registers the specified <paramref name="controlBuilder" />for the specified <paramref name="type" />.
     /// </summary>
     /// <param name="type">The type for which to use the specified controlBuilder.</param>
-    /// <param name="controlBuilder">The control builder to use with <paramref name="type"/>.</param>
-    public void RegisterControlBuilder(Type type, IConfigControlBuilder controlBuilder)
-    {
-      this.controlBuilderByType.Add(new KeyValuePair<Type, IConfigControlBuilder>(type, controlBuilder));
-    }
+    /// <param name="controlBuilder">The control builder to use with <paramref name="type" />.</param>
+    public void RegisterControlBuilder(Type type, IConfigControlBuilder controlBuilder) => this.controlBuilderByType.Add(new KeyValuePair<Type, IConfigControlBuilder>(type, controlBuilder));
 
     /// <summary>
     /// Gets the control builder for the specified <paramref name="type" />.

@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="DesktopRuntimeTests.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -41,9 +41,12 @@ namespace Soloplan.WhatsON.GUI.Tests
     {
       // WPF queues startup even without Run; keep rendering isolated from real servers.
       var app = new ResourceTestApp { ShutdownMode = ShutdownMode.OnExplicitShutdown };
-      app.Resources = (ResourceDictionary)Application.LoadComponent(new Uri("/Soloplan.WhatsON.GUI;component/ApplicationResources.xaml", UriKind.Relative));
+      app.Resources =
+        (ResourceDictionary)Application.LoadComponent(new Uri("/Soloplan.WhatsON.GUI;component/ApplicationResources.xaml", UriKind.Relative));
       app.ApplyTheme(ApplicationTheme.System);
-      Assert.That(System.Windows.Forms.Application.ColorMode, Is.EqualTo(app.IsDarkThemeEnabled ? System.Windows.Forms.SystemColorMode.Dark : System.Windows.Forms.SystemColorMode.Classic));
+      Assert.That(
+        System.Windows.Forms.Application.ColorMode,
+        Is.EqualTo(app.IsDarkThemeEnabled ? System.Windows.Forms.SystemColorMode.Dark : System.Windows.Forms.SystemColorMode.Classic));
       app.ApplyTheme(ApplicationTheme.Light);
       Assert.That(app.IsDarkThemeEnabled, Is.False);
       Assert.That(System.Windows.Forms.Application.ColorMode, Is.EqualTo(System.Windows.Forms.SystemColorMode.Classic));
@@ -53,9 +56,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       Assert.That(app.Resources["MaterialDesignPaper"], Is.Not.Null);
 
       var plugins = PluginManager.Instance.Plugins;
-      Assert.That(
-        plugins.OfType<ConnectorPlugin>().Select(plugin => plugin.Name),
-        Is.EquivalentTo(new[] { "Jenkins", "CruiseControl" }));
+      Assert.That(plugins.OfType<ConnectorPlugin>().Select(plugin => plugin.Name), Is.EquivalentTo(new[] { "Jenkins", "CruiseControl" }));
       var presentationPlugins = plugins.OfType<PresentationPlugin>().ToList();
       Assert.That(presentationPlugins, Has.Count.EqualTo(2));
       foreach (var plugin in presentationPlugins)
@@ -139,11 +140,15 @@ namespace Soloplan.WhatsON.GUI.Tests
       Assert.That(app.IsDarkThemeEnabled, Is.False, "Closing without saving must restore the saved appearance.");
 
       var projectSettings = new ApplicationConfiguration { ThemeMode = ApplicationTheme.Light };
-      projectSettings.ConnectorsConfiguration.Add(new ConnectorConfiguration("Jenkins", "Application build", new List<ConfigurationItem>
-      {
-        new ConfigurationItem(Connector.ServerAddress) { Value = "https://ci.example.invalid" },
-        new ConfigurationItem(Connector.ProjectName) { Value = "main" },
-      }));
+      projectSettings.ConnectorsConfiguration.Add(
+        new ConnectorConfiguration(
+          "Jenkins",
+          "Application build",
+          new List<ConfigurationItem>
+          {
+            new ConfigurationItem(Connector.ServerAddress) { Value = "https://ci.example.invalid" },
+            new ConfigurationItem(Connector.ProjectName) { Value = "main" },
+          }));
       var populatedSettings = new ConfigWindow(projectSettings, new WindowSettings());
       try
       {
@@ -176,9 +181,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       using (var factory = new LogFactory())
       {
         var loggingConfiguration = XmlLoggingConfiguration.CreateFromXmlString(reader.ReadToEnd(), factory);
-        Assert.That(
-          loggingConfiguration.AllTargets.Select(target => target.Name),
-          Is.EquivalentTo(new[] { "whatsONMainLog", "whatsONConsoleLog" }));
+        Assert.That(loggingConfiguration.AllTargets.Select(target => target.Name), Is.EquivalentTo(new[] { "whatsONMainLog", "whatsONConsoleLog" }));
       }
     }
 
@@ -187,51 +190,69 @@ namespace Soloplan.WhatsON.GUI.Tests
       var wizard = new WizardController(null, new ApplicationConfiguration(), new WindowSettings());
       var changes = new List<string>();
       wizard.PropertyChanged += (sender, args) => changes.Add(args.PropertyName);
-      var currentPage = typeof(WizardController).GetProperty("CurrentPage", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+      var currentPage = typeof(WizardController).GetProperty(
+        "CurrentPage",
+        System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
       currentPage.SetValue(wizard, new ProjectSelectionWizardPage(wizard));
       Assert.That(wizard.IsLastStep, Is.True);
       Assert.That(wizard.IsPreviousStepEnabled, Is.True);
-      Assert.That(changes, Does.Contain(nameof(wizard.IsLastStep)).And.Contain(nameof(wizard.IsNotLastStep)).And.Contain(nameof(wizard.IsPreviousStepEnabled)));
+      Assert.That(
+        changes,
+        Does.Contain(nameof(wizard.IsLastStep)).And.Contain(nameof(wizard.IsNotLastStep)).And.Contain(nameof(wizard.IsPreviousStepEnabled)));
       changes.Clear();
       currentPage.SetValue(wizard, new ConnectionWizardPage(wizard));
       Assert.That(wizard.IsLastStep, Is.False);
       Assert.That(wizard.IsPreviousStepEnabled, Is.False);
-      Assert.That(changes, Does.Contain(nameof(wizard.IsLastStep)).And.Contain(nameof(wizard.IsNotLastStep)).And.Contain(nameof(wizard.IsPreviousStepEnabled)));
+      Assert.That(
+        changes,
+        Does.Contain(nameof(wizard.IsLastStep)).And.Contain(nameof(wizard.IsNotLastStep)).And.Contain(nameof(wizard.IsPreviousStepEnabled)));
     }
 
     private static void VerifyTrayNotificationForwarding()
     {
       var notifications = new NotificationsModel(new ObservationScheduler());
-      var connector = PluginManager.Instance.GetConnector(new ConnectorConfiguration("Jenkins", "Main", new List<ConfigurationItem>
-      {
-        new ConfigurationItem(Connector.ServerAddress) { Value = "https://build.example.invalid" },
-        new ConfigurationItem(Connector.ProjectName) { Value = "main" },
-      }));
+      var connector = PluginManager.Instance.GetConnector(
+        new ConnectorConfiguration(
+          "Jenkins",
+          "Main",
+          new List<ConfigurationItem>
+          {
+            new ConfigurationItem(Connector.ServerAddress) { Value = "https://build.example.invalid" },
+            new ConfigurationItem(Connector.ProjectName) { Value = "main" },
+          }));
       connector.CurrentStatus = new Status { Name = "Main", State = ObservationState.Success };
-      var queryCompleted = typeof(NotificationsModel).GetMethod("SchedulerStatusQueried", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+      var queryCompleted = typeof(NotificationsModel).GetMethod(
+        "SchedulerStatusQueried",
+        System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
       var changes = new List<(object Sender, string Property)>();
       notifications.StatusChanged += (sender, args) => changes.Add((sender, args.PropertyName));
       for (var iteration = 0; iteration < 3; iteration++)
       {
         queryCompleted.Invoke(notifications, new object[] { null, connector });
         Assert.That(changes.Last().Sender, Is.SameAs(notifications.Connectors.Single().CurrentStatus));
-        Assert.That(changes.Last().Property, Is.EqualTo(nameof(Common.ConnectorTreeView.ConnectorViewModel.CurrentStatus)));
+        Assert.That(changes.Last().Property, Is.EqualTo(nameof(ConnectorViewModel.CurrentStatus)));
       }
 
       changes.Clear();
       notifications.Connectors.Single().CurrentStatus.ErrorMessage = "Build failed";
       Assert.That(changes, Has.Count.EqualTo(1), "Repeated queries must not duplicate status subscriptions.");
-      Assert.That(changes[0].Sender, Is.SameAs(notifications.Connectors.Single().CurrentStatus), "The tray identifies projects using the original event sender.");
+      Assert.That(
+        changes[0].Sender,
+        Is.SameAs(notifications.Connectors.Single().CurrentStatus),
+        "The tray identifies projects using the original event sender.");
     }
 
     private static void VerifyNotificationBindings()
     {
       var item = new Configuration.ViewModel.ConfigurationItemViewModel();
-      item.Load(new ConfigurationItem(Connector.NotificationsVisbility)
-      {
-        Value = Newtonsoft.Json.JsonConvert.SerializeObject(new ConnectorNotificationConfiguration { UseGlobalNotificationSettings = true }),
-      });
-      var card = (ContentControl)new NotificationSettingsControlBuilder().GetControl(item, new ConfigurationItemAttribute(Connector.NotificationsVisbility, typeof(ConnectorNotificationConfiguration)));
+      item.Load(
+        new ConfigurationItem(Connector.NotificationsVisbility)
+        {
+          Value = Newtonsoft.Json.JsonConvert.SerializeObject(new ConnectorNotificationConfiguration { UseGlobalNotificationSettings = true }),
+        });
+      var card = (ContentControl)new NotificationSettingsControlBuilder().GetControl(
+        item,
+        new ConfigurationItemAttribute(Connector.NotificationsVisbility, typeof(ConnectorNotificationConfiguration)));
       var columns = (StackPanel)((Expander)card.Content).Content;
       var states = (StackPanel)columns.Children[0];
       var options = (StackPanel)columns.Children[1];
@@ -248,7 +269,9 @@ namespace Soloplan.WhatsON.GUI.Tests
           Assert.That(((ToggleButton)row.Children[0]).IsEnabled, Is.EqualTo(!useGlobal));
         }
 
-        Assert.That(Newtonsoft.Json.JsonConvert.DeserializeObject<ConnectorNotificationConfiguration>(item.Value).UseGlobalNotificationSettings, Is.EqualTo(useGlobal));
+        Assert.That(
+          Newtonsoft.Json.JsonConvert.DeserializeObject<ConnectorNotificationConfiguration>(item.Value).UseGlobalNotificationSettings,
+          Is.EqualTo(useGlobal));
       }
     }
 
@@ -336,9 +359,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       content.Children.Add(new Border { Height = 400 });
       var viewer = new ScrollViewer
       {
-        Content = content,
-        VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-        HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+        Content = content, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
       };
       foreach (var height in new[] { 600, 200, 600 })
       {
@@ -378,7 +399,8 @@ namespace Soloplan.WhatsON.GUI.Tests
           Assert.That(controller.ProposedServerAddress, Is.EqualTo("https://ci.example.invalid/"));
           Assert.That(address.ActualHeight, Is.GreaterThanOrEqualTo(40));
 
-          controller.Projects.AddProject(new Project("https://ci.example.invalid", "Application build", "https://ci.example.invalid/job/app", "Application build"));
+          controller.Projects.AddProject(
+            new Project("https://ci.example.invalid", "Application build", "https://ci.example.invalid/job/app", "Application build"));
           var selection = new ProjectSelectionWizardPage(controller) { DataContext = controller };
           wizard.Frame.Content = selection;
           wizard.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
@@ -429,7 +451,10 @@ namespace Soloplan.WhatsON.GUI.Tests
                 var selector = (ComboBox)((Page)frame.Content).FindName("LanguageSelector");
                 Assert.That(selector.SelectedValue, Is.EqualTo(ApplicationLanguage.German));
                 selector.SelectedValue = ApplicationLanguage.English;
-                Assert.That(configuration.Language, Is.EqualTo(ApplicationLanguage.German), "The language must remain unsaved until Save changes is used.");
+                Assert.That(
+                  configuration.Language,
+                  Is.EqualTo(ApplicationLanguage.German),
+                  "The language must remain unsaved until Save changes is used.");
                 Assert.That(CultureInfo.CurrentUICulture.Name, Is.EqualTo("de-DE"));
               }
               else if (section == 1)

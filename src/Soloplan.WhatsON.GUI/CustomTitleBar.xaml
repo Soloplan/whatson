@@ -5,7 +5,8 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              Height="44" MinHeight="44" FontFamily="Segoe UI" FontSize="13"
              UseLayoutRounding="True" SnapsToDevicePixels="True" MouseLeftButtonDown="MainWindowBarMouseDown">
-  <Border Background="{DynamicResource SettingsSurface}" BorderBrush="{DynamicResource SettingsBorder}" BorderThickness="0,0,0,1">
+  <Border Background="{DynamicResource SettingsSurface}" BorderBrush="{DynamicResource SettingsBorder}"
+          BorderThickness="0,0,0,1">
     <Grid Margin="8,0">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="88" />
@@ -15,30 +16,40 @@
       <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
                   Visibility="{Binding CustomButtonVisible, Converter={StaticResource BoolToVis}}">
         <Button x:Name="SettingsButton" Click="OnButtonClicked" Style="{StaticResource HeaderIconButton}"
-                ToolTip="{x:Static loc:Strings.Settings}" AutomationProperties.Name="{x:Static loc:Strings.OpenSettings}">
+                ToolTip="{x:Static loc:Strings.Settings}"
+                AutomationProperties.Name="{x:Static loc:Strings.OpenSettings}">
           <materialDesign:PackIcon Kind="{Binding CustomButtonIcon}" Width="18" Height="18" />
         </Button>
         <Button x:Name="AddMenuButton" Click="ShowAddMenu" Style="{StaticResource HeaderIconButton}"
-                ToolTip="{x:Static loc:Strings.AddOrImportProjects}" AutomationProperties.Name="{x:Static loc:Strings.AddOrImportProjects}">
+                ToolTip="{x:Static loc:Strings.AddOrImportProjects}"
+                AutomationProperties.Name="{x:Static loc:Strings.AddOrImportProjects}">
           <materialDesign:PackIcon Kind="Plus" Width="18" Height="18" />
           <Button.ContextMenu>
             <ContextMenu Style="{StaticResource HeaderMenu}" Placement="Bottom" VerticalOffset="6"
                          ItemContainerStyle="{StaticResource HeaderMenuItem}">
               <MenuItem Header="{x:Static loc:Strings.AddProjectsMenu}" Click="NewConnectorClick">
-                <MenuItem.Icon><materialDesign:PackIcon Kind="Plus" Width="18" Height="18" /></MenuItem.Icon>
+                <MenuItem.Icon>
+                  <materialDesign:PackIcon Kind="Plus" Width="18" Height="18" />
+                </MenuItem.Icon>
               </MenuItem>
               <MenuItem Header="{x:Static loc:Strings.ImportProjectsMenu}" Click="ImportClick">
-                <MenuItem.Icon><materialDesign:PackIcon Kind="Import" Width="18" Height="18" /></MenuItem.Icon>
+                <MenuItem.Icon>
+                  <materialDesign:PackIcon Kind="Import" Width="18" Height="18" />
+                </MenuItem.Icon>
               </MenuItem>
               <MenuItem Header="{x:Static loc:Strings.AddGroupMenu}" Click="NewGroupClick">
-                <MenuItem.Icon><materialDesign:PackIcon Kind="FolderPlusOutline" Width="18" Height="18" /></MenuItem.Icon>
+                <MenuItem.Icon>
+                  <materialDesign:PackIcon Kind="FolderPlusOutline" Width="18" Height="18" />
+                </MenuItem.Icon>
               </MenuItem>
             </ContextMenu>
           </Button.ContextMenu>
         </Button>
       </StackPanel>
       <Grid Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False">
-        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition /></Grid.ColumnDefinitions>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto" /><ColumnDefinition />
+        </Grid.ColumnDefinitions>
         <Image Source="pack://application:,,,/Soloplan.WhatsON.GUI;component/Resources/whatsONx16.png"
                Width="16" Height="16" Margin="0,0,8,0" />
         <TextBlock Grid.Column="1" Text="{Binding Text}" FontWeight="SemiBold" VerticalAlignment="Center"
@@ -46,12 +57,14 @@
       </Grid>
       <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
         <Button x:Name="MinimizeButton" Click="MinimizeButonClick" Style="{StaticResource HeaderIconButton}"
-                ToolTip="{x:Static loc:Strings.MinimizeWindow}" AutomationProperties.Name="{x:Static loc:Strings.MinimizeWindow}"
+                ToolTip="{x:Static loc:Strings.MinimizeWindow}"
+                AutomationProperties.Name="{x:Static loc:Strings.MinimizeWindow}"
                 Visibility="{Binding ShowMinimizeButton, Converter={StaticResource BoolToVis}}">
           <materialDesign:PackIcon Kind="WindowMinimize" Width="16" Height="16" />
         </Button>
         <Button x:Name="CloseButton" Click="CloseButtonClick" Style="{StaticResource HeaderCloseButton}"
-                ToolTip="{x:Static loc:Strings.CloseWindow}" AutomationProperties.Name="{x:Static loc:Strings.CloseWindow}">
+                ToolTip="{x:Static loc:Strings.CloseWindow}"
+                AutomationProperties.Name="{x:Static loc:Strings.CloseWindow}">
           <materialDesign:PackIcon Kind="WindowClose" Width="16" Height="16" />
         </Button>
       </StackPanel>

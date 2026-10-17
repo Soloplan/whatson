@@ -1,7 +1,9 @@
-﻿// <copyright file="AboutPage.xaml.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="AboutPage.xaml.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.GUI.Configuration
 {
@@ -28,7 +30,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     private readonly ConfigViewModel configurationViewModel;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AboutPage"/> class.
+    /// Initializes a new instance of the <see cref="AboutPage" /> class.
     /// </summary>
     public AboutPage(ConfigViewModel configurationViewModel)
     {
@@ -36,7 +38,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
       this.configurationViewModel = configurationViewModel;
       try
       {
-        this.VersionLabel.Text = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        this.VersionLabel.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
       }
       catch (Exception)
       {
@@ -49,22 +51,17 @@ namespace Soloplan.WhatsON.GUI.Configuration
       this.PluginList.ItemsSource = this.Plugins;
     }
 
-    public IList<PluginViewModel> Plugins
-    {
-      get
+    public IList<PluginViewModel> Plugins =>
+      PluginManager.Instance.Plugins.Select(x =>
       {
-        return PluginManager.Instance.Plugins.Select(x =>
+        var newPlugin = new PluginViewModel { Name = x.GetType().Name, Version = x.GetType().Assembly.GetName().Version };
+        if (x is ConnectorPlugin connector)
         {
-          var newPlugin = new PluginViewModel { Name = x.GetType().Name, Version = x.GetType().Assembly.GetName().Version };
-          if (x is ConnectorPlugin connector)
-          {
-            newPlugin.Description = $"{connector.Name}: {connector.Description}";
-          }
+          newPlugin.Description = $"{connector.Name}: {connector.Description}";
+        }
 
-          return newPlugin;
-        }).ToList();
-      }
-    }
+        return newPlugin;
+      }).ToList();
 
     private void OpenLink(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
     {
@@ -76,14 +73,14 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// Handles import button click.
     /// </summary>
     /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+    /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
     private void ImportButtonClick(object sender, RoutedEventArgs e)
     {
       using (var openFileDialog = new OpenFileDialog())
       {
         openFileDialog.Filter = this.GetConfigFileFilter();
         openFileDialog.FileName = !string.IsNullOrWhiteSpace(this.ConfigFile.Text) ? Path.GetFileName(this.ConfigFile.Text) : string.Empty;
-        if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        if (openFileDialog.ShowDialog() == DialogResult.OK)
         {
           var result = this.configurationViewModel.Import(openFileDialog.FileName, out var errorMessage);
           if (!result)
@@ -98,23 +95,20 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// Handles export button click.
     /// </summary>
     /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+    /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
     private void ExportButtonClick(object sender, RoutedEventArgs e)
     {
       using (var saveFileDialog = new SaveFileDialog())
       {
         saveFileDialog.Filter = this.GetConfigFileFilter();
         saveFileDialog.FileName = !string.IsNullOrWhiteSpace(this.ConfigFile.Text) ? Path.GetFileName(this.ConfigFile.Text) : string.Empty;
-        if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        if (saveFileDialog.ShowDialog() == DialogResult.OK)
         {
           this.configurationViewModel.Export(saveFileDialog.FileName);
         }
       }
     }
 
-    private string GetConfigFileFilter()
-    {
-      return $"{Properties.Resources.JsonFilesFilterName}|*.{SerializationHelper.ConfigFileExtension}";
-    }
+    private string GetConfigFileFilter() => $"{Properties.Resources.JsonFilesFilterName}|*.{SerializationHelper.ConfigFileExtension}";
   }
 }

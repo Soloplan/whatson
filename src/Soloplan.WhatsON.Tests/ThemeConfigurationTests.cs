@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ThemeConfigurationTests.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -26,10 +26,7 @@ namespace Soloplan.WhatsON.Tests
     [TestCase("{\"ThemeMode\":\"System\",\"DarkThemeEnabled\":true}", ApplicationTheme.System)]
     [TestCase("{\"DarkThemeEnabled\":true,\"ThemeMode\":\"Light\"}", ApplicationTheme.Light)]
     [TestCase("{\"ThemeMode\":\"Dark\",\"DarkThemeEnabled\":false}", ApplicationTheme.Dark)]
-    public void LegacyPreferenceIsMigratedWithoutOverridingAnExplicitTheme(string json, ApplicationTheme expected)
-    {
-      Assert.That(JsonConvert.DeserializeObject<ApplicationConfiguration>(json).ThemeMode, Is.EqualTo(expected));
-    }
+    public void LegacyPreferenceIsMigratedWithoutOverridingAnExplicitTheme(string json, ApplicationTheme expected) => Assert.That(JsonConvert.DeserializeObject<ApplicationConfiguration>(json).ThemeMode, Is.EqualTo(expected));
 
     [TestCase(ApplicationTheme.System)]
     [TestCase(ApplicationTheme.Light)]

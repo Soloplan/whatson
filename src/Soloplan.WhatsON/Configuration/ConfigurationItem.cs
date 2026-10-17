@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ConfigurationItem.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -15,7 +15,7 @@ namespace Soloplan.WhatsON.Configuration
   public class ConfigurationItem : IConfigurationItem
   {
     /// <summary>
-    /// Initializes a new instance of the <see cref="ConfigurationItem"/> class.
+    /// Initializes a new instance of the <see cref="ConfigurationItem" /> class.
     /// </summary>
     /// <param name="key">The key.</param>
     [JsonConstructor]

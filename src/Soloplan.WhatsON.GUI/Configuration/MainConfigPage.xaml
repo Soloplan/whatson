@@ -4,7 +4,8 @@
       xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
       xmlns:config="clr-namespace:Soloplan.WhatsON.Configuration;assembly=Soloplan.WhatsON"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-      Title="{x:Static loc:Strings.General}" FontFamily="Segoe UI" FontSize="14" Background="Transparent" TextElement.Foreground="{DynamicResource MaterialDesignBody}">
+      Title="{x:Static loc:Strings.General}" FontFamily="Segoe UI" FontSize="14" Background="Transparent"
+      TextElement.Foreground="{DynamicResource MaterialDesignBody}">
   <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,0,16">
     <StackPanel Margin="0,0,20,0">
       <TextBlock Text="{x:Static loc:Strings.General}" Style="{StaticResource SettingsHeading}" />
@@ -14,39 +15,51 @@
         <StackPanel>
           <TextBlock Text="{x:Static loc:Strings.Appearance}" Style="{StaticResource SettingsSectionHeading}" />
           <Grid Margin="0,0,0,16">
-            <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="190" /></Grid.ColumnDefinitions>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition /><ColumnDefinition Width="190" />
+            </Grid.ColumnDefinitions>
             <StackPanel Margin="0,0,20,0" VerticalAlignment="Center">
               <TextBlock Text="{x:Static loc:Strings.Language}" FontWeight="SemiBold" />
-              <TextBlock Text="{x:Static loc:Strings.LanguageRestartDescription}" Style="{StaticResource SettingsDescription}" Margin="0,4,0,0" />
+              <TextBlock Text="{x:Static loc:Strings.LanguageRestartDescription}"
+                         Style="{StaticResource SettingsDescription}" Margin="0,4,0,0" />
             </StackPanel>
             <ComboBox x:Name="LanguageSelector" Grid.Column="1" MinHeight="36" SelectedValuePath="Tag"
-                      SelectedValue="{Binding Language, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{x:Static loc:Strings.Language}">
+                      SelectedValue="{Binding Language, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      AutomationProperties.Name="{x:Static loc:Strings.Language}">
               <ComboBoxItem Content="{x:Static loc:Strings.System}" Tag="{x:Static config:ApplicationLanguage.System}" />
               <ComboBoxItem Content="English" Tag="{x:Static config:ApplicationLanguage.English}" />
               <ComboBoxItem Content="Deutsch" Tag="{x:Static config:ApplicationLanguage.German}" />
             </ComboBox>
           </Grid>
           <Grid Margin="0,0,0,16">
-            <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="190" /></Grid.ColumnDefinitions>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition /><ColumnDefinition Width="190" />
+            </Grid.ColumnDefinitions>
             <StackPanel Margin="0,0,20,0" VerticalAlignment="Center">
               <TextBlock Text="{x:Static loc:Strings.ColorTheme}" FontWeight="SemiBold" />
-              <TextBlock Text="{x:Static loc:Strings.SystemThemeDescription}" Style="{StaticResource SettingsDescription}" Margin="0,4,0,0" />
+              <TextBlock Text="{x:Static loc:Strings.SystemThemeDescription}"
+                         Style="{StaticResource SettingsDescription}" Margin="0,4,0,0" />
             </StackPanel>
             <ComboBox x:Name="ThemeModeSelector" Grid.Column="1" MinHeight="36"
                       SelectedValue="{Binding ThemeMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                      SelectedValuePath="Tag" SelectionChanged="ThemeModeSelectionChanged" AutomationProperties.Name="{x:Static loc:Strings.ColorTheme}">
+                      SelectedValuePath="Tag" SelectionChanged="ThemeModeSelectionChanged"
+                      AutomationProperties.Name="{x:Static loc:Strings.ColorTheme}">
               <ComboBoxItem Content="{x:Static loc:Strings.System}" Tag="{x:Static config:ApplicationTheme.System}" />
               <ComboBoxItem Content="{x:Static loc:Strings.Light}" Tag="{x:Static config:ApplicationTheme.Light}" />
               <ComboBoxItem Content="{x:Static loc:Strings.Dark}" Tag="{x:Static config:ApplicationTheme.Dark}" />
             </ComboBox>
           </Grid>
           <Grid>
-            <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="190" /></Grid.ColumnDefinitions>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition /><ColumnDefinition Width="190" />
+            </Grid.ColumnDefinitions>
             <StackPanel VerticalAlignment="Center" Margin="0,0,20,0">
               <TextBlock Text="{x:Static loc:Strings.BuildListDensity}" FontWeight="SemiBold" />
-              <TextBlock Text="{x:Static loc:Strings.DensityDescription}" Style="{StaticResource SettingsDescription}" Margin="0,4,0,0" />
+              <TextBlock Text="{x:Static loc:Strings.DensityDescription}" Style="{StaticResource SettingsDescription}"
+                         Margin="0,4,0,0" />
             </StackPanel>
-            <ComboBox Grid.Column="1" MinHeight="36" SelectedIndex="{Binding ViewStyle}" AutomationProperties.Name="{x:Static loc:Strings.BuildListDensity}">
+            <ComboBox Grid.Column="1" MinHeight="36" SelectedIndex="{Binding ViewStyle}"
+                      AutomationProperties.Name="{x:Static loc:Strings.BuildListDensity}">
               <ComboBoxItem Content="{x:Static loc:Strings.Standard}" />
               <ComboBoxItem Content="{x:Static loc:Strings.Compact}" />
               <ComboBoxItem Content="{x:Static loc:Strings.Compressed}" />
@@ -59,42 +72,53 @@
           <TextBlock Text="{x:Static loc:Strings.StartupAndWindow}" Style="{StaticResource SettingsSectionHeading}" />
           <DockPanel Margin="0,4,0,12">
             <ToggleButton DockPanel.Dock="Right" IsChecked="{Binding OpenOnSystemStart}"
-                          Style="{StaticResource MaterialDesignSwitchToggleButton}" AutomationProperties.Name="{x:Static loc:Strings.RunWhenWindowsStarts}" />
+                          Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                          AutomationProperties.Name="{x:Static loc:Strings.RunWhenWindowsStarts}" />
             <TextBlock Text="{x:Static loc:Strings.RunWhenWindowsStarts}" VerticalAlignment="Center" />
           </DockPanel>
           <DockPanel Margin="0,0,0,12">
             <ToggleButton DockPanel.Dock="Right" IsChecked="{Binding ShowInTaskbar}"
-                          Style="{StaticResource MaterialDesignSwitchToggleButton}" AutomationProperties.Name="{x:Static loc:Strings.ShowInTaskbar}" />
+                          Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                          AutomationProperties.Name="{x:Static loc:Strings.ShowInTaskbar}" />
             <TextBlock Text="{x:Static loc:Strings.ShowInTaskbar}" VerticalAlignment="Center" />
           </DockPanel>
           <DockPanel Margin="0,0,0,12">
             <ToggleButton DockPanel.Dock="Right" IsChecked="{Binding AlwaysOnTop}"
-                          Style="{StaticResource MaterialDesignSwitchToggleButton}" AutomationProperties.Name="{x:Static loc:Strings.KeepWindowOnTop}" />
+                          Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                          AutomationProperties.Name="{x:Static loc:Strings.KeepWindowOnTop}" />
             <TextBlock Text="{x:Static loc:Strings.KeepWindowOnTop}" VerticalAlignment="Center" />
           </DockPanel>
           <DockPanel>
             <ToggleButton DockPanel.Dock="Right" IsChecked="{Binding OpenMinimized}"
-                          Style="{StaticResource MaterialDesignSwitchToggleButton}" AutomationProperties.Name="{x:Static loc:Strings.StartMinimized}" />
+                          Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                          AutomationProperties.Name="{x:Static loc:Strings.StartMinimized}" />
             <TextBlock Text="{x:Static loc:Strings.StartMinimized}" VerticalAlignment="Center" />
           </DockPanel>
         </StackPanel>
       </Border>
       <Border Style="{StaticResource SettingsCard}">
         <StackPanel>
-          <TextBlock Text="{x:Static loc:Strings.Notifications}" Style="{StaticResource SettingsSectionHeading}" Margin="0,0,0,4" />
+          <TextBlock Text="{x:Static loc:Strings.Notifications}" Style="{StaticResource SettingsSectionHeading}"
+                     Margin="0,0,0,4" />
           <TextBlock Text="{x:Static loc:Strings.GlobalNotificationsDescription}"
                      Style="{StaticResource SettingsDescription}" Margin="0,0,0,16" />
           <UniformGrid Columns="3" Rows="2">
-            <CheckBox Content="{x:Static loc:Strings.Unstable}" IsChecked="{Binding UnstableObservationState}" Margin="0,0,12,12" />
-            <CheckBox Content="{x:Static loc:Strings.Failure}" IsChecked="{Binding FailureObservationState}" Margin="0,0,12,12" />
-            <CheckBox Content="{x:Static loc:Strings.Success}" IsChecked="{Binding SuccessObservationState}" Margin="0,0,0,12" />
-            <CheckBox Content="{x:Static loc:Strings.Running}" IsChecked="{Binding RunningObservationState}" Margin="0,0,12,12" />
-            <CheckBox Content="{x:Static loc:Strings.Unknown}" IsChecked="{Binding UnknownObservationState}" Margin="0,0,12,12" />
+            <CheckBox Content="{x:Static loc:Strings.Unstable}" IsChecked="{Binding UnstableObservationState}"
+                      Margin="0,0,12,12" />
+            <CheckBox Content="{x:Static loc:Strings.Failure}" IsChecked="{Binding FailureObservationState}"
+                      Margin="0,0,12,12" />
+            <CheckBox Content="{x:Static loc:Strings.Success}" IsChecked="{Binding SuccessObservationState}"
+                      Margin="0,0,0,12" />
+            <CheckBox Content="{x:Static loc:Strings.Running}" IsChecked="{Binding RunningObservationState}"
+                      Margin="0,0,12,12" />
+            <CheckBox Content="{x:Static loc:Strings.Unknown}" IsChecked="{Binding UnknownObservationState}"
+                      Margin="0,0,12,12" />
           </UniformGrid>
           <Border BorderBrush="{DynamicResource SettingsBorder}" BorderThickness="0,1,0,0" Padding="0,14,0,0">
             <DockPanel>
               <ToggleButton DockPanel.Dock="Right" IsChecked="{Binding NotifyOnlyIfStatusChanged}"
-                            Style="{StaticResource MaterialDesignSwitchToggleButton}" AutomationProperties.Name="{x:Static loc:Strings.NotifyOnlyWhenStatusChanges}" />
+                            Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                            AutomationProperties.Name="{x:Static loc:Strings.NotifyOnlyWhenStatusChanges}" />
               <TextBlock Text="{x:Static loc:Strings.OnlyNotifyWhenStatusChanges}" VerticalAlignment="Center" />
             </DockPanel>
           </Border>

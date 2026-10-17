@@ -27,7 +27,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <summary>
     /// Checks all the validation rules associated with objects, forces the binding to execute all their validation rules.
     /// </summary>
-    /// <param name="parent">The parent <see cref="DependencyObject"/>.</param>
+    /// <param name="parent">The parent <see cref="DependencyObject" />.</param>
     /// <returns>True if valid.</returns>
     public static bool IsValid(DependencyObject parent)
     {
@@ -86,10 +86,10 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     }
 
     /// <summary>
-    /// Gets the <see cref="DependencyProperty"/>s.
+    /// Gets the <see cref="DependencyProperty" />s.
     /// </summary>
     /// <param name="type">The type.</param>
-    /// <returns>The list of <see cref="DependencyProperty"/>.</returns>
+    /// <returns>The list of <see cref="DependencyProperty" />.</returns>
     private static IEnumerable<DependencyProperty> GetDepenedencyProperties(Type type)
     {
       if (propertiesReflectionCache.ContainsKey(type))

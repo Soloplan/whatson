@@ -1,7 +1,9 @@
-﻿// <copyright file="ConnectorsTreeView.xaml.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ConnectorsTreeView.xaml.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
@@ -32,14 +34,15 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private Collection<ConnectorViewModel> selectedConnectors = new Collection<ConnectorViewModel>();
 
     /// <summary>
-    /// Backing field for <see cref="DeleteSelectedObject"/>.
+    /// Backing field for <see cref="DeleteSelectedObject" />.
     /// </summary>
     private CustomCommand deleteFocusedObject;
 
     /// <summary>
-    /// Bool needed for double mouse up event firing problem. If there was an item clicked then, there will be no group clicked event handling succeeding the mentioned one.
+    /// Bool needed for double mouse up event firing problem. If there was an item clicked then, there will be no group
+    /// clicked event handling succeeding the mentioned one.
     /// </summary>
-    private bool connectorItemEventFired = false;
+    private bool connectorItemEventFired;
 
     public ConnectorsTreeView()
     {
@@ -65,7 +68,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Event fired when configuration is changed by user interaction with <see cref="ConnectorsTreeView"/>.
+    /// Event fired when configuration is changed by user interaction with <see cref="ConnectorsTreeView" />.
     /// </summary>
     public event EventHandler ConfigurationChanged;
 
@@ -105,18 +108,12 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Writes current settings from <see cref="ConnectorsTreeView"/> to <paramref name="configuration"/>.
+    /// Writes current settings from <see cref="ConnectorsTreeView" /> to <paramref name="configuration" />.
     /// </summary>
     /// <param name="configuration">Configuration to which data should be written.</param>
-    public void WriteToConfiguration(ApplicationConfiguration configuration)
-    {
-      this.model.WriteToConfiguration(configuration);
-    }
+    public void WriteToConfiguration(ApplicationConfiguration configuration) => this.model.WriteToConfiguration(configuration);
 
-    public TreeListSettings GetTreeListSettings()
-    {
-      return new TreeListSettings { GroupExpansions = this.model.GetGroupExpansionState() };
-    }
+    public TreeListSettings GetTreeListSettings() => new TreeListSettings { GroupExpansions = this.model.GetGroupExpansionState() };
 
     public void ApplyTreeListSettings(TreeListSettings treeListSettings)
     {
@@ -129,7 +126,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Creates new group with <paramref name="groupName"/> and brings it into focus.
+    /// Creates new group with <paramref name="groupName" /> and brings it into focus.
     /// </summary>
     /// <param name="groupName">Name for new group.</param>
     public void CreateGroup(string groupName)
@@ -143,10 +140,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// Gets list of group names currently in use.
     /// </summary>
     /// <returns>List of currently used group names.</returns>
-    public IList<string> GetGroupNames()
-    {
-      return this.model.ConnectorGroups.Select(grp => grp.GroupName).ToList();
-    }
+    public IList<string> GetGroupNames() => this.model.ConnectorGroups.Select(grp => grp.GroupName).ToList();
 
     /// <summary>
     /// Cleares some resources.
@@ -188,9 +182,9 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
       else if (hexColor.Length == 3)
       {
-        red = byte.Parse(hexColor[0].ToString() + hexColor[0].ToString(), NumberStyles.AllowHexSpecifier);
-        green = byte.Parse(hexColor[1].ToString() + hexColor[1].ToString(), NumberStyles.AllowHexSpecifier);
-        blue = byte.Parse(hexColor[2].ToString() + hexColor[2].ToString(), NumberStyles.AllowHexSpecifier);
+        red = byte.Parse(new string(hexColor[0], 2), NumberStyles.AllowHexSpecifier);
+        green = byte.Parse(new string(hexColor[1], 2), NumberStyles.AllowHexSpecifier);
+        blue = byte.Parse(new string(hexColor[2], 2), NumberStyles.AllowHexSpecifier);
       }
 
       return Color.FromRgb(red, green, blue);
@@ -219,10 +213,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
-    private void OnTreeItemDoubleClick(object sender, MouseButtonEventArgs e)
-    {
-      this.model.OnDoubleClick(sender, e);
-    }
+    private void OnTreeItemDoubleClick(object sender, MouseButtonEventArgs e) => this.model.OnDoubleClick(sender, e);
 
     private CustomCommand CreateDeleteFocusedObjectCommand()
     {
@@ -250,15 +241,30 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Hooks or unhooks events for <see cref="model"/>.
+    /// Hooks or unhooks events for <see cref="model" />.
     /// </summary>
     /// <param name="hook">Controls whether the events should be hooked or unhooked.</param>
     private void HookUnhookModelEvents(bool hook)
     {
-      void OnModelOnEditItem(object s, EditTreeItemViewModelEventArgs e) => this.EditItem?.Invoke(s, e);
-      void OnModelOnExportItem(object s, ValueEventArgs<TreeItemViewModel> e) => this.ExportItem?.Invoke(s, e);
-      void OnModelOnDeleteItem(object s, DeleteTreeItemEventArgs e) => this.DeleteItem?.Invoke(s, e);
-      void OnModelOnConfigurationChanged(object s, EventArgs e) => this.ConfigurationChanged?.Invoke(this, EventArgs.Empty);
+      void OnModelOnEditItem(object s, EditTreeItemViewModelEventArgs e)
+      {
+        this.EditItem?.Invoke(s, e);
+      }
+
+      void OnModelOnExportItem(object s, ValueEventArgs<TreeItemViewModel> e)
+      {
+        this.ExportItem?.Invoke(s, e);
+      }
+
+      void OnModelOnDeleteItem(object s, DeleteTreeItemEventArgs e)
+      {
+        this.DeleteItem?.Invoke(s, e);
+      }
+
+      void OnModelOnConfigurationChanged(object s, EventArgs e)
+      {
+        this.ConfigurationChanged?.Invoke(this, EventArgs.Empty);
+      }
 
       if (hook)
       {
@@ -291,14 +297,13 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         Color invertedColor = Color.FromRgb((byte)~colorToConvert.R, (byte)~colorToConvert.G, (byte)~colorToConvert.B);
         return new SolidColorBrush(invertedColor);
       }
-      else
-      {
-        return new SolidColorBrush(Color.FromRgb(0, 0, 0));
-      }
+
+      return new SolidColorBrush(Color.FromRgb(0, 0, 0));
     }
 
     /// <summary>
-    /// Resets a selection style for a tree view item. Uses MaterialDesignBackground to determine font color and as consequence is compatible with night mode.
+    /// Resets a selection style for a tree view item. Uses MaterialDesignBackground to determine font color and as
+    /// consequence is compatible with night mode.
     /// </summary>
     /// <param name="treeViewItem">Item to reset its style.</param>
     private void ResetStyle(ref TreeViewItem treeViewItem)
@@ -312,10 +317,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// Sets style for a tree view item.
     /// </summary>
     /// <param name="treeViewItem">Item to set its style.</param>
-    private void SetStyle(ref TreeViewItem treeViewItem)
-    {
-      treeViewItem.Foreground = Brushes.MediumVioletRed;
-    }
+    private void SetStyle(ref TreeViewItem treeViewItem) => treeViewItem.Foreground = Brushes.MediumVioletRed;
 
     /// <summary>
     /// Finds a group where a connector is located and calls style reset for him.
@@ -354,7 +356,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Based on group and connector function generates container from item and calls style reset for the generated container.
+    /// Based on group and connector function generates container from item and calls style reset for the generated
+    /// container.
     /// </summary>
     /// <param name="connectorGroupViewModel">Group of the connector.</param>
     /// <param name="connectorViewModel">Connector to reset its style.</param>
@@ -362,7 +365,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorGroupViewModel);
       var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(connectorViewModel)
-        ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorViewModel);
+                                ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorViewModel);
       if (treeViewItemInGroup != null)
       {
         this.ResetStyle(ref treeViewItemInGroup);
@@ -378,7 +381,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       TreeViewItem groupTreeViewItem = (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorGroupViewModel);
       var treeViewItemInGroup = (TreeViewItem)groupTreeViewItem?.ItemContainerGenerator.ContainerFromItem(connectorViewModel)
-        ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorViewModel);
+                                ?? (TreeViewItem)this.mainTreeView.ItemContainerGenerator.ContainerFromItem(connectorViewModel);
       if (treeViewItemInGroup != null)
       {
         this.SetStyle(ref treeViewItemInGroup);
@@ -411,7 +414,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Function determines behaviour after a connector in the tree was clicked with control pressed. It enables to toggle selection of a given connector.
+    /// Function determines behaviour after a connector in the tree was clicked with control pressed. It enables to toggle
+    /// selection of a given connector.
     /// </summary>
     /// <param name="connector">Clicked connector.</param>
     private void OnCtrlProjectClicked(ConnectorViewModel connector)
@@ -427,7 +431,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Function determines behaviour after a connector in the tree was clicked with shift pressed. It allows to select items from last selected item to currently selected one.
+    /// Function determines behaviour after a connector in the tree was clicked with shift pressed. It allows to select items
+    /// from last selected item to currently selected one.
     /// Allows selection between groups.
     /// </summary>
     /// <param name="connector">Clicked connector.</param>
@@ -669,7 +674,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
 
       e.Handled = true;
-      return;
     }
 
     /// <summary>
@@ -758,7 +762,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Performs some additional operations to inform model about selected connectors so the model can move/remove them when the time for a drop comes.
+    /// Performs some additional operations to inform model about selected connectors so the model can move/remove them when
+    /// the time for a drop comes.
     /// </summary>
     /// <param name="sender">sender item.</param>
     /// <param name="e">event args.</param>
@@ -767,7 +772,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       var item = (TreeViewItem)sender;
       if (item.Header is ConnectorGroupViewModel)
       {
-        return;
       }
       else
       {
@@ -823,7 +827,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.A))
       {
-        if (this.AreAllconnectorsSelected() == false)
+        if (!this.AreAllconnectorsSelected())
         {
           this.SelectAllConnectors();
         }
@@ -835,7 +839,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Handles scrolling event. Becuse of item virtualization it is necessary to refresh displayed item styles in code behind, because virtual items are null pointers when not seen.
+    /// Handles scrolling event. Becuse of item virtualization it is necessary to refresh displayed item styles in code
+    /// behind, because virtual items are null pointers when not seen.
     /// </summary>
     /// <param name="sender">Sender object.</param>
     /// <param name="e">Args.</param>

@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="JenkinsConnector.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
-//    Licensed under the MIT License. See License-file in the project root for license information.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -20,7 +20,10 @@ namespace Soloplan.WhatsON.Jenkins
   using Soloplan.WhatsON.Model;
 
   [ConnectorType(ConnectorName, ConnectorDisplayName, Description = nameof(Strings.JenkinsDescription))]
-  [ConfigurationItem(RedirectPlugin, typeof(bool), Priority = 400)] // defines use of Display URL API Plugin https://wiki.jenkins.io/display/JENKINS/Display+URL+API+Plugin
+  [ConfigurationItem(
+    RedirectPlugin,
+    typeof(bool),
+    Priority = 400)] // defines use of Display URL API Plugin https://wiki.jenkins.io/display/JENKINS/Display+URL+API+Plugin
   [NotificationConfigurationItem(NotificationsVisbility, typeof(ConnectorNotificationConfiguration), Priority = 1600000000)]
   public class JenkinsConnector : Connector
   {
@@ -46,7 +49,7 @@ namespace Soloplan.WhatsON.Jenkins
     private readonly IJenkinsApi api;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="JenkinsConnector"/> class.
+    /// Initializes a new instance of the <see cref="JenkinsConnector" /> class.
     /// </summary>
     /// <param name="configuration">The configuration.</param>
     /// <param name="api">API for Jenkins.</param>
@@ -62,19 +65,13 @@ namespace Soloplan.WhatsON.Jenkins
     /// Checks correctness of self server URL.
     /// </summary>
     /// <returns>true when fine, false when url is broken.</returns>
-    public override async Task<bool> CheckServerURL()
-    {
-      return await this.IsReachableUrl(this.Address);
-    }
+    public override async Task<bool> CheckServerURL() => await this.IsReachableUrl(this.Address);
 
     /// <summary>
     /// Checks correctness of self project URL.
     /// </summary>
     /// <returns>true when fine, false when url is broken.</returns>
-    public override async Task<bool> CheckProjectURL()
-    {
-      return await this.IsReachableUrl(JenkinsApi.UrlHelper.ProjectUrl(this));
-    }
+    public override async Task<bool> CheckProjectURL() => await this.IsReachableUrl(JenkinsApi.UrlHelper.ProjectUrl(this));
 
     protected override async Task ExecuteQuery(CancellationToken cancellationToken)
     {
@@ -87,7 +84,8 @@ namespace Soloplan.WhatsON.Jenkins
           return;
         }
 
-        log.Error($"It was necessary to reevaluate history of jenkins job {this.Configuration.GetConfigurationByKey(Connector.Category)?.Value?.Trim()} / {this.Configuration.Name}, prev build number {this.PreviousCheckStatus.BuildNumber}, current build number {currentStatus.BuildNumber}");
+        log.Error(
+          $"It was necessary to reevaluate history of jenkins job {this.Configuration.GetConfigurationByKey(Category)?.Value?.Trim()} / {this.Configuration.Name}, prev build number {this.PreviousCheckStatus.BuildNumber}, current build number {currentStatus.BuildNumber}");
         for (var i = currentStatus.BuildNumber - 1; i > this.PreviousCheckStatus.BuildNumber; i--)
         {
           var build = await this.api.GetJenkinsBuild(this, i, cancellationToken);
@@ -106,7 +104,7 @@ namespace Soloplan.WhatsON.Jenkins
       var job = await this.api.GetJenkinsJob(this, cancellationToken);
       if (job == null)
       {
-        if (await this.CheckServerURL() == false)
+        if (!await this.CheckServerURL())
         {
           var status = new Status();
           status.ErrorMessage = Strings.ServerNotAvailable;
@@ -114,7 +112,7 @@ namespace Soloplan.WhatsON.Jenkins
           return status;
         }
 
-        if (await this.CheckProjectURL() == false)
+        if (!await this.CheckProjectURL())
         {
           var status = new Status();
           status.ErrorMessage = Strings.ProjectNotAvailable;
@@ -198,11 +196,8 @@ namespace Soloplan.WhatsON.Jenkins
       newStatus.Url = JenkinsApi.UrlHelper.BuildUrl(this, newStatus.BuildNumber);
       newStatus.ErrorMessage = latestBuild.Result;
 
-      newStatus.CommittedToThisBuild = latestBuild.ChangeSets?.SelectMany(p => p.ChangeSetItems)
-        .Select(p => p.Author)
-        .GroupBy(p => p.FullName)
-        .Select(p => p.FirstOrDefault())
-        .ToList();
+      newStatus.CommittedToThisBuild = latestBuild.ChangeSets?.SelectMany(p => p.ChangeSetItems).Select(p => p.Author).GroupBy(p => p.FullName)
+        .Select(p => p.FirstOrDefault()).ToList();
 
       return newStatus;
     }

@@ -40,9 +40,6 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
       this.Url = CruiseControlServer.UrlHelper.GetReportUrl(this.Connector.directAddress, this.Connector?.Project);
     }
 
-    protected override BuildStatusViewModel GetStatusViewModel()
-    {
-      return new CruiseControlStatusViewModel(this);
-    }
+    protected override BuildStatusViewModel GetStatusViewModel() => new CruiseControlStatusViewModel(this);
   }
 }

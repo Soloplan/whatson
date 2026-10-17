@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="FakeJenkinsApi.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -11,7 +11,6 @@ namespace Soloplan.WhatsON.Jenkins.Tests
   using System.Collections.Generic;
   using System.Threading;
   using System.Threading.Tasks;
-  using Soloplan.WhatsON.Jenkins;
   using Soloplan.WhatsON.Jenkins.Model;
   using Soloplan.WhatsON.Model;
 
@@ -57,7 +56,11 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       return eventArgs.Result;
     }
 
-    public async Task<IList<JenkinsBuild>> GetBuilds(JenkinsConnector connector, CancellationToken token, int @from = 0, int to = Connector.MaxSnapshots)
+    public async Task<IList<JenkinsBuild>> GetBuilds(
+      JenkinsConnector connector,
+      CancellationToken token,
+      int from = 0,
+      int to = Connector.MaxSnapshots)
     {
       if (this.BuildsRequest == null)
       {

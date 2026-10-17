@@ -23,10 +23,7 @@ namespace Soloplan.WhatsON.CruiseControl
     {
     }
 
-    public override Connector CreateNew(ConnectorConfiguration configuration, bool? checkRedirect = null)
-    {
-      return new CruiseControlConnector(configuration);
-    }
+    public override Connector CreateNew(ConnectorConfiguration configuration, bool? checkRedirect = null) => new CruiseControlConnector(configuration);
 
     /// <summary>
     /// Gets the projects.
@@ -57,7 +54,10 @@ namespace Soloplan.WhatsON.CruiseControl
       var serverProjects = new List<Project>();
       foreach (var project in allProjects.CruiseControlProject)
       {
-        var serverProjectTreeItem = new Project(address, project.Name, address + "server/" + project.ServerName + "/project/" + project.Name + "/ViewProjectReport.aspx");
+        var serverProjectTreeItem = new Project(
+          address,
+          project.Name,
+          address + "server/" + project.ServerName + "/project/" + project.Name + "/ViewProjectReport.aspx");
         if (string.IsNullOrWhiteSpace(project.ServerName))
         {
           result.Add(serverProjectTreeItem);
@@ -67,7 +67,12 @@ namespace Soloplan.WhatsON.CruiseControl
           var serverProject = serverProjects.FirstOrDefault(s => s.Name == project.ServerName);
           if (serverProject == null)
           {
-            serverProject = new Project(null, project.ServerName, address + "server/" + project.ServerName + "/viewServerReport.aspx", project.Name, address + "server/" + project.ServerName + "/project/" + project.Name);
+            serverProject = new Project(
+              null,
+              project.ServerName,
+              address + "server/" + project.ServerName + "/viewServerReport.aspx",
+              project.Name,
+              address + "server/" + project.ServerName + "/project/" + project.Name);
             serverProjects.Add(serverProject);
             result.Add(serverProject);
           }

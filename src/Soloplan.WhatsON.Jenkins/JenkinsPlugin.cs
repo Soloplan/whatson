@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="JenkinsPlugin.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -39,7 +39,8 @@ namespace Soloplan.WhatsON.Jenkins
       {
         return jenkinsProject;
       }
-      else if (checkRedirect == false)
+
+      if (checkRedirect == false)
       {
         return jenkinsProject;
       }
@@ -51,10 +52,11 @@ namespace Soloplan.WhatsON.Jenkins
         return jenkinsProject;
       }
 
-      var task = Task.Run(async () => await jenkinsProject.IsReachableUrl(JenkinsApi.UrlHelper.ProjectUrl(jenkinsProject) + JenkinsApi.UrlHelper.RedirectPluginUrlSuffix));
+      var task = Task.Run(async () =>
+        await jenkinsProject.IsReachableUrl(JenkinsApi.UrlHelper.ProjectUrl(jenkinsProject) + JenkinsApi.UrlHelper.RedirectPluginUrlSuffix));
       task.Wait();
       var result = task.Result;
-      if (result == true)
+      if (result)
       {
         jenkinsProject.Configuration.GetConfigurationByKey("RedirectPlugin").Value = "True";
         configuration.GetConfigurationByKey("RedirectPlugin").Value = "True";
@@ -148,8 +150,13 @@ namespace Soloplan.WhatsON.Jenkins
       foreach (var jenkinsJob in jenkinsJobs.Jobs)
       {
         var newServerProject = this.AddProject(projects, jenkinsJob);
-        if (string.Equals(jenkinsJob.ClassName.Trim(), "com.cloudbees.hudson.plugins.folder.Folder".Trim(), System.StringComparison.InvariantCultureIgnoreCase)
-         || string.Equals(jenkinsJob.ClassName.Trim(), "org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject".Trim(), System.StringComparison.InvariantCultureIgnoreCase))
+        if (string.Equals(
+              jenkinsJob.ClassName.Trim(),
+              "com.cloudbees.hudson.plugins.folder.Folder".Trim(),
+              StringComparison.InvariantCultureIgnoreCase) || string.Equals(
+              jenkinsJob.ClassName.Trim(),
+              "org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject".Trim(),
+              StringComparison.InvariantCultureIgnoreCase))
         {
           await this.GetProjectsLists(jenkinsJob.Url, newServerProject.Children, jenkinsApi);
           foreach (var child in newServerProject.Children)
@@ -168,7 +175,12 @@ namespace Soloplan.WhatsON.Jenkins
     /// <returns>The newly  created server projects tree item.</returns>
     private Project AddProject(IList<Project> parentList, JenkinsJob jenkinsJobsItem)
     {
-      var newServerProject = new Project(jenkinsJobsItem.Url, jenkinsJobsItem.DisplayName ?? jenkinsJobsItem.Name, jenkinsJobsItem.Url, jenkinsJobsItem.FullName, jenkinsJobsItem.Description);
+      var newServerProject = new Project(
+        jenkinsJobsItem.Url,
+        jenkinsJobsItem.DisplayName ?? jenkinsJobsItem.Name,
+        jenkinsJobsItem.Url,
+        jenkinsJobsItem.FullName,
+        jenkinsJobsItem.Description);
       parentList.Add(newServerProject);
       return newServerProject;
     }

@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ProjectViewModel.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -16,7 +16,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
   /// <summary>
   /// The view model for the selectable projects on the wizard.
   /// </summary>
-  /// <seealso cref="System.ComponentModel.INotifyPropertyChanged"/>
+  /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
   public partial class ProjectViewModel : INotifyPropertyChanged
   {
     /// <summary>
@@ -112,7 +112,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     }
 
     /// <summary>
-    /// Gets a value indicating whether this project is checkable - supports checking (some items might be only some grouping items).
+    /// Gets a value indicating whether this project is checkable - supports checking (some items might be only some grouping
+    /// items).
     /// </summary>
     public bool IsCheckable
     {
@@ -141,7 +142,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// Determines whether is any project checked.
     /// </summary>
     /// <returns>
-    ///   <c>true</c> if any project is checked; otherwise, <c>false</c>.
+    /// <c>true</c> if any project is checked; otherwise, <c>false</c>.
     /// </returns>
     public bool IsAnyChecked()
     {
@@ -177,10 +178,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// Decides if a tooltip should be visible.
     /// </summary>
     /// <returns>True when should be visible, false when should not be visible.</returns>
-    public bool ShouldDisplayTooltip()
-    {
-      return (this.Description == string.Empty || this.Description == null) ? false : true;
-    }
+    public bool ShouldDisplayTooltip() => (this.Description == string.Empty || this.Description == null) ? false : true;
 
     /// <summary>
     /// Updates the checked state of the groups(including parent groups).

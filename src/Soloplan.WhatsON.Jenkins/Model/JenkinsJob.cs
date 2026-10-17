@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="JenkinsJob.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -18,7 +18,8 @@ namespace Soloplan.WhatsON.Jenkins.Model
     /// <summary>
     /// The request properties for the server query.
     /// </summary>
-    public const string RequestProperties = "displayName,fullDisplayName,lastBuild[number,displayName,description,building,duration,estimatedDuration,result,timestamp,culprits[fullName,absoluteUrl],changeSets[items[author[fullName,absoluteUrl]]]],name,fullName,url";
+    public const string RequestProperties =
+      "displayName,fullDisplayName,lastBuild[number,displayName,description,building,duration,estimatedDuration,result,timestamp,culprits[fullName,absoluteUrl],changeSets[items[author[fullName,absoluteUrl]]]],name,fullName,url";
 
     /// <summary>
     /// Gets or sets the job display name.

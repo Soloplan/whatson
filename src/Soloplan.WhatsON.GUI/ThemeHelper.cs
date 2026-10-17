@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ThemeHelper.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -50,7 +50,8 @@ namespace Soloplan.WhatsON.GUI
     /// <param name="isDark">if set to <c>true</c> dark mode will be applied.</param>
     public void ApplyLightDarkMode(bool isDark)
     {
-      System.Windows.Forms.Application.SetColorMode(isDark ? System.Windows.Forms.SystemColorMode.Dark : System.Windows.Forms.SystemColorMode.Classic);
+      System.Windows.Forms.Application.SetColorMode(
+        isDark ? System.Windows.Forms.SystemColorMode.Dark : System.Windows.Forms.SystemColorMode.Classic);
       var baseTheme = isDark ? Theme.Dark : Theme.Light;
       ITheme theme = Theme.Create(baseTheme, isDark ? PrimaryColor : SecondaryColor, Color.FromRgb(49, 95, 200));
       var paletteHelper = new PaletteHelper();
@@ -64,16 +65,16 @@ namespace Soloplan.WhatsON.GUI
       resources["SettingsSelection"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(isDark ? "#233A61" : "#EAF0FE"));
     }
 
-    internal static bool IsDarkMode(ApplicationTheme mode, bool systemIsDark)
-    {
-      return mode == ApplicationTheme.Dark || (mode == ApplicationTheme.System && systemIsDark);
-    }
+    internal static bool IsDarkMode(ApplicationTheme mode, bool systemIsDark) => mode == ApplicationTheme.Dark || (mode == ApplicationTheme.System && systemIsDark);
 
     internal static bool SystemUsesDarkMode()
     {
       try
       {
-        return Registry.GetValue(@"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 1) is int value && value == 0;
+        return Registry.GetValue(
+          @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize",
+          "AppsUseLightTheme",
+          1) is int value && value == 0;
       }
       catch (Exception exception) when (exception is SecurityException || exception is UnauthorizedAccessException || exception is IOException)
       {

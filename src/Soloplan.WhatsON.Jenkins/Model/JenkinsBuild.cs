@@ -1,7 +1,9 @@
-﻿// <copyright file="JenkinsBuild.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="JenkinsBuild.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.Jenkins.Model
 {
@@ -9,7 +11,8 @@ namespace Soloplan.WhatsON.Jenkins.Model
 
   public class JenkinsBuild
   {
-    public const string RequestProperties = "number,displayName,description,building,duration,estimatedDuration,result,timestamp,culprits[fullName,absoluteUrl],changeSets[items[author[fullName,absoluteUrl]]]";
+    public const string RequestProperties =
+      "number,displayName,description,building,duration,estimatedDuration,result,timestamp,culprits[fullName,absoluteUrl],changeSets[items[author[fullName,absoluteUrl]]]";
 
     public int Number { get; set; }
 

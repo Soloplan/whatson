@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="TestConnector.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -27,10 +27,7 @@ namespace Soloplan.WhatsON.Tests
 
     public int HistoryRequests { get; private set; }
 
-    protected override Task<Status> GetCurrentStatus(CancellationToken cancellationToken)
-    {
-      return this.Query(cancellationToken);
-    }
+    protected override Task<Status> GetCurrentStatus(CancellationToken cancellationToken) => this.Query(cancellationToken);
 
     protected override Task<List<Status>> GetHistory(CancellationToken cancellationToken)
     {

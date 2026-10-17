@@ -1,7 +1,9 @@
-﻿// <copyright file="ConnectorPlugin.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ConnectorPlugin.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.Composition
 {
@@ -15,7 +17,7 @@ namespace Soloplan.WhatsON.Composition
   using Soloplan.WhatsON.Model;
 
   /// <summary>
-  /// Base implementation for all plugins that provide connectors.
+  ///   Base implementation for all plugins that provide connectors.
   /// </summary>
   public abstract class ConnectorPlugin : IPlugin
   {
@@ -25,7 +27,8 @@ namespace Soloplan.WhatsON.Composition
       var connectorTypeAttribute = this.ConnectorType.GetCustomAttribute<ConnectorTypeAttribute>();
       if (connectorTypeAttribute == null)
       {
-        throw new ArgumentException($"The connector type {this.ConnectorType} doesn't provide meta information. Make sure a ConnectorTypeAttribute is defined on the type.");
+        throw new ArgumentException(
+          $"The connector type {this.ConnectorType} doesn't provide meta information. Make sure a ConnectorTypeAttribute is defined on the type.");
       }
 
       this.Name = connectorTypeAttribute.Name;
@@ -37,24 +40,24 @@ namespace Soloplan.WhatsON.Composition
 
     public Type ConnectorType { get; }
 
-    public string Name { get; }
+    public string Description { get; }
 
     public string DisplayName { get; }
 
-    public string Description { get; }
-
-    public abstract Connector CreateNew(ConnectorConfiguration configuration, bool? checkRedirect = null);
+    public string Name { get; }
 
     /// <summary>
-    /// Assigns the <see cref="Project"/> to <see cref="ConfigurationItem"/>.
+    ///   Assigns the <see cref="Project" /> to <see cref="ConfigurationItem" />.
     /// </summary>
     /// <param name="project">The server project.</param>
     /// <param name="configurationItemsSupport">The configuration items provider.</param>
     /// <param name="serverAddress">The server address.</param>
     public abstract void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress = null);
 
+    public abstract Connector CreateNew(ConnectorConfiguration configuration, bool? checkRedirect = null);
+
     /// <summary>
-    /// Gets the projects.
+    ///   Gets the projects.
     /// </summary>
     /// <param name="address">The address.</param>
     /// <returns>The projects from the server.</returns>

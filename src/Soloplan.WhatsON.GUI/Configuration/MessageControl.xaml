@@ -11,7 +11,9 @@
       <TextBlock x:Name="uxMessgeTextBox" TextWrapping="Wrap" Style="{StaticResource SettingsDescription}" />
       <Button Content="{x:Static loc:Strings.OK}" HorizontalAlignment="Right" Margin="0,24,0,0" IsDefault="True"
               Command="materialDesign:DialogHost.CloseDialogCommand" Style="{StaticResource SettingsPrimaryButton}">
-        <Button.CommandParameter><system:Boolean>True</system:Boolean></Button.CommandParameter>
+        <Button.CommandParameter>
+          <system:Boolean>True</system:Boolean>
+        </Button.CommandParameter>
       </Button>
     </StackPanel>
   </Border>

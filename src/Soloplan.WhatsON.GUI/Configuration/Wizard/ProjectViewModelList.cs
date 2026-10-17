@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ProjectViewModelList.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -13,7 +13,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
   using Soloplan.WhatsON.Model;
 
   /// <summary>
-  /// The list which is able to keep the <see cref="ProjectViewModel"/>s and serves additional functionalities.
+  /// The list which is able to keep the <see cref="ProjectViewModel" />s and serves additional functionalities.
   /// </summary>
   /// <seealso cref="System.Collections.Generic.IReadOnlyList{ProjectViewModel}" />
   public class ProjectViewModelList : IReadOnlyList<ProjectViewModel>
@@ -29,7 +29,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     private bool uncheckAllRunning;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ProjectViewModelList"/> class.
+    /// Initializes a new instance of the <see cref="ProjectViewModelList" /> class.
     /// </summary>
     public ProjectViewModelList()
     {
@@ -52,32 +52,26 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     public int Count => this.projects.Count;
 
     /// <summary>
-    /// Gets the <see cref="ProjectViewModel"/> at the specified index.
+    /// Gets the <see cref="ProjectViewModel" /> at the specified index.
     /// </summary>
     /// <value>
-    /// The <see cref="ProjectViewModel"/>.
+    /// The <see cref="ProjectViewModel" />.
     /// </value>
     /// <param name="index">The index.</param>
-    /// <returns>The <see cref="ProjectViewModel"/> at specific index.</returns>
+    /// <returns>The <see cref="ProjectViewModel" /> at specific index.</returns>
     public ProjectViewModel this[int index] => this.projects[index];
 
     /// <summary>
     /// Gets the enumerator.
     /// </summary>
     /// <returns>The enumerator.</returns>
-    public IEnumerator<ProjectViewModel> GetEnumerator()
-    {
-      return this.projects.GetEnumerator();
-    }
+    public IEnumerator<ProjectViewModel> GetEnumerator() => this.projects.GetEnumerator();
 
     /// <summary>
     /// Gets the enumerator.
     /// </summary>
     /// <returns>The enumerator.</returns>
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-      return this.projects.GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => this.projects.GetEnumerator();
 
     /// <summary>
     /// Adds the project.

@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="WizardController.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -75,7 +75,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     private ConnectorViewModel editedConnectorViewModel;
 
     /// <summary>
-    /// The force of <see cref="IsPreviousStepEnabled"/> flag.
+    /// The force of <see cref="IsPreviousStepEnabled" /> flag.
     /// </summary>
     private bool? forceIsPreviousStepEnabled;
 
@@ -101,10 +101,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// Gets the projects tree.
     /// </summary>
-    public IReadOnlyList<GrouppingSetting> GroupingSettings
-    {
-      get;
-    }
+    public IReadOnlyList<GrouppingSetting> GroupingSettings { get; }
 
     /// <summary>
     /// Gets or sets the selected grouping setting.
@@ -153,12 +150,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// Gets a value indicating whether the proposed address is empty.
     /// </summary>
     /// <value>
-    ///   <c>true</c> if the proposed address is empty; otherwise, <c>false</c>.
+    /// <c>true</c> if the proposed address is empty; otherwise, <c>false</c>.
     /// </value>
     public bool IsProposedAddressEmpty => string.IsNullOrWhiteSpace(this.ProposedServerAddress);
 
     /// <summary>
-    /// Indicates if auto detection is enabled, when set also updates <seealso cref="IsAutoDetectionDisabled"/>
+    /// Indicates if auto detection is enabled, when set also updates <seealso cref="IsAutoDetectionDisabled" />
     /// to keep the detection controls synchronized.
     /// </summary>
     public bool IsAutoDetectionEnabled { get; set; } = true;
@@ -188,10 +185,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         return this.proposedServerAddress;
       }
 
-      set
-      {
-        this.proposedServerAddress = value;
-      }
+      set => this.proposedServerAddress = value;
     }
 
     public List<string> AvailableServers
@@ -200,9 +194,10 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       {
         if (this.IsAutoDetectionEnabled)
         {
-          return this.config.ConnectorsConfiguration.Where(x =>
-          x.GetConfigurationByKey(Connector.ServerAddress) != null &&
-          !string.IsNullOrEmpty(x.GetConfigurationByKey(Connector.ServerAddress).Value)).Select(x => new Uri(x.GetConfigurationByKey(Connector.ServerAddress).Value).AbsoluteUri).Distinct().ToList();
+          return this.config.ConnectorsConfiguration
+            .Where(x => x.GetConfigurationByKey(Connector.ServerAddress) != null
+                        && !string.IsNullOrEmpty(x.GetConfigurationByKey(Connector.ServerAddress).Value))
+            .Select(x => new Uri(x.GetConfigurationByKey(Connector.ServerAddress).Value).AbsoluteUri).Distinct().ToList();
         }
 
         if (this.SelectedConnectorType == null)
@@ -211,19 +206,14 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         }
 
         return this.config.ConnectorsConfiguration.Where(x =>
-          x.Type == this.SelectedConnectorType.Name &&
-          x.GetConfigurationByKey(Connector.ServerAddress) != null &&
-          !string.IsNullOrEmpty(x.GetConfigurationByKey(Connector.ServerAddress).Value)).Select(x => new Uri(x.GetConfigurationByKey(Connector.ServerAddress).Value).AbsoluteUri).Distinct().ToList();
+          x.Type == this.SelectedConnectorType.Name && x.GetConfigurationByKey(Connector.ServerAddress) != null
+                                                    && !string.IsNullOrEmpty(x.GetConfigurationByKey(Connector.ServerAddress).Value)).Select(x =>
+          new Uri(x.GetConfigurationByKey(Connector.ServerAddress).Value).AbsoluteUri).Distinct().ToList();
       }
     }
 
-    public List<ConnectorPlugin> AvailableConnectorTypes
-    {
-      get
-      {
-        return PluginManager.Instance.ConnectorPlugins.OrderByDescending(x => this.config.ConnectorsConfiguration.Count(y => y.Type == x.Name)).ToList();
-      }
-    }
+    public List<ConnectorPlugin> AvailableConnectorTypes =>
+      PluginManager.Instance.ConnectorPlugins.OrderByDescending(x => this.config.ConnectorsConfiguration.Count(y => y.Type == x.Name)).ToList();
 
     public ConnectorPlugin SelectedConnectorType
     {
@@ -237,10 +227,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         return this.selectedConnectorType;
       }
 
-      set
-      {
-        this.selectedConnectorType = value;
-      }
+      set => this.selectedConnectorType = value;
     }
 
     /// <summary>
@@ -252,7 +239,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// Gets a value indicating whether finish button should be enabled.
     /// </summary>
     /// <value>
-    ///   <c>true</c> if this the finish button should be enabled; otherwise, <c>false</c>.
+    /// <c>true</c> if this the finish button should be enabled; otherwise, <c>false</c>.
     /// </value>
     public bool IsFinishEnabled { get; private set; }
 
@@ -300,6 +287,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       else
       {
         this.ProposedServerAddress = this.editedConnectorViewModel.GetConfigurationByKey(Connector.ServerAddress)?.Value;
+
         void OnActivated(object sender, EventArgs e)
         {
           this.GoToProjectSelectionStep();
@@ -340,7 +328,14 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       var checkedProjects = this.Projects.GetChecked();
       foreach (var checkedProject in checkedProjects.Where(p => p.Projects.Count == 0))
       {
-        var newProject = new Project(checkedProject.Address, checkedProject.Name, checkedProject.DirectAddress, checkedProject.FullName, checkedProject.Description, this.Projects.PlugIn, this.CreateParentProjectStructure(checkedProject));
+        var newProject = new Project(
+          checkedProject.Address,
+          checkedProject.Name,
+          checkedProject.DirectAddress,
+          checkedProject.FullName,
+          checkedProject.Description,
+          this.Projects.PlugIn,
+          this.CreateParentProjectStructure(checkedProject));
         serverProjects.Add(newProject);
       }
 
@@ -498,13 +493,15 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
             return false;
           }
 
-          return x.Type == this.SelectedConnectorType.Name
-          && new Uri(address).AbsoluteUri.Equals(this.ProposedServerAddress)
-          && x.GetConfigurationByKey(Connector.ProjectName)?.Value == (!string.IsNullOrWhiteSpace(project.FullName) ? project.FullName : project.Name);
+          return x.Type == this.SelectedConnectorType.Name && new Uri(address).AbsoluteUri.Equals(this.ProposedServerAddress)
+                                                           && x.GetConfigurationByKey(Connector.ProjectName)?.Value
+                                                           == (!string.IsNullOrWhiteSpace(project.FullName) ? project.FullName : project.Name);
         }).ToList();
 
         newProject.AlreadyAdded = alreadyExists.Any();
-        newProject.AddedProject = alreadyExists.Any() ? string.Join(" - ", alreadyExists.Select(x => $"{x.GetConfigurationByKey(Connector.Category).Value}/{x.Name}")) : null;
+        newProject.AddedProject = alreadyExists.Any()
+          ? string.Join(" - ", alreadyExists.Select(x => $"{x.GetConfigurationByKey(Connector.Category).Value}/{x.Name}"))
+          : null;
 
         this.ProcessServerSubProjects(project.Children, newProject);
       }
@@ -519,12 +516,16 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       Tuple<ConnectorPlugin, ProjectViewModelList> pluginToQueryWithModel;
       if (this.editedConnectorViewModel != null)
       {
-        pluginToQueryWithModel = new Tuple<ConnectorPlugin, ProjectViewModelList>(this.editedConnectorViewModel.SourceConnectorPlugin, new ProjectViewModelList { MultiSelectionMode = this.MultiSelectionMode, PlugIn = this.editedConnectorViewModel.SourceConnectorPlugin });
+        pluginToQueryWithModel = new Tuple<ConnectorPlugin, ProjectViewModelList>(
+          this.editedConnectorViewModel.SourceConnectorPlugin,
+          new ProjectViewModelList { MultiSelectionMode = this.MultiSelectionMode, PlugIn = this.editedConnectorViewModel.SourceConnectorPlugin });
       }
       else
       {
         var plugin = PluginManager.Instance.ConnectorPlugins.FirstOrDefault(x => x.Name.Equals(this.SelectedConnectorType.Name));
-        pluginToQueryWithModel = new Tuple<ConnectorPlugin, ProjectViewModelList>(plugin, new ProjectViewModelList { MultiSelectionMode = this.MultiSelectionMode, PlugIn = plugin });
+        pluginToQueryWithModel = new Tuple<ConnectorPlugin, ProjectViewModelList>(
+          plugin,
+          new ProjectViewModelList { MultiSelectionMode = this.MultiSelectionMode, PlugIn = plugin });
       }
 
       var taskList = new Dictionary<Task, ProjectViewModelList>();
@@ -548,7 +549,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
           break;
         }
 
-        log.Debug($"Projects discovery for a plugin task completed not successfully. Status:{completedTask.Status}; Exception: {completedTask.Exception}");
+        log.Debug(
+          $"Projects discovery for a plugin task completed not successfully. Status:{completedTask.Status}; Exception: {completedTask.Exception}");
         taskList.Remove(completedTask);
       }
 
@@ -564,16 +566,23 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <returns>The task.</returns>
     private async Task PrepareProjectsListWithTypeDetection()
     {
-      Collection<Tuple<ConnectorPlugin, ProjectViewModelList>> pluginToQueryWithModels = new Collection<Tuple<ConnectorPlugin, ProjectViewModelList>>();
+      Collection<Tuple<ConnectorPlugin, ProjectViewModelList>> pluginToQueryWithModels =
+        new Collection<Tuple<ConnectorPlugin, ProjectViewModelList>>();
       if (this.editedConnectorViewModel != null)
       {
-        pluginToQueryWithModels.Add(new Tuple<ConnectorPlugin, ProjectViewModelList>(this.editedConnectorViewModel.SourceConnectorPlugin, new ProjectViewModelList { MultiSelectionMode = this.MultiSelectionMode, PlugIn = this.editedConnectorViewModel.SourceConnectorPlugin }));
+        pluginToQueryWithModels.Add(
+          new Tuple<ConnectorPlugin, ProjectViewModelList>(
+            this.editedConnectorViewModel.SourceConnectorPlugin,
+            new ProjectViewModelList { MultiSelectionMode = this.MultiSelectionMode, PlugIn = this.editedConnectorViewModel.SourceConnectorPlugin }));
       }
       else
       {
         foreach (var plugin in PluginManager.Instance.ConnectorPlugins)
         {
-          pluginToQueryWithModels.Add(new Tuple<ConnectorPlugin, ProjectViewModelList>(plugin, new ProjectViewModelList { MultiSelectionMode = this.MultiSelectionMode, PlugIn = plugin }));
+          pluginToQueryWithModels.Add(
+            new Tuple<ConnectorPlugin, ProjectViewModelList>(
+              plugin,
+              new ProjectViewModelList { MultiSelectionMode = this.MultiSelectionMode, PlugIn = plugin }));
         }
       }
 
@@ -603,7 +612,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
             break;
           }
 
-          log.Debug($"Projects discovery for a plugin task completed not successfully. Status:{completedTask.Status}; Exception: {completedTask.Exception}");
+          log.Debug(
+            $"Projects discovery for a plugin task completed not successfully. Status:{completedTask.Status}; Exception: {completedTask.Exception}");
           taskList.Remove(completedTask);
         }
         catch (Exception ex)
@@ -626,7 +636,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     {
       try
       {
-        var serverProjects = await listQueryingPlugin.Item1.GetProjects(this.ProposedServerAddress.Last() != '/' ? this.ProposedServerAddress += '/' : this.ProposedServerAddress);
+        var serverProjects = await listQueryingPlugin.Item1.GetProjects(
+          this.ProposedServerAddress.Last() != '/' ? this.ProposedServerAddress += '/' : this.ProposedServerAddress);
         foreach (var serverProject in serverProjects.OrderBy(x => x.Name))
         {
           var newProject = listQueryingPlugin.Item2.AddProject(serverProject);
@@ -639,8 +650,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       {
         throw ex;
       }
-
-      return;
     }
 
     /// <summary>
@@ -739,7 +748,14 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         return null;
       }
 
-      var newParent = new Project(viewModel.Parent.Address, viewModel.Parent.Name, viewModel.Parent.DirectAddress, viewModel.Parent.FullName, viewModel.Parent.Description, this.Projects.PlugIn, this.CreateParentProjectStructure(viewModel.Parent));
+      var newParent = new Project(
+        viewModel.Parent.Address,
+        viewModel.Parent.Name,
+        viewModel.Parent.DirectAddress,
+        viewModel.Parent.FullName,
+        viewModel.Parent.Description,
+        this.Projects.PlugIn,
+        this.CreateParentProjectStructure(viewModel.Parent));
       return newParent;
     }
   }

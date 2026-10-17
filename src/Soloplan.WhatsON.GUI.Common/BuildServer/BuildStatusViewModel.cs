@@ -72,13 +72,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
     public bool Building { get; protected set; }
 
-    public DateTime FinishTime
-    {
-      get
-      {
-        return this.Time + this.Duration;
-      }
-    }
+    public DateTime FinishTime => this.Time + this.Duration;
 
     public override DateTime Time
     {
@@ -98,9 +92,9 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     /// Gets or sets progress shown in progress bar and displayed in GUI.
     /// The value is processed:
     /// <list type="">
-    /// <item>0 is changed to 1 to prevent progress bar showing unknown value.</item>
-    /// <item>Changed to 0 if build is taking longer then expected to show unknown value.</item>
-    /// <item>Otherwise the value from build server is shown.</item>
+    ///   <item>0 is changed to 1 to prevent progress bar showing unknown value.</item>
+    ///   <item>Changed to 0 if build is taking longer then expected to show unknown value.</item>
+    ///   <item>Otherwise the value from build server is shown.</item>
     /// </list>
     /// </summary>
     public int Progress { get; protected set; }
@@ -141,7 +135,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     }
 
     /// <summary>
-    /// Updates flags used to control visibility of controls based on <see cref="State"/>.
+    /// Updates flags used to control visibility of controls based on <see cref="State" />.
     /// </summary>
     protected override void UpdateStateFlags()
     {
@@ -184,11 +178,13 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     }
 
     /// <summary>
-    /// Updates <see cref="Progress"/> based on other parameters.
+    /// Updates <see cref="Progress" /> based on other parameters.
     /// </summary>
     /// <remarks>
-    /// Must be called when <see cref="BuildingNoLongerThenExpected"/>, <see cref="BuildingLongerThenExpected"/> and <see cref="RawProgress"/> are calculated
-    /// and won't change. It is important not to change values when <see cref="BuildingLongerThenExpected"/> because it resets the indeterminate progress bar
+    /// Must be called when <see cref="BuildingNoLongerThenExpected" />, <see cref="BuildingLongerThenExpected" /> and
+    /// <see cref="RawProgress" /> are calculated
+    /// and won't change. It is important not to change values when <see cref="BuildingLongerThenExpected" /> because it
+    /// resets the indeterminate progress bar
     /// and the animation looks bad.
     /// </remarks>
     private void UpdateProgress()

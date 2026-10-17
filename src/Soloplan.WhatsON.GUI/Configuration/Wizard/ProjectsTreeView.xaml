@@ -14,10 +14,12 @@
       <Grid Margin="0,2,4,2">
         <Grid.ToolTip>
           <ToolTip Visibility="{Binding Path=., Converter={StaticResource WizardProjectToVisibilityConverter}}"
-                   Background="{DynamicResource SettingsSurface}" BorderBrush="{DynamicResource SettingsBorder}" Padding="12">
+                   Background="{DynamicResource SettingsSurface}" BorderBrush="{DynamicResource SettingsBorder}"
+                   Padding="12">
             <wpf:HtmlPanel Background="Transparent" MaxWidth="600">
               <wpf:HtmlPanel.Text>
-                <MultiBinding StringFormat='{}&lt;font size=&quot;6&quot; face=&quot;Segoe UI&quot; color=&quot;{1}&quot;&gt; {0} &lt;/font&gt;'>
+                <MultiBinding
+                  StringFormat='{}&lt;font size=&quot;6&quot; face=&quot;Segoe UI&quot; color=&quot;{1}&quot;&gt; {0} &lt;/font&gt;'>
                   <Binding Path="Description" />
                   <Binding Source="{StaticResource MaterialDesignBody}" Converter="{StaticResource RGBAToRGBConverter}" />
                 </MultiBinding>
@@ -25,28 +27,37 @@
             </wpf:HtmlPanel>
           </ToolTip>
         </Grid.ToolTip>
-        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-        <Grid.RowDefinitions><RowDefinition /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto" /><ColumnDefinition /><ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition /><RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
         <CheckBox Focusable="False" IsChecked="{Binding IsChecked}" Margin="0,0,10,0" VerticalAlignment="Center"
-                  Visibility="{Binding IsCheckable, Converter={StaticResource BoolToVis}}" AutomationProperties.Name="{Binding Name}" />
+                  Visibility="{Binding IsCheckable, Converter={StaticResource BoolToVis}}"
+                  AutomationProperties.Name="{Binding Name}" />
         <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
         <TextBlock Grid.Column="2" Margin="10,0,0,0" VerticalAlignment="Center">
           <Hyperlink NavigateUri="{Binding DirectAddress}" RequestNavigate="HyperlinkRequestNavigate"
-                     Foreground="{DynamicResource SettingsAccent}" AutomationProperties.Name="{x:Static loc:Strings.OpenProjectInBrowser}">
+                     Foreground="{DynamicResource SettingsAccent}"
+                     AutomationProperties.Name="{x:Static loc:Strings.OpenProjectInBrowser}">
             <materialDesign:PackIcon Kind="OpenInNew" Width="16" Height="16" />
           </Hyperlink>
         </TextBlock>
         <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,4,0,0"
                    Foreground="{DynamicResource SettingsMuted}" FontSize="11"
-                   Visibility="{Binding AlreadyAdded, Converter={StaticResource BoolToVisibility}}" TextTrimming="CharacterEllipsis">
+                   Visibility="{Binding AlreadyAdded, Converter={StaticResource BoolToVisibility}}"
+                   TextTrimming="CharacterEllipsis">
           <Run Text="{x:Static loc:Strings.AlreadyAddedPrefix}" /><Run Text="{Binding AddedProject}" />
         </TextBlock>
       </Grid>
     </HierarchicalDataTemplate>
   </UserControl.Resources>
-  <TreeView x:Name="mainTreeView" ItemsSource="{Binding}" Background="Transparent" BorderThickness="0" Padding="0,0,12,0"
+  <TreeView x:Name="mainTreeView" ItemsSource="{Binding}" Background="Transparent" BorderThickness="0"
+            Padding="0,0,12,0"
             VirtualizingPanel.IsVirtualizing="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-            ScrollViewer.VerticalScrollBarVisibility="Auto" AutomationProperties.Name="{x:Static loc:Strings.AvailableProjects}">
+            ScrollViewer.VerticalScrollBarVisibility="Auto"
+            AutomationProperties.Name="{x:Static loc:Strings.AvailableProjects}">
     <TreeView.ItemContainerStyle>
       <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
         <Setter Property="IsExpanded" Value="True" />

@@ -12,7 +12,7 @@ namespace Soloplan.WhatsON.CruiseControl.Model
   [System.SerializableAttribute]
   [System.ComponentModel.DesignerCategoryAttribute("code")]
   [XmlType(AnonymousType = true)]
-  [XmlRoot(ElementName= "Projects", Namespace = "", IsNullable = false)]
+  [XmlRoot(ElementName = "Projects", Namespace = "", IsNullable = false)]
   public class CruiseControlJobs
   {
     [XmlElement("Project")]

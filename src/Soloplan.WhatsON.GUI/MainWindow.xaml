@@ -40,15 +40,15 @@
   </Window.Resources>
   <DockPanel>
     <local:CustomTitleBar
-                          AddConnectorClicked="NewConnectorClick"
-                          AddGroupClicked="NewGroupClick"
-                          ButtonClicked="OpenConfig"
-                          CustomButtonIcon="SettingsOutline"
-                          CustomButtonVisible="{Binding ConfigurationModifiedFromTree, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Converter={StaticResource InvertBoolConverter}}"
-                          DockPanel.Dock="Top"
-                          ImportClicked="ImportClick"
-                          ShowMinimizeButton="{Binding Path=ShowInTaskbar, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}"
-                          Window="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" />
+      AddConnectorClicked="NewConnectorClick"
+      AddGroupClicked="NewGroupClick"
+      ButtonClicked="OpenConfig"
+      CustomButtonIcon="SettingsOutline"
+      CustomButtonVisible="{Binding ConfigurationModifiedFromTree, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Converter={StaticResource InvertBoolConverter}}"
+      DockPanel.Dock="Top"
+      ImportClicked="ImportClick"
+      ShowMinimizeButton="{Binding Path=ShowInTaskbar, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}"
+      Window="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" />
 
     <Border x:Name="HideableStackPanel"
             Padding="8,8,8,8"
@@ -60,8 +60,10 @@
                      VerticalAlignment="Center"
                      Text="{x:Static loc:Strings.ConfigurationIsModified}" />
           <DockPanel DockPanel.Dock="Right">
-            <Button Margin="5" Padding="5" Click="SaveClick" Style="{StaticResource MaterialDesignFlatAccentBgButton}" Content="{x:Static loc:Strings.Save}" />
-            <Button Margin="5" Padding="5" Click="ResetClick" Style="{StaticResource MaterialDesignFlatAccentBgButton}" Content="{x:Static loc:Strings.Reset}" />
+            <Button Margin="5" Padding="5" Click="SaveClick" Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                    Content="{x:Static loc:Strings.Save}" />
+            <Button Margin="5" Padding="5" Click="ResetClick" Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                    Content="{x:Static loc:Strings.Reset}" />
           </DockPanel>
         </DockPanel>
       </materialDesign:ColorZone>

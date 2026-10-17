@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ApiHelper.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -24,12 +24,6 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       };
     }
 
-    public static JenkinsJob GetProject(ObservationState state, int lastBuildNumber)
-    {
-      return new JenkinsJob
-      {
-        LastBuild = GetBuild(state, lastBuildNumber),
-      };
-    }
+    public static JenkinsJob GetProject(ObservationState state, int lastBuildNumber) => new JenkinsJob { LastBuild = GetBuild(state, lastBuildNumber), };
   }
 }

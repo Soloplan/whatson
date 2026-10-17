@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="NotificationSettingsControlBuilder.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -61,7 +61,8 @@ namespace Soloplan.WhatsON.GUI.Configuration
 
       this.ApplyConfigurationItemToNotificationState(notificationState, configItem, configItemAttribute, expander);
       var configItemPropertyChanged = (INotifyPropertyChanged)configItem;
-      configItemPropertyChanged.PropertyChanged += (s, e) => this.ApplyConfigurationItemToNotificationState(notificationState, configItem, configItemAttribute, expander);
+      configItemPropertyChanged.PropertyChanged += (s, e) =>
+        this.ApplyConfigurationItemToNotificationState(notificationState, configItem, configItemAttribute, expander);
 
       foreach (var notificationStateItem in notificationState.ItemsState)
       {
@@ -82,8 +83,14 @@ namespace Soloplan.WhatsON.GUI.Configuration
 
     private void AssignPropertyChangeOfStateItems(NotificationsState notificationsState, IConfigurationItem configItem)
     {
-      notificationsState.UseGlobalSettings.PropertyChanged += (s, e) => this.NotificationStateChanged(notificationsState.UseGlobalSettings, configItem, e.PropertyName);
-      notificationsState.OnlyIfStateChanged.PropertyChanged += (s, e) => this.NotificationStateChanged(notificationsState.OnlyIfStateChanged, configItem, e.PropertyName);
+      notificationsState.UseGlobalSettings.PropertyChanged += (s, e) => this.NotificationStateChanged(
+        notificationsState.UseGlobalSettings,
+        configItem,
+        e.PropertyName);
+      notificationsState.OnlyIfStateChanged.PropertyChanged += (s, e) => this.NotificationStateChanged(
+        notificationsState.OnlyIfStateChanged,
+        configItem,
+        e.PropertyName);
       foreach (var notificationStateItem in notificationsState.ItemsState)
       {
         notificationStateItem.PropertyChanged += (s, e) => this.NotificationStateChanged(notificationStateItem, configItem, e.PropertyName);
@@ -95,8 +102,10 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// </summary>
     /// <param name="notificationStateItem">The notification state item.</param>
     /// <param name="assignGlobalSettingsEnabledDependency">if set to <c>true</c> [assign global settings enabled dependency].</param>
-    /// <returns>The <see cref="StackPanel"/> with the toggle button and caption.</returns>
-    private StackPanel CreateControlForNotificationStateItem(NotificationStateItem notificationStateItem, bool assignGlobalSettingsEnabledDependency = true)
+    /// <returns>The <see cref="StackPanel" /> with the toggle button and caption.</returns>
+    private StackPanel CreateControlForNotificationStateItem(
+      NotificationStateItem notificationStateItem,
+      bool assignGlobalSettingsEnabledDependency = true)
     {
       var itemStackPanel = new StackPanel();
       itemStackPanel.Orientation = Orientation.Horizontal;
@@ -125,12 +134,15 @@ namespace Soloplan.WhatsON.GUI.Configuration
     }
 
     /// <summary>
-    /// Removes the unsupported <see cref="ObservationState"/>s by plugin.
+    /// Removes the unsupported <see cref="ObservationState" />s by plugin.
     /// </summary>
     /// <param name="observationStates">The observation states collection.</param>
-    /// <param name="observationState"><see cref="ObservationState"/> to check it's support on plugin.</param>
+    /// <param name="observationState"><see cref="ObservationState" /> to check it's support on plugin.</param>
     /// <param name="supportsState">Call to support state check.</param>
-    private void RemoveNotSupportedObservationState(ICollection<ObservationState> observationStates, ObservationState observationState, Func<bool> supportsState)
+    private void RemoveNotSupportedObservationState(
+      ICollection<ObservationState> observationStates,
+      ObservationState observationState,
+      Func<bool> supportsState)
     {
       var observationStateListItem = observationStates.FirstOrDefault(s => s == observationState);
       if (observationStateListItem != default(ObservationState) && !supportsState())
@@ -155,7 +167,11 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// <param name="configItem">The configuration item.</param>
     /// <param name="configItemAttribute">The configuration item attribute.</param>
     /// <param name="expander">The expander control.</param>
-    private void ApplyConfigurationItemToNotificationState(NotificationsState notificationsState, IConfigurationItem configItem, ConfigurationItemAttribute configItemAttribute, Expander expander)
+    private void ApplyConfigurationItemToNotificationState(
+      NotificationsState notificationsState,
+      IConfigurationItem configItem,
+      ConfigurationItemAttribute configItemAttribute,
+      Expander expander)
     {
       var configItemValue = configItem.GetOrCreateConnectorNotificationConfiguration();
       var observationStates = Enum.GetValues(typeof(ObservationState)).Cast<ObservationState>().ToList();
@@ -205,16 +221,13 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// </summary>
     /// <param name="expander">The expander.</param>
     /// <param name="notificationsState">The notification state.</param>
-    private void UpdateExpanderHeader(Expander expander, NotificationsState notificationsState)
-    {
-      expander.Header = Localizer.NotificationSettings(this.GetNotificationsStateTextRepresentation(notificationsState));
-    }
+    private void UpdateExpanderHeader(Expander expander, NotificationsState notificationsState) => expander.Header = Localizer.NotificationSettings(this.GetNotificationsStateTextRepresentation(notificationsState));
 
     /// <summary>
     /// Gets the notifications state text representation.
     /// </summary>
     /// <param name="notificationsState">The notification state.</param>
-    /// <returns>The text representation for list of <see cref="NotificationStateItem"/>.</returns>
+    /// <returns>The text representation for list of <see cref="NotificationStateItem" />.</returns>
     private string GetNotificationsStateTextRepresentation(NotificationsState notificationsState)
     {
       if (notificationsState.UseGlobalSettings.IsActive)
@@ -242,8 +255,8 @@ namespace Soloplan.WhatsON.GUI.Configuration
     }
 
     /// <summary>
-    /// Handled the <see cref="NotificationStateItem"/> changed.
-    /// Updates the <see cref="IConfigurationItem"/>.
+    /// Handled the <see cref="NotificationStateItem" /> changed.
+    /// Updates the <see cref="IConfigurationItem" />.
     /// </summary>
     /// <param name="notificationStateItem">State of the notification.</param>
     /// <param name="configItem">The configuration item.</param>
@@ -263,7 +276,10 @@ namespace Soloplan.WhatsON.GUI.Configuration
         connectorNotificationConfiguration.AssignFromObeservationStateActivity(item.ObservationState, item.IsActive);
       }
 
-      var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto, NullValueHandling = NullValueHandling.Ignore, Formatting = Formatting.None };
+      var settings = new JsonSerializerSettings
+      {
+        TypeNameHandling = TypeNameHandling.Auto, NullValueHandling = NullValueHandling.Ignore, Formatting = Formatting.None,
+      };
       configItem.Value = JsonConvert.SerializeObject(connectorNotificationConfiguration, settings);
     }
 
@@ -273,21 +289,21 @@ namespace Soloplan.WhatsON.GUI.Configuration
     private class NotificationsState
     {
       /// <summary>
-      /// Initializes a new instance of the <see cref="NotificationsState"/> class.
+      /// Initializes a new instance of the <see cref="NotificationsState" /> class.
       /// </summary>
       public NotificationsState()
       {
         this.UseGlobalSettings = new NotificationStateItem(this);
         this.UseGlobalSettings.Caption = Strings.UseMainConfiguration;
         this.UseGlobalSettings.PropertyChanged += (s, e) =>
+        {
+          foreach (var listItem in this.ItemsState)
           {
-            foreach (var listItem in this.ItemsState)
-            {
-              listItem.RefreshGlobalSettings();
-            }
+            listItem.RefreshGlobalSettings();
+          }
 
-            this.OnlyIfStateChanged.RefreshGlobalSettings();
-          };
+          this.OnlyIfStateChanged.RefreshGlobalSettings();
+        };
 
         this.OnlyIfStateChanged = new NotificationStateItem(this);
         this.OnlyIfStateChanged.Caption = Strings.OnlyIfStatusChanged;
@@ -301,18 +317,12 @@ namespace Soloplan.WhatsON.GUI.Configuration
       /// <summary>
       /// Gets the state item which represents the use global settings flag.
       /// </summary>
-      public NotificationStateItem UseGlobalSettings
-      {
-        get;
-      }
+      public NotificationStateItem UseGlobalSettings { get; }
 
       /// <summary>
       /// Gets the state item which represents the "Only if state changed" flag.
       /// </summary>
-      public NotificationStateItem OnlyIfStateChanged
-      {
-        get;
-      }
+      public NotificationStateItem OnlyIfStateChanged { get; }
     }
 
     /// <summary>
@@ -322,7 +332,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     private partial class NotificationStateItem : INotifyPropertyChanged
     {
       /// <summary>
-      /// Initializes a new instance of the <see cref="NotificationStateItem"/> class.
+      /// Initializes a new instance of the <see cref="NotificationStateItem" /> class.
       /// </summary>
       /// <param name="notificationsState">The notification state.</param>
       public NotificationStateItem(NotificationsState notificationsState)
@@ -336,7 +346,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
       public NotificationsState NotificationsState { get; }
 
       /// <summary>
-      /// Gets or sets the <see cref="ObservationState"/> - the reference to the enum value.
+      /// Gets or sets the <see cref="ObservationState" /> - the reference to the enum value.
       /// </summary>
       public ObservationState ObservationState { get; set; }
 
@@ -355,10 +365,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
       /// </summary>
       public string Caption { get; set; }
 
-      public void RefreshGlobalSettings()
-      {
-        this.OnPropertyChanged(nameof(this.IsNotUseGlobalSettingsForParentListActive));
-      }
+      public void RefreshGlobalSettings() => this.OnPropertyChanged(nameof(this.IsNotUseGlobalSettingsForParentListActive));
     }
   }
 }

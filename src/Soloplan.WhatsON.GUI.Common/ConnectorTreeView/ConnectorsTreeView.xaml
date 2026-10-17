@@ -46,7 +46,8 @@
         </MenuItem>
       </ContextMenu>
 
-      <HierarchicalDataTemplate DataType="{x:Type local:ConnectorGroupViewModel}" ItemsSource="{Binding Path=ConnectorViewModels}">
+      <HierarchicalDataTemplate DataType="{x:Type local:ConnectorGroupViewModel}"
+                                ItemsSource="{Binding Path=ConnectorViewModels}">
         <DockPanel Width="Auto"
                    ContextMenu="{StaticResource BaseTreeMenuImpl}"
                    LastChildFill="True">
@@ -70,11 +71,12 @@
           </DockPanel>
 
 
-          <StackPanel MaxHeight="{Binding DataContext.BuildIconSize, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}"
-                      Margin="0,0,15,0"
-                      HorizontalAlignment="Right"
-                      DockPanel.Dock="Right"
-                      Orientation="Horizontal">
+          <StackPanel
+            MaxHeight="{Binding DataContext.BuildIconSize, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}"
+            Margin="0,0,15,0"
+            HorizontalAlignment="Right"
+            DockPanel.Dock="Right"
+            Orientation="Horizontal">
 
             <StackPanel Orientation="Horizontal" Visibility="{Binding RunningConnectorColumnVisibility, Mode=OneWay}">
               <Border Name="RunningBorder"
@@ -176,7 +178,8 @@
               </StackPanel>
             </buildServer:BuildInformationIconControl.ToolTip>
           </buildServer:BuildInformationIconControl>
-          <buildServer:BuildNumberControl Margin="5,0,0,0" BuildNumber="{Binding DataContext.CurrentStatus.BuildNumber, RelativeSource={RelativeSource AncestorType=DockPanel}}" />
+          <buildServer:BuildNumberControl Margin="5,0,0,0"
+                                          BuildNumber="{Binding DataContext.CurrentStatus.BuildNumber, RelativeSource={RelativeSource AncestorType=DockPanel}}" />
           <TextBlock MinWidth="150"
                      MaxWidth="250"
                      Margin="5,0,0,0"
@@ -197,26 +200,28 @@
     </ResourceDictionary>
   </UserControl.Resources>
 
-    <TreeView Name="mainTreeView"
+  <TreeView Name="mainTreeView"
             HorizontalContentAlignment="Stretch"
             dd:DragDrop.DropHandler="{Binding}"
             dd:DragDrop.IsDragSource="True"
             dd:DragDrop.IsDropTarget="True">
-        <TreeView.InputBindings>
-      <KeyBinding Key="Delete" Command="{Binding DeleteSelectedObject, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}" />
+    <TreeView.InputBindings>
+      <KeyBinding Key="Delete"
+                  Command="{Binding DeleteSelectedObject, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}" />
     </TreeView.InputBindings>
     <TreeView.ItemContainerStyle>
       <Style BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="{x:Type TreeViewItem}">
         <EventSetter Event="MouseDoubleClick" Handler="OnTreeItemDoubleClick" />
-        <EventSetter Event="MouseLeftButtonDown" Handler="OnTreeItemLeftMouseDown"/>
-        <EventSetter Event="MouseLeftButtonUp" Handler="OnTreeItemLeftMouseUp"/>
-        <EventSetter Event="MouseRightButtonDown" Handler="OnTreeItemRightMouseDown"/>
-        <EventSetter Event="Drop" Handler="OnTreeViewItemDrop"/>
-        <Setter Property="Focusable" Value="False"/>
+        <EventSetter Event="MouseLeftButtonDown" Handler="OnTreeItemLeftMouseDown" />
+        <EventSetter Event="MouseLeftButtonUp" Handler="OnTreeItemLeftMouseUp" />
+        <EventSetter Event="MouseRightButtonDown" Handler="OnTreeItemRightMouseDown" />
+        <EventSetter Event="Drop" Handler="OnTreeViewItemDrop" />
+        <Setter Property="Focusable" Value="False" />
         <Setter Property="IsExpanded" Value="{Binding IsNodeExpanded, Mode=TwoWay}" />
-        <Setter Property="Padding" Value="{Binding DataContext.ItemPadding, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}" />
+        <Setter Property="Padding"
+                Value="{Binding DataContext.ItemPadding, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:ConnectorsTreeView}}" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
-        <Setter Property="Background" Value="Orange"/>
+        <Setter Property="Background" Value="Orange" />
       </Style>
     </TreeView.ItemContainerStyle>
   </TreeView>

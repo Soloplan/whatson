@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ServerTests.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -24,7 +24,9 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
   public class ServerTests
   {
     private string directory;
+
     private string statusFile;
+
     private CruiseControlServer server;
 
     [SetUp]
@@ -37,15 +39,14 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
     }
 
     [TearDown]
-    public void TearDown()
-    {
-      Directory.Delete(this.directory, true);
-    }
+    public void TearDown() => Directory.Delete(this.directory, true);
 
     [Test]
     public async Task XmlStatusReportPreservesProjectIdentityResultAndServer()
     {
-      File.WriteAllText(this.statusFile, "<Projects><Project name='Release &amp; QA' category='Tools' activity='Sleeping' lastBuildStatus='Failure' lastBuildLabel='42' lastBuildTime='2020-10-17T12:00:00' nextBuildTime='2020-10-18T12:00:00' webUrl='https://builds.example/release' serverName='local' description='Compile &amp; test'/></Projects>");
+      File.WriteAllText(
+        this.statusFile,
+        "<Projects><Project name='Release &amp; QA' category='Tools' activity='Sleeping' lastBuildStatus='Failure' lastBuildLabel='42' lastBuildTime='2020-10-17T12:00:00' nextBuildTime='2020-10-18T12:00:00' webUrl='https://builds.example/release' serverName='local' description='Compile &amp; test'/></Projects>");
 
       var projects = await this.server.GetAllProjects();
       var project = projects.CruiseControlProject.Single();
@@ -73,7 +74,9 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
     [Test]
     public async Task ProjectsOnTheSameServerShareTheCachedReportWithinThePollInterval()
     {
-      File.WriteAllText(this.statusFile, "<Projects><Project name='First' lastBuildLabel='1'/><Project name='Second' lastBuildLabel='2'/></Projects>");
+      File.WriteAllText(
+        this.statusFile,
+        "<Projects><Project name='First' lastBuildLabel='1'/><Project name='Second' lastBuildLabel='2'/></Projects>");
       await this.server.GetProjectStatus(CancellationToken.None, "First", int.MaxValue);
       File.WriteAllText(this.statusFile, "<Projects><Project name='Second' lastBuildLabel='99'/></Projects>");
 
@@ -129,10 +132,10 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
     {
       var projectDirectory = Path.Combine(this.directory, "project", "Release");
       Directory.CreateDirectory(projectDirectory);
-      var html = "<a href='/help' class='passed'>Help</a><table class='RecentBuildsPanel'>" +
-        "<tr><td><a href='/project/Release/build/three.xml' class='passed'>10/17/2020 12:03:00 PM (3)</a></td></tr>" +
-        "<tr><td><a href='/project/Release/build/two.xml' class='failed'>10/17/2020 12:02:00 PM (2)</a></td></tr>" +
-        "<tr><td><a href='/project/Release/build/one.xml' class='passed'>10/17/2020 12:01:00 PM (1)</a></td></tr></table>";
+      var html = "<a href='/help' class='passed'>Help</a><table class='RecentBuildsPanel'>"
+                 + "<tr><td><a href='/project/Release/build/three.xml' class='passed'>10/17/2020 12:03:00 PM (3)</a></td></tr>"
+                 + "<tr><td><a href='/project/Release/build/two.xml' class='failed'>10/17/2020 12:02:00 PM (2)</a></td></tr>"
+                 + "<tr><td><a href='/project/Release/build/one.xml' class='passed'>10/17/2020 12:01:00 PM (1)</a></td></tr></table>";
       File.WriteAllText(Path.Combine(projectDirectory, "ViewAllBuilds.aspx"), html);
 
       var history = await this.server.GetBuilds("Release", 2);
@@ -148,7 +151,9 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
     [TestCase("Cancelled", ObservationState.Unknown)]
     public async Task ConnectorMapsCompletedBuildResultsWithoutInventingSuccess(string result, ObservationState expected)
     {
-      File.WriteAllText(this.statusFile, $"<Projects><Project name='Release' activity='Sleeping' lastBuildStatus='{result}' lastBuildLabel='1'><messages/></Project></Projects>");
+      File.WriteAllText(
+        this.statusFile,
+        $"<Projects><Project name='Release' activity='Sleeping' lastBuildStatus='{result}' lastBuildLabel='1'><messages/></Project></Projects>");
       var connector = this.CreateConnector();
 
       await connector.QueryStatus(CancellationToken.None);
@@ -160,7 +165,9 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
     [Test]
     public async Task BuildingActivityTakesPrecedenceOverTheLastCompletedBuildResult()
     {
-      File.WriteAllText(this.statusFile, "<Projects><Project name='Release' activity='Building' lastBuildStatus='Failure' lastBuildLabel='1'><messages/></Project></Projects>");
+      File.WriteAllText(
+        this.statusFile,
+        "<Projects><Project name='Release' activity='Building' lastBuildStatus='Failure' lastBuildLabel='1'><messages/></Project></Projects>");
       var connector = this.CreateConnector();
 
       await connector.QueryStatus(CancellationToken.None);
@@ -174,7 +181,9 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
     [TestCase("CheckingModifications", false, true)]
     public async Task QueuedAndCheckingProjectsKeepTheLastCompletedResultVisible(string activity, bool pending, bool checking)
     {
-      File.WriteAllText(this.statusFile, $"<Projects><Project name='Release' activity='{activity}' lastBuildStatus='Failure' lastBuildLabel='1'><messages/></Project></Projects>");
+      File.WriteAllText(
+        this.statusFile,
+        $"<Projects><Project name='Release' activity='{activity}' lastBuildStatus='Failure' lastBuildLabel='1'><messages/></Project></Projects>");
       var connector = this.CreateConnector();
 
       await connector.QueryStatus(CancellationToken.None);
@@ -188,7 +197,9 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
     [Test]
     public async Task ReportsWithoutAnOptionalMessagesElementStillProduceAStatus()
     {
-      File.WriteAllText(this.statusFile, "<Projects><Project name='Release' activity='Sleeping' lastBuildStatus='Success' lastBuildLabel='1'/></Projects>");
+      File.WriteAllText(
+        this.statusFile,
+        "<Projects><Project name='Release' activity='Sleeping' lastBuildStatus='Success' lastBuildLabel='1'/></Projects>");
       var connector = this.CreateConnector();
 
       await connector.QueryStatus(CancellationToken.None);
@@ -200,8 +211,8 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
     [Test]
     public async Task CulpritNamesAreTrimmedAndDeduplicatedAcrossMessages()
     {
-      var report = "<Projects><Project name='Release' activity='Sleeping' lastBuildStatus='Failure' lastBuildLabel='1'><messages>" +
-        "<message kind='Breakers' text=' Alice, Bob, ,Alice '/><message kind='Breakers' text='Bob, Carol'/></messages></Project></Projects>";
+      var report = "<Projects><Project name='Release' activity='Sleeping' lastBuildStatus='Failure' lastBuildLabel='1'><messages>"
+                   + "<message kind='Breakers' text=' Alice, Bob, ,Alice '/><message kind='Breakers' text='Bob, Carol'/></messages></Project></Projects>";
       File.WriteAllText(this.statusFile, report);
       var connector = this.CreateConnector();
 
@@ -215,7 +226,9 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
     [TestCase("BuildAbortedBy")]
     public async Task FailureMessagesCannotBeDisplayedAsSuccessfulOrUnknownBuilds(string kind)
     {
-      File.WriteAllText(this.statusFile, $"<Projects><Project name='Release' activity='Sleeping' lastBuildStatus='Success' lastBuildLabel='1'><messages><message kind='{kind}' text='Build failed'/></messages></Project></Projects>");
+      File.WriteAllText(
+        this.statusFile,
+        $"<Projects><Project name='Release' activity='Sleeping' lastBuildStatus='Success' lastBuildLabel='1'><messages><message kind='{kind}' text='Build failed'/></messages></Project></Projects>");
       var connector = this.CreateConnector();
 
       await connector.QueryStatus(CancellationToken.None);
@@ -228,7 +241,9 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
     [TestCase("NotDefined")]
     public async Task InformationalMessagesDoNotTurnAnUnknownBuildIntoAFailure(string kind)
     {
-      File.WriteAllText(this.statusFile, $"<Projects><Project name='Release' activity='Sleeping' lastBuildStatus='Unknown' lastBuildLabel='1'><messages><message kind='{kind}' text='Informational message'/></messages></Project></Projects>");
+      File.WriteAllText(
+        this.statusFile,
+        $"<Projects><Project name='Release' activity='Sleeping' lastBuildStatus='Unknown' lastBuildLabel='1'><messages><message kind='{kind}' text='Informational message'/></messages></Project></Projects>");
       var connector = this.CreateConnector();
 
       await connector.QueryStatus(CancellationToken.None);
@@ -267,19 +282,23 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
     [Test]
     public async Task ConnectorCombinesTheLatestBuildWithHistoricalResults()
     {
-      File.WriteAllText(this.statusFile, "<Projects><Project name='Release' activity='Sleeping' lastBuildStatus='Success' lastBuildLabel='3'><messages/></Project></Projects>");
+      File.WriteAllText(
+        this.statusFile,
+        "<Projects><Project name='Release' activity='Sleeping' lastBuildStatus='Success' lastBuildLabel='3'><messages/></Project></Projects>");
       var projectDirectory = Path.Combine(this.directory, "project", "Release");
       Directory.CreateDirectory(projectDirectory);
-      var historyHtml = "<table class='RecentBuildsPanel'>" +
-        "<tr><td><a href='/project/Release/build/two.xml' class='failed'>10/17/2020 12:02:00 PM (2)</a></td></tr>" +
-        "<tr><td><a href='/project/Release/build/one.xml' class='passed'>10/17/2020 12:01:00 PM (1)</a></td></tr></table>";
+      var historyHtml = "<table class='RecentBuildsPanel'>"
+                        + "<tr><td><a href='/project/Release/build/two.xml' class='failed'>10/17/2020 12:02:00 PM (2)</a></td></tr>"
+                        + "<tr><td><a href='/project/Release/build/one.xml' class='passed'>10/17/2020 12:01:00 PM (1)</a></td></tr></table>";
       File.WriteAllText(Path.Combine(projectDirectory, "ViewAllBuilds.aspx"), historyHtml);
       var connector = this.CreateConnector();
 
       await connector.QueryStatus(CancellationToken.None);
 
       Assert.That(connector.Snapshots.Select(s => s.Status.BuildNumber), Is.EqualTo(new[] { 3, 2, 1 }));
-      Assert.That(connector.Snapshots.Select(s => s.Status.State), Is.EqualTo(new[] { ObservationState.Success, ObservationState.Failure, ObservationState.Success }));
+      Assert.That(
+        connector.Snapshots.Select(s => s.Status.State),
+        Is.EqualTo(new[] { ObservationState.Success, ObservationState.Failure, ObservationState.Success }));
     }
 
     private static void WaitForClockTick()
@@ -292,13 +311,22 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
     private CruiseControlConnector CreateConnector(bool serverAvailable = true, bool projectAvailable = true)
     {
       var address = new Uri(this.directory + Path.DirectorySeparatorChar).AbsoluteUri;
-      var configuration = new ConnectorConfiguration("CruiseControl", "Release", Connector.ServerAddress, address, Connector.ProjectName, "Release", Connector.DirectAddress, address);
+      var configuration = new ConnectorConfiguration(
+        "CruiseControl",
+        "Release",
+        Connector.ServerAddress,
+        address,
+        Connector.ProjectName,
+        "Release",
+        Connector.DirectAddress,
+        address);
       return new ReachabilityConnector(configuration, serverAvailable, projectAvailable);
     }
 
     private class ReachabilityConnector : CruiseControlConnector
     {
       private readonly bool serverAvailable;
+
       private readonly bool projectAvailable;
 
       public ReachabilityConnector(ConnectorConfiguration configuration, bool serverAvailable, bool projectAvailable)
@@ -308,15 +336,9 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
         this.projectAvailable = projectAvailable;
       }
 
-      public override Task<bool> CheckServerURL()
-      {
-        return Task.FromResult(this.serverAvailable);
-      }
+      public override Task<bool> CheckServerURL() => Task.FromResult(this.serverAvailable);
 
-      public override Task<bool> CheckProjectURL()
-      {
-        return Task.FromResult(this.projectAvailable);
-      }
+      public override Task<bool> CheckProjectURL() => Task.FromResult(this.projectAvailable);
     }
   }
 }

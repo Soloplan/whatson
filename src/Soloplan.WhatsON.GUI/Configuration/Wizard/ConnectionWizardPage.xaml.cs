@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ConnectionWizardPage.xaml.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -21,7 +21,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     private readonly WizardController wizardController;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ConnectionWizardPage"/> class.
+    /// Initializes a new instance of the <see cref="ConnectionWizardPage" /> class.
     /// </summary>
     /// <param name="wizardController">The wizard controller.</param>
     public ConnectionWizardPage(WizardController wizardController)
@@ -45,8 +45,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// Handles the key up event for control which allows providing a project address.
     /// </summary>
     /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="System.Windows.Input.KeyEventArgs"/> instance containing the event data.</param>
-    private void ConnectionAdressKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+    /// <param name="e">The <see cref="System.Windows.Input.KeyEventArgs" /> instance containing the event data.</param>
+    private void ConnectionAdressKeyUp(object sender, KeyEventArgs e)
     {
       if (e.Key == Key.Enter)
       {

@@ -1,7 +1,9 @@
-﻿// <copyright file="StatusToColorConverter.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="StatusToColorConverter.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.GUI.Common.Converters
 {
@@ -27,20 +29,17 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
         return new SolidColorBrush(GetColor(state));
       }
 
-      return new SolidColorBrush(System.Windows.Media.Colors.White);
+      return new SolidColorBrush(Colors.White);
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-      return null;
-    }
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
 
     private static Color GetColor(ObservationState state)
     {
       switch (state)
       {
         case ObservationState.Unstable:
-          return System.Windows.Media.Colors.Orange;
+          return Colors.Orange;
           break;
         case ObservationState.Failure:
           return Color.FromRgb(201, 42, 60);
@@ -49,7 +48,7 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
           return Color.FromRgb(66, 171, 20);
           break;
         case ObservationState.Running:
-          return System.Windows.Media.Colors.DarkCyan;
+          return Colors.DarkCyan;
           break;
         default:
           return Color.FromRgb(120, 144, 156);

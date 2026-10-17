@@ -24,10 +24,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// Gets or sets names of other groups.
     /// </summary>
-    public IList<string> AlreadyUsedNames
-    {
-      get; set;
-    }
+    public IList<string> AlreadyUsedNames { get; set; }
 
     /// <summary>
     /// Gets error message.

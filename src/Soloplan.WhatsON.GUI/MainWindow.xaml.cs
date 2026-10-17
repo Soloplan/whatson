@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="MainWindow.xaml.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -51,7 +51,7 @@ namespace Soloplan.WhatsON.GUI
     private MainWindowSettings settings;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MainWindow"/> class.
+    /// Initializes a new instance of the <see cref="MainWindow" /> class.
     /// </summary>
     /// <param name="scheduler">The scheduler observing build servers.</param>
     /// <param name="configuration">App configuration.</param>
@@ -159,7 +159,7 @@ namespace Soloplan.WhatsON.GUI
     /// Handles the Click event of the add new connector button control.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+    /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
     private void NewConnectorClick(object sender, EventArgs e)
     {
       var wizardController = new WizardController(this, this.config, this.settings.WizardDialogSettings);
@@ -181,7 +181,7 @@ namespace Soloplan.WhatsON.GUI
     /// Handles the import click.
     /// </summary>
     /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+    /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
     private void ImportClick(object sender, EventArgs e)
     {
       var interchange = new ProjectsDataInterchange();
@@ -246,10 +246,7 @@ namespace Soloplan.WhatsON.GUI
     /// <param name="e">Event args.</param>
     private async void NewGroupClick(object sender, EventArgs e)
     {
-      var model = new GroupViewModel
-      {
-        AlreadyUsedNames = this.mainTreeView.GetGroupNames(),
-      };
+      var model = new GroupViewModel { AlreadyUsedNames = this.mainTreeView.GetGroupNames(), };
 
       var editGroupDialog = new EditGroupNameDialog(model);
       var result = await this.ShowDialogOnPageHost(editGroupDialog);
@@ -271,17 +268,11 @@ namespace Soloplan.WhatsON.GUI
 
       configWindow.Owner = this;
       configWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-      configWindow.ConfigurationApplied += (s, ev) =>
-      {
-        this.ConfigurationApplied?.Invoke(this, ev);
-      };
+      configWindow.ConfigurationApplied += (s, ev) => { this.ConfigurationApplied?.Invoke(this, ev); };
 
       this.settings.ConfigDialogSettings?.Apply(configWindow);
 
-      configWindow.Closing += (s, ev) =>
-      {
-        this.settings.ConfigDialogSettings = new WindowSettings().Parse(configWindow);
-      };
+      configWindow.Closing += (s, ev) => { this.settings.ConfigDialogSettings = new WindowSettings().Parse(configWindow); };
 
       configWindow.ShowDialog();
     }
@@ -301,7 +292,7 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">Event args.</param>
-    private void ExportTreeItem(object sender, ValueEventArgs<Common.ConnectorTreeView.TreeItemViewModel> e)
+    private void ExportTreeItem(object sender, ValueEventArgs<TreeItemViewModel> e)
     {
       if (e.Value is ConnectorGroupViewModel groupTreeViewModel)
       {
@@ -327,7 +318,7 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">Event args.</param>
-    private async void EditTreeItem(object sender, Common.ConnectorTreeView.EditTreeItemViewModelEventArgs e)
+    private async void EditTreeItem(object sender, EditTreeItemViewModelEventArgs e)
     {
       if (e.Model is ConnectorGroupViewModel groupTreeViewModel)
       {
@@ -348,10 +339,7 @@ namespace Soloplan.WhatsON.GUI
       {
         if (e.EditType == EditType.Rename)
         {
-          var model = new Soloplan.WhatsON.GUI.Configuration.ViewModel.ConnectorViewModel
-          {
-            Name = connectorViewModel.Name,
-          };
+          var model = new Configuration.ViewModel.ConnectorViewModel { Name = connectorViewModel.Name, };
 
           var editProjectNameDialog = new EditProjectName(model);
           var result = await this.ShowDialogOnPageHost(editProjectNameDialog);
@@ -383,11 +371,11 @@ namespace Soloplan.WhatsON.GUI
       {
         message = Localizer.DeleteGroup(group.GroupName);
       }
-      else if (e.NoOtherSelections == false && e.DeleteItem is Soloplan.WhatsON.GUI.Common.ConnectorTreeView.ConnectorViewModel)
+      else if (!e.NoOtherSelections && e.DeleteItem is Common.ConnectorTreeView.ConnectorViewModel)
       {
         message = Strings.DeleteMultipleProjects;
       }
-      else if (e.DeleteItem is Soloplan.WhatsON.GUI.Common.ConnectorTreeView.ConnectorViewModel connector)
+      else if (e.DeleteItem is Common.ConnectorTreeView.ConnectorViewModel connector)
       {
         message = Localizer.DeleteNamedProject(connector.Name);
       }
@@ -401,7 +389,7 @@ namespace Soloplan.WhatsON.GUI
     }
 
     /// <summary>
-    /// Shows <paramref name="dialog"/> in DialogHost "MainWindowPageHost". Works only with dialogs returning true/false.
+    /// Shows <paramref name="dialog" /> in DialogHost "MainWindowPageHost". Works only with dialogs returning true/false.
     /// </summary>
     /// <param name="dialog">Dialog to show.</param>
     /// <returns>True or false depending on what option user selected.</returns>

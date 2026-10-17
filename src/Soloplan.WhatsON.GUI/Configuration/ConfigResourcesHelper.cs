@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ConfigResourcesHelper.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -34,10 +34,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// </summary>
     /// <param name="configurationItemAttribute">The configuration item attribute.</param>
     /// <param name="connectorType">Type of the connector.</param>
-    public static void ApplyConfigResources(ConfigurationItemAttribute configurationItemAttribute, Type connectorType)
-    {
-      ApplyCaptionConfigResources(configurationItemAttribute, connectorType);
-    }
+    public static void ApplyConfigResources(ConfigurationItemAttribute configurationItemAttribute, Type connectorType) => ApplyCaptionConfigResources(configurationItemAttribute, connectorType);
 
     /// <summary>
     /// Applies the caption configuration resources.
@@ -112,7 +109,9 @@ namespace Soloplan.WhatsON.GUI.Configuration
     {
       try
       {
-        var resourceManager = new ResourceManager($"{assemblyForResourceDiscovery.GetName().Name}.Properties.{ConfigurationItemsFileName}", assemblyForResourceDiscovery);
+        var resourceManager = new ResourceManager(
+          $"{assemblyForResourceDiscovery.GetName().Name}.Properties.{ConfigurationItemsFileName}",
+          assemblyForResourceDiscovery);
         return resourceManager.GetString(resourceName);
       }
       catch (MissingManifestResourceException)

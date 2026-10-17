@@ -1,7 +1,9 @@
-﻿// <copyright file="ConfigViewModel.cs" company="Soloplan GmbH">
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ConfigViewModel.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
 {
@@ -15,7 +17,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
   using Soloplan.WhatsON.Localization;
 
   /// <summary>
-  /// The view model for see <see cref="Configuration"/>.
+  /// The view model for see <see cref="Configuration" />.
   /// </summary>
   public class ConfigViewModel : ViewModelBase
   {
@@ -71,10 +73,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// Gets or sets a value indicating whether a single new connector configuration mode is active.
     /// </summary>
-    public bool SingleNewConnectorMode
-    {
-      get; set;
-    }
+    public bool SingleNewConnectorMode { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether window should be shown in taskbar.
@@ -134,7 +133,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// Gets or sets a value indicating whether application should start with system.
     /// </summary>
     /// <value>
-    ///   <c>true</c> if true, start APP with the system ; otherwise, <c>false</c>.
+    /// <c>true</c> if true, start APP with the system ; otherwise, <c>false</c>.
     /// </value>
     [OnChangedMethod(nameof(MarkModified))]
     public bool OpenOnSystemStart
@@ -181,10 +180,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
         return this.openOnSystemStart.Value;
       }
 
-      set
-      {
-        this.openOnSystemStart = value;
-      }
+      set => this.openOnSystemStart = value;
     }
 
     /// <summary>
@@ -194,7 +190,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     public int ViewStyle { get; set; }
 
     /// <summary>
-    /// Gets or sets the initial focused configuration <see cref="ListBoxItem"/>.
+    /// Gets or sets the initial focused configuration <see cref="ListBoxItem" />.
     /// </summary>
     public ListBoxItem InitialFocusedConfigurationListBoxItem { get; set; }
 
@@ -212,7 +208,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// Gets a value indicating whether configuration is modified.
     /// </summary>
     /// <value>
-    ///   <c>true</c> if configuration is modified; otherwise, <c>false</c>.
+    /// <c>true</c> if configuration is modified; otherwise, <c>false</c>.
     /// </value>
     public bool ConfigurationIsModified { get; private set; }
 
@@ -220,7 +216,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// Gets a value indicating whether configuration is not modified.
     /// </summary>
     /// <value>
-    ///   <c>true</c> if configuration is not modified; otherwise, <c>false</c>.
+    /// <c>true</c> if configuration is not modified; otherwise, <c>false</c>.
     /// </value>
     public bool ConfigurationIsNotModified => !this.ConfigurationIsModified;
 
@@ -386,7 +382,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// Handles the CollectionItemPropertyChanged event of the Connectors object.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The <see cref="System.ComponentModel.PropertyChangedEventArgs"/> instance containing the event data.</param>
+    /// <param name="e">The <see cref="System.ComponentModel.PropertyChangedEventArgs" /> instance containing the event data.</param>
     private void ConnectorsCollectionItemPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
       this.MarkModified();
@@ -394,14 +390,14 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     }
 
     /// <summary>
-    /// Handles the changes of <see cref="Connectors"/> collection.
+    /// Handles the changes of <see cref="Connectors" /> collection.
     /// </summary>
     /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="System.Collections.Specialized.NotifyCollectionChangedEventArgs"/> instance containing the event data.</param>
-    private void ConnectorsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-    {
-      this.MarkModified();
-    }
+    /// <param name="e">
+    /// The <see cref="System.Collections.Specialized.NotifyCollectionChangedEventArgs" /> instance containing
+    /// the event data.
+    /// </param>
+    private void ConnectorsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e) => this.MarkModified();
 
     /// <summary>
     /// Applies the start with Windows option.

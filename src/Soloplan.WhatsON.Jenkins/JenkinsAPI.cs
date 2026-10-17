@@ -56,7 +56,11 @@ namespace Soloplan.WhatsON.Jenkins
       }
     }
 
-    public async Task<IList<JenkinsBuild>> GetBuilds(JenkinsConnector connector, CancellationToken token, int from = 0, int to = Connector.MaxSnapshots)
+    public async Task<IList<JenkinsBuild>> GetBuilds(
+      JenkinsConnector connector,
+      CancellationToken token,
+      int from = 0,
+      int to = Connector.MaxSnapshots)
     {
       var buildsRequest = UrlHelper.BuildsRequest(connector, from, to);
       JenkinsBuilds builds = null;
@@ -77,20 +81,15 @@ namespace Soloplan.WhatsON.Jenkins
 
       public const string JobUrlPrefix = "job";
 
-      public static string JobsRequest(string address)
-      {
-        return $"{SanitizeBaseUrl(address)}/api/json?tree={JenkinsJobs.RequestProperties}";
-      }
+      public static string JobsRequest(string address) => $"{SanitizeBaseUrl(address)}/api/json?tree={JenkinsJobs.RequestProperties}";
 
-      public static string JobRequest(JenkinsConnector connector)
-      {
-        return $"{SanitizeBaseUrl(connector.Address)}/{GetRelativeProjectUrl(connector)}/api/json?tree={JenkinsJob.RequestProperties}";
-      }
+      public static string JobRequest(JenkinsConnector connector) => $"{SanitizeBaseUrl(connector.Address)}/{GetRelativeProjectUrl(connector)}/api/json?tree={JenkinsJob.RequestProperties}";
 
       public static string BuildUrl(JenkinsConnector connector, int buildNumber, bool appendRedirect = true)
       {
         var url = $"{SanitizeBaseUrl(connector.Address)}/{GetRelativeProjectUrl(connector)}/{buildNumber}";
-        if (appendRedirect && bool.TryParse(connector.Configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin)?.Value, out var redirect) && redirect)
+        if (appendRedirect && bool.TryParse(connector.Configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin)?.Value, out var redirect)
+                           && redirect)
         {
           return $"{url}{RedirectPluginUrlSuffix}";
         }
@@ -102,7 +101,8 @@ namespace Soloplan.WhatsON.Jenkins
       {
         var url = $"{SanitizeBaseUrl(connector.Address)}/{GetRelativeProjectUrl(connector)}";
 
-        if (appendRedirect && bool.TryParse(connector.Configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin)?.Value, out var redirect) && redirect)
+        if (appendRedirect && bool.TryParse(connector.Configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin)?.Value, out var redirect)
+                           && redirect)
         {
           return $"{url}{RedirectPluginUrlSuffix}";
         }
@@ -110,20 +110,15 @@ namespace Soloplan.WhatsON.Jenkins
         return url;
       }
 
-      public static string BuildRequest(JenkinsConnector connector, int buildNumber)
-      {
-        return $"{BuildUrl(connector, buildNumber, false)}/api/json?tree={JenkinsBuild.RequestProperties}";
-      }
+      public static string BuildRequest(JenkinsConnector connector, int buildNumber) => $"{BuildUrl(connector, buildNumber, false)}/api/json?tree={JenkinsBuild.RequestProperties}";
 
       public static string BuildsRequest(JenkinsConnector connector, int from, int to)
       {
-        return $"{SanitizeBaseUrl(connector.Address)}/{GetRelativeProjectUrl(connector)}/api/json?tree=builds[{JenkinsBuild.RequestProperties}]{{{from},{to}}}";
+        return
+          $"{SanitizeBaseUrl(connector.Address)}/{GetRelativeProjectUrl(connector)}/api/json?tree=builds[{JenkinsBuild.RequestProperties}]{{{from},{to}}}";
       }
 
-      private static string SanitizeBaseUrl(string address)
-      {
-        return address.TrimEnd('/');
-      }
+      private static string SanitizeBaseUrl(string address) => address.TrimEnd('/');
 
       private static string GetRelativeProjectUrl(Connector connector)
       {

@@ -28,18 +28,9 @@ namespace Soloplan.WhatsON.Model
   public abstract class Connector
   {
     /// <summary>
-    /// The redirect plugin tag.
-    /// </summary>
-    public const string NotificationsVisbility = "NotificationsVisbility";
-
-    /// <summary>
     /// The category tag.
     /// </summary>
     public const string Category = "Category";
-
-    public const string ServerAddress = "Address";
-
-    public const string ProjectName = "ProjectName";
 
     public const string DirectAddress = "DirectAddress";
 
@@ -49,12 +40,21 @@ namespace Soloplan.WhatsON.Model
     public const int MaxSnapshots = 5;
 
     /// <summary>
+    /// The redirect plugin tag.
+    /// </summary>
+    public const string NotificationsVisbility = "NotificationsVisbility";
+
+    public const string ProjectName = "ProjectName";
+
+    public const string ServerAddress = "Address";
+
+    /// <summary>
     /// Logger instance used by this class.
     /// </summary>
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Connector"/> class.
+    /// Initializes a new instance of the <see cref="Connector" /> class.
     /// </summary>
     /// <param name="configuration">The configuration.</param>
     protected Connector(ConnectorConfiguration configuration)
@@ -70,15 +70,6 @@ namespace Soloplan.WhatsON.Model
     }
 
     /// <summary>
-    /// Gets or sets the description of the connector.
-    /// </summary>
-    public string Description { get; set; }
-
-    public Status CurrentStatus { get; set; }
-
-    public List<Snapshot> Snapshots { get; set; }
-
-    /// <summary>
     /// Gets or sets the address.
     /// </summary>
     public string Address
@@ -87,11 +78,25 @@ namespace Soloplan.WhatsON.Model
       set => this.Configuration.GetConfigurationByKey(ServerAddress).Value = value;
     }
 
+    /// <summary>
+    /// Gets or sets the configuration of a connector.
+    /// </summary>
+    public ConnectorConfiguration Configuration { get; set; }
+
+    public Status CurrentStatus { get; set; }
+
+    /// <summary>
+    /// Gets or sets the description of the connector.
+    /// </summary>
+    public string Description { get; set; }
+
     public string Project
     {
       get => this.Configuration.GetConfigurationByKey(ProjectName).Value;
       set => this.Configuration.GetConfigurationByKey(ProjectName).Value = value;
     }
+
+    public List<Snapshot> Snapshots { get; set; }
 
     public string directAddress
     {
@@ -99,35 +104,29 @@ namespace Soloplan.WhatsON.Model
       set => this.Configuration.GetConfigurationByKey(DirectAddress).Value = value;
     }
 
-    /// <summary>
-    /// Gets or sets the configuration of a connector.
-    /// </summary>
-    public ConnectorConfiguration Configuration { get; set; }
-
-    public async Task QueryStatus(CancellationToken cancellationToken)
-    {
-      log.Trace("Querying status for connector {connector}.", new { this.Configuration.Name, this.CurrentStatus });
-      await this.ExecuteQuery(cancellationToken);
-      log.Trace("Status for connector {connector} queried.", new { this.Configuration.Name, this.CurrentStatus });
-
-      if (this.CurrentStatus != null && this.ShouldTakeSnapshot(this.CurrentStatus))
-      {
-        log.Debug("Adding snapshot for connector {connector}", new { this.Configuration.Name, this.CurrentStatus });
-        this.AddSnapshot(this.CurrentStatus);
-      }
-    }
-
     public void AddSnapshot(Status status)
     {
       while (this.Snapshots.Count >= MaxSnapshots)
       {
-        log.Debug("Max number of snapshots exceeded. Dequeuing snapshot.", new { Name = this.Configuration.Name, CurrentStatus = this.CurrentStatus });
+        log.Debug("Max number of snapshots exceeded. Dequeuing snapshot.", new { this.Configuration.Name, this.CurrentStatus });
         this.Snapshots.RemoveAt(this.Snapshots.Count - 1); // remove the end of the list because we're sortring by age
       }
 
       this.Snapshots.Add(new Snapshot(status));
       this.Snapshots.Sort((x, y) => x.Age.CompareTo(y.Age));
     }
+
+    /// <summary>
+    /// Checks correctness of self project URL.
+    /// </summary>
+    /// <returns>true when fine, false when url is broken.</returns>
+    public virtual async Task<bool> CheckProjectURL() => false;
+
+    /// <summary>
+    /// Checks correctness of self server URL.
+    /// </summary>
+    /// <returns>true when fine, false when url is broken.</returns>
+    public virtual async Task<bool> CheckServerURL() => false;
 
     public virtual async Task<bool> IsReachableUrl(string urlInput)
     {
@@ -151,22 +150,17 @@ namespace Soloplan.WhatsON.Model
       return testStatus;
     }
 
-    /// <summary>
-    /// Checks correctness of self server URL.
-    /// </summary>
-    /// <returns>true when fine, false when url is broken.</returns>
-    public virtual async Task<bool> CheckServerURL()
+    public async Task QueryStatus(CancellationToken cancellationToken)
     {
-      return false;
-    }
+      log.Trace("Querying status for connector {connector}.", new { this.Configuration.Name, this.CurrentStatus });
+      await this.ExecuteQuery(cancellationToken);
+      log.Trace("Status for connector {connector} queried.", new { this.Configuration.Name, this.CurrentStatus });
 
-    /// <summary>
-    /// Checks correctness of self project URL.
-    /// </summary>
-    /// <returns>true when fine, false when url is broken.</returns>
-    public virtual async Task<bool> CheckProjectURL()
-    {
-      return false;
+      if (this.CurrentStatus != null && this.ShouldTakeSnapshot(this.CurrentStatus))
+      {
+        log.Debug("Adding snapshot for connector {connector}", new { this.Configuration.Name, this.CurrentStatus });
+        this.AddSnapshot(this.CurrentStatus);
+      }
     }
 
     public override string ToString()
@@ -212,11 +206,16 @@ namespace Soloplan.WhatsON.Model
       }
     }
 
+    protected abstract Task<Status> GetCurrentStatus(CancellationToken cancellationToken);
+
+    protected abstract Task<List<Status>> GetHistory(CancellationToken cancellationToken);
+
     protected virtual bool ShouldTakeSnapshot(Status status)
     {
       log.Trace("Checking if snapshot should be taken...");
 
-      if (status != null && status.State != ObservationState.Running && this.Snapshots.All(x => x.Status.BuildNumber != status.BuildNumber) && status.InvalidBuild == false)
+      if (status != null && status.State != ObservationState.Running && this.Snapshots.All(x => x.Status.BuildNumber != status.BuildNumber)
+          && !status.InvalidBuild)
       {
         log.Debug("Snapshot should be taken. {stat}", new { CurrentStatus = status });
         return true;
@@ -224,9 +223,5 @@ namespace Soloplan.WhatsON.Model
 
       return false;
     }
-
-    protected abstract Task<Status> GetCurrentStatus(CancellationToken cancellationToken);
-
-    protected abstract Task<List<Status>> GetHistory(CancellationToken cancellationToken);
   }
 }

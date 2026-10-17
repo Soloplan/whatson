@@ -27,7 +27,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// Previews the selected appearance without saving other settings.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+    /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
     private void ThemeModeSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       if (((ComboBox)sender).SelectedValue is ApplicationTheme mode && Application.Current is App app)

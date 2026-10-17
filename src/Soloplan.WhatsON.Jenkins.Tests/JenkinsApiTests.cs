@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="JenkinsApiTests.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -26,23 +26,23 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
       int state = 0;
       api.JobRequest += (s, e) =>
-       {
-         if (state == 0)
-         {
-           e.Result = ApiHelper.GetProject(ObservationState.Running, 10);
-           state++;
-         }
-         else if (state == 1)
-         {
-           e.Result = ApiHelper.GetProject(ObservationState.Running, 11);
-           state++;
-         }
-         else
-         {
-           e.Result = ApiHelper.GetProject(ObservationState.Running, 12);
-           state++;
-         }
-       };
+      {
+        if (state == 0)
+        {
+          e.Result = ApiHelper.GetProject(ObservationState.Running, 10);
+          state++;
+        }
+        else if (state == 1)
+        {
+          e.Result = ApiHelper.GetProject(ObservationState.Running, 11);
+          state++;
+        }
+        else
+        {
+          e.Result = ApiHelper.GetProject(ObservationState.Running, 12);
+          state++;
+        }
+      };
 
       api.BuildsRequest += (s, e) =>
       {
@@ -116,16 +116,17 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
       var expectedBuilds = new[]
       {
-        new Tuple<int, ObservationState>(11, ObservationState.Failure),
-        new Tuple<int, ObservationState>(10, ObservationState.Success),
-        new Tuple<int, ObservationState>(9, ObservationState.Unstable),
-        new Tuple<int, ObservationState>(8, ObservationState.Unstable),
+        new Tuple<int, ObservationState>(11, ObservationState.Failure), new Tuple<int, ObservationState>(10, ObservationState.Success),
+        new Tuple<int, ObservationState>(9, ObservationState.Unstable), new Tuple<int, ObservationState>(8, ObservationState.Unstable),
         new Tuple<int, ObservationState>(7, ObservationState.Unstable),
       };
 
       foreach (var expectedBuild in expectedBuilds)
       {
-        Assert.That(jenkinsStatuses.Any(stat => stat.BuildNumber == expectedBuild.Item1 && stat.State == expectedBuild.Item2), Is.True, $"Build No. {expectedBuild} was not present in snapshots.");
+        Assert.That(
+          jenkinsStatuses.Any(stat => stat.BuildNumber == expectedBuild.Item1 && stat.State == expectedBuild.Item2),
+          Is.True,
+          $"Build No. {expectedBuild} was not present in snapshots.");
       }
     }
   }

@@ -9,14 +9,17 @@
         Background="{DynamicResource SettingsBackground}" FontFamily="Segoe UI" FontSize="14"
         ShowInTaskbar="False" Style="{StaticResource BorderLessWindowStyle}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}">
-  <Border Background="{DynamicResource SettingsBackground}" BorderBrush="{DynamicResource SettingsBorder}" BorderThickness="1">
+  <Border Background="{DynamicResource SettingsBackground}" BorderBrush="{DynamicResource SettingsBorder}"
+          BorderThickness="1">
     <DockPanel>
       <gui:CustomTitleBar x:Name="Header" DockPanel.Dock="Top" CustomButtonVisible="False" ShowMinimizeButton="False"
                           Window="{Binding RelativeSource={RelativeSource AncestorType={x:Type wizard:WizardWindow}}}" />
       <materialDesign:DialogHost x:Name="WizardWaitDialogHost" Identifier="WizardWaitDialogHostId"
                                  DialogTheme="Inherit" DialogBackground="{DynamicResource SettingsSurface}">
         <Grid>
-          <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" /><RowDefinition /><RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
           <StackPanel Orientation="Horizontal" Margin="24,20,24,20">
             <Border CornerRadius="6" Padding="12,8">
               <Border.Style>
@@ -32,7 +35,8 @@
               </Border.Style>
               <TextBlock Text="{x:Static loc:Strings.ConnectionStep}" FontWeight="SemiBold" FontSize="13" />
             </Border>
-            <materialDesign:PackIcon Kind="ChevronRight" Width="18" Height="18" Margin="12,0" VerticalAlignment="Center"
+            <materialDesign:PackIcon Kind="ChevronRight" Width="18" Height="18" Margin="12,0"
+                                     VerticalAlignment="Center"
                                      Foreground="{DynamicResource SettingsMuted}" />
             <Border CornerRadius="6" Padding="12,8">
               <Border.Style>
@@ -50,17 +54,24 @@
             </Border>
           </StackPanel>
           <Frame x:Name="Frame" Grid.Row="1" Margin="24,0,24,20" NavigationUIVisibility="Hidden" />
-          <Border Grid.Row="2" Background="{DynamicResource SettingsSurface}" BorderBrush="{DynamicResource SettingsBorder}"
+          <Border Grid.Row="2" Background="{DynamicResource SettingsSurface}"
+                  BorderBrush="{DynamicResource SettingsBorder}"
                   BorderThickness="0,1,0,0" Padding="24,16">
             <DockPanel LastChildFill="False">
-              <Button Content="{x:Static loc:Strings.Cancel}" DockPanel.Dock="Left" IsCancel="True" Style="{StaticResource SettingsSecondaryButton}" />
+              <Button Content="{x:Static loc:Strings.Cancel}" DockPanel.Dock="Left" IsCancel="True"
+                      Style="{StaticResource SettingsSecondaryButton}" />
               <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                <Button x:Name="BackButton" Content="{x:Static loc:Strings.Back}" Click="PrevClick" IsEnabled="{Binding IsPreviousStepEnabled}"
+                <Button x:Name="BackButton" Content="{x:Static loc:Strings.Back}" Click="PrevClick"
+                        IsEnabled="{Binding IsPreviousStepEnabled}"
                         Margin="0,0,10,0" Style="{StaticResource SettingsSecondaryButton}" />
-                <Button x:Name="NextButton" Content="{x:Static loc:Strings.Next}" Click="NextClick" IsEnabled="{Binding IsNextStepEnabled}"
-                        Visibility="{Binding IsNotLastStep, Converter={StaticResource BoolToVis}}" Style="{StaticResource SettingsPrimaryButton}" />
-                <Button x:Name="FinishButton" Content="{x:Static loc:Strings.AddSelectedProjects}" Click="FinishClick" IsEnabled="{Binding IsAnyProjectChecked}"
-                        Visibility="{Binding IsLastStep, Converter={StaticResource BoolToVis}}" Style="{StaticResource SettingsPrimaryButton}" />
+                <Button x:Name="NextButton" Content="{x:Static loc:Strings.Next}" Click="NextClick"
+                        IsEnabled="{Binding IsNextStepEnabled}"
+                        Visibility="{Binding IsNotLastStep, Converter={StaticResource BoolToVis}}"
+                        Style="{StaticResource SettingsPrimaryButton}" />
+                <Button x:Name="FinishButton" Content="{x:Static loc:Strings.AddSelectedProjects}" Click="FinishClick"
+                        IsEnabled="{Binding IsAnyProjectChecked}"
+                        Visibility="{Binding IsLastStep, Converter={StaticResource BoolToVis}}"
+                        Style="{StaticResource SettingsPrimaryButton}" />
               </StackPanel>
             </DockPanel>
           </Border>

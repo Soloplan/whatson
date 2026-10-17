@@ -1,0 +1,228 @@
+﻿# AV references point to C# coding guidelines:
+# http://wiki.soloplan.de/wiki/doku.php?id=programming:csharp:guidelines
+# List of all possible settings:
+# https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference
+# https://www.jetbrains.com/help/resharper/EditorConfig_Index.html
+
+# top-most EditorConfig file
+root = true
+
+# Windows-style newlines with a newline ending every file
+# see AV2400
+[*]
+end_of_line = crlf
+indent_style = space
+indent_size = 2
+keep_existing_linebreaks = true
+max_line_length = off
+charset = utf-8-bom
+
+# XML documentation: No indent from parent element
+xmldoc_indent_text = ZeroIndent
+
+[*.groovy]
+# Jenkins pipeline scripts must not add a byte-order mark (BOM), as this will cause build jobs to fail.
+charset = utf-8
+
+[*.json]
+# Implementations MUST NOT add a byte order mark to the beginning of a JSON text.
+charset = utf-8
+
+[*.xml]
+insert_final_newline = false
+
+[*.{csproj,props,target}]
+ij_xml_space_inside_empty_tag = true
+
+[**/GeneratedSource/**.cs]
+generated_code = true
+dotnet_analyzer_diagnostic.severity = none
+dotnet_diagnostic.severity = none
+
+[*.Designer.cs]
+generated_code = true
+dotnet_analyzer_diagnostic.severity = none
+dotnet_diagnostic.severity = none
+
+[*.g.cs]
+generated_code = true
+dotnet_analyzer_diagnostic.severity = none
+dotnet_diagnostic.severity = none
+
+[*.cshtml]
+# "Xyz" property access is fine for razor files. No need for "this.Xyz".
+dotnet_style_qualification_for_field = false
+dotnet_style_qualification_for_property = false
+dotnet_style_qualification_for_method = false
+dotnet_style_qualification_for_event = false
+
+[**/{Tests,Test}/**.cs]
+resharper_unused_parameter_local_highlighting = none
+
+# Use Async suffix for async methods
+dotnet_diagnostic.VSTHRD200.severity = none
+
+# allow underscore for identifiers in test projects (Mantis 92382)
+dotnet_diagnostic.CA1707.severity = none
+
+# suppress "Consider making public types internal" suggestion in test projects (https://github.com/dotnet/roslyn-analyzers/issues/7192)
+dotnet_diagnostic.CA1515.severity = none
+
+[*.cs]
+# Align multi line expression: This makes the expressions easier to understand
+align_multiline_binary_expressions_chain = true
+
+# void Method([NotNull] IFoo foo);
+csharp_space_after_attributes = true
+
+csharp_trailing_comma_in_multiline_lists = true
+# We are ok with "new Foo { Bar = 1 }", not need for "new Foo { Bar = 1, }".
+csharp_trailing_comma_in_singleline_lists = false
+
+trim_trailing_whitespace = true
+csharp_preferred_modifier_order = public, private, protected, internal, file, static, new, abstract, virtual, sealed, readonly, override, extern, unsafe, volatile, async, required
+insert_final_newline = true
+csharp_style_namespace_declarations = block_scoped
+
+# No change in line breaks:
+keep_existing_arrangement = true
+
+# This pertains to analyzer warning SA1116SplitParametersMustStartOnLineAfterDeclaration:
+csharp_wrap_after_invocation_lpar = true
+
+# Blank lines
+blank_lines_before_single_line_comment = 0
+blank_lines_between_using_groups = 0
+blank_lines_before_block_statements = 0
+
+# A "{" should not be followed by a comment: First need a line break
+csharp_allow_comment_after_lbrace = false
+
+# int SomeProp { get; set; } instead of 5 lines:
+place_simple_declaration_blocks_on_single_line = true
+
+# "this" qualification
+dotnet_style_qualification_for_field = true:suggestion
+dotnet_style_qualification_for_property = true:suggestion
+dotnet_style_qualification_for_method = true:suggestion
+dotnet_style_qualification_for_event = true:suggestion
+
+# Object initializers (like "new Foo { Prop = val, Prop2 = val2 }" etc.
+keep_existing_initializer_arrangement = true
+place_simple_initializer_on_single_line = true
+max_initializer_elements_on_line = 1
+
+# prefer language keywords (int, string, etc.) over framework type names (Int32, String, etc.)
+# see AV2201
+dotnet_style_predefined_type_for_locals_parameters_members = true:suggestion
+dotnet_style_predefined_type_for_member_access = true:suggestion
+
+# Organize Usings
+# Sort System.* usings alphabetically and place them before other usings.
+# see AV2402
+dotnet_sort_system_directives_first = true:suggestion
+
+# For non-resharper/non-rider users: This will make auto-generated usings inside the namespace:
+csharp_using_directive_placement = inside_namespace:suggestion
+
+# Place else statements on a new line.
+csharp_new_line_before_else = true:suggestion
+
+# Place catch statements on a new line.
+csharp_new_line_before_catch = true:suggestion
+
+# Require finally statements to be on a new line after the closing brace.
+csharp_new_line_before_finally = true:suggestion
+
+# Indent switch case contents
+csharp_indent_case_contents = true:suggestion
+
+# Indent switch labels
+csharp_indent_switch_labels = true:suggestion
+
+# Require no space between the cast and the value
+csharp_space_after_cast = false:suggestion
+
+# Space After Keywords in Control Flow Statements: Require a space after a keyword
+csharp_space_after_keywords_in_control_flow_statements = true:suggestion
+
+# Space Between Method Declaration Argument-List Parentheses: Require no space after a keyword
+csharp_space_between_method_declaration_parameter_list_parentheses = false:suggestion
+
+# Leave Statements and Member Declarations on the Same Line
+csharp_preserve_single_line_statements = false:suggestion
+
+# Inlined variable declarations
+csharp_style_inlined_variable_declaration = true:suggestion
+
+# Use expression-bodied members appropriately (AV2410)
+# See https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference#expression_bodied_members
+csharp_style_expression_bodied_methods = when_on_single_line:none
+csharp_style_expression_bodied_constructors = false:none
+csharp_style_expression_bodied_operators = when_on_single_line:none
+csharp_style_expression_bodied_properties = when_on_single_line:suggestion
+csharp_style_expression_bodied_indexers = when_on_single_line:suggestion
+csharp_style_expression_bodied_accessors = when_on_single_line:suggestion
+
+# Use block-scoped namespaces. Should be handled by IDE0160
+csharp_style_namespace_declarations = block_scoped
+
+# Don't use top-level statements. Disable IDE0210 which would suggest it
+csharp_style_prefer_top_level_statements = false:error
+
+# A parameter or property name containing Text, Message, or Caption should not trigger CA1303
+dotnet_code_quality.CA1303.use_naming_heuristic = true
+
+# Apply API surface rules regardless of the visibility of the type
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/code-quality-rule-options#api_surface
+dotnet_code_quality.api_surface = all
+# CA1002: Do not expose generic lists
+dotnet_code_quality.ca1002.api_surface = public
+# CA1708 (Identifiers should differ by more than case): it's quite common to have a public property and a private backing field that only differ by case
+dotnet_code_quality.ca1708.api_surface = public
+
+# public List<int> foo = new() // NOT "new ()". (C# 8)
+csharp_space_before_new_parentheses = false
+
+# new()' vs 'new T()(C# 9)
+# Object creation when created type is evident from usage: use target typed (it's shorter)
+# https://www.jetbrains.com/help/resharper/Object_Creation_Style.html
+# and https://www.jetbrains.com/help/resharper/EditorConfig_CSHARP_CSharpCodeStylePageImplSchema.html#resharper_csharp_object_creation_when_type_evident
+csharp_object_creation_when_type_evident = target_typed
+
+# new()' vs 'new T()(C# 9)
+# Object creation when created type is not evident from usage: use explict type (better readable)
+# https://www.jetbrains.com/help/resharper/Object_Creation_Style.html
+# and https://www.jetbrains.com/help/resharper/EditorConfig_CSHARP_CSharpCodeStylePageImplSchema.html#resharper_csharp_object_creation_when_type_not_evident
+csharp_object_creation_when_type_not_evident = explicitly_typed
+
+# Guidelines require VS extension: https://marketplace.visualstudio.com/items?itemName=PaulHarrington.EditorGuidelinesPreview
+guidelines = 130, 150
+guidelines_style = 1px solid 40ff00f0
+
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca2225 : We dont use it from VB.
+dotnet_diagnostic.CA2225.severity = none
+
+# Our DotSettings has: Shift, Equality, Bitwise, Conditional
+# Though, if we set "conditional" in the following we will get A LOT of style complaints:
+parentheses_non_obvious_operations = none, bitwise, bitwise_inclusive_or, range, bitwise_exclusive_or, shift, bitwise_and
+# set??? parentheses_group_non_obvious_operations = conditional
+
+# Prefer fully qualified using name at nested scope
+# We do NOT want "using BusinessLogic" (relative using) but always fully qualified.
+csharp_qualified_using_at_nested_scope = true
+
+# ReSharper properties
+# we prefer namespace import directives for imported types (not fully qualified names everywhere)
+resharper_csharp_prefer_qualified_reference = false
+
+# Some values of the enum are not processed inside 'switch' statement and are handled via default section
+resharper_switch_statement_handles_some_known_enum_values_with_default_highlighting = suggestion
+
+# To ensure that NRT annotations are actually helpful, they should not be simply be suppressed without an explanation
+resharper_nullable_warning_suppression_is_used_highlighting = warning
+
+place_attribute_on_same_line = never
+
+# We want "Bar()" for static members:
+static_members_qualify_members = none

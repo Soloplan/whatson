@@ -12,7 +12,8 @@
       <Border Style="{StaticResource SettingsCard}">
         <StackPanel>
           <TextBlock Text="{x:Static loc:Strings.ServerConnection}" Style="{StaticResource SettingsSectionHeading}" />
-          <Label Content="{x:Static loc:Strings.ServerOrProjectURL}" Target="{Binding ElementName=AddressComboBox}" Padding="0" FontWeight="SemiBold" Margin="0,0,0,8" />
+          <Label Content="{x:Static loc:Strings.ServerOrProjectURL}" Target="{Binding ElementName=AddressComboBox}"
+                 Padding="0" FontWeight="SemiBold" Margin="0,0,0,8" />
           <ComboBox x:Name="AddressComboBox" MinHeight="40" IsEditable="True"
                     ItemsSource="{Binding AvailableServers, Mode=OneWay}"
                     Text="{Binding ProposedServerAddress}"
@@ -21,10 +22,12 @@
                      Style="{StaticResource SettingsDescription}" Margin="0,8,0,20" />
           <CheckBox x:Name="AutoDetectionCheckbox" Content="{x:Static loc:Strings.DetectBuildSystemAutomatically}"
                     IsChecked="{Binding IsAutoDetectionEnabled, Mode=TwoWay}" />
-          <StackPanel Margin="0,20,0,0" Visibility="{Binding IsAutoDetectionDisabled, Converter={StaticResource BoolToVis}}">
+          <StackPanel Margin="0,20,0,0"
+                      Visibility="{Binding IsAutoDetectionDisabled, Converter={StaticResource BoolToVis}}">
             <TextBlock Text="{x:Static loc:Strings.BuildSystem}" FontWeight="SemiBold" Margin="0,0,0,8" />
             <ComboBox MinHeight="40" DisplayMemberPath="DisplayName" ItemsSource="{Binding AvailableConnectorTypes}"
-                      SelectedItem="{Binding SelectedConnectorType, Mode=TwoWay}" AutomationProperties.Name="{x:Static loc:Strings.BuildSystem}" />
+                      SelectedItem="{Binding SelectedConnectorType, Mode=TwoWay}"
+                      AutomationProperties.Name="{x:Static loc:Strings.BuildSystem}" />
           </StackPanel>
         </StackPanel>
       </Border>

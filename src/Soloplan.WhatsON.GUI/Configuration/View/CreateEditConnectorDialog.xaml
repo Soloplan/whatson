@@ -9,21 +9,30 @@
   <Border Style="{StaticResource SettingsDialog}">
     <StackPanel>
       <TextBlock Text="{x:Static loc:Strings.ProjectDetails}" Style="{StaticResource SettingsSectionHeading}" />
-      <TextBlock Text="{x:Static loc:Strings.ChooseBuildSystemDescription}" Style="{StaticResource SettingsDescription}" Margin="0,0,0,20" />
-      <Label Content="{x:Static loc:Strings.BuildSystem}" Target="{Binding ElementName=uxPluginType}" Padding="0" FontWeight="SemiBold" Margin="0,0,0,6" />
+      <TextBlock Text="{x:Static loc:Strings.ChooseBuildSystemDescription}"
+                 Style="{StaticResource SettingsDescription}" Margin="0,0,0,20" />
+      <Label Content="{x:Static loc:Strings.BuildSystem}" Target="{Binding ElementName=uxPluginType}" Padding="0"
+             FontWeight="SemiBold" Margin="0,0,0,6" />
       <ComboBox x:Name="uxPluginType" MinHeight="40" DisplayMemberPath="DisplayName" Margin="0,0,0,16"
-                ItemsSource="{Binding ConnectorPlugins, Source={x:Static whatsOn:PluginManager.Instance}}" AutomationProperties.Name="{x:Static loc:Strings.BuildSystem}" />
-      <Label Content="{x:Static loc:Strings.ProjectName}" Target="{Binding ElementName=uxEditConnectorName}" Padding="0" FontWeight="SemiBold" Margin="0,0,0,6" />
-      <TextBox x:Name="uxEditConnectorName" MinHeight="40" AutomationProperties.Name="{x:Static loc:Strings.ProjectName}"
+                ItemsSource="{Binding ConnectorPlugins, Source={x:Static whatsOn:PluginManager.Instance}}"
+                AutomationProperties.Name="{x:Static loc:Strings.BuildSystem}" />
+      <Label Content="{x:Static loc:Strings.ProjectName}" Target="{Binding ElementName=uxEditConnectorName}"
+             Padding="0" FontWeight="SemiBold" Margin="0,0,0,6" />
+      <TextBox x:Name="uxEditConnectorName" MinHeight="40"
+               AutomationProperties.Name="{x:Static loc:Strings.ProjectName}"
                Text="{Binding CurrentConnector.Name, UpdateSourceTrigger=Explicit}" />
       <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Margin="0,24,0,0">
         <Button Content="{x:Static loc:Strings.Cancel}" Click="CancelButtonClick" IsCancel="True" Margin="0,0,10,0"
                 Command="materialDesign:DialogHost.CloseDialogCommand" Style="{StaticResource SettingsSecondaryButton}">
-          <Button.CommandParameter><system:Boolean>False</system:Boolean></Button.CommandParameter>
+          <Button.CommandParameter>
+            <system:Boolean>False</system:Boolean>
+          </Button.CommandParameter>
         </Button>
         <Button Content="{x:Static loc:Strings.Confirm}" Click="OkButtonClick" IsDefault="True"
                 Command="materialDesign:DialogHost.CloseDialogCommand" Style="{StaticResource SettingsPrimaryButton}">
-          <Button.CommandParameter><system:Boolean>True</system:Boolean></Button.CommandParameter>
+          <Button.CommandParameter>
+            <system:Boolean>True</system:Boolean>
+          </Button.CommandParameter>
         </Button>
       </StackPanel>
     </StackPanel>

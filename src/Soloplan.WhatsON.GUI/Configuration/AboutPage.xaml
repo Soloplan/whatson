@@ -3,37 +3,53 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-      Title="{x:Static loc:Strings.About}" FontFamily="Segoe UI" FontSize="14" Background="Transparent" TextElement.Foreground="{DynamicResource MaterialDesignBody}">
+      Title="{x:Static loc:Strings.About}" FontFamily="Segoe UI" FontSize="14" Background="Transparent"
+      TextElement.Foreground="{DynamicResource MaterialDesignBody}">
   <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,0,16">
     <StackPanel Margin="0,0,20,0">
       <TextBlock Text="{x:Static loc:Strings.AboutWhatsON}" Style="{StaticResource SettingsHeading}" />
-      <TextBlock Text="{x:Static loc:Strings.BuildMonitoringDescription}" Style="{StaticResource SettingsDescription}" Margin="0,0,0,22" />
+      <TextBlock Text="{x:Static loc:Strings.BuildMonitoringDescription}" Style="{StaticResource SettingsDescription}"
+                 Margin="0,0,0,22" />
       <Border Style="{StaticResource SettingsCard}">
         <StackPanel>
           <DockPanel Margin="0,0,0,14">
-            <Border DockPanel.Dock="Left" Background="{DynamicResource SettingsSelection}" CornerRadius="12" Padding="12" Margin="0,0,14,0">
-              <materialDesign:PackIcon Kind="Monitor" Width="28" Height="28" Foreground="{DynamicResource SettingsAccent}" />
+            <Border DockPanel.Dock="Left" Background="{DynamicResource SettingsSelection}" CornerRadius="12"
+                    Padding="12" Margin="0,0,14,0">
+              <materialDesign:PackIcon Kind="Monitor" Width="28" Height="28"
+                                       Foreground="{DynamicResource SettingsAccent}" />
             </Border>
             <StackPanel VerticalAlignment="Center">
               <TextBlock Text="whatsON" FontSize="22" FontWeight="SemiBold" />
-              <TextBlock Style="{StaticResource SettingsDescription}"><Run Text="{x:Static loc:Strings.VersionPrefix}" /><Run x:Name="VersionLabel" /></TextBlock>
+              <TextBlock Style="{StaticResource SettingsDescription}">
+                <Run Text="{x:Static loc:Strings.VersionPrefix}" /><Run x:Name="VersionLabel" />
+              </TextBlock>
             </StackPanel>
           </DockPanel>
           <TextBlock Margin="0,0,0,10">
             <Hyperlink NavigateUri="https://github.com/Soloplan/whatson" RequestNavigate="OpenLink"
-                       Foreground="{DynamicResource SettingsAccent}" AutomationProperties.Name="{x:Static loc:Strings.ProjectWebsite}"><Run Text="{x:Static loc:Strings.ProjectWebsite}" /></Hyperlink>
+                       Foreground="{DynamicResource SettingsAccent}"
+                       AutomationProperties.Name="{x:Static loc:Strings.ProjectWebsite}">
+              <Run Text="{x:Static loc:Strings.ProjectWebsite}" />
+            </Hyperlink>
             <Run Text="   ·   " />
             <Hyperlink NavigateUri="https://github.com/Soloplan/whatson/blob/master/LICENSE" RequestNavigate="OpenLink"
-                       Foreground="{DynamicResource SettingsAccent}"><Run Text="{x:Static loc:Strings.MITLicense}" /></Hyperlink>
+                       Foreground="{DynamicResource SettingsAccent}">
+              <Run Text="{x:Static loc:Strings.MITLicense}" />
+            </Hyperlink>
             <Run Text="   ·   " />
             <Hyperlink NavigateUri="https://github.com/Soloplan/whatson/issues" RequestNavigate="OpenLink"
-                       Foreground="{DynamicResource SettingsAccent}" AutomationProperties.Name="{x:Static loc:Strings.ReportAnIssue}"><Run Text="{x:Static loc:Strings.ReportAnIssue}" /></Hyperlink>
+                       Foreground="{DynamicResource SettingsAccent}"
+                       AutomationProperties.Name="{x:Static loc:Strings.ReportAnIssue}">
+              <Run Text="{x:Static loc:Strings.ReportAnIssue}" />
+            </Hyperlink>
           </TextBlock>
           <TextBlock Text="{x:Static loc:Strings.Authors}"
                      Style="{StaticResource SettingsDescription}" Margin="0,0,0,8" />
           <TextBlock FontSize="12">
             <Hyperlink NavigateUri="https://www.soloplan.de" RequestNavigate="OpenLink"
-                       Foreground="{DynamicResource SettingsAccent}"><Run Text="{x:Static loc:Strings.MadeBySoloplan}" /></Hyperlink>
+                       Foreground="{DynamicResource SettingsAccent}">
+              <Run Text="{x:Static loc:Strings.MadeBySoloplan}" />
+            </Hyperlink>
           </TextBlock>
           <TextBlock Style="{StaticResource SettingsDescription}" Margin="0,12,0,0">
             <Run Text="Material Design in XAML " /><Run x:Name="MDIXVersionLabel" />
@@ -42,14 +58,18 @@
       </Border>
       <Border Style="{StaticResource SettingsCard}">
         <StackPanel>
-          <TextBlock Text="{x:Static loc:Strings.Configuration}" Style="{StaticResource SettingsSectionHeading}" Margin="0,0,0,4" />
+          <TextBlock Text="{x:Static loc:Strings.Configuration}" Style="{StaticResource SettingsSectionHeading}"
+                     Margin="0,0,0,4" />
           <TextBlock Text="{x:Static loc:Strings.BackupSettingsDescription}"
                      Style="{StaticResource SettingsDescription}" Margin="0,0,0,12" />
           <TextBox x:Name="ConfigFile" IsReadOnly="True" MinHeight="36" FontSize="12"
-                   AutomationProperties.Name="{x:Static loc:Strings.ConfigurationFileLocation}" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
+                   AutomationProperties.Name="{x:Static loc:Strings.ConfigurationFileLocation}"
+                   ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
           <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
-            <Button Content="{x:Static loc:Strings.ImportSettings}" Click="ImportButtonClick" Style="{StaticResource SettingsSecondaryButton}" Margin="0,0,10,0" />
-            <Button Content="{x:Static loc:Strings.ExportSettings}" Click="ExportButtonClick" Style="{StaticResource SettingsSecondaryButton}" />
+            <Button Content="{x:Static loc:Strings.ImportSettings}" Click="ImportButtonClick"
+                    Style="{StaticResource SettingsSecondaryButton}" Margin="0,0,10,0" />
+            <Button Content="{x:Static loc:Strings.ExportSettings}" Click="ExportButtonClick"
+                    Style="{StaticResource SettingsSecondaryButton}" />
           </StackPanel>
         </StackPanel>
       </Border>
@@ -57,7 +77,8 @@
         <StackPanel>
           <TextBlock Text="{x:Static loc:Strings.InstalledPlugins}" Style="{StaticResource SettingsSectionHeading}" />
           <ListView x:Name="PluginList" BorderThickness="0" Background="Transparent" FontSize="13"
-                    ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="{x:Static loc:Strings.InstalledPlugins}">
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    AutomationProperties.Name="{x:Static loc:Strings.InstalledPlugins}">
             <ListView.ItemContainerStyle>
               <Style TargetType="ListViewItem">
                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -68,9 +89,14 @@
             <ListView.ItemTemplate>
               <DataTemplate>
                 <Grid>
-                  <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                  <Grid.RowDefinitions><RowDefinition /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-                  <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" Margin="0,0,12,0" />
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition /><ColumnDefinition Width="Auto" />
+                  </Grid.ColumnDefinitions>
+                  <Grid.RowDefinitions>
+                    <RowDefinition /><RowDefinition Height="Auto" />
+                  </Grid.RowDefinitions>
+                  <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
+                             Margin="0,0,12,0" />
                   <TextBlock Grid.Column="1" Text="{Binding Version}" Style="{StaticResource SettingsDescription}" />
                   <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Description}" Margin="0,4,0,0"
                              Style="{StaticResource SettingsDescription}" />

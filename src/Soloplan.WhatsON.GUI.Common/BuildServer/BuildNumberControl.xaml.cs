@@ -1,7 +1,9 @@
-﻿// <copyright file="BuildNumberControl.xaml.cs" company="Soloplan GmbH">
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="BuildNumberControl.xaml.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.GUI.Common.BuildServer
 {
@@ -18,12 +20,15 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
   public partial class BuildNumberControl : UserControl
   {
     /// <summary>
-    /// Dependency property for <see cref="MediaTypeNames.Text"/>.
+    /// Dependency property for <see cref="MediaTypeNames.Text" />.
     /// </summary>
-    public static readonly DependencyProperty BuildNumberProperty = DependencyProperty.Register(nameof(BuildNumber), typeof(int?), typeof(BuildNumberControl));
+    public static readonly DependencyProperty BuildNumberProperty = DependencyProperty.Register(
+      nameof(BuildNumber),
+      typeof(int?),
+      typeof(BuildNumberControl));
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="BuildNumberControl"/> class.
+    /// Initializes a new instance of the <see cref="BuildNumberControl" /> class.
     /// </summary>
     public BuildNumberControl()
     {

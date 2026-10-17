@@ -12,8 +12,11 @@
   <UserControl.Resources>
     <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
   </UserControl.Resources>
-  <StackPanel Orientation="{Binding ControlOrientation, RelativeSource={RelativeSource AncestorType=local:ProgressBarTooltipControl}}">
-    <StackPanel Orientation="{Binding ControlOrientation, RelativeSource={RelativeSource AncestorType=local:ProgressBarTooltipControl}}" Visibility="{Binding BuildingNoLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
+  <StackPanel
+    Orientation="{Binding ControlOrientation, RelativeSource={RelativeSource AncestorType=local:ProgressBarTooltipControl}}">
+    <StackPanel
+      Orientation="{Binding ControlOrientation, RelativeSource={RelativeSource AncestorType=local:ProgressBarTooltipControl}}"
+      Visibility="{Binding BuildingNoLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
       <StackPanel Orientation="Horizontal">
         <TextBlock Text="{Binding Progress}" />
         <TextBlock x:Name="PercentSignText" Text="% - " />
@@ -29,7 +32,8 @@
         <TextBlock Name="EstimatedRemainingText" Text="{x:Static loc:Strings.EstimatedRemaining}" />
       </StackPanel>
     </StackPanel>
-    <StackPanel Orientation="Horizontal" Visibility="{Binding BuildingLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
+    <StackPanel Orientation="Horizontal"
+                Visibility="{Binding BuildingLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
       <TextBlock Text="{x:Static loc:Strings.TakingPrefix}" />
       <TextBlock>
         <TextBlock.Text>

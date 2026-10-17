@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="JsonApiTests.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -22,10 +22,15 @@ namespace Soloplan.WhatsON.Tests
   public class JsonApiTests
   {
     private TcpListener listener;
+
     private Task responseTask;
+
     private TaskCompletionSource<string> receivedRequest;
+
     private TaskCompletionSource<bool> sendResponse;
+
     private IWebProxy originalProxy;
+
     private bool disposing;
 
     [SetUp]
@@ -62,7 +67,9 @@ namespace Soloplan.WhatsON.Tests
     {
       var address = this.StartServer("{\"build\":42}", "application/json; charset=utf-8");
 
-      var result = await new SerializationHelper().GetJsonModel<Dictionary<string, int>>(address, requestCallback: request => request.Headers["X-Test-Api"] = "synthetic-test-value");
+      var result = await new SerializationHelper().GetJsonModel<Dictionary<string, int>>(
+        address,
+        requestCallback: request => request.Headers["X-Test-Api"] = "synthetic-test-value");
       var headers = await this.receivedRequest.Task;
 
       Assert.That(result["build"], Is.EqualTo(42));
@@ -76,7 +83,9 @@ namespace Soloplan.WhatsON.Tests
     {
       var address = this.StartServer("{\"build\":42}", contentType);
 
-      Assert.That(async () => await new SerializationHelper().GetJsonModel<Dictionary<string, int>>(address), Throws.TypeOf<InvalidPlugInApiResponseException>());
+      Assert.That(
+        async () => await new SerializationHelper().GetJsonModel<Dictionary<string, int>>(address),
+        Throws.TypeOf<InvalidPlugInApiResponseException>());
     }
 
     [TestCase("{broken")]
@@ -86,7 +95,9 @@ namespace Soloplan.WhatsON.Tests
     {
       var address = this.StartServer(json);
 
-      var exception = Assert.ThrowsAsync<InvalidPlugInApiResponseException>(async () => await new SerializationHelper().GetJsonModel<Dictionary<string, int>>(address));
+      var exception =
+        Assert.ThrowsAsync<InvalidPlugInApiResponseException>(async () =>
+          await new SerializationHelper().GetJsonModel<Dictionary<string, int>>(address));
 
       Assert.That(exception.InnerException, Is.InstanceOf<Newtonsoft.Json.JsonException>());
     }
@@ -108,7 +119,9 @@ namespace Soloplan.WhatsON.Tests
     {
       var address = this.StartServer("{\"build\":42}", status: "201 Created");
 
-      Assert.That(async () => await new SerializationHelper().GetJsonModel<Dictionary<string, int>>(address), Throws.TypeOf<InvalidPlugInApiResponseException>());
+      Assert.That(
+        async () => await new SerializationHelper().GetJsonModel<Dictionary<string, int>>(address),
+        Throws.TypeOf<InvalidPlugInApiResponseException>());
     }
 
     [Test]
@@ -118,7 +131,10 @@ namespace Soloplan.WhatsON.Tests
       using (var cancellation = new CancellationTokenSource())
       {
         var query = Task.Run(() => new SerializationHelper().GetJsonModel<Dictionary<string, int>>(address, cancellation.Token));
-        Assert.That(await Task.WhenAny(this.receivedRequest.Task, Task.Delay(5000)), Is.SameAs(this.receivedRequest.Task), "Request did not reach the local responder.");
+        Assert.That(
+          await Task.WhenAny(this.receivedRequest.Task, Task.Delay(5000)),
+          Is.SameAs(this.receivedRequest.Task),
+          "Request did not reach the local responder.");
 
         cancellation.Cancel();
 
@@ -155,7 +171,8 @@ namespace Soloplan.WhatsON.Tests
             this.receivedRequest.TrySetResult(headers.ToString());
             await this.sendResponse.Task;
             var bytes = Encoding.UTF8.GetBytes(body);
-            var headerBytes = Encoding.ASCII.GetBytes($"HTTP/1.1 {status}\r\nContent-Type: {contentType}\r\nContent-Length: {bytes.Length}\r\nConnection: close\r\n\r\n");
+            var headerBytes = Encoding.ASCII.GetBytes(
+              $"HTTP/1.1 {status}\r\nContent-Type: {contentType}\r\nContent-Length: {bytes.Length}\r\nConnection: close\r\n\r\n");
             await stream.WriteAsync(headerBytes, 0, headerBytes.Length);
             await stream.WriteAsync(bytes, 0, bytes.Length);
           }

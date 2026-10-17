@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ConnectorViewModel.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -15,7 +15,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
   using Soloplan.WhatsON.Model;
 
   /// <summary>
-  /// The view model for see <see cref="Connector"/>.
+  /// The view model for see <see cref="Connector" />.
   /// </summary>
   public class ConnectorViewModel : ViewModelBase, IConfigurationItemProvider
   {
@@ -98,7 +98,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
         {
           this.Name = connectorSource.Name;
           this.Identifier = connectorSource.Identifier;
-          var configurationItemsToNull = this.ConfigurationItems.Where(cvm => this.SourceConnectorConfiguration.ConfigurationItems.All(c => c.Key != cvm.Key));
+          var configurationItemsToNull =
+            this.ConfigurationItems.Where(cvm => this.SourceConnectorConfiguration.ConfigurationItems.All(c => c.Key != cvm.Key));
           foreach (var configurationItemToNull in configurationItemsToNull)
           {
             configurationItemToNull.Value = null;
@@ -123,7 +124,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <returns>The connector attributes.</returns>
     public IList<ConfigurationItemAttribute> GetConnectorConfigAttributes()
     {
-      var configurationItemAttributes = this.SourceConnectorPlugin.ConnectorType.GetCustomAttributes(typeof(ConfigurationItemAttribute), true).Cast<ConfigurationItemAttribute>().ToList();
+      var configurationItemAttributes = this.SourceConnectorPlugin.ConnectorType.GetCustomAttributes(typeof(ConfigurationItemAttribute), true)
+        .Cast<ConfigurationItemAttribute>().ToList();
       foreach (var configurationItemAttribute in configurationItemAttributes)
       {
         ConfigResourcesHelper.ApplyConfigResources(configurationItemAttribute, this.SourceConnectorPlugin.ConnectorType);
@@ -148,7 +150,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// Applies changes to source connector configuration.
     /// </summary>
     /// <param name="newConnectorConfigurationCreated">if set to <c>true</c> [new connector configuration created].</param>
-    /// <returns>New instance of <see cref="ConnectorConfiguration"/> if it was created; otherwise the existing instance.</returns>
+    /// <returns>New instance of <see cref="ConnectorConfiguration" /> if it was created; otherwise the existing instance.</returns>
     public ConnectorConfiguration ApplyToSourceConnectorConfiguration(out bool newConnectorConfigurationCreated)
     {
       newConnectorConfigurationCreated = false;
@@ -177,7 +179,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// Creates the new connector configuration with applied changes.
     /// </summary>
-    /// <returns>New instance of <see cref="ConnectorConfiguration"/>.</returns>
+    /// <returns>New instance of <see cref="ConnectorConfiguration" />.</returns>
     public ConnectorConfiguration CreateNewConnectorConfiguration()
     {
       var sourceConnectorConfig = new ConnectorConfiguration(this.SourceConnectorPlugin.Name);
@@ -196,7 +198,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// In case it is not existing, a new item is created.
     /// </summary>
     /// <param name="key">The key.</param>
-    /// <returns>The found or created <see cref="ConfigurationItemViewModel"/>.</returns>
+    /// <returns>The found or created <see cref="ConfigurationItemViewModel" />.</returns>
     private ConfigurationItemViewModel GetConfigurationItemViewModel(string key)
     {
       var configItemViewModel = this.ConfigurationItems.FirstOrDefault(x => x.Key == key);

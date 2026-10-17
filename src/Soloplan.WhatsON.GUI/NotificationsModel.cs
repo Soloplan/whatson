@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="NotificationsModel.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -16,18 +16,17 @@ namespace Soloplan.WhatsON.GUI
 
   public class NotificationsModel
   {
-    private readonly ObservableCollection<ConnectorViewModel> connectors;
     private object lockObj = new object();
 
     public NotificationsModel(ObservationScheduler scheduler)
     {
-      this.connectors = new ObservableCollection<ConnectorViewModel>();
+      this.Connectors = new ObservableCollection<ConnectorViewModel>();
       scheduler.StatusQueried += this.SchedulerStatusQueried;
     }
 
     public event PropertyChangedEventHandler StatusChanged;
 
-    public ObservableCollection<ConnectorViewModel> Connectors => this.connectors;
+    public ObservableCollection<ConnectorViewModel> Connectors { get; }
 
     private void SchedulerStatusQueried(object sender, Connector connector)
     {
@@ -38,16 +37,13 @@ namespace Soloplan.WhatsON.GUI
       this.ForwardStatusChanged(modelToUpdate.CurrentStatus, new PropertyChangedEventArgs(nameof(ConnectorViewModel.CurrentStatus)));
     }
 
-    private void ForwardStatusChanged(object sender, PropertyChangedEventArgs eventArgs)
-    {
-      this.StatusChanged?.Invoke(sender, eventArgs);
-    }
+    private void ForwardStatusChanged(object sender, PropertyChangedEventArgs eventArgs) => this.StatusChanged?.Invoke(sender, eventArgs);
 
     private ConnectorViewModel GetModelToUpdate(Connector connector)
     {
       lock (this.lockObj)
       {
-        var modelToUpdate = this.connectors.FirstOrDefault(sub => sub.Identifier == connector.Configuration.Identifier);
+        var modelToUpdate = this.Connectors.FirstOrDefault(sub => sub.Identifier == connector.Configuration.Identifier);
         if (modelToUpdate == null)
         {
           var presentationPlugIn = PluginManager.Instance.GetPresentationPlugin(connector.Configuration.Type);
@@ -61,7 +57,7 @@ namespace Soloplan.WhatsON.GUI
           }
 
           modelToUpdate.PropertyChanged += this.ForwardStatusChanged;
-          this.connectors.Add(modelToUpdate);
+          this.Connectors.Add(modelToUpdate);
         }
 
         return modelToUpdate;

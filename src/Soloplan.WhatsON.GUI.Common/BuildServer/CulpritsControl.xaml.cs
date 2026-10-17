@@ -18,12 +18,15 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
   public partial class CulpritsControl : UserControl
   {
     /// <summary>
-    /// Dependency property for <see cref="CulpritsProp"/>.
+    /// Dependency property for <see cref="CulpritsProp" />.
     /// </summary>
-    public static readonly DependencyProperty CulpritsPropProperty = DependencyProperty.Register(nameof(CulpritsProp), typeof(IList), typeof(CulpritsControl));
+    public static readonly DependencyProperty CulpritsPropProperty = DependencyProperty.Register(
+      nameof(CulpritsProp),
+      typeof(IList),
+      typeof(CulpritsControl));
 
     /// <summary>
-    /// Dependency property for <see cref="CulpritsProp"/>.
+    /// Dependency property for <see cref="CulpritsProp" />.
     /// </summary>
     public static readonly DependencyProperty CaptionProperty = DependencyProperty.Register(nameof(Caption), typeof(string), typeof(CulpritsControl));
 

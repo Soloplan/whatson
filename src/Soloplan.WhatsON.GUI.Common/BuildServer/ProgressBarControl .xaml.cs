@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ProgressBarTooltipControl.xaml.cs" company="Soloplan GmbH">
+// <copyright file="ProgressBarControl .xaml.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
@@ -17,11 +17,19 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
   public partial class ProgressBarControl : UserControl
   {
     /// <summary>
-    /// Dependency property for <see cref="CulpritsProp"/>.
+    /// Dependency property for <see cref="CulpritsProp" />.
     /// </summary>
-    public static readonly DependencyProperty ControlOrientationProperty = DependencyProperty.Register(nameof(ControlOrientation), typeof(Orientation), typeof(ProgressBarControl), new PropertyMetadata(Orientation.Vertical));
+    public static readonly DependencyProperty ControlOrientationProperty = DependencyProperty.Register(
+      nameof(ControlOrientation),
+      typeof(Orientation),
+      typeof(ProgressBarControl),
+      new PropertyMetadata(Orientation.Vertical));
 
-    public static readonly DependencyProperty CompactDisplayProperty = DependencyProperty.Register(nameof(CompactDisplay), typeof(bool), typeof(ProgressBarControl), new PropertyMetadata(false, new PropertyChangedCallback(OnCurrentReadingChanged)));
+    public static readonly DependencyProperty CompactDisplayProperty = DependencyProperty.Register(
+      nameof(CompactDisplay),
+      typeof(bool),
+      typeof(ProgressBarControl),
+      new PropertyMetadata(false, OnCurrentReadingChanged));
 
     public ProgressBarControl()
     {

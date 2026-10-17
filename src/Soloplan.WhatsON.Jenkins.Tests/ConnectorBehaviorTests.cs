@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ConnectorBehaviorTests.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -44,7 +44,8 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     public async Task BuildingFlagTakesPrecedenceOverAReportedResult()
     {
       var api = new FakeJenkinsApi();
-      api.JobRequest += (sender, args) => args.Result = new JenkinsJob { LastBuild = new JenkinsBuild { Number = 1, Building = true, Result = "SUCCESS" } };
+      api.JobRequest += (sender, args) =>
+        args.Result = new JenkinsJob { LastBuild = new JenkinsBuild { Number = 1, Building = true, Result = "SUCCESS" } };
       var connector = new JenkinsConnector(Configuration(), api);
 
       await connector.QueryStatus(CancellationToken.None);
@@ -175,8 +176,9 @@ namespace Soloplan.WhatsON.Jenkins.Tests
           args.Builds.Add(ApiHelper.GetBuild(ObservationState.Success, number));
         }
       };
-      api.BuildRequest += (sender, args) => args.Result = middleBuildDeleted && args.BuildNumber == 11 ? null :
-        ApiHelper.GetBuild(args.BuildNumber == 12 ? ObservationState.Failure : ObservationState.Success, args.BuildNumber);
+      api.BuildRequest += (sender, args) => args.Result = middleBuildDeleted && args.BuildNumber == 11
+        ? null
+        : ApiHelper.GetBuild(args.BuildNumber == 12 ? ObservationState.Failure : ObservationState.Success, args.BuildNumber);
       var connector = new JenkinsConnector(Configuration(), api);
       await connector.QueryStatus(CancellationToken.None);
 
@@ -186,7 +188,9 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       Assert.Multiple(() =>
       {
         Assert.That(connector.CurrentStatus.State, Is.EqualTo(ObservationState.Running));
-        Assert.That(connector.Snapshots.Select(s => s.Status.BuildNumber), Is.EqualTo(middleBuildDeleted ? new[] { 12, 10, 9, 8, 7 } : new[] { 12, 11, 10, 9, 8 }));
+        Assert.That(
+          connector.Snapshots.Select(s => s.Status.BuildNumber),
+          Is.EqualTo(middleBuildDeleted ? new[] { 12, 10, 9, 8, 7 } : new[] { 12, 11, 10, 9, 8 }));
         Assert.That(connector.Snapshots.First().Status.State, Is.EqualTo(ObservationState.Failure));
         Assert.That(connector.Snapshots.All(s => s.Status.State != ObservationState.Running), Is.True);
       });
@@ -239,14 +243,12 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       Assert.That(connector.CurrentStatus.State, Is.EqualTo(ObservationState.Success));
     }
 
-    private static ConnectorConfiguration Configuration()
-    {
-      return new ConnectorConfiguration("Jenkins", "Release", Connector.ServerAddress, "https://builds.example", Connector.ProjectName, "Release");
-    }
+    private static ConnectorConfiguration Configuration() => new ConnectorConfiguration("Jenkins", "Release", Connector.ServerAddress, "https://builds.example", Connector.ProjectName, "Release");
 
     private class ReachabilityConnector : JenkinsConnector
     {
       private readonly bool serverAvailable;
+
       private readonly bool projectAvailable;
 
       public ReachabilityConnector(IJenkinsApi api, bool serverAvailable, bool projectAvailable)
@@ -256,15 +258,9 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         this.projectAvailable = projectAvailable;
       }
 
-      public override Task<bool> CheckServerURL()
-      {
-        return Task.FromResult(this.serverAvailable);
-      }
+      public override Task<bool> CheckServerURL() => Task.FromResult(this.serverAvailable);
 
-      public override Task<bool> CheckProjectURL()
-      {
-        return Task.FromResult(this.projectAvailable);
-      }
+      public override Task<bool> CheckProjectURL() => Task.FromResult(this.projectAvailable);
     }
   }
 }

@@ -12,9 +12,13 @@ namespace Soloplan.WhatsON.CruiseControl.Model
   public enum CcBuildStatus
   {
     Success,
+
     Failure,
+
     Exception,
+
     Unknown,
+
     Cancelled,
   }
 

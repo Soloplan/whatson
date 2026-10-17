@@ -12,8 +12,11 @@
   <UserControl.Resources>
     <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
   </UserControl.Resources>
-  <StackPanel Orientation="{Binding ControlOrientation, RelativeSource={RelativeSource AncestorType=local:ProgressBarTooltipControl}}">
-    <StackPanel Orientation="{Binding ControlOrientation, RelativeSource={RelativeSource AncestorType=local:ProgressBarTooltipControl}}" Visibility="{Binding BuildingNoLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
+  <StackPanel
+    Orientation="{Binding ControlOrientation, RelativeSource={RelativeSource AncestorType=local:ProgressBarTooltipControl}}">
+    <StackPanel
+      Orientation="{Binding ControlOrientation, RelativeSource={RelativeSource AncestorType=local:ProgressBarTooltipControl}}"
+      Visibility="{Binding BuildingNoLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
       <StackPanel Orientation="Horizontal">
         <TextBlock x:Name="CompletionText" Text="{x:Static loc:Strings.CompletionPrefix}" />
         <TextBlock Text="{Binding Progress}" />
@@ -30,10 +33,13 @@
           </TextBlock.Text>
         </TextBlock>
         <TextBlock Name="EstimatedRemainingText" Text="{x:Static loc:Strings.EstimatedRemaining}" />
-        <TextBlock><LineBreak/></TextBlock> 
+        <TextBlock>
+          <LineBreak />
+        </TextBlock>
       </StackPanel>
     </StackPanel>
-    <StackPanel Orientation="Horizontal" Visibility="{Binding BuildingLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
+    <StackPanel Orientation="Horizontal"
+                Visibility="{Binding BuildingLongerThenExpected, Converter={StaticResource BoolToVisibility}}">
       <TextBlock Text="{x:Static loc:Strings.TakingPrefix}" />
       <TextBlock>
         <TextBlock.Text>
@@ -45,7 +51,9 @@
         </TextBlock.Text>
       </TextBlock>
       <TextBlock Text="{x:Static loc:Strings.LongerThanEstimatedSuffix}" />
-      <TextBlock><LineBreak/></TextBlock>  
+      <TextBlock>
+        <LineBreak />
+      </TextBlock>
     </StackPanel>
   </StackPanel>
 </UserControl>

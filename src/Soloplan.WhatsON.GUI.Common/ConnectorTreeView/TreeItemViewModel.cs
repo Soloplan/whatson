@@ -17,19 +17,19 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   public abstract partial class TreeItemViewModel : INotifyPropertyChanged, IHandleDoubleClick
   {
     /// <summary>
-    /// Backing field for <see cref="EditCommand"/>.
+    /// Backing field for <see cref="EditCommand" />.
     /// </summary>
     private CustomCommand editCommand;
 
     /// <summary>
-    /// Backing field for <see cref="ExportCommand"/>.
+    /// Backing field for <see cref="ExportCommand" />.
     /// </summary>
     private CustomCommand exportCommand;
 
     private CustomCommand deleteCommand;
 
     /// <summary>
-    /// Backing field for <see cref="RenameCommand"/>.
+    /// Backing field for <see cref="RenameCommand" />.
     /// </summary>
     private CustomCommand renameCommand;
 
@@ -93,7 +93,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <param name="eventArgs">Arguments containing data about edited item.</param>
     protected virtual void OnEditItem(object sender, EditTreeItemViewModelEventArgs eventArgs)
     {
-      if (this.IsOnlyOneSelected == false)
+      if (!this.IsOnlyOneSelected)
       {
         return;
       }
@@ -106,20 +106,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="eventArgs">Arguments containing data about deleted item.</param>
-    protected virtual void OnDeleteItem(object sender, DeleteTreeItemEventArgs eventArgs)
-    {
-      this.DeleteItem?.Invoke(sender, eventArgs);
-    }
+    protected virtual void OnDeleteItem(object sender, DeleteTreeItemEventArgs eventArgs) => this.DeleteItem?.Invoke(sender, eventArgs);
 
     /// <summary>
     /// Called when item is exported.
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="eventArgs">Arguments containing data about exporting item.</param>
-    protected virtual void OnExportItem(object sender, ValueEventArgs<TreeItemViewModel> eventArgs)
-    {
-      this.ExportItem?.Invoke(sender, eventArgs);
-    }
+    protected virtual void OnExportItem(object sender, ValueEventArgs<TreeItemViewModel> eventArgs) => this.ExportItem?.Invoke(sender, eventArgs);
 
     /// <summary>
     /// Creates command used for editing this tree item.
@@ -165,15 +159,12 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Firest <see cref="ConfigurationChanged"/> event.
+    /// Firest <see cref="ConfigurationChanged" /> event.
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="eventArgs">Event args.</param>
     [SuppressPropertyChangedWarnings]
-    protected virtual void OnConfigurationChanged(object sender, EventArgs eventArgs)
-    {
-      this.ConfigurationChanged?.Invoke(sender, eventArgs);
-    }
+    protected virtual void OnConfigurationChanged(object sender, EventArgs eventArgs) => this.ConfigurationChanged?.Invoke(sender, eventArgs);
 
     /// <summary>
     /// Handles delete command.
@@ -186,14 +177,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.OnDeleteItem(this, data);
     }
 
-    private void TreeConfigurationChanged()
-    {
-      this.EditCommand.CanExecute(null);
-    }
+    private void TreeConfigurationChanged() => this.EditCommand.CanExecute(null);
   }
 
   /// <summary>
-  /// Data related to deleting <see cref="TreeItemViewModel"/>.
+  /// Data related to deleting <see cref="TreeItemViewModel" />.
   /// </summary>
   public class DeleteTreeItemEventArgs : EventArgs
   {
@@ -210,11 +198,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// Indicates if there are no other selected connectots.
     /// </summary>
-    ///
     private bool noOtherSelection = true;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DeleteTreeItemEventArgs"/> class.
+    /// Initializes a new instance of the <see cref="DeleteTreeItemEventArgs" /> class.
     /// </summary>
     /// <param name="deleteItem">The item about to be deleted.</param>
     public DeleteTreeItemEventArgs(TreeItemViewModel deleteItem)
@@ -227,8 +214,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     public bool NoOtherSelections
     {
-      get { return this.noOtherSelection; }
-      set { this.noOtherSelection = value; }
+      get => this.noOtherSelection;
+      set => this.noOtherSelection = value;
     }
 
     /// <summary>

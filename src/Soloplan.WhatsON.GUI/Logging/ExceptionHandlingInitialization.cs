@@ -1,7 +1,9 @@
-﻿// <copyright file="ExceptionHandlingInitialization.cs" company="Soloplan GmbH">
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ExceptionHandlingInitialization.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.GUI.Logging
 {
@@ -33,7 +35,9 @@ namespace Soloplan.WhatsON.GUI.Logging
         }
         else
         {
-          log.Fatal("An unhandled exception occurred in a non-main thread. No exception object available. Only this thing: {@exceptionObj}", args.ExceptionObject);
+          log.Fatal(
+            "An unhandled exception occurred in a non-main thread. No exception object available. Only this thing: {@exceptionObj}",
+            args.ExceptionObject);
         }
       };
 
@@ -42,10 +46,7 @@ namespace Soloplan.WhatsON.GUI.Logging
         log.Fatal(e.Exception, "An unhandled asynchronous exception occurred in the main thread:");
       };
 
-      AppDomain.CurrentDomain.FirstChanceException += (sender, args) =>
-      {
-        log.Error(args.Exception, "A first-chance exception occurred");
-      };
+      AppDomain.CurrentDomain.FirstChanceException += (sender, args) => { log.Error(args.Exception, "A first-chance exception occurred"); };
     }
   }
 }

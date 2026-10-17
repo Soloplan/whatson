@@ -19,7 +19,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
   public partial class ProjectsTreeView : UserControl
   {
     /// <summary>
-    /// Initializes a new instance of the <see cref="ProjectsTreeView"/> class.
+    /// Initializes a new instance of the <see cref="ProjectsTreeView" /> class.
     /// </summary>
     public ProjectsTreeView()
     {
@@ -27,23 +27,20 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     }
 
     /// <summary>
-    /// Marks the <see cref="RoutedEventArgs"/> as handled.
+    /// Marks the <see cref="RoutedEventArgs" /> as handled.
     /// </summary>
     /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-    private void NullHandler(object sender, RoutedEventArgs e)
-    {
-      e.Handled = true;
-    }
+    /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
+    private void NullHandler(object sender, RoutedEventArgs e) => e.Handled = true;
 
     /// <summary>
     /// Handles the PreviewKeyUp event of the TreeViewItem control.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The <see cref="System.Windows.Input.KeyEventArgs"/> instance containing the event data.</param>
-    private void TreeViewItemPreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+    /// <param name="e">The <see cref="System.Windows.Input.KeyEventArgs" /> instance containing the event data.</param>
+    private void TreeViewItemPreviewKeyUp(object sender, KeyEventArgs e)
     {
-      if (e.Key == System.Windows.Input.Key.Space)
+      if (e.Key == Key.Space)
       {
         var item = (ProjectViewModel)this.mainTreeView.SelectedItem;
         if (item.IsCheckable)
@@ -58,7 +55,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// Handles the hyperlink requiest event of elements in the TreeViewItem control.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The <see cref="RequestNavigateEventArgs"/> instance containing the event data.</param>
+    /// <param name="e">The <see cref="RequestNavigateEventArgs" /> instance containing the event data.</param>
     private void HyperlinkRequestNavigate(object sender, RequestNavigateEventArgs e)
     {
       Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
@@ -88,7 +85,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     /// <param name="sender">Sender item.</param>
     /// <param name="e">Event args.</param>
-    private void ProjectsTreeViewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+    private void ProjectsTreeViewKeyDown(object sender, KeyEventArgs e)
     {
       if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.A))
       {

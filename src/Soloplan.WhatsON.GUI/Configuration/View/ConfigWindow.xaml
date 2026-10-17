@@ -9,7 +9,8 @@
         Background="{DynamicResource SettingsBackground}" FontFamily="Segoe UI"
         TextElement.FontSize="14" TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Closing="WindowClosing" ShowInTaskbar="False" Style="{StaticResource BorderLessWindowStyle}">
-  <Border Background="{DynamicResource SettingsBackground}" BorderBrush="{DynamicResource SettingsBorder}" BorderThickness="1">
+  <Border Background="{DynamicResource SettingsBackground}" BorderBrush="{DynamicResource SettingsBorder}"
+          BorderThickness="1">
     <DockPanel>
       <gui:CustomTitleBar DockPanel.Dock="Top" CustomButtonVisible="False" ShowMinimizeButton="False"
                           Window="{Binding RelativeSource={RelativeSource AncestorType={x:Type view:ConfigWindow}}}" />
@@ -24,38 +25,46 @@
               <Style TargetType="ColumnDefinition">
                 <Setter Property="Width" Value="190" />
                 <Style.Triggers>
-                  <DataTrigger Binding="{Binding SingleConnectorMode}" Value="True"><Setter Property="Width" Value="0" /></DataTrigger>
+                  <DataTrigger Binding="{Binding SingleConnectorMode}" Value="True">
+                    <Setter Property="Width" Value="0" />
+                  </DataTrigger>
                 </Style.Triggers>
               </Style>
             </ColumnDefinition.Style>
           </ColumnDefinition>
           <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <Border Grid.RowSpan="2" Background="{DynamicResource SettingsSurface}" BorderBrush="{DynamicResource SettingsBorder}"
+        <Border Grid.RowSpan="2" Background="{DynamicResource SettingsSurface}"
+                BorderBrush="{DynamicResource SettingsBorder}"
                 BorderThickness="0,0,1,0"
                 Visibility="{Binding SingleConnectorMode, Converter={StaticResource InvertBoolToVis}}">
           <DockPanel Margin="14,24,14,16">
-            <TextBlock DockPanel.Dock="Top" Text="{x:Static loc:Strings.SettingsUppercase}" FontSize="11" FontWeight="SemiBold"
+            <TextBlock DockPanel.Dock="Top" Text="{x:Static loc:Strings.SettingsUppercase}" FontSize="11"
+                       FontWeight="SemiBold"
                        Foreground="{DynamicResource SettingsMuted}" Margin="14,0,0,18" />
             <TextBlock DockPanel.Dock="Bottom" Text="whatsON" Margin="14,16,0,0"
                        Foreground="{DynamicResource SettingsMuted}" FontSize="12" />
             <ListBox x:Name="ConfigTopicsListBox" BorderThickness="0" Background="Transparent"
                      ItemContainerStyle="{StaticResource SettingsNavigationItem}"
                      SelectedItem="{Binding InitialFocusedConfigurationListBoxItem, Mode=OneWay}"
-                     SelectionChanged="ListBoxSelectionChanged" AutomationProperties.Name="{x:Static loc:Strings.SettingsSections}">
-              <ListBoxItem Tag="{x:Static view:ConfigWindow.MainListItemTag}" AutomationProperties.Name="{x:Static loc:Strings.General}">
+                     SelectionChanged="ListBoxSelectionChanged"
+                     AutomationProperties.Name="{x:Static loc:Strings.SettingsSections}">
+              <ListBoxItem Tag="{x:Static view:ConfigWindow.MainListItemTag}"
+                           AutomationProperties.Name="{x:Static loc:Strings.General}">
                 <StackPanel Orientation="Horizontal">
                   <materialDesign:PackIcon Kind="Tune" Width="20" Height="20" Margin="0,0,12,0" />
                   <TextBlock Text="{x:Static loc:Strings.General}" VerticalAlignment="Center" />
                 </StackPanel>
               </ListBoxItem>
-              <ListBoxItem Tag="{x:Static view:ConfigWindow.ConnectorsListItemTag}" AutomationProperties.Name="{x:Static loc:Strings.Projects}">
+              <ListBoxItem Tag="{x:Static view:ConfigWindow.ConnectorsListItemTag}"
+                           AutomationProperties.Name="{x:Static loc:Strings.Projects}">
                 <StackPanel Orientation="Horizontal">
                   <materialDesign:PackIcon Kind="Server" Width="20" Height="20" Margin="0,0,12,0" />
                   <TextBlock Text="{x:Static loc:Strings.Projects}" VerticalAlignment="Center" />
                 </StackPanel>
               </ListBoxItem>
-              <ListBoxItem Tag="{x:Static view:ConfigWindow.AboutListItemTag}" AutomationProperties.Name="{x:Static loc:Strings.About}">
+              <ListBoxItem Tag="{x:Static view:ConfigWindow.AboutListItemTag}"
+                           AutomationProperties.Name="{x:Static loc:Strings.About}">
                 <StackPanel Orientation="Horizontal">
                   <materialDesign:PackIcon Kind="InformationOutline" Width="20" Height="20" Margin="0,0,12,0" />
                   <TextBlock Text="{x:Static loc:Strings.About}" VerticalAlignment="Center" />
@@ -72,9 +81,11 @@
                 Visibility="{Binding ConfigurationIsModified, Converter={StaticResource BoolToVis}}">
           <DockPanel LastChildFill="True">
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-              <Button x:Name="ResetButton" Content="{Binding SnackbarActionCaption}" Click="SnackbarResetClick" Margin="0,0,10,0"
+              <Button x:Name="ResetButton" Content="{Binding SnackbarActionCaption}" Click="SnackbarResetClick"
+                      Margin="0,0,10,0"
                       Style="{StaticResource SettingsSecondaryButton}" />
-              <Button x:Name="SaveButton" Content="{x:Static loc:Strings.SaveChanges}" Click="SnackbarSaveClick" Style="{StaticResource SettingsPrimaryButton}" />
+              <Button x:Name="SaveButton" Content="{x:Static loc:Strings.SaveChanges}" Click="SnackbarSaveClick"
+                      Style="{StaticResource SettingsPrimaryButton}" />
             </StackPanel>
             <TextBlock Text="{x:Static loc:Strings.UnsavedChanges}" VerticalAlignment="Center"
                        Foreground="{DynamicResource SettingsMuted}" FontSize="12" />

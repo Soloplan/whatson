@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ProjectsDataInterchange.cs" company="Soloplan GmbH">
-//  Copyright (c) Soloplan GmbH. All rights reserved.
-//  Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -85,10 +85,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
       return true;
     }
 
-    private string GetProjectsInterchangeFileFilter()
-    {
-      return $"{Properties.Resources.JsonFilesFilterName}|*.{SerializationHelper.ConfigFileExtension}";
-    }
+    private string GetProjectsInterchangeFileFilter() => $"{Properties.Resources.JsonFilesFilterName}|*.{SerializationHelper.ConfigFileExtension}";
 
     /// <summary>
     /// Gets the export file path.
@@ -101,7 +98,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
         saveFileDialog.Filter = this.GetProjectsInterchangeFileFilter();
 
         saveFileDialog.FileName = $"whatson_{string.Join("_", fileName.Split(Path.GetInvalidFileNameChars()))}.json";
-        if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        if (saveFileDialog.ShowDialog() == DialogResult.OK)
         {
           return saveFileDialog.FileName;
         }
@@ -119,7 +116,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
       using (var openFileDialog = new OpenFileDialog())
       {
         openFileDialog.Filter = this.GetProjectsInterchangeFileFilter();
-        if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        if (openFileDialog.ShowDialog() == DialogResult.OK)
         {
           return openFileDialog.FileName;
         }

@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ExternalEnabledStateCommand.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -60,10 +60,7 @@ namespace Soloplan.WhatsON.GUI.Common
     /// </summary>
     /// <param name="sender">Sender.</param>
     /// <param name="args">Event args.</param>
-    protected virtual void OnCanExecuteChanged(object sender, EventArgs args)
-    {
-      this.CanExecuteChanged?.Invoke(sender, args);
-    }
+    protected virtual void OnCanExecuteChanged(object sender, EventArgs args) => this.CanExecuteChanged?.Invoke(sender, args);
 
     protected virtual bool CanExecuteInternal(object parameter)
     {

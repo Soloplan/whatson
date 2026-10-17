@@ -15,8 +15,10 @@
     </StackPanel>
     <Border Grid.Row="1" Style="{StaticResource SettingsCard}" Padding="16">
       <StackPanel>
-        <Label Content="{x:Static loc:Strings.FindProject}" Target="{Binding ElementName=searchTextBox}" Padding="0" FontWeight="SemiBold" Margin="0,0,0,6" />
-        <TextBox x:Name="searchTextBox" MinHeight="36" TextChanged="SearchTextBoxTextChanged" AutomationProperties.Name="{x:Static loc:Strings.FindProject}" />
+        <Label Content="{x:Static loc:Strings.FindProject}" Target="{Binding ElementName=searchTextBox}" Padding="0"
+               FontWeight="SemiBold" Margin="0,0,0,6" />
+        <TextBox x:Name="searchTextBox" MinHeight="36" TextChanged="SearchTextBoxTextChanged"
+                 AutomationProperties.Name="{x:Static loc:Strings.FindProject}" />
       </StackPanel>
     </Border>
     <Border Grid.Row="2" Style="{StaticResource SettingsCard}" Padding="12">
@@ -28,11 +30,14 @@
             <Style TargetType="StackPanel">
               <Setter Property="Visibility" Value="Collapsed" />
               <Style.Triggers>
-                <DataTrigger Binding="{Binding Projects.Count}" Value="0"><Setter Property="Visibility" Value="Visible" /></DataTrigger>
+                <DataTrigger Binding="{Binding Projects.Count}" Value="0">
+                  <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
               </Style.Triggers>
             </Style>
           </StackPanel.Style>
-          <TextBlock Text="{x:Static loc:Strings.NoProjectsFound}" FontWeight="SemiBold" TextAlignment="Center" Margin="0,0,0,6" />
+          <TextBlock Text="{x:Static loc:Strings.NoProjectsFound}" FontWeight="SemiBold" TextAlignment="Center"
+                     Margin="0,0,0,6" />
           <TextBlock Text="{x:Static loc:Strings.CheckAddressDescription}"
                      Style="{StaticResource SettingsDescription}" TextAlignment="Center" />
         </StackPanel>
@@ -40,8 +45,11 @@
     </Border>
     <Border Grid.Row="3" Style="{StaticResource SettingsCard}" Margin="0" Padding="16">
       <Grid>
-        <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="230" /></Grid.ColumnDefinitions>
-        <TextBlock Text="{x:Static loc:Strings.OrganizeProjects}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,16,0" />
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition /><ColumnDefinition Width="230" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="{x:Static loc:Strings.OrganizeProjects}" FontWeight="SemiBold" VerticalAlignment="Center"
+                   Margin="0,0,16,0" />
         <ComboBox x:Name="uxGrouppingSettings" Grid.Column="1" MinHeight="36" DisplayMemberPath="Caption"
                   ItemsSource="{Binding GroupingSettings}" IsSynchronizedWithCurrentItem="True"
                   Loaded="UxGrouppingSettingsLoaded" SelectedItem="{Binding SelectedGroupingSetting, Mode=TwoWay}"

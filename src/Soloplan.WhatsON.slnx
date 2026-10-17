@@ -1,13 +1,13 @@
 <Solution>
-  <Project Path="Soloplan.WhatsON.CruiseControl.GUI/Soloplan.WhatsON.CruiseControl.GUI.csproj" />
-  <Project Path="Soloplan.WhatsON.CruiseControl.Tests/Soloplan.WhatsON.CruiseControl.Tests.csproj" />
-  <Project Path="Soloplan.WhatsON.CruiseControl/Soloplan.WhatsON.CruiseControl.csproj" />
-  <Project Path="Soloplan.WhatsON.GUI.Common/Soloplan.WhatsON.GUI.Common.csproj" />
-  <Project Path="Soloplan.WhatsON.GUI/Soloplan.WhatsON.GUI.csproj" />
-  <Project Path="Soloplan.WhatsON.GUI/Tests/Soloplan.WhatsON.GUI.Tests.csproj" />
-  <Project Path="Soloplan.WhatsON.Jenkins.GUI/Soloplan.WhatsON.Jenkins.GUI.csproj" />
-  <Project Path="Soloplan.WhatsON.Jenkins.Tests/Soloplan.WhatsON.Jenkins.Tests.csproj" />
-  <Project Path="Soloplan.WhatsON.Jenkins/Soloplan.WhatsON.Jenkins.csproj" />
-  <Project Path="Soloplan.WhatsON.Tests/Soloplan.WhatsON.Tests.csproj" />
-  <Project Path="Soloplan.WhatsON/Soloplan.WhatsON.csproj" />
+  <Project Path="Soloplan.WhatsON.CruiseControl.GUI/Soloplan.WhatsON.CruiseControl.GUI.csproj"/>
+  <Project Path="Soloplan.WhatsON.CruiseControl.Tests/Soloplan.WhatsON.CruiseControl.Tests.csproj"/>
+  <Project Path="Soloplan.WhatsON.CruiseControl/Soloplan.WhatsON.CruiseControl.csproj"/>
+  <Project Path="Soloplan.WhatsON.GUI.Common/Soloplan.WhatsON.GUI.Common.csproj"/>
+  <Project Path="Soloplan.WhatsON.GUI/Soloplan.WhatsON.GUI.csproj"/>
+  <Project Path="Soloplan.WhatsON.GUI/Tests/Soloplan.WhatsON.GUI.Tests.csproj"/>
+  <Project Path="Soloplan.WhatsON.Jenkins.GUI/Soloplan.WhatsON.Jenkins.GUI.csproj"/>
+  <Project Path="Soloplan.WhatsON.Jenkins.Tests/Soloplan.WhatsON.Jenkins.Tests.csproj"/>
+  <Project Path="Soloplan.WhatsON.Jenkins/Soloplan.WhatsON.Jenkins.csproj"/>
+  <Project Path="Soloplan.WhatsON.Tests/Soloplan.WhatsON.Tests.csproj"/>
+  <Project Path="Soloplan.WhatsON/Soloplan.WhatsON.csproj"/>
 </Solution>

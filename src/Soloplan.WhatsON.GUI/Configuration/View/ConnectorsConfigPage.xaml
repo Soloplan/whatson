@@ -3,9 +3,11 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-      Title="{x:Static loc:Strings.Projects}" FontFamily="Segoe UI" FontSize="14" Background="Transparent" Initialized="PageInitialized"
+      Title="{x:Static loc:Strings.Projects}" FontFamily="Segoe UI" FontSize="14" Background="Transparent"
+      Initialized="PageInitialized"
       TextElement.Foreground="{DynamicResource MaterialDesignBody}">
-  <materialDesign:DialogHost Identifier="ConnectorsConfigPageHost" Style="{StaticResource MaterialDesignEmbeddedDialogHost}">
+  <materialDesign:DialogHost Identifier="ConnectorsConfigPageHost"
+                             Style="{StaticResource MaterialDesignEmbeddedDialogHost}">
     <Grid Margin="0,0,20,16">
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
@@ -27,15 +29,20 @@
       </DockPanel>
       <StackPanel Grid.Row="1">
         <TextBox x:Name="uxName" Margin="0,0,0,20" MinHeight="40"
-                 materialDesign:HintAssist.Hint="{x:Static loc:Strings.ProjectName}" AutomationProperties.Name="{x:Static loc:Strings.ProjectName}"
+                 materialDesign:HintAssist.Hint="{x:Static loc:Strings.ProjectName}"
+                 AutomationProperties.Name="{x:Static loc:Strings.ProjectName}"
                  Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                  Visibility="{Binding SingleConnectorMode, Converter={StaticResource BoolToVis}}" />
         <Border>
           <Border.Style>
             <Style TargetType="Border" BasedOn="{StaticResource SettingsCard}">
               <Style.Triggers>
-                <DataTrigger Binding="{Binding Connectors.Count}" Value="0"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger>
-                <DataTrigger Binding="{Binding SingleConnectorMode}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger>
+                <DataTrigger Binding="{Binding Connectors.Count}" Value="0">
+                  <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding SingleConnectorMode}" Value="True">
+                  <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
               </Style.Triggers>
             </Style>
           </Border.Style>
@@ -46,7 +53,8 @@
                       IsSynchronizedWithCurrentItem="True" SelectionChanged="ConnectorsSelectionChanged"
                       AutomationProperties.Name="{x:Static loc:Strings.SelectedProject}" />
             <WrapPanel Margin="0,16,0,0">
-              <Button x:Name="RenameButtton" Content="{x:Static loc:Strings.Rename}" Click="RenameConnectorClick" Margin="0,0,8,0"
+              <Button x:Name="RenameButtton" Content="{x:Static loc:Strings.Rename}" Click="RenameConnectorClick"
+                      Margin="0,0,8,0"
                       Style="{StaticResource SettingsSecondaryButton}"
                       IsEnabled="{Binding CurrentConnectorIsNull, Converter={StaticResource InvertBoolConverter}}" />
               <Button x:Name="DeleteButton" Content="{x:Static loc:Strings.Remove}" Click="DeleteConnectorClick"
@@ -73,11 +81,13 @@
             </Style>
           </Border.Style>
           <StackPanel HorizontalAlignment="Center" MaxWidth="390">
-            <Border Width="64" Height="64" CornerRadius="18" Background="{DynamicResource SettingsSelection}" Margin="0,0,0,20">
+            <Border Width="64" Height="64" CornerRadius="18" Background="{DynamicResource SettingsSelection}"
+                    Margin="0,0,0,20">
               <materialDesign:PackIcon Kind="Server" Width="32" Height="32" VerticalAlignment="Center"
                                        HorizontalAlignment="Center" Foreground="{DynamicResource SettingsAccent}" />
             </Border>
-            <TextBlock Text="{x:Static loc:Strings.YourBuildsInOnePlace}" FontSize="20" FontWeight="SemiBold" TextAlignment="Center" />
+            <TextBlock Text="{x:Static loc:Strings.YourBuildsInOnePlace}" FontSize="20" FontWeight="SemiBold"
+                       TextAlignment="Center" />
             <TextBlock Text="{x:Static loc:Strings.EmptyProjectsDescription}"
                        TextAlignment="Center" Style="{StaticResource SettingsDescription}" Margin="0,10,0,0" />
             <TextBlock Text="{x:Static loc:Strings.AddFirstBuildDescription}"
@@ -88,7 +98,9 @@
           <Frame.Style>
             <Style TargetType="Frame">
               <Style.Triggers>
-                <DataTrigger Binding="{Binding CurrentConnectorIsNull}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger>
+                <DataTrigger Binding="{Binding CurrentConnectorIsNull}" Value="True">
+                  <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
               </Style.Triggers>
             </Style>
           </Frame.Style>

@@ -15,7 +15,8 @@
   </UserControl.Resources>
 
   <StackPanel>
-    <StackPanel Orientation="Horizontal" Visibility="{Binding BuildTimeUnknown, Converter={StaticResource BoolToVisibility}}">
+    <StackPanel Orientation="Horizontal"
+                Visibility="{Binding BuildTimeUnknown, Converter={StaticResource BoolToVisibility}}">
       <TextBlock Text="{x:Static loc:Strings.BuildingForPrefix}" />
       <TextBlock>
         <TextBlock.Text>
@@ -26,7 +27,9 @@
           </MultiBinding>
         </TextBlock.Text>
       </TextBlock>
-      <TextBlock><LineBreak/></TextBlock> 
+      <TextBlock>
+        <LineBreak />
+      </TextBlock>
     </StackPanel>
     <buildServer:ProgressBarTooltipControl DataContext="{Binding}" />
   </StackPanel>

@@ -14,12 +14,13 @@
 
   <ContextMenu x:Key="BuildServerProjectContextMenu">
     <!--  CommandParameter must be declared before Command or else value from previous opening of context menu will be passed. WTF?!  -->
-    <MenuItem CommandParameter="{Binding CurrentStatus}" Command="{Binding CurrentStatus.CopyBuildLabel}" IsEnabled="{Binding IsOnlyOneSelected}">
+    <MenuItem CommandParameter="{Binding CurrentStatus}" Command="{Binding CurrentStatus.CopyBuildLabel}"
+              IsEnabled="{Binding IsOnlyOneSelected}">
       <MenuItem.Header>
         <StackPanel Orientation="Horizontal">
           <materialDesign:PackIcon Kind="TagOutline" />
-                    <TextBlock Padding="10,0,0,0" Text="{x:Static loc:Strings.CopyLatestBuildLabel}"/>
-                </StackPanel>
+          <TextBlock Padding="10,0,0,0" Text="{x:Static loc:Strings.CopyLatestBuildLabel}" />
+        </StackPanel>
       </MenuItem.Header>
     </MenuItem>
     <MenuItem Command="{Binding RenameCommand}" IsEnabled="{Binding RenameCommand.canExecuteState}">
@@ -46,7 +47,7 @@
         </StackPanel>
       </MenuItem.Header>
     </MenuItem>
-        <MenuItem Command="{Binding ExportCommand}" IsEnabled="{Binding ExportCommand.canExecuteState}">
+    <MenuItem Command="{Binding ExportCommand}" IsEnabled="{Binding ExportCommand.canExecuteState}">
       <MenuItem.Header>
         <StackPanel Orientation="Horizontal">
           <materialDesign:PackIcon Kind="Export" />
@@ -55,7 +56,8 @@
       </MenuItem.Header>
     </MenuItem>
     <Separator />
-    <MenuItem CommandParameter="{Binding CurrentStatus.Parent.Url}" Command="{Binding OpenWebPage}" IsEnabled="{Binding IsOnlyOneSelected}">
+    <MenuItem CommandParameter="{Binding CurrentStatus.Parent.Url}" Command="{Binding OpenWebPage}"
+              IsEnabled="{Binding IsOnlyOneSelected}">
       <MenuItem.Header>
         <StackPanel Orientation="Horizontal">
           <materialDesign:PackIcon Kind="Link" />
@@ -80,7 +82,8 @@
       <buildServer:HistoryBuildControl.ToolTip>
         <StackPanel>
           <buildServer:HistoryBuildTooltipControl DataContext="{Binding}" />
-          <buildServer:CulpritsControl Caption="Changes by:" CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
+          <buildServer:CulpritsControl Caption="Changes by:"
+                                       CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
         </StackPanel>
       </buildServer:HistoryBuildControl.ToolTip>
     </buildServer:HistoryBuildControl>
@@ -92,14 +95,18 @@
         <buildServer:BuildInformationIconControl.ToolTip>
           <StackPanel>
             <buildServer:ProgressBarTooltipControl DataContext="{Binding}" />
-            <StackPanel Visibility="{Binding CulpritsAndLastCommittedDifferent, Converter={StaticResource BoolToVisibility}}">
-              <buildServer:CulpritsControl Caption="Commits by:" CulpritsProp="{Binding DataContext.CommittedToThisBuild, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
+            <StackPanel
+              Visibility="{Binding CulpritsAndLastCommittedDifferent, Converter={StaticResource BoolToVisibility}}">
+              <buildServer:CulpritsControl Caption="Commits by:"
+                                           CulpritsProp="{Binding DataContext.CommittedToThisBuild, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
             </StackPanel>
-            <buildServer:CulpritsControl Caption="All culprits for this build:" CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
+            <buildServer:CulpritsControl Caption="All culprits for this build:"
+                                         CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
           </StackPanel>
         </buildServer:BuildInformationIconControl.ToolTip>
       </buildServer:BuildInformationIconControl>
-      <buildServer:BuildNumberControl Margin="5,0,0,0" BuildNumber="{Binding DataContext.CurrentStatus.BuildNumber, RelativeSource={RelativeSource AncestorType=DockPanel}}" />
+      <buildServer:BuildNumberControl Margin="5,0,0,0"
+                                      BuildNumber="{Binding DataContext.CurrentStatus.BuildNumber, RelativeSource={RelativeSource AncestorType=DockPanel}}" />
       <TextBlock MinWidth="150"
                  MaxWidth="250"
                  Margin="5,0,0,0"

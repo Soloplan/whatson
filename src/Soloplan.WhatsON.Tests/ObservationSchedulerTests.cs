@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ObservationSchedulerTests.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -20,16 +20,10 @@ namespace Soloplan.WhatsON.Tests
     private ObservationScheduler scheduler;
 
     [SetUp]
-    public void SetUp()
-    {
-      this.scheduler = new ObservationScheduler();
-    }
+    public void SetUp() => this.scheduler = new ObservationScheduler();
 
     [TearDown]
-    public void TearDown()
-    {
-      this.scheduler.Stop(true);
-    }
+    public void TearDown() => this.scheduler.Stop(true);
 
     [Test]
     public async Task DuplicateObservationAndRepeatedStartDoNotCreateDuplicateQueries()
@@ -236,7 +230,10 @@ namespace Soloplan.WhatsON.Tests
 
     private static async Task<T> Await<T>(Task<T> task)
     {
-      Assert.That(await Task.WhenAny(task, Task.Delay(TimeSpan.FromSeconds(5))), Is.SameAs(task), "Observation did not complete within five seconds.");
+      Assert.That(
+        await Task.WhenAny(task, Task.Delay(TimeSpan.FromSeconds(5))),
+        Is.SameAs(task),
+        "Observation did not complete within five seconds.");
       return await task;
     }
   }

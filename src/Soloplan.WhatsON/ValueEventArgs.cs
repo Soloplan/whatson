@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ValueEventArgs.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -17,7 +17,7 @@ namespace Soloplan.WhatsON
   public class ValueEventArgs<T> : EventArgs
   {
     /// <summary>
-    /// Initializes a new instance of the <see cref="ValueEventArgs{T}"/> class.
+    /// Initializes a new instance of the <see cref="ValueEventArgs{T}" /> class.
     /// </summary>
     /// <param name="value">The value.</param>
     public ValueEventArgs(T value)

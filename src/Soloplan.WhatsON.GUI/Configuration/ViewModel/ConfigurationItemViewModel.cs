@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ConfigurationItemViewModel.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -10,7 +10,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
   using Soloplan.WhatsON.Configuration;
 
   /// <summary>
-  /// The view model for see <see cref="ConfigurationItem"/>.
+  /// The view model for see <see cref="ConfigurationItem" />.
   /// </summary>
   public class ConfigurationItemViewModel : ViewModelBase, IConfigurationItem
   {
@@ -68,7 +68,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// Creates the new configuration item with applied value.
     /// </summary>
-    /// <returns>New instance of <see cref="ConfigurationItem"/>.</returns>
+    /// <returns>New instance of <see cref="ConfigurationItem" />.</returns>
     public ConfigurationItem CreateNewConfigurationItem()
     {
       var result = new ConfigurationItem(this.Key);
@@ -80,7 +80,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// Applies modifications to source.
     /// </summary>
     /// <param name="newItemCreated">if set to <c>true</c> a new item was created.</param>
-    /// <returns>New instance of <see cref="ConfigurationItem"/> if it not esist; otherwise existing item.</returns>
+    /// <returns>New instance of <see cref="ConfigurationItem" /> if it not esist; otherwise existing item.</returns>
     public ConfigurationItem ApplyToSource(out bool newItemCreated)
     {
       newItemCreated = false;

@@ -46,7 +46,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
           return;
         }
 
-        var treeViewItem = (TreeViewItem)this.projectsTreeView.mainTreeView.ItemContainerGenerator.ContainerFromItem(this.projectsTreeView.mainTreeView.Items[0]);
+        var treeViewItem =
+          (TreeViewItem)this.projectsTreeView.mainTreeView.ItemContainerGenerator.ContainerFromItem(this.projectsTreeView.mainTreeView.Items[0]);
         treeViewItem?.Focus();
       };
     }
@@ -55,7 +56,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// Handles the PreviewKeyUp event of the MainTreeView control.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The <see cref="System.Windows.Input.KeyEventArgs"/> instance containing the event data.</param>
+    /// <param name="e">The <see cref="System.Windows.Input.KeyEventArgs" /> instance containing the event data.</param>
     private void MainTreeViewPreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
     {
       if (e.Key == System.Windows.Input.Key.Enter)
@@ -69,7 +70,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// Handles the Loaded event of the uxGrouppingSettings control.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+    /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
     private void UxGrouppingSettingsLoaded(object sender, RoutedEventArgs e)
     {
       var bindingExpressionbase = BindingOperations.GetBindingExpressionBase((ComboBox)sender, Selector.SelectedItemProperty);
@@ -178,7 +179,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// Handles the TextChanged event of the TextBox control.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The <see cref="TextChangedEventArgs"/> instance containing the event data.</param>
+    /// <param name="e">The <see cref="TextChangedEventArgs" /> instance containing the event data.</param>
     private void SearchTextBoxTextChanged(object sender, TextChangedEventArgs e)
     {
       if (this.searchTypingTimer == null)
@@ -196,7 +197,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// Handles the Tick event of the SearchTypingTimer control.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+    /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
     private void SearchTypingTimerTick(object sender, EventArgs e)
     {
       this.searchTypingTimer.Stop();

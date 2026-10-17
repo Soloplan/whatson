@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ConfigControlBuilder.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -46,7 +46,11 @@ namespace Soloplan.WhatsON.GUI.Configuration
     public FrameworkElement GetControl(IConfigurationItem configItem, ConfigurationItemAttribute configItemAttribute)
     {
       var control = this.GetControlInternal(configItem, configItemAttribute);
-      control.Margin = new Thickness(control.Margin.Left, control.Margin.Top, control.Margin.Right, control.Margin.Bottom + this.RequiredBottomMargin);
+      control.Margin = new Thickness(
+        control.Margin.Left,
+        control.Margin.Top,
+        control.Margin.Right,
+        control.Margin.Bottom + this.RequiredBottomMargin);
       if (this.ValueBindingDependencyProperty != null)
       {
         this.InitilizeValueBinding(control, configItem, configItemAttribute);
@@ -72,7 +76,10 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// <returns>
     /// The binding instance assigned to the control.
     /// </returns>
-    public virtual Binding InitilizeValueBinding(FrameworkElement control, IConfigurationItem configItem, ConfigurationItemAttribute configItemAttribute)
+    public virtual Binding InitilizeValueBinding(
+      FrameworkElement control,
+      IConfigurationItem configItem,
+      ConfigurationItemAttribute configItemAttribute)
     {
       var valueBinding = new Binding();
       valueBinding.Source = configItem;
@@ -95,9 +102,6 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// <param name="control">The control.</param>
     /// <param name="dependencyProperty">The dependency property.</param>
     /// <param name="valueBinding">The value binding.</param>
-    public virtual void SetValueBinding(FrameworkElement control, DependencyProperty dependencyProperty, Binding valueBinding)
-    {
-      BindingOperations.SetBinding(control, this.ValueBindingDependencyProperty, valueBinding);
-    }
+    public virtual void SetValueBinding(FrameworkElement control, DependencyProperty dependencyProperty, Binding valueBinding) => BindingOperations.SetBinding(control, this.ValueBindingDependencyProperty, valueBinding);
   }
 }

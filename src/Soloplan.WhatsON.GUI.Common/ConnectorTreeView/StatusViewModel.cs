@@ -1,7 +1,9 @@
-﻿// <copyright file="StatusViewModel.cs" company="Soloplan GmbH">
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="StatusViewModel.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
@@ -12,7 +14,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using Soloplan.WhatsON.Model;
 
   /// <summary>
-  /// Base ViewModel used for any kind of <see cref="Soloplan.WhatsON.Connector"/>.
+  /// Base ViewModel used for any kind of <see cref="Soloplan.WhatsON.Connector" />.
   /// </summary>
   public partial class StatusViewModel : INotifyPropertyChanged
   {
@@ -28,13 +30,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     public bool First { get; set; }
 
-    public int Size
-    {
-      get
-      {
-        return this.First ? 6 : 4;
-      }
-    }
+    public int Size => this.First ? 6 : 4;
 
     public string Name { get; protected set; }
 
@@ -60,7 +56,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     public virtual void Update(Status newStatus)
     {
-      log.Trace("Updating status model {model}", new { this.Name, Details = this.Details });
+      log.Trace("Updating status model {model}", new { this.Name, this.Details });
       if (newStatus == null)
       {
         this.Name = Strings.Loading;
@@ -76,7 +72,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Updates flags used to control visibility of controls based on <see cref="State"/>.
+    /// Updates flags used to control visibility of controls based on <see cref="State" />.
     /// </summary>
     protected virtual void UpdateStateFlags()
     {

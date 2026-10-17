@@ -1,7 +1,9 @@
-﻿// <copyright file="ConnectorViewModel.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ConnectorViewModel.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
@@ -44,13 +46,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     public string Description { get; protected set; }
 
-    public BuildStatusViewModel CurrentStatus { get; private set; }
+    public BuildStatusViewModel CurrentStatus { get; }
 
     public string Url { get; protected set; }
 
-    public Guid Identifier { get; private set; }
+    public Guid Identifier { get; }
 
-    public ObservableCollection<BuildStatusViewModel> ConnectorSnapshots => this.connectorSnapshots ?? (this.connectorSnapshots = new ObservableCollection<BuildStatusViewModel>());
+    public ObservableCollection<BuildStatusViewModel> ConnectorSnapshots =>
+      this.connectorSnapshots ?? (this.connectorSnapshots = new ObservableCollection<BuildStatusViewModel>());
 
     public Connector Connector { get; private set; }
 
@@ -72,14 +75,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// Applies configuration (currently just name) without firing property changed.
     /// </summary>
     /// <param name="configuration">The configuration to apply.</param>
-    public virtual void ApplyConfiguration(ConnectorConfiguration configuration)
-    {
-      this.Name = configuration.Name;
-    }
+    public virtual void ApplyConfiguration(ConnectorConfiguration configuration) => this.Name = configuration.Name;
 
     public virtual void Update(Connector changedConnector)
     {
-      Application.Current.Dispatcher.Invoke(new Action(() =>
+      Application.Current.Dispatcher.Invoke(() =>
       {
         log.Trace("Updating model {model}", new { this.Name, this.Identifier });
 
@@ -125,22 +125,16 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
         this.Description = changedConnector.Description;
         this.CurrentStatus.Update(changedConnector.CurrentStatus);
-      }));
+      });
     }
 
     /// <summary>
     /// Implements function that decides if a tooltip should be visible.
     /// </summary>
     /// <returns>Base returns always true.</returns>
-    public virtual bool ShouldDisplayTooltip()
-    {
-      return true;
-    }
+    public virtual bool ShouldDisplayTooltip() => true;
 
-    protected virtual BuildStatusViewModel GetStatusViewModel()
-    {
-      return new BuildStatusViewModel(this);
-    }
+    protected virtual BuildStatusViewModel GetStatusViewModel() => new BuildStatusViewModel(this);
 
     /// <summary>
     /// Creates command used for editing this tree item.
@@ -153,9 +147,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       return command;
     }
 
-    private void NameChanged()
-    {
-      this.OnConfigurationChanged(this, EventArgs.Empty);
-    }
+    private void NameChanged() => this.OnConfigurationChanged(this, EventArgs.Empty);
   }
 }

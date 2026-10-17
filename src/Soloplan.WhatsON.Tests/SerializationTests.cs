@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="SerializationTests.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -20,6 +20,7 @@ namespace Soloplan.WhatsON.Tests
   public class SerializationTests
   {
     private string directory;
+
     private SerializationHelper serializer;
 
     [SetUp]
@@ -31,10 +32,7 @@ namespace Soloplan.WhatsON.Tests
     }
 
     [TearDown]
-    public void TearDown()
-    {
-      Directory.Delete(this.directory, true);
-    }
+    public void TearDown() => Directory.Delete(this.directory, true);
 
     [Test]
     public void SaveAndLoadPreserveProjectsIdentitiesAndNotificationPreferences()
@@ -42,7 +40,13 @@ namespace Soloplan.WhatsON.Tests
       var configuration = new ApplicationConfiguration { ThemeMode = ApplicationTheme.Dark, AlwaysOnTop = true, OpenMinimized = true };
       configuration.NotificationConfiguration.OnlyIfChanged = true;
       configuration.NotificationConfiguration.SuccessNotificationEnabled = false;
-      var connector = new ConnectorConfiguration("Jenkins", "Release – 日本語", Connector.ServerAddress, "https://builds.example/", Connector.ProjectName, "folder/release");
+      var connector = new ConnectorConfiguration(
+        "Jenkins",
+        "Release – 日本語",
+        Connector.ServerAddress,
+        "https://builds.example/",
+        Connector.ProjectName,
+        "folder/release");
       var overrideSettings = new ConnectorNotificationConfiguration { UseGlobalNotificationSettings = false, FailureNotificationEnabled = false };
       connector.ConfigurationItems.Add(new ConfigurationItem(Connector.NotificationsVisbility, JsonConvert.SerializeObject(overrideSettings)));
       configuration.ConnectorsConfiguration.Add(connector);
@@ -59,7 +63,9 @@ namespace Soloplan.WhatsON.Tests
         Assert.That(restored.NotificationConfiguration.OnlyIfChanged, Is.True);
         Assert.That(restored.NotificationConfiguration.SuccessNotificationEnabled, Is.False);
         Assert.That(restored.ConnectorsConfiguration.Select(c => c.Name), Is.EqualTo(configuration.ConnectorsConfiguration.Select(c => c.Name)));
-        Assert.That(restored.ConnectorsConfiguration.Select(c => c.Identifier), Is.EqualTo(configuration.ConnectorsConfiguration.Select(c => c.Identifier)));
+        Assert.That(
+          restored.ConnectorsConfiguration.Select(c => c.Identifier),
+          Is.EqualTo(configuration.ConnectorsConfiguration.Select(c => c.Identifier)));
         Assert.That(restored.ConnectorsConfiguration[0].GetConfigurationByKey(Connector.ProjectName).Value, Is.EqualTo("folder/release"));
         Assert.That(restored.GetNotificationConfiguration(restored.ConnectorsConfiguration[0]).FailureNotificationEnabled, Is.False);
       });
@@ -81,7 +87,9 @@ namespace Soloplan.WhatsON.Tests
         Assert.That(exported["ConnectorsConfiguration"].Children().All(c => c["Identifier"] == null), Is.True);
         Assert.That(imported.ConnectorsConfiguration.Select(c => c.Identifier), Is.Unique);
         Assert.That(imported.ConnectorsConfiguration.Select(c => c.Identifier), Has.None.EqualTo(Guid.Empty));
-        Assert.That(imported.ConnectorsConfiguration.Select(c => c.Identifier).Intersect(configuration.ConnectorsConfiguration.Select(c => c.Identifier)), Is.Empty);
+        Assert.That(
+          imported.ConnectorsConfiguration.Select(c => c.Identifier).Intersect(configuration.ConnectorsConfiguration.Select(c => c.Identifier)),
+          Is.Empty);
         Assert.That(imported.ConnectorsConfiguration.Select(c => c.Name), Is.EqualTo(new[] { "First", "Second" }));
       });
     }
@@ -117,7 +125,9 @@ namespace Soloplan.WhatsON.Tests
     [Test]
     public void LoadingRemovesConsecutiveNullProjectsAndPreservesValidProjectsInOrder()
     {
-      File.WriteAllText(this.serializer.ConfigFile, "{\"ConnectorsConfiguration\":[null,null,{\"Type\":\"Jenkins\",\"Name\":\"First\"},null,{\"Type\":\"Jenkins\",\"Name\":\"Second\"},null]}");
+      File.WriteAllText(
+        this.serializer.ConfigFile,
+        "{\"ConnectorsConfiguration\":[null,null,{\"Type\":\"Jenkins\",\"Name\":\"First\"},null,{\"Type\":\"Jenkins\",\"Name\":\"Second\"},null]}");
 
       var configuration = this.serializer.LoadConfiguration();
 
@@ -128,10 +138,9 @@ namespace Soloplan.WhatsON.Tests
     [TestCase("Soloplan.WhatsON.CruiseControl.CruiseControlPlugin", "CruiseControl")]
     public void LegacyPluginTypeNamesStillLoad(string legacyType, string expectedType)
     {
-      File.WriteAllText(this.serializer.ConfigFile, JsonConvert.SerializeObject(new
-      {
-        ConnectorsConfiguration = new[] { new { PluginTypeName = legacyType, Name = "Legacy project" } },
-      }));
+      File.WriteAllText(
+        this.serializer.ConfigFile,
+        JsonConvert.SerializeObject(new { ConnectorsConfiguration = new[] { new { PluginTypeName = legacyType, Name = "Legacy project" } }, }));
 
       var connector = this.serializer.LoadConfiguration().ConnectorsConfiguration.Single();
 
@@ -163,7 +172,14 @@ namespace Soloplan.WhatsON.Tests
     public void MigrationPreservesAnExplicitCruiseControlProjectAddress()
     {
       var configuration = new ApplicationConfiguration();
-      configuration.ConnectorsConfiguration.Add(new ConnectorConfiguration("CruiseControl", "Release", Connector.ServerAddress, "https://builds.example/ccnet/", Connector.DirectAddress, "https://other.example/project"));
+      configuration.ConnectorsConfiguration.Add(
+        new ConnectorConfiguration(
+          "CruiseControl",
+          "Release",
+          Connector.ServerAddress,
+          "https://builds.example/ccnet/",
+          Connector.DirectAddress,
+          "https://other.example/project"));
       this.serializer.SaveConfiguration(configuration);
 
       var connector = this.serializer.LoadConfiguration().ConnectorsConfiguration.Single();
@@ -199,7 +215,9 @@ namespace Soloplan.WhatsON.Tests
     {
       this.serializer.SaveConfiguration(new ApplicationConfiguration { ThemeMode = ApplicationTheme.Dark });
 
-      Assert.That(() => this.serializer.SaveConfiguration(new ApplicationConfiguration(), this.directory), Throws.InstanceOf<IOException>().Or.InstanceOf<UnauthorizedAccessException>());
+      Assert.That(
+        () => this.serializer.SaveConfiguration(new ApplicationConfiguration(), this.directory),
+        Throws.InstanceOf<IOException>().Or.InstanceOf<UnauthorizedAccessException>());
       Assert.That(this.serializer.LoadConfiguration().ThemeMode, Is.EqualTo(ApplicationTheme.Dark));
     }
   }

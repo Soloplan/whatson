@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="NotificationConfigurationTests.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -55,7 +55,10 @@ namespace Soloplan.WhatsON.Tests
     public void ProjectOverridesAreIsolatedFromGlobalAndOtherProjectsSettings()
     {
       var application = new ApplicationConfiguration();
-      var settings = new ConnectorNotificationConfiguration { UseGlobalNotificationSettings = false, FailureNotificationEnabled = false, OnlyIfChanged = true };
+      var settings = new ConnectorNotificationConfiguration
+      {
+        UseGlobalNotificationSettings = false, FailureNotificationEnabled = false, OnlyIfChanged = true,
+      };
       var connector = new ConnectorConfiguration("Jenkins", "Release", Connector.NotificationsVisbility, JsonConvert.SerializeObject(settings));
       var other = new ConnectorConfiguration("Jenkins", "Other");
 

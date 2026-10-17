@@ -4,6 +4,7 @@
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
 namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
   using System;
@@ -19,7 +20,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     public event EventHandler<ValueEventArgs<object>> OnExecute;
 
     /// <summary>
-    /// Handles command execution. Calls <see cref="OnExecute"/>.
+    /// Handles command execution. Calls <see cref="OnExecute" />.
     /// </summary>
     /// <param name="parameter">The parameter.</param>
     public override void Execute(object parameter)

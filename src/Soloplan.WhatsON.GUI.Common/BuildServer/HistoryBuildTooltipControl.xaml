@@ -17,11 +17,13 @@
     <converters:NullOrDefaultToVisibilityConverter x:Key="NullOrDefaultVisibilityConverter" />
   </UserControl.Resources>
   <StackPanel>
-    <StackPanel Orientation="Horizontal" Visibility="{Binding Label, Converter={StaticResource NullOrDefaultVisibilityConverter}}">
+    <StackPanel Orientation="Horizontal"
+                Visibility="{Binding Label, Converter={StaticResource NullOrDefaultVisibilityConverter}}">
       <TextBlock Text="🏷️ " />
       <TextBlock FontWeight="Bold" Text="{Binding Label}" />
     </StackPanel>
-    <StackPanel Orientation="Horizontal" Visibility="{Binding Duration, Converter={StaticResource NullOrDefaultVisibilityConverter}}">
+    <StackPanel Orientation="Horizontal"
+                Visibility="{Binding Duration, Converter={StaticResource NullOrDefaultVisibilityConverter}}">
       <TextBlock Text="{x:Static loc:Strings.DurationPrefix}" />
       <TextBlock>
         <TextBlock.Text>
@@ -33,12 +35,14 @@
         </TextBlock.Text>
       </TextBlock>
     </StackPanel>
-    <StackPanel Orientation="Horizontal" Visibility="{Binding Time, Converter={StaticResource NullOrDefaultVisibilityConverter}}">
+    <StackPanel Orientation="Horizontal"
+                Visibility="{Binding Time, Converter={StaticResource NullOrDefaultVisibilityConverter}}">
       <TextBlock Text="{x:Static loc:Strings.FinishedPrefix}" />
       <TextBlock Text="{Binding FinishTime, Converter={StaticResource TimeToAproximateTimeConverter}}" />
 
     </StackPanel>
-    <StackPanel Orientation="Horizontal" Visibility="{Binding Time, Converter={StaticResource NullOrDefaultVisibilityConverter}}">
+    <StackPanel Orientation="Horizontal"
+                Visibility="{Binding Time, Converter={StaticResource NullOrDefaultVisibilityConverter}}">
       <TextBlock Text="📆 " />
       <TextBlock Text="{Binding Time}" />
     </StackPanel>

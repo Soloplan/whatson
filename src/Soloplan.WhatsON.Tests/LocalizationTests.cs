@@ -1,7 +1,9 @@
-﻿// <copyright file="LocalizationTests.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="LocalizationTests.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.Tests
 {
@@ -44,7 +46,9 @@ namespace Soloplan.WhatsON.Tests
       var english = manager.GetResourceSet(CultureInfo.InvariantCulture, true, false);
       var german = manager.GetResourceSet(CultureInfo.GetCultureInfo("de"), true, false);
       Assert.That(german, Is.Not.Null, "A German satellite assembly must be deployed.");
-      Assert.That(german.Cast<DictionaryEntry>().Select(entry => entry.Key), Is.EquivalentTo(english.Cast<DictionaryEntry>().Select(entry => entry.Key)));
+      Assert.That(
+        german.Cast<DictionaryEntry>().Select(entry => entry.Key),
+        Is.EquivalentTo(english.Cast<DictionaryEntry>().Select(entry => entry.Key)));
       foreach (DictionaryEntry entry in english)
       {
         var translation = german.GetString((string)entry.Key);
@@ -65,10 +69,7 @@ namespace Soloplan.WhatsON.Tests
 
     [Test]
     [SetUICulture("fr-FR")]
-    public void UnsupportedCulturesFallBackToEnglish()
-    {
-      Assert.That(Strings.Settings, Is.EqualTo("Settings"));
-    }
+    public void UnsupportedCulturesFallBackToEnglish() => Assert.That(Strings.Settings, Is.EqualTo("Settings"));
 
     [TestCase("en-US", ObservationState.Unknown, "Unknown")]
     [TestCase("en-US", ObservationState.Unstable, "Unstable")]
@@ -110,12 +111,37 @@ namespace Soloplan.WhatsON.Tests
         var german = culture == "de-DE";
         Assert.That(Localizer.NotificationSettings(name), Is.EqualTo(german ? $"Benachrichtigungen ({name})" : $"Notification settings ({name})"));
         Assert.That(Localizer.ProjectNotification(name), Is.EqualTo(german ? $"Projektname: {name}." : $"Project name: {name}."));
-        Assert.That(Localizer.DeleteGroup(name), Is.EqualTo(german ? $"Möchten Sie die Gruppe „{name}“ und alle zugehörigen Projekte wirklich löschen?" : $"Are you sure you want to delete the group '{name}' and all its items?"));
-        Assert.That(Localizer.DeleteNamedProject(name), Is.EqualTo(german ? $"Möchten Sie das Projekt „{name}“ wirklich löschen?" : $"Are you sure you want to delete the project '{name}'?"));
-        Assert.That(Localizer.ProjectError(error).Replace("\r\n", "\n"), Is.EqualTo(german ? $"Beim Laden der Projekte ist ein Fehler aufgetreten.\nDetails: {error}" : $"There was a project error,\ndetails: {error}"));
-        Assert.That(Localizer.ImportFailed(path, error), Is.EqualTo(german ? $"Die Konfiguration konnte nicht aus der JSON-Datei importiert werden. Dateipfad: {path}; Fehler: {error}" : $"Import of the configuration from JSON file was not successful; file path: {path}; exception: {error}"));
-        Assert.That(Localizer.ProjectImportFailed(path, error), Is.EqualTo(german ? $"Die Projekte konnten nicht aus der JSON-Datei importiert werden. Dateipfad: {path}; Fehler: {error}" : $"Import of the projects configuration from JSON file was not successful; file path: {path}; exception: {error}"));
-        Assert.That(Localizer.MissingConnectorData(identifier, name, error, "Jenkins").Replace("\r\n", "\n"), Is.EqualTo(german ? $"Kennung: {identifier}\nName: {name}\nBeschreibung: {error}\nErwarteter Verbindungstyp: Jenkins" : $"Identifier: {identifier}\nName: {name}\nDescription: {error}\nExpected connector type: Jenkins"));
+        Assert.That(
+          Localizer.DeleteGroup(name),
+          Is.EqualTo(
+            german
+              ? $"Möchten Sie die Gruppe „{name}“ und alle zugehörigen Projekte wirklich löschen?"
+              : $"Are you sure you want to delete the group '{name}' and all its items?"));
+        Assert.That(
+          Localizer.DeleteNamedProject(name),
+          Is.EqualTo(german ? $"Möchten Sie das Projekt „{name}“ wirklich löschen?" : $"Are you sure you want to delete the project '{name}'?"));
+        Assert.That(
+          Localizer.ProjectError(error).Replace("\r\n", "\n"),
+          Is.EqualTo(
+            german ? $"Beim Laden der Projekte ist ein Fehler aufgetreten.\nDetails: {error}" : $"There was a project error,\ndetails: {error}"));
+        Assert.That(
+          Localizer.ImportFailed(path, error),
+          Is.EqualTo(
+            german
+              ? $"Die Konfiguration konnte nicht aus der JSON-Datei importiert werden. Dateipfad: {path}; Fehler: {error}"
+              : $"Import of the configuration from JSON file was not successful; file path: {path}; exception: {error}"));
+        Assert.That(
+          Localizer.ProjectImportFailed(path, error),
+          Is.EqualTo(
+            german
+              ? $"Die Projekte konnten nicht aus der JSON-Datei importiert werden. Dateipfad: {path}; Fehler: {error}"
+              : $"Import of the projects configuration from JSON file was not successful; file path: {path}; exception: {error}"));
+        Assert.That(
+          Localizer.MissingConnectorData(identifier, name, error, "Jenkins").Replace("\r\n", "\n"),
+          Is.EqualTo(
+            german
+              ? $"Kennung: {identifier}\nName: {name}\nBeschreibung: {error}\nErwarteter Verbindungstyp: Jenkins"
+              : $"Identifier: {identifier}\nName: {name}\nDescription: {error}\nExpected connector type: Jenkins"));
       }
       finally
       {

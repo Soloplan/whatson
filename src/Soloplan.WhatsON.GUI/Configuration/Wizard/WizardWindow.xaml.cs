@@ -1,7 +1,9 @@
-﻿// <copyright file="WizardWindow.xaml.cs" company="Soloplan GmbH">
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="WizardWindow.xaml.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 {
@@ -63,24 +65,24 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <param name="getAdditionalSettingValue">The get additional setting value.</param>
     public void Apply(WindowSettings.GetAdditionalSettingValueDelegate getAdditionalSettingValue)
     {
-      var savedOrDefaultGroupingSettingId = getAdditionalSettingValue(nameof(LastSelectedWizardProjectGroupingSettingId), AddProjectPathToProjectName);
+      var savedOrDefaultGroupingSettingId = getAdditionalSettingValue(
+        nameof(LastSelectedWizardProjectGroupingSettingId),
+        AddProjectPathToProjectName);
       var groupingSetting = this.wizardController.GroupingSettings.FirstOrDefault(g => g.Id == savedOrDefaultGroupingSettingId);
       this.wizardController.SelectedGroupingSetting = groupingSetting ?? this.wizardController.GroupingSettings.First();
     }
 
     /// <summary>
-    /// Parses the specified additional setting values from <see cref="T:System.Windows.Window" /> instance on which the interface is implemented.
+    /// Parses the specified additional setting values from <see cref="T:System.Windows.Window" /> instance on which the
+    /// interface is implemented.
     /// </summary>
     /// <param name="setAdditionalSettingValue">The set additional setting value.</param>
-    public void Parse(WindowSettings.SetAdditionalSettingValueDelegate setAdditionalSettingValue)
-    {
-      setAdditionalSettingValue(nameof(LastSelectedWizardProjectGroupingSettingId), this.wizardController.SelectedGroupingSetting.Id);
-    }
+    public void Parse(WindowSettings.SetAdditionalSettingValueDelegate setAdditionalSettingValue) => setAdditionalSettingValue(nameof(LastSelectedWizardProjectGroupingSettingId), this.wizardController.SelectedGroupingSetting.Id);
 
     /// <summary>
     /// Raises the <see cref="E:ContentRendered" /> event.
     /// </summary>
-    /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+    /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
     protected override void OnContentRendered(EventArgs e)
     {
       base.OnContentRendered(e);
@@ -97,30 +99,21 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// Next page click.
     /// </summary>
     /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-    private void NextClick(object sender, RoutedEventArgs e)
-    {
-      this.wizardController.GoToNextPage();
-    }
+    /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
+    private void NextClick(object sender, RoutedEventArgs e) => this.wizardController.GoToNextPage();
 
     /// <summary>
     /// Previous page click.
     /// </summary>
     /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-    private void PrevClick(object sender, RoutedEventArgs e)
-    {
-      this.wizardController.GoToPrevPage();
-    }
+    /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
+    private void PrevClick(object sender, RoutedEventArgs e) => this.wizardController.GoToPrevPage();
 
     /// <summary>
     /// Finish click.
     /// </summary>
     /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-    private void FinishClick(object sender, RoutedEventArgs e)
-    {
-      this.wizardController.Finish();
-    }
+    /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
+    private void FinishClick(object sender, RoutedEventArgs e) => this.wizardController.Finish();
   }
 }

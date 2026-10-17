@@ -1,7 +1,9 @@
-﻿// <copyright file="ConnectorGroupViewModel.cs" company="Soloplan GmbH">
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ConnectorGroupViewModel.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
@@ -18,7 +20,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using Soloplan.WhatsON.Model;
 
   /// <summary>
-  /// Viewmodel representing group of connectors shown as single node in <see cref="ConnectorTreeView"/>.
+  /// Viewmodel representing group of connectors shown as single node in <see cref="ConnectorTreeView" />.
   /// </summary>
   public class ConnectorGroupViewModel : TreeItemViewModel
   {
@@ -34,7 +36,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.IsNodeExpanded = true;
     }
 
-    public ObservableCollection<ConnectorViewModel> ConnectorViewModels => this.statusViewModels ?? (this.statusViewModels = new ObservableCollection<ConnectorViewModel>());
+    public ObservableCollection<ConnectorViewModel> ConnectorViewModels =>
+      this.statusViewModels ?? (this.statusViewModels = new ObservableCollection<ConnectorViewModel>());
 
     [OnChangedMethod(nameof(GroupNameChanged))]
     public string GroupName { get; set; }
@@ -56,7 +59,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Gets the visibility state of column for <see cref="ObservationState.Running"/>.
+    /// Gets the visibility state of column for <see cref="ObservationState.Running" />.
     /// </summary>
     public Visibility RunningConnectorColumnVisibility { get; private set; } = Visibility.Collapsed;
 
@@ -67,7 +70,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     public int RunningConnectors { get; private set; } = -1;
 
     /// <summary>
-    /// Gets the visibility state of column for <see cref="ObservationState.Failure"/>.
+    /// Gets the visibility state of column for <see cref="ObservationState.Failure" />.
     /// </summary>
     public Visibility FailureConnectorColumnVisibility { get; private set; } = Visibility.Collapsed;
 
@@ -78,7 +81,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     public int FailingConnectors { get; private set; } = -1;
 
     /// <summary>
-    /// Gets the visibility state of column for <see cref="ObservationState.Unstable"/>.
+    /// Gets the visibility state of column for <see cref="ObservationState.Unstable" />.
     /// </summary>
     public Visibility UnstableConnectorColumnVisibility { get; private set; } = Visibility.Collapsed;
 
@@ -89,7 +92,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     public int UnstableConnectors { get; private set; } = -1;
 
     /// <summary>
-    /// Gets the visibility state of column for <see cref="ObservationState.Unknown"/>.
+    /// Gets the visibility state of column for <see cref="ObservationState.Unknown" />.
     /// </summary>
     public Visibility UnknownConnectorColumnVisibility { get; private set; } = Visibility.Collapsed;
 
@@ -127,11 +130,15 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.GroupName = connectorGroup.Key ?? string.Empty;
       log.Debug("Initializing group {GroupName}", this.GroupName);
 
-      var connectorsNoLongerPresent = this.ConnectorViewModels.Where(model => connectorGroup.All(configurationSubject => configurationSubject.Identifier != model.Identifier)).ToList();
-      var newConnectors = connectorGroup.Where(configurationSubject => this.ConnectorViewModels.All(viewModel => configurationSubject.Identifier != viewModel.Identifier));
+      var connectorsNoLongerPresent = this.ConnectorViewModels
+        .Where(model => connectorGroup.All(configurationSubject => configurationSubject.Identifier != model.Identifier)).ToList();
+      var newConnectors = connectorGroup.Where(configurationSubject =>
+        this.ConnectorViewModels.All(viewModel => configurationSubject.Identifier != viewModel.Identifier));
       foreach (var noLongerPresentConnectorViewModel in connectorsNoLongerPresent)
       {
-        log.Debug("Remove no longer present connector {noLongerPresentConnectorViewModel}", new { noLongerPresentConnectorViewModel.Identifier, noLongerPresentConnectorViewModel.Name });
+        log.Debug(
+          "Remove no longer present connector {noLongerPresentConnectorViewModel}",
+          new { noLongerPresentConnectorViewModel.Identifier, noLongerPresentConnectorViewModel.Name });
         noLongerPresentConnectorViewModel.EditItem -= this.OnSubItemEdit;
         noLongerPresentConnectorViewModel.DeleteItem -= this.DeleteConnector;
         noLongerPresentConnectorViewModel.ExportItem -= this.ExportItemHandler;
@@ -178,39 +185,27 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Sets the visiblity of column containing <see cref="ObservationState.Running"/> state indicator.
+    /// Sets the visiblity of column containing <see cref="ObservationState.Running" /> state indicator.
     /// </summary>
-    private void SetRunningColumnVisible()
-    {
-      this.RunningConnectorColumnVisibility = this.RunningConnectors > 0 ? Visibility.Visible : Visibility.Collapsed;
-    }
+    private void SetRunningColumnVisible() => this.RunningConnectorColumnVisibility = this.RunningConnectors > 0 ? Visibility.Visible : Visibility.Collapsed;
 
     /// <summary>
-    /// Sets the visiblity of column containing <see cref="ObservationState.Failure"/> state indicator.
+    /// Sets the visiblity of column containing <see cref="ObservationState.Failure" /> state indicator.
     /// </summary>
-    private void SetFailureColumnVisible()
-    {
-      this.FailureConnectorColumnVisibility = this.FailingConnectors > 0 ? Visibility.Visible : Visibility.Collapsed;
-    }
+    private void SetFailureColumnVisible() => this.FailureConnectorColumnVisibility = this.FailingConnectors > 0 ? Visibility.Visible : Visibility.Collapsed;
 
     /// <summary>
-    /// Sets the visiblity of column containing <see cref="ObservationState.Unstable"/> state indicator.
+    /// Sets the visiblity of column containing <see cref="ObservationState.Unstable" /> state indicator.
     /// </summary>
-    private void SetUnstableColumnVisible()
-    {
-      this.UnstableConnectorColumnVisibility = this.UnstableConnectors > 0 ? Visibility.Visible : Visibility.Collapsed;
-    }
+    private void SetUnstableColumnVisible() => this.UnstableConnectorColumnVisibility = this.UnstableConnectors > 0 ? Visibility.Visible : Visibility.Collapsed;
 
     /// <summary>
-    /// Sets the visiblity of column containing <see cref="ObservationState.Unknown"/> state indicator.
+    /// Sets the visiblity of column containing <see cref="ObservationState.Unknown" /> state indicator.
     /// </summary>
-    private void SetUnknownColumnVisible()
-    {
-      this.UnknownConnectorColumnVisibility = this.UnknownConnectors > 0 ? Visibility.Visible : Visibility.Collapsed;
-    }
+    private void SetUnknownColumnVisible() => this.UnknownConnectorColumnVisibility = this.UnknownConnectors > 0 ? Visibility.Visible : Visibility.Collapsed;
 
     /// <summary>
-    /// Handles collection changed event of <see cref="ConnectorViewModel"/>.
+    /// Handles collection changed event of <see cref="ConnectorViewModel" />.
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">Event args.</param>
@@ -243,20 +238,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.ConnectorViewModels.Add(connectorViewModel);
     }
 
-    private void ConnectorViewModelConfigurationChanged(object sender, EventArgs e)
-    {
-      this.OnConfigurationChanged(sender, e);
-    }
+    private void ConnectorViewModelConfigurationChanged(object sender, EventArgs e) => this.OnConfigurationChanged(sender, e);
 
     /// <summary>
     /// Handles the export of a project item.
     /// </summary>
     /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="ValueEventArgs{TreeItemViewModel}"/> instance containing the event data.</param>
-    private void ExportItemHandler(object sender, ValueEventArgs<TreeItemViewModel> e)
-    {
-      this.OnExportItem(this, e);
-    }
+    /// <param name="e">The <see cref="ValueEventArgs{TreeItemViewModel}" /> instance containing the event data.</param>
+    private void ExportItemHandler(object sender, ValueEventArgs<TreeItemViewModel> e) => this.OnExportItem(this, e);
 
     private ConnectorViewModel GetConnectorViewModel(Connector connector)
     {
@@ -274,10 +263,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       return new ConnectorViewModel(connector);
     }
 
-    private void OnSubItemEdit(object sender, EditTreeItemViewModelEventArgs e)
-    {
-      this.OnEditItem(sender, e);
-    }
+    private void OnSubItemEdit(object sender, EditTreeItemViewModelEventArgs e) => this.OnEditItem(sender, e);
 
     private async void DeleteConnector(object sender, DeleteTreeItemEventArgs e)
     {
@@ -287,9 +273,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
-    private void GroupNameChanged()
-    {
-      this.OnConfigurationChanged(this, EventArgs.Empty);
-    }
+    private void GroupNameChanged() => this.OnConfigurationChanged(this, EventArgs.Empty);
   }
 }
