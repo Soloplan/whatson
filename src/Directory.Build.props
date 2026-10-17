@@ -10,7 +10,8 @@
     <Company>Soloplan GmbH</Company>
     <Copyright>Copyright © Soloplan GmbH 2020</Copyright>
     <Product>whatsON</Product>
-    <Version>1.0.0.2</Version>
+    <Version Condition="'$(Version)' == ''">1.$([System.DateTime]::UtcNow.ToString('yyMM')).0-local</Version>
+    <Version Condition="$(Version.StartsWith('v'))">$(Version.Substring(1))</Version>
   </PropertyGroup>
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.InteropServices.ComVisibleAttribute">

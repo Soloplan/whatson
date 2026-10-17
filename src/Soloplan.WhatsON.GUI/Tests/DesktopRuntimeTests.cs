@@ -12,10 +12,12 @@ namespace Soloplan.WhatsON.GUI.Tests
   using System.Globalization;
   using System.IO;
   using System.Linq;
+  using System.Reflection;
   using System.Threading;
   using System.Windows;
   using System.Windows.Controls;
   using System.Windows.Controls.Primitives;
+  using System.Windows.Documents;
   using System.Windows.Markup;
   using System.Windows.Threading;
   using NLog;
@@ -114,6 +116,11 @@ namespace Soloplan.WhatsON.GUI.Tests
             }
           }
         }
+
+        var about = new AboutPage(settings.ConfigurationViewModel);
+        var version = typeof(AboutPage).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+        Assert.That(version, Is.Not.Null.And.Not.Empty);
+        Assert.That(((Run)about.FindName("VersionLabel")).Text, Is.EqualTo(version));
 
         VerifySettingsPageEdges(settings, sections, frame);
         sections.SelectedIndex = 0;

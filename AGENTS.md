@@ -38,6 +38,13 @@ tests that need external services as `Integration` and desktop tests as `UI`.
 The GUI test assembly has an inherited `UI` category. Snapshot publishing
 includes both `master` and `develop`.
 
+Versioning uses the SDK `Version` property, set in the Jenkins environment as
+`1.yyMM.build-branch` (UTC build start month), or the complete `TAG_NAME`.
+`Directory.Build.props` removes an optional leading `v` from the version.
+Release tags must otherwise be valid SDK versions, e.g. `v1.2610.42`.
+Local builds default to `1.yyMM.0-local`.
+Keep the About dialog on `AssemblyInformationalVersion` to display the suffix.
+
 ```powershell
 dotnet build src/Soloplan.WhatsON.slnx -c Debug
 dotnet test src/Soloplan.WhatsON.slnx -c Debug --no-build

@@ -82,8 +82,20 @@ dotnet test src/Soloplan.WhatsON.slnx -c Release --no-build --filter "TestCatego
 
 The unfiltered command above still runs every test. CI records and archives
 NUnit results and skips packaging and publishing after test failures.
-Snapshots are published to `whatson/master` or `whatson/develop`; `v*` tags are
+Snapshots are published to `whatson/master` or `whatson/develop`; tags are
 published to their own release folder.
+
+Versions are generated automatically as `1.yyMM.build-branch`, using the UTC
+build start month and Jenkins build number: for example, `1.2610.42-develop`
+or `1.2610.42-master`. Branch names are sanitized for version suffixes.
+The Jenkins environment uses the complete `TAG_NAME` as the release version:
+`Directory.Build.props` strips an optional leading `v`, so tag `v1.2610.42`
+produces `1.2610.42`. Tags must otherwise be valid SDK versions; prerelease
+tags such as `v1.2610.42-rc.1` also work. Local
+builds default to `1.yyMM.0-local`. All projects use the standard SDK `Version`
+property; no versioning package or manual project-file updates are needed.
+The About dialog shows the informational version, including the branch suffix
+and Git commit metadata added by the SDK. Jenkins build numbers are per job.
 
 View-model property notifications use PropertyChanged.Fody with the shared
 `src/FodyWeavers.xml` configuration. Notification roots are partial classes

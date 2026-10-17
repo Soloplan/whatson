@@ -38,7 +38,9 @@ namespace Soloplan.WhatsON.GUI.Configuration
       this.configurationViewModel = configurationViewModel;
       try
       {
-        this.VersionLabel.Text = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
+        var assembly = Assembly.GetExecutingAssembly();
+        this.VersionLabel.Text = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
+          ?? assembly.GetName().Version?.ToString() ?? string.Empty;
       }
       catch (Exception)
       {

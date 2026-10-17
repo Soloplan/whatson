@@ -5,6 +5,7 @@ import com.soloplan.*
 def Bucket = "tools"
 def outputDir = "src/bin/Release"
 def solution = "src/Soloplan.WhatsON.slnx"
+def versionMonth = new Date(currentBuild.startTimeInMillis).format('yyMM', TimeZone.getTimeZone('UTC'))
 
 pipeline {
   agent {
@@ -18,6 +19,10 @@ pipeline {
     disableResume()
     skipStagesAfterUnstable()
     timestamps()
+  }
+
+  environment {
+    Version = "${env.TAG_NAME ?: "1.${versionMonth}.${env.BUILD_NUMBER}-${env.BRANCH_NAME.replaceAll('[^0-9A-Za-z-]', '-')}"}"
   }
 
   stages {
@@ -77,7 +82,7 @@ pipeline {
 
     stage('Publish Release') {
       when {
-        tag "v*"
+        buildingTag()
       }
       
       steps {
