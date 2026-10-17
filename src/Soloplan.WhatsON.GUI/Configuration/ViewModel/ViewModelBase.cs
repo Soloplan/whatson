@@ -5,11 +5,15 @@
 
 namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
 {
-  public abstract class ViewModelBase : NotifyPropertyChanged
+  using System.ComponentModel;
+  using PropertyChanged;
+
+  public abstract partial class ViewModelBase : INotifyPropertyChanged
   {
     /// <summary>
     /// Gets or sets a value indicating whether the loaded flag is set.
     /// </summary>
+    [DoNotNotify]
     public bool IsLoaded { get; set; }
   }
 }

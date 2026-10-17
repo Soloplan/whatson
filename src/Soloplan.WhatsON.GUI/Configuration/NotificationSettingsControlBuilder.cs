@@ -11,7 +11,6 @@ namespace Soloplan.WhatsON.GUI.Configuration
   using System.Collections.Generic;
   using System.ComponentModel;
   using System.Linq;
-  using System.Runtime.CompilerServices;
   using System.Windows;
   using System.Windows.Controls;
   using System.Windows.Controls.Primitives;
@@ -26,7 +25,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
   /// The control builder for the notification settings.
   /// </summary>
   /// <seealso cref="Soloplan.WhatsON.GUI.Configuration.ConfigControlBuilder" />
-  public class NotificationSettingsControlBuilder : ConfigControlBuilder
+  public partial class NotificationSettingsControlBuilder : ConfigControlBuilder
   {
     /// <summary>
     /// Gets the supported configuration items key.
@@ -284,10 +283,10 @@ namespace Soloplan.WhatsON.GUI.Configuration
           {
             foreach (var listItem in this.ItemsState)
             {
-              listItem.OnPropertyChanged(nameof(NotificationStateItem.IsNotUseGlobalSettingsForParentListActive));
+              listItem.RefreshGlobalSettings();
             }
 
-            this.OnlyIfStateChanged.OnPropertyChanged(nameof(NotificationStateItem.IsNotUseGlobalSettingsForParentListActive));
+            this.OnlyIfStateChanged.RefreshGlobalSettings();
           };
 
         this.OnlyIfStateChanged = new NotificationStateItem(this);
@@ -320,13 +319,8 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// The helper class for binding and keeping information about the active state of the notification setting.
     /// </summary>
     /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
-    private class NotificationStateItem : INotifyPropertyChanged
+    private partial class NotificationStateItem : INotifyPropertyChanged
     {
-      /// <summary>
-      /// The is active flag.
-      /// </summary>
-      private bool isActive;
-
       /// <summary>
       /// Initializes a new instance of the <see cref="NotificationStateItem"/> class.
       /// </summary>
@@ -335,11 +329,6 @@ namespace Soloplan.WhatsON.GUI.Configuration
       {
         this.NotificationsState = notificationsState;
       }
-
-      /// <summary>
-      /// Occurs when property changed.
-      /// </summary>
-      public event PropertyChangedEventHandler PropertyChanged;
 
       /// <summary>
       /// Gets the notification state.
@@ -359,28 +348,16 @@ namespace Soloplan.WhatsON.GUI.Configuration
       /// <summary>
       /// Gets or sets a value indicating whether this notification setting is active.
       /// </summary>
-      public bool IsActive
-      {
-        get => this.isActive;
-        set
-        {
-          this.isActive = value;
-          this.OnPropertyChanged();
-        }
-      }
+      public bool IsActive { get; set; }
 
       /// <summary>
       /// Gets or sets the caption.
       /// </summary>
       public string Caption { get; set; }
 
-      /// <summary>
-      /// Called when property changed.
-      /// </summary>
-      /// <param name="propertyName">Name of the property.</param>
-      public void OnPropertyChanged([CallerMemberName] string propertyName = null)
+      public void RefreshGlobalSettings()
       {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        this.OnPropertyChanged(nameof(this.IsNotUseGlobalSettingsForParentListActive));
       }
     }
   }

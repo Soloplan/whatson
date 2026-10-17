@@ -70,6 +70,14 @@ on Windows. Custom plugins built for .NET Framework must be rebuilt for .NET 10.
 Project settings and package versions are shared in `src/Directory.Build.*`
 and `src/Directory.Packages.props`.
 
+View-model property notifications use PropertyChanged.Fody with the shared
+`src/FodyWeavers.xml` configuration. Notification roots are partial classes
+implementing `INotifyPropertyChanged`; Fody generates the events and invokers.
+Each presentation plugin assembly needs its own Fody and PropertyChanged.Fody
+package references to weave its setters. The former `NotifyPropertyChanged`
+base class has been removed; external plugins inheriting it must migrate and
+rebuild.
+
 ## Languages
 
 whatsON supports English and German. The default **System** language follows the

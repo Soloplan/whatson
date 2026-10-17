@@ -9,11 +9,13 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Collections;
   using System.Collections.Generic;
   using System.Collections.ObjectModel;
+  using System.ComponentModel;
   using System.Linq;
   using System.Windows;
   using System.Windows.Input;
   using GongSolutions.Wpf.DragDrop;
   using NLog;
+  using PropertyChanged;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.Model;
@@ -21,7 +23,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   /// <summary>
   /// Top level viewmodel used to bind to <see cref="ConnectorTreeView"/>.
   /// </summary>
-  public class ConnectorTreeViewModel : NotifyPropertyChanged, IHandleDoubleClick, IDropTarget
+  public partial class ConnectorTreeViewModel : INotifyPropertyChanged, IHandleDoubleClick, IDropTarget
   {
     /// <summary>
     /// The logger.
@@ -44,25 +46,9 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private bool configurationChanging;
 
     /// <summary>
-    /// Backing field for <see cref="ItemPadding"/>.
-    /// </summary>
-    private int itemPadding;
-
-    /// <summary>
-    /// Previous value of <see cref="OneGroup"/>.
-    /// </summary>
-    private bool prevOneGroupValue;
-
-    /// <summary>
     /// Previous value of relative instert position.
     /// </summary>
     private Collection<ConnectorViewModel> connectorsToDrop = new Collection<ConnectorViewModel>();
-
-    private int fontSize;
-
-    private int fontSizeSmall;
-
-    private int buildIconSize;
 
     /// <summary>
     /// Called when configuration has changed due to user input.
@@ -92,67 +78,23 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// Gets first group from <see cref="ConnectorGroups"/>, used for binding when there is just one group <see cref="OneGroup"/>.
     /// </summary>
-    public ConnectorGroupViewModel FirstGroup => this.ConnectorGroups.FirstOrDefault();
+    public ConnectorGroupViewModel FirstGroup { get; private set; }
 
     /// <summary>
     /// Gets a value indicating whether there is only one group.
     /// </summary>
-    public bool OneGroup => this.ConnectorGroups.Count == 1;
+    public bool OneGroup { get; private set; }
 
     /// <summary>
     /// Gets or sets the padding of tree view items.
     /// </summary>
-    public int ItemPadding
-    {
-      get => this.itemPadding;
-      set
-      {
-        if (this.itemPadding != value)
-        {
-          this.itemPadding = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public int ItemPadding { get; set; }
 
-    public int FontSize
-    {
-      get => this.fontSize;
-      set
-      {
-        if (this.fontSize != value)
-        {
-          this.fontSize = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public int FontSize { get; set; }
 
-    public int FontSizeSmall
-    {
-      get => this.fontSizeSmall;
-      set
-      {
-        if (this.fontSizeSmall != value)
-        {
-          this.fontSizeSmall = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public int FontSizeSmall { get; set; }
 
-    public int BuildIconSize
-    {
-      get => this.buildIconSize;
-      set
-      {
-        if (this.buildIconSize != value)
-        {
-          this.buildIconSize = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public int BuildIconSize { get; set; }
 
     /// <summary>Updates the current drag state.</summary>
     /// <param name="dropInfo">Information about the drag.</param>
@@ -330,7 +272,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         }
       }
 
-      this.FireOneGroupChanged();
       switch (configuration.ViewStyle)
       {
         case ViewStyle.Normal:
@@ -428,7 +369,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       var model = this.CreateNewGroupModel(groupName);
       this.ConnectorGroups.Add(model);
-      this.FireOneGroupChanged();
       this.OnConfigurationChanged(this, EventArgs.Empty);
       return model;
     }
@@ -475,7 +415,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         if (!canceled && this.ConnectorGroups.Remove(group))
         {
           this.OnConfigurationChanged(this, EventArgs.Empty);
-          this.FireOneGroupChanged();
         }
       }
     }
@@ -493,6 +432,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="args">Event args.</param>
+    [SuppressPropertyChangedWarnings]
     protected void OnConfigurationChanged(object sender, EventArgs args)
     {
       try
@@ -635,7 +575,13 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private ObservableCollection<ConnectorGroupViewModel> CreateConnectorGroupViewModelCollection()
     {
-      return new ObservableCollection<ConnectorGroupViewModel>();
+      var groups = new ObservableCollection<ConnectorGroupViewModel>();
+      groups.CollectionChanged += (sender, args) =>
+      {
+        this.FirstGroup = groups.FirstOrDefault();
+        this.OneGroup = groups.Count == 1;
+      };
+      return groups;
     }
 
     private ConnectorGroupViewModel CreateNewGroupModel(string groupName)
@@ -706,7 +652,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       if (madeChanges)
       {
         this.OnConfigurationChanged(this, EventArgs.Empty);
-        this.FireOneGroupChanged();
       }
     }
 
@@ -733,16 +678,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       if (madeChanges)
       {
         this.OnConfigurationChanged(this, EventArgs.Empty);
-        this.FireOneGroupChanged();
-      }
-    }
-
-    private void FireOneGroupChanged()
-    {
-      if (this.OneGroup != this.prevOneGroupValue)
-      {
-        this.OnPropertyChanged(nameof(this.OneGroup));
-        this.prevOneGroupValue = this.OneGroup;
       }
     }
 

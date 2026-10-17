@@ -15,6 +15,7 @@ namespace Soloplan.WhatsON.GUI.Tests
   using System.Threading;
   using System.Windows;
   using System.Windows.Controls;
+  using System.Windows.Controls.Primitives;
   using System.Windows.Markup;
   using System.Windows.Threading;
   using NLog;
@@ -165,7 +166,10 @@ namespace Soloplan.WhatsON.GUI.Tests
       VerifyTitleBarActionsAndLayout();
       VerifyScrollSpacing();
       VerifyWizardLayouts(app);
+      VerifyWizardNavigationNotifications();
       VerifyGermanViews(app);
+      VerifyNotificationBindings();
+      VerifyTrayNotificationForwarding();
 
       using (var stream = Application.GetResourceStream(new Uri("/Soloplan.WhatsON.GUI;component/Logging/LogConfig.xml", UriKind.Relative)).Stream)
       using (var reader = new StreamReader(stream))
@@ -175,6 +179,76 @@ namespace Soloplan.WhatsON.GUI.Tests
         Assert.That(
           loggingConfiguration.AllTargets.Select(target => target.Name),
           Is.EquivalentTo(new[] { "whatsONMainLog", "whatsONConsoleLog" }));
+      }
+    }
+
+    private static void VerifyWizardNavigationNotifications()
+    {
+      var wizard = new WizardController(null, new ApplicationConfiguration(), new WindowSettings());
+      var changes = new List<string>();
+      wizard.PropertyChanged += (sender, args) => changes.Add(args.PropertyName);
+      var currentPage = typeof(WizardController).GetProperty("CurrentPage", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+      currentPage.SetValue(wizard, new ProjectSelectionWizardPage(wizard));
+      Assert.That(wizard.IsLastStep, Is.True);
+      Assert.That(wizard.IsPreviousStepEnabled, Is.True);
+      Assert.That(changes, Does.Contain(nameof(wizard.IsLastStep)).And.Contain(nameof(wizard.IsNotLastStep)).And.Contain(nameof(wizard.IsPreviousStepEnabled)));
+      changes.Clear();
+      currentPage.SetValue(wizard, new ConnectionWizardPage(wizard));
+      Assert.That(wizard.IsLastStep, Is.False);
+      Assert.That(wizard.IsPreviousStepEnabled, Is.False);
+      Assert.That(changes, Does.Contain(nameof(wizard.IsLastStep)).And.Contain(nameof(wizard.IsNotLastStep)).And.Contain(nameof(wizard.IsPreviousStepEnabled)));
+    }
+
+    private static void VerifyTrayNotificationForwarding()
+    {
+      var notifications = new NotificationsModel(new ObservationScheduler());
+      var connector = PluginManager.Instance.GetConnector(new ConnectorConfiguration("Jenkins", "Main", new List<ConfigurationItem>
+      {
+        new ConfigurationItem(Connector.ServerAddress) { Value = "https://build.example.invalid" },
+        new ConfigurationItem(Connector.ProjectName) { Value = "main" },
+      }));
+      connector.CurrentStatus = new Status { Name = "Main", State = ObservationState.Success };
+      var queryCompleted = typeof(NotificationsModel).GetMethod("SchedulerStatusQueried", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+      var changes = new List<(object Sender, string Property)>();
+      notifications.StatusChanged += (sender, args) => changes.Add((sender, args.PropertyName));
+      for (var iteration = 0; iteration < 3; iteration++)
+      {
+        queryCompleted.Invoke(notifications, new object[] { null, connector });
+        Assert.That(changes.Last().Sender, Is.SameAs(notifications.Connectors.Single().CurrentStatus));
+        Assert.That(changes.Last().Property, Is.EqualTo(nameof(Common.ConnectorTreeView.ConnectorViewModel.CurrentStatus)));
+      }
+
+      changes.Clear();
+      notifications.Connectors.Single().CurrentStatus.ErrorMessage = "Build failed";
+      Assert.That(changes, Has.Count.EqualTo(1), "Repeated queries must not duplicate status subscriptions.");
+      Assert.That(changes[0].Sender, Is.SameAs(notifications.Connectors.Single().CurrentStatus), "The tray identifies projects using the original event sender.");
+    }
+
+    private static void VerifyNotificationBindings()
+    {
+      var item = new Configuration.ViewModel.ConfigurationItemViewModel();
+      item.Load(new ConfigurationItem(Connector.NotificationsVisbility)
+      {
+        Value = Newtonsoft.Json.JsonConvert.SerializeObject(new ConnectorNotificationConfiguration { UseGlobalNotificationSettings = true }),
+      });
+      var card = (ContentControl)new NotificationSettingsControlBuilder().GetControl(item, new ConfigurationItemAttribute(Connector.NotificationsVisbility, typeof(ConnectorNotificationConfiguration)));
+      var columns = (StackPanel)((Expander)card.Content).Content;
+      var states = (StackPanel)columns.Children[0];
+      var options = (StackPanel)columns.Children[1];
+      var useGlobalSettings = (ToggleButton)((StackPanel)options.Children[0]).Children[0];
+      var onlyIfChanged = (ToggleButton)((StackPanel)options.Children[1]).Children[0];
+      foreach (var useGlobal in new[] { true, false, true, false })
+      {
+        useGlobalSettings.IsChecked = useGlobal;
+        useGlobalSettings.GetBindingExpression(ToggleButton.IsCheckedProperty).UpdateSource();
+        card.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+        Assert.That(onlyIfChanged.IsEnabled, Is.EqualTo(!useGlobal));
+        foreach (StackPanel row in states.Children)
+        {
+          Assert.That(((ToggleButton)row.Children[0]).IsEnabled, Is.EqualTo(!useGlobal));
+        }
+
+        Assert.That(Newtonsoft.Json.JsonConvert.DeserializeObject<ConnectorNotificationConfiguration>(item.Value).UseGlobalNotificationSettings, Is.EqualTo(useGlobal));
       }
     }
 

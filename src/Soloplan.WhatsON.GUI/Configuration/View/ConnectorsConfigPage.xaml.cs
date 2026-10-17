@@ -10,7 +10,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
   using System;
   using System.ComponentModel;
   using System.Linq;
-  using System.Runtime.CompilerServices;
   using System.Windows;
   using System.Windows.Controls;
   using System.Windows.Data;
@@ -39,16 +38,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// The wizard dialog settings.
     /// </summary>
     private readonly WindowSettings wizardDialogSettings;
-
-    /// <summary>
-    /// The current connector.
-    /// </summary>
-    private ConnectorViewModel currentConnector;
-
-    /// <summary>
-    /// The single connector mode.
-    /// </summary>
-    private bool singleConnectorMode;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ConnectorsPage" /> class.
@@ -80,10 +69,10 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
       var newConnector = new ConnectorViewModel();
 
       // TODO move to connector view model/model
-      this.currentConnector.SourceConnectorPlugin = newConnectorPlugin;
-      this.currentConnector.Name = string.Empty;
-      this.currentConnector.Load(null);
-      this.Connectors.Add(this.currentConnector);
+      this.CurrentConnector.SourceConnectorPlugin = newConnectorPlugin;
+      this.CurrentConnector.Name = string.Empty;
+      this.CurrentConnector.Load(null);
+      this.Connectors.Add(this.CurrentConnector);
       this.CurrentConnector = newConnector;
 
       this.InitilizeConnectorNameTextEditBinding();
@@ -109,22 +98,9 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     }
 
     /// <summary>
-    /// Occurs when a property was changed.
-    /// </summary>
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    /// <summary>
     /// Gets or sets a value indicating whether a single connector mode is active.
     /// </summary>
-    public bool SingleConnectorMode
-    {
-      get => this.singleConnectorMode;
-      set
-      {
-        this.singleConnectorMode = value;
-        this.OnPropertyChanged();
-      }
-    }
+    public bool SingleConnectorMode { get; set; }
 
     /// <summary>
     /// Gets the connectors.
@@ -134,16 +110,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <summary>
     /// Gets or sets the current connector.
     /// </summary>
-    public ConnectorViewModel CurrentConnector
-    {
-      get => this.currentConnector;
-      set
-      {
-        this.currentConnector = value;
-        this.OnPropertyChanged();
-        this.OnPropertyChanged(nameof(this.CurrentConnectorIsNull));
-      }
-    }
+    public ConnectorViewModel CurrentConnector { get; set; }
 
     /// <summary>
     /// Gets a value indicating whether current connector is null.
@@ -182,15 +149,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
           this.WizardButton.IsEnabled = false;
         }
       }
-    }
-
-    /// <summary>
-    /// Called when property was changed.
-    /// </summary>
-    /// <param name="propertyName">Name of the property.</param>
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-      this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     /// <summary>
@@ -237,7 +195,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
         finally
         {
           this.uxConnectors.SelectionChanged += this.ConnectorsSelectionChanged;
-          this.currentConnector = null; // just mark that the backing field  should be initialized.
+          this.CurrentConnector = null; // just mark that the backing field  should be initialized.
         }
       }
 

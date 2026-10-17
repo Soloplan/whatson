@@ -7,35 +7,18 @@
 
 namespace Soloplan.WhatsON.GUI.Common.BuildServer
 {
-  public class UserViewModel : NotifyPropertyChanged
-  {
-    private string fullName;
-    private string url;
+  using System.ComponentModel;
 
+  public partial class UserViewModel : INotifyPropertyChanged
+  {
     /// <summary>
     /// Gets or sets name of user how made modifications in this build.
     /// </summary>
-    public string FullName
-    {
-      get => this.fullName;
-      set
-      {
-        this.fullName = value;
-        this.OnPropertyChanged();
-      }
-    }
+    public string FullName { get; set; }
 
     /// <summary>
     /// Gets or sets URL to user.
     /// </summary>
-    public string Url
-    {
-      get => this.url;
-      set
-      {
-        this.url = value;
-        this.OnPropertyChanged();
-      }
-    }
+    public string Url { get; set; }
   }
 }

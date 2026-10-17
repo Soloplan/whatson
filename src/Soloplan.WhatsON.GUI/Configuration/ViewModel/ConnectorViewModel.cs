@@ -20,16 +20,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
   public class ConnectorViewModel : ViewModelBase, IConfigurationItemProvider
   {
     /// <summary>
-    /// The name of the connector.
-    /// </summary>
-    private string name;
-
-    /// <summary>
-    /// The source connector.
-    /// </summary>
-    private ConnectorConfiguration sourceConnectorConfiguration;
-
-    /// <summary>
     /// The source connector Plugin.
     /// </summary>
     private ConnectorPlugin sourceConnectorPlugin;
@@ -37,16 +27,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// Gets the connector source configuration.
     /// </summary>
-    public ConnectorConfiguration SourceConnectorConfiguration
-    {
-      get => this.sourceConnectorConfiguration;
-      private set
-      {
-        this.sourceConnectorConfiguration = value;
-        this.OnPropertyChanged();
-        this.OnPropertyChanged(nameof(this.SourceConnectorPlugin));
-      }
-    }
+    public ConnectorConfiguration SourceConnectorConfiguration { get; private set; }
 
     /// <summary>
     /// Gets or sets the source connector plugin.
@@ -74,15 +55,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// Gets or sets the name of the connector.
     /// </summary>
-    public string Name
-    {
-      get => this.name;
-      set
-      {
-        this.name = value;
-        this.OnPropertyChanged();
-      }
-    }
+    public string Name { get; set; }
 
     /// <summary>
     /// Gets the full name of this connector including the category (if set).
@@ -187,7 +160,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
       }
       else
       {
-        this.SourceConnectorConfiguration.Name = this.name;
+        this.SourceConnectorConfiguration.Name = this.Name;
         foreach (var configurationItem in this.ConfigurationItems)
         {
           var appliedConfigurationItem = configurationItem.ApplyToSource(out bool newItemCreated);
@@ -208,7 +181,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     public ConnectorConfiguration CreateNewConnectorConfiguration()
     {
       var sourceConnectorConfig = new ConnectorConfiguration(this.SourceConnectorPlugin.Name);
-      sourceConnectorConfig.Name = this.name;
+      sourceConnectorConfig.Name = this.Name;
       foreach (var configurationItem in this.ConfigurationItems)
       {
         var newConfigurationItem = configurationItem.CreateNewConfigurationItem();

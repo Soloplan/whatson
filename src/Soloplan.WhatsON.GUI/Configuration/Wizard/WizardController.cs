@@ -12,7 +12,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
   using System.Collections.ObjectModel;
   using System.ComponentModel;
   using System.Linq;
-  using System.Runtime.CompilerServices;
   using System.Threading.Tasks;
   using System.Windows;
   using System.Windows.Controls;
@@ -29,7 +28,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
   /// Controls the execution of a wizard which allows to create or edit a project connection.
   /// </summary>
   /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
-  public class WizardController : INotifyPropertyChanged
+  public partial class WizardController : INotifyPropertyChanged
   {
     /// <summary>
     /// The timeout used to detect timeouts when querying build servers.
@@ -59,44 +58,14 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     private WizardWindow wizardWindow;
 
     /// <summary>
-    /// The current page.
-    /// </summary>
-    private Page currentPage;
-
-    /// <summary>
     /// The projects view model.
     /// </summary>
     private ProjectViewModelList projects;
 
     /// <summary>
-    /// Is any project checked.
-    /// </summary>
-    private bool isAnyProjectChecked;
-
-    /// <summary>
-    /// Is finish enabled.
-    /// </summary>
-    private bool isFinishEnabled;
-
-    /// <summary>
     /// The proposed server address.
     /// </summary>
     private string proposedServerAddress;
-
-    /// <summary>
-    /// Is proposed address empty flag.
-    /// </summary>
-    private bool isProposedAddressEmpty = true;
-
-    /// <summary>
-    /// Is automatical connector type enabled.
-    /// </summary>
-    private bool isAutoDetectionEnabled = true;
-
-    /// <summary>
-    /// Is automatical connector type disabled.
-    /// </summary>
-    private bool isAutoDetectionDisabled = false;
 
     private ConnectorPlugin selectedConnectorType;
 
@@ -111,11 +80,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     private bool? forceIsPreviousStepEnabled;
 
     /// <summary>
-    /// The selected grouping setting.
-    /// </summary>
-    private GrouppingSetting selectedGroupingSetting;
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="WizardController" /> class.
     /// </summary>
     /// <param name="ownerWindow">The owner window.</param>
@@ -128,11 +92,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       this.wizardDialogSettings = wizardDialogSettings;
       this.GroupingSettings = this.InitializeGrouppingSettings();
     }
-
-    /// <summary>
-    /// Occurs when property was changed.
-    /// </summary>
-    public event PropertyChangedEventHandler PropertyChanged;
 
     /// <summary>
     /// Gets the projects tree.
@@ -150,25 +109,17 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// Gets or sets the selected grouping setting.
     /// </summary>
-    public GrouppingSetting SelectedGroupingSetting
-    {
-      get => this.selectedGroupingSetting;
-      set
-      {
-        this.selectedGroupingSetting = value;
-        this.OnPropertyChanged(nameof(this.SelectedGroupingSetting));
-      }
-    }
+    public GrouppingSetting SelectedGroupingSetting { get; set; }
 
     /// <summary>
     /// Gets a value indicating whether wizard is NOT on it's first step.
     /// </summary>
-    public bool IsNotFirstStep => this.currentPage != null && !(this.currentPage is ConnectionWizardPage);
+    public bool IsNotFirstStep => this.CurrentPage != null && !(this.CurrentPage is ConnectionWizardPage);
 
     /// <summary>
     /// Gets a value indicating whether wizard is on it's last step.
     /// </summary>
-    public bool IsLastStep => this.currentPage is ProjectSelectionWizardPage;
+    public bool IsLastStep => this.CurrentPage is ProjectSelectionWizardPage;
 
     /// <summary>
     /// Gets a value indicating whether wizard is NOT on it's last step.
@@ -204,45 +155,18 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <value>
     ///   <c>true</c> if the proposed address is empty; otherwise, <c>false</c>.
     /// </value>
-    public bool IsProposedAddressEmpty
-    {
-      get => this.isProposedAddressEmpty;
-      private set
-      {
-        this.isProposedAddressEmpty = value;
-        this.OnPropertyChanged(nameof(this.IsNextStepEnabled));
-      }
-    }
+    public bool IsProposedAddressEmpty => string.IsNullOrWhiteSpace(this.ProposedServerAddress);
 
     /// <summary>
     /// Indicates if auto detection is enabled, when set also updates <seealso cref="IsAutoDetectionDisabled"/>
-    /// trough public setter so the OnPropertyChanged on both are called and view is notified.
+    /// to keep the detection controls synchronized.
     /// </summary>
-    public bool IsAutoDetectionEnabled
-    {
-      get => this.isAutoDetectionEnabled;
-      set
-      {
-        this.isAutoDetectionEnabled = value;
-        this.IsAutoDetectionDisabled = !value;
-        this.OnPropertyChanged(nameof(this.isAutoDetectionEnabled));
-      }
-    }
+    public bool IsAutoDetectionEnabled { get; set; } = true;
 
     /// <summary>
-    /// Indicates if auto detection is disabled. When set also changes <seealso cref="isAutoDetectionDisabled"/>
-    /// through private setter.
+    /// Gets a value indicating whether automatic detection is disabled.
     /// </summary>
-    public bool IsAutoDetectionDisabled
-    {
-      get => this.isAutoDetectionDisabled;
-      set
-      {
-        this.isAutoDetectionDisabled = value;
-        this.isAutoDetectionEnabled = !value;
-        this.OnPropertyChanged(nameof(this.isAutoDetectionDisabled));
-      }
-    }
+    public bool IsAutoDetectionDisabled => !this.IsAutoDetectionEnabled;
 
     /// <summary>
     /// Gets or sets a value indicating whether multi selection mode is active.
@@ -267,8 +191,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       set
       {
         this.proposedServerAddress = value;
-        this.IsProposedAddressEmpty = string.IsNullOrWhiteSpace(value);
-        this.OnPropertyChanged(nameof(this.IsProposedAddressEmpty));
       }
     }
 
@@ -276,7 +198,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     {
       get
       {
-        if (this.isAutoDetectionEnabled)
+        if (this.IsAutoDetectionEnabled)
         {
           return this.config.ConnectorsConfiguration.Where(x =>
           x.GetConfigurationByKey(Connector.ServerAddress) != null &&
@@ -318,23 +240,13 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       set
       {
         this.selectedConnectorType = value;
-        this.OnPropertyChanged(nameof(this.SelectedConnectorType));
-        this.OnPropertyChanged(nameof(this.AvailableServers));
       }
     }
 
     /// <summary>
     /// Gets a value indicating whether any project is checked.
     /// </summary>
-    public bool IsAnyProjectChecked
-    {
-      get => this.isAnyProjectChecked;
-      private set
-      {
-        this.isAnyProjectChecked = value;
-        this.OnPropertyChanged();
-      }
-    }
+    public bool IsAnyProjectChecked { get; private set; }
 
     /// <summary>
     /// Gets a value indicating whether finish button should be enabled.
@@ -342,15 +254,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <value>
     ///   <c>true</c> if this the finish button should be enabled; otherwise, <c>false</c>.
     /// </value>
-    public bool IsFinishEnabled
-    {
-      get => this.isFinishEnabled;
-      private set
-      {
-        this.isFinishEnabled = value;
-        this.OnPropertyChanged();
-      }
-    }
+    public bool IsFinishEnabled { get; private set; }
+
+    /// <summary>
+    /// The current page.
+    /// </summary>
+    private Page CurrentPage { get; set; }
 
     /// <summary>
     /// Gets the wizard frame.
@@ -480,16 +389,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// Called when property was changed.
     /// </summary>
-    /// <param name="propertyName">Name of the property.</param>
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    private void OnIsAutoDetectionEnabledChanged()
     {
-      this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-      if (propertyName == nameof(this.isAutoDetectionEnabled))
+      if (this.IsAutoDetectionEnabled)
       {
-        if (this.isAutoDetectionEnabled)
-        {
-          this.selectedConnectorType = null;
-        }
+        this.SelectedConnectorType = null;
       }
     }
 
@@ -564,32 +468,17 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     }
 
     /// <summary>
-    /// Called when page was changed.
-    /// </summary>
-    private void OnPageChanged()
-    {
-      this.OnPropertyChanged(nameof(this.IsNotFirstStep));
-      this.OnPropertyChanged(nameof(this.IsLastStep));
-      this.OnPropertyChanged(nameof(this.IsNotLastStep));
-      this.OnPropertyChanged(nameof(this.IsFinishEnabled));
-      this.OnPropertyChanged(nameof(this.IsNextStepEnabled));
-      this.OnPropertyChanged(nameof(this.IsPreviousStepEnabled));
-    }
-
-    /// <summary>
     /// Goes to connection step of the wizard.
     /// </summary>
     private void GoToConnectionStep()
     {
-      this.currentPage = new ConnectionWizardPage(this);
-      this.currentPage.DataContext = this;
-      this.WizardFrame.Content = this.currentPage;
+      this.CurrentPage = new ConnectionWizardPage(this);
+      this.CurrentPage.DataContext = this;
+      this.WizardFrame.Content = this.CurrentPage;
       if (this.editedConnectorViewModel != null)
       {
         this.SelectedConnectorType = this.editedConnectorViewModel.SourceConnectorPlugin;
       }
-
-      this.OnPageChanged();
     }
 
     private void ProcessServerSubProjects(IList<Project> projects, ProjectViewModel projectViewModel)
@@ -791,7 +680,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       var waitDailogTask = DialogHost.Show(waitControl, "WizardWaitDialogHostId");
       try
       {
-        if (this.isAutoDetectionEnabled)
+        if (this.IsAutoDetectionEnabled)
         {
           await this.PrepareProjectsListWithTypeDetection();
         }
@@ -810,10 +699,9 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 
       if (!error)
       {
-        this.currentPage = new ProjectSelectionWizardPage(this);
-        this.currentPage.DataContext = this;
-        this.WizardFrame.Content = this.currentPage;
-        this.OnPageChanged();
+        this.CurrentPage = new ProjectSelectionWizardPage(this);
+        this.CurrentPage.DataContext = this;
+        this.WizardFrame.Content = this.CurrentPage;
       }
       else if (this.wizardWindow.IsVisible)
       {

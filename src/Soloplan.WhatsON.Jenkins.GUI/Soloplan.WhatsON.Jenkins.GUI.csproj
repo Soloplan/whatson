@@ -15,4 +15,8 @@
     <ProjectReference Include="..\Soloplan.WhatsON.Jenkins\Soloplan.WhatsON.Jenkins.csproj" />
     <ProjectReference Include="..\Soloplan.WhatsON\Soloplan.WhatsON.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Fody" PrivateAssets="all" />
+    <PackageReference Include="PropertyChanged.Fody" PrivateAssets="all" />
+  </ItemGroup>
 </Project>

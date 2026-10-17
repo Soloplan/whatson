@@ -19,25 +19,12 @@ namespace Soloplan.WhatsON.Jenkins.GUI
   {
     private ObservableCollection<UserViewModel> committedToThisBuild;
 
-    private bool culpritsAndLastCommittedDifferent;
-
     public JenkinsStatusViewModel(ConnectorViewModel model)
       : base(model)
     {
     }
 
-    public bool CulpritsAndLastCommittedDifferent
-    {
-      get => this.culpritsAndLastCommittedDifferent;
-      set
-      {
-        if (this.culpritsAndLastCommittedDifferent != value)
-        {
-          this.culpritsAndLastCommittedDifferent = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public bool CulpritsAndLastCommittedDifferent { get; set; }
 
     public ObservableCollection<UserViewModel> CommittedToThisBuild => this.committedToThisBuild ?? (this.committedToThisBuild = new ObservableCollection<UserViewModel>());
 

@@ -82,6 +82,12 @@ could not run; do not change frameworks or packages just to bypass them.
   Preserve those exceptions when changing project items.
 - Edit resource/settings inputs rather than generated `*.Designer.cs` files.
   Keep saved configuration compatible unless the task explicitly changes its format.
+- UI property notifications use PropertyChanged.Fody, configured in `src/FodyWeavers.xml`.
+  Declare notification roots as partial classes implementing `INotifyPropertyChanged`;
+  Fody generates the event and invokers. Use auto-properties and `OnChangedMethod`
+  callbacks for domain side effects instead of handwritten notification setters.
+  Refresh collection-derived values through the generated invoker when necessary.
+  WPF dependency properties and domain events keep their native mechanisms.
 - Keep credentials and live server details out of source, fixtures, and logs.
   Use fake responses for tests; do not trigger real builds to verify a connector.
 - When delegating work, give each agent a distinct file or responsibility scope.

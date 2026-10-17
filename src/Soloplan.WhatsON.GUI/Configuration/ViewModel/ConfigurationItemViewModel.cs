@@ -15,50 +15,14 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
   public class ConfigurationItemViewModel : ViewModelBase, IConfigurationItem
   {
     /// <summary>
-    /// The key.
-    /// </summary>
-    private string key;
-
-    /// <summary>
-    /// The value.
-    /// </summary>
-    private string value;
-
-    /// <summary>
     /// Gets the key.
     /// </summary>
-    public string Key
-    {
-      get => this.key;
-      private set
-      {
-        if (this.key == value)
-        {
-          return;
-        }
-
-        this.key = value;
-        this.OnPropertyChanged();
-      }
-    }
+    public string Key { get; private set; }
 
     /// <summary>
     /// Gets or sets the value.
     /// </summary>
-    public string Value
-    {
-      get => this.value;
-      set
-      {
-        if (this.value == value)
-        {
-          return;
-        }
-
-        this.value = value;
-        this.OnPropertyChanged();
-      }
-    }
+    public string Value { get; set; }
 
     /// <summary>
     /// Gets the original configuration item.
@@ -107,8 +71,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <returns>New instance of <see cref="ConfigurationItem"/>.</returns>
     public ConfigurationItem CreateNewConfigurationItem()
     {
-      var result = new ConfigurationItem(this.key);
-      result.Value = this.value;
+      var result = new ConfigurationItem(this.Key);
+      result.Value = this.Value;
       return result;
     }
 
@@ -127,7 +91,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
       }
       else
       {
-        this.ConfigurationItem.Value = this.value;
+        this.ConfigurationItem.Value = this.Value;
       }
 
       return this.ConfigurationItem;

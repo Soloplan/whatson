@@ -98,7 +98,7 @@ namespace Soloplan.WhatsON.GUI
       this.icon.Click += (s, e) => this.BringToFront(false);
 
       this.model = new NotificationsModel(this.scheduler);
-      this.model.PropertyChanged += this.CurrentStatusPropertyChanged;
+      this.model.StatusChanged += this.CurrentStatusPropertyChanged;
       this.UpdateTrayIcon();
 
       if (File.Exists(Path.Combine(SerializationHelper.Instance.ConfigFolder, MainWindow.VisualSettingsFile)))
@@ -420,9 +420,9 @@ namespace Soloplan.WhatsON.GUI
       }
 
       this.mainWindow?.ApplyConfiguration(this.configuration);
-      this.model.PropertyChanged -= this.CurrentStatusPropertyChanged;
+      this.model.StatusChanged -= this.CurrentStatusPropertyChanged;
       this.model = new NotificationsModel(this.scheduler);
-      this.model.PropertyChanged += this.CurrentStatusPropertyChanged;
+      this.model.StatusChanged += this.CurrentStatusPropertyChanged;
       this.UpdateTrayIcon();
 
       this.scheduler.Start();

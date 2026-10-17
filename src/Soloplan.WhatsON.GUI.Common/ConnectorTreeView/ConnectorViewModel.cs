@@ -11,6 +11,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Windows.Controls;
   using System.Windows.Input;
   using NLog;
+  using PropertyChanged;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.Model;
@@ -23,14 +24,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
     private ObservableCollection<BuildStatusViewModel> connectorSnapshots;
-
-    private string name;
-
-    private string description;
-
-    private BuildStatusViewModel currentStatus;
-
-    private string url;
 
     public ConnectorViewModel()
     {
@@ -46,58 +39,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
-    public string Name
-    {
-      get => this.name;
-      set
-      {
-        if (this.name != value)
-        {
-          this.name = value;
-          this.OnConfigurationChanged(this, EventArgs.Empty);
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    [OnChangedMethod(nameof(NameChanged))]
+    public string Name { get; set; }
 
-    public string Description
-    {
-      get => this.description;
-      protected set
-      {
-        if (this.description != value)
-        {
-          this.description = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public string Description { get; protected set; }
 
-    public BuildStatusViewModel CurrentStatus
-    {
-      get => this.currentStatus;
-      private set
-      {
-        if (!object.ReferenceEquals(this.currentStatus, value))
-        {
-          this.currentStatus = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public BuildStatusViewModel CurrentStatus { get; private set; }
 
-    public string Url
-    {
-      get => this.url;
-      protected set
-      {
-        if (this.url != value)
-        {
-          this.url = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public string Url { get; protected set; }
 
     public Guid Identifier { get; private set; }
 
@@ -125,7 +74,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <param name="configuration">The configuration to apply.</param>
     public virtual void ApplyConfiguration(ConnectorConfiguration configuration)
     {
-      this.name = configuration.Name;
+      this.Name = configuration.Name;
     }
 
     public virtual void Update(Connector changedConnector)
@@ -202,6 +151,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       var command = base.CreateEditCommand();
       command.CanExecuteExternal += (s, e) => { e.Cancel = this.ConfigurationModifiedInTree || !this.IsOnlyOneSelected; };
       return command;
+    }
+
+    private void NameChanged()
+    {
+      this.OnConfigurationChanged(this, EventArgs.Empty);
     }
   }
 }

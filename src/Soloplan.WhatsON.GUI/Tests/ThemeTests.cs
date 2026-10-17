@@ -36,7 +36,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       Assert.That(model.ConfigurationIsModified, Is.False);
 
       model.ThemeMode = mode;
-      Assert.That(model.ConfigurationIsModified, Is.True);
+      Assert.That(model.ConfigurationIsModified, Is.EqualTo(mode != source.ThemeMode));
       Assert.That(source.ThemeMode, Is.EqualTo(ApplicationTheme.Light));
 
       var exported = new ApplicationConfiguration();

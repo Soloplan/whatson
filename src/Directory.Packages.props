@@ -3,6 +3,7 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="Fody" Version="6.9.3" />
     <PackageVersion Include="gong-wpf-dragdrop" Version="4.0.0" />
     <PackageVersion Include="HtmlAgilityPack" Version="1.13.1" />
     <PackageVersion Include="HtmlRenderer.WPF" Version="1.6.1" />
@@ -15,6 +16,7 @@
     <PackageVersion Include="NLog" Version="5.5.1" />
     <PackageVersion Include="NUnit" Version="4.6.1" />
     <PackageVersion Include="NUnit3TestAdapter" Version="6.3.1" />
+    <PackageVersion Include="PropertyChanged.Fody" Version="4.1.0" />
     <PackageVersion Include="StyleCop.Analyzers" Version="1.1.118" />
   </ItemGroup>
 </Project>

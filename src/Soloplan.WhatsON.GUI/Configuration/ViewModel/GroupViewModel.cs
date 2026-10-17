@@ -14,25 +14,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
   /// <summary>
   /// Model for editing group name.
   /// </summary>
-  public class GroupViewModel : NotifyPropertyChanged, IDataErrorInfo
+  public partial class GroupViewModel : INotifyPropertyChanged, IDataErrorInfo
   {
-    /// <summary>
-    /// Backing field for <see cref="Name"/>.
-    /// </summary>
-    private string name;
-
     /// <summary>
     /// Gets or sets the name of the group.
     /// </summary>
-    public string Name
-    {
-      get => this.name;
-      set
-      {
-        this.name = value;
-        this.OnPropertyChanged();
-      }
-    }
+    public string Name { get; set; }
 
     /// <summary>
     /// Gets or sets names of other groups.

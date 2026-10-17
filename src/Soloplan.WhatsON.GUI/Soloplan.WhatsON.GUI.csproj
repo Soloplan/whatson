@@ -27,4 +27,8 @@
     <EmbeddedResource Update="Properties\Resources.resx" Generator="PublicResXFileCodeGenerator" LastGenOutput="Resources.Designer.cs" />
     <EmbeddedResource Update="Properties\ConfigurationItems.resx" Generator="ResXFileCodeGenerator" LastGenOutput="ConfigurationItems.Designer.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Fody" PrivateAssets="all" />
+    <PackageReference Include="PropertyChanged.Fody" PrivateAssets="all" />
+  </ItemGroup>
 </Project>

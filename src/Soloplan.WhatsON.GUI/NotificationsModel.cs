@@ -14,7 +14,7 @@ namespace Soloplan.WhatsON.GUI
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Model;
 
-  public class NotificationsModel : NotifyPropertyChanged
+  public class NotificationsModel
   {
     private readonly ObservableCollection<ConnectorViewModel> connectors;
     private object lockObj = new object();
@@ -25,15 +25,22 @@ namespace Soloplan.WhatsON.GUI
       scheduler.StatusQueried += this.SchedulerStatusQueried;
     }
 
+    public event PropertyChangedEventHandler StatusChanged;
+
     public ObservableCollection<ConnectorViewModel> Connectors => this.connectors;
 
     private void SchedulerStatusQueried(object sender, Connector connector)
     {
       var modelToUpdate = this.GetModelToUpdate(connector);
       modelToUpdate.Update(connector);
-      modelToUpdate.CurrentStatus.PropertyChanged -= this.OnPropertyChanged;
-      modelToUpdate.CurrentStatus.PropertyChanged += this.OnPropertyChanged;
-      this.OnPropertyChanged(modelToUpdate.CurrentStatus, new PropertyChangedEventArgs(nameof(ConnectorViewModel.CurrentStatus)));
+      modelToUpdate.CurrentStatus.PropertyChanged -= this.ForwardStatusChanged;
+      modelToUpdate.CurrentStatus.PropertyChanged += this.ForwardStatusChanged;
+      this.ForwardStatusChanged(modelToUpdate.CurrentStatus, new PropertyChangedEventArgs(nameof(ConnectorViewModel.CurrentStatus)));
+    }
+
+    private void ForwardStatusChanged(object sender, PropertyChangedEventArgs eventArgs)
+    {
+      this.StatusChanged?.Invoke(sender, eventArgs);
     }
 
     private ConnectorViewModel GetModelToUpdate(Connector connector)
@@ -53,7 +60,7 @@ namespace Soloplan.WhatsON.GUI
             modelToUpdate = new ConnectorViewModel(connector);
           }
 
-          modelToUpdate.PropertyChanged += this.OnPropertyChanged;
+          modelToUpdate.PropertyChanged += this.ForwardStatusChanged;
           this.connectors.Add(modelToUpdate);
         }
 

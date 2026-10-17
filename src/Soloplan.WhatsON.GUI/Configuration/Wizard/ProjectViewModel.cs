@@ -10,14 +10,14 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
   using System.Collections.Generic;
   using System.ComponentModel;
   using System.Linq;
-  using System.Runtime.CompilerServices;
+  using PropertyChanged;
   using Soloplan.WhatsON.Model;
 
   /// <summary>
   /// The view model for the selectable projects on the wizard.
   /// </summary>
   /// <seealso cref="System.ComponentModel.INotifyPropertyChanged"/>
-  public class ProjectViewModel : INotifyPropertyChanged
+  public partial class ProjectViewModel : INotifyPropertyChanged
   {
     /// <summary>
     /// The root list of the projects.
@@ -35,11 +35,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     private bool isChecked;
 
     /// <summary>
-    /// The is visible flag.
-    /// </summary>
-    private bool isVisible = true;
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="ProjectViewModel" /> class which will be a root element.
     /// </summary>
     /// <param name="name">The name.</param>
@@ -49,11 +44,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       this.rootList = rootList;
       this.Name = name;
     }
-
-    /// <summary>
-    /// Occurs when project property changed.
-    /// </summary>
-    public event PropertyChangedEventHandler PropertyChanged;
 
     /// <summary>
     /// Gets the projects.
@@ -83,20 +73,13 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// Gets or sets a value indicating whether this project is visible.
     /// </summary>
-    public bool IsVisible
-    {
-      get => this.isVisible;
-      set
-      {
-        this.isVisible = value;
-        this.OnPropertyChanged();
-        this.UpdateParentGroupsCheckedState();
-      }
-    }
+    [OnChangedMethod(nameof(UpdateParentGroupsCheckedState))]
+    public bool IsVisible { get; set; } = true;
 
     /// <summary>
     /// Gets or sets a value indicating whether this project is checked.
     /// </summary>
+    [DoNotCheckEquality]
     public bool IsChecked
     {
       get
@@ -125,8 +108,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         {
           this.rootList.UncheckAll(this);
         }
-
-        this.OnPropertyChanged();
       }
     }
 
@@ -199,15 +180,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     public bool ShouldDisplayTooltip()
     {
       return (this.Description == string.Empty || this.Description == null) ? false : true;
-    }
-
-    /// <summary>
-    /// Called when property was changed.
-    /// </summary>
-    /// <param name="propertyName">Name of the property.</param>
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-      this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     /// <summary>

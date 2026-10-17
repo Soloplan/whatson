@@ -12,6 +12,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Windows;
   using System.Windows.Input;
   using NLog;
+  using PropertyChanged;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.Model;
@@ -26,25 +27,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
-    private string groupName;
-
     private ObservableCollection<ConnectorViewModel> statusViewModels;
-
-    private int runningConnectors = -1;
-
-    private int failingConnectors = -1;
-
-    private int unstableConnectors = -1;
-
-    private int unknownConnectors = -1;
-
-    private Visibility runningConnectorColumnVisibility = Visibility.Collapsed;
-
-    private Visibility failureConnectorColumnVisibility = Visibility.Collapsed;
-
-    private Visibility unstableConnectorColumnVisibility = Visibility.Collapsed;
-
-    private Visibility unknownConnectorColumnVisibility = Visibility.Collapsed;
 
     public ConnectorGroupViewModel()
     {
@@ -53,19 +36,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     public ObservableCollection<ConnectorViewModel> ConnectorViewModels => this.statusViewModels ?? (this.statusViewModels = new ObservableCollection<ConnectorViewModel>());
 
-    public string GroupName
-    {
-      get => this.groupName;
-      set
-      {
-        if (this.groupName != value)
-        {
-          this.groupName = value;
-          this.OnPropertyChanged();
-          this.OnConfigurationChanged(this, EventArgs.Empty);
-        }
-      }
-    }
+    [OnChangedMethod(nameof(GroupNameChanged))]
+    public string GroupName { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether configuration was modified from main window.
@@ -86,134 +58,46 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// Gets the visibility state of column for <see cref="ObservationState.Running"/>.
     /// </summary>
-    public Visibility RunningConnectorColumnVisibility
-    {
-      get => this.runningConnectorColumnVisibility;
-      private set
-      {
-        if (this.runningConnectorColumnVisibility != value)
-        {
-          this.runningConnectorColumnVisibility = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public Visibility RunningConnectorColumnVisibility { get; private set; } = Visibility.Collapsed;
 
     /// <summary>
     /// Gets the number of running connectors.
     /// </summary>
-    public int RunningConnectors
-    {
-      get => this.runningConnectors;
-      private set
-      {
-        if (this.runningConnectors != value)
-        {
-          this.runningConnectors = value;
-          this.SetRunningColumnVisible();
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    [OnChangedMethod(nameof(SetRunningColumnVisible))]
+    public int RunningConnectors { get; private set; } = -1;
 
     /// <summary>
     /// Gets the visibility state of column for <see cref="ObservationState.Failure"/>.
     /// </summary>
-    public Visibility FailureConnectorColumnVisibility
-    {
-      get => this.failureConnectorColumnVisibility;
-      private set
-      {
-        if (this.failureConnectorColumnVisibility != value)
-        {
-          this.failureConnectorColumnVisibility = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public Visibility FailureConnectorColumnVisibility { get; private set; } = Visibility.Collapsed;
 
     /// <summary>
     /// Gets the number of failing connectors.
     /// </summary>
-    public int FailingConnectors
-    {
-      get => this.failingConnectors;
-      private set
-      {
-        if (this.FailingConnectors != value)
-        {
-          this.failingConnectors = value;
-          this.SetFailureColumnVisible();
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    [OnChangedMethod(nameof(SetFailureColumnVisible))]
+    public int FailingConnectors { get; private set; } = -1;
 
     /// <summary>
     /// Gets the visibility state of column for <see cref="ObservationState.Unstable"/>.
     /// </summary>
-    public Visibility UnstableConnectorColumnVisibility
-    {
-      get => this.unstableConnectorColumnVisibility;
-      private set
-      {
-        if (this.unstableConnectorColumnVisibility != value)
-        {
-          this.unstableConnectorColumnVisibility = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public Visibility UnstableConnectorColumnVisibility { get; private set; } = Visibility.Collapsed;
 
     /// <summary>
     /// Gets the number of unstable connectors.
     /// </summary>
-    public int UnstableConnectors
-    {
-      get => this.unstableConnectors;
-      private set
-      {
-        if (this.unstableConnectors != value)
-        {
-          this.unstableConnectors = value;
-          this.SetUnstableColumnVisible();
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    [OnChangedMethod(nameof(SetUnstableColumnVisible))]
+    public int UnstableConnectors { get; private set; } = -1;
 
     /// <summary>
     /// Gets the visibility state of column for <see cref="ObservationState.Unknown"/>.
     /// </summary>
-    public Visibility UnknownConnectorColumnVisibility
-    {
-      get => this.unknownConnectorColumnVisibility;
-      private set
-      {
-        if (this.unknownConnectorColumnVisibility != value)
-        {
-          this.unknownConnectorColumnVisibility = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public Visibility UnknownConnectorColumnVisibility { get; private set; } = Visibility.Collapsed;
 
     /// <summary>
     /// Gets the number of connectors in unknown state.
     /// </summary>
-    public int UnknownConnectors
-    {
-      get => this.unknownConnectors;
-      private set
-      {
-        if (this.unknownConnectors != value)
-        {
-          this.unknownConnectors = value;
-          this.SetUnknownColumnVisible();
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    [OnChangedMethod(nameof(SetUnknownColumnVisible))]
+    public int UnknownConnectors { get; private set; } = -1;
 
     /// <summary>
     /// Called when connector changes, ex new status.
@@ -401,6 +285,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       {
         this.OnDeleteItem(this, e);
       }
+    }
+
+    private void GroupNameChanged()
+    {
+      this.OnConfigurationChanged(this, EventArgs.Empty);
     }
   }
 }

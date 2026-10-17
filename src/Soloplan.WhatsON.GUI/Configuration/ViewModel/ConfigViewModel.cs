@@ -6,10 +6,10 @@
 namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
 {
   using System;
-  using System.Runtime.CompilerServices;
   using System.Windows.Controls;
   using Microsoft.Win32;
   using NLog;
+  using PropertyChanged;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Configuration.View;
   using Soloplan.WhatsON.Localization;
@@ -35,81 +35,9 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
     /// <summary>
-    /// The selected appearance preference.
-    /// </summary>
-    private ApplicationTheme themeMode;
-
-    private ApplicationLanguage language;
-
-    /// <summary>
     /// The open on system start.
     /// </summary>
     private bool? openOnSystemStart;
-
-    /// <summary>
-    /// Backing field for <see cref="ShowInTaskbar"/>.
-    /// </summary>
-    private bool showInTaskbar;
-
-    /// <summary>
-    /// Backing field for <see cref="AlwaysOnTop"/>.
-    /// </summary>
-    private bool alwaysOnTop;
-
-    /// <summary>
-    /// Backing field for <see cref="OpenMinimized"/>.
-    /// </summary>
-    private bool openMinimized;
-
-    /// <summary>
-    /// Backing field for <see cref="ViewStyle"/>.
-    /// </summary>
-    private ViewStyle viewStyle;
-
-    /// <summary>
-    /// The unstable observation state.
-    /// </summary>
-    private bool unstableObservationState;
-
-    /// <summary>
-    /// The failure observation state.
-    /// </summary>
-    private bool failureObservationState;
-
-    /// <summary>
-    /// The success observation state.
-    /// </summary>
-    private bool successObservationState;
-
-    /// <summary>
-    /// The running observation state.
-    /// </summary>
-    private bool runningObservationState;
-
-    /// <summary>
-    /// The unknown observation state.
-    /// </summary>
-    private bool unknownObservationState;
-
-    /// <summary>
-    /// Notify only if status changed.
-    /// </summary>
-    private bool notifyOnlyIfStatusChanged;
-
-    /// <summary>
-    /// The initial focused configuration <see cref="ListBoxItem"/>.
-    /// </summary>
-    private ListBoxItem initialFocusedConfigurationListBoxItem;
-
-    /// <summary>
-    /// The single connector mode flag.
-    /// </summary>
-    private bool singleConnectorMode;
-
-    /// <summary>
-    /// The configuration is modified flag.
-    /// </summary>
-    private bool configurationIsModified;
 
     /// <summary>
     /// Occurs when configuration was applied.
@@ -129,25 +57,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// Gets or sets the appearance preference.
     /// </summary>
-    public ApplicationTheme ThemeMode
-    {
-      get => this.themeMode;
-      set
-      {
-        this.themeMode = value;
-        this.OnPropertyChanged();
-      }
-    }
+    [OnChangedMethod(nameof(MarkModified))]
+    public ApplicationTheme ThemeMode { get; set; }
 
-    public ApplicationLanguage Language
-    {
-      get => this.language;
-      set
-      {
-        this.language = value;
-        this.OnPropertyChanged();
-      }
-    }
+    [OnChangedMethod(nameof(MarkModified))]
+    public ApplicationLanguage Language { get; set; }
 
     /// <summary>
     /// Gets the snackbar action caption.
@@ -165,119 +79,56 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// Gets or sets a value indicating whether window should be shown in taskbar.
     /// </summary>
-    public bool ShowInTaskbar
-    {
-      get => this.showInTaskbar;
-      set
-      {
-        this.showInTaskbar = value;
-        this.OnPropertyChanged();
-      }
-    }
+    [OnChangedMethod(nameof(MarkModified))]
+    public bool ShowInTaskbar { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether unstable observation state is active.
     /// </summary>
-    public bool UnstableObservationState
-    {
-      get => this.unstableObservationState;
-      set
-      {
-        this.unstableObservationState = value;
-        this.OnPropertyChanged();
-      }
-    }
+    [OnChangedMethod(nameof(MarkModified))]
+    public bool UnstableObservationState { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether failure observation state is active.
     /// </summary>
-    public bool FailureObservationState
-    {
-      get => this.failureObservationState;
-      set
-      {
-        this.failureObservationState = value;
-        this.OnPropertyChanged();
-      }
-    }
+    [OnChangedMethod(nameof(MarkModified))]
+    public bool FailureObservationState { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether success observation state is active.
     /// </summary>
-    public bool SuccessObservationState
-    {
-      get => this.successObservationState;
-      set
-      {
-        this.successObservationState = value;
-        this.OnPropertyChanged();
-      }
-    }
+    [OnChangedMethod(nameof(MarkModified))]
+    public bool SuccessObservationState { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether running observation state is active.
     /// </summary>
-    public bool RunningObservationState
-    {
-      get => this.runningObservationState;
-      set
-      {
-        this.runningObservationState = value;
-        this.OnPropertyChanged();
-      }
-    }
+    [OnChangedMethod(nameof(MarkModified))]
+    public bool RunningObservationState { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether unknown observation state is active.
     /// </summary>
-    public bool UnknownObservationState
-    {
-      get => this.unknownObservationState;
-      set
-      {
-        this.unknownObservationState = value;
-        this.OnPropertyChanged();
-      }
-    }
+    [OnChangedMethod(nameof(MarkModified))]
+    public bool UnknownObservationState { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether to notify only if status was changed.
     /// </summary>
-    public bool NotifyOnlyIfStatusChanged
-    {
-      get => this.notifyOnlyIfStatusChanged;
-      set
-      {
-        this.notifyOnlyIfStatusChanged = value;
-        this.OnPropertyChanged();
-      }
-    }
+    [OnChangedMethod(nameof(MarkModified))]
+    public bool NotifyOnlyIfStatusChanged { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether window should be always on top of other windows.
     /// </summary>
-    public bool AlwaysOnTop
-    {
-      get => this.alwaysOnTop;
-      set
-      {
-        this.alwaysOnTop = value;
-        this.OnPropertyChanged();
-      }
-    }
+    [OnChangedMethod(nameof(MarkModified))]
+    public bool AlwaysOnTop { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether the window should open minimized.
     /// </summary>
-    public bool OpenMinimized
-    {
-      get => this.openMinimized;
-      set
-      {
-        this.openMinimized = value;
-        this.OnPropertyChanged();
-      }
-    }
+    [OnChangedMethod(nameof(MarkModified))]
+    public bool OpenMinimized { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether application should start with system.
@@ -285,6 +136,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <value>
     ///   <c>true</c> if true, start APP with the system ; otherwise, <c>false</c>.
     /// </value>
+    [OnChangedMethod(nameof(MarkModified))]
     public bool OpenOnSystemStart
     {
       get
@@ -332,48 +184,24 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
       set
       {
         this.openOnSystemStart = value;
-        this.OnPropertyChanged();
       }
     }
 
     /// <summary>
     /// Gets or sets view style.
     /// </summary>
-    public int ViewStyle
-    {
-      get => (int)this.viewStyle;
-      set
-      {
-        this.viewStyle = (ViewStyle)value;
-        this.OnPropertyChanged();
-      }
-    }
+    [OnChangedMethod(nameof(MarkModified))]
+    public int ViewStyle { get; set; }
 
     /// <summary>
     /// Gets or sets the initial focused configuration <see cref="ListBoxItem"/>.
     /// </summary>
-    public ListBoxItem InitialFocusedConfigurationListBoxItem
-    {
-      get => this.initialFocusedConfigurationListBoxItem;
-      set
-      {
-        this.initialFocusedConfigurationListBoxItem = value;
-        this.OnPropertyChanged();
-      }
-    }
+    public ListBoxItem InitialFocusedConfigurationListBoxItem { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether single connector mode is active.
     /// </summary>
-    public bool SingleConnectorMode
-    {
-      get => this.singleConnectorMode;
-      set
-      {
-        this.singleConnectorMode = value;
-        this.OnPropertyChanged();
-      }
-    }
+    public bool SingleConnectorMode { get; set; }
 
     /// <summary>
     /// Gets the original configuration.
@@ -386,15 +214,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <value>
     ///   <c>true</c> if configuration is modified; otherwise, <c>false</c>.
     /// </value>
-    public bool ConfigurationIsModified
-    {
-      get => this.configurationIsModified;
-      private set
-      {
-        this.configurationIsModified = value;
-        this.OnPropertyChanged();
-      }
-    }
+    public bool ConfigurationIsModified { get; private set; }
 
     /// <summary>
     /// Gets a value indicating whether configuration is not modified.
@@ -411,7 +231,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     public void Load(ApplicationConfiguration configurationSource)
     {
       this.IsLoaded = false;
-      var configurationIsModifiedOldValue = this.ConfigurationIsModified;
       try
       {
         this.Configuration = configurationSource;
@@ -450,12 +269,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
           this.Connectors.CollectionChanged += this.ConnectorsCollectionChanged;
           this.Connectors.CollectionItemPropertyChanged += this.ConnectorsCollectionItemPropertyChanged;
         }
-      }
-
-      if (configurationIsModifiedOldValue)
-      {
-        this.OnPropertyChanged(nameof(this.ConfigurationIsModified));
-        this.OnPropertyChanged(nameof(this.ConfigurationIsNotModified));
       }
     }
 
@@ -541,20 +354,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// Called when significant property of the view model was changed.
     /// </summary>
-    /// <param name="propertyName">Name of the property.</param>
-    protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    private void MarkModified()
     {
-      if (!this.ConfigurationIsModified && propertyName != nameof(this.ConfigurationIsModified) &&
-          propertyName != nameof(this.ConfigurationIsNotModified) && this.IsLoaded &&
-          propertyName != nameof(this.InitialFocusedConfigurationListBoxItem) &&
-          propertyName != nameof(this.SingleConnectorMode))
+      if (this.IsLoaded)
       {
         this.ConfigurationIsModified = true;
-        this.OnPropertyChanged(nameof(this.ConfigurationIsModified));
-        this.OnPropertyChanged(nameof(this.ConfigurationIsNotModified));
       }
-
-      base.OnPropertyChanged(propertyName);
     }
 
     /// <summary>
@@ -584,6 +389,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <param name="e">The <see cref="System.ComponentModel.PropertyChangedEventArgs"/> instance containing the event data.</param>
     private void ConnectorsCollectionItemPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
+      this.MarkModified();
       this.OnPropertyChanged(nameof(this.Connectors));
     }
 
@@ -594,9 +400,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <param name="e">The <see cref="System.Collections.Specialized.NotifyCollectionChangedEventArgs"/> instance containing the event data.</param>
     private void ConnectorsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
-      this.ConfigurationIsModified = true;
-      this.OnPropertyChanged(nameof(this.ConfigurationIsModified));
-      this.OnPropertyChanged(nameof(this.ConfigurationIsNotModified));
+      this.MarkModified();
     }
 
     /// <summary>

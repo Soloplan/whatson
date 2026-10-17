@@ -9,15 +9,13 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
   using System;
   using System.Collections.Generic;
+  using System.ComponentModel;
   using System.Threading.Tasks;
   using System.Windows.Input;
+  using PropertyChanged;
 
-  public abstract class TreeItemViewModel : NotifyPropertyChanged, IHandleDoubleClick
+  public abstract partial class TreeItemViewModel : INotifyPropertyChanged, IHandleDoubleClick
   {
-    private bool isNodeExpanded;
-
-    private bool isOnlyOneSelected = true;
-
     /// <summary>
     /// Backing field for <see cref="EditCommand"/>.
     /// </summary>
@@ -29,11 +27,6 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private CustomCommand exportCommand;
 
     private CustomCommand deleteCommand;
-
-    /// <summary>
-    /// Backing field for <see cref="ConfigurationModifiedInTree"/>.
-    /// </summary>
-    private bool configurationModifiedInTree;
 
     /// <summary>
     /// Backing field for <see cref="RenameCommand"/>.
@@ -57,31 +50,9 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     public event EventHandler ConfigurationChanged;
 
-    public bool IsNodeExpanded
-    {
-      get => this.isNodeExpanded;
-      set
-      {
-        if (this.isNodeExpanded != value)
-        {
-          this.isNodeExpanded = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public bool IsNodeExpanded { get; set; }
 
-    public bool IsOnlyOneSelected
-    {
-      get => this.isOnlyOneSelected;
-      set
-      {
-        if (this.isOnlyOneSelected != value)
-        {
-          this.isOnlyOneSelected = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public bool IsOnlyOneSelected { get; set; } = true;
 
     /// <summary>
     /// Gets command for editing tree item.
@@ -103,19 +74,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// Gets or sets a value indicating whether configuration was modified from main window.
     /// </summary>
-    public virtual bool ConfigurationModifiedInTree
-    {
-      get => this.configurationModifiedInTree;
-      set
-      {
-        if (this.ConfigurationModifiedInTree != value)
-        {
-          this.configurationModifiedInTree = value;
-          this.OnPropertyChanged();
-          this.EditCommand.CanExecute(null);
-        }
-      }
-    }
+    [OnChangedMethod(nameof(TreeConfigurationChanged))]
+    public virtual bool ConfigurationModifiedInTree { get; set; }
 
     /// <summary>
     /// Handles double click.
@@ -209,6 +169,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="eventArgs">Event args.</param>
+    [SuppressPropertyChangedWarnings]
     protected virtual void OnConfigurationChanged(object sender, EventArgs eventArgs)
     {
       this.ConfigurationChanged?.Invoke(sender, eventArgs);
@@ -223,6 +184,11 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     {
       var data = new DeleteTreeItemEventArgs(this);
       this.OnDeleteItem(this, data);
+    }
+
+    private void TreeConfigurationChanged()
+    {
+      this.EditCommand.CanExecute(null);
     }
   }
 

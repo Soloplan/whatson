@@ -50,13 +50,6 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     private MainWindowSettings settings;
 
-    private bool initialized;
-
-    /// <summary>
-    /// Backing field for <see cref="ConfigurationModifiedFromTree"/>.
-    /// </summary>
-    private bool configurationModifiedFromTree;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="MainWindow"/> class.
     /// </summary>
@@ -70,7 +63,6 @@ namespace Soloplan.WhatsON.GUI
       this.config = configuration;
       this.initialConnectorState = initialConnectorState;
       this.ShowInTaskbar = this.config.ShowInTaskbar;
-      this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.ShowInTaskbar)));
       this.Topmost = this.config.AlwaysOnTop;
       this.DataContext = this;
       this.mainTreeView.ConfigurationChanged += this.MainTreeViewOnConfigurationChanged;
@@ -84,30 +76,12 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     public event EventHandler<ValueEventArgs<ApplicationConfiguration>> ConfigurationApplied;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public bool IsTreeInitialized
-    {
-      get => this.initialized;
-      set
-      {
-        this.initialized = value;
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsTreeInitialized)));
-      }
-    }
+    public bool IsTreeInitialized { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether configuration was modified from tree view.
     /// </summary>
-    public bool ConfigurationModifiedFromTree
-    {
-      get => this.configurationModifiedFromTree;
-      set
-      {
-        this.configurationModifiedFromTree = value;
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.ConfigurationModifiedFromTree)));
-      }
-    }
+    public bool ConfigurationModifiedFromTree { get; set; }
 
     public MainWindowSettings GetVisualSettings()
     {
@@ -153,7 +127,6 @@ namespace Soloplan.WhatsON.GUI
       this.config = configuration;
       this.mainTreeView.Update(this.config);
       this.ShowInTaskbar = this.config.ShowInTaskbar;
-      this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.ShowInTaskbar)));
       this.Topmost = this.config.AlwaysOnTop;
     }
 

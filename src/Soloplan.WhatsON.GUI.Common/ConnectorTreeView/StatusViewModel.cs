@@ -6,6 +6,7 @@
 namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
   using System;
+  using System.ComponentModel;
   using NLog;
   using Soloplan.WhatsON.Localization;
   using Soloplan.WhatsON.Model;
@@ -13,52 +14,19 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   /// <summary>
   /// Base ViewModel used for any kind of <see cref="Soloplan.WhatsON.Connector"/>.
   /// </summary>
-  public class StatusViewModel : NotifyPropertyChanged
+  public partial class StatusViewModel : INotifyPropertyChanged
   {
     /// <summary>
     /// The logger.
     /// </summary>
     private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
 
-    private string name;
-
-    private string details;
-
-    private DateTime time;
-
-    private ObservationState state;
-
-    private bool failure;
-
-    private bool unknown;
-
-    private bool succees;
-
-    private bool unstable;
-
-    private bool first;
-
-    private string label;
-
-    private string errorMessage;
-
     public StatusViewModel(ConnectorViewModel connector)
     {
       this.Parent = connector;
     }
 
-    public bool First
-    {
-      get => this.first;
-      set
-      {
-        if (this.first != value)
-        {
-          this.first = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public bool First { get; set; }
 
     public int Size
     {
@@ -68,134 +36,25 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
     }
 
-    public string Name
-    {
-      get
-      {
-        return this.name;
-      }
+    public string Name { get; protected set; }
 
-      protected set
-      {
-        if (this.name != value)
-        {
-          this.name = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public virtual string Label { get; protected set; }
 
-    public virtual string Label
-    {
-      get
-      {
-        return this.label;
-      }
+    public string Details { get; protected set; }
 
-      protected set
-      {
-        if (this.label != value)
-        {
-          this.label = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public ObservationState State { get; set; }
 
-    public string Details
-    {
-      get
-      {
-        return this.details;
-      }
+    public virtual DateTime Time { get; protected set; }
 
-      protected set
-      {
-        if (this.details != value)
-        {
-          this.details = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public bool Failure { get; set; }
 
-    public ObservationState State
-    {
-      get => this.state;
+    public bool Unknown { get; set; }
 
-      set
-      {
-        if (this.state != value)
-        {
-          this.state = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public bool Succees { get; set; }
 
-    public virtual DateTime Time
-    {
-      get
-      {
-        return this.time;
-      }
+    public bool Unstable { get; set; }
 
-      protected  set
-      {
-        this.time = value;
-        this.OnPropertyChanged();
-      }
-    }
-
-    public bool Failure
-    {
-      get => this.failure;
-      set
-      {
-        this.failure = value;
-        this.OnPropertyChanged();
-      }
-    }
-
-    public bool Unknown
-    {
-      get => this.unknown;
-      set
-      {
-        this.unknown = value;
-        this.OnPropertyChanged();
-      }
-    }
-
-    public bool Succees
-    {
-      get => this.succees;
-      set
-      {
-        this.succees = value;
-        this.OnPropertyChanged();
-      }
-    }
-
-    public bool Unstable
-    {
-      get => this.unstable;
-      set
-      {
-        this.unstable = value;
-        this.OnPropertyChanged();
-      }
-    }
-
-    public string ErrorMessage
-    {
-      get => this.errorMessage;
-      set
-      {
-        this.errorMessage = value;
-        this.OnPropertyChanged();
-      }
-    }
+    public string ErrorMessage { get; set; }
 
     public ConnectorViewModel Parent { get; }
 
@@ -206,7 +65,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       {
         this.Name = Strings.Loading;
         this.Details = Strings.Loading;
-        this.state = ObservationState.Unknown;
+        this.State = ObservationState.Unknown;
         return;
       }
 

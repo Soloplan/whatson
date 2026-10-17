@@ -14,11 +14,6 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
 
   public class CruiseControlStatusViewModel : BuildStatusViewModel
   {
-    /// <summary>
-    /// The backing field for <see cref="BuildTimeUnknown"/>.
-    /// </summary>
-    private bool buildTimeUnknown;
-
     public CruiseControlStatusViewModel(ConnectorViewModel model)
       : base(model)
     {
@@ -27,18 +22,7 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
     /// <summary>
     /// Gets or sets a value indicating whether estimated build time is known.
     /// </summary>
-    public bool BuildTimeUnknown
-    {
-      get => this.buildTimeUnknown;
-      set
-      {
-        if (this.buildTimeUnknown != value)
-        {
-          this.buildTimeUnknown = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public bool BuildTimeUnknown { get; set; }
 
     public override void Update(Status newStatus)
     {

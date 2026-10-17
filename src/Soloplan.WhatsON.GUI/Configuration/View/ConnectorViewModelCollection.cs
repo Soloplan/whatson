@@ -12,6 +12,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
   using System.Collections.ObjectModel;
   using System.ComponentModel;
   using System.Linq;
+  using PropertyChanged;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Configuration.ViewModel;
 
@@ -124,6 +125,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// Raises the <see cref="E:CollectionItemPropertyChanged" /> event.
     /// </summary>
     /// <param name="propertyChangedEventArgs">The <see cref="PropertyChangedEventArgs"/> instance containing the event data.</param>
+    [SuppressPropertyChangedWarnings]
     private void OnCollectionItemPropertyChanged(PropertyChangedEventArgs propertyChangedEventArgs)
     {
       this.CollectionItemPropertyChanged?.Invoke(this, propertyChangedEventArgs);

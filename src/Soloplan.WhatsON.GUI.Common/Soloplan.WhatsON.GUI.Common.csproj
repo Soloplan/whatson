@@ -14,4 +14,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Soloplan.WhatsON\Soloplan.WhatsON.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Fody" PrivateAssets="all" />
+    <PackageReference Include="PropertyChanged.Fody" PrivateAssets="all" />
+  </ItemGroup>
 </Project>
