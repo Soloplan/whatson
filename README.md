@@ -1,192 +1,210 @@
-
-<img src="./whatsON-logo.png" width="100" height="100">
+<img src="./whatsON-logo.png" width="100" height="100" alt="whatsON logo">
 
 # whatsON
 
-A build monitoring tool written in C#.
-  <br>
-  <br>
+**Build monitoring for Windows, with support for Jenkins and CruiseControl.NET.**
 
-<p align="center">
-  <a href="https://github.com/Soloplan/whatson/issues/new?template=bug.md">Report bug</a>
-  ·
-  <a href="https://github.com/Soloplan/whatson/issues/new?template=feature.md&labels=feature">Request feature</a>
-</p>
+whatsON is a C# desktop application that brings build status, progress, and recent
+results into one view. Monitor projects across multiple build servers and receive
+Windows notifications when builds need your attention.
 
+[Report a bug](https://github.com/Soloplan/whatson/issues/new?template=bug.md) ·
+[Request a feature](https://github.com/Soloplan/whatson/issues/new?template=feature.md&labels=feature) ·
+[Download the latest release](https://github.com/Soloplan/whatson/releases/latest)
 
-**whatsON** is a tool that provides the possibility to monitor the status and progress of build processes. It's designed to give developers or other collaborators a quick overview of the infrastructure's health and to notify them about issues in the build.
+![whatsON light and dark themes with sample projects](WebContent/Screenshot.png)
 
-![alt text](https://raw.githubusercontent.com/Soloplan/whatson/master/WebContent/Screenshot.png)
-
-## Table of contents
+## Contents
 
 - [Features](#features)
-- [Quick start](#quick-start)
-- [Build from source](#build-from-source)
-- [Feature requests and bugs](#feature-requests-and-bugs)
+- [Getting started](#getting-started)
+- [Appearance and language](#appearance-and-language)
+- [Building from source](#building-from-source)
 - [Plugins](#plugins)
-- [Documentation](#documentation)
-- [Contribiution](#contribution)
-- [Working with coding agents](#working-with-coding-agents)
+- [Documentation and support](#documentation-and-support)
+- [Contributing](#contributing)
+- [License](#license)
 - [Creators](#creators)
-- [License](#License)
 
 ## Features
-- Monitor multiple builds status with a lot of additional information.
-- Supports multiple build automation systems. By default Jenkins and CruiseControl.NET, but you can create your own plugin!
-- Quick view for status of last 5 builds (Jenkins plugin)
-- Easy configuration directly on main window.
-- Wizard to add new projects.
-- Configurable Windows notifications.
-- System, light, and dark appearance, with automatic updates when Windows changes theme.
 
-## Quick start
+- Monitor multiple projects and build servers in one application.
+- Connect to Jenkins and CruiseControl.NET with the included plugins.
+- View build status, progress, and additional build information.
+- Review the five most recent builds with the Jenkins plugin.
+- Add projects through a guided setup wizard and configure them from the main window.
+- Receive configurable Windows notifications.
+- Choose a light or dark appearance, or follow the Windows theme automatically.
+- Use the interface in English or German.
+- Extend support to other build systems through custom plugins.
 
-1. [Download the latest release.](https://github.com/Soloplan/whatson/releases/latest)
-1. Save it to the location from which you will be using it.
-1. Start the app from file *Soloplan.WhatsON.GUI.exe*
-1. If you want the app to start during the system start, open the configuration (gear icon at the top, left corner) and set the option "Run when windows starts"
-1. To add a new project build for monitoring, you can use the wizard (plus icon at the top, left corner).
+## Getting started
 
-Choose **Settings → General → Color theme** to follow Windows or select Light or
-Dark. Changes preview immediately; select **Save changes** to keep them. Reset
-or close Settings to return to the saved appearance.
+1. [Download the latest release](https://github.com/Soloplan/whatson/releases/latest).
+2. Place the application files in the directory from which you want to run whatsON.
+3. Launch `Soloplan.WhatsON.GUI.exe`.
+4. Select the plus icon in the upper-left corner to add a project with the setup wizard.
+5. To launch whatsON automatically at sign-in, open Settings using the gear icon and enable **Run when Windows starts**.
 
-## Build from source
+Framework-dependent builds require the
+[.NET 10 Desktop Runtime for Windows](https://dotnet.microsoft.com/en-us/download/dotnet/10.0).
+The self-contained MSIX package includes its runtime.
 
-Install the .NET 10 SDK on Windows, then run from the repository root:
+## Appearance and language
+
+Under **Settings → General → Color theme**, select **System**, **Light**, or
+**Dark**. Theme changes preview immediately. Select **Save changes** to keep them;
+resetting or closing Settings restores the saved appearance.
+
+Under **Settings → General → Language**, select **System**, **English**, or
+**Deutsch**, save your changes, and restart whatsON. **System** follows the Windows
+display language when it is English or German and uses English otherwise.
+Configurations without a language preference also use **System**. Explicit
+language choices are preserved when importing or exporting configuration.
+
+## Building from source
+
+### Prerequisites and commands
+
+Install the .NET 10 SDK on Windows, then run these commands from the repository
+root. Publish into an empty output directory to avoid including files from older
+builds.
 
 ```powershell
 dotnet build src/Soloplan.WhatsON.slnx -c Release
 dotnet test src/Soloplan.WhatsON.slnx -c Release --no-build
-dotnet publish src/Soloplan.WhatsON.GUI/Soloplan.WhatsON.GUI.csproj -c Release --no-build -o src/bin/Release
+dotnet publish src/Soloplan.WhatsON.GUI/Soloplan.WhatsON.GUI.csproj -c Release -o src/bin/Release
 ```
 
-Run `src/bin/Release/Soloplan.WhatsON.GUI.exe`. Copy the entire publish directory
-when deploying, including the runtime configuration, dependencies, and plugins.
-Use an empty publish directory to avoid mixing in old .NET Framework binaries.
-These builds require the [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
-on Windows. Custom plugins built for .NET Framework must be rebuilt for .NET 10.
-Project settings and package versions are shared in `src/Directory.Build.*`
-and `src/Directory.Packages.props`.
+Launch `src/bin/Release/Soloplan.WhatsON.GUI.exe`. Distribute the entire publish
+directory, including dependencies, plugins, `.deps.json`, `.runtimeconfig.json`,
+and the `de` localization folder. This framework-dependent build requires the
+.NET 10 Desktop Runtime for Windows. External plugins built for .NET Framework
+must be migrated and rebuilt for .NET 10.
 
-Jenkins uses `SoloPipeline@1.7` on the Windows `dotnet-framework` build container.
-It builds and tests the full solution, excluding the NUnit categories
-`Integration` and `UI`. The GUI test assembly is categorized as `UI` because it
-needs the Windows desktop runtime and includes desktop interactions. Run the
-same container-compatible test selection locally with:
+Shared project settings are in `src/Directory.Build.props` and
+`src/Directory.Build.targets`; package versions are in
+`src/Directory.Packages.props`.
+
+### Tests and continuous integration
+
+The test command above runs all tests. Tests categorized as **Integration** require
+external services; **UI** tests require a desktop environment. The GUI test
+assembly inherits the **UI** category.
+
+Jenkins uses `SoloPipeline@1.7` in the Windows `dotnet-framework` build container
+with the .NET 10 SDK. It builds and tests the full solution, excluding the
+`Integration` and `UI` categories. To run the same test selection locally:
 
 ```powershell
 dotnet test src/Soloplan.WhatsON.slnx -c Release --no-build --filter "TestCategory!=Integration&TestCategory!=UI"
 ```
 
-The unfiltered command above still runs every test. CI records and archives
-NUnit results and skips packaging and publishing after test failures.
-Snapshots are published to `whatson/beta` (master) or `whatson/alpha` (develop).
-Tags are published to their own release folder.
+CI archives NUnit results and skips packaging and publishing after test failures.
+Snapshots are published to `whatson/beta` for `master` and `whatson/alpha` for
+`develop`. Tags are published to their own release folders.
 
-Versions are generated automatically as `1.yyMM.build-channel`, using the UTC
-build start month and Jenkins build number: for example, `1.2610.42-alpha`
-for develop and `1.2610.42-beta` for master. Feature branches use alpha.
-The Jenkins environment uses the complete `TAG_NAME` as the release version:
-`Directory.Build.props` strips an optional leading `v`, so tag `v1.2610.42`
-produces `1.2610.42`. Tags must otherwise be valid SDK versions; prerelease
-tags such as `v1.2610.42-rc.1` also work. Local
-builds default to `1.yyMM.0-local`. All projects use the standard SDK `Version`
-property; no versioning package or manual project-file updates are needed.
-The About dialog shows the informational version, including the channel suffix
-and Git commit metadata added by the SDK. Jenkins build numbers are per job.
+### Versioning and packaging
 
-Jenkins also produces a self-contained x64 MSIX and an App Installer update feed,
-using Windows packaging tools and Azure signing. GitHub release
-uploads are manual. See [MSIX packaging and updates](src/Soloplan.WhatsON.Package/README.md)
-for build prerequisites, signing, channel URLs, and the upload procedure.
+Build versions use `1.yyMM.build-channel`, where `yyMM` is the UTC build start
+month and `build` is the Jenkins build number. For example:
+
+| Build | Version example |
+| --- | --- |
+| Develop or feature branch | `1.2610.42-alpha` |
+| Master | `1.2610.42-beta` |
+| Release tag `v1.2610.42` | `1.2610.42` |
+| Local build | `1.2610.0-local` |
+
+Jenkins passes the complete `TAG_NAME` as the release version.
+`Directory.Build.props` removes an optional leading `v`; the remaining value
+must be a valid SDK version. Prerelease tags such as `v1.2610.42-rc.1` are also
+supported. Jenkins build numbers are scoped to each job.
+
+All projects use the SDK `Version` property. The About dialog displays
+`AssemblyInformationalVersion`, including the channel suffix and Git commit
+metadata added by the SDK.
+
+MSIX packaging is separate from the normal solution build and requires Visual
+Studio's Windows packaging tools. Jenkins also produces a self-contained x64
+MSIX package and an App Installer update feed, with Azure signing for
+`master`, `develop`, and tag builds. GitHub release uploads are manual.
+See [MSIX packaging and updates](src/Soloplan.WhatsON.Package/README.md) for
+prerequisites, signing, channel URLs, and upload instructions.
+
+### Localization
+
+Shared interface text is stored in
+`src/Soloplan.WhatsON/Localization/Strings.resx` and `Strings.de.resx`.
+Edit the resource files directly; the .NET SDK generates the public `Strings`
+class during each build.
+
+Use `Strings.None` in C# and `{x:Static loc:Strings.None}` in WPF, with `loc` mapped
+to `clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON`.
+For messages with arguments, use named methods such as
+`Localizer.DeleteNamedProject(projectName)`. Use `Localizer.GetStateName(state)`
+for build states. Resource properties and method arguments are checked by the
+compiler. Keep resource keys and formatting placeholders consistent across both
+translations.
+
+English is the fallback for untranslated cultures. Project names, URLs,
+server-provided descriptions, and diagnostic logs retain their original content.
+Existing validation, tray, and connector settings resources remain in the
+`Properties/Resources*.resx` and `Properties/ConfigurationItems*.resx` files of
+their owning projects. These use standard .NET satellite resources.
+
+Localization tests cover translation completeness, formatting placeholders,
+fallback behavior, persistence, and translated controls.
+
+### Property notifications
 
 View-model property notifications use PropertyChanged.Fody with the shared
 `src/FodyWeavers.xml` configuration. Notification roots are partial classes
 implementing `INotifyPropertyChanged`; Fody generates the events and invokers.
 Each presentation plugin assembly needs its own Fody and PropertyChanged.Fody
-package references to weave its setters. The former `NotifyPropertyChanged`
-base class has been removed; external plugins inheriting it must migrate and
-rebuild.
+package references to weave its setters.
 
-## Languages
-
-whatsON supports English and German. The default **System** language follows the
-Windows display language when it is English or German, and falls back to English
-for other languages. Existing configurations without a language preference also
-use **System**. Choose **Settings → General → Language** to select System,
-English, or Deutsch, save your changes, and restart whatsON. Explicit language
-choices are preserved in configuration imports and exports.
-
-Interface text is stored in `src/Soloplan.WhatsON/Localization/Strings.resx`
-and `Strings.de.resx`. The .NET SDK generates the public `Strings` class during
-every build; add or edit resources in the `.resx` files, not generated code.
-Use `Strings.None` in C# and `{x:Static loc:Strings.None}` in WPF, where `loc`
-references `clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON`.
-Use named methods such as `Localizer.DeleteNamedProject(projectName)` for messages
-with arguments, and `Localizer.GetStateName(state)` for build states. Resource
-properties and method arguments are checked by the compiler. Keep the same keys
-and formatting placeholders in both translations.
-English is the fallback when a culture has no translation. Project names, URLs,
-server-provided descriptions, and diagnostic logs retain their original content.
-
-Existing validation/tray resources and connector settings captions use the
-`Properties/Resources*.resx` and `Properties/ConfigurationItems*.resx` files in
-their owning projects. These also use standard .NET satellite resources.
-The publish directory's `de` folder must be distributed with the application.
-Localization tests check translation completeness, formatting placeholders,
-fallback, persistence, and translated controls.
-
-## Feature requests and bugs
-
-Have a bug or a feature request please search for it in existing and closed issues. If your problem or idea is not addressed yet, please [open a new issue](https://github.com/Soloplan/whatson/issues/new).
+The former `NotifyPropertyChanged` base class has been removed. External plugins
+that inherit from it must migrate and rebuild.
 
 ## Plugins
 
-The plugins in whatsON allows to monitor builds from various build servers.
-It is possible to develop your own plugin, if it would be useful for the comunity, we would be happy if you would share it's code.
-By default, it allows to monitor these servers:
- - [Jenkins](https://jenkins.io/)
- - [CrusieControl.NET](https://github.com/ccnet/CruiseControl.NET)
- 
- ## Documentation
- 
- Documentation is available as a [github WIKI](https://github.com/Soloplan/whatson/wiki)
- 
- ## Contribution
- 
- You can create your own plugin, see this [guide](https://github.com/Soloplan/whatson/wiki/Developing-a-new-plugin) for details.
- 
- You can checkout the [Travis CI plugin](https://github.com/steffen-wilke/whatson-travis-ci) as example.
- 
- See also [contribution guidelines](https://github.com/Soloplan/whatson/wiki/Contribiution).
- 
-## Working with coding agents
+whatsON includes connectors for:
 
-See [AGENTS.md](AGENTS.md) for the repository layout, Windows build prerequisites,
-build and test commands, coding conventions, and agent coordination guidance.
+- [Jenkins](https://jenkins.io/)
+- [CruiseControl.NET](https://github.com/ccnet/CruiseControl.NET)
 
- ## Creators
+Custom plugins can add support for other build systems. See the
+[plugin development guide](https://github.com/Soloplan/whatson/wiki/Developing-a-new-plugin)
+and the community [Travis CI plugin](https://github.com/steffen-wilke/whatson-travis-ci)
+for an example.
 
-**Christian Heidl**
+## Documentation and support
 
-**Steffen Wilke**
+Visit the [project wiki](https://github.com/Soloplan/whatson/wiki) for additional
+documentation. Before reporting a bug or requesting a feature, search both open
+and closed issues. If your topic has not been covered,
+[open a new issue](https://github.com/Soloplan/whatson/issues/new).
 
-- <https://github.com/steffen-wilke>
+## Contributing
 
-**Dominik Gouda**
+Contributions, bug reports, and community plugins are welcome. Read the
+[contribution guidelines](https://github.com/Soloplan/whatson/wiki/Contribiution)
+before submitting changes.
 
-- <https://github.com/dominikgolda>
-
-**Krzysztof Lorenc**
-
-- <https://github.com/krzysztof-lorenc>
-
-**Tomasz Skowron**
-
-- <https://github.com/skowront>
+For work with coding agents, [AGENTS.md](AGENTS.md) describes the repository
+layout, Windows build prerequisites, test commands, coding conventions, and
+coordination guidance.
 
 ## License
 
-[MIT license](https://github.com/Soloplan/whatson/blob/master/LICENSE)
+whatsON is distributed under the [MIT license](LICENSE).
+
+## Creators
+
+- Christian Heidl
+- [Steffen Wilke](https://github.com/steffen-wilke)
+- [Dominik Gouda](https://github.com/dominikgolda)
+- [Krzysztof Lorenc](https://github.com/krzysztof-lorenc)
+- [Tomasz Skowron](https://github.com/skowront)
+- [GamesAgeddon](https://github.com/GamesAgeddon)

@@ -1,0 +1,11 @@
+{
+  "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob",
+  "displayName": "Project6",
+  "fullDisplayName": "Folder11 / Project6",
+  "fullName": "Folder11/Project6",
+  "name": "Project6",
+  "url": "http://build.example.invalid/job/Folder11/job/Project6/",
+  "builds": [],
+  "lastBuild": null,
+  "disabled": true
+}

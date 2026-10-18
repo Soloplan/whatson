@@ -1,0 +1,127 @@
+{
+  "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob",
+  "displayName": "Project2",
+  "fullDisplayName": "Folder1 / Project2",
+  "fullName": "Folder1/Project2",
+  "name": "Project2",
+  "url": "http://build.example.invalid/job/Folder1/job/Project2/",
+  "builds": [
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+      "building": false,
+      "description": null,
+      "displayName": "#106",
+      "duration": 125000,
+      "estimatedDuration": 300000,
+      "number": 106,
+      "result": "SUCCESS",
+      "timestamp": 1768669200000,
+      "changeSets": [],
+      "culprits": []
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+      "building": false,
+      "description": null,
+      "displayName": "#105",
+      "duration": 124000,
+      "estimatedDuration": 300000,
+      "number": 105,
+      "result": "SUCCESS",
+      "timestamp": 1768665600000,
+      "changeSets": [],
+      "culprits": []
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+      "building": false,
+      "description": null,
+      "displayName": "#104",
+      "duration": 123000,
+      "estimatedDuration": 300000,
+      "number": 104,
+      "result": "SUCCESS",
+      "timestamp": 1768662000000,
+      "changeSets": [],
+      "culprits": []
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+      "building": false,
+      "description": null,
+      "displayName": "#103",
+      "duration": 122000,
+      "estimatedDuration": 300000,
+      "number": 103,
+      "result": "SUCCESS",
+      "timestamp": 1768658400000,
+      "changeSets": [
+        {
+          "_class": "hudson.scm.SubversionChangeLogSet",
+          "items": [
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 3"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 3"
+              }
+            }
+          ]
+        }
+      ],
+      "culprits": [
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 3"
+        }
+      ]
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+      "building": false,
+      "description": null,
+      "displayName": "#102",
+      "duration": 121000,
+      "estimatedDuration": 300000,
+      "number": 102,
+      "result": "SUCCESS",
+      "timestamp": 1768654800000,
+      "changeSets": [],
+      "culprits": []
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+      "building": false,
+      "description": null,
+      "displayName": "#101",
+      "duration": 120000,
+      "estimatedDuration": 300000,
+      "number": 101,
+      "result": "SUCCESS",
+      "timestamp": 1768651200000,
+      "changeSets": [],
+      "culprits": []
+    }
+  ],
+  "lastBuild": {
+    "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+    "building": false,
+    "description": null,
+    "displayName": "#106",
+    "duration": 125000,
+    "estimatedDuration": 300000,
+    "number": 106,
+    "result": "SUCCESS",
+    "timestamp": 1768669200000,
+    "changeSets": [],
+    "culprits": []
+  },
+  "disabled": true
+}

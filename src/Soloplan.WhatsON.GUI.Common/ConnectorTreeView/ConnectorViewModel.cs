@@ -27,6 +27,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private ObservableCollection<BuildStatusViewModel>? connectorSnapshots;
 
+    private bool applyingConfiguration;
+
     public ConnectorViewModel()
       : this(null)
     {
@@ -76,10 +78,21 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Applies configuration (currently just name) without firing property changed.
+    /// Applies saved configuration without treating it as a user edit.
     /// </summary>
     /// <param name="configuration">The configuration to apply.</param>
-    public virtual void ApplyConfiguration(ConnectorConfiguration configuration) => this.Name = configuration.Name;
+    public virtual void ApplyConfiguration(ConnectorConfiguration configuration)
+    {
+      try
+      {
+        this.applyingConfiguration = true;
+        this.Name = configuration.Name;
+      }
+      finally
+      {
+        this.applyingConfiguration = false;
+      }
+    }
 
     public virtual void Update(Connector? changedConnector)
     {
@@ -152,6 +165,12 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       return command;
     }
 
-    private void NameChanged() => this.OnConfigurationChanged(this, EventArgs.Empty);
+    private void NameChanged()
+    {
+      if (!this.applyingConfiguration)
+      {
+        this.OnConfigurationChanged(this, EventArgs.Empty);
+      }
+    }
   }
 }

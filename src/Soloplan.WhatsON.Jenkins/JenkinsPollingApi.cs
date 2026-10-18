@@ -35,7 +35,6 @@ namespace Soloplan.WhatsON.Jenkins
     private static readonly HttpClient pollingClient = new HttpClient(new HttpClientHandler
     {
       AutomaticDecompression = DecompressionMethods.All,
-      AllowAutoRedirect = false,
       UseProxy = false,
       MaxResponseHeadersLength = 32,
     }) { Timeout = Timeout.InfiniteTimeSpan };
