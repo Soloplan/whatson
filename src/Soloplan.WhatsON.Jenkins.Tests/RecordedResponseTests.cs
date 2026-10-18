@@ -85,6 +85,37 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       Assert.That(server.LogEntries.Count(), Is.EqualTo(2), "Replay must not probe the live server or fetch history separately.");
     }
 
+    [TestCase(301)]
+    [TestCase(302)]
+    [TestCase(307)]
+    public async Task RedirectedPollingPreservesThePreviousJsonApiBehavior(int redirectStatus)
+    {
+      using var server = WireMockServer.Start();
+      var json = ReadRecording("job-1.json", server.Urls[0]);
+      var job = JsonConvert.DeserializeObject<JenkinsJob>(json) ?? throw new AssertionException("Missing recorded job.");
+      var project = job.FullName ?? throw new AssertionException("Missing recorded project path.");
+      var jsonConnector = CreateConnector(server.Urls[0], project);
+      var xmlConnector = CreateConnector(server.Urls[0], project);
+      server.Given(Request.Create().WithPath(new Uri(JenkinsApi.UrlHelper.JobRequest(jsonConnector)).AbsolutePath).UsingGet())
+        .RespondWith(Response.Create().WithStatusCode(redirectStatus).WithHeader("Location", server.Urls[0] + "/canonical/json"));
+      server.Given(Request.Create().WithPath(JenkinsApi.PollingRequest(new[] { xmlConnector }, false).AbsolutePath).UsingGet())
+        .RespondWith(Response.Create().WithStatusCode(redirectStatus).WithHeader("Location", server.Urls[0] + "/canonical/xml"));
+      server.Given(Request.Create().WithPath("/canonical/json").UsingGet())
+        .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json").WithBody(json));
+      server.Given(Request.Create().WithPath("/canonical/xml").UsingGet())
+        .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/xml")
+          .WithBody(ReadRecording("poll-1.xml", server.Urls[0])));
+
+      await jsonConnector.QueryStatus(CancellationToken.None);
+      var queried = await xmlConnector.QueryStatusBatch(new[] { xmlConnector }, CancellationToken.None);
+
+      Assert.That(jsonConnector.CurrentStatus?.State, Is.EqualTo(ObservationState.Success));
+      Assert.That(queried, Is.EquivalentTo(new[] { xmlConnector }));
+      Assert.That(xmlConnector.CurrentStatus?.BuildNumber, Is.EqualTo(jsonConnector.CurrentStatus?.BuildNumber));
+      Assert.That(xmlConnector.CurrentStatus?.State, Is.EqualTo(jsonConnector.CurrentStatus?.State));
+      Assert.That(server.LogEntries.Count(), Is.EqualTo(4));
+    }
+
     [Test]
     public async Task RecordedDiscoveryPreservesNestedProjectPaths()
     {
