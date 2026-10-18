@@ -323,6 +323,24 @@ namespace Soloplan.WhatsON.GUI.Tests
       }
     }
 
+    [Test]
+    public void ApplyingSavedProjectNamesUpdatesBindingsWithoutMarkingConfigurationAsEdited()
+    {
+      var model = new ConnectorViewModel { Name = "Original name" };
+      var notifications = Observe(model);
+      var configurationEdits = 0;
+      model.ConfigurationChanged += (sender, args) => configurationEdits++;
+
+      model.ApplyConfiguration(new ConnectorConfiguration("Jenkins", "Saved name"));
+
+      Assert.That(model.Name, Is.EqualTo("Saved name"));
+      Assert.That(notifications, Does.Contain(nameof(model.Name)));
+      Assert.That(configurationEdits, Is.Zero);
+
+      model.Name = "User edit";
+      Assert.That(configurationEdits, Is.EqualTo(1), "Configuration refresh must not suppress later user edits.");
+    }
+
     private static Project CreateProject(string name) => new Project("https://build.example.invalid", name, null, name);
 
     private static List<string> Observe(INotifyPropertyChanged model)
