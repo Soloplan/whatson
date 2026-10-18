@@ -1,0 +1,2779 @@
+{
+  "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob",
+  "displayName": "Project5",
+  "fullDisplayName": "Folder4 / Folder9 / Project5",
+  "fullName": "Folder4/Folder9/Project5",
+  "name": "Project5",
+  "url": "http://build.example.invalid/job/Folder4/job/Folder9/job/Project5/",
+  "builds": [
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+      "building": true,
+      "description": null,
+      "displayName": "#106",
+      "duration": 125000,
+      "estimatedDuration": 300000,
+      "number": 106,
+      "result": "FAILURE",
+      "timestamp": 1768928400000,
+      "changeSets": [],
+      "culprits": [
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 21"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 22"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 23"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 24"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 25"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 26"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 19"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 27"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 28"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 29"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 30"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 31"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 14"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 32"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 33"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 34"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 35"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 36"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 37"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 38"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 8"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 16"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 39"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 40"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 41"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 11"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 2"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 42"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 43"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 44"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 45"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 46"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 47"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 48"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 49"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 50"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 18"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 51"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 52"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 53"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 54"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 17"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 3"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 55"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 56"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 57"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 58"
+        }
+      ]
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+      "building": false,
+      "description": null,
+      "displayName": "#105",
+      "duration": 124000,
+      "estimatedDuration": 300000,
+      "number": 105,
+      "result": "FAILURE",
+      "timestamp": 1768924800000,
+      "changeSets": [],
+      "culprits": [
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 21"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 22"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 23"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 24"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 25"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 26"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 19"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 27"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 28"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 29"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 30"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 31"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 14"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 32"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 33"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 34"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 35"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 36"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 37"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 38"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 8"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 16"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 39"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 40"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 41"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 11"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 2"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 42"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 43"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 44"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 45"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 46"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 47"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 48"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 49"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 50"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 18"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 51"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 52"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 53"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 54"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 17"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 3"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 55"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 56"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 57"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 58"
+        }
+      ]
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+      "building": false,
+      "description": null,
+      "displayName": "#104",
+      "duration": 123000,
+      "estimatedDuration": 300000,
+      "number": 104,
+      "result": "FAILURE",
+      "timestamp": 1768921200000,
+      "changeSets": [
+        {
+          "_class": "hudson.scm.SubversionChangeLogSet",
+          "items": [
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 14"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 14"
+              }
+            }
+          ]
+        }
+      ],
+      "culprits": [
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 21"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 22"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 23"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 24"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 25"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 26"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 19"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 27"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 28"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 29"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 30"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 31"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 14"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 32"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 33"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 34"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 35"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 36"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 37"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 38"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 8"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 16"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 39"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 40"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 41"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 11"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 2"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 42"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 43"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 44"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 45"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 46"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 47"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 48"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 49"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 50"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 18"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 51"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 52"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 53"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 54"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 17"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 3"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 55"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 56"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 57"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 58"
+        }
+      ]
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+      "building": false,
+      "description": null,
+      "displayName": "#103",
+      "duration": 122000,
+      "estimatedDuration": 300000,
+      "number": 103,
+      "result": "FAILURE",
+      "timestamp": 1768917600000,
+      "changeSets": [],
+      "culprits": [
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 21"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 22"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 23"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 24"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 25"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 26"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 19"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 27"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 28"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 29"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 30"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 31"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 14"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 32"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 33"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 34"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 35"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 36"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 37"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 38"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 8"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 16"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 39"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 40"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 41"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 11"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 2"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 42"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 43"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 44"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 45"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 46"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 47"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 48"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 49"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 50"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 18"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 51"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 52"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 53"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 54"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 17"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 3"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 55"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 56"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 57"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 58"
+        }
+      ]
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+      "building": false,
+      "description": null,
+      "displayName": "#102",
+      "duration": 121000,
+      "estimatedDuration": 300000,
+      "number": 102,
+      "result": "FAILURE",
+      "timestamp": 1768914000000,
+      "changeSets": [
+        {
+          "_class": "hudson.scm.SubversionChangeLogSet",
+          "items": [
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 16"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 17"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 8"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 18"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 19"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 16"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 45"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 16"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 11"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 11"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 47"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 17"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 54"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 14"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 32"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 16"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 32"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 32"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 26"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 32"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 49"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 39"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 16"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 50"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 54"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 30"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 16"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 49"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 14"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 14"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 14"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 30"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 14"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 14"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 54"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 32"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 41"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 39"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 54"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 39"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 22"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 21"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 22"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 54"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 29"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 39"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 32"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 22"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 45"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 22"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 22"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 22"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 54"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 32"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 14"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 14"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 32"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 39"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 16"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 39"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 55"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 49"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 3"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 3"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 14"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 30"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 30"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 3"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 39"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 31"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 39"
+              }
+            }
+          ]
+        }
+      ],
+      "culprits": [
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 21"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 22"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 23"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 24"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 25"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 26"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 19"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 27"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 28"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 29"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 30"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 31"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 14"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 32"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 33"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 34"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 35"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 36"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 37"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 38"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 8"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 16"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 39"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 40"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 41"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 11"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 2"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 42"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 43"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 44"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 45"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 46"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 47"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 48"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 49"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 50"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 18"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 51"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 52"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 53"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 54"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 17"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 3"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 55"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 56"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 57"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 58"
+        }
+      ]
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+      "building": false,
+      "description": null,
+      "displayName": "#101",
+      "duration": 120000,
+      "estimatedDuration": 300000,
+      "number": 101,
+      "result": "FAILURE",
+      "timestamp": 1768910400000,
+      "changeSets": [
+        {
+          "_class": "hudson.scm.SubversionChangeLogSet",
+          "items": [
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 37"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 40"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 28"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 41"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 51"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 32"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 23"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 19"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 32"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 17"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 51"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 8"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 16"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 22"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 30"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 30"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 30"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 37"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 23"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 23"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 30"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 30"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 32"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 37"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 22"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 49"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 39"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 37"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 40"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 16"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 45"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 51"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 51"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 50"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 32"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 38"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 16"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 38"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 32"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 44"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 44"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 44"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 44"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 23"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 45"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 52"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 44"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 52"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 52"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 32"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 44"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 32"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 42"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 39"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 44"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 44"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 44"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 19"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 22"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 26"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 14"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 30"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 44"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 36"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 22"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 3"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 37"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 36"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 3"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 3"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 8"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 57"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 16"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 35"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 52"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 27"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 51"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 39"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 29"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 2"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 46"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 39"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 44"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 39"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 44"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 39"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 52"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 39"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 44"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 39"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 44"
+              }
+            },
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 44"
+              }
+            }
+          ]
+        }
+      ],
+      "culprits": [
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 21"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 22"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 23"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 24"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 25"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 26"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 19"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 27"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 28"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 29"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 30"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 31"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 14"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 32"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 33"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 34"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 35"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 36"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 37"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 38"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 8"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 16"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 39"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 40"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 41"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 11"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 2"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 42"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 43"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 44"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 45"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 46"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 48"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 49"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 50"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 51"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 52"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 53"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 54"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 17"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 3"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 55"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 56"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 57"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 58"
+        }
+      ]
+    }
+  ],
+  "lastBuild": {
+    "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+    "building": true,
+    "description": null,
+    "displayName": "#106",
+    "duration": 125000,
+    "estimatedDuration": 300000,
+    "number": 106,
+    "result": "FAILURE",
+    "timestamp": 1768928400000,
+    "changeSets": [],
+    "culprits": [
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 21"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 22"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 23"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 24"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 25"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 26"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 19"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 27"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 28"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 29"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 30"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 31"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 14"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 32"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 33"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 34"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 35"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 36"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 37"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 38"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 8"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 16"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 39"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 40"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 41"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 11"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 2"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 42"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 43"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 44"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 45"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 46"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 47"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 48"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 49"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 50"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 18"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 51"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 52"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 53"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 54"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 17"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 3"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 55"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 56"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 57"
+      },
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 58"
+      }
+    ]
+  },
+  "disabled": false
+}

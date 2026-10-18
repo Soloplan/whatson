@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='utf-8'?>
+<jobs>
+  <job _class="org.jenkinsci.plugins.workflow.job.WorkflowJob">
+    <name>Project2</name>
+    <build _class="org.jenkinsci.plugins.workflow.job.WorkflowRun">
+      <building>false</building>
+      <displayName>#106</displayName>
+      <duration>125000</duration>
+      <estimatedDuration>300000</estimatedDuration>
+      <number>106</number>
+      <result>SUCCESS</result>
+      <timestamp>1768669200000</timestamp>
+    </build>
+    <build _class="org.jenkinsci.plugins.workflow.job.WorkflowRun">
+      <building>false</building>
+      <displayName>#105</displayName>
+      <duration>124000</duration>
+      <estimatedDuration>300000</estimatedDuration>
+      <number>105</number>
+      <result>SUCCESS</result>
+      <timestamp>1768665600000</timestamp>
+    </build>
+    <build _class="org.jenkinsci.plugins.workflow.job.WorkflowRun">
+      <building>false</building>
+      <displayName>#104</displayName>
+      <duration>123000</duration>
+      <estimatedDuration>300000</estimatedDuration>
+      <number>104</number>
+      <result>SUCCESS</result>
+      <timestamp>1768662000000</timestamp>
+    </build>
+    <build _class="org.jenkinsci.plugins.workflow.job.WorkflowRun">
+      <building>false</building>
+      <displayName>#103</displayName>
+      <duration>122000</duration>
+      <estimatedDuration>300000</estimatedDuration>
+      <number>103</number>
+      <result>SUCCESS</result>
+      <timestamp>1768658400000</timestamp>
+      <changeSet _class="hudson.scm.SubversionChangeLogSet">
+        <item _class="hudson.scm.SubversionChangeLogSet$LogEntry">
+          <author>
+            <absoluteUrl>http://build.example.invalid/user/contributor/</absoluteUrl>
+            <fullName>Contributor 3</fullName>
+          </author>
+        </item>
+        <item _class="hudson.scm.SubversionChangeLogSet$LogEntry">
+          <author>
+            <absoluteUrl>http://build.example.invalid/user/contributor/</absoluteUrl>
+            <fullName>Contributor 3</fullName>
+          </author>
+        </item>
+      </changeSet>
+      <culprit>
+        <absoluteUrl>http://build.example.invalid/user/contributor/</absoluteUrl>
+        <fullName>Contributor 3</fullName>
+      </culprit>
+    </build>
+    <build _class="org.jenkinsci.plugins.workflow.job.WorkflowRun">
+      <building>false</building>
+      <displayName>#102</displayName>
+      <duration>121000</duration>
+      <estimatedDuration>300000</estimatedDuration>
+      <number>102</number>
+      <result>SUCCESS</result>
+      <timestamp>1768654800000</timestamp>
+    </build>
+    <build _class="org.jenkinsci.plugins.workflow.job.WorkflowRun">
+      <building>false</building>
+      <displayName>#101</displayName>
+      <duration>120000</duration>
+      <estimatedDuration>300000</estimatedDuration>
+      <number>101</number>
+      <result>SUCCESS</result>
+      <timestamp>1768651200000</timestamp>
+    </build>
+    <lastBuild _class="org.jenkinsci.plugins.workflow.job.WorkflowRun">
+      <building>false</building>
+      <displayName>#106</displayName>
+      <duration>125000</duration>
+      <estimatedDuration>300000</estimatedDuration>
+      <number>106</number>
+      <result>SUCCESS</result>
+      <timestamp>1768669200000</timestamp>
+    </lastBuild>
+    <disabled>true</disabled>
+    <inQueue>false</inQueue>
+  </job>
+</jobs>

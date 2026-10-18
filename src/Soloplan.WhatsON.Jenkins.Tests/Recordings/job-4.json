@@ -1,0 +1,236 @@
+{
+  "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob",
+  "displayName": "Project4",
+  "fullDisplayName": "Folder7 / Project4",
+  "fullName": "Folder7/Project4",
+  "name": "Project4",
+  "url": "http://build.example.invalid/job/Folder7/job/Project4/",
+  "builds": [
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+      "building": false,
+      "description": null,
+      "displayName": "#106",
+      "duration": 125000,
+      "estimatedDuration": 300000,
+      "number": 106,
+      "result": "UNSTABLE",
+      "timestamp": 1768842000000,
+      "changeSets": [
+        {
+          "_class": "hudson.scm.SubversionChangeLogSet",
+          "items": [
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 14"
+              }
+            }
+          ]
+        }
+      ],
+      "culprits": [
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 14"
+        }
+      ]
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+      "building": false,
+      "description": null,
+      "displayName": "#105",
+      "duration": 124000,
+      "estimatedDuration": 300000,
+      "number": 105,
+      "result": "UNSTABLE",
+      "timestamp": 1768838400000,
+      "changeSets": [
+        {
+          "_class": "hudson.scm.SubversionChangeLogSet",
+          "items": [
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 14"
+              }
+            }
+          ]
+        }
+      ],
+      "culprits": [
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 14"
+        }
+      ]
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+      "building": false,
+      "description": null,
+      "displayName": "#104",
+      "duration": 123000,
+      "estimatedDuration": 300000,
+      "number": 104,
+      "result": "SUCCESS",
+      "timestamp": 1768834800000,
+      "changeSets": [
+        {
+          "_class": "hudson.scm.SubversionChangeLogSet",
+          "items": [
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 16"
+              }
+            }
+          ]
+        }
+      ],
+      "culprits": [
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 16"
+        }
+      ]
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+      "building": false,
+      "description": null,
+      "displayName": "#103",
+      "duration": 122000,
+      "estimatedDuration": 300000,
+      "number": 103,
+      "result": "SUCCESS",
+      "timestamp": 1768831200000,
+      "changeSets": [
+        {
+          "_class": "hudson.scm.SubversionChangeLogSet",
+          "items": [
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 17"
+              }
+            }
+          ]
+        }
+      ],
+      "culprits": [
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 17"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 8"
+        }
+      ]
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+      "building": false,
+      "description": null,
+      "displayName": "#102",
+      "duration": 121000,
+      "estimatedDuration": 300000,
+      "number": 102,
+      "result": "UNSTABLE",
+      "timestamp": 1768827600000,
+      "changeSets": [
+        {
+          "_class": "hudson.scm.SubversionChangeLogSet",
+          "items": [
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 8"
+              }
+            }
+          ]
+        }
+      ],
+      "culprits": [
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 8"
+        }
+      ]
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+      "building": false,
+      "description": null,
+      "displayName": "#101",
+      "duration": 120000,
+      "estimatedDuration": 300000,
+      "number": 101,
+      "result": "SUCCESS",
+      "timestamp": 1768824000000,
+      "changeSets": [
+        {
+          "_class": "hudson.scm.SubversionChangeLogSet",
+          "items": [
+            {
+              "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+              "author": {
+                "absoluteUrl": "http://build.example.invalid/user/contributor/",
+                "fullName": "Contributor 18"
+              }
+            }
+          ]
+        }
+      ],
+      "culprits": [
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 19"
+        },
+        {
+          "absoluteUrl": "http://build.example.invalid/user/contributor/",
+          "fullName": "Contributor 18"
+        }
+      ]
+    }
+  ],
+  "lastBuild": {
+    "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+    "building": false,
+    "description": null,
+    "displayName": "#106",
+    "duration": 125000,
+    "estimatedDuration": 300000,
+    "number": 106,
+    "result": "UNSTABLE",
+    "timestamp": 1768842000000,
+    "changeSets": [
+      {
+        "_class": "hudson.scm.SubversionChangeLogSet",
+        "items": [
+          {
+            "_class": "hudson.scm.SubversionChangeLogSet$LogEntry",
+            "author": {
+              "absoluteUrl": "http://build.example.invalid/user/contributor/",
+              "fullName": "Contributor 14"
+            }
+          }
+        ]
+      }
+    ],
+    "culprits": [
+      {
+        "absoluteUrl": "http://build.example.invalid/user/contributor/",
+        "fullName": "Contributor 14"
+      }
+    ]
+  },
+  "disabled": false
+}

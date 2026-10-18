@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<jobs>
+  <job _class="org.jenkinsci.plugins.workflow.job.WorkflowJob">
+    <name>Project6</name>
+    <disabled>true</disabled>
+    <inQueue>false</inQueue>
+  </job>
+</jobs>
