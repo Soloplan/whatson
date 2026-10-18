@@ -14,21 +14,21 @@ namespace Soloplan.WhatsON.GUI.Common
     /// <summary>
     /// The logger.
     /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
-    public override void Execute(object parameter)
+    public override void Execute(object? parameter)
     {
       if (parameter is string url)
       {
         log.Debug("Opening web page {@address}.", url);
-        System.Diagnostics.Process.Start(url);
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true });
         return;
       }
 
       log.Warn("Can't open web page because the pram is of incorrect type {type}", new { Type = parameter?.GetType() });
     }
 
-    protected override bool CanExecuteInternal(object parameter)
+    protected override bool CanExecuteInternal(object? parameter)
     {
       if (parameter is string url && !string.IsNullOrEmpty(url))
       {

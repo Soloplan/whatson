@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="EditProjectName.xaml.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -23,20 +23,20 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     }
 
     public EditProjectName(ConnectorViewModel model)
-    : this()
+      : this()
     {
       this.DataContext = model;
     }
 
-    private void OkButtonClick(object sender, RoutedEventArgs e)
+    private void OkButtonClick(object? sender, RoutedEventArgs e)
     {
     }
 
-    private void CancelButtonClick(object sender, RoutedEventArgs e)
+    private void CancelButtonClick(object? sender, RoutedEventArgs e)
     {
     }
 
-    private void CanCloseDialog(object sender, CanExecuteRoutedEventArgs e)
+    private void CanCloseDialog(object? sender, CanExecuteRoutedEventArgs e)
     {
       if (e.Parameter is bool param)
       {

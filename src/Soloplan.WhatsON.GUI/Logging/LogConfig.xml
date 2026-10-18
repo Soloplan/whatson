@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<nlog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="http://www.nlog-project.org/schemas/NLog.xsd"
       autoReload="true"
       throwExceptions="true"
       keepVariablesOnReload="true">
@@ -12,7 +12,7 @@
             archiveFileName="${var:logFileDir}/archives/{#####}.zip"
             layout="${longdate} ${level} ${callsite}:${callsite-linenumber}  - ${message}
                     ${exception:format=Type, Message,ToString,StackTrace:maxInnerExceptionLevel=10:separator=\r\n}"
-            keepFileOpen="false" 
+            keepFileOpen="false"
             archiveAboveSize="20971520"
             enableArchiveFileCompression="true"
             archiveNumbering="Sequence"

@@ -1,7 +1,9 @@
-﻿// <copyright file="TrayHandler.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="TrayHandler.cs" company="Soloplan GmbH">
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.GUI
 {
@@ -17,11 +19,12 @@ namespace Soloplan.WhatsON.GUI
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.GUI.Properties;
+  using Soloplan.WhatsON.Localization;
   using Soloplan.WhatsON.Model;
   using Application = System.Windows.Application;
 
   /// <summary>
-  /// Wrapper for <see cref="NotifyIcon"/> from System.WindowsForms. Handles creation/opening/closing of main window.
+  /// Wrapper for <see cref="NotifyIcon" /> from System.WindowsForms. Handles creation/opening/closing of main window.
   /// </summary>
   public class TrayHandler : IDisposable
   {
@@ -38,34 +41,34 @@ namespace Soloplan.WhatsON.GUI
     /// <summary>
     /// The context menu displayed by tray icon.
     /// </summary>
-    private ContextMenu contextMenu;
+    private ContextMenuStrip? contextMenu;
 
     /// <summary>
     /// The icon.
     /// </summary>
-    private NotifyIcon icon;
+    private NotifyIcon? icon;
 
     /// <summary>
-    /// The icon displayed when build-status is pending.
+    /// The unbadged icon displayed when build-status is pending or no projects are configured.
     /// </summary>
-    private Icon loadingIcon;
+    private Icon? loadingIcon;
 
     /// <summary>
     /// The icon displayed when build-status is normal.
     /// </summary>
-    private Icon normalIcon;
+    private Icon? normalIcon;
 
     /// <summary>
     /// The icon displayed when build-status is unstable.
     /// </summary>
-    private Icon unstableIcon;
+    private Icon? unstableIcon;
 
     /// <summary>
     /// The icon displayed when build-status is broken.
     /// </summary>
-    private Icon failureIcon;
+    private Icon? failureIcon;
 
-    private MainWindow mainWindow;
+    private MainWindow? mainWindow;
 
     private NotificationsModel model;
 
@@ -76,36 +79,39 @@ namespace Soloplan.WhatsON.GUI
 
     public TrayHandler(ObservationScheduler scheduler, ApplicationConfiguration configuration)
     {
-      this.loadingIcon = new Icon(Properties.Resources.Whatson, new Size(16, 16));
+      System.Windows.Forms.Application.EnableVisualStyles();
+      this.loadingIcon = new Icon(Resources.Whatson, new Size(16, 16));
       this.normalIcon = CreateStatusIcon(this.loadingIcon, Color.LimeGreen);
       this.unstableIcon = CreateStatusIcon(this.loadingIcon, Color.Gold);
       this.failureIcon = CreateStatusIcon(this.loadingIcon, Color.Red);
 
-      this.icon = new System.Windows.Forms.NotifyIcon();
+      this.icon = new NotifyIcon();
       this.icon.Icon = this.loadingIcon;
       this.icon.Text = Resources.TrayHandler_UpdateTrayIcon_Pending;
       this.icon.Visible = true;
       this.scheduler = scheduler;
       this.configuration = configuration;
 
-      this.contextMenu = new ContextMenu();
-      this.icon.ContextMenu = this.contextMenu;
-      this.contextMenu.Popup += this.OnContextMenuPopup;
+      this.contextMenu = new ContextMenuStrip { RenderMode = ToolStripRenderMode.System };
+      this.icon.ContextMenuStrip = this.contextMenu;
+      this.contextMenu.Opening += this.OnContextMenuPopup;
       this.icon.DoubleClick += (s, e) => this.ShowOrHideWindow();
       this.icon.BalloonTipClicked += (s, e) => this.BringToFront(true);
       this.icon.Click += (s, e) => this.BringToFront(false);
 
       this.model = new NotificationsModel(this.scheduler);
-      this.model.PropertyChanged += this.CurrentStatusPropertyChanged;
+      this.model.StatusChanged += this.CurrentStatusPropertyChanged;
       this.UpdateTrayIcon();
+      Localizer.LanguageChanged += this.LanguageChanged;
 
       if (File.Exists(Path.Combine(SerializationHelper.Instance.ConfigFolder, MainWindow.VisualSettingsFile)))
       {
-        this.VisualSettings = SerializationHelper.Load<MainWindowSettings>(Path.Combine(SerializationHelper.Instance.ConfigFolder, MainWindow.VisualSettingsFile));
+        this.VisualSettings =
+          SerializationHelper.Load<MainWindowSettings>(Path.Combine(SerializationHelper.Instance.ConfigFolder, MainWindow.VisualSettingsFile));
       }
     }
 
-    public MainWindowSettings VisualSettings { get; private set; }
+    public MainWindowSettings VisualSettings { get; private set; } = new MainWindowSettings();
 
     /// <summary>
     /// Gets a value indicating whether the main window is visible.
@@ -113,7 +119,7 @@ namespace Soloplan.WhatsON.GUI
     private bool MainWindowVisible => Application.Current.MainWindow is MainWindow window && window.Visibility == System.Windows.Visibility.Visible;
 
     /// <summary>
-    /// Gets instance of <see cref="MainWindow"/>.
+    /// Gets instance of <see cref="MainWindow" />.
     /// </summary>
     private MainWindow MainWindow
     {
@@ -121,7 +127,7 @@ namespace Soloplan.WhatsON.GUI
       {
         if (this.mainWindow == null)
         {
-          this.mainWindow = new MainWindow(this.scheduler, this.configuration, this.model.Connectors.Select(sub => sub.Connector).ToList());
+          this.mainWindow = new MainWindow(this.scheduler, this.configuration, this.model.Connectors.Select(sub => sub.Connector).OfType<Connector>().ToList());
 
           this.mainWindow.ApplyVisualSettings(this.VisualSettings);
 
@@ -136,6 +142,7 @@ namespace Soloplan.WhatsON.GUI
 
     public void Dispose()
     {
+      Localizer.LanguageChanged -= this.LanguageChanged;
       this.contextMenu?.Dispose();
       this.contextMenu = null;
       this.icon?.Dispose();
@@ -159,7 +166,7 @@ namespace Soloplan.WhatsON.GUI
     public void ShowBaloon(string title, string tipText, ToolTipIcon i)
     {
       tipText = string.IsNullOrEmpty(tipText) ? " " : tipText;
-      this.icon.ShowBalloonTip(1000, title, tipText, i);
+      this.icon?.ShowBalloonTip(1000, title, tipText, i);
     }
 
     /// <summary>
@@ -175,10 +182,12 @@ namespace Soloplan.WhatsON.GUI
         }
         else if ((DateTime.Now - this.lastWindowFocused).TotalMilliseconds > 250)
         {
-          this.VisualSettings = this.mainWindow.GetVisualSettings();
+          this.VisualSettings = this.MainWindow.GetVisualSettings();
           if (this.VisualSettings != null)
           {
-            SerializationHelper.Instance.Save(this.VisualSettings, Path.Combine(SerializationHelper.Instance.ConfigFolder, MainWindow.VisualSettingsFile));
+            SerializationHelper.Instance.Save(
+              this.VisualSettings,
+              Path.Combine(SerializationHelper.Instance.ConfigFolder, MainWindow.VisualSettingsFile));
           }
 
           this.MainWindow.Hide();
@@ -213,10 +222,18 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="states">Current connector states.</param>
     /// <param name="configuredConnectorCount">Number of configured connectors expected to report a state.</param>
-    /// <returns>Failure if any build is failing, unstable if any build is unstable, unknown while statuses are pending, otherwise success.</returns>
+    /// <returns>
+    /// Failure if any build is failing, unstable if any build is unstable, unknown when no statuses are available or
+    /// statuses are pending, otherwise success.
+    /// </returns>
     internal static ObservationState GetOverallState(System.Collections.Generic.IEnumerable<ObservationState> states, int configuredConnectorCount)
     {
       var currentStates = states.ToList();
+      if (currentStates.Count == 0)
+      {
+        return ObservationState.Unknown;
+      }
+
       if (currentStates.Contains(ObservationState.Failure))
       {
         return ObservationState.Failure;
@@ -227,7 +244,9 @@ namespace Soloplan.WhatsON.GUI
         return ObservationState.Unstable;
       }
 
-      return currentStates.Count < configuredConnectorCount || currentStates.Contains(ObservationState.Unknown) ? ObservationState.Unknown : ObservationState.Success;
+      return currentStates.Count < configuredConnectorCount || currentStates.Contains(ObservationState.Unknown)
+        ? ObservationState.Unknown
+        : ObservationState.Success;
     }
 
     /// <summary>
@@ -236,17 +255,17 @@ namespace Soloplan.WhatsON.GUI
     /// <param name="currentState">The current connector state.</param>
     /// <param name="snapshotStates">History states ordered from newest to oldest.</param>
     /// <returns>The current state, or the newest completed history state while the current state is unknown or running.</returns>
-    internal static ObservationState GetEffectiveState(ObservationState currentState, System.Collections.Generic.IEnumerable<ObservationState> snapshotStates)
+    internal static ObservationState GetEffectiveState(
+      ObservationState currentState,
+      System.Collections.Generic.IEnumerable<ObservationState> snapshotStates)
     {
       if (currentState != ObservationState.Unknown && currentState != ObservationState.Running)
       {
         return currentState;
       }
 
-      var completedState = snapshotStates
-        .Where(state => state != ObservationState.Unknown && state != ObservationState.Running)
-        .Select(state => (ObservationState?)state)
-        .FirstOrDefault();
+      var completedState = snapshotStates.Where(state => state != ObservationState.Unknown && state != ObservationState.Running)
+        .Select(state => (ObservationState?)state).FirstOrDefault();
       return completedState ?? currentState;
     }
 
@@ -257,7 +276,10 @@ namespace Soloplan.WhatsON.GUI
     /// <param name="stateToCheck">The state to check.</param>
     /// <param name="notificationConfiguration">The notification configuration.</param>
     /// <returns>True if the notification should be shown, otherwise false.</returns>
-    internal bool CheckNotificationShow(StatusViewModel currentStatus, ObservationState stateToCheck, NotificationConfiguration notificationConfiguration)
+    internal bool CheckNotificationShow(
+      StatusViewModel currentStatus,
+      ObservationState stateToCheck,
+      NotificationConfiguration notificationConfiguration)
     {
       var enabledCheck = this.GetEnabledStateCheck(stateToCheck, notificationConfiguration);
       if (!enabledCheck())
@@ -266,7 +288,7 @@ namespace Soloplan.WhatsON.GUI
       }
 
       var connectorSnapshots = currentStatus.Parent.ConnectorSnapshots;
-      if (connectorSnapshots == null || connectorSnapshots.Count == 1 || notificationConfiguration.OnlyIfChanged == false)
+      if (connectorSnapshots == null || connectorSnapshots.Count == 1 || !notificationConfiguration.OnlyIfChanged)
       {
         return currentStatus.State == stateToCheck;
       }
@@ -325,52 +347,69 @@ namespace Soloplan.WhatsON.GUI
     private static extern bool DestroyIcon(IntPtr handle);
 
     /// <summary>
-    /// Called when user attempts to close <see cref="MainWindow"/>. It prevents window being closed and hides it instead.
+    /// Called when user attempts to close <see cref="MainWindow" />. It prevents window being closed and hides it instead.
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The event args.</param>
-    private void MainWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
+    private void MainWindowClosing(object? sender, System.ComponentModel.CancelEventArgs e)
     {
-      this.VisualSettings = this.mainWindow.GetVisualSettings();
+      if (sender is MainWindow window)
+      {
+        this.VisualSettings = window.GetVisualSettings();
+      }
     }
 
-    private void MainWindowClosed(object sender, EventArgs e)
+    private void MainWindowClosed(object? sender, EventArgs e)
     {
       if (this.VisualSettings != null)
       {
-        SerializationHelper.Instance.Save(this.VisualSettings, Path.Combine(SerializationHelper.Instance.ConfigFolder, MainWindow.VisualSettingsFile));
+        SerializationHelper.Instance.Save(
+          this.VisualSettings,
+          Path.Combine(SerializationHelper.Instance.ConfigFolder, MainWindow.VisualSettingsFile));
       }
 
-      this.mainWindow.Closing -= this.MainWindowClosing;
-      this.mainWindow.Closed -= this.MainWindowClosed;
+      if (this.mainWindow != null)
+      {
+        this.mainWindow.Closing -= this.MainWindowClosing;
+        this.mainWindow.Closed -= this.MainWindowClosed;
+      }
+
       this.mainWindow = null;
     }
 
     /// <summary>
     /// Creates context menu whenever it is opened.
     /// </summary>
-    private void OnContextMenuPopup(object sender, EventArgs e)
+    private void OnContextMenuPopup(object? sender, System.ComponentModel.CancelEventArgs e)
     {
-      this.contextMenu.MenuItems.Clear();
-      var openCloseWindow = new MenuItem();
-      openCloseWindow.Text = this.MainWindowVisible ? "Close window" : "Open window";
+      if (this.contextMenu == null)
+      {
+        return;
+      }
+
+      this.contextMenu.Items.Clear();
+      var openCloseWindow = new ToolStripMenuItem();
+      openCloseWindow.Text = this.MainWindowVisible ? Strings.CloseWindow : Strings.OpenWindow;
       openCloseWindow.Click += (s, args) => this.ShowOrHideWindow();
 
-      var closeApplication = new MenuItem();
-      closeApplication.Text = "Exit";
+      var closeApplication = new ToolStripMenuItem();
+      closeApplication.Text = Strings.Exit;
       closeApplication.Click += this.OnCloseApplicationClick;
 
-      this.contextMenu.MenuItems.Add(openCloseWindow);
-      this.contextMenu.MenuItems.Add(closeApplication);
+      this.contextMenu.Items.Add(openCloseWindow);
+      this.contextMenu.Items.Add(closeApplication);
     }
+
+    private void LanguageChanged(object? sender, EventArgs args) => Application.Current.Dispatcher.Invoke(() =>
+    {
+      this.UpdateTrayIcon();
+      this.OnContextMenuPopup(this.contextMenu, new System.ComponentModel.CancelEventArgs());
+    });
 
     /// <summary>
     /// Handles closing application.
     /// </summary>
-    private void OnCloseApplicationClick(object sender, EventArgs e)
-    {
-      Application.Current.Shutdown();
-    }
+    private void OnCloseApplicationClick(object? sender, EventArgs e) => Application.Current.Shutdown();
 
     /// <summary>
     /// Brings the window to front.
@@ -397,7 +436,7 @@ namespace Soloplan.WhatsON.GUI
       }
     }
 
-    private void MainWindowConfigurationApplied(object sender, ValueEventArgs<ApplicationConfiguration> e)
+    private void MainWindowConfigurationApplied(object? sender, ValueEventArgs<ApplicationConfiguration> e)
     {
       this.configuration = e.Value;
       if (this.scheduler.Running)
@@ -413,9 +452,9 @@ namespace Soloplan.WhatsON.GUI
       }
 
       this.mainWindow?.ApplyConfiguration(this.configuration);
-      this.model.PropertyChanged -= this.CurrentStatusPropertyChanged;
+      this.model.StatusChanged -= this.CurrentStatusPropertyChanged;
       this.model = new NotificationsModel(this.scheduler);
-      this.model.PropertyChanged += this.CurrentStatusPropertyChanged;
+      this.model.StatusChanged += this.CurrentStatusPropertyChanged;
       this.UpdateTrayIcon();
 
       this.scheduler.Start();
@@ -458,10 +497,11 @@ namespace Soloplan.WhatsON.GUI
     /// Currents status changed.
     /// </summary>
     /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="System.ComponentModel.PropertyChangedEventArgs"/> instance containing the event data.</param>
-    private void CurrentStatusPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    /// <param name="e">The <see cref="System.ComponentModel.PropertyChangedEventArgs" /> instance containing the event data.</param>
+    private void CurrentStatusPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-      if (sender is StatusViewModel statusViewModel && (e.PropertyName == nameof(StatusViewModel.State) || e.PropertyName == nameof(ConnectorViewModel.CurrentStatus)))
+      if (sender is StatusViewModel statusViewModel
+          && (e.PropertyName == nameof(StatusViewModel.State) || e.PropertyName == nameof(ConnectorViewModel.CurrentStatus)))
       {
         this.UpdateTrayIcon();
 
@@ -470,38 +510,49 @@ namespace Soloplan.WhatsON.GUI
           return;
         }
 
-        var connectorConfiguration = this.configuration.ConnectorsConfiguration.FirstOrDefault(s => s.Identifier == statusViewModel.Parent.Identifier);
+        var connectorConfiguration =
+          this.configuration.ConnectorsConfiguration.FirstOrDefault(s => s.Identifier == statusViewModel.Parent.Identifier);
+        if (connectorConfiguration == null)
+        {
+          return;
+        }
+
         var notificationConfiguration = this.configuration.GetNotificationConfiguration(connectorConfiguration);
 
-        var description = $"Project name: {statusViewModel.Parent.Name}.";
+        var description = Localizer.ProjectNotification(statusViewModel.Parent.Name);
         if (this.CheckNotificationShow(statusViewModel, ObservationState.Running, notificationConfiguration))
         {
-          this.ShowBaloon("Build started.", description, System.Windows.Forms.ToolTipIcon.None);
+          this.ShowBaloon(Strings.BuildStarted, description, ToolTipIcon.None);
         }
         else if (this.CheckNotificationShow(statusViewModel, ObservationState.Failure, notificationConfiguration))
         {
-          this.ShowBaloon("Build failed.", description, System.Windows.Forms.ToolTipIcon.Error);
+          this.ShowBaloon(Strings.BuildFailed, description, ToolTipIcon.Error);
         }
         else if (this.CheckNotificationShow(statusViewModel, ObservationState.Success, notificationConfiguration))
         {
-          this.ShowBaloon("Build successful", description, System.Windows.Forms.ToolTipIcon.Info);
+          this.ShowBaloon(Strings.BuildSuccessful, description, ToolTipIcon.Info);
         }
         else if (this.CheckNotificationShow(statusViewModel, ObservationState.Unstable, notificationConfiguration))
         {
-          this.ShowBaloon("Build successful (Unstable)", description, System.Windows.Forms.ToolTipIcon.Warning);
+          this.ShowBaloon(Strings.BuildSuccessfulUnstable, description, ToolTipIcon.Warning);
         }
         else if (this.CheckNotificationShow(statusViewModel, ObservationState.Unknown, notificationConfiguration))
         {
-          this.ShowBaloon("Build interrupted", description, System.Windows.Forms.ToolTipIcon.Warning);
+          this.ShowBaloon(Strings.BuildInterrupted, description, ToolTipIcon.Warning);
         }
       }
     }
 
     private void UpdateTrayIcon()
     {
-      var connectorStates = this.model.Connectors
-        .Select(connector => GetEffectiveState(connector.CurrentStatus.State, connector.ConnectorSnapshots.Select(snapshot => snapshot.State)))
-        .ToList();
+      if (this.icon == null)
+      {
+        return;
+      }
+
+      var connectorStates = this.model.Connectors.Select(connector => GetEffectiveState(
+        connector.CurrentStatus.State,
+        connector.ConnectorSnapshots.Select(snapshot => snapshot.State))).ToList();
       var overallState = GetOverallState(connectorStates, this.configuration.ConnectorsConfiguration.Count);
       switch (overallState)
       {
@@ -515,7 +566,9 @@ namespace Soloplan.WhatsON.GUI
           break;
         case ObservationState.Unknown:
           this.icon.Icon = this.loadingIcon;
-          this.icon.Text = Resources.TrayHandler_UpdateTrayIcon_Pending;
+          this.icon.Text = this.configuration.ConnectorsConfiguration.Count == 0
+            ? Resources.TrayHandler_UpdateTrayIcon_NoProjects
+            : Resources.TrayHandler_UpdateTrayIcon_Pending;
           break;
         default:
           this.icon.Icon = this.normalIcon;

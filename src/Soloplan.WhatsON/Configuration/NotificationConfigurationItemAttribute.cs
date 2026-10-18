@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="NotificationConfigurationItemAttribute.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -16,7 +16,7 @@ namespace Soloplan.WhatsON.Configuration
   public class NotificationConfigurationItemAttribute : ConfigurationItemAttribute
   {
     /// <summary>
-    /// Initializes a new instance of the <see cref="NotificationConfigurationItemAttribute"/> class.
+    /// Initializes a new instance of the <see cref="NotificationConfigurationItemAttribute" /> class.
     /// </summary>
     /// <param name="key">The key.</param>
     /// <param name="type">The type.</param>
@@ -31,9 +31,9 @@ namespace Soloplan.WhatsON.Configuration
     public bool SupportsFailureNotify { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets a value indicating whether connector supports unstable notifications.
+    /// Gets or sets a value indicating whether connector supports running notifications.
     /// </summary>
-    public bool SupportsUnstableNotify { get; set; } = true;
+    public bool SupportsRunningNotify { get; set; } = true;
 
     /// <summary>
     /// Gets or sets a value indicating whether connector supports success notifications.
@@ -41,13 +41,13 @@ namespace Soloplan.WhatsON.Configuration
     public bool SupportsSuccessNotify { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets a value indicating whether connector supports running notifications.
-    /// </summary>
-    public bool SupportsRunningNotify { get; set; } = true;
-
-    /// <summary>
     /// Gets or sets a value indicating whether connector supports unknown notifications.
     /// </summary>
     public bool SupportsUnknownNotify { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether connector supports unstable notifications.
+    /// </summary>
+    public bool SupportsUnstableNotify { get; set; } = true;
   }
 }

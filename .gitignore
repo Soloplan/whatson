@@ -1,4 +1,82 @@
-.vs
-obj
-bin
+# .NET build, package, test, and coverage output at any project depth.
+[Bb]in/
+[Oo]bj/
+BundleArtifacts/
+/artifacts/
+TestResults/
+coverage/
+*.nupkg
+*.snupkg
+*.trx
+*.coverage
+*.coveragexml
+coverage.cobertura.xml
+coverage.opencover.xml
+lcov.info
+
+# IDE and editor folders, including all settings and local state.
+.vs/
+.idea/
+.vscode/
+[._]ReSharper*/
+.history/
+.ionide/
+
+# IDE user files and profiling output.
+*.suo
 *.user
+*.rsuser
+*.userosscache
+*.sln.docstates
+*.DotSettings.user
+*.dotCover
+*.dotTrace
+*.sublime-workspace
+
+# Local tools, scratch files, and isolated agent checkouts.
+/.local/
+/.worktrees/
+.cache/
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
+
+# Local credentials; safe examples and templates remain versionable.
+.env
+.env.*
+!.env.example
+!.env.template
+!.env.*.example
+!.env.*.template
+*.pfx
+*.p12
+
+# Graft's regenerable local graph; .ignore keeps its cards searchable.
+/graft/
+
+# Agent tool folders and files, including all configuration and runtime state.
+.codex/
+.agents/
+.claude/
+.cursor/
+.continue/
+.serena/
+.opencode/
+.aider*
+AGENTS.local.md
+CLAUDE.local.md
+.mcp.local.json
+opencode.local.json

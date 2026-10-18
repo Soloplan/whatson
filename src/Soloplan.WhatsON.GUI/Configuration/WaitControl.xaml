@@ -1,19 +1,15 @@
 ﻿<UserControl x:Class="Soloplan.WhatsON.GUI.Configuration.WaitControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Configuration"
-             mc:Ignorable="d" 
-             d:DesignHeight="60" d:DesignWidth="60"
-             Background="{DynamicResource MaterialDesignPaper}"
-             TextElement.Foreground="{DynamicResource MaterialDesignBody}">
-    <StackPanel  Margin="4" MinWidth="60">
-      <ProgressBar Width="50"
-                   Height="50"
-                   Margin="10"
-                   IsIndeterminate="True"
+             xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
+             xmlns:live="clr-namespace:Soloplan.WhatsON.GUI.Common.Localization;assembly=Soloplan.WhatsON.GUI.Common"
+             FontFamily="Segoe UI" FontSize="14" TextElement.Foreground="{DynamicResource MaterialDesignBody}">
+  <Border Style="{StaticResource SettingsDialog}">
+    <StackPanel Orientation="Horizontal">
+      <ProgressBar Width="28" Height="28" Margin="0,0,16,0" IsIndeterminate="True"
                    Style="{StaticResource MaterialDesignCircularProgressBar}"
-                   Value="0" />
-  </StackPanel>
+                   AutomationProperties.Name="{live:Text loc:Strings.LoadingProjects}" />
+      <TextBlock Text="{live:Text loc:Strings.LoadingProjectsEllipsis}" VerticalAlignment="Center" FontWeight="SemiBold" />
+    </StackPanel>
+  </Border>
 </UserControl>

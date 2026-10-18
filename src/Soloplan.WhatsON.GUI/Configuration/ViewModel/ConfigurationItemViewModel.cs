@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ConfigurationItemViewModel.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -10,60 +10,24 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
   using Soloplan.WhatsON.Configuration;
 
   /// <summary>
-  /// The view model for see <see cref="ConfigurationItem"/>.
+  /// The view model for see <see cref="ConfigurationItem" />.
   /// </summary>
   public class ConfigurationItemViewModel : ViewModelBase, IConfigurationItem
   {
     /// <summary>
-    /// The key.
-    /// </summary>
-    private string key;
-
-    /// <summary>
-    /// The value.
-    /// </summary>
-    private string value;
-
-    /// <summary>
     /// Gets the key.
     /// </summary>
-    public string Key
-    {
-      get => this.key;
-      private set
-      {
-        if (this.key == value)
-        {
-          return;
-        }
-
-        this.key = value;
-        this.OnPropertyChanged();
-      }
-    }
+    public string Key { get; private set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the value.
     /// </summary>
-    public string Value
-    {
-      get => this.value;
-      set
-      {
-        if (this.value == value)
-        {
-          return;
-        }
-
-        this.value = value;
-        this.OnPropertyChanged();
-      }
-    }
+    public string? Value { get; set; }
 
     /// <summary>
     /// Gets the original configuration item.
     /// </summary>
-    public ConfigurationItem ConfigurationItem { get; private set; }
+    public ConfigurationItem? ConfigurationItem { get; private set; }
 
     /// <summary>
     /// Loads the configuration item view model from the source object.
@@ -104,11 +68,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// Creates the new configuration item with applied value.
     /// </summary>
-    /// <returns>New instance of <see cref="ConfigurationItem"/>.</returns>
+    /// <returns>New instance of <see cref="ConfigurationItem" />.</returns>
     public ConfigurationItem CreateNewConfigurationItem()
     {
-      var result = new ConfigurationItem(this.key);
-      result.Value = this.value;
+      var result = new ConfigurationItem(this.Key);
+      result.Value = this.Value;
       return result;
     }
 
@@ -116,7 +80,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// Applies modifications to source.
     /// </summary>
     /// <param name="newItemCreated">if set to <c>true</c> a new item was created.</param>
-    /// <returns>New instance of <see cref="ConfigurationItem"/> if it not esist; otherwise existing item.</returns>
+    /// <returns>New instance of <see cref="ConfigurationItem" /> if it not esist; otherwise existing item.</returns>
     public ConfigurationItem ApplyToSource(out bool newItemCreated)
     {
       newItemCreated = false;
@@ -127,7 +91,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
       }
       else
       {
-        this.ConfigurationItem.Value = this.value;
+        this.ConfigurationItem.Value = this.Value;
       }
 
       return this.ConfigurationItem;

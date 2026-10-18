@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ConfigControlBuilderFactory.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -18,7 +18,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// <summary>
     /// Singleton instance.
     /// </summary>
-    private static volatile ConfigControlBuilderFactory instance;
+    private static volatile ConfigControlBuilderFactory? instance;
 
     /// <summary>
     /// Caches control builders that should be used by a given type.
@@ -43,14 +43,11 @@ namespace Soloplan.WhatsON.GUI.Configuration
     }
 
     /// <summary>
-    /// Registers the specified <paramref name="controlBuilder"/>for the specified <paramref name="type"/>.
+    /// Registers the specified <paramref name="controlBuilder" />for the specified <paramref name="type" />.
     /// </summary>
     /// <param name="type">The type for which to use the specified controlBuilder.</param>
-    /// <param name="controlBuilder">The control builder to use with <paramref name="type"/>.</param>
-    public void RegisterControlBuilder(Type type, IConfigControlBuilder controlBuilder)
-    {
-      this.controlBuilderByType.Add(new KeyValuePair<Type, IConfigControlBuilder>(type, controlBuilder));
-    }
+    /// <param name="controlBuilder">The control builder to use with <paramref name="type" />.</param>
+    public void RegisterControlBuilder(Type type, IConfigControlBuilder controlBuilder) => this.controlBuilderByType.Add(new KeyValuePair<Type, IConfigControlBuilder>(type, controlBuilder));
 
     /// <summary>
     /// Gets the control builder for the specified <paramref name="type" />.
@@ -60,7 +57,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// <returns>
     /// The control builder for this type or null if not found.
     /// </returns>
-    internal IConfigControlBuilder GetControlBuilder(Type type, string configurationItemKey)
+    internal IConfigControlBuilder? GetControlBuilder(Type type, string configurationItemKey)
     {
       this.CheckConfiguration();
       var builder = this.controlBuilderByType.FirstOrDefault(b => b.Key == type && b.Value.SupportedConfigurationItemsKey == configurationItemKey);

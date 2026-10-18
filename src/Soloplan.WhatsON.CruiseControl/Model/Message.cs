@@ -36,7 +36,7 @@ namespace Soloplan.WhatsON.CruiseControl.Model
   public class Message
   {
     [XmlAttributeAttribute("text")]
-    public string Text { get; set; }
+    public string? Text { get; set; }
 
     [XmlAttributeAttribute("kind")]
     public MessageKind Kind { get; set; }

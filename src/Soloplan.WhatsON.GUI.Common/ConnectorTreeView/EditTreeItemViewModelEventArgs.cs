@@ -1,6 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="EditTreeItemViewModelEventArgs.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -11,15 +12,16 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   public enum EditType
   {
     Undefined = 0,
+
     Edit = 1,
+
     Rename = 2,
   }
 
   public class EditTreeItemViewModelEventArgs : EventArgs
   {
-    private object commandParameters;
-
     public EditType EditType { get; set; }
-    public TreeItemViewModel Model { get; set; }
+
+    public required TreeItemViewModel Model { get; set; }
   }
 }

@@ -1,6 +1,8 @@
 ﻿<Window x:Class="Soloplan.WhatsON.GUI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
+        xmlns:live="clr-namespace:Soloplan.WhatsON.GUI.Common.Localization;assembly=Soloplan.WhatsON.GUI.Common"
         xmlns:connectorTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView;assembly=Soloplan.WhatsON.GUI.Common"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:Soloplan.WhatsON.GUI"
@@ -11,11 +13,11 @@
         Height="450"
         MinWidth="300"
         MinHeight="200"
-        Background="{DynamicResource MaterialDesignPaper}"
-        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
+        Background="{DynamicResource SettingsBackground}"
+        FontFamily="Segoe UI"
         Style="{StaticResource BorderLessWindowStyle}"
         TextElement.FontSize="14"
-        TextElement.FontWeight="Medium"
+        TextElement.FontWeight="Normal"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         mc:Ignorable="d">
   <Window.Resources>
@@ -37,18 +39,17 @@
       </Storyboard>
     </ResourceDictionary>
   </Window.Resources>
-  <DockPanel>
-    <local:CustomTitleBar Height="32"
-                          AddConnectorClicked="NewConnectorClick"
-                          AddGroupClicked="NewGroupClick"
-                          ButtonClicked="OpenConfig"
-                          CustomButtonIcon="SettingsOutline"
-                          CustomButtonVisible="{Binding ConfigurationModifiedFromTree, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Converter={StaticResource InvertBoolConverter}}"
-                          DockPanel.Dock="Top"
-                          FontSize="12"
-                          ImportClicked="ImportClick"
-                          ShowMinimizeButton="{Binding Path=ShowInTaskbar, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}"
-                          Window="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" />
+  <DockPanel Background="{DynamicResource SettingsBackground}">
+    <local:CustomTitleBar
+      AddConnectorClicked="NewConnectorClick"
+      AddGroupClicked="NewGroupClick"
+      ButtonClicked="OpenConfig"
+      CustomButtonIcon="SettingsOutline"
+      CustomButtonVisible="{Binding ConfigurationModifiedFromTree, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Converter={StaticResource InvertBoolConverter}}"
+      DockPanel.Dock="Top"
+      ImportClicked="ImportClick"
+      ShowMinimizeButton="{Binding Path=ShowInTaskbar, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}"
+      Window="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" />
 
     <Border x:Name="HideableStackPanel"
             Padding="8,8,8,8"
@@ -58,10 +59,12 @@
         <DockPanel LastChildFill="False">
           <TextBlock Padding="5"
                      VerticalAlignment="Center"
-                     Text="Configuration is modified" />
+                     Text="{live:Text loc:Strings.ConfigurationIsModified}" />
           <DockPanel DockPanel.Dock="Right">
-            <Button Margin="5" Padding="5" Click="SaveClick" Style="{StaticResource MaterialDesignFlatAccentBgButton}">Save</Button>
-            <Button Margin="5" Padding="5" Click="ResetClick" Style="{StaticResource MaterialDesignFlatAccentBgButton}">Reset</Button>
+            <Button Margin="5" Padding="5" Click="SaveClick" Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                    Content="{live:Text loc:Strings.Save}" />
+            <Button Margin="5" Padding="5" Click="ResetClick" Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                    Content="{live:Text loc:Strings.Reset}" />
           </DockPanel>
         </DockPanel>
       </materialDesign:ColorZone>
@@ -73,13 +76,13 @@
     <materialDesign:DialogHost DockPanel.Dock="Bottom" Identifier="MainWindowPageHost">
       <Grid>
         <connectorTreeView:ConnectorsTreeView x:Name="mainTreeView"
-                                              Margin="0,3,0,0"
+                                              Margin="12,8,12,12"
                                               HorizontalAlignment="Stretch" />
         <TextBlock HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    FontSize="18"
                    FontWeight="Bold"
-                   Text="Loading..."
+                   Text="{live:Text loc:Strings.Loading}"
                    Visibility="{Binding IsTreeInitialized, Converter={StaticResource InvertBoolToVis}}" />
       </Grid>
     </materialDesign:DialogHost>

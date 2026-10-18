@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="CheckBoxConfigControlBuilder.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -23,7 +23,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// <summary>
     /// Gets the supported configuration items key.
     /// </summary>
-    public override string SupportedConfigurationItemsKey => null;
+    public override string? SupportedConfigurationItemsKey => null;
 
     /// <summary>
     /// Gets the value binding dependency property.

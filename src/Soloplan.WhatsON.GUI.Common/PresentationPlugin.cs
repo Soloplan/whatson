@@ -15,7 +15,7 @@ namespace Soloplan.WhatsON.GUI.Common
   using Soloplan.WhatsON.Model;
 
   /// <summary>
-  /// PlugIn which provides presentation of <see cref="ConnectorType"/> connectors.
+  /// PlugIn which provides presentation of <see cref="ConnectorType" /> connectors.
   /// </summary>
   public abstract class PresentationPlugin : IPlugin
   {
@@ -35,19 +35,19 @@ namespace Soloplan.WhatsON.GUI.Common
     /// </summary>
     public string ConnectorType { get; }
 
-    public string LayoutXaml { get; set; }
+    public string? LayoutXaml { get; set; }
 
     /// <summary>
-    /// Creates the <see cref="ConnectorViewModel"/> decedent.
+    /// Creates the <see cref="ConnectorViewModel" /> decedent.
     /// </summary>
-    /// <returns><see cref="ConnectorViewModel"/> decedent.</returns>
+    /// <returns><see cref="ConnectorViewModel" /> decedent.</returns>
     public abstract ConnectorViewModel CreateViewModel(Connector connector);
 
     /// <summary>
-    /// Gets the XAML file defining the DataTemplet for displaying the view model created by <see cref="CreateViewModel"/>.
+    /// Gets the XAML file defining the DataTemplet for displaying the view model created by <see cref="CreateViewModel" />.
     /// </summary>
     /// <returns>Data template.</returns>
-    public XmlReader GetDataTempletXaml()
+    public XmlReader? GetDataTempletXaml()
     {
       if (string.IsNullOrWhiteSpace(this.LayoutXaml))
       {

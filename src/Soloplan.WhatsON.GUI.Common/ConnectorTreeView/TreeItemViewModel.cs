@@ -9,79 +9,50 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
   using System;
   using System.Collections.Generic;
+  using System.ComponentModel;
   using System.Threading.Tasks;
   using System.Windows.Input;
+  using PropertyChanged;
 
-  public abstract class TreeItemViewModel : NotifyPropertyChanged, IHandleDoubleClick
+  public abstract partial class TreeItemViewModel : INotifyPropertyChanged, IHandleDoubleClick
   {
-    private bool isNodeExpanded;
-
-    private bool isOnlyOneSelected = true;
+    /// <summary>
+    /// Backing field for <see cref="EditCommand" />.
+    /// </summary>
+    private CustomCommand? editCommand;
 
     /// <summary>
-    /// Backing field for <see cref="EditCommand"/>.
+    /// Backing field for <see cref="ExportCommand" />.
     /// </summary>
-    private CustomCommand editCommand;
+    private CustomCommand? exportCommand;
+
+    private CustomCommand? deleteCommand;
 
     /// <summary>
-    /// Backing field for <see cref="ExportCommand"/>.
+    /// Backing field for <see cref="RenameCommand" />.
     /// </summary>
-    private CustomCommand exportCommand;
-
-    private CustomCommand deleteCommand;
-
-    /// <summary>
-    /// Backing field for <see cref="ConfigurationModifiedInTree"/>.
-    /// </summary>
-    private bool configurationModifiedInTree;
-
-    /// <summary>
-    /// Backing field for <see cref="RenameCommand"/>.
-    /// </summary>
-    private CustomCommand renameCommand;
+    private CustomCommand? renameCommand;
 
     /// <summary>
     /// Event fired when user requested editing of tree view item in context menu.
     /// </summary>
-    public event EventHandler<EditTreeItemViewModelEventArgs> EditItem;
+    public event EventHandler<EditTreeItemViewModelEventArgs>? EditItem;
 
     /// <summary>
     /// Event fired when item should be deleted.
     /// </summary>
-    public event EventHandler<DeleteTreeItemEventArgs> DeleteItem;
+    public event EventHandler<DeleteTreeItemEventArgs>? DeleteItem;
 
     /// <summary>
     /// Event fired when user requested exporting of tree view item in context menu.
     /// </summary>
-    public event EventHandler<ValueEventArgs<TreeItemViewModel>> ExportItem;
+    public event EventHandler<ValueEventArgs<TreeItemViewModel>>? ExportItem;
 
-    public event EventHandler ConfigurationChanged;
+    public event EventHandler? ConfigurationChanged;
 
-    public bool IsNodeExpanded
-    {
-      get => this.isNodeExpanded;
-      set
-      {
-        if (this.isNodeExpanded != value)
-        {
-          this.isNodeExpanded = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public bool IsNodeExpanded { get; set; }
 
-    public bool IsOnlyOneSelected
-    {
-      get => this.isOnlyOneSelected;
-      set
-      {
-        if (this.isOnlyOneSelected != value)
-        {
-          this.isOnlyOneSelected = value;
-          this.OnPropertyChanged();
-        }
-      }
-    }
+    public bool IsOnlyOneSelected { get; set; } = true;
 
     /// <summary>
     /// Gets command for editing tree item.
@@ -103,26 +74,15 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// Gets or sets a value indicating whether configuration was modified from main window.
     /// </summary>
-    public virtual bool ConfigurationModifiedInTree
-    {
-      get => this.configurationModifiedInTree;
-      set
-      {
-        if (this.ConfigurationModifiedInTree != value)
-        {
-          this.configurationModifiedInTree = value;
-          this.OnPropertyChanged();
-          this.EditCommand.CanExecute(null);
-        }
-      }
-    }
+    [OnChangedMethod(nameof(TreeConfigurationChanged))]
+    public virtual bool ConfigurationModifiedInTree { get; set; }
 
     /// <summary>
     /// Handles double click.
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">Event args.</param>
-    public virtual void OnDoubleClick(object sender, MouseButtonEventArgs e)
+    public virtual void OnDoubleClick(object? sender, MouseButtonEventArgs e)
     {
     }
 
@@ -131,9 +91,9 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="eventArgs">Arguments containing data about edited item.</param>
-    protected virtual void OnEditItem(object sender, EditTreeItemViewModelEventArgs eventArgs)
+    protected virtual void OnEditItem(object? sender, EditTreeItemViewModelEventArgs eventArgs)
     {
-      if (this.IsOnlyOneSelected == false)
+      if (!this.IsOnlyOneSelected)
       {
         return;
       }
@@ -146,20 +106,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="eventArgs">Arguments containing data about deleted item.</param>
-    protected virtual void OnDeleteItem(object sender, DeleteTreeItemEventArgs eventArgs)
-    {
-      this.DeleteItem?.Invoke(sender, eventArgs);
-    }
+    protected virtual void OnDeleteItem(object? sender, DeleteTreeItemEventArgs eventArgs) => this.DeleteItem?.Invoke(sender, eventArgs);
 
     /// <summary>
     /// Called when item is exported.
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="eventArgs">Arguments containing data about exporting item.</param>
-    protected virtual void OnExportItem(object sender, ValueEventArgs<TreeItemViewModel> eventArgs)
-    {
-      this.ExportItem?.Invoke(sender, eventArgs);
-    }
+    protected virtual void OnExportItem(object? sender, ValueEventArgs<TreeItemViewModel> eventArgs) => this.ExportItem?.Invoke(sender, eventArgs);
 
     /// <summary>
     /// Creates command used for editing this tree item.
@@ -205,29 +159,29 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Firest <see cref="ConfigurationChanged"/> event.
+    /// Firest <see cref="ConfigurationChanged" /> event.
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="eventArgs">Event args.</param>
-    protected virtual void OnConfigurationChanged(object sender, EventArgs eventArgs)
-    {
-      this.ConfigurationChanged?.Invoke(sender, eventArgs);
-    }
+    [SuppressPropertyChangedWarnings]
+    protected virtual void OnConfigurationChanged(object? sender, EventArgs eventArgs) => this.ConfigurationChanged?.Invoke(sender, eventArgs);
 
     /// <summary>
     /// Handles delete command.
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">Event args.</param>
-    private void DeleteCommandOnExecute(object sender, ValueEventArgs<object> e)
+    private void DeleteCommandOnExecute(object? sender, ValueEventArgs<object?> e)
     {
       var data = new DeleteTreeItemEventArgs(this);
       this.OnDeleteItem(this, data);
     }
+
+    private void TreeConfigurationChanged() => this.EditCommand.CanExecute(null);
   }
 
   /// <summary>
-  /// Data related to deleting <see cref="TreeItemViewModel"/>.
+  /// Data related to deleting <see cref="TreeItemViewModel" />.
   /// </summary>
   public class DeleteTreeItemEventArgs : EventArgs
   {
@@ -244,11 +198,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <summary>
     /// Indicates if there are no other selected connectots.
     /// </summary>
-    ///
     private bool noOtherSelection = true;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DeleteTreeItemEventArgs"/> class.
+    /// Initializes a new instance of the <see cref="DeleteTreeItemEventArgs" /> class.
     /// </summary>
     /// <param name="deleteItem">The item about to be deleted.</param>
     public DeleteTreeItemEventArgs(TreeItemViewModel deleteItem)
@@ -261,8 +214,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// </summary>
     public bool NoOtherSelections
     {
-      get { return this.noOtherSelection; }
-      set { this.noOtherSelection = value; }
+      get => this.noOtherSelection;
+      set => this.noOtherSelection = value;
     }
 
     /// <summary>

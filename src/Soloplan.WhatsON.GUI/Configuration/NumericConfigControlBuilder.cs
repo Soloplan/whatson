@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="NumericConfigControlBuilder.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -38,8 +38,8 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// Numbers the validation text box.
     /// </summary>
     /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="System.Windows.Input.TextCompositionEventArgs"/> instance containing the event data.</param>
-    private void NumberValidationTextBox(object sender, System.Windows.Input.TextCompositionEventArgs e)
+    /// <param name="e">The <see cref="System.Windows.Input.TextCompositionEventArgs" /> instance containing the event data.</param>
+    private void NumberValidationTextBox(object? sender, System.Windows.Input.TextCompositionEventArgs e)
     {
       var regex = new Regex("[^0-9]+");
       e.Handled = regex.IsMatch(e.Text);

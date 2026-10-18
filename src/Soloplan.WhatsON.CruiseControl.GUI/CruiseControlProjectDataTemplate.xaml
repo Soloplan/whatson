@@ -1,4 +1,6 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
+                    xmlns:live="clr-namespace:Soloplan.WhatsON.GUI.Common.Localization;assembly=Soloplan.WhatsON.GUI.Common"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:buildServer="clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer;assembly=Soloplan.WhatsON.GUI.Common"
                     xmlns:connectorTreeView="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView;assembly=Soloplan.WhatsON.GUI.Common"
@@ -8,51 +10,29 @@
   <converters:TimeToApproximateTimeConverter x:Key="TimeToApproximateTimeConverter" />
   <converters:NullOrDefaultToVisibilityConverter x:Key="NullOrDefaultVisibilityConverter" />
   <converters:MainStatusToVisibilityConverter x:Key="MainStatusToVisibilityConverter" />
-  <converters:StatusTotooltipVisibilityConverter x:Key="StatusTotooltipVisibilityConverter"/>
-  <ToolTip x:Key="CruiseControlBuildInfoToolTip" Visibility="{Binding Path=. , Converter={StaticResource MainStatusToVisibilityConverter}}">
-  <StackPanel>
-    <local:CCProgressBarTooltipControl DataContext="{Binding}" />
-    <buildServer:CulpritsControl Caption="Changes by:" CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
-    <TextBlock Text="{Binding ErrorMessage, Mode=OneWay}" Visibility="{Binding State , Converter={StaticResource StatusTotooltipVisibilityConverter}}" />
-  </StackPanel>
+  <converters:StatusTotooltipVisibilityConverter x:Key="StatusTotooltipVisibilityConverter" />
+  <ToolTip x:Key="CruiseControlBuildInfoToolTip"
+           Visibility="{Binding Path=. , Converter={StaticResource MainStatusToVisibilityConverter}}">
+    <StackPanel>
+      <local:CCProgressBarTooltipControl DataContext="{Binding}" />
+      <buildServer:CulpritsControl Caption="{live:Text loc:Strings.ChangesByCaption}"
+                                   CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
+      <TextBlock Text="{Binding ErrorMessage}" Style="{DynamicResource ToolTipMessage}" />
+    </StackPanel>
   </ToolTip>
 
-    <ToolTip x:Key="RowToolTip" Visibility="{Binding CurrentStatus , Converter={StaticResource MainStatusToVisibilityConverter}}">
-        <StackPanel DataContext="{Binding CurrentStatus}">
-            <local:CCProgressBarTooltipControl DataContext="{Binding}" />
-            <buildServer:CulpritsControl Caption="Changes by:" CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
-            <TextBlock Text="{Binding ErrorMessage, Mode=OneWay}" Visibility="{Binding State , Converter={StaticResource StatusTotooltipVisibilityConverter}}" />
-        </StackPanel>
-    </ToolTip>
+  <ToolTip x:Key="RowToolTip"
+           Visibility="{Binding CurrentStatus , Converter={StaticResource MainStatusToVisibilityConverter}}">
+    <StackPanel DataContext="{Binding CurrentStatus}">
+      <local:CCProgressBarTooltipControl DataContext="{Binding}" />
+      <buildServer:CulpritsControl Caption="{live:Text loc:Strings.ChangesByCaption}"
+                                   CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
+      <TextBlock Text="{Binding ErrorMessage}" Style="{DynamicResource ToolTipMessage}" />
+    </StackPanel>
+  </ToolTip>
 
-    <DataTemplate DataType="{x:Type local:CruiseControlProjectViewModel}">
-        <DockPanel Width="Auto" ContextMenu="{DynamicResource BuildServerProjectContextMenu}" DataContext="{Binding}" ToolTip="{StaticResource RowToolTip}">
-            <buildServer:BuildInformationIconControl DataContext="{Binding CurrentStatus}"
-                                               DockPanel.Dock="Left"
-                                               ToolTip="{StaticResource CruiseControlBuildInfoToolTip}" />
-            <buildServer:BuildNumberControl Margin="5,0,0,0"
-                                      VerticalAlignment="Center"
-                                      BuildNumber="{Binding DataContext.CurrentStatus.BuildNumber, RelativeSource={RelativeSource AncestorType=DockPanel}}" />
-            <TextBlock MinWidth="150"
-                 MaxWidth="250"
-                 Margin="5,0,0,0"
-                 FontSize="{Binding DataContext.FontSize, Mode=OneWay, RelativeSource={RelativeSource AncestorType=connectorTreeView:ConnectorsTreeView}}"
-                 FontWeight="Normal"
-                 Text="{Binding Name}"
-                 TextTrimming="CharacterEllipsis">
-            </TextBlock>
-            <buildServer:HistoryBuildList DataContext="{Binding ConnectorSnapshots, Mode=OneWay}" DockPanel.Dock="Right" />
-            <TextBlock Margin="5,0,10,0"
-                 HorizontalAlignment="Right"
-                 VerticalAlignment="Center"
-                 DockPanel.Dock="Right"
-                 FontSize="{Binding DataContext.FontSizeSmall, Mode=OneWay, RelativeSource={RelativeSource AncestorType=connectorTreeView:ConnectorsTreeView}}"
-                 FontWeight="Normal"
-                 Text="{Binding CurrentStatus.FinishTime, Converter={StaticResource TimeToApproximateTimeConverter}}"
-                 Visibility="{Binding CurrentStatus.FinishTime, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
-            <DockPanel>
-                <TextBlock/>
-            </DockPanel>
-        </DockPanel>
-    </DataTemplate>
+  <DataTemplate DataType="{x:Type local:CruiseControlProjectViewModel}">
+    <buildServer:ProjectRowControl ContextMenu="{DynamicResource BuildServerProjectContextMenu}"
+                                   ToolTip="{StaticResource RowToolTip}" />
+  </DataTemplate>
 </ResourceDictionary>

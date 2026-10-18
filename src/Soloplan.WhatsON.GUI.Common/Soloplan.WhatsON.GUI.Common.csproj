@@ -1,114 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <ProjectGuid>{8659027C-E4DA-40D3-B081-FFF37BDFD73F}</ProjectGuid>
-    <TargetFramework>net472</TargetFramework>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <OutputPath>..\bin\$(Configuration)\</OutputPath>
+    <Description>Contains common elements, used by exe file and by plugins.</Description>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-  </PropertyGroup>
-  <Import Project="..\..\config\Soloplan.WhatsON.targets" />
   <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="BuildServer\BuildNumberControl.xaml.cs">
-      <DependentUpon>BuildNumberControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="BuildServer\ProgressBarControl .xaml.cs">
-      <DependentUpon>ProgressBarControl .xaml</DependentUpon>
-    </Compile>
-    <Compile Update="BuildServer\CulpritsControl.xaml.cs">
-      <DependentUpon>CulpritsControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="BuildServer\HistoryBuildControl.xaml.cs">
-      <DependentUpon>HistoryBuildControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="BuildServer\HistoryBuildList.xaml.cs">
-      <DependentUpon>HistoryBuildList.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="BuildServer\HistoryBuildTooltipControl.xaml.cs">
-      <DependentUpon>HistoryBuildTooltipControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="BuildServer\BuildInformationIconControl.xaml.cs">
-      <DependentUpon>BuildInformationIconControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="BuildServer\ProgressBarTooltipControl.xaml.cs">
-      <DependentUpon>ProgressBarTooltipControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="ConnectorTreeView\ConnectorsTreeView.xaml.cs">
-      <DependentUpon>ConnectorsTreeView.xaml</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="gong-wpf-dragdrop" Version="2.2.0" />
-    <PackageReference Include="Humanizer" Version="2.8.26" />
-    <PackageReference Include="Humanizer.Core" Version="2.8.26" />
-    <PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
-    <PackageReference Include="NLog" Version="4.7.5" />
-    <PackageReference Include="System.Windows.Interactivity.WPF" Version="2.0.20525" />
+    <PackageReference Include="gong-wpf-dragdrop" />
+    <PackageReference Include="Humanizer.Core" />
+    <PackageReference Include="Humanizer.Core.de" />
+    <PackageReference Include="MaterialDesignThemes" />
+    <PackageReference Include="NLog" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Soloplan.WhatsON\Soloplan.WhatsON.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="BuildServer\BuildNumberControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="BuildServer\CulpritsControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="BuildServer\HistoryBuildControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="BuildServer\HistoryBuildList.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="BuildServer\HistoryBuildTooltipControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="BuildServer\BuildInformationIconControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="BuildServer\BuildProjectDataTemplate.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="BuildServer\ProgressBarControl .xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="BuildServer\ProgressBarTooltipControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="BuildStateColors.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ConnectorTreeView\ConnectorMissingDataTemplate.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ConnectorTreeView\ConnectorsTreeView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
+    <PackageReference Include="Fody" PrivateAssets="all" />
+    <PackageReference Include="PropertyChanged.Fody" PrivateAssets="all" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,85 @@
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
+    <Platform Condition="'$(Platform)' == ''">x64</Platform>
+    <WapProjPath Condition="'$(WapProjPath)' == ''">$(MSBuildExtensionsPath)\Microsoft\DesktopBridge\</WapProjPath>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <Import Project="$(WapProjPath)Microsoft.DesktopBridge.props" />
+  <PropertyGroup>
+    <ProjectGuid>{375AE8BB-8092-4D25-9BF7-18CF777C0685}</ProjectGuid>
+    <PackageId>Soloplan.WhatsON.Package</PackageId>
+    <TargetPlatformVersion>10.0.26100.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <EntryPointProjectUniqueName>..\Soloplan.WhatsON.GUI\Soloplan.WhatsON.GUI.csproj</EntryPointProjectUniqueName>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <AppxBundle>Never</AppxBundle>
+    <UapAppxPackageBuildMode>SideloadOnly</UapAppxPackageBuildMode>
+    <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
+    <AppxAutoIncrementPackageRevision>false</AppxAutoIncrementPackageRevision>
+    <AppxSymbolPackageEnabled>false</AppxSymbolPackageEnabled>
+    <GenerateAppInstallerFile>true</GenerateAppInstallerFile>
+    <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
+    <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+    <WhatsONChannel Condition="'$(WhatsONChannel)' == '' and '$(TAG_NAME)' != ''">stable</WhatsONChannel>
+    <WhatsONChannel Condition="'$(WhatsONChannel)' == ''">alpha</WhatsONChannel>
+    <WhatsONPackageName>Soloplan.WhatsON</WhatsONPackageName>
+    <WhatsONDisplayName>whatsON</WhatsONDisplayName>
+    <WhatsONPackageName Condition="'$(WhatsONChannel)' != 'stable'">Soloplan.WhatsON.$(WhatsONChannel)</WhatsONPackageName>
+    <WhatsONDisplayName Condition="'$(WhatsONChannel)' != 'stable'">whatsON ($(WhatsONChannel))</WhatsONDisplayName>
+    <WhatsONPackageVersion>$(Version.Split('-')[0].Split('+')[0])</WhatsONPackageVersion>
+    <WhatsONPackageVersion Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(WhatsONPackageVersion)', '^\d+\.\d+\.\d+$'))">$(WhatsONPackageVersion).0</WhatsONPackageVersion>
+    <AppInstallerUri Condition="'$(AppInstallerUri)' == '' and '$(WhatsONChannel)' == 'stable'">https://github.com/Soloplan/whatson/releases/latest/download/</AppInstallerUri>
+    <AppInstallerUri Condition="'$(AppInstallerUri)' == ''">https://github.com/Soloplan/whatson/releases/download/$(WhatsONChannel)/</AppInstallerUri>
+    <WhatsONPackageUri Condition="'$(WhatsONPackageUri)' == '' and '$(WhatsONChannel)' == 'stable' and '$(TAG_NAME)' != ''">https://github.com/Soloplan/whatson/releases/download/$(TAG_NAME)/</WhatsONPackageUri>
+    <WhatsONPackageUri Condition="'$(WhatsONPackageUri)' == ''">$(AppInstallerUri)</WhatsONPackageUri>
+    <AppxPackageName>whatsON_$(Version)_x64</AppxPackageName>
+    <AppxPackageDir Condition="'$(AppxPackageDir)' == ''">$(MSBuildProjectDirectory)\bin\AppPackages\</AppxPackageDir>
+    <AppxPackageTestDir>$(AppxPackageDir)$(AppxPackageName)\</AppxPackageTestDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" PrivateAssets="all" />
+    <AppxManifest Include="Package.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
+    <Content Include="Assets\*.png" />
+    <ProjectReference Include="..\Soloplan.WhatsON.GUI\Soloplan.WhatsON.GUI.csproj">
+      <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+      <PublishProfile>Properties\PublishProfiles\Windows.pubxml</PublishProfile>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(WapProjPath)Microsoft.DesktopBridge.targets" />
+  <!-- Stamp a build copy; packaging must not change the checked-in manifest. -->
+  <Target Name="PrepareWhatsONManifest" BeforeTargets="_ValidatePresenceOfAppxManifestItems">
+    <Error Condition="'$(WhatsONChannel)' != 'stable' and '$(WhatsONChannel)' != 'beta' and '$(WhatsONChannel)' != 'alpha'" Text="WhatsONChannel must be stable, beta, or alpha." />
+    <Error Condition="!$([System.Text.RegularExpressions.Regex]::IsMatch('$(AppInstallerUri)', '^https://[^/?#]+(/[^?#]*)?/$'))" Text="AppInstallerUri must be an HTTPS URL ending in /, without a query or fragment." />
+    <Error Condition="!$([System.Text.RegularExpressions.Regex]::IsMatch('$(WhatsONPackageUri)', '^https://[^/?#]+(/[^?#]*)?/$'))" Text="WhatsONPackageUri must be an HTTPS URL ending in /, without a query or fragment." />
+    <Copy SourceFiles="Package.appxmanifest" DestinationFiles="$(IntermediateOutputPath)Package.appxmanifest" />
+    <XmlPoke XmlInputPath="$(IntermediateOutputPath)Package.appxmanifest" Query="/*[local-name()='Package']/*[local-name()='Identity']/@Version" Value="$(WhatsONPackageVersion)" />
+    <XmlPoke XmlInputPath="$(IntermediateOutputPath)Package.appxmanifest" Query="/*[local-name()='Package']/*[local-name()='Identity']/@Name" Value="$(WhatsONPackageName)" />
+    <XmlPoke XmlInputPath="$(IntermediateOutputPath)Package.appxmanifest" Query="//*[local-name()='DisplayName'] | //*[local-name()='VisualElements']/@DisplayName" Value="$(WhatsONDisplayName)" />
+    <ItemGroup>
+      <AppxManifest Remove="@(AppxManifest)" />
+      <AppxManifest Include="$(IntermediateOutputPath)Package.appxmanifest" />
+    </ItemGroup>
+  </Target>
+  <!-- GitHub release assets are flat; keep the feed URL stable and the package URL versioned. -->
+  <Target Name="PrepareWhatsONAppInstaller" AfterTargets="GenerateAppInstallerFileForPackage" Condition="'$(GenerateAppInstallerFile)' == 'true'">
+    <Copy SourceFiles="@(AppInstallerFilePath)" DestinationFiles="$(AppxPackageDir)whatsON.appinstaller" />
+    <XmlPoke XmlInputPath="$(AppxPackageDir)whatsON.appinstaller" Query="/*[local-name()='AppInstaller']/@Uri" Value="$(AppInstallerUri)whatsON.appinstaller" />
+    <XmlPoke XmlInputPath="$(AppxPackageDir)whatsON.appinstaller" Query="/*[local-name()='AppInstaller']/*[local-name()='MainPackage']/@Uri" Value="$(WhatsONPackageUri)$(AppxPackageName).msix" />
+    <ItemGroup>
+      <InstallerFileWrites Include="$(AppxPackageDir)whatsON.appinstaller" />
+    </ItemGroup>
+  </Target>
+</Project>

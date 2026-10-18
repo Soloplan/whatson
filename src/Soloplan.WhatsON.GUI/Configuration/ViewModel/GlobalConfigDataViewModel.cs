@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="GlobalConfigDataViewModel.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -9,29 +9,26 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
 {
   using System.Collections.Generic;
   using System.ComponentModel;
+  using System.Linq;
   using System.Runtime.CompilerServices;
   using Soloplan.WhatsON.Model;
 
   /// <summary>
-  /// Some data of the configuration has to be globally accessible for binding purposes, otherwise configuration data structure would have to refer to it's parent object.
+  /// Some data of the configuration has to be globally accessible for binding purposes, otherwise configuration data
+  /// structure would have to refer to it's parent object.
   /// </summary>
   /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
-  public class GlobalConfigDataViewModel : INotifyPropertyChanged
+  public partial class GlobalConfigDataViewModel : INotifyPropertyChanged
   {
     /// <summary>
     /// Singleton instance.
     /// </summary>
-    private static volatile GlobalConfigDataViewModel instance;
+    private static volatile GlobalConfigDataViewModel? instance;
 
     /// <summary>
     /// The configuration view model.
     /// </summary>
-    private ConfigViewModel configuration;
-
-    /// <summary>
-    /// Occurs when property was changed.
-    /// </summary>
-    public event PropertyChangedEventHandler PropertyChanged;
+    private ConfigViewModel configuration = new ConfigViewModel();
 
     /// <summary>
     /// Gets the singleton instance.
@@ -52,7 +49,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     {
       get
       {
-        var result = new List<string>();
+        var result = new List<string>(this.configuration.Groups.Where(name => !string.IsNullOrWhiteSpace(name)));
         foreach (var connector in this.configuration.Connectors)
         {
           var configItemViewModel = connector.GetConfigurationByKey(Connector.Category);
@@ -79,18 +76,6 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// Configurations was reset or updated.
     /// </summary>
-    public void ConfigurationResetOrUpdated()
-    {
-      this.OnPropertyChanged(nameof(this.UsedCategories));
-    }
-
-    /// <summary>
-    /// Called when property was changed.
-    /// </summary>
-    /// <param name="propertyName">Name of the property.</param>
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-      this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
+    public void ConfigurationResetOrUpdated() => this.OnPropertyChanged(nameof(this.UsedCategories));
   }
 }

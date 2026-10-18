@@ -1,7 +1,9 @@
-﻿// <copyright file="CustomTitleBar.xaml.cs" company="Soloplan GmbH">
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="CustomTitleBar.xaml.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.GUI
 {
@@ -9,6 +11,7 @@ namespace Soloplan.WhatsON.GUI
   using System.IO;
   using System.Windows;
   using System.Windows.Controls;
+  using System.Windows.Data;
   using System.Windows.Input;
   using MaterialDesignThemes.Wpf;
   using NLog;
@@ -19,37 +22,42 @@ namespace Soloplan.WhatsON.GUI
   public partial class CustomTitleBar : UserControl
   {
     /// <summary>
-    /// Dependency property for <see cref="ShowMinimizeButton"/>.
+    /// Dependency property for <see cref="ShowMinimizeButton" />.
     /// </summary>
-    public static readonly DependencyProperty ShowMinimizeButtonProperty = DependencyProperty.Register(nameof(ShowMinimizeButton), typeof(bool), typeof(CustomTitleBar));
+    public static readonly DependencyProperty ShowMinimizeButtonProperty =
+      DependencyProperty.Register(nameof(ShowMinimizeButton), typeof(bool), typeof(CustomTitleBar));
 
     /// <summary>
-    /// Dependency property for <see cref="Window"/>.
+    /// Dependency property for <see cref="Window" />.
     /// </summary>
     public static readonly DependencyProperty WindowProperty = DependencyProperty.Register(nameof(Window), typeof(Window), typeof(CustomTitleBar));
 
     /// <summary>
-    /// Dependency property for <see cref="Text"/>.
+    /// Dependency property for <see cref="Text" />.
     /// </summary>
     public static readonly DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(CustomTitleBar));
 
     /// <summary>
-    /// Dependency property for <see cref="CustomButtonIcon"/>.
+    /// Dependency property for <see cref="CustomButtonIcon" />.
     /// </summary>
-    public static readonly DependencyProperty CustomButtonIconProperty = DependencyProperty.Register(nameof(CustomButtonIcon), typeof(PackIconKind), typeof(CustomTitleBar));
+    public static readonly DependencyProperty CustomButtonIconProperty = DependencyProperty.Register(
+      nameof(CustomButtonIcon),
+      typeof(PackIconKind),
+      typeof(CustomTitleBar));
 
     /// <summary>
-    /// Dependency property for <see cref="CustomButtonVisible"/>.
+    /// Dependency property for <see cref="CustomButtonVisible" />.
     /// </summary>
-    public static readonly DependencyProperty CustomButtonVisibleProperty = DependencyProperty.Register(nameof(CustomButtonVisible), typeof(bool), typeof(CustomTitleBar));
+    public static readonly DependencyProperty CustomButtonVisibleProperty =
+      DependencyProperty.Register(nameof(CustomButtonVisible), typeof(bool), typeof(CustomTitleBar));
 
     /// <summary>
     /// Logger used by this class.
     /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="CustomTitleBar"/> class.
+    /// Initializes a new instance of the <see cref="CustomTitleBar" /> class.
     /// </summary>
     public CustomTitleBar()
     {
@@ -60,16 +68,16 @@ namespace Soloplan.WhatsON.GUI
     /// <summary>
     /// Called when custom button was clicked.
     /// </summary>
-    public event EventHandler ButtonClicked;
+    public event EventHandler? ButtonClicked;
 
-    public event EventHandler AddConnectorClicked;
+    public event EventHandler? AddConnectorClicked;
 
-    public event EventHandler AddGroupClicked;
+    public event EventHandler? AddGroupClicked;
 
     /// <summary>
     /// Occurs when import button was clicked.
     /// </summary>
-    public event EventHandler ImportClicked;
+    public event EventHandler? ImportClicked;
 
     /// <summary>
     /// Gets or sets the window handled by this instance.
@@ -93,7 +101,7 @@ namespace Soloplan.WhatsON.GUI
     /// Gets or sets text displayed on title bar.
     /// </summary>
     /// <remarks>
-    /// By default the property is set to <see cref="Window.Title"/> when <see cref="Window"/> is assigned.
+    /// By default the property follows <see cref="Window.Title" /> when <see cref="Window" /> is assigned.
     /// </remarks>
     public string Text
     {
@@ -102,7 +110,7 @@ namespace Soloplan.WhatsON.GUI
     }
 
     /// <summary>
-    /// Gets or sets icon of custom button (located on the left of <see cref="CustomTitleBar"/>).
+    /// Gets or sets icon of custom button (located on the left of <see cref="CustomTitleBar" />).
     /// </summary>
     public PackIconKind CustomButtonIcon
     {
@@ -119,13 +127,19 @@ namespace Soloplan.WhatsON.GUI
       set => this.SetValue(CustomButtonVisibleProperty, value);
     }
 
-    /// <summary>Invoked whenever the effective value of any dependency property on this <see cref="T:System.Windows.FrameworkElement" /> has been updated. The specific dependency property that changed is reported in the arguments parameter. Overrides <see cref="M:System.Windows.DependencyObject.OnPropertyChanged(System.Windows.DependencyPropertyChangedEventArgs)" />.</summary>
+    /// <summary>
+    /// Invoked whenever the effective value of any dependency property on this
+    /// <see cref="T:System.Windows.FrameworkElement" /> has been updated. The specific dependency property that changed is
+    /// reported in the arguments parameter. Overrides
+    /// <see cref="M:System.Windows.DependencyObject.OnPropertyChanged(System.Windows.DependencyPropertyChangedEventArgs)" />
+    /// .
+    /// </summary>
     /// <param name="e">The event data that describes the property that changed, as well as old and new values.</param>
     protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
     {
       if (e.Property.Name == nameof(this.Window) && this.EnsureWindow())
       {
-        this.Text = this.Window.Title;
+        this.SetBinding(TextProperty, new Binding(nameof(System.Windows.Window.Title)) { Source = this.Window, Mode = BindingMode.OneWay });
       }
 
       base.OnPropertyChanged(e);
@@ -135,8 +149,8 @@ namespace Soloplan.WhatsON.GUI
     /// Main window bar mouse down.
     /// </summary>
     /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="System.Windows.Input.MouseButtonEventArgs"/> instance containing the event data.</param>
-    private void MainWindowBarMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    /// <param name="e">The <see cref="System.Windows.Input.MouseButtonEventArgs" /> instance containing the event data.</param>
+    private void MainWindowBarMouseDown(object? sender, MouseButtonEventArgs e)
     {
       if (!this.EnsureWindow())
       {
@@ -159,11 +173,11 @@ namespace Soloplan.WhatsON.GUI
     }
 
     /// <summary>
-    /// Minimizes the <see cref="Window"/>.
+    /// Minimizes the <see cref="Window" />.
     /// </summary>
     /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="MouseButtonEventArgs"/> instance containing the event data.</param>
-    private void MinimizeButonClick(object sender, RoutedEventArgs e)
+    /// <param name="e">The <see cref="MouseButtonEventArgs" /> instance containing the event data.</param>
+    private void MinimizeButonClick(object? sender, RoutedEventArgs e)
     {
       if (!this.EnsureWindow())
       {
@@ -174,11 +188,11 @@ namespace Soloplan.WhatsON.GUI
     }
 
     /// <summary>
-    /// Closes the <see cref="Window"/>.
+    /// Closes the <see cref="Window" />.
     /// </summary>
     /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-    private void CloseButtonClick(object sender, RoutedEventArgs e)
+    /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
+    private void CloseButtonClick(object? sender, RoutedEventArgs e)
     {
       if (!this.EnsureWindow())
       {
@@ -201,7 +215,7 @@ namespace Soloplan.WhatsON.GUI
     }
 
     /// <summary>
-    /// Verifies that <see cref="Window"/> is set.
+    /// Verifies that <see cref="Window" /> is set.
     /// </summary>
     /// <returns>True if the window is set; false otherwise.</returns>
     private bool EnsureWindow()
@@ -216,33 +230,27 @@ namespace Soloplan.WhatsON.GUI
     }
 
     /// <summary>
-    /// Handles click on custom button. Calls <see cref="ButtonClicked"/>.
+    /// Handles click on custom button. Calls <see cref="ButtonClicked" />.
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">Event args.</param>
-    private void OnButtonClicked(object sender, MouseButtonEventArgs e)
+    private void OnButtonClicked(object? sender, RoutedEventArgs e) => this.ButtonClicked?.Invoke(sender, e);
+
+    private void ShowAddMenu(object? sender, RoutedEventArgs e)
     {
-      this.ButtonClicked?.Invoke(sender, e);
+      this.AddMenuButton.ContextMenu.PlacementTarget = this.AddMenuButton;
+      this.AddMenuButton.ContextMenu.IsOpen = true;
     }
 
-    private void NewGroupClick(object sender, RoutedEventArgs e)
-    {
-      this.AddGroupClicked?.Invoke(sender, e);
-    }
+    private void NewGroupClick(object? sender, RoutedEventArgs e) => this.AddGroupClicked?.Invoke(sender, e);
 
-    private void NewConnectorClick(object sender, RoutedEventArgs e)
-    {
-      this.AddConnectorClicked?.Invoke(sender, e);
-    }
+    private void NewConnectorClick(object? sender, RoutedEventArgs e) => this.AddConnectorClicked?.Invoke(sender, e);
 
     /// <summary>
     /// Import click handler.
     /// </summary>
     /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-    private void ImportClick(object sender, RoutedEventArgs e)
-    {
-      this.ImportClicked?.Invoke(sender, e);
-    }
+    /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
+    private void ImportClick(object? sender, RoutedEventArgs e) => this.ImportClicked?.Invoke(sender, e);
   }
 }

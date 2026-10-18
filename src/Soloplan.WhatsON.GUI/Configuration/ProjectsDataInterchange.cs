@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ProjectsDataInterchange.cs" company="Soloplan GmbH">
-//  Copyright (c) Soloplan GmbH. All rights reserved.
-//  Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -10,10 +10,12 @@ namespace Soloplan.WhatsON.GUI.Configuration
   using System;
   using System.Collections.Generic;
   using System.IO;
+  using System.Linq;
   using System.Windows;
   using System.Windows.Forms;
   using NLog;
   using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.Localization;
 
   /// <summary>
   /// The projects import/export.
@@ -23,7 +25,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// <summary>
     /// Logger instance used by this class.
     /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
     /// <summary>
     /// Exports the specified connector configuration.
@@ -66,41 +68,63 @@ namespace Soloplan.WhatsON.GUI.Configuration
 
       try
       {
-        var importedProjectsConfig = SerializationHelper.Load<IList<ConnectorConfiguration>>(filePath);
-        foreach (var importedProjecConfig in importedProjectsConfig)
-        {
-          appConfiguration.ConnectorsConfiguration.Add(importedProjecConfig);
-        }
+        this.Import(appConfiguration, filePath);
       }
       catch (Exception e)
       {
-        var errorMessage = $"Import of the projects onfiguration from JSON file was not successful; file path: {filePath}; exception: {e.Message}";
+        var errorMessage = Localizer.ProjectImportFailed(filePath, e.Message);
         log.Error(errorMessage);
         log.Error(e);
-        System.Windows.MessageBox.Show(errorMessage, "Import error", MessageBoxButton.OK, MessageBoxImage.Error);
+        System.Windows.MessageBox.Show(errorMessage, Strings.ImportError, MessageBoxButton.OK, MessageBoxImage.Error);
         return false;
       }
 
       return true;
     }
 
-    private string GetProjectsInterchangeFileFilter()
+    internal void Import(ApplicationConfiguration appConfiguration, string filePath)
     {
-      return $"{Properties.Resources.JsonFilesFilterName}|*.{SerializationHelper.ConfigFileExtension}";
+      var importedProjectsConfig = SerializationHelper.Load<IList<ConnectorConfiguration>>(filePath);
+      if (importedProjectsConfig == null || importedProjectsConfig.Any(project => project == null))
+      {
+        throw new InvalidDataException();
+      }
+
+      var originalCount = appConfiguration.ConnectorsConfiguration.Count;
+      try
+      {
+        foreach (var project in importedProjectsConfig)
+        {
+          appConfiguration.ConnectorsConfiguration.Add(project);
+        }
+
+        SerializationHelper.Instance.SaveConfiguration(appConfiguration);
+      }
+      catch
+      {
+        while (appConfiguration.ConnectorsConfiguration.Count > originalCount)
+        {
+          appConfiguration.ConnectorsConfiguration.RemoveAt(appConfiguration.ConnectorsConfiguration.Count - 1);
+        }
+
+        throw;
+      }
     }
+
+    private string GetProjectsInterchangeFileFilter() => $"{Properties.Resources.JsonFilesFilterName}|*.{SerializationHelper.ConfigFileExtension}";
 
     /// <summary>
     /// Gets the export file path.
     /// </summary>
     /// <returns>The export file path.</returns>
-    private string GetExportFilePath(string fileName)
+    private string? GetExportFilePath(string fileName)
     {
       using (var saveFileDialog = new SaveFileDialog())
       {
         saveFileDialog.Filter = this.GetProjectsInterchangeFileFilter();
 
         saveFileDialog.FileName = $"whatson_{string.Join("_", fileName.Split(Path.GetInvalidFileNameChars()))}.json";
-        if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        if (saveFileDialog.ShowDialog() == DialogResult.OK)
         {
           return saveFileDialog.FileName;
         }
@@ -113,12 +137,12 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// Gets the import file path.
     /// </summary>
     /// <returns>The import file path.</returns>
-    private string GetImportFilePath()
+    private string? GetImportFilePath()
     {
       using (var openFileDialog = new OpenFileDialog())
       {
         openFileDialog.Filter = this.GetProjectsInterchangeFileFilter();
-        if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        if (openFileDialog.ShowDialog() == DialogResult.OK)
         {
           return openFileDialog.FileName;
         }

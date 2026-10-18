@@ -1,7 +1,9 @@
-﻿// <copyright file="LoggingConfiguration.cs" company="Soloplan GmbH">
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="LoggingConfiguration.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Soloplan.WhatsON.GUI.Logging
 {
@@ -24,7 +26,7 @@ namespace Soloplan.WhatsON.GUI.Logging
 
     /// <summary>
     /// Gets a value indicating whether log is initialized.
-    /// If is false after call to <see cref="Initialize"/> this means that logging initialization failed.
+    /// If is false after call to <see cref="Initialize" /> this means that logging initialization failed.
     /// </summary>
     public bool LogInitialized { get; private set; }
 
@@ -43,7 +45,7 @@ namespace Soloplan.WhatsON.GUI.Logging
     public void Initialize()
     {
 #if DEBUG
-      var rootDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+      var rootDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) ?? AppContext.BaseDirectory;
 #else
       var rootDir = SerializationHelper.Instance.ConfigFolder;
 #endif
@@ -60,7 +62,7 @@ namespace Soloplan.WhatsON.GUI.Logging
       this.LogInitialized = true;
     }
 
-    private static string GetOrCreateLogFiledirectory(string rootDir)
+    private static string? GetOrCreateLogFiledirectory(string rootDir)
     {
       var logsPath = Path.Combine(rootDir, "Log");
       try
@@ -78,7 +80,7 @@ namespace Soloplan.WhatsON.GUI.Logging
       }
     }
 
-    private static string GetConfigFilePath(string configDir)
+    private static string? GetConfigFilePath(string configDir)
     {
       try
       {
@@ -96,7 +98,7 @@ namespace Soloplan.WhatsON.GUI.Logging
         }
 
         var filePath = Path.Combine(configDir, ConfigFileName);
-        File.WriteAllLines(filePath, new[] { Resources.LogConfig }, Encoding.UTF8);
+        File.WriteAllLines(filePath, [Resources.LogConfig], Encoding.UTF8);
         return filePath;
       }
       catch (Exception)

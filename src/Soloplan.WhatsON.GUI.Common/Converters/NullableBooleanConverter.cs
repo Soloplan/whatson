@@ -14,7 +14,7 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
   [ValueConversion(typeof(bool), typeof(bool))]
   public class NullableBooleanConverter : IValueConverter
   {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object value, Type targetType, object? parameter, CultureInfo culture)
     {
       if (value != null)
       {
@@ -24,7 +24,7 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
       return false;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? ConvertBack(object value, Type targetType, object? parameter, CultureInfo culture)
     {
       if (value != null)
       {

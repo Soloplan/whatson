@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="InvertBooleanConverter.cs" company="Soloplan GmbH">
+// <copyright file="StatusTotooltipVisibilityConverter.cs" company="Soloplan GmbH">
 //   Copyright (c) Soloplan GmbH. All rights reserved.
 //   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
@@ -18,15 +18,8 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
   /// </summary>
   public class StatusTotooltipVisibilityConverter : IValueConverter
   {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-      return ((ObservationState)value) != ObservationState.Unknown ? Visibility.Collapsed : Visibility.Visible;
-    }
+    public object Convert(object value, Type targetType, object? parameter, CultureInfo culture) => ((ObservationState)value) != ObservationState.Unknown ? Visibility.Collapsed : Visibility.Visible;
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-      return value;
-    }
-
+    public object ConvertBack(object value, Type targetType, object? parameter, CultureInfo culture) => value;
   }
 }

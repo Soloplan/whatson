@@ -1,0 +1,125 @@
+<UserControl x:Class="Soloplan.WhatsON.GUI.Common.BuildServer.ProjectRowControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer"
+             xmlns:tree="clr-namespace:Soloplan.WhatsON.GUI.Common.ConnectorTreeView"
+             xmlns:converters="clr-namespace:Soloplan.WhatsON.GUI.Common.Converters"
+             xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
+             xmlns:live="clr-namespace:Soloplan.WhatsON.GUI.Common.Localization"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             HorizontalContentAlignment="Stretch">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="../BuildStateColors.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+      <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+      <converters:NullOrDefaultToVisibilityConverter x:Key="HasValue" />
+      <converters:TimeToApproximateTimeConverter x:Key="RelativeTime" />
+      <Style x:Key="Metadata" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource SettingsMuted}" />
+        <Setter Property="FontSize" Value="{Binding DataContext.FontSizeSmall, RelativeSource={RelativeSource AncestorType=tree:ConnectorsTreeView}}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+      </Style>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <Grid MinHeight="24">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="Auto" />
+    </Grid.ColumnDefinitions>
+    <Grid Width="{Binding DataContext.BuildIconSize, RelativeSource={RelativeSource AncestorType=tree:ConnectorsTreeView}}"
+          Margin="0,0,10,0" VerticalAlignment="Center">
+      <local:BuildInformationIconControl x:Name="BuildStateIcon" DataContext="{Binding CurrentStatus}">
+        <local:BuildInformationIconControl.Style>
+          <Style TargetType="local:BuildInformationIconControl">
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding DataContext.IsDisabled, RelativeSource={RelativeSource AncestorType=local:ProjectRowControl}}" Value="True">
+                <Setter Property="Visibility" Value="Collapsed" />
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </local:BuildInformationIconControl.Style>
+      </local:BuildInformationIconControl>
+      <materialDesign:PackIcon x:Name="DisabledIcon" Kind="PauseCircleOutline"
+                               Width="{Binding DataContext.BuildIconSize, RelativeSource={RelativeSource AncestorType=tree:ConnectorsTreeView}}"
+                               Height="{Binding Width, RelativeSource={RelativeSource Self}}"
+                               Foreground="{DynamicResource SettingsMuted}"
+                               Visibility="{Binding IsDisabled, Converter={StaticResource BoolToVisibility}}"
+                               ToolTip="{live:Text loc:Strings.JobDisabledDescription}"
+                               AutomationProperties.Name="{live:Text loc:Strings.JobDisabled}" />
+    </Grid>
+    <TextBlock Grid.Column="1" x:Name="ProjectName" Text="{Binding Name}" ToolTip="{Binding Name}"
+               FontSize="{Binding DataContext.FontSize, RelativeSource={RelativeSource AncestorType=tree:ConnectorsTreeView}}"
+               FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,12,0">
+      <TextBlock.Style>
+        <Style TargetType="TextBlock">
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding IsDisabled}" Value="True">
+              <Setter Property="Foreground" Value="{DynamicResource SettingsMuted}" />
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </TextBlock.Style>
+    </TextBlock>
+    <Border Grid.Column="2" Background="{DynamicResource SettingsBackground}" CornerRadius="5" Padding="6,3"
+            Margin="0,0,12,0" VerticalAlignment="Center">
+      <Border.Style>
+        <Style TargetType="Border">
+          <Setter Property="Visibility" Value="{Binding CurrentStatus.BuildNumber, Converter={StaticResource HasValue}}" />
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding IsDisabled}" Value="True">
+              <Setter Property="Visibility" Value="Collapsed" />
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </Border.Style>
+      <local:BuildNumberControl x:Name="BuildNumber" BuildNumber="{Binding DataContext.CurrentStatus.BuildNumber, RelativeSource={RelativeSource AncestorType=local:ProjectRowControl}}"
+                                Foreground="{DynamicResource SettingsMuted}" />
+    </Border>
+    <Border Grid.Column="2" x:Name="DisabledBadge" Background="{DynamicResource SettingsBackground}"
+            BorderBrush="{DynamicResource SettingsBorder}" BorderThickness="1" CornerRadius="5" Padding="6,2"
+            Margin="0,0,12,0" VerticalAlignment="Center"
+            Visibility="{Binding IsDisabled, Converter={StaticResource BoolToVisibility}}"
+            ToolTip="{live:Text loc:Strings.JobDisabledDescription}">
+      <TextBlock Text="{live:Text loc:Strings.JobDisabled}" Style="{StaticResource Metadata}" />
+    </Border>
+    <Grid Grid.Column="3" x:Name="BuildTiming" Width="112">
+      <TextBlock
+                 HorizontalAlignment="Right"
+                 Visibility="{Binding CurrentStatus.FinishTime, Converter={StaticResource HasValue}}">
+        <TextBlock.Text>
+          <MultiBinding Converter="{StaticResource RelativeTime}">
+            <Binding Path="CurrentStatus.FinishTime" />
+            <Binding Path="Culture" Source="{x:Static live:LanguageSource.Instance}" />
+          </MultiBinding>
+        </TextBlock.Text>
+        <TextBlock.Style>
+          <Style TargetType="TextBlock" BasedOn="{StaticResource Metadata}">
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding CurrentStatus.Building}" Value="True">
+                <Setter Property="Opacity" Value="0" />
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </TextBlock.Style>
+      </TextBlock>
+      <StackPanel VerticalAlignment="Center"
+                  Visibility="{Binding CurrentStatus.Building, Converter={StaticResource BoolToVisibility}}">
+        <DockPanel>
+          <TextBlock Text="{live:Text loc:Strings.Running}" Style="{StaticResource Metadata}" />
+          <TextBlock Text="{Binding CurrentStatus.Progress, StringFormat={}{0}%}" Style="{StaticResource Metadata}"
+                     HorizontalAlignment="Right" />
+        </DockPanel>
+        <ProgressBar x:Name="BuildProgress" Height="3" Margin="0,4,0,0" Minimum="0" Maximum="100" Value="{Binding CurrentStatus.Progress, Mode=OneWay}"
+                     IsIndeterminate="{Binding CurrentStatus.BuildingLongerThenExpected}"
+                     Foreground="{StaticResource Running}" Background="{DynamicResource SettingsBorder}"
+                     AutomationProperties.Name="{live:Text loc:Strings.Running}" />
+      </StackPanel>
+    </Grid>
+    <local:HistoryBuildList Grid.Column="4" x:Name="BuildHistory" DataContext="{Binding ConnectorSnapshots}" VerticalAlignment="Center" />
+  </Grid>
+</UserControl>

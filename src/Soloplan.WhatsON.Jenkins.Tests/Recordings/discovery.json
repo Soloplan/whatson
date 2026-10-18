@@ -1,0 +1,112 @@
+{
+  "jobs": [
+    {
+      "_class": "com.cloudbees.hudson.plugins.folder.Folder",
+      "name": "Folder1",
+      "fullName": "Folder1",
+      "displayName": "Folder1",
+      "url": "http://build.example.invalid/job/Folder1/",
+      "description": "Recorded project description.",
+      "jobs": [
+        {
+          "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob",
+          "name": "Project1",
+          "fullName": "Folder1/Project1",
+          "displayName": "Project1",
+          "url": "http://build.example.invalid/job/Folder1/job/Project1/",
+          "description": "Recorded project description."
+        },
+        {
+          "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob",
+          "name": "Project2",
+          "fullName": "Folder1/Project2",
+          "displayName": "Project2",
+          "url": "http://build.example.invalid/job/Folder1/job/Project2/",
+          "description": "Recorded project description."
+        }
+      ]
+    },
+    {
+      "_class": "com.cloudbees.hudson.plugins.folder.Folder",
+      "name": "Folder7",
+      "fullName": "Folder7",
+      "displayName": "Folder7",
+      "url": "http://build.example.invalid/job/Folder7/",
+      "description": "Recorded project description.",
+      "jobs": [
+        {
+          "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob",
+          "name": "Project4",
+          "fullName": "Folder7/Project4",
+          "displayName": "Project4",
+          "url": "http://build.example.invalid/job/Folder7/job/Project4/",
+          "description": "Recorded project description."
+        }
+      ]
+    },
+    {
+      "_class": "com.cloudbees.hudson.plugins.folder.Folder",
+      "name": "Folder4",
+      "fullName": "Folder4",
+      "displayName": "Folder4",
+      "url": "http://build.example.invalid/job/Folder4/",
+      "description": "Recorded project description.",
+      "jobs": [
+        {
+          "_class": "com.cloudbees.hudson.plugins.folder.Folder",
+          "name": "Folder9",
+          "fullName": "Folder4/Folder9",
+          "displayName": "Folder9",
+          "url": "http://build.example.invalid/job/Folder4/job/Folder9/",
+          "description": "Recorded project description.",
+          "jobs": [
+            {
+              "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob",
+              "name": "Project5",
+              "fullName": "Folder4/Folder9/Project5",
+              "displayName": "Project5",
+              "url": "http://build.example.invalid/job/Folder4/job/Folder9/job/Project5/",
+              "description": "Recorded project description."
+            }
+          ]
+        },
+        {
+          "_class": "com.cloudbees.hudson.plugins.folder.Folder",
+          "name": "Folder5",
+          "fullName": "Folder4/Folder5",
+          "displayName": "Folder5",
+          "url": "http://build.example.invalid/job/Folder4/job/Folder5/",
+          "description": "Recorded project description.",
+          "jobs": [
+            {
+              "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob",
+              "name": "Project3",
+              "fullName": "Folder4/Folder5/Project3",
+              "displayName": "Project3",
+              "url": "http://build.example.invalid/job/Folder4/job/Folder5/job/Project3/",
+              "description": "Recorded project description."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_class": "com.cloudbees.hudson.plugins.folder.Folder",
+      "name": "Folder11",
+      "fullName": "Folder11",
+      "displayName": "Folder11",
+      "url": "http://build.example.invalid/job/Folder11/",
+      "description": "Recorded project description.",
+      "jobs": [
+        {
+          "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob",
+          "name": "Project6",
+          "fullName": "Folder11/Project6",
+          "displayName": "Project6",
+          "url": "http://build.example.invalid/job/Folder11/job/Project6/",
+          "description": "Recorded project description."
+        }
+      ]
+    }
+  ]
+}

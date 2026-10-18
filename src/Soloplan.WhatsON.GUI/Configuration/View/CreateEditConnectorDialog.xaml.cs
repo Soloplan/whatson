@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="CreateEditConnectorDialog.xaml.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -41,8 +41,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// OK button click.
     /// </summary>
     /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-    private void OkButtonClick(object sender, RoutedEventArgs e)
+    /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
+    private void OkButtonClick(object? sender, RoutedEventArgs e)
     {
     }
 
@@ -50,8 +50,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// Cancel button click.
     /// </summary>
     /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-    private void CancelButtonClick(object sender, RoutedEventArgs e)
+    /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
+    private void CancelButtonClick(object? sender, RoutedEventArgs e)
     {
       foreach (var be in BindingOperations.GetSourceUpdatingBindings(this))
       {

@@ -9,9 +9,9 @@ namespace Soloplan.WhatsON.GUI.Common.VisualConfig
 {
   public class MainWindowSettings
   {
-    public TreeListSettings TreeListSettings { get; set; }
+    public TreeListSettings? TreeListSettings { get; set; }
 
-    public WindowSettings MainWindowDimensions { get; set; }
+    public WindowSettings? MainWindowDimensions { get; set; }
 
     /// <summary>
     /// Gets or sets the window location.
@@ -25,10 +25,10 @@ namespace Soloplan.WhatsON.GUI.Common.VisualConfig
 
     public bool Maximized { get; set; }
 
-    public WindowSettings ConfigDialogSettings { get; set; }
+    public WindowSettings? ConfigDialogSettings { get; set; }
 
-    public WindowSettings WizardDialogSettings { get; set; } = new WindowSettings();
+    public WindowSettings? WizardDialogSettings { get; set; } = new WindowSettings();
 
-    public ColorSettings ColorSettings { get; set; }
+    public ColorSettings? ColorSettings { get; set; }
   }
 }

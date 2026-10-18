@@ -7,29 +7,26 @@
 
 namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
-  using System.Text;
   using System.Windows;
   using System.Windows.Input;
-  using Microsoft.Expression.Interactivity.Core;
+  using Microsoft.Xaml.Behaviors.Core;
+  using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.Model;
 
   public class ConnectorMissingViewModel : ConnectorViewModel
   {
-    public ConnectorMissingViewModel(Connector connector)
-      : base(connector)
+    public ConnectorMissingViewModel(ConnectorConfiguration configuration)
     {
+      this.Identifier = configuration.Identifier;
+      this.Name = configuration.Name;
+      this.ExpectedConnectorType = configuration.Type;
+
       void Act()
       {
-        var builder = new StringBuilder();
-        builder.AppendLine($"Identifier: {this.Identifier}");
-        builder.AppendLine($"Name: {this.Name}");
-        builder.AppendLine($"Description: {this.Description}");
-        builder.AppendLine($"Expected connector type: {this.ExpectedConnectorType}");
-        Clipboard.SetText(builder.ToString());
+        Clipboard.SetText(Localizer.MissingConnectorData(this.Identifier, this.Name, this.Description ?? string.Empty, this.ExpectedConnectorType ?? string.Empty));
       }
 
       this.CopyData = new ActionCommand(Act);
-      this.ExpectedConnectorType = connector?.Configuration?.Type;
     }
 
     /// <summary>
@@ -43,10 +40,10 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     public string ExpectedConnectorType { get; }
 
     /// <summary>
-    /// Doesn't do anything since <paramref name="changedConnector"/> is null.
+    /// Doesn't do anything since <paramref name="changedConnector" /> is null.
     /// </summary>
     /// <param name="changedConnector">Connector which has changed - always null.</param>
-    public override void Update(Connector changedConnector)
+    public override void Update(Connector? changedConnector)
     {
     }
   }

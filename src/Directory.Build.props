@@ -1,0 +1,21 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <Nullable>enable</Nullable>
+    <WarningsAsErrors>$(WarningsAsErrors);nullable</WarningsAsErrors>
+    <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)..\config\whatson.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Company>Soloplan GmbH</Company>
+    <Copyright>Copyright © Soloplan GmbH 2020</Copyright>
+    <Product>whatsON</Product>
+    <Version Condition="'$(Version)' == ''">1.$([System.DateTime]::UtcNow.ToString('yyMM')).0-local</Version>
+    <Version Condition="$(Version.StartsWith('v'))">$(Version.Substring(1))</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.InteropServices.ComVisibleAttribute">
+      <_Parameter1>false</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+</Project>

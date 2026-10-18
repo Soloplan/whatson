@@ -25,12 +25,12 @@ namespace Soloplan.WhatsON.Composition
     /// <summary>
     /// Logger instance used by this class.
     /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
     /// <summary>
     /// Singleton instance.
     /// </summary>
-    private static volatile PluginManager instance;
+    private static volatile PluginManager? instance;
 
     /// <summary>
     /// The connectors.
@@ -40,7 +40,7 @@ namespace Soloplan.WhatsON.Composition
     /// <summary>
     /// The connector plugins list.
     /// </summary>
-    private List<ConnectorPlugin> connectorPlugins;
+    private List<ConnectorPlugin>? connectorPlugins;
 
     /// <summary>
     /// Registered plugins.
@@ -48,7 +48,7 @@ namespace Soloplan.WhatsON.Composition
     private List<IPlugin> plugIns = new List<IPlugin>();
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="PluginManager"/> class.
+    /// Initializes a new instance of the <see cref="PluginManager" /> class.
     /// </summary>
     private PluginManager()
     {
@@ -98,32 +98,12 @@ namespace Soloplan.WhatsON.Composition
     public IReadOnlyList<IPlugin> Plugins => this.plugIns.AsReadOnly();
 
     /// <summary>
-    /// Gets the Plugin instance of a Connector Plugin.
-    /// </summary>
-    /// <param name="connector">The connector.</param>
-    /// <returns>The Plugin instance.</returns>
-    public ConnectorPlugin GetPlugin(Connector connector)
-    {
-      return this.ConnectorPlugins.FirstOrDefault(sp => sp.ConnectorType == connector.GetType());
-    }
-
-    /// <summary>
-    /// Gets the Plugin instance of a Connector Configuration.
-    /// </summary>
-    /// <param name="connectorConfiguration">The connector configuration.</param>
-    /// <returns>The Plugin instance.</returns>
-    public ConnectorPlugin GetPlugin(ConnectorConfiguration connectorConfiguration)
-    {
-      return this.ConnectorPlugins.FirstOrDefault(sp => sp.Name == connectorConfiguration.Type);
-    }
-
-    /// <summary>
     /// Creates the new connector.
     /// </summary>
     /// <param name="connectorConfiguration">The connector configuration.</param>
     /// <returns>Creates new connector with given configuration.</returns>
     /// <exception cref="InvalidOperationException">Couldn't find plugin for a type: {connectorConfiguration.TypeName}.</exception>
-    public Connector CreateNewConnector(ConnectorConfiguration connectorConfiguration, bool? checkRedirect = null)
+    public Connector? CreateNewConnector(ConnectorConfiguration connectorConfiguration, bool? checkRedirect = null)
     {
       var plugin = this.ConnectorPlugins.FirstOrDefault(p => p.Name == connectorConfiguration.Type);
       if (plugin == null)
@@ -153,7 +133,7 @@ namespace Soloplan.WhatsON.Composition
     /// <param name="connectorConfiguration">The connector configuration.</param>
     /// <returns>A new connector with given configuration.</returns>
     /// <exception cref="InvalidOperationException">Couldn't find plugin for a type: {connectorConfiguration.TypeName}.</exception>
-    public Connector GetConnector(ConnectorConfiguration connectorConfiguration, bool? checkRedirect = null)
+    public Connector? GetConnector(ConnectorConfiguration connectorConfiguration, bool? checkRedirect = null)
     {
       var connector = this.connectors.FirstOrDefault(s => s != null && s.Configuration.Identifier == connectorConfiguration.Identifier);
       if (connector != null)
@@ -165,7 +145,21 @@ namespace Soloplan.WhatsON.Composition
     }
 
     /// <summary>
-    /// Finds all the <see cref="T:Soloplan.WhatsON.Composition.IPlugin"/>s that are provided by the specified assemblies.
+    /// Gets the Plugin instance of a Connector Plugin.
+    /// </summary>
+    /// <param name="connector">The connector.</param>
+    /// <returns>The Plugin instance.</returns>
+    public ConnectorPlugin? GetPlugin(Connector connector) => this.ConnectorPlugins.FirstOrDefault(sp => sp.ConnectorType == connector.GetType());
+
+    /// <summary>
+    /// Gets the Plugin instance of a Connector Configuration.
+    /// </summary>
+    /// <param name="connectorConfiguration">The connector configuration.</param>
+    /// <returns>The Plugin instance.</returns>
+    public ConnectorPlugin? GetPlugin(ConnectorConfiguration connectorConfiguration) => this.ConnectorPlugins.FirstOrDefault(sp => sp.Name == connectorConfiguration.Type);
+
+    /// <summary>
+    /// Finds all the <see cref="T:Soloplan.WhatsON.Composition.IPlugin" />s that are provided by the specified assemblies.
     /// Note that this method only supports assemblies from the applications root directory,
     /// i.e. the plugin assembly must be located next to the application's executable.
     /// </summary>
@@ -175,7 +169,7 @@ namespace Soloplan.WhatsON.Composition
     {
       foreach (var assemblyName in assemblies)
       {
-        if(!assemblyName.Contains("WhatsON"))
+        if (!assemblyName.Contains("WhatsON"))
         {
           continue;
         }
@@ -210,7 +204,10 @@ namespace Soloplan.WhatsON.Composition
           if (typeof(IPlugin).IsAssignableFrom(type) && !type.IsAbstract)
           {
             log.Debug("Found plugin {plugin}", new { Assembly = absoluteName, PluginType = type });
-            yield return Activator.CreateInstance(type) as IPlugin;
+            if (Activator.CreateInstance(type) is IPlugin plugin)
+            {
+              yield return plugin;
+            }
           }
         }
 
@@ -224,7 +221,7 @@ namespace Soloplan.WhatsON.Composition
     private void InitializePlugInTypes()
     {
       log.Debug("Initializing {PluginsManager}", nameof(PluginManager));
-      var path = System.IO.Path.GetDirectoryName(System.AppContext.BaseDirectory);
+      var path = AppContext.BaseDirectory;
       var plugInPath = path;
       log.Debug("Paths used {}", new { AppDirectory = path, PluginDirectory = plugInPath });
       if (Directory.Exists(plugInPath))

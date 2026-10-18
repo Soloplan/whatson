@@ -1,307 +1,38 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BB65378F-518E-43E4-A374-592A9FE88E51}</ProjectGuid>
+    <Description>The library containing the GUI for the whatsON build and infrastructure monitoring tool.</Description>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Soloplan.WhatsON.GUI</RootNamespace>
-    <AssemblyName>Soloplan.WhatsON.GUI</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject>Soloplan.WhatsON.GUI.App</StartupObject>
-  </PropertyGroup>
-  <PropertyGroup>
     <ApplicationIcon>Whatson.ico</ApplicationIcon>
+    <DefaultItemExcludes>$(DefaultItemExcludes);Tests\**</DefaultItemExcludes>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="UIAutomationProvider" />
-    <Reference Include="UIAutomationTypes" />
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
+    <InternalsVisibleTo Include="Soloplan.WhatsON.GUI.Tests" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Compile Include="Configuration\AboutPage.xaml.cs">
-      <DependentUpon>AboutPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Configuration\CheckBoxConfigControlBuilder.cs" />
-    <Compile Include="Configuration\ConfigResourcesHelper.cs" />
-    <Compile Include="Configuration\MessageControl.xaml.cs">
-      <DependentUpon>MessageControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Configuration\NotificationSettingsControlBuilder.cs" />
-    <Compile Include="Configuration\PluginViewModel.cs" />
-    <Compile Include="Configuration\ProjectsDataInterchange.cs" />
-    <Compile Include="Configuration\ViewModel\GroupViewModel.cs" />
-    <Compile Include="Configuration\View\EditGroupNameDialog.xaml.cs">
-      <DependentUpon>EditGroupNameDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Configuration\View\EditProjectName.xaml.cs">
-      <DependentUpon>EditProjectName.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Configuration\WaitControl.xaml.cs">
-      <DependentUpon>WaitControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Configuration\Wizard\GrouppingSetting.cs" />
-    <Compile Include="Configuration\Wizard\ProjectSelectionWizardPage.xaml.cs">
-      <DependentUpon>ProjectSelectionWizardPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Configuration\Wizard\ConnectionWizardPage.xaml.cs">
-      <DependentUpon>ConnectionWizardPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Configuration\Wizard\ProjectsTreeView.xaml.cs">
-      <DependentUpon>ProjectsTreeView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Configuration\Wizard\ProjectViewModel.cs" />
-    <Compile Include="Configuration\Wizard\ProjectViewModelList.cs" />
-    <Compile Include="Configuration\Wizard\WizardController.cs" />
-    <Compile Include="Configuration\Wizard\WizardProjectToVisibilityConverter.cs" />
-    <Compile Include="Configuration\Wizard\WizardWindow.xaml.cs">
-      <DependentUpon>WizardWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="CustomTitleBar.xaml.cs">
-      <DependentUpon>CustomTitleBar.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Logging\ExceptionHandlingInitialization.cs" />
-    <Compile Include="Logging\LoggingConfiguration.cs" />
-    <Compile Include="NotificationsModel.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\ConfigurationItems.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ConfigurationItems.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Configuration\ConfigControlBuilder.cs" />
-    <Compile Include="Configuration\NotEmptyValidationRule.cs" />
-    <Compile Include="Configuration\View\Validation.cs" />
-    <Compile Include="ThemeHelper.cs" />
-    <Compile Include="TrayHandler.cs" />
-    <Compile Include="WindowFinder.cs" />
-    <Page Include="Configuration\AboutPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Configuration\MessageControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Configuration\View\ConfigWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Configuration\MainConfigPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Configuration\View\EditGroupNameDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Configuration\View\EditProjectName.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Configuration\WaitControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Configuration\Wizard\ProjectSelectionWizardPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Configuration\View\ConnectorConfigPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Configuration\View\ConnectorsConfigPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Configuration\View\OkCancelDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Configuration\View\CreateEditConnectorDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Configuration\Wizard\ConnectionWizardPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Configuration\Wizard\ProjectsTreeView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Configuration\Wizard\WizardWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="CustomTitleBar.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Configuration\ComboBoxConfigControlBuilder.cs" />
-    <Compile Include="Configuration\ConfigControlBuilderFactory.cs" />
-    <Compile Include="Configuration\CategoryComboBoxConfigControlBuilder.cs" />
-    <Compile Include="Configuration\ViewModel\ConfigurationItemViewModel.cs" />
-    <Compile Include="Configuration\ViewModel\ConfigViewModel.cs" />
-    <Compile Include="Configuration\ViewModel\GlobalConfigDataViewModel.cs" />
-    <Compile Include="Configuration\ViewModel\ConnectorViewModel.cs" />
-    <Compile Include="Configuration\ViewModel\ViewModelBase.cs" />
-    <Compile Include="Configuration\View\ConfigWindow.xaml.cs">
-      <DependentUpon>ConfigWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Configuration\IConfigControlBuilder.cs" />
-    <Compile Include="Configuration\MainConfigPage.xaml.cs">
-      <DependentUpon>MainConfigPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Configuration\NumericConfigControlBuilder.cs" />
-    <Compile Include="Configuration\View\ConnectorConfigPage.xaml.cs">
-      <DependentUpon>ConnectorConfigPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Configuration\View\ConnectorsConfigPage.xaml.cs">
-      <DependentUpon>ConnectorsConfigPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Configuration\TextConfigControlBuilder.cs" />
-    <Compile Include="Configuration\View\OkCancelDialog.xaml.cs">
-      <DependentUpon>OkCancelDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Configuration\View\CreateEditConnectorDialog.xaml.cs">
-      <DependentUpon>CreateEditConnectorDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Configuration\View\ConnectorViewModelCollection.cs" />
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
+    <PackageReference Include="HtmlRenderer.WPF" />
+    <PackageReference Include="Humanizer.Core" />
+    <PackageReference Include="MaterialDesignThemes" />
+    <PackageReference Include="NLog" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <EmbeddedResource Include="Properties\ConfigurationItems.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>ConfigurationItems.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Soloplan.WhatsON.GUI.Common\Soloplan.WhatsON.GUI.Common.csproj">
-      <Project>{8659027c-e4da-40d3-b081-fff37bdfd73f}</Project>
-      <Name>Soloplan.WhatsON.GUI.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Soloplan.WhatsON\Soloplan.WhatsON.csproj">
-      <Project>{C5EEC17B-E8A9-4CD2-BE0B-491E70D9F511}</Project>
-      <Name>Soloplan.WhatsON</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="HtmlRenderer.WPF">
-      <Version>1.5.0.6</Version>
-    </PackageReference>
-    <PackageReference Include="Humanizer">
-      <Version>2.8.26</Version>
-    </PackageReference>
-    <PackageReference Include="Humanizer.Core">
-      <Version>2.8.26</Version>
-    </PackageReference>
-    <PackageReference Include="MaterialDesignColors">
-      <Version>1.2.7</Version>
-    </PackageReference>
-    <PackageReference Include="MaterialDesignThemes">
-      <Version>3.2.0</Version>
-    </PackageReference>
-    <PackageReference Include="NLog">
-      <Version>4.7.5</Version>
-    </PackageReference>
-    <PackageReference Include="ShowMeTheXAML.MSBuild">
-      <Version>1.0.12</Version>
-    </PackageReference>
-    <PackageReference Include="System.Windows.Interactivity.WPF">
-      <Version>2.0.20525</Version>
-    </PackageReference>
+    <ProjectReference Include="..\Soloplan.WhatsON.GUI.Common\Soloplan.WhatsON.GUI.Common.csproj" />
+    <ProjectReference Include="..\Soloplan.WhatsON\Soloplan.WhatsON.csproj" />
+    <ProjectReference Include="..\Soloplan.WhatsON.Jenkins.GUI\Soloplan.WhatsON.Jenkins.GUI.csproj" />
+    <ProjectReference Include="..\Soloplan.WhatsON.CruiseControl.GUI\Soloplan.WhatsON.CruiseControl.GUI.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Whatson.ico" />
     <Resource Include="Logging\LogConfig.xml" />
+    <Resource Include="Resources\whatsONx16.png" />
+    <EmbeddedResource Update="Properties\Resources.resx" Generator="PublicResXFileCodeGenerator" LastGenOutput="Resources.Designer.cs" />
+    <EmbeddedResource Update="Properties\ConfigurationItems.resx" Generator="ResXFileCodeGenerator" LastGenOutput="ConfigurationItems.Designer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\whatsONx16.png" />
+    <PackageReference Include="Fody" PrivateAssets="all" />
+    <PackageReference Include="PropertyChanged.Fody" PrivateAssets="all" />
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\..\config\Soloplan.WhatsON.targets" />
 </Project>

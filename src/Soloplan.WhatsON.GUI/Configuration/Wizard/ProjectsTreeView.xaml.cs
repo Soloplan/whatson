@@ -7,107 +7,94 @@
 
 namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 {
+  using System;
   using System.Diagnostics;
   using System.Windows;
   using System.Windows.Controls;
   using System.Windows.Input;
-  using System.Windows.Navigation;
+  using System.Windows.Media;
+  using TheArtOfDev.HtmlRenderer.Core.Entities;
+  using TheArtOfDev.HtmlRenderer.WPF;
 
-  /// <summary>
-  /// Interaction logic for ProjectsTreeView.xaml.
-  /// </summary>
   public partial class ProjectsTreeView : UserControl
   {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ProjectsTreeView"/> class.
-    /// </summary>
     public ProjectsTreeView()
     {
       this.InitializeComponent();
     }
 
-    /// <summary>
-    /// Marks the <see cref="RoutedEventArgs"/> as handled.
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-    private void NullHandler(object sender, RoutedEventArgs e)
+    private static ListBox? FindProjectList(DependencyObject? element)
     {
+      while (element != null)
+      {
+        if (element is ListBox list)
+        {
+          return list;
+        }
+
+        element = VisualTreeHelper.GetParent(element);
+      }
+
+      return null;
+    }
+
+    private void OpenFolderClick(object sender, RoutedEventArgs e)
+    {
+      if (sender is FrameworkElement { DataContext: ProjectViewModel { IsFolder: true } folder } &&
+          FindProjectList(sender as DependencyObject)?.DataContext is ProjectBrowserColumn column)
+      {
+        column.SelectedProject = folder;
+      }
+
       e.Handled = true;
     }
 
-    /// <summary>
-    /// Handles the PreviewKeyUp event of the TreeViewItem control.
-    /// </summary>
-    /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The <see cref="System.Windows.Input.KeyEventArgs"/> instance containing the event data.</param>
-    private void TreeViewItemPreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+    private void DescriptionImageLoad(object sender, RoutedEventArgs<HtmlImageLoadEventArgs> e)
     {
-      if (e.Key == System.Windows.Input.Key.Space)
+      // Server descriptions can contain SVG badges or invalid image data that WPF cannot decode.
+      e.Data.Callback();
+    }
+
+    private void ColumnLoaded(object sender, RoutedEventArgs e) => ((FrameworkElement)sender).BringIntoView();
+
+    private void ColumnsSizeChanged(object sender, SizeChangedEventArgs e)
+    {
+      var width = Math.Max(230, this.ColumnsScrollViewer.ViewportWidth / Math.Min(Math.Max(1, this.ColumnsPanel.Items.Count), 2));
+      if (double.IsFinite(width) && Math.Abs(width - (double)this.Resources["ProjectColumnWidth"]) > 0.5)
       {
-        var item = (ProjectViewModel)this.mainTreeView.SelectedItem;
-        if (item.IsCheckable)
-        {
-          item.IsChecked = !item.IsChecked;
-          e.Handled = true;
-        }
+        this.Resources["ProjectColumnWidth"] = width;
       }
     }
 
-    /// <summary>
-    /// Handles the hyperlink requiest event of elements in the TreeViewItem control.
-    /// </summary>
-    /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The <see cref="RequestNavigateEventArgs"/> instance containing the event data.</param>
-    private void HyperlinkRequestNavigate(object sender, RequestNavigateEventArgs e)
+    private void OpenProjectClick(object sender, RoutedEventArgs e)
     {
-      Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+      if (sender is FrameworkElement { DataContext: ProjectViewModel project } &&
+          Uri.TryCreate(project.DirectAddress, UriKind.Absolute, out var uri) && uri.Scheme is "http" or "https")
+      {
+        Process.Start(new ProcessStartInfo(uri.AbsoluteUri) { UseShellExecute = true });
+      }
+
       e.Handled = true;
     }
 
-    /// <summary>
-    /// Checks if all projects are checked.
-    /// </summary>
-    /// <returns>Bool = true if all projects are checked. </returns>
-    private bool AreAllProjectsChecked()
+    private void ProjectsPreviewKeyDown(object sender, KeyEventArgs e)
     {
-      foreach (var item in this.mainTreeView.Items)
+      if (e.Key == Key.Enter && e.OriginalSource is ListBoxItem { DataContext: ProjectViewModel { IsFolder: true } folder } row &&
+          FindProjectList(row)?.DataContext is ProjectBrowserColumn column)
       {
-        var project = (ProjectViewModel)item;
-        if (!project.IsChecked)
-        {
-          return false;
-        }
+        column.SelectedProject = folder;
+        e.Handled = true;
       }
-
-      return true;
-    }
-
-    /// <summary>
-    /// Handles keydown in wizard projects tree view.
-    /// </summary>
-    /// <param name="sender">Sender item.</param>
-    /// <param name="e">Event args.</param>
-    private void ProjectsTreeViewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-    {
-      if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.A))
+      else if (e.Key == Key.A && Keyboard.Modifiers == ModifierKeys.Control &&
+          this.DataContext is ProjectBrowserViewModel { MultiSelectionMode: true } browser)
       {
-        if (!this.AreAllProjectsChecked())
-        {
-          foreach (var item in this.mainTreeView.Items)
-          {
-            var project = (ProjectViewModel)item;
-            project.IsChecked = true;
-          }
-        }
-        else
-        {
-          foreach (var item in this.mainTreeView.Items)
-          {
-            var project = (ProjectViewModel)item;
-            project.IsChecked = false;
-          }
-        }
+        browser.AllSelectionState = browser.AllSelectionState != true;
+        e.Handled = true;
+      }
+      else if (e.Key == Key.Space && e.OriginalSource is ListBoxItem { DataContext: ProjectViewModel item })
+      {
+        item.IsChecked = !item.IsChecked;
+        e.Handled = true;
       }
     }
   }

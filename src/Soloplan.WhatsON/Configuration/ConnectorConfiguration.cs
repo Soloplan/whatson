@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ConnectorConfiguration.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -17,22 +17,22 @@ namespace Soloplan.WhatsON.Configuration
   /// </summary>
   public class ConnectorConfiguration
   {
-    private string type;
+    private string type = string.Empty;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ConnectorConfiguration"/> class.
+    /// Initializes a new instance of the <see cref="ConnectorConfiguration" /> class.
     /// </summary>
     /// <param name="connectorName">Name of the type.</param>
     /// <param name="name">The name.</param>
     /// <param name="configurationItems">The configuration items.</param>
-    public ConnectorConfiguration(string connectorName, string name, List<ConfigurationItem> configurationItems)
+    public ConnectorConfiguration(string? connectorName, string name, List<ConfigurationItem> configurationItems)
       : this(connectorName, name)
     {
       this.ConfigurationItems = configurationItems;
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ConnectorConfiguration"/> class.
+    /// Initializes a new instance of the <see cref="ConnectorConfiguration" /> class.
     /// </summary>
     /// <param name="connectorName">Name of the type.</param>
     /// <param name="name">The name.</param>
@@ -42,8 +42,16 @@ namespace Soloplan.WhatsON.Configuration
     /// <param name="value2">The value2.</param>
     /// <param name="key3">The key3.</param>
     /// <param name="value3">The value3.</param>
-    public ConnectorConfiguration(string connectorName, string name, string key1, string value1, string key2 = null, string value2 = null, string key3 = null, string value3 = null)
-    : this(connectorName, name)
+    public ConnectorConfiguration(
+      string? connectorName,
+      string name,
+      string key1,
+      string? value1,
+      string? key2 = null,
+      string? value2 = null,
+      string? key3 = null,
+      string? value3 = null)
+      : this(connectorName, name)
     {
       this.Name = name;
       this.ConfigurationItems = new List<ConfigurationItem>();
@@ -60,26 +68,31 @@ namespace Soloplan.WhatsON.Configuration
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ConnectorConfiguration"/> class.
+    /// Initializes a new instance of the <see cref="ConnectorConfiguration" /> class.
     /// </summary>
     /// <param name="connectorName">Name of the type.</param>
     /// <param name="name">The name.</param>
-    public ConnectorConfiguration(string connectorName, string name)
-     : this(connectorName)
+    public ConnectorConfiguration(string? connectorName, string name)
+      : this(connectorName)
     {
       this.Name = name;
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ConnectorConfiguration"/> class.
+    /// Initializes a new instance of the <see cref="ConnectorConfiguration" /> class.
     /// </summary>
     /// <param name="connectorName">Name of the plugin type.</param>
     [JsonConstructor]
-    public ConnectorConfiguration(string connectorName)
+    public ConnectorConfiguration(string? connectorName)
     {
-      this.Type = connectorName;
+      this.Type = connectorName ?? string.Empty;
       this.Identifier = Guid.NewGuid();
     }
+
+    /// <summary>
+    /// Gets or sets the configuration items.
+    /// </summary>
+    public IList<ConfigurationItem> ConfigurationItems { get; set; } = new List<ConfigurationItem>();
 
     /// <summary>
     /// Gets or sets the configuration identifier.
@@ -89,7 +102,13 @@ namespace Soloplan.WhatsON.Configuration
     /// <summary>
     /// Gets or sets the name of the connector.
     /// </summary>
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the name of the plugin type.
+    /// </summary>
+    [Obsolete("Replaced by the Type which is evaluated from the ConnectorPlugin.Name property instead of the FullName of the Plugin type.")]
+    public string? PluginTypeName { internal get; set; }
 
     /// <summary>
     /// Gets or sets the name of the plugin type.
@@ -116,22 +135,8 @@ namespace Soloplan.WhatsON.Configuration
         return this.type;
       }
 
-      set
-      {
-        this.type = value;
-      }
+      set => this.type = value;
     }
-
-    /// <summary>
-    /// Gets or sets the name of the plugin type.
-    /// </summary>
-    [Obsolete("Replaced by the Type which is evaluated from the ConnectorPlugin.Name property instead of the FullName of the Plugin type.")]
-    public string PluginTypeName { internal get; set; }
-
-    /// <summary>
-    /// Gets or sets the configuration items.
-    /// </summary>
-    public IList<ConfigurationItem> ConfigurationItems { get; set; } = new List<ConfigurationItem>();
 
     /// <summary>
     /// Gets the configuration by key.
@@ -148,7 +153,7 @@ namespace Soloplan.WhatsON.Configuration
         return configItem;
       }
 
-      return this.ConfigurationItems.FirstOrDefault(x => x.Key == key);
+      return configItem;
     }
   }
 }

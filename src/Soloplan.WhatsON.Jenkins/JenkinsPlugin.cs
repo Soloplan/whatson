@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="JenkinsPlugin.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -9,7 +9,11 @@ namespace Soloplan.WhatsON.Jenkins
 {
   using System;
   using System.Collections.Generic;
+  using System.Net;
+  using System.Net.Http;
+  using System.Net.Mime;
   using System.Threading.Tasks;
+  using Newtonsoft.Json;
   using NLog;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
@@ -21,7 +25,9 @@ namespace Soloplan.WhatsON.Jenkins
     /// <summary>
     /// Logger instance used by this class.
     /// </summary>
-    private static readonly Logger log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType?.ToString());
+    private static readonly Logger log = LogManager.GetCurrentClassLogger();
+
+    private static readonly HttpClient discoveryClient = new HttpClient();
 
     private static Dictionary<string, bool> blueOceanCache = new Dictionary<string, bool>();
 
@@ -35,34 +41,43 @@ namespace Soloplan.WhatsON.Jenkins
       log.Debug("Creating new JenkinsProject based on configuration {configuration}", new { configuration.Name, configuration.Identifier });
       var jenkinsProject = new JenkinsConnector(configuration, new JenkinsApi());
 
-      if (checkRedirect == null)
-      {
-        return jenkinsProject;
-      }
-      else if (checkRedirect == false)
+      if (checkRedirect != true || bool.TryParse(configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin).Value, out _))
       {
         return jenkinsProject;
       }
 
-      if (blueOceanCache.ContainsKey(jenkinsProject.Address))
+      var address = jenkinsProject.Address;
+      ArgumentException.ThrowIfNullOrWhiteSpace(address);
+      if (blueOceanCache.ContainsKey(address))
       {
-        jenkinsProject.Configuration.GetConfigurationByKey("RedirectPlugin").Value = blueOceanCache[jenkinsProject.Address].ToString();
-        configuration.GetConfigurationByKey("RedirectPlugin").Value = blueOceanCache[jenkinsProject.Address].ToString();
+        jenkinsProject.Configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin).Value = blueOceanCache[address].ToString();
+        configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin).Value = blueOceanCache[address].ToString();
         return jenkinsProject;
       }
 
-      var task = Task.Run(async () => await jenkinsProject.IsReachableUrl(JenkinsApi.UrlHelper.ProjectUrl(jenkinsProject) + JenkinsApi.UrlHelper.RedirectPluginUrlSuffix));
-      task.Wait();
-      var result = task.Result;
-      if (result == true)
+      var task = Task.Run(async () =>
       {
-        jenkinsProject.Configuration.GetConfigurationByKey("RedirectPlugin").Value = "True";
-        configuration.GetConfigurationByKey("RedirectPlugin").Value = "True";
-        blueOceanCache.Add(jenkinsProject.Address, true);
+        try
+        {
+          using var response = await discoveryClient.GetAsync(JenkinsApi.UrlHelper.ProjectUrl(jenkinsProject) + JenkinsApi.UrlHelper.RedirectPluginUrlSuffix);
+          return response.IsSuccessStatusCode;
+        }
+        catch (Exception exception)
+        {
+          log.Debug(exception, "Could not detect the optional Blue Ocean redirect.");
+          return false;
+        }
+      });
+      var result = task.GetAwaiter().GetResult();
+      if (result)
+      {
+        jenkinsProject.Configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin).Value = "True";
+        configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin).Value = "True";
+        blueOceanCache.Add(address, true);
       }
       else
       {
-        blueOceanCache.Add(jenkinsProject.Address, false);
+        blueOceanCache.Add(address, false);
       }
 
       return jenkinsProject;
@@ -75,20 +90,10 @@ namespace Soloplan.WhatsON.Jenkins
     /// <returns>
     /// The projects list from the server.
     /// </returns>
-    public override async Task<IList<Project>> GetProjects(string address)
+    public override async Task<IList<Project>?> GetProjects(string address)
     {
-      var api = new JenkinsApi();
       var serverProjects = new List<Project>();
-      try
-      {
-        await this.GetProjectsLists(address, serverProjects, api);
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
-
-      return serverProjects;
+      return await this.GetProjectsLists(address, serverProjects) ? serverProjects : null;
     }
 
     /// <summary>
@@ -97,15 +102,18 @@ namespace Soloplan.WhatsON.Jenkins
     /// <param name="project">The server project.</param>
     /// <param name="configurationItemsSupport">The configuration items provider.</param>
     /// <param name="serverAddress">The server address.</param>
-    public override void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string serverAddress)
+    public override void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string? serverAddress = null)
     {
+      ArgumentException.ThrowIfNullOrWhiteSpace(serverAddress);
       var projectName = project.FullName;
 
       // hacky way to extract the project name from the URL for versions prior to 0.9.1...
       if (string.IsNullOrWhiteSpace(projectName))
       {
         // for now, we extract the project name from the address
-        var projectNameWithoutAddress = project.Address.Substring(serverAddress.Length, project.Address.Length - serverAddress.Length - 1).Trim('/');
+        var projectAddress = project.Address;
+        ArgumentException.ThrowIfNullOrWhiteSpace(projectAddress);
+        var projectNameWithoutAddress = projectAddress.Substring(serverAddress.Length, projectAddress.Length - serverAddress.Length - 1).Trim('/');
         if (projectNameWithoutAddress.StartsWith(JenkinsApi.UrlHelper.JobUrlPrefix, StringComparison.CurrentCultureIgnoreCase))
         {
           projectName = projectNameWithoutAddress.Substring(3, projectNameWithoutAddress.Length - 3).TrimStart('/');
@@ -121,43 +129,64 @@ namespace Soloplan.WhatsON.Jenkins
     /// </summary>
     /// <param name="address">The server address.</param>
     /// <param name="projects">The list of projects to update.</param>
-    /// <param name="jenkinsApi">Jenkins Api instance.</param>
     /// <returns>A task representing the job.</returns>
-    private async Task GetProjectsLists(string address, IList<Project> projects, JenkinsApi jenkinsApi)
+    private async Task<bool> GetProjectsLists(string address, IList<Project> projects)
     {
-      JenkinsJobs jenkinsJobs;
-      try
+      using var response = await discoveryClient.GetAsync(JenkinsApi.UrlHelper.JobsRequest(address));
+      if (response.StatusCode == HttpStatusCode.NotFound)
       {
-        jenkinsJobs = await jenkinsApi.GetJenkinsJobs(address, default);
-      }
-      catch (Exception ex)
-      {
-        throw ex;
+        return false;
       }
 
-      if (jenkinsJobs == null)
+      response.EnsureSuccessStatusCode();
+      if (!string.Equals(response.Content.Headers.ContentType?.MediaType, MediaTypeNames.Application.Json, StringComparison.OrdinalIgnoreCase))
       {
-        return;
+        return false;
       }
 
+      var jenkinsJobs = JsonConvert.DeserializeObject<JenkinsJobs>(await response.Content.ReadAsStringAsync());
       if (jenkinsJobs?.Jobs == null)
       {
-        return;
+        return false;
       }
 
-      foreach (var jenkinsJob in jenkinsJobs.Jobs)
+      return await this.AddProjects(jenkinsJobs.Jobs, projects);
+    }
+
+    private async Task<bool> AddProjects(IList<JenkinsJob> jobs, IList<Project> projects)
+    {
+      foreach (var jenkinsJob in jobs)
       {
-        var newServerProject = this.AddProject(projects, jenkinsJob);
-        if (string.Equals(jenkinsJob.ClassName.Trim(), "com.cloudbees.hudson.plugins.folder.Folder".Trim(), System.StringComparison.InvariantCultureIgnoreCase)
-         || string.Equals(jenkinsJob.ClassName.Trim(), "org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject".Trim(), System.StringComparison.InvariantCultureIgnoreCase))
+        if (string.IsNullOrWhiteSpace(jenkinsJob.Url) || string.IsNullOrWhiteSpace(jenkinsJob.Name))
         {
-          await this.GetProjectsLists(jenkinsJob.Url, newServerProject.Children, jenkinsApi);
+          return false;
+        }
+
+        var newServerProject = this.AddProject(projects, jenkinsJob);
+        if (jenkinsJob.Jobs != null || string.Equals(
+              jenkinsJob.ClassName?.Trim(),
+              "com.cloudbees.hudson.plugins.folder.Folder",
+              StringComparison.InvariantCultureIgnoreCase) || string.Equals(
+              jenkinsJob.ClassName?.Trim(),
+              "org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject",
+              StringComparison.InvariantCultureIgnoreCase))
+        {
+          var loaded = jenkinsJob.Jobs != null
+            ? await this.AddProjects(jenkinsJob.Jobs, newServerProject.Children)
+            : await this.GetProjectsLists(jenkinsJob.Url, newServerProject.Children);
+          if (!loaded)
+          {
+            return false;
+          }
+
           foreach (var child in newServerProject.Children)
           {
             child.Parent = newServerProject;
           }
         }
       }
+
+      return true;
     }
 
     /// <summary>
@@ -168,7 +197,12 @@ namespace Soloplan.WhatsON.Jenkins
     /// <returns>The newly  created server projects tree item.</returns>
     private Project AddProject(IList<Project> parentList, JenkinsJob jenkinsJobsItem)
     {
-      var newServerProject = new Project(jenkinsJobsItem.Url, jenkinsJobsItem.DisplayName ?? jenkinsJobsItem.Name, jenkinsJobsItem.Url, jenkinsJobsItem.FullName, jenkinsJobsItem.Description);
+      var newServerProject = new Project(
+        jenkinsJobsItem.Url ?? throw new InvalidPlugInApiResponseException("Jenkins returned a job without a URL."),
+        jenkinsJobsItem.DisplayName ?? jenkinsJobsItem.Name ?? throw new InvalidPlugInApiResponseException("Jenkins returned a job without a name."),
+        jenkinsJobsItem.Url ?? throw new InvalidPlugInApiResponseException("Jenkins returned a job without a URL."),
+        jenkinsJobsItem.FullName,
+        jenkinsJobsItem.Description);
       parentList.Add(newServerProject);
       return newServerProject;
     }

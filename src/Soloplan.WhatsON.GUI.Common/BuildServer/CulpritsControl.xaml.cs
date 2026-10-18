@@ -10,7 +10,6 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
   using System.Collections;
   using System.Windows;
   using System.Windows.Controls;
-  using Soloplan.WhatsON.GUI.Common.Converters;
 
   /// <summary>
   /// Interaction logic for CulpritsControl.xaml.
@@ -18,20 +17,21 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
   public partial class CulpritsControl : UserControl
   {
     /// <summary>
-    /// Dependency property for <see cref="CulpritsProp"/>.
+    /// Dependency property for <see cref="CulpritsProp" />.
     /// </summary>
-    public static readonly DependencyProperty CulpritsPropProperty = DependencyProperty.Register(nameof(CulpritsProp), typeof(IList), typeof(CulpritsControl));
+    public static readonly DependencyProperty CulpritsPropProperty = DependencyProperty.Register(
+      nameof(CulpritsProp),
+      typeof(IList),
+      typeof(CulpritsControl));
 
     /// <summary>
-    /// Dependency property for <see cref="CulpritsProp"/>.
+    /// Dependency property for <see cref="CulpritsProp" />.
     /// </summary>
     public static readonly DependencyProperty CaptionProperty = DependencyProperty.Register(nameof(Caption), typeof(string), typeof(CulpritsControl));
 
     public CulpritsControl()
     {
       this.InitializeComponent();
-      var converter = this.Resources["CountToVisibility"] as CountToVisibilityConverter;
-      converter.ValueForFalse = Visibility.Collapsed;
       this.DataContext = this;
     }
 
@@ -45,15 +45,6 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     {
       get => (string)this.GetValue(CaptionProperty);
       set => this.SetValue(CaptionProperty, value);
-    }
-
-    protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
-    {
-      if (e.Property.Name == nameof(this.CulpritsProp))
-      {
-      }
-
-      base.OnPropertyChanged(e);
     }
   }
 }

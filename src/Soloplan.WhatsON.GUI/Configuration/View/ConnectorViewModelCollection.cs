@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ConnectorViewModelCollection.cs" company="Soloplan GmbH">
-// Copyright (c) Soloplan GmbH. All rights reserved.
-// Licensed under the MIT License. See License-file in the project root for license information.
+//   Copyright (c) Soloplan GmbH. All rights reserved.
+//   Licensed under the MIT License. See License-file in the project root for license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -12,11 +12,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
   using System.Collections.ObjectModel;
   using System.ComponentModel;
   using System.Linq;
+  using PropertyChanged;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Configuration.ViewModel;
 
   /// <summary>
-  /// The <see cref="ObservableCollection{T}"/> implementation for connectors with some additional events.
+  /// The <see cref="ObservableCollection{T}" /> implementation for connectors with some additional events.
   /// </summary>
   /// <seealso cref="ConnectorViewModel" />
   public class ConnectorViewModelCollection : ObservableCollection<ConnectorViewModel>
@@ -24,20 +25,17 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <summary>
     /// Occurs when connectors were loaded.
     /// </summary>
-    public event EventHandler<EventArgs> Loaded;
+    public event EventHandler<EventArgs>? Loaded;
 
     /// <summary>
     /// Occurs when collection item property changed.
     /// </summary>
-    public event EventHandler<PropertyChangedEventArgs> CollectionItemPropertyChanged;
+    public event EventHandler<PropertyChangedEventArgs>? CollectionItemPropertyChanged;
 
     /// <summary>
     /// Should be called when connectors were loaded by external code.
     /// </summary>
-    public void LoadCompleted()
-    {
-      this.Loaded?.Invoke(this, new EventArgs());
-    }
+    public void LoadCompleted() => this.Loaded?.Invoke(this, new EventArgs());
 
     /// <summary>
     /// Loads the connectors from the source configuration.
@@ -123,10 +121,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <summary>
     /// Raises the <see cref="E:CollectionItemPropertyChanged" /> event.
     /// </summary>
-    /// <param name="propertyChangedEventArgs">The <see cref="PropertyChangedEventArgs"/> instance containing the event data.</param>
-    private void OnCollectionItemPropertyChanged(PropertyChangedEventArgs propertyChangedEventArgs)
-    {
-      this.CollectionItemPropertyChanged?.Invoke(this, propertyChangedEventArgs);
-    }
+    /// <param name="propertyChangedEventArgs">The <see cref="PropertyChangedEventArgs" /> instance containing the event data.</param>
+    [SuppressPropertyChangedWarnings]
+    private void OnCollectionItemPropertyChanged(PropertyChangedEventArgs propertyChangedEventArgs) => this.CollectionItemPropertyChanged?.Invoke(this, propertyChangedEventArgs);
   }
 }

@@ -9,37 +9,22 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
 {
   using System.Collections.Generic;
   using System.ComponentModel;
+  using Soloplan.WhatsON.Localization;
 
   /// <summary>
   /// Model for editing group name.
   /// </summary>
-  public class GroupViewModel : NotifyPropertyChanged, IDataErrorInfo
+  public partial class GroupViewModel : INotifyPropertyChanged, IDataErrorInfo
   {
-    /// <summary>
-    /// Backing field for <see cref="Name"/>.
-    /// </summary>
-    private string name;
-
     /// <summary>
     /// Gets or sets the name of the group.
     /// </summary>
-    public string Name
-    {
-      get => this.name;
-      set
-      {
-        this.name = value;
-        this.OnPropertyChanged();
-      }
-    }
+    public string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets names of other groups.
     /// </summary>
-    public IList<string> AlreadyUsedNames
-    {
-      get; set;
-    }
+    public IList<string> AlreadyUsedNames { get; set; } = new List<string>();
 
     /// <summary>
     /// Gets error message.
@@ -50,7 +35,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
       {
         if (this.AlreadyUsedNames.Contains(this.Name))
         {
-          return "The name is already used.";
+          return Strings.GroupNameAlreadyUsed;
         }
 
         return string.Empty;

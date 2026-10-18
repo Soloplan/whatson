@@ -1,0 +1,15 @@
+<Project>
+  <PropertyGroup>
+    <ProjectWeaverXml>$(MSBuildThisFileDirectory)FodyWeavers.xml</ProjectWeaverXml>
+    <FodyGenerateXsd>false</FodyGenerateXsd>
+  </PropertyGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)..\config\stylecop.json" Link="stylecop.json"/>
+    <PackageReference Include="StyleCop.Analyzers" PrivateAssets="all"/>
+  </ItemGroup>
+  <ItemGroup Condition="'$(IsTestProject)' == 'true'">
+    <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+    <PackageReference Include="NUnit"/>
+    <PackageReference Include="NUnit3TestAdapter" PrivateAssets="all"/>
+  </ItemGroup>
+</Project>

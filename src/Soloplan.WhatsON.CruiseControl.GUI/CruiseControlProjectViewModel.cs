@@ -17,7 +17,7 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
     public CruiseControlProjectViewModel(CruiseControlConnector connector)
       : base(connector)
     {
-      this.Url = CruiseControlServer.UrlHelper.GetReportUrl(connector.directAddress, this.Connector?.Project);
+      this.Url = connector.directAddress is string address ? CruiseControlServer.UrlHelper.GetReportUrl(address, connector.Project) : null;
     }
 
     /// <summary>
@@ -37,12 +37,9 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
     public override void ApplyConfiguration(ConnectorConfiguration configuration)
     {
       base.ApplyConfiguration(configuration);
-      this.Url = CruiseControlServer.UrlHelper.GetReportUrl(this.Connector.directAddress, this.Connector?.Project);
+      this.Url = this.Connector?.directAddress is string address ? CruiseControlServer.UrlHelper.GetReportUrl(address, this.Connector.Project) : null;
     }
 
-    protected override BuildStatusViewModel GetStatusViewModel()
-    {
-      return new CruiseControlStatusViewModel(this);
-    }
+    protected override BuildStatusViewModel GetStatusViewModel() => new CruiseControlStatusViewModel(this);
   }
 }
