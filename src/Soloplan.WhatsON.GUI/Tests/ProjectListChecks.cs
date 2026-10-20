@@ -132,6 +132,7 @@ namespace Soloplan.WhatsON.GUI.Tests
                       Assert.That(row.ContextMenu.Items[0], Is.SameAs(volunteerMenu), "The volunteer action goes first.");
                       Assert.That(row.ContextMenu.Items[1], Is.TypeOf<Separator>());
                       Assert.That(volunteerMenu.Visibility, Is.EqualTo(Visibility.Visible), "Missing credentials must not hide the action.");
+                      Assert.That(FindVisualChild<MaterialDesignThemes.Wpf.PackIcon>(volunteerMenu)?.Kind, Is.EqualTo(MaterialDesignThemes.Wpf.PackIconKind.AccountWrench));
                       Assert.That(volunteerMenu.IsEnabled, Is.False, "These projects have no Jenkins credentials.");
                       Assert.That(volunteerMenu.Header, Is.EqualTo(Strings.ClearVolunteer));
                       Assert.That(volunteerMenu.Command, Is.SameAs(current.ClearVolunteer));
