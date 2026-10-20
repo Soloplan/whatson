@@ -172,6 +172,22 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     }
 
     [Test]
+    public async Task DamagedNoticeKeepsRecoveryTrackingUntilItIsRepaired()
+    {
+      var connector = this.CreateConnector();
+      await connector.SetVolunteer(42, null, true, CancellationToken.None);
+      var original = this.claimed.Description ?? throw new AssertionException("Missing notice.");
+      this.claimed.Description = original.Replace("YWxleA==", "/w==");
+      this.job.LastBuild = new JenkinsBuild { Number = 43, Result = "SUCCESS" };
+      await connector.QueryStatus(CancellationToken.None);
+      Assert.That(this.clearAttempts, Is.Zero);
+      Assert.That(new JenkinsVolunteerStore(this.directory).Read(JenkinsApi.UrlHelper.ProjectUrl(connector, false)).Count(), Is.EqualTo(1));
+      this.claimed.Description = original;
+      await this.CreateConnector().QueryStatus(CancellationToken.None);
+      Assert.That(this.claimed.Description, Is.EqualTo("Release notes"));
+    }
+
+    [Test]
     public void ANewerRunOnJenkinsPreventsClaimingAStaleUiBuild()
     {
       var connector = this.CreateConnector();

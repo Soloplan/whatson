@@ -61,6 +61,71 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       Assert.Throws<ArgumentException>(() => JenkinsVolunteer.SetOwner(null, "alex\nother"));
     }
 
+    [TestCase("Alex & <team> [on call]")]
+    [TestCase("Jörg 中文 $1")]
+    [TestCase("--><!-- whatsON:volunteer:end -->")]
+    public void CommentMarkersRoundTripNamesWithoutAllowingMarkupInjection(string owner)
+    {
+      var marker = JenkinsVolunteer.SetOwner(null, owner);
+      Assert.That(marker, Does.StartWith("<!-- whatsON:volunteer:start -->"));
+      Assert.That(marker, Does.EndWith("<!-- whatsON:volunteer:end -->"));
+      Assert.That(marker, Does.Contain("Being fixed by " + System.Net.WebUtility.HtmlEncode(owner)));
+      Assert.That(JenkinsVolunteer.GetOwner(marker), Is.EqualTo(owner));
+      Assert.That(JenkinsVolunteer.SetOwner(marker, null), Is.Empty);
+    }
+
+    [TestCase("\n")]
+    [TestCase("\r\n")]
+    public void ExtraLineBreaksInsideTheNoticeAreSupported(string newline)
+    {
+      var marker = JenkinsVolunteer.SetOwner(null, "alex");
+      Assert.That(marker, Is.EqualTo("<!-- whatsON:volunteer:start -->\n<!-- whatsON:volunteer:owner YWxleA== -->\nBeing fixed by alex\n<!-- whatsON:volunteer:end -->"));
+      var description = "Before" + marker.Replace("\n", newline + newline) + "After";
+      Assert.That(JenkinsVolunteer.GetOwner(description), Is.EqualTo("alex"));
+      Assert.That(JenkinsVolunteer.SetOwner(description, null), Is.EqualTo("BeforeAfter"));
+      Assert.That(JenkinsVolunteer.SetOwner(description, "other"), Is.EqualTo("Before" + JenkinsVolunteer.SetOwner(null, "other") + "After"));
+    }
+
+    [Test]
+    public void ReplacementUsesBoundariesAndPreservesSurroundingText()
+    {
+      var marker = JenkinsVolunteer.SetOwner(null, "alex").Replace("Being fixed by alex", "<strong>Edited notice</strong>\r\nAnother line");
+      var description = "<p>Before</p>\r\n" + marker + "\r\n<!-- unrelated -->After";
+      Assert.That(JenkinsVolunteer.GetOwner(description), Is.EqualTo("alex"));
+      Assert.That(JenkinsVolunteer.SetOwner(description, "other"),
+        Is.EqualTo("<p>Before</p>\r\n" + JenkinsVolunteer.SetOwner(null, "other") + "\r\n<!-- unrelated -->After"));
+      Assert.That(JenkinsVolunteer.SetOwner(description, null), Is.EqualTo("<p>Before</p>\r\n\r\n<!-- unrelated -->After"));
+    }
+
+    [Test]
+    public void LegacyMarkersCanStillBeReadClearedAndReplaced()
+    {
+      const string description = "Before\r\n[whatsON] Being fixed by Alex &amp; team [/whatsON]\r\nAfter";
+      Assert.That(JenkinsVolunteer.GetOwner(description), Is.EqualTo("Alex & team"));
+      Assert.That(JenkinsVolunteer.SetOwner(description, null), Is.EqualTo("Before\r\nAfter"));
+      Assert.That(JenkinsVolunteer.SetOwner(description, "other"), Is.EqualTo("Before\r\n" + JenkinsVolunteer.SetOwner(null, "other") + "After"));
+      Assert.Throws<InvalidOperationException>(() => JenkinsVolunteer.SetOwner(description + JenkinsVolunteer.SetOwner(null, "other"), null));
+    }
+
+    [TestCase("<!-- whatsON:volunteer:start -->Keep this text")]
+    [TestCase("Keep this text<!-- whatsON:volunteer:end -->")]
+    [TestCase("<!-- whatsON:volunteer:end --><!-- whatsON:volunteer:start -->")]
+    [TestCase("<!-- whatsON:volunteer:start -->Missing owner<!-- whatsON:volunteer:end -->")]
+    public void IncompleteCommentMarkersPreventEdits(string description)
+    {
+      Assert.Throws<InvalidOperationException>(() => JenkinsVolunteer.SetOwner(description, null));
+      Assert.Throws<InvalidOperationException>(() => JenkinsVolunteer.SetOwner(description, "alex"));
+    }
+
+    [TestCase("A")]
+    [TestCase("/w==")]
+    public void CorruptedOwnerMetadataDoesNotBreakStatusReading(string encodedOwner)
+    {
+      var marker = "<!-- whatsON:volunteer:start --><!-- whatsON:volunteer:owner " + encodedOwner
+        + " -->Notice<!-- whatsON:volunteer:end -->";
+      Assert.That(JenkinsVolunteer.GetOwner(marker), Is.Null);
+    }
+
     [TestCase(true)]
     [TestCase(false)]
     public async Task ApiAuthenticatesPreservesDescriptionAndVerifiesTheSavedMarker(bool claim)
@@ -119,6 +184,29 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       Assert.That(server.LogEntries, Has.Count.EqualTo(1));
     }
 
+    [TestCase("damaged")]
+    [TestCase("duplicate")]
+    [TestCase("incomplete")]
+    public void CorruptedNoticeNeverTriggersAnApiWrite(string damage)
+    {
+      using var server = WireMockServer.Start();
+      var api = new JenkinsApi(this.secrets);
+      var connector = this.CreateConnector(server.Urls[0], api);
+      var marker = JenkinsVolunteer.SetOwner(null, "alex");
+      var description = damage switch
+      {
+        "duplicate" => marker + marker,
+        "incomplete" => marker.Replace("<!-- whatsON:volunteer:end -->", string.Empty),
+        _ => marker.Replace("YWxleA==", "/w=="),
+      };
+      server.Given(Request.Create().WithPath("/job/folder/job/project/42/api/json").UsingGet())
+        .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json")
+          .WithBody(JsonConvert.SerializeObject(new JenkinsBuild { Number = 42, Result = "FAILURE", Description = description })));
+      Assert.ThrowsAsync<InvalidOperationException>(() => api.SetVolunteer(connector, 42, null, true, CancellationToken.None));
+      Assert.ThrowsAsync<InvalidOperationException>(() => api.SetVolunteer(connector, 42, null, false, CancellationToken.None));
+      Assert.That(server.LogEntries.All(entry => entry.RequestMessage?.Method == "GET"), Is.True);
+    }
+
     [Test]
     public void PollingSeparatesCredentialsAndIncludesDescriptionInCompactMode()
     {
@@ -139,7 +227,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var api = new JenkinsApi(this.secrets);
       var connector = this.CreateConnector(server.Urls[0], api);
       var auth = "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes("alex:fake-api-token"));
-      var description = JenkinsVolunteer.SetOwner(null, "alex");
+      var description = System.Net.WebUtility.HtmlEncode(JenkinsVolunteer.SetOwner(null, "alex"));
       server.Given(Request.Create().WithPath("/job/folder/api/xml").WithHeader("Authorization", auth).UsingGet())
         .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/xml")
           .WithBody("<jobs><job><name>project</name><lastStableBuild><number>40</number></lastStableBuild><lastBuild><number>42</number><result>FAILURE</result><description>" + description

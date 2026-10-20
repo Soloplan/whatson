@@ -62,6 +62,12 @@ Right-click the current failed or unstable build and select **Volunteer to fix**
 The action remains visible but disabled when the user name or API token is missing,
 when a newer run has started, or when the current run is not failed or unstable. whatsON
 adds a visible marker to that build's description, preserving existing text.
+The notice is enclosed by `<!-- whatsON:volunteer:start -->` and
+`<!-- whatsON:volunteer:end -->`, with the owner stored separately inside the
+block. Replacing or clearing it preserves text outside those boundaries, even if
+the visible notice has been edited. Duplicate, incomplete, or damaged blocks prevent
+edits and retain automatic-cleanup tracking until corrected.
+Existing `[whatsON]` notices remain readable and can still be cleared.
 Other whatsON clients read the marker on their next poll. **Clear volunteer**
 removes only the marker and remains available for marked history entries.
 

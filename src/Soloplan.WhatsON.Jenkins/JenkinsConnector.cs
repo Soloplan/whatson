@@ -392,7 +392,7 @@ namespace Soloplan.WhatsON.Jenkins
               continue;
             }
 
-            if (JenkinsVolunteer.GetOwner(build.Description) == claim.Owner)
+            if (JenkinsVolunteer.GetValidatedOwner(build.Description) == claim.Owner)
             {
               build = await this.api.SetVolunteer(this, claim.BuildNumber, claim.Owner, false, token);
             }

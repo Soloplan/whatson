@@ -54,7 +54,7 @@ namespace Soloplan.WhatsON.Jenkins
         throw new InvalidPlugInApiResponseException("Jenkins returned a different build.");
       }
 
-      var owner = JenkinsVolunteer.GetOwner(build.Description);
+      var owner = JenkinsVolunteer.GetValidatedOwner(build.Description);
       if (!string.Equals(owner, expectedOwner, StringComparison.Ordinal) || (claim && owner != null))
       {
         throw new InvalidOperationException("The volunteer has changed. Refresh the build before trying again.");
