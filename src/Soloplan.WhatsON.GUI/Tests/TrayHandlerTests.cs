@@ -13,6 +13,7 @@ namespace Soloplan.WhatsON.GUI.Tests
   using System.Windows.Forms;
   using NUnit.Framework;
   using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Model;
 
   [TestFixture]
@@ -35,7 +36,11 @@ namespace Soloplan.WhatsON.GUI.Tests
     [TestCase(new ObservationState[0], 1, ExpectedResult = ObservationState.Unknown)]
     [TestCase(new[] { ObservationState.Success }, 1, ExpectedResult = ObservationState.Success)]
     [TestCase(new[] { ObservationState.Success }, 2, ExpectedResult = ObservationState.Unknown)]
-    [TestCase(new[] { ObservationState.Success, ObservationState.Running }, 2, ExpectedResult = ObservationState.Success)]
+    [TestCase(new[] { ObservationState.Success, ObservationState.Running }, 2, ExpectedResult = ObservationState.Unknown)]
+    [TestCase(new[] { ObservationState.Running }, 1, ExpectedResult = ObservationState.Unknown)]
+    [TestCase(new[] { ObservationState.Failure, ObservationState.Running }, 2, ExpectedResult = ObservationState.Failure)]
+    [TestCase(new[] { ObservationState.Unstable, ObservationState.Running }, 2, ExpectedResult = ObservationState.Unstable)]
+    [TestCase(new[] { ObservationState.Unknown, ObservationState.Running }, 3, ExpectedResult = ObservationState.Unknown)]
     [TestCase(new[] { ObservationState.Unknown, ObservationState.Success }, 2, ExpectedResult = ObservationState.Unknown)]
     [TestCase(new[] { ObservationState.Success, ObservationState.Unstable }, 3, ExpectedResult = ObservationState.Unstable)]
     [TestCase(new[] { ObservationState.Unstable, ObservationState.Failure }, 3, ExpectedResult = ObservationState.Failure)]
@@ -67,6 +72,96 @@ namespace Soloplan.WhatsON.GUI.Tests
       }
     }
 
+    [TestCase(ObservationState.Success)]
+    [TestCase(ObservationState.Failure)]
+    [TestCase(ObservationState.Unstable)]
+    [TestCase(ObservationState.Unknown)]
+    [Apartment(ApartmentState.STA)]
+    public void TrayIconFollowsRepeatedBuildStartsAndCompletions(ObservationState previousState)
+    {
+      using var tray = new TrayHandler(new ObservationScheduler(), new ApplicationConfiguration { OpenMinimized = true });
+      var model = (typeof(TrayHandler).GetField("model", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected model field.")).GetValue(tray) as NotificationsModel ?? throw new AssertionException("Expected model.");
+      var icon = (typeof(TrayHandler).GetField("icon", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected icon field.")).GetValue(tray) as NotifyIcon ?? throw new AssertionException("Expected icon.");
+      var update = typeof(TrayHandler).GetMethod("UpdateTrayIcon", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected update method.");
+      var connector = new ConnectorViewModel();
+      model.Connectors.Add(connector);
+      var history = new ConnectorViewModel();
+      history.CurrentStatus.Update(new Status(previousState));
+      connector.ConnectorSnapshots.Add(history.CurrentStatus);
+      var runningIcons = (typeof(TrayHandler).GetField("runningIcons", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected running icons field.")).GetValue(tray) as Dictionary<ObservationState, System.Drawing.Icon[]> ?? throw new AssertionException("Expected running icons.");
+      var pulse = typeof(TrayHandler).GetMethod("PulseTrayIcon", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected pulse method.");
+      var timer = (typeof(TrayHandler).GetField("pulseTimer", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected timer field.")).GetValue(tray) as System.Windows.Forms.Timer ?? throw new AssertionException("Expected timer.");
+      Assert.That(timer.Interval, Is.EqualTo(150));
+      foreach (var state in new[] { previousState, Running, Failure, Running, Success })
+      {
+        connector.CurrentStatus.Update(new Status(state));
+        update.Invoke(tray, null);
+        var effectiveState = state == Running ? previousState : state;
+        var expectedField = effectiveState switch
+        {
+          ObservationState.Failure => "failureIcon",
+          ObservationState.Unstable => "unstableIcon",
+          ObservationState.Unknown => "loadingIcon",
+          _ => "normalIcon",
+        };
+        var expectedIcon = state == Running ? runningIcons[effectiveState][0] : (typeof(TrayHandler).GetField(expectedField, BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected status icon field.")).GetValue(tray);
+        Assert.That(icon.Icon, Is.SameAs(expectedIcon), $"Tray icon after changing to {state}.");
+        Assert.That(timer.Enabled, Is.EqualTo(state == Running));
+        if (state == Running)
+        {
+          var frames = runningIcons[effectiveState];
+          using var expanded = frames[0].ToBitmap();
+          using var contracted = frames[frames.Length / 2].ToBitmap();
+          var steadyIcon = (typeof(TrayHandler).GetField(expectedField, BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected status icon field.")).GetValue(tray) as System.Drawing.Icon ?? throw new AssertionException("Expected status icon.");
+          using var steady = steadyIcon.ToBitmap();
+          var color = effectiveState switch
+          {
+            ObservationState.Success => System.Drawing.Color.LimeGreen,
+            ObservationState.Failure => System.Drawing.Color.Red,
+            ObservationState.Unstable => System.Drawing.Color.Gold,
+            _ => System.Drawing.Color.Gray,
+          };
+          var expandedPixels = 0;
+          var contractedPixels = 0;
+          var steadyPixels = 0;
+          for (var y = 0; y < expanded.Height; y++)
+          {
+            for (var x = 0; x < expanded.Width; x++)
+            {
+              expandedPixels += expanded.GetPixel(x, y).ToArgb() == color.ToArgb() ? 1 : 0;
+              contractedPixels += contracted.GetPixel(x, y).ToArgb() == color.ToArgb() ? 1 : 0;
+              steadyPixels += steady.GetPixel(x, y).ToArgb() == color.ToArgb() ? 1 : 0;
+            }
+          }
+
+          Assert.That(expandedPixels - contractedPixels, Is.GreaterThan(20), "The pulse must visibly change the badge area.");
+          if (effectiveState != ObservationState.Unknown)
+          {
+            Assert.That(expandedPixels, Is.EqualTo(steadyPixels), "The pulse must not grow beyond the normal badge size.");
+          }
+
+          Assert.That(contracted.GetPixel(11, 11).ToArgb(), Is.EqualTo(color.ToArgb()), "The contracted badge must keep the same center and status color.");
+          Assert.That(contracted.GetPixel(13, 13).ToArgb(), Is.Not.EqualTo(color.ToArgb()), "The contracted badge must not shift toward the corner.");
+          for (var frame = 1; frame <= frames.Length; frame++)
+          {
+            pulse.Invoke(tray, new object?[] { null, System.EventArgs.Empty });
+            Assert.That(icon.Icon, Is.SameAs(frames[frame % frames.Length]));
+          }
+
+          Assert.That(icon.Text, Does.EndWith($" ({Soloplan.WhatsON.Localization.Strings.Running})"));
+          if (previousState == Failure)
+          {
+            Assert.That(icon.Text, Does.StartWith(Properties.Resources.TrayHandler_UpdateTrayIcon_BuildFailing));
+          }
+        }
+        else
+        {
+          pulse.Invoke(tray, new object?[] { null, System.EventArgs.Empty });
+          Assert.That(icon.Icon, Is.SameAs(expectedIcon), "Completed builds must stay steady.");
+        }
+      }
+    }
+
     /// <summary>
     /// Tests the <see cref="TrayHandler.GetEffectiveState" /> method.
     /// </summary>
@@ -76,6 +171,8 @@ namespace Soloplan.WhatsON.GUI.Tests
     [TestCase(ObservationState.Success, new[] { ObservationState.Failure }, ExpectedResult = ObservationState.Success)]
     [TestCase(ObservationState.Failure, new[] { ObservationState.Success }, ExpectedResult = ObservationState.Failure)]
     [TestCase(ObservationState.Running, new[] { ObservationState.Unstable, ObservationState.Success }, ExpectedResult = ObservationState.Unstable)]
+    [TestCase(ObservationState.Running, new[] { ObservationState.Failure }, ExpectedResult = ObservationState.Failure)]
+    [TestCase(ObservationState.Running, new[] { ObservationState.Success }, ExpectedResult = ObservationState.Success)]
     [TestCase(
       ObservationState.Unknown,
       new[] { ObservationState.Running, ObservationState.Failure, ObservationState.Success },

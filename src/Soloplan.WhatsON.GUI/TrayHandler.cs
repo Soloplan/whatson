@@ -58,6 +58,14 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     private Icon? normalIcon;
 
+    private readonly System.Collections.Generic.Dictionary<ObservationState, Icon[]> runningIcons = new();
+
+    private readonly Timer pulseTimer = new Timer { Interval = 150 };
+
+    private Icon[]? pulseFrames;
+
+    private int pulseFrame;
+
     /// <summary>
     /// The icon displayed when build-status is unstable.
     /// </summary>
@@ -84,6 +92,20 @@ namespace Soloplan.WhatsON.GUI
       this.normalIcon = CreateStatusIcon(this.loadingIcon, Color.LimeGreen);
       this.unstableIcon = CreateStatusIcon(this.loadingIcon, Color.Gold);
       this.failureIcon = CreateStatusIcon(this.loadingIcon, Color.Red);
+      foreach (var (state, color) in new[]
+      {
+        (ObservationState.Unknown, Color.Gray),
+        (ObservationState.Success, Color.LimeGreen),
+        (ObservationState.Unstable, Color.Gold),
+        (ObservationState.Failure, Color.Red),
+      })
+      {
+        this.runningIcons[state] = Enumerable.Range(0, 12)
+          .Select(frame => CreateStatusIcon(this.loadingIcon, color, (int)Math.Round(5 + (2 * Math.Cos(frame * Math.PI / 6)))))
+          .ToArray();
+      }
+
+      this.pulseTimer.Tick += this.PulseTrayIcon;
 
       this.icon = new NotifyIcon();
       this.icon.Icon = this.loadingIcon;
@@ -142,6 +164,8 @@ namespace Soloplan.WhatsON.GUI
 
     public void Dispose()
     {
+      this.pulseTimer.Dispose();
+      this.pulseFrames = null;
       Localizer.LanguageChanged -= this.LanguageChanged;
       this.model.StatusChanged -= this.CurrentStatusPropertyChanged;
       this.model.Dispose();
@@ -153,6 +177,12 @@ namespace Soloplan.WhatsON.GUI
       this.loadingIcon = null;
       this.normalIcon?.Dispose();
       this.normalIcon = null;
+      foreach (var runningIcon in this.runningIcons.Values.SelectMany(frames => frames))
+      {
+        runningIcon.Dispose();
+      }
+
+      this.runningIcons.Clear();
       this.unstableIcon?.Dispose();
       this.unstableIcon = null;
       this.failureIcon?.Dispose();
@@ -252,7 +282,7 @@ namespace Soloplan.WhatsON.GUI
         return ObservationState.Unstable;
       }
 
-      return currentStates.Count < configuredConnectorCount || currentStates.Contains(ObservationState.Unknown)
+      return currentStates.Count < configuredConnectorCount || currentStates.Contains(ObservationState.Unknown) || currentStates.Contains(ObservationState.Running)
         ? ObservationState.Unknown
         : ObservationState.Success;
     }
@@ -280,7 +310,7 @@ namespace Soloplan.WhatsON.GUI
     /// <summary>
     /// Creates a copy of the application icon with a colored status badge.
     /// </summary>
-    private static Icon CreateStatusIcon(Icon baseIcon, Color statusColor)
+    private static Icon CreateStatusIcon(Icon baseIcon, Color statusColor, int badgeSize = 7)
     {
       using (var bitmap = new Bitmap(16, 16))
       {
@@ -291,8 +321,9 @@ namespace Soloplan.WhatsON.GUI
           using (var outline = new SolidBrush(Color.FromArgb(230, 255, 255, 255)))
           using (var badge = new SolidBrush(statusColor))
           {
-            graphics.FillEllipse(outline, 7, 7, 9, 9);
-            graphics.FillEllipse(badge, 8, 8, 7, 7);
+            var badgePosition = 11.5f - (badgeSize / 2f);
+            graphics.FillEllipse(outline, badgePosition - 1, badgePosition - 1, badgeSize + 2, badgeSize + 2);
+            graphics.FillEllipse(badge, badgePosition, badgePosition, badgeSize, badgeSize);
           }
         }
 
@@ -490,6 +521,15 @@ namespace Soloplan.WhatsON.GUI
       }
     }
 
+    private void PulseTrayIcon(object? sender, EventArgs e)
+    {
+      if (this.icon != null && this.pulseFrames != null)
+      {
+        this.pulseFrame = (this.pulseFrame + 1) % this.pulseFrames.Length;
+        this.icon.Icon = this.pulseFrames[this.pulseFrame];
+      }
+    }
+
     private void UpdateTrayIcon()
     {
       if (this.icon == null)
@@ -497,6 +537,7 @@ namespace Soloplan.WhatsON.GUI
         return;
       }
 
+      var isRunning = this.model.Connectors.Any(connector => connector.CurrentStatus.State == ObservationState.Running);
       var connectorStates = this.model.Connectors.Select(connector => GetEffectiveState(
         connector.CurrentStatus.State,
         connector.ConnectorSnapshots.Select(snapshot => snapshot.State))).ToList();
@@ -521,6 +562,20 @@ namespace Soloplan.WhatsON.GUI
           this.icon.Icon = this.normalIcon;
           this.icon.Text = Resources.TrayHandler_UpdateTrayIcon_Normal;
           break;
+      }
+
+      if (isRunning)
+      {
+        this.pulseFrames = this.runningIcons[overallState];
+        this.icon.Icon = this.pulseFrames[this.pulseFrame];
+        this.icon.Text += $" ({Strings.Running})";
+        this.pulseTimer.Start();
+      }
+      else
+      {
+        this.pulseTimer.Stop();
+        this.pulseFrames = null;
+        this.pulseFrame = 0;
       }
     }
   }
