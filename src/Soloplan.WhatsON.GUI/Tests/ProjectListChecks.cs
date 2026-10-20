@@ -9,6 +9,7 @@ namespace Soloplan.WhatsON.GUI.Tests
 {
   using System;
   using System.Collections.Generic;
+  using System.Linq;
   using System.Reflection;
   using System.Windows;
   using System.Windows.Controls;
@@ -56,6 +57,16 @@ namespace Soloplan.WhatsON.GUI.Tests
               Duration = TimeSpan.FromMinutes(3),
               EstimatedDuration = TimeSpan.FromMinutes(8),
             };
+            if (index == 2)
+            {
+              connector.CurrentStatus = new Soloplan.WhatsON.Jenkins.JenkinsStatus(ObservationState.Failure)
+              {
+                BuildNumber = 110,
+                Details = Soloplan.WhatsON.Jenkins.JenkinsVolunteer.SetOwner(null, "alexander.long.username"),
+                Time = DateTime.UtcNow.AddMinutes(-3),
+              };
+            }
+
             for (var history = 0; history < 5; history++)
             {
               connector.AddSnapshot(new Status { State = ObservationState.Success, BuildNumber = 107 - history, Time = DateTime.UtcNow.AddHours(-history - 1) });
@@ -107,6 +118,26 @@ namespace Soloplan.WhatsON.GUI.Tests
 
                   Assert.That(((BuildNumberControl)row.FindName("BuildNumber")).BuildNumber, Is.EqualTo(model.CurrentStatus?.BuildNumber));
                   Assert.That(row.ContextMenu, Is.Not.Null, "Both plugins must retain project commands.");
+                  if (groupIndex == 0 && index == 2 && width == 800)
+                  {
+                    row.ContextMenu.PlacementTarget = row;
+                    row.ContextMenu.DataContext = model;
+                    row.ContextMenu.IsOpen = true;
+                    try
+                    {
+                      window.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+                      var volunteerCommand = model.CurrentStatus?.VolunteerToFix ?? throw new AssertionException("Expected Jenkins volunteer command.");
+                      var volunteerMenu = row.ContextMenu.Items.OfType<MenuItem>().Single(item => item.Command == volunteerCommand);
+                      Assert.That(volunteerMenu.Visibility, Is.EqualTo(Visibility.Visible), "Missing credentials must not hide the action.");
+                      Assert.That(volunteerMenu.IsEnabled, Is.False, "These projects have no Jenkins credentials.");
+                    }
+                    finally
+                    {
+                      row.ContextMenu.IsOpen = false;
+                    }
+                  }
+
+                  Assert.That(((Border)row.FindName("VolunteerBadge")).Visibility, Is.EqualTo(groupIndex == 0 && index == 2 ? Visibility.Visible : Visibility.Collapsed));
                   Assert.That(((TextBlock)row.FindName("ProjectName")).ActualWidth, Is.GreaterThan(35), "Project names take priority over optional metadata.");
                   Assert.That(((FrameworkElement)row.FindName("BuildHistory")).Visibility, Is.EqualTo(width == 800 ? Visibility.Visible : Visibility.Collapsed));
                   Assert.That(((FrameworkElement)row.FindName("BuildTiming")).Visibility, Is.EqualTo(width == 300 ? Visibility.Collapsed : Visibility.Visible));

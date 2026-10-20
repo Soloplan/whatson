@@ -20,6 +20,7 @@
              materialDesign:TransitionAssist.DisableTransitions="True">
   <UserControl.Resources>
     <converters:StatusToColorConverter x:Key="StatusToColorConverter" />
+    <converters:NullOrDefaultToVisibilityConverter x:Key="HasVolunteerCommand" />
     <ContextMenu x:Key="ContextMenuBuild">
       <MenuItem CommandParameter="{Binding}" Command="{Binding CopyBuildLabel}">
         <MenuItem.Header>
@@ -37,6 +38,10 @@
           </StackPanel>
         </MenuItem.Header>
       </MenuItem>
+      <MenuItem Header="{live:Text loc:Strings.VolunteerToFix}" Command="{Binding VolunteerToFix}"
+                Visibility="{Binding VolunteerToFix, Converter={StaticResource HasVolunteerCommand}}" />
+      <MenuItem Header="{live:Text loc:Strings.ClearVolunteer}" Command="{Binding ClearVolunteer}"
+                Visibility="{Binding ClearVolunteer, Converter={StaticResource HasVolunteerCommand}}" />
     </ContextMenu>
   </UserControl.Resources>
   <DockPanel ContextMenu="{StaticResource ContextMenuBuild}">

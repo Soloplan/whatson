@@ -7,6 +7,8 @@
 
 namespace Soloplan.WhatsON.Jenkins.GUI
 {
+  using System.Linq;
+  using System.Windows;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
@@ -29,7 +31,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
     {
       if (this.CurrentStatus is JenkinsStatusViewModel status)
       {
-        return (status.Culprits.Count == 0 && status.CommittedToThisBuild.Count == 0 && status.State != ObservationState.Running
+        return (status.Volunteer == null && status.Culprits.Count == 0 && status.CommittedToThisBuild.Count == 0 && status.State != ObservationState.Running
                 && status.State != ObservationState.Unknown)
           ? false
           : true;
@@ -42,6 +44,27 @@ namespace Soloplan.WhatsON.Jenkins.GUI
     {
       base.ApplyConfiguration(configuration);
       this.Url = this.Connector is Connector connector ? JenkinsApi.UrlHelper.ProjectUrl(connector) : null;
+    }
+
+    public override void Update(Connector? changedConnector)
+    {
+      base.Update(changedConnector);
+      if (changedConnector == null)
+      {
+        return;
+      }
+
+      Application.Current.Dispatcher.Invoke(() =>
+      {
+        foreach (var model in this.ConnectorSnapshots)
+        {
+          var status = changedConnector.Snapshots.FirstOrDefault(snapshot => snapshot.Status.BuildNumber == model.BuildNumber)?.Status;
+          if (status != null)
+          {
+            model.Update(status);
+          }
+        }
+      });
     }
 
     protected override BuildStatusViewModel GetStatusViewModel() => new JenkinsStatusViewModel(this);

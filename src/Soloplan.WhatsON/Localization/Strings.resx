@@ -533,4 +533,9 @@ Expected connector type: {3}</value>
   <data name="ProjectServerRoot" xml:space="preserve"><value>Build server</value></data>
   <data name="OpenProjectFolder" xml:space="preserve"><value>Open folder</value></data>
   <data name="FilterProjectFolder" xml:space="preserve"><value>Filter this folder</value></data>
+  <data name="VolunteerToFix" xml:space="preserve"><value>Volunteer to fix</value></data>
+  <data name="ClearVolunteer" xml:space="preserve"><value>Clear volunteer</value></data>
+  <data name="VolunteerUpdateFailed" xml:space="preserve"><value>Could not update the volunteer. Check your Jenkins credentials and Run/Update permission.</value></data>
+  <data name="TokenCannotBeDecrypted" xml:space="preserve"><value>Stored token cannot be read. Enter the API token again.</value></data>
+  <data name="TokenCannotBeSaved" xml:space="preserve"><value>The API token could not be encrypted. Check access to your local application data folder.</value></data>
 </root>

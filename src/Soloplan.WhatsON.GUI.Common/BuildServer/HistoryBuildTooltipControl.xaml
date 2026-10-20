@@ -17,6 +17,8 @@
     </Style>
   </UserControl.Resources>
   <StackPanel>
+    <TextBlock Text="{Binding Volunteer}" ToolTip="{live:Text loc:Strings.VolunteerToFix}"
+               FontWeight="SemiBold" Visibility="{Binding Volunteer, Converter={StaticResource HasValue}}" />
     <DockPanel Visibility="{Binding Label, Converter={StaticResource HasValue}}">
       <materialDesign:PackIcon Kind="TagOutline" />
       <TextBlock FontWeight="SemiBold" Text="{Binding Label}" TextWrapping="Wrap" />

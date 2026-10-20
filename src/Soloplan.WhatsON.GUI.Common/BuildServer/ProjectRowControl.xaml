@@ -52,19 +52,28 @@
                                ToolTip="{live:Text loc:Strings.JobDisabledDescription}"
                                AutomationProperties.Name="{live:Text loc:Strings.JobDisabled}" />
     </Grid>
-    <TextBlock Grid.Column="1" x:Name="ProjectName" Text="{Binding Name}" ToolTip="{Binding Name}"
-               FontSize="{Binding DataContext.FontSize, RelativeSource={RelativeSource AncestorType=tree:ConnectorsTreeView}}"
-               FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,12,0">
-      <TextBlock.Style>
-        <Style TargetType="TextBlock">
-          <Style.Triggers>
-            <DataTrigger Binding="{Binding IsDisabled}" Value="True">
-              <Setter Property="Foreground" Value="{DynamicResource SettingsMuted}" />
-            </DataTrigger>
-          </Style.Triggers>
-        </Style>
-      </TextBlock.Style>
-    </TextBlock>
+    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+      <TextBlock x:Name="ProjectName" Text="{Binding Name}" ToolTip="{Binding Name}"
+                 FontSize="{Binding DataContext.FontSize, RelativeSource={RelativeSource AncestorType=tree:ConnectorsTreeView}}"
+                 FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,12,0">
+        <TextBlock.Style>
+          <Style TargetType="TextBlock">
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding IsDisabled}" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource SettingsMuted}" />
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </TextBlock.Style>
+      </TextBlock>
+      <Border x:Name="VolunteerBadge" HorizontalAlignment="Left" Background="{DynamicResource SettingsBackground}" CornerRadius="5" Padding="6,2" Margin="0,0,12,0"
+              VerticalAlignment="Center" Visibility="{Binding CurrentStatus.Volunteer, Converter={StaticResource HasValue}}">
+        <StackPanel Orientation="Horizontal" ToolTip="{Binding CurrentStatus.Volunteer}">
+          <materialDesign:PackIcon Kind="AccountWrench" Width="16" Height="16" Margin="0,0,4,0" />
+          <TextBlock Text="{Binding CurrentStatus.Volunteer}" MaxWidth="96" TextTrimming="CharacterEllipsis" Style="{StaticResource Metadata}" />
+        </StackPanel>
+      </Border>
+    </StackPanel>
     <Border Grid.Column="2" Background="{DynamicResource SettingsBackground}" CornerRadius="5" Padding="6,3"
             Margin="0,0,12,0" VerticalAlignment="Center">
       <Border.Style>

@@ -10,19 +10,39 @@ namespace Soloplan.WhatsON.Jenkins.GUI
   using System;
   using System.Collections.ObjectModel;
   using System.Linq;
+  using System.Threading;
+  using System.Threading.Tasks;
+  using System.Windows;
+  using System.Windows.Input;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Jenkins.Model;
+  using Soloplan.WhatsON.Localization;
   using Soloplan.WhatsON.Model;
 
   public class JenkinsStatusViewModel : BuildStatusViewModel
   {
+    private readonly CustomCommand volunteerToFix = new CustomCommand();
+    private readonly CustomCommand clearVolunteer = new CustomCommand();
     private ObservableCollection<UserViewModel>? committedToThisBuild;
+    private bool changingVolunteer;
 
     public JenkinsStatusViewModel(ConnectorViewModel model)
       : base(model)
     {
+      this.volunteerToFix.CanExecuteExternal += (_, e) => e.Cancel = !this.CanChangeVolunteer()
+        || this.Volunteer != null || this.Building
+        || this.BuildNumber != this.Parent.CurrentStatus.BuildNumber
+        || (this.State != ObservationState.Failure && this.State != ObservationState.Unstable)
+        || (this.Parent.CurrentStatus.State != ObservationState.Failure && this.Parent.CurrentStatus.State != ObservationState.Unstable);
+      this.clearVolunteer.CanExecuteExternal += (_, e) => e.Cancel = !this.CanChangeVolunteer() || this.Volunteer == null;
+      this.volunteerToFix.OnExecute += async (_, _) => await this.ChangeVolunteer(true);
+      this.clearVolunteer.OnExecute += async (_, _) => await this.ChangeVolunteer(false);
     }
+
+    public override ICommand VolunteerToFix => this.volunteerToFix;
+
+    public override ICommand ClearVolunteer => this.clearVolunteer;
 
     public bool CulpritsAndLastCommittedDifferent { get; set; }
 
@@ -32,6 +52,8 @@ namespace Soloplan.WhatsON.Jenkins.GUI
     public override void Update(Status? newStatus)
     {
       base.Update(newStatus);
+      this.Volunteer = newStatus is JenkinsStatus ? JenkinsVolunteer.GetOwner(newStatus.Details) : null;
+      this.RefreshVolunteerCommands();
       if (!(newStatus is JenkinsStatus jenkinsStatus))
       {
         return;
@@ -72,6 +94,43 @@ namespace Soloplan.WhatsON.Jenkins.GUI
                                                  this.CommittedToThisBuild.All(committer => committer.FullName != culprit.FullName));
 
       this.UpdateCalculatedFields();
+    }
+
+    private bool CanChangeVolunteer() => !this.changingVolunteer && this.BuildNumber > 0
+      && this.Parent.Connector is JenkinsConnector { HasApiCredentials: true };
+
+    private void RefreshVolunteerCommands()
+    {
+      this.volunteerToFix.CanExecute(null);
+      this.clearVolunteer.CanExecute(null);
+    }
+
+    private async Task ChangeVolunteer(bool claim)
+    {
+      if (!(claim ? this.volunteerToFix : this.clearVolunteer).CanExecute(null)
+          || this.Parent.Connector is not JenkinsConnector connector || this.BuildNumber is not int buildNumber)
+      {
+        return;
+      }
+
+      this.changingVolunteer = true;
+      this.RefreshVolunteerCommands();
+      try
+      {
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(60));
+        var status = await connector.SetVolunteer(buildNumber, this.Volunteer, claim, timeout.Token);
+        this.Update(status);
+        this.Parent.Update(connector);
+      }
+      catch (Exception exception)
+      {
+        MessageBox.Show(Strings.VolunteerUpdateFailed + Environment.NewLine + exception.Message, Strings.VolunteerToFix, MessageBoxButton.OK, MessageBoxImage.Error);
+      }
+      finally
+      {
+        this.changingVolunteer = false;
+        this.RefreshVolunteerCommands();
+      }
     }
   }
 }

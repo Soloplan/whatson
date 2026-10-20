@@ -100,7 +100,7 @@ namespace Soloplan.WhatsON.Jenkins
           }
 
           requests++;
-          var jobs = await DownloadPollingJobs(uri, token);
+          var jobs = await this.DownloadPollingJobs(uri, batch[0], token);
           foreach (var connector in batch)
           {
             jobs.TryGetValue(UrlHelper.ProjectLeafName(connector), out var job);
@@ -150,7 +150,8 @@ namespace Soloplan.WhatsON.Jenkins
 
     internal static IEnumerable<IReadOnlyList<JenkinsConnector>> PlanPollingRequests(IReadOnlyCollection<JenkinsConnector> connectors)
     {
-      var queues = connectors.GroupBy(UrlHelper.ParentUrl).ToDictionary(group => group.Key, group => new Queue<JenkinsConnector>(group));
+      var queues = connectors.GroupBy(connector => (UrlHelper.ParentUrl(connector), connector.AuthenticationUser, connector.EncryptedApiToken))
+        .ToDictionary(group => group.Key, group => new Queue<JenkinsConnector>(group));
       var planned = new HashSet<JenkinsConnector>();
       foreach (var connector in connectors)
       {
@@ -159,7 +160,7 @@ namespace Soloplan.WhatsON.Jenkins
           continue;
         }
 
-        var queue = queues[UrlHelper.ParentUrl(connector)];
+        var queue = queues[(UrlHelper.ParentUrl(connector), connector.AuthenticationUser, connector.EncryptedApiToken)];
         var batch = new List<JenkinsConnector>();
         while (queue.Count > 0 && batch.Count < MaximumJobsPerRequest)
         {
@@ -179,10 +180,10 @@ namespace Soloplan.WhatsON.Jenkins
 
     internal static Uri PollingRequest(IReadOnlyList<JenkinsConnector> batch, bool compact)
     {
-      var build = compact ? "number,building,result,timestamp,duration,estimatedDuration" : JenkinsBuild.RequestProperties;
+      var build = compact ? "number,description,building,result,timestamp,duration,estimatedDuration" : JenkinsBuild.RequestProperties;
 
       // Jenkins applies XPath after export: stay within one folder and a bounded build history.
-      var tree = $"jobs[name,disabled,inQueue,lastBuild[{build}],builds[{build}]{{0,{Connector.MaxSnapshots + 1}}}]";
+      var tree = $"jobs[name,disabled,inQueue,lastStableBuild[number],lastBuild[{build}],builds[{build}]{{0,{Connector.MaxSnapshots + 1}}}]";
       var names = batch.Select(UrlHelper.ProjectLeafName).Distinct(StringComparer.Ordinal);
       var xpath = "/*/job[" + string.Join(" or ", names.Select(NamePredicate)) + "]";
       return new Uri(UrlHelper.ParentUrl(batch[0]) + "/api/xml?tree=" + Uri.EscapeDataString(tree)
@@ -206,13 +207,37 @@ namespace Soloplan.WhatsON.Jenkins
       : !value.Contains('"') ? "\"" + value + "\""
       : "concat(" + string.Join(",\"'\",", value.Split('\'').Select(part => "'" + part + "'")) + ")";
 
-    private static async Task<IDictionary<string, JenkinsJob>> DownloadPollingJobs(Uri uri, CancellationToken token)
+    private static JToken ToJson(XElement element, int depth)
+    {
+      if (depth > 32)
+      {
+        throw new InvalidPlugInApiResponseException("Jenkins polling XML is nested too deeply.");
+      }
+
+      if (!element.HasElements)
+      {
+        return new JValue(element.Value);
+      }
+
+      var result = new JObject();
+      foreach (var group in element.Elements().GroupBy(child => child.Name.LocalName))
+      {
+        var arrayName = group.Key switch { "build" => "builds", "culprit" => "culprits", "changeSet" => "changeSets", "item" => "items", _ => null };
+        result[arrayName ?? group.Key] = arrayName == null ? ToJson(group.Single(), depth + 1) : new JArray(group.Select(child => ToJson(child, depth + 1)));
+      }
+
+      return result;
+    }
+
+    private async Task<IDictionary<string, JenkinsJob>> DownloadPollingJobs(Uri uri, JenkinsConnector connector, CancellationToken token)
     {
       using var timeout = CancellationTokenSource.CreateLinkedTokenSource(token);
       timeout.CancelAfter(TimeSpan.FromSeconds(30));
       using var request = new HttpRequestMessage(HttpMethod.Get, uri);
+      this.Authenticate(request, connector);
       request.Headers.Accept.ParseAdd("application/xml");
-      using var response = await pollingClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, timeout.Token);
+      var client = request.Headers.Authorization == null ? pollingClient : authenticatedClient;
+      using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, timeout.Token);
       if ((int)response.StatusCode is 413 or 414 or 431)
       {
         throw new PollingBatchTooLargeException();
@@ -259,28 +284,6 @@ namespace Soloplan.WhatsON.Jenkins
       }
 
       return document.Root.Elements("job").Select(element => ToJson(element, 0).ToObject<JenkinsJob>() ?? throw new InvalidPlugInApiResponseException("Jenkins returned a null job.")).ToDictionary(job => job.Name ?? throw new InvalidPlugInApiResponseException("Jenkins returned a job without a name."), StringComparer.Ordinal);
-    }
-
-    private static JToken ToJson(XElement element, int depth)
-    {
-      if (depth > 32)
-      {
-        throw new InvalidPlugInApiResponseException("Jenkins polling XML is nested too deeply.");
-      }
-
-      if (!element.HasElements)
-      {
-        return new JValue(element.Value);
-      }
-
-      var result = new JObject();
-      foreach (var group in element.Elements().GroupBy(child => child.Name.LocalName))
-      {
-        var arrayName = group.Key switch { "build" => "builds", "culprit" => "culprits", "changeSet" => "changeSets", "item" => "items", _ => null };
-        result[arrayName ?? group.Key] = arrayName == null ? ToJson(group.Single(), depth + 1) : new JArray(group.Select(child => ToJson(child, depth + 1)));
-      }
-
-      return result;
     }
 
     private sealed class PollingBatchTooLargeException : Exception

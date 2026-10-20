@@ -24,6 +24,11 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
     public Func<IReadOnlyCollection<JenkinsConnector>, CancellationToken, Task<JenkinsPollingResult>>? PollingQuery { get; set; }
 
+    public Func<JenkinsConnector, int, string?, bool, CancellationToken, Task<JenkinsBuild>>? VolunteerQuery { get; set; }
+
+    public Task<JenkinsBuild> SetVolunteer(JenkinsConnector connector, int buildNumber, string? expectedOwner, bool claim, CancellationToken token) =>
+      this.VolunteerQuery?.Invoke(connector, buildNumber, expectedOwner, claim, token) ?? throw new NotSupportedException();
+
     public Task<JenkinsPollingResult> GetPollingJobs(IReadOnlyCollection<JenkinsConnector> connectors, CancellationToken token) =>
       this.PollingQuery?.Invoke(connectors, token) ?? throw new InvalidOperationException($"{nameof(this.PollingQuery)} must be set for server batching.");
 

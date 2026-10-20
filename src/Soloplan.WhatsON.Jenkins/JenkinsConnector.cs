@@ -25,6 +25,8 @@ namespace Soloplan.WhatsON.Jenkins
     typeof(bool),
     Priority = 400)] // defines use of Display URL API Plugin https://wiki.jenkins.io/display/JENKINS/Display+URL+API+Plugin
   [NotificationConfigurationItem(NotificationsVisbility, typeof(ConnectorNotificationConfiguration), Priority = 1600000000)]
+  [ConfigurationItem(UserName, typeof(string), Priority = 410)]
+  [ConfigurationItem(ApiToken, typeof(SecretProtector), Priority = 420)]
   public class JenkinsConnector : Connector, IBatchedConnector
   {
     public const string ConnectorName = "Jenkins";
@@ -35,6 +37,10 @@ namespace Soloplan.WhatsON.Jenkins
     /// The redirect plugin tag.
     /// </summary>
     public const string RedirectPlugin = "RedirectPlugin";
+
+    public const string UserName = "JenkinsUserName";
+
+    public const string ApiToken = "JenkinsApiToken";
 
     private const long TicksInMillisecond = 10000;
 
@@ -49,6 +55,8 @@ namespace Soloplan.WhatsON.Jenkins
     private readonly IJenkinsApi api;
 
     private readonly TimeProvider timeProvider;
+
+    private readonly JenkinsVolunteerStore volunteers;
 
     private readonly JenkinsPollingPolicy polling = new JenkinsPollingPolicy();
 
@@ -69,15 +77,68 @@ namespace Soloplan.WhatsON.Jenkins
     }
 
     internal JenkinsConnector(ConnectorConfiguration configuration, IJenkinsApi api, TimeProvider timeProvider)
+      : this(configuration, api, timeProvider, JenkinsVolunteerStore.Instance)
+    {
+    }
+
+    internal JenkinsConnector(ConnectorConfiguration configuration, IJenkinsApi api, TimeProvider timeProvider, JenkinsVolunteerStore volunteers)
       : base(configuration)
     {
       this.api = api;
       this.timeProvider = timeProvider;
+      this.volunteers = volunteers;
     }
 
     public Uri? BatchAddress => Uri.TryCreate(this.Address?.TrimEnd('/') + "/", UriKind.Absolute, out var address) ? address : null;
 
+    public string? AuthenticationUser => this.Configuration.ConfigurationItems.FirstOrDefault(item => item.Key == UserName)?.Value?.Trim();
+
+    public string? EncryptedApiToken => this.Configuration.ConfigurationItems.FirstOrDefault(item => item.Key == ApiToken)?.Value;
+
+    public bool HasApiCredentials => !string.IsNullOrWhiteSpace(this.AuthenticationUser) && !string.IsNullOrEmpty(this.EncryptedApiToken);
+
     private JenkinsStatus? PreviousCheckStatus { get; set; }
+
+    public async Task<Status> SetVolunteer(int buildNumber, string? expectedOwner, bool claim, CancellationToken token)
+    {
+      var jobUrl = JenkinsApi.UrlHelper.ProjectUrl(this, false);
+      if (claim)
+      {
+        if (!this.HasApiCredentials || this.CurrentStatus is not { Building: false, State: ObservationState.Failure or ObservationState.Unstable } current
+            || current.BuildNumber != buildNumber || this.AuthenticationUser is not string owner)
+        {
+          throw new InvalidOperationException("Only the current failed or unstable build can be claimed. Configure Jenkins credentials first.");
+        }
+
+        var job = await this.api.GetJenkinsJob(this, token);
+        if (job?.LastBuild is not { Building: false, Result: "FAILURE" or "UNSTABLE" } latest || latest.Number != buildNumber)
+        {
+          throw new InvalidOperationException("The current Jenkins build has changed. Refresh the project before volunteering.");
+        }
+
+        // Persist before the request so a crash or an uncertain network response cannot lose cleanup tracking.
+        this.volunteers.Save(jobUrl, buildNumber, owner);
+      }
+
+      var build = await this.api.SetVolunteer(this, buildNumber, expectedOwner, claim, token);
+      if (!claim)
+      {
+        this.volunteers.Remove(jobUrl, buildNumber);
+      }
+
+      var description = build.Description;
+      if (this.CurrentStatus?.BuildNumber == buildNumber)
+      {
+        this.CurrentStatus.Details = description;
+      }
+
+      foreach (var snapshot in this.Snapshots.Where(snapshot => snapshot.Status.BuildNumber == buildNumber))
+      {
+        snapshot.Status.Details = description;
+      }
+
+      return this.CreateStatus(build);
+    }
 
     public async Task<IReadOnlyCollection<Connector>> QueryStatusBatch(IReadOnlyCollection<Connector> connectors, CancellationToken token)
     {
@@ -168,6 +229,11 @@ namespace Soloplan.WhatsON.Jenkins
       {
         foreach (var build in this.recentBuilds.Where(build => !build.Building).OrderByDescending(build => build.Number).Take(MaxSnapshots))
         {
+          foreach (var snapshot in this.Snapshots.Where(snapshot => snapshot.Status.BuildNumber == build.Number))
+          {
+            snapshot.Status.Details = build.Description;
+          }
+
           if (this.Snapshots.All(snapshot => snapshot.Status.BuildNumber != build.Number)
               && (this.Snapshots.Count < MaxSnapshots || build.Number > this.Snapshots.Min(snapshot => snapshot.Status.BuildNumber)))
           {
@@ -254,6 +320,7 @@ namespace Soloplan.WhatsON.Jenkins
         return status;
       }
 
+      await this.ClearRecoveredVolunteers(job, cancellationToken);
       return this.CreateStatus(job.LastBuild);
     }
 
@@ -300,6 +367,68 @@ namespace Soloplan.WhatsON.Jenkins
       return ObservationState.Unknown;
     }
 
+    private async Task ClearRecoveredVolunteers(JenkinsJob job, CancellationToken token)
+    {
+      var successfulBuild = Math.Max(
+        job.LastStableBuild?.Number ?? 0,
+        job.LastBuild is { Building: false, Result: "SUCCESS" } latest ? latest.Number : 0);
+      if (!this.HasApiCredentials || successfulBuild <= 0)
+      {
+        return;
+      }
+
+      try
+      {
+        var jobUrl = JenkinsApi.UrlHelper.ProjectUrl(this, false);
+        foreach (var claim in this.volunteers.Read(jobUrl).Where(claim => claim.BuildNumber < successfulBuild).ToList())
+        {
+          try
+          {
+            token.ThrowIfCancellationRequested();
+            var build = await this.api.GetJenkinsBuild(this, claim.BuildNumber, token);
+            token.ThrowIfCancellationRequested();
+            if (build == null || build.Number != claim.BuildNumber)
+            {
+              continue;
+            }
+
+            if (JenkinsVolunteer.GetOwner(build.Description) == claim.Owner)
+            {
+              build = await this.api.SetVolunteer(this, claim.BuildNumber, claim.Owner, false, token);
+            }
+
+            foreach (var recent in (job.Builds ?? Array.Empty<JenkinsBuild>()).Where(recent => recent.Number == claim.BuildNumber))
+            {
+              recent.Description = build.Description;
+            }
+
+            foreach (var snapshot in this.Snapshots.Where(snapshot => snapshot.Status.BuildNumber == claim.BuildNumber))
+            {
+              snapshot.Status.Details = build.Description;
+            }
+
+            this.volunteers.Remove(jobUrl, claim.BuildNumber);
+          }
+          catch (OperationCanceledException) when (token.IsCancellationRequested)
+          {
+            throw;
+          }
+          catch (Exception exception)
+          {
+            log.Warn(exception, "Could not clear Jenkins volunteer for build {build}; retrying on a later poll.", claim.BuildNumber);
+          }
+        }
+      }
+      catch (OperationCanceledException) when (token.IsCancellationRequested)
+      {
+        throw;
+      }
+      catch (Exception exception)
+      {
+        log.Warn(exception, "Could not read Jenkins volunteer tracking for project {project}.", this.Project);
+      }
+    }
+
     private Status CreateStatus(JenkinsBuild latestBuild)
     {
       var newStatus = new JenkinsStatus(GetState(latestBuild))
@@ -326,7 +455,6 @@ namespace Soloplan.WhatsON.Jenkins
       {
         var previous = this.CurrentStatus is JenkinsStatus current && current.BuildNumber == latestBuild.Number
           ? current : this.Snapshots.Select(snapshot => snapshot.Status).OfType<JenkinsStatus>().FirstOrDefault(status => status.BuildNumber == latestBuild.Number);
-        newStatus.Details = previous?.Details;
         newStatus.DisplayName = previous?.DisplayName;
         newStatus.Name = previous?.Name ?? $"#{latestBuild.Number}";
         newStatus.Culprits = previous?.Culprits ?? new List<JenkinsUser>();

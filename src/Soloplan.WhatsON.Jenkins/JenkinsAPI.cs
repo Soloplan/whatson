@@ -22,7 +22,7 @@ namespace Soloplan.WhatsON.Jenkins
       var jobRequest = UrlHelper.JobRequest(connector, connector.Snapshots.Count == 0);
       try
       {
-        return await SerializationHelper.Instance.GetJsonModel<JenkinsJob>(jobRequest, token);
+        return await this.GetJson<JenkinsJob>(connector, jobRequest, token);
       }
       catch (OperationCanceledException) when (token.IsCancellationRequested)
       {
@@ -52,7 +52,7 @@ namespace Soloplan.WhatsON.Jenkins
       var buildRequest = UrlHelper.BuildRequest(connector, buildNumber);
       try
       {
-        return await SerializationHelper.Instance.GetJsonModel<JenkinsBuild>(buildRequest, token);
+        return await this.GetJson<JenkinsBuild>(connector, buildRequest, token);
       }
       catch (Exception)
       {
@@ -70,7 +70,7 @@ namespace Soloplan.WhatsON.Jenkins
       JenkinsBuilds? builds = null;
       try
       {
-        builds = await SerializationHelper.Instance.GetJsonModel<JenkinsBuilds>(buildsRequest, token);
+        builds = await this.GetJson<JenkinsBuilds>(connector, buildsRequest, token);
       }
       catch (OperationCanceledException) when (token.IsCancellationRequested)
       {

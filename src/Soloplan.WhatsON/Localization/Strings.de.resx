@@ -533,4 +533,9 @@ Erwarteter Verbindungstyp: {3}</value>
   <data name="ProjectServerRoot" xml:space="preserve"><value>Build-Server</value></data>
   <data name="OpenProjectFolder" xml:space="preserve"><value>Ordner öffnen</value></data>
   <data name="FilterProjectFolder" xml:space="preserve"><value>Diesen Ordner filtern</value></data>
+  <data name="VolunteerToFix" xml:space="preserve"><value>Behebung übernehmen</value></data>
+  <data name="ClearVolunteer" xml:space="preserve"><value>Übernahme aufheben</value></data>
+  <data name="VolunteerUpdateFailed" xml:space="preserve"><value>Die Übernahme konnte nicht geändert werden. Prüfen Sie Ihre Jenkins-Zugangsdaten und die Berechtigung Run/Update.</value></data>
+  <data name="TokenCannotBeDecrypted" xml:space="preserve"><value>Gespeichertes Token kann nicht gelesen werden. Geben Sie das API-Token erneut ein.</value></data>
+  <data name="TokenCannotBeSaved" xml:space="preserve"><value>Das API-Token konnte nicht verschlüsselt werden. Prüfen Sie den Zugriff auf Ihren lokalen Anwendungsdatenordner.</value></data>
 </root>

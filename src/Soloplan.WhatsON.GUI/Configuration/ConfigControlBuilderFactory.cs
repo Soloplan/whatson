@@ -75,6 +75,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     private void RegisterBuiltInTypeSpecificControlBuilders()
     {
       this.RegisterControlBuilder(typeof(string), new TextConfigControlBuilder());
+      this.RegisterControlBuilder(typeof(SecretProtector), new SecretConfigControlBuilder());
       this.RegisterControlBuilder(typeof(int), new NumericConfigControlBuilder());
       this.RegisterControlBuilder(typeof(string), new CategoryComboBoxConfigControlBuilder());
       this.RegisterControlBuilder(typeof(bool), new CheckBoxConfigControlBuilder());

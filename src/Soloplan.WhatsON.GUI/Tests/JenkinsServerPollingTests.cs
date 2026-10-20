@@ -149,7 +149,7 @@ namespace Soloplan.WhatsON.GUI.Tests
     public async Task OversizedBodiesUseCompactStatusEvenWithoutContentLengthOrAfterDecompression(bool chunked, bool gzip)
     {
       await using var server = new ApiServer { Chunked = chunked, Gzip = gzip };
-      server.Respond = path => Query(path)["tree"].Contains("description", StringComparison.Ordinal)
+      server.Respond = path => Query(path)["tree"].Contains("culprits", StringComparison.Ordinal)
         ? ("200 OK", "application/xml", new string('x', JenkinsApi.MaximumResponseBytes + 1))
         : Reply(path, [Job("Release", 2)]);
       var connector = CreateConnector(server.Address, "Release");
@@ -179,7 +179,7 @@ namespace Soloplan.WhatsON.GUI.Tests
     }
 
     [Test]
-    public async Task CompactFallbackPreservesKnownDetailsAndAvoidsRepeatedOversizedDownloads()
+    public async Task CompactFallbackRefreshesDescriptionAndPreservesOtherKnownDetails()
     {
       await using var server = new ApiServer();
       var clock = new Clock();
@@ -192,14 +192,16 @@ namespace Soloplan.WhatsON.GUI.Tests
       var connector = CreateConnector(server.Address, "Release", clock);
       await connector.QueryStatusBatch([connector], CancellationToken.None);
       clock.Advance(TimeSpan.FromMinutes(5));
-      server.Respond = path => Query(path)["tree"].Contains("description", StringComparison.Ordinal)
-        ? ("200 OK", "application/xml", new string('x', JenkinsApi.MaximumResponseBytes + 1)) : Reply(path, [Job("Release", 7)]);
+      var compact = Job("Release", 7);
+      (compact.Element("lastBuild") ?? throw new AssertionException("Missing last build.")).Add(new XElement("description", "Updated build details"));
+      server.Respond = path => Query(path)["tree"].Contains("culprits", StringComparison.Ordinal)
+        ? ("200 OK", "application/xml", new string('x', JenkinsApi.MaximumResponseBytes + 1)) : Reply(path, [compact]);
 
       await connector.QueryStatusBatch([connector], CancellationToken.None);
       clock.Advance(TimeSpan.FromMinutes(5));
       await connector.QueryStatusBatch([connector], CancellationToken.None);
 
-      Assert.That(connector.CurrentStatus?.Details, Is.EqualTo("Known build details"));
+      Assert.That(connector.CurrentStatus?.Details, Is.EqualTo("Updated build details"));
       Assert.That((connector.CurrentStatus as JenkinsStatus ?? throw new AssertionException("Expected a JenkinsStatus.")).DisplayName, Is.EqualTo("Release #7"));
       Assert.That((connector.CurrentStatus as JenkinsStatus ?? throw new AssertionException("Expected a JenkinsStatus.")).Culprits.Single().FullName, Is.EqualTo("Anna"));
       Assert.That(server.Requests, Has.Count.EqualTo(4), "The following poll should reuse the compact form instead of downloading oversized details again.");

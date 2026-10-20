@@ -203,6 +203,38 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       Assert.That(policy.NextDue, Is.EqualTo(now.AddSeconds(10)));
     }
 
+    [Test]
+    public async Task PollingRefreshesClearedMarkersEvenWhenBuildNumbersHaveNotChanged()
+    {
+      var description = JenkinsVolunteer.SetOwner("Notes", "alex");
+      var api = new FakeJenkinsApi();
+      api.PollingQuery = (connectors, _) =>
+      {
+        var result = new JenkinsPollingResult();
+        foreach (var connector in connectors)
+        {
+          result.Jobs[connector] = new JenkinsJob
+          {
+            LastBuild = new JenkinsBuild { Number = 42, Result = "FAILURE", Description = description },
+            Builds = new[] { new JenkinsBuild { Number = 41, Result = "FAILURE", Description = description } },
+            DetailsOmitted = true,
+          };
+        }
+
+        return Task.FromResult(result);
+      };
+      var clock = new Clock();
+      var project = CreateConnector(api, "project", clock);
+      await project.QueryStatusBatch(new[] { project }, CancellationToken.None);
+      Assert.That(JenkinsVolunteer.GetOwner(project.CurrentStatus?.Details), Is.EqualTo("alex"));
+      Assert.That(JenkinsVolunteer.GetOwner(project.Snapshots.Single(snapshot => snapshot.Status.BuildNumber == 41).Status.Details), Is.EqualTo("alex"));
+      description = "Notes";
+      clock.Advance(TimeSpan.FromMinutes(6));
+      await project.QueryStatusBatch(new[] { project }, CancellationToken.None);
+      Assert.That(project.CurrentStatus?.Details, Is.EqualTo("Notes"));
+      Assert.That(project.Snapshots.Single(snapshot => snapshot.Status.BuildNumber == 41).Status.Details, Is.EqualTo("Notes"));
+    }
+
     private static JenkinsConnector CreateConnector(IJenkinsApi api, string project, Clock? clock = null) => new JenkinsConnector(
       new ConnectorConfiguration("Jenkins", project, Connector.ServerAddress, "https://builds.example", Connector.ProjectName, project), api, clock ?? (TimeProvider)TimeProvider.System);
 

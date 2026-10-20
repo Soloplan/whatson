@@ -76,6 +76,12 @@
         </StackPanel>
       </MenuItem.Header>
     </MenuItem>
+    <MenuItem Header="{live:Text loc:Strings.VolunteerToFix}" Command="{Binding CurrentStatus.VolunteerToFix}"
+              IsEnabled="{Binding IsOnlyOneSelected}"
+              Visibility="{Binding CurrentStatus.VolunteerToFix, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
+    <MenuItem Header="{live:Text loc:Strings.ClearVolunteer}" Command="{Binding CurrentStatus.ClearVolunteer}"
+              IsEnabled="{Binding IsOnlyOneSelected}"
+              Visibility="{Binding CurrentStatus.ClearVolunteer, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
   </ContextMenu>
 
   <DataTemplate DataType="{x:Type buildServer:BuildStatusViewModel}">
