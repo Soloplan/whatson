@@ -14,6 +14,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
   using System.Text;
   using System.Threading;
   using System.Threading.Tasks;
+  using System.Xml.Linq;
   using Newtonsoft.Json;
   using NUnit.Framework;
   using Soloplan.WhatsON.Configuration;
@@ -46,6 +47,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     [TestCase("Existing description\n")]
     [TestCase("Existing description\r\n\r\n")]
     [TestCase("<p>Release notes</p>\r\nSecond line\r\n")]
+    [TestCase("<hr /><p>Release notes</p><hr />")]
     public void ClaimAndClearPreserveExistingDescription(string? description)
     {
       var claimed = JenkinsVolunteer.SetOwner(description, "Alex & team");
@@ -72,7 +74,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var marker = JenkinsVolunteer.SetOwner(null, owner);
       Assert.That(marker, Does.StartWith("<!-- whatsON:volunteer:start -->"));
       Assert.That(marker, Does.EndWith("<!-- whatsON:volunteer:end -->"));
-      Assert.That(marker, Does.Contain("Being fixed by " + System.Net.WebUtility.HtmlEncode(owner)));
+      Assert.That(marker, Does.Contain("<strong>" + System.Net.WebUtility.HtmlEncode(owner) + "</strong>"));
       Assert.That(JenkinsVolunteer.GetOwner(marker), Is.EqualTo(owner));
       Assert.That(JenkinsVolunteer.SetOwner(marker, null), Is.Empty);
     }
@@ -82,7 +84,6 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     public void ExtraLineBreaksInsideTheNoticeAreSupported(string newline)
     {
       var marker = JenkinsVolunteer.SetOwner(null, "alex");
-      Assert.That(marker, Is.EqualTo("<!-- whatsON:volunteer:start -->\n<!-- whatsON:volunteer:owner YWxleA== -->\n<br />\nBeing fixed by alex\n<!-- whatsON:volunteer:end -->"));
       var description = "Before" + marker.Replace("\n", newline + newline) + "After";
       Assert.That(JenkinsVolunteer.GetOwner(description), Is.EqualTo("alex"));
       Assert.That(JenkinsVolunteer.SetOwner(description, null), Is.EqualTo("BeforeAfter"));
@@ -92,7 +93,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     [Test]
     public void ReplacementUsesBoundariesAndPreservesSurroundingText()
     {
-      var marker = JenkinsVolunteer.SetOwner(null, "alex").Replace("Being fixed by alex", "<strong>Edited notice</strong>\r\nAnother line");
+      var marker = JenkinsVolunteer.SetOwner(null, "alex").Replace("Volunteer: <strong>alex</strong>", "<strong>Edited notice</strong>\r\nAnother line");
       var description = "<p>Before</p>\r\n" + marker + "\r\n<!-- unrelated -->After";
       Assert.That(JenkinsVolunteer.GetOwner(description), Is.EqualTo("alex"));
       Assert.That(JenkinsVolunteer.SetOwner(description, "other"),
@@ -108,6 +109,36 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       Assert.That(JenkinsVolunteer.SetOwner(description, null), Is.EqualTo("Before\r\nAfter"));
       Assert.That(JenkinsVolunteer.SetOwner(description, "other"), Is.EqualTo("Before\r\nAfter" + JenkinsVolunteer.SetOwner(null, "other")));
       Assert.Throws<InvalidOperationException>(() => JenkinsVolunteer.SetOwner(description + JenkinsVolunteer.SetOwner(null, "other"), null));
+    }
+
+    [Test]
+    public void BannerEmphasizesTheOwnerWithoutOverridingThemeColors()
+    {
+      const string owner = "Alex & <team>";
+      var marker = JenkinsVolunteer.SetOwner(null, owner);
+      var markup = XElement.Parse("<description>" + marker + "</description>");
+      Assert.That(markup.Elements().Select(element => element.Name.LocalName), Is.EqualTo(new[] { "hr", "div", "hr" }));
+      var banner = markup.Elements("div").Single();
+      Assert.That(banner.Elements("h3").Single().Value, Is.EqualTo("Fix in progress"));
+      Assert.That(banner.Elements("p").Single().Value, Is.EqualTo("Volunteer: " + owner));
+      Assert.That(banner.Descendants("strong").Single().Value, Is.EqualTo(owner));
+      Assert.That(banner.Attribute("style")?.Value, Does.Contain("border-left: 4px solid #3b82f6"));
+      foreach (var style in markup.Descendants().Attributes("style"))
+      {
+        Assert.That(style.Value, Does.Not.Match(@"(^|;)\s*(color|background(?:-color)?)\s*:"), "The notice must inherit Jenkins theme colors.");
+      }
+
+      Assert.That(JenkinsVolunteer.SetOwner(marker, null), Is.Empty, "Clearing must remove both rules and the entire banner.");
+    }
+
+    [Test]
+    public void PreviousCommentNoticesCanStillBeReadClearedAndReplaced()
+    {
+      const string marker = "<!-- whatsON:volunteer:start -->\n<!-- whatsON:volunteer:owner YWxleA== -->\n<br />\nBeing fixed by alex\n<!-- whatsON:volunteer:end -->";
+      var description = "<p>Before</p>" + marker + "<hr />After";
+      Assert.That(JenkinsVolunteer.GetOwner(description), Is.EqualTo("alex"));
+      Assert.That(JenkinsVolunteer.SetOwner(description, null), Is.EqualTo("<p>Before</p><hr />After"));
+      Assert.That(JenkinsVolunteer.SetOwner(description, "other"), Is.EqualTo("<p>Before</p><hr />After" + JenkinsVolunteer.SetOwner(null, "other")));
     }
 
     [TestCase("<!-- whatsON:volunteer:start -->Keep this text")]
