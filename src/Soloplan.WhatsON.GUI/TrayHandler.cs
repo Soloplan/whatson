@@ -16,6 +16,7 @@ namespace Soloplan.WhatsON.GUI
   using System.Windows.Forms;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.GUI.Properties;
@@ -253,6 +254,22 @@ namespace Soloplan.WhatsON.GUI
 
         this.MainWindow.IsTreeInitialized = true;
       }
+    }
+
+    internal static string GetNotificationDescription(StatusViewModel status)
+    {
+      var lines = new System.Collections.Generic.List<string> { Localizer.ProjectNotification(status.Parent.Name) };
+      if (!string.IsNullOrWhiteSpace(status.Label))
+      {
+        lines.Add(status.Label);
+      }
+
+      if (status is BuildStatusViewModel build && status.State != ObservationState.Running && build.Duration > TimeSpan.Zero)
+      {
+        lines.Add($"{Strings.DurationPrefix}{build.Duration:g}");
+      }
+
+      return string.Join(Environment.NewLine, lines);
     }
 
     /// <summary>
@@ -497,7 +514,7 @@ namespace Soloplan.WhatsON.GUI
           return;
         }
 
-        var description = Localizer.ProjectNotification(statusViewModel.Parent.Name);
+        var description = GetNotificationDescription(statusViewModel);
         if (statusViewModel.State == ObservationState.Running)
         {
           this.ShowBaloon(Strings.BuildStarted, description, ToolTipIcon.None);
