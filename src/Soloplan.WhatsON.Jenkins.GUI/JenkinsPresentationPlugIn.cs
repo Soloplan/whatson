@@ -7,6 +7,8 @@
 
 namespace Soloplan.WhatsON.Jenkins.GUI
 {
+  using System.Windows;
+  using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Model;
@@ -19,5 +21,8 @@ namespace Soloplan.WhatsON.Jenkins.GUI
     }
 
     public override ConnectorViewModel CreateViewModel(Connector connector) => new JenkinsProjectViewModel(connector);
+
+    public override FrameworkElement? CreateConfigurationAction(string key, IConfigurationItemProvider configuration) =>
+      key == JenkinsConnector.ApiToken ? new JenkinsCredentialsTestControl(configuration) : null;
   }
 }

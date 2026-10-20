@@ -193,6 +193,87 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     }
 
     [Test]
+    public async Task CredentialTestAuthenticatesWithOneReadOnlyRequestAndPreservesContextPath()
+    {
+      using var server = WireMockServer.Start();
+      var api = new JenkinsApi(this.secrets);
+      var connector = this.CreateConnector(server.Urls[0] + "/jenkins", api);
+      var ciphertext = connector.EncryptedApiToken;
+      var auth = "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes("alex:fake-api-token"));
+      server.Given(Request.Create().WithPath("/jenkins/whoAmI/api/json").WithHeader("Authorization", auth).UsingGet())
+        .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json")
+          .WithBody("{\"authenticated\":true,\"anonymous\":false,\"name\":\"alex\"}"));
+
+      Assert.That(await api.TestAuthentication(connector, CancellationToken.None), Is.EqualTo("alex"));
+      Assert.That(connector.EncryptedApiToken, Is.EqualTo(ciphertext));
+      Assert.That(server.LogEntries, Has.Count.EqualTo(1));
+      Assert.That(server.LogEntries.Single().RequestMessage?.Method, Is.EqualTo("GET"));
+    }
+
+    [TestCase("{\"authenticated\":true,\"anonymous\":true,\"name\":\"anonymous\"}")]
+    [TestCase("{\"authenticated\":false,\"anonymous\":false,\"name\":\"alex\"}")]
+    [TestCase("{\"authenticated\":true,\"anonymous\":false,\"name\":\"\"}")]
+    public void CredentialTestRejectsUnauthenticatedIdentities(string identity)
+    {
+      using var server = WireMockServer.Start();
+      var api = new JenkinsApi(this.secrets);
+      var connector = this.CreateConnector(server.Urls[0], api);
+      server.Given(Request.Create().WithPath("/whoAmI/api/json").UsingGet())
+        .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json").WithBody(identity));
+      Assert.ThrowsAsync<HttpRequestException>(() => api.TestAuthentication(connector, CancellationToken.None));
+    }
+
+    [TestCase("application/json", "{}")]
+    [TestCase("application/json", "{\"authenticated\":\"true\",\"anonymous\":false,\"name\":\"alex\"}")]
+    [TestCase("text/html", "<html>Sign in</html>")]
+    public void CredentialTestRejectsUnexpectedResponses(string contentType, string body)
+    {
+      using var server = WireMockServer.Start();
+      var api = new JenkinsApi(this.secrets);
+      var connector = this.CreateConnector(server.Urls[0], api);
+      server.Given(Request.Create().WithPath("/whoAmI/api/json").UsingGet())
+        .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", contentType).WithBody(body));
+      Assert.ThrowsAsync<InvalidPlugInApiResponseException>(() => api.TestAuthentication(connector, CancellationToken.None));
+    }
+
+    [TestCase(401)]
+    [TestCase(403)]
+    [TestCase(302)]
+    public void CredentialTestRejectsAccessFailuresAndDoesNotFollowRedirects(int status)
+    {
+      using var server = WireMockServer.Start();
+      var api = new JenkinsApi(this.secrets);
+      var connector = this.CreateConnector(server.Urls[0], api);
+      server.Given(Request.Create().WithPath("/whoAmI/api/json").UsingGet())
+        .RespondWith(Response.Create().WithStatusCode(status).WithHeader("Location", server.Urls[0] + "/other"));
+      Assert.ThrowsAsync<HttpRequestException>(() => api.TestAuthentication(connector, CancellationToken.None));
+      Assert.That(server.LogEntries, Has.Count.EqualTo(1));
+    }
+
+    [TestCase(Connector.ServerAddress)]
+    [TestCase(JenkinsConnector.UserName)]
+    [TestCase(JenkinsConnector.ApiToken)]
+    public void CredentialTestRequiresAllSettingsBeforeSendingARequest(string missingKey)
+    {
+      using var server = WireMockServer.Start();
+      var api = new JenkinsApi(this.secrets);
+      var connector = this.CreateConnector(server.Urls[0], api);
+      connector.Configuration.GetConfigurationByKey(missingKey).Value = string.Empty;
+      Assert.ThrowsAsync<InvalidOperationException>(() => api.TestAuthentication(connector, CancellationToken.None));
+      Assert.That(server.LogEntries, Is.Empty);
+    }
+
+    [TestCase("http://ci.example.invalid")]
+    [TestCase("ftp://localhost")]
+    [TestCase("https://user:password@ci.example.invalid")]
+    public void CredentialTestRejectsUnsafeAddresses(string address)
+    {
+      var api = new JenkinsApi(this.secrets);
+      var connector = this.CreateConnector(address, api);
+      Assert.ThrowsAsync<InvalidOperationException>(() => api.TestAuthentication(connector, CancellationToken.None));
+    }
+
+    [Test]
     public void AnExistingOrChangedClaimIsNotOverwritten()
     {
       using var server = WireMockServer.Start();

@@ -16,6 +16,7 @@ namespace Soloplan.WhatsON.Jenkins
   using System.Threading;
   using System.Threading.Tasks;
   using Newtonsoft.Json;
+  using Newtonsoft.Json.Linq;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.Jenkins.Model;
 
@@ -24,6 +25,7 @@ namespace Soloplan.WhatsON.Jenkins
     private static readonly HttpClient authenticatedClient = new HttpClient(new HttpClientHandler
     {
       AllowAutoRedirect = false,
+      UseCookies = false,
       AutomaticDecompression = DecompressionMethods.All,
       UseProxy = false,
     }) { Timeout = TimeSpan.FromSeconds(30) };
@@ -38,6 +40,31 @@ namespace Soloplan.WhatsON.Jenkins
     internal JenkinsApi(SecretProtector secrets)
     {
       this.secrets = secrets;
+    }
+
+    public async Task<string> TestAuthentication(JenkinsConnector connector, CancellationToken token)
+    {
+      if (!connector.HasApiCredentials || connector.BatchAddress is not Uri address
+        || (address.Scheme != Uri.UriSchemeHttps && address.Scheme != Uri.UriSchemeHttp)
+        || !string.IsNullOrEmpty(address.UserInfo) || !string.IsNullOrEmpty(address.Query) || !string.IsNullOrEmpty(address.Fragment))
+      {
+        throw new InvalidOperationException("Configure a Jenkins address, user name and API token.");
+      }
+
+      var identity = await this.GetJson<JObject>(connector, new Uri(address, "whoAmI/api/json").AbsoluteUri, token);
+      if (identity["authenticated"]?.Type != JTokenType.Boolean || identity["anonymous"]?.Type != JTokenType.Boolean
+        || identity["name"]?.Type != JTokenType.String)
+      {
+        throw new InvalidPlugInApiResponseException("Jenkins did not return an authentication identity.");
+      }
+
+      var name = identity.Value<string>("name");
+      if (!identity.Value<bool>("authenticated") || identity.Value<bool>("anonymous") || string.IsNullOrWhiteSpace(name))
+      {
+        throw new HttpRequestException("Jenkins did not authenticate these credentials.", null, HttpStatusCode.Unauthorized);
+      }
+
+      return name;
     }
 
     public async Task<JenkinsBuild> SetVolunteer(JenkinsConnector connector, int buildNumber, string? expectedOwner, bool claim, CancellationToken token)

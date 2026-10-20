@@ -168,6 +168,11 @@ namespace Soloplan.WhatsON.GUI.Tests
         Assert.That(((Border)page.FindName("EmptyProjectsState")).Visibility, Is.EqualTo(Visibility.Collapsed));
         Assert.That(((Button)page.FindName("DeleteButton")).IsEnabled, Is.True);
         Assert.That(((Frame)page.FindName("uxConnectorFrame")).Content, Is.InstanceOf<ConnectorConfigPage>());
+        var connectorEditor = (ConnectorConfigPage)((Frame)page.FindName("uxConnectorFrame")).Content;
+        var fields = (StackPanel)connectorEditor.FindName("StackPanel");
+        var testControl = fields.Children.OfType<Soloplan.WhatsON.Jenkins.GUI.JenkinsCredentialsTestControl>().Single();
+        Assert.That(fields.Children[fields.Children.IndexOf(testControl) - 1], Is.TypeOf<PasswordBox>(), "The test belongs directly below the API token.");
+        Assert.That(testControl.TestButton.IsEnabled, Is.False);
       }
       finally
       {

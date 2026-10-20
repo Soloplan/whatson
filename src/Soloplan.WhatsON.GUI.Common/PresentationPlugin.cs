@@ -9,8 +9,10 @@ namespace Soloplan.WhatsON.GUI.Common
 {
   using System.IO;
   using System.Text;
+  using System.Windows;
   using System.Xml;
   using Soloplan.WhatsON.Composition;
+  using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Model;
 
@@ -42,6 +44,8 @@ namespace Soloplan.WhatsON.GUI.Common
     /// </summary>
     /// <returns><see cref="ConnectorViewModel" /> decedent.</returns>
     public abstract ConnectorViewModel CreateViewModel(Connector connector);
+
+    public virtual FrameworkElement? CreateConfigurationAction(string key, IConfigurationItemProvider configuration) => null;
 
     /// <summary>
     /// Gets the XAML file defining the DataTemplet for displaying the view model created by <see cref="CreateViewModel" />.

@@ -10,8 +10,10 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
   using System.Linq;
   using System.Windows.Controls;
   using MaterialDesignThemes.Wpf;
+  using Soloplan.WhatsON.Composition;
+  using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.GUI.Common.Localization;
-  using Soloplan.WhatsON.GUI.Configuration.ViewModel;
+  using ConnectorViewModel = Soloplan.WhatsON.GUI.Configuration.ViewModel.ConnectorViewModel;
 
   /// <summary>
   /// Interaction logic for ConnectorConfigPage.xaml.
@@ -78,6 +80,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
         }
 
         this.StackPanel.Children.Add(editor);
+        var action = PluginManager.Instance.GetPresentationPlugin(connector.SourceConnectorPlugin?.Name ?? string.Empty)
+          ?.CreateConfigurationAction(configAttribute.Key, connector);
+        if (action != null)
+        {
+          this.StackPanel.Children.Add(action);
+        }
       }
     }
   }

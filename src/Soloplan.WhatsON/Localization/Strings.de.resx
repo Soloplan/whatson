@@ -540,4 +540,13 @@ Erwarteter Verbindungstyp: {3}</value>
   <data name="TokenCannotBeSaved" xml:space="preserve"><value>Das API-Token konnte nicht verschlüsselt werden. Prüfen Sie den Zugriff auf Ihren lokalen Anwendungsdatenordner.</value></data>
   <data name="VolunteerToFixDescription" xml:space="preserve"><value>Die Behebung des aktuellen fehlgeschlagenen oder instabilen Builds übernehmen.&#10;Benötigt Jenkins-Benutzername und API-Token unter „Bearbeiten“.&#10;Das Konto muss Build-Beschreibungen bearbeiten dürfen.</value></data>
   <data name="ClearVolunteerDescription" xml:space="preserve"><value>Die Übernahme für diesen Build aufheben, auch die einer anderen Person.&#10;Benötigt Jenkins-Benutzername und API-Token unter „Bearbeiten“.&#10;Das Konto muss Build-Beschreibungen bearbeiten dürfen.</value></data>
+  <data name="TestApiCredentials" xml:space="preserve"><value>Zugangsdaten testen</value></data>
+  <data name="JenkinsCredentialsRequired" xml:space="preserve"><value>Geben Sie Jenkins-Adresse, Benutzername und API-Token ein, um die Anmeldung zu testen.</value></data>
+  <data name="JenkinsCredentialsTesting" xml:space="preserve"><value>Wird getestet…</value></data>
+  <data name="JenkinsCredentialsValid" xml:space="preserve"><value>Als {0} angemeldet. Die Berechtigung zum Bearbeiten von Build-Beschreibungen wurde nicht geprüft.</value></data>
+  <data name="JenkinsCredentialsRejected" xml:space="preserve"><value>Jenkins hat den Zugriff abgelehnt. Prüfen Sie Benutzername, API-Token und Kontozugriff.</value></data>
+  <data name="JenkinsCredentialsConnectionFailed" xml:space="preserve"><value>Keine Verbindung zu Jenkins möglich. Prüfen Sie Serveradresse, Netzwerk und Zertifikat.</value></data>
+  <data name="JenkinsCredentialsTimedOut" xml:space="preserve"><value>Der Verbindungstest hat zu lange gedauert. Prüfen Sie Serveradresse und Netzwerk und versuchen Sie es erneut.</value></data>
+  <data name="JenkinsCredentialsInvalidResponse" xml:space="preserve"><value>Der Server hat keine gültige Jenkins-Anmeldeantwort geliefert. Prüfen Sie die Jenkins-Adresse.</value></data>
+  <data name="JenkinsCredentialsInvalidSettings" xml:space="preserve"><value>Verwenden Sie eine gültige HTTPS-Jenkins-Serveradresse und einen Benutzernamen ohne Doppelpunkt (:).</value></data>
 </root>

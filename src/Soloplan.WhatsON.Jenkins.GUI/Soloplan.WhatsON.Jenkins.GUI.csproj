@@ -5,6 +5,7 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="Soloplan.WhatsON.GUI.Tests" />
     <Page Remove="JenkinsProjectDataTemplate.xaml" />
     <Resource Include="JenkinsProjectDataTemplate.xaml" />
   </ItemGroup>
