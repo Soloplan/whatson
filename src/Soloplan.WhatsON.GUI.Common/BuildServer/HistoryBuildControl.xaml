@@ -22,6 +22,21 @@
     <converters:StatusToColorConverter x:Key="StatusToColorConverter" />
     <converters:NullOrDefaultToVisibilityConverter x:Key="HasVolunteerCommand" />
     <ContextMenu x:Key="ContextMenuBuild">
+      <MenuItem Visibility="{Binding VolunteerToFix, Converter={StaticResource HasVolunteerCommand}}">
+        <MenuItem.Style>
+          <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+            <Setter Property="Header" Value="{live:Text loc:Strings.ClearVolunteer}" />
+            <Setter Property="Command" Value="{Binding ClearVolunteer}" />
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding Volunteer}" Value="{x:Null}">
+                <Setter Property="Header" Value="{live:Text loc:Strings.VolunteerToFix}" />
+                <Setter Property="Command" Value="{Binding VolunteerToFix}" />
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </MenuItem.Style>
+      </MenuItem>
+      <Separator Visibility="{Binding VolunteerToFix, Converter={StaticResource HasVolunteerCommand}}" />
       <MenuItem CommandParameter="{Binding}" Command="{Binding CopyBuildLabel}">
         <MenuItem.Header>
           <StackPanel Orientation="Horizontal">
@@ -38,10 +53,6 @@
           </StackPanel>
         </MenuItem.Header>
       </MenuItem>
-      <MenuItem Header="{live:Text loc:Strings.VolunteerToFix}" Command="{Binding VolunteerToFix}"
-                Visibility="{Binding VolunteerToFix, Converter={StaticResource HasVolunteerCommand}}" />
-      <MenuItem Header="{live:Text loc:Strings.ClearVolunteer}" Command="{Binding ClearVolunteer}"
-                Visibility="{Binding ClearVolunteer, Converter={StaticResource HasVolunteerCommand}}" />
     </ContextMenu>
   </UserControl.Resources>
   <DockPanel ContextMenu="{StaticResource ContextMenuBuild}">

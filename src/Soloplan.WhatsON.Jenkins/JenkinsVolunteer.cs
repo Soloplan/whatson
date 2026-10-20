@@ -53,13 +53,11 @@ namespace Soloplan.WhatsON.Jenkins
 
       var replacement = owner == null ? string.Empty
         : Start + "\n" + OwnerPrefix + Convert.ToBase64String(new UTF8Encoding(false, true).GetBytes(owner))
-          + " -->\nBeing fixed by " + WebUtility.HtmlEncode(owner) + "\n" + End;
-      if (Marker.IsMatch(text))
-      {
-        return Marker.Replace(text, _ => replacement);
-      }
+          + " -->\n<br />\nBeing fixed by " + WebUtility.HtmlEncode(owner) + "\n" + End;
 
-      return LegacyMarker.IsMatch(text) ? LegacyMarker.Replace(text, _ => replacement) : replacement + text;
+      text = Marker.Replace(text, string.Empty);
+      text = LegacyMarker.Replace(text, string.Empty);
+      return text + replacement;
     }
 
     internal static string? GetValidatedOwner(string? description)

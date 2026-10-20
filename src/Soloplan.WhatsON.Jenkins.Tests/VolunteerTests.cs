@@ -43,12 +43,15 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     [TestCase(null)]
     [TestCase("")]
     [TestCase("Existing description")]
+    [TestCase("Existing description\n")]
+    [TestCase("Existing description\r\n\r\n")]
     [TestCase("<p>Release notes</p>\r\nSecond line\r\n")]
     public void ClaimAndClearPreserveExistingDescription(string? description)
     {
       var claimed = JenkinsVolunteer.SetOwner(description, "Alex & team");
       Assert.That(JenkinsVolunteer.GetOwner(claimed), Is.EqualTo("Alex & team"));
       Assert.That(claimed, Does.Contain("Alex &amp; team"));
+      Assert.That(claimed, Is.EqualTo((description ?? string.Empty) + JenkinsVolunteer.SetOwner(null, "Alex & team")));
       Assert.That(JenkinsVolunteer.SetOwner(claimed, null), Is.EqualTo(description ?? string.Empty));
       Assert.That(JenkinsVolunteer.GetOwner(JenkinsVolunteer.SetOwner(claimed, null)), Is.Null);
     }
@@ -79,11 +82,11 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     public void ExtraLineBreaksInsideTheNoticeAreSupported(string newline)
     {
       var marker = JenkinsVolunteer.SetOwner(null, "alex");
-      Assert.That(marker, Is.EqualTo("<!-- whatsON:volunteer:start -->\n<!-- whatsON:volunteer:owner YWxleA== -->\nBeing fixed by alex\n<!-- whatsON:volunteer:end -->"));
+      Assert.That(marker, Is.EqualTo("<!-- whatsON:volunteer:start -->\n<!-- whatsON:volunteer:owner YWxleA== -->\n<br />\nBeing fixed by alex\n<!-- whatsON:volunteer:end -->"));
       var description = "Before" + marker.Replace("\n", newline + newline) + "After";
       Assert.That(JenkinsVolunteer.GetOwner(description), Is.EqualTo("alex"));
       Assert.That(JenkinsVolunteer.SetOwner(description, null), Is.EqualTo("BeforeAfter"));
-      Assert.That(JenkinsVolunteer.SetOwner(description, "other"), Is.EqualTo("Before" + JenkinsVolunteer.SetOwner(null, "other") + "After"));
+      Assert.That(JenkinsVolunteer.SetOwner(description, "other"), Is.EqualTo("BeforeAfter" + JenkinsVolunteer.SetOwner(null, "other")));
     }
 
     [Test]
@@ -93,7 +96,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var description = "<p>Before</p>\r\n" + marker + "\r\n<!-- unrelated -->After";
       Assert.That(JenkinsVolunteer.GetOwner(description), Is.EqualTo("alex"));
       Assert.That(JenkinsVolunteer.SetOwner(description, "other"),
-        Is.EqualTo("<p>Before</p>\r\n" + JenkinsVolunteer.SetOwner(null, "other") + "\r\n<!-- unrelated -->After"));
+        Is.EqualTo("<p>Before</p>\r\n\r\n<!-- unrelated -->After" + JenkinsVolunteer.SetOwner(null, "other")));
       Assert.That(JenkinsVolunteer.SetOwner(description, null), Is.EqualTo("<p>Before</p>\r\n\r\n<!-- unrelated -->After"));
     }
 
@@ -103,7 +106,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       const string description = "Before\r\n[whatsON] Being fixed by Alex &amp; team [/whatsON]\r\nAfter";
       Assert.That(JenkinsVolunteer.GetOwner(description), Is.EqualTo("Alex & team"));
       Assert.That(JenkinsVolunteer.SetOwner(description, null), Is.EqualTo("Before\r\nAfter"));
-      Assert.That(JenkinsVolunteer.SetOwner(description, "other"), Is.EqualTo("Before\r\n" + JenkinsVolunteer.SetOwner(null, "other") + "After"));
+      Assert.That(JenkinsVolunteer.SetOwner(description, "other"), Is.EqualTo("Before\r\nAfter" + JenkinsVolunteer.SetOwner(null, "other")));
       Assert.Throws<InvalidOperationException>(() => JenkinsVolunteer.SetOwner(description + JenkinsVolunteer.SetOwner(null, "other"), null));
     }
 
@@ -126,17 +129,19 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       Assert.That(JenkinsVolunteer.GetOwner(marker), Is.Null);
     }
 
-    [TestCase(true)]
-    [TestCase(false)]
-    public async Task ApiAuthenticatesPreservesDescriptionAndVerifiesTheSavedMarker(bool claim)
+    [TestCase(true, "alex")]
+    [TestCase(false, "alex")]
+    [TestCase(false, "sam")]
+    public async Task ApiAuthenticatesPreservesDescriptionAndVerifiesTheSavedMarker(bool claim, string userName)
     {
       using var server = WireMockServer.Start();
       var api = new JenkinsApi(this.secrets);
       var connector = this.CreateConnector(server.Urls[0], api);
+      connector.Configuration.GetConfigurationByKey(JenkinsConnector.UserName).Value = userName;
       var original = claim ? "Release notes\r\n" : JenkinsVolunteer.SetOwner("Release notes\r\n", "alex");
-      var updated = JenkinsVolunteer.SetOwner(original, claim ? "alex" : null);
+      var updated = JenkinsVolunteer.SetOwner(original, claim ? userName : null);
       var path = "/job/folder/job/project/42";
-      var auth = "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes("alex:fake-api-token"));
+      var auth = "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(userName + ":fake-api-token"));
       server.Given(Request.Create().WithPath(path + "/api/json").WithHeader("Authorization", auth).UsingGet())
         .InScenario("claim")
         .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json")

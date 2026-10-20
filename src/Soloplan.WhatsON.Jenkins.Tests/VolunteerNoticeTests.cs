@@ -90,7 +90,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
               Assert.That(JenkinsVolunteer.GetOwner(description), Is.EqualTo(owner));
               Assert.That(JenkinsVolunteer.SetOwner(description, null), Is.EqualTo(before + after));
               var replaced = JenkinsVolunteer.SetOwner(description, "replacement");
-              Assert.That(replaced, Is.EqualTo(before + JenkinsVolunteer.SetOwner(null, "replacement") + after));
+              Assert.That(replaced, Is.EqualTo(before + after + JenkinsVolunteer.SetOwner(null, "replacement")));
               Assert.That(JenkinsVolunteer.SetOwner(replaced, "replacement"), Is.EqualTo(replaced));
             }
           }

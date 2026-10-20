@@ -126,10 +126,35 @@ namespace Soloplan.WhatsON.GUI.Tests
                     try
                     {
                       window.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
-                      var volunteerCommand = model.CurrentStatus?.VolunteerToFix ?? throw new AssertionException("Expected Jenkins volunteer command.");
-                      var volunteerMenu = row.ContextMenu.Items.OfType<MenuItem>().Single(item => item.Command == volunteerCommand);
+                      var current = model.CurrentStatus ?? throw new AssertionException("Expected Jenkins status.");
+                      var volunteerMenu = row.ContextMenu.Items.OfType<MenuItem>()
+                        .Single(item => item.Command == current.VolunteerToFix || item.Command == current.ClearVolunteer);
+                      Assert.That(row.ContextMenu.Items[0], Is.SameAs(volunteerMenu), "The volunteer action goes first.");
+                      Assert.That(row.ContextMenu.Items[1], Is.TypeOf<Separator>());
                       Assert.That(volunteerMenu.Visibility, Is.EqualTo(Visibility.Visible), "Missing credentials must not hide the action.");
                       Assert.That(volunteerMenu.IsEnabled, Is.False, "These projects have no Jenkins credentials.");
+                      Assert.That(volunteerMenu.Header, Is.EqualTo(Strings.ClearVolunteer));
+                      Assert.That(volunteerMenu.Command, Is.SameAs(current.ClearVolunteer));
+
+                      current.Update(new Soloplan.WhatsON.Jenkins.JenkinsStatus(ObservationState.Failure) { BuildNumber = 110 });
+                      window.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+                      Assert.That(volunteerMenu.Header, Is.EqualTo(Strings.VolunteerToFix));
+                      Assert.That(volunteerMenu.Command, Is.SameAs(current.VolunteerToFix));
+                      Assert.That(volunteerMenu.IsEnabled, Is.False, "The claim action also stays disabled without credentials.");
+
+                      connectors[2].Configuration.GetConfigurationByKey(Soloplan.WhatsON.Jenkins.JenkinsConnector.UserName).Value = "alex";
+                      connectors[2].Configuration.GetConfigurationByKey(Soloplan.WhatsON.Jenkins.JenkinsConnector.ApiToken).Value = "preview-only";
+                      current.Update(new Soloplan.WhatsON.Jenkins.JenkinsStatus(ObservationState.Failure) { BuildNumber = 110 });
+                      window.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+                      Assert.That(volunteerMenu.IsEnabled, Is.True);
+                      current.Update(connectors[2].CurrentStatus);
+                      window.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+                      Assert.That(volunteerMenu.Header, Is.EqualTo(Strings.ClearVolunteer));
+                      Assert.That(volunteerMenu.Command, Is.SameAs(current.ClearVolunteer));
+                      Assert.That(volunteerMenu.IsEnabled, Is.True);
+                      connectors[2].Configuration.GetConfigurationByKey(Soloplan.WhatsON.Jenkins.JenkinsConnector.UserName).Value = string.Empty;
+                      connectors[2].Configuration.GetConfigurationByKey(Soloplan.WhatsON.Jenkins.JenkinsConnector.ApiToken).Value = string.Empty;
+                      current.Update(connectors[2].CurrentStatus);
                     }
                     finally
                     {
@@ -149,8 +174,8 @@ namespace Soloplan.WhatsON.GUI.Tests
                     var historyControl = FindVisualChild<HistoryBuildControl>(historyList) ?? throw new AssertionException("Missing history control.");
                     var historyMenu = (FindVisualChild<DockPanel>(historyControl) ?? throw new AssertionException("Missing history panel.")).ContextMenu;
                     historyMenu.DataContext = historyControl.DataContext;
-                    Assert.That(((MenuItem)historyMenu.Items[0]).Command, Is.Not.Null, "History keeps the copy-build command.");
-                    Assert.That(((MenuItem)historyMenu.Items[1]).Command, Is.Not.Null, "History keeps the open-build command.");
+                    Assert.That(((MenuItem)historyMenu.Items[2]).Command, Is.Not.Null, "History keeps the copy-build command.");
+                    Assert.That(((MenuItem)historyMenu.Items[3]).Command, Is.Not.Null, "History keeps the open-build command.");
                   }
                 }
               }

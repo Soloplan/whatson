@@ -110,6 +110,42 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       Assert.That(new JenkinsVolunteerStore(this.directory).Read(JenkinsApi.UrlHelper.ProjectUrl(connector, false)).Count(), Is.EqualTo(1));
     }
 
+    [TestCase("alex")]
+    [TestCase("sam")]
+    public async Task OnlyTheClientWithLocalTrackingAutomaticallyClearsTheNotice(string otherUser)
+    {
+      var creator = this.CreateConnector();
+      await creator.SetVolunteer(42, null, true, CancellationToken.None);
+      this.job.LastBuild = new JenkinsBuild { Number = 43, Result = "SUCCESS" };
+      var otherClient = this.CreateConnector(Path.Combine(this.directory, "other-client"), otherUser);
+      await otherClient.QueryStatus(CancellationToken.None);
+      Assert.That(this.clearAttempts, Is.Zero, "A matching Jenkins user name alone must not authorize automatic cleanup.");
+      Assert.That(JenkinsVolunteer.GetOwner(this.claimed.Description), Is.EqualTo("alex"));
+
+      await this.CreateConnector().QueryStatus(CancellationToken.None);
+      Assert.That(this.clearAttempts, Is.EqualTo(1), "The original client resumes its own cleanup after restart.");
+      Assert.That(this.claimed.Description, Is.EqualTo("Release notes"));
+    }
+
+    [Test]
+    public async Task AnotherConfiguredClientCanClearManuallyAndTheCreatorDropsItsTrackingLater()
+    {
+      var creator = this.CreateConnector();
+      await creator.SetVolunteer(42, null, true, CancellationToken.None);
+      var otherClient = this.CreateConnector(Path.Combine(this.directory, "other-client"), "sam");
+      await otherClient.QueryStatus(CancellationToken.None);
+      await otherClient.SetVolunteer(42, JenkinsVolunteer.GetOwner(otherClient.CurrentStatus?.Details), false, CancellationToken.None);
+      Assert.That(this.clearAttempts, Is.EqualTo(1));
+      Assert.That(this.claimed.Description, Is.EqualTo("Release notes"));
+      var jobUrl = JenkinsApi.UrlHelper.ProjectUrl(creator, false);
+      Assert.That(new JenkinsVolunteerStore(this.directory).Read(jobUrl).Count(), Is.EqualTo(1));
+
+      this.job.LastBuild = new JenkinsBuild { Number = 43, Result = "SUCCESS" };
+      await this.CreateConnector().QueryStatus(CancellationToken.None);
+      Assert.That(this.clearAttempts, Is.EqualTo(1), "The creator must not write again after another user cleared the notice.");
+      Assert.That(new JenkinsVolunteerStore(this.directory).Read(jobUrl), Is.Empty);
+    }
+
     [TestCase("read")]
     [TestCase("write")]
     [TestCase("credentials")]
@@ -229,12 +265,12 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       Assert.That(restarted.Read("https://one.example/job/b").Single().Owner, Is.EqualTo("other"));
     }
 
-    private JenkinsConnector CreateConnector()
+    private JenkinsConnector CreateConnector(string? trackingDirectory = null, string userName = "alex")
     {
       var configuration = new ConnectorConfiguration("Jenkins", "job", Connector.ServerAddress, "https://builds.example", Connector.ProjectName, "folder/job");
-      configuration.GetConfigurationByKey(JenkinsConnector.UserName).Value = "alex";
+      configuration.GetConfigurationByKey(JenkinsConnector.UserName).Value = userName;
       configuration.GetConfigurationByKey(JenkinsConnector.ApiToken).Value = "encrypted-placeholder";
-      return new JenkinsConnector(configuration, this.api, TimeProvider.System, new JenkinsVolunteerStore(this.directory))
+      return new JenkinsConnector(configuration, this.api, TimeProvider.System, new JenkinsVolunteerStore(trackingDirectory ?? this.directory))
       {
         CurrentStatus = new JenkinsStatus(ObservationState.Failure) { BuildNumber = 42 },
       };

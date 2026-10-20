@@ -61,7 +61,9 @@ change is required.
 Right-click the current failed or unstable build and select **Volunteer to fix**.
 The action remains visible but disabled when the user name or API token is missing,
 when a newer run has started, or when the current run is not failed or unstable. whatsON
-adds a visible marker to that build's description, preserving existing text.
+appends a visible marker at the bottom of that build's description, preserving existing text.
+Replacing an existing notice also moves it to the bottom. An HTML line break inside
+the marker separates the notice from existing text when HTML rendering is enabled.
 The notice is enclosed by `<!-- whatsON:volunteer:start -->` and
 `<!-- whatsON:volunteer:end -->`, with the owner stored separately inside the
 block. Replacing or clearing it preserves text outside those boundaries, even if
@@ -70,11 +72,15 @@ edits and retain automatic-cleanup tracking until corrected.
 Existing `[whatsON]` notices remain readable and can still be cleared.
 Other whatsON clients read the marker on their next poll. **Clear volunteer**
 removes only the marker and remains available for marked history entries.
+Anyone with configured Jenkins credentials and Run/Update permission can clear a
+notice manually, including a notice set by someone else.
 
 whatsON records each claim's server/job URL, build number, and volunteer in
 `%LOCALAPPDATA%\WhatsOn\volunteers`. Once a newer build succeeds, it clears the
-marker from the originally claimed build automatically. Tracking survives restarts
-and does not depend on the build remaining in the recent-history list. Jenkins'
+marker from the originally claimed build automatically. Automatic cleanup is
+performed only by the client holding that local record;
+other clients do not automatically clear notices merely because they can see them.
+Tracking survives restarts and does not depend on the build remaining in the recent-history list. Jenkins'
 last stable (fully successful) build also detects recovery while whatsON was closed, even if the
 job has failed again since. Failed cleanup requests are retried on later polls;
 valid credentials with Run/Update permission must still be configured. A marker

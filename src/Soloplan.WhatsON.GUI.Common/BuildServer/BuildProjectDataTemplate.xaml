@@ -14,6 +14,22 @@
   <converters:DebugConverter x:Key="DebugConverter" />
 
   <ContextMenu x:Key="BuildServerProjectContextMenu">
+    <MenuItem Visibility="{Binding CurrentStatus.VolunteerToFix, Converter={StaticResource NullOrDefaultVisibilityConverter}}"
+              IsEnabled="{Binding IsOnlyOneSelected}">
+      <MenuItem.Style>
+        <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+          <Setter Property="Header" Value="{live:Text loc:Strings.ClearVolunteer}" />
+          <Setter Property="Command" Value="{Binding CurrentStatus.ClearVolunteer}" />
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding CurrentStatus.Volunteer}" Value="{x:Null}">
+              <Setter Property="Header" Value="{live:Text loc:Strings.VolunteerToFix}" />
+              <Setter Property="Command" Value="{Binding CurrentStatus.VolunteerToFix}" />
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </MenuItem.Style>
+    </MenuItem>
+    <Separator Visibility="{Binding CurrentStatus.VolunteerToFix, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
     <!--  CommandParameter must be declared before Command or else value from previous opening of context menu will be passed. WTF?!  -->
     <MenuItem CommandParameter="{Binding CurrentStatus}" Command="{Binding CurrentStatus.CopyBuildLabel}"
               IsEnabled="{Binding IsOnlyOneSelected}">
@@ -76,12 +92,6 @@
         </StackPanel>
       </MenuItem.Header>
     </MenuItem>
-    <MenuItem Header="{live:Text loc:Strings.VolunteerToFix}" Command="{Binding CurrentStatus.VolunteerToFix}"
-              IsEnabled="{Binding IsOnlyOneSelected}"
-              Visibility="{Binding CurrentStatus.VolunteerToFix, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
-    <MenuItem Header="{live:Text loc:Strings.ClearVolunteer}" Command="{Binding CurrentStatus.ClearVolunteer}"
-              IsEnabled="{Binding IsOnlyOneSelected}"
-              Visibility="{Binding CurrentStatus.ClearVolunteer, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
   </ContextMenu>
 
   <DataTemplate DataType="{x:Type buildServer:BuildStatusViewModel}">
