@@ -13,8 +13,6 @@ namespace Soloplan.WhatsON.GUI.Tests
   using System.Windows.Forms;
   using NUnit.Framework;
   using Soloplan.WhatsON.Configuration;
-  using Soloplan.WhatsON.GUI.Common.BuildServer;
-  using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Model;
 
   [TestFixture]
@@ -132,30 +130,17 @@ namespace Soloplan.WhatsON.GUI.Tests
       ObservationState historyState3,
       ObservationState historyState4)
     {
-      var observationScheduler = new ObservationScheduler();
-      var configuration = new ApplicationConfiguration();
-      configuration.OpenMinimized = true;
-      var trayHandler = new TrayHandler(observationScheduler, configuration);
-
-      var connectorViewModel = new ConnectorViewModel();
-      var statusViewModel = new StatusViewModel(connectorViewModel);
-      statusViewModel.State = currentState;
-      var status1 = new BuildStatusViewModel(connectorViewModel) { State = currentState };
-      var status2 = new BuildStatusViewModel(connectorViewModel) { State = historyState1 };
-      var status3 = new BuildStatusViewModel(connectorViewModel) { State = historyState2 };
-      var status4 = new BuildStatusViewModel(connectorViewModel) { State = historyState3 };
-      var status5 = new BuildStatusViewModel(connectorViewModel) { State = historyState4 };
-      connectorViewModel.ConnectorSnapshots.Add(status5);
-      connectorViewModel.ConnectorSnapshots.Add(status4);
-      connectorViewModel.ConnectorSnapshots.Add(status3);
-      connectorViewModel.ConnectorSnapshots.Add(status2);
-      connectorViewModel.ConnectorSnapshots.Add(status1);
-
-      var notificationConfiguration = new NotificationConfiguration();
-      notificationConfiguration.OnlyIfChanged = onlyIfChanged;
-      notificationConfiguration.RunningNotificationEnabled = false;
-
-      return trayHandler.CheckNotificationShow(statusViewModel, currentState, notificationConfiguration);
+      var settings = new NotificationConfiguration { OnlyIfChanged = onlyIfChanged, RunningNotificationEnabled = false };
+      var current = new Status(currentState) { BuildNumber = 5 };
+      var history = new[]
+      {
+        current,
+        new Status(historyState1) { BuildNumber = 4 },
+        new Status(historyState2) { BuildNumber = 3 },
+        new Status(historyState3) { BuildNumber = 2 },
+        new Status(historyState4) { BuildNumber = 1 },
+      };
+      return settings.ShouldNotify(current, history);
     }
   }
 }

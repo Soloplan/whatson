@@ -143,6 +143,8 @@ namespace Soloplan.WhatsON.GUI
     public void Dispose()
     {
       Localizer.LanguageChanged -= this.LanguageChanged;
+      this.model.StatusChanged -= this.CurrentStatusPropertyChanged;
+      this.model.Dispose();
       this.contextMenu?.Dispose();
       this.contextMenu = null;
       this.icon?.Dispose();
@@ -165,6 +167,12 @@ namespace Soloplan.WhatsON.GUI
     /// <param name="i">Icon.</param>
     public void ShowBaloon(string title, string tipText, ToolTipIcon i)
     {
+      if (!Application.Current.Dispatcher.CheckAccess())
+      {
+        Application.Current.Dispatcher.Invoke(() => this.ShowBaloon(title, tipText, i));
+        return;
+      }
+
       tipText = string.IsNullOrEmpty(tipText) ? " " : tipText;
       this.icon?.ShowBalloonTip(1000, title, tipText, i);
     }
@@ -267,48 +275,6 @@ namespace Soloplan.WhatsON.GUI
       var completedState = snapshotStates.Where(state => state != ObservationState.Unknown && state != ObservationState.Running)
         .Select(state => (ObservationState?)state).FirstOrDefault();
       return completedState ?? currentState;
-    }
-
-    /// <summary>
-    /// Checks if the notification should be shown.
-    /// </summary>
-    /// <param name="currentStatus">The current status.</param>
-    /// <param name="stateToCheck">The state to check.</param>
-    /// <param name="notificationConfiguration">The notification configuration.</param>
-    /// <returns>True if the notification should be shown, otherwise false.</returns>
-    internal bool CheckNotificationShow(
-      StatusViewModel currentStatus,
-      ObservationState stateToCheck,
-      NotificationConfiguration notificationConfiguration)
-    {
-      var enabledCheck = this.GetEnabledStateCheck(stateToCheck, notificationConfiguration);
-      if (!enabledCheck())
-      {
-        return false;
-      }
-
-      var connectorSnapshots = currentStatus.Parent.ConnectorSnapshots;
-      if (connectorSnapshots == null || connectorSnapshots.Count == 1 || !notificationConfiguration.OnlyIfChanged)
-      {
-        return currentStatus.State == stateToCheck;
-      }
-
-      var historicalOrderedConnectorSnapshots = connectorSnapshots.Reverse().Skip(1);
-      foreach (var historicalOrderedConnectorSnapshot in historicalOrderedConnectorSnapshots)
-      {
-        var snapshotEnabledCheck = this.GetEnabledStateCheck(historicalOrderedConnectorSnapshot.State, notificationConfiguration);
-        if (snapshotEnabledCheck() && currentStatus.State == stateToCheck)
-        {
-          if (historicalOrderedConnectorSnapshot.State != currentStatus.State)
-          {
-            return true;
-          }
-
-          return false;
-        }
-      }
-
-      return false;
     }
 
     /// <summary>
@@ -453,44 +419,12 @@ namespace Soloplan.WhatsON.GUI
 
       this.mainWindow?.ApplyConfiguration(this.configuration);
       this.model.StatusChanged -= this.CurrentStatusPropertyChanged;
+      this.model.Dispose();
       this.model = new NotificationsModel(this.scheduler);
       this.model.StatusChanged += this.CurrentStatusPropertyChanged;
       this.UpdateTrayIcon();
 
       this.scheduler.Start();
-    }
-
-    /// <summary>
-    /// Gets the enabled state check method call.
-    /// </summary>
-    /// <param name="stateToCheck">The state to check.</param>
-    /// <param name="notificationConfiguration">The notification configuration.</param>
-    /// <returns>The enabled state check method call.</returns>
-    private Func<bool> GetEnabledStateCheck(ObservationState stateToCheck, NotificationConfiguration notificationConfiguration)
-    {
-      Func<bool> enabledCheck;
-      switch (stateToCheck)
-      {
-        case ObservationState.Unknown:
-          enabledCheck = () => notificationConfiguration.UnknownNotificationEnabled;
-          break;
-        case ObservationState.Unstable:
-          enabledCheck = () => notificationConfiguration.UnstableNotificationEnabled;
-          break;
-        case ObservationState.Failure:
-          enabledCheck = () => notificationConfiguration.FailureNotificationEnabled;
-          break;
-        case ObservationState.Success:
-          enabledCheck = () => notificationConfiguration.SuccessNotificationEnabled;
-          break;
-        case ObservationState.Running:
-          enabledCheck = () => notificationConfiguration.RunningNotificationEnabled;
-          break;
-        default:
-          throw new ArgumentOutOfRangeException(nameof(stateToCheck), stateToCheck, null);
-      }
-
-      return enabledCheck;
     }
 
     /// <summary>
@@ -500,6 +434,13 @@ namespace Soloplan.WhatsON.GUI
     /// <param name="e">The <see cref="System.ComponentModel.PropertyChangedEventArgs" /> instance containing the event data.</param>
     private void CurrentStatusPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
+      // NotifyIcon's native window must always be accessed on its owning thread.
+      if (!Application.Current.Dispatcher.CheckAccess())
+      {
+        Application.Current.Dispatcher.Invoke(() => this.CurrentStatusPropertyChanged(sender, e));
+        return;
+      }
+
       if (sender is StatusViewModel statusViewModel
           && (e.PropertyName == nameof(StatusViewModel.State) || e.PropertyName == nameof(ConnectorViewModel.CurrentStatus)))
       {
@@ -518,25 +459,31 @@ namespace Soloplan.WhatsON.GUI
         }
 
         var notificationConfiguration = this.configuration.GetNotificationConfiguration(connectorConfiguration);
+        var connector = statusViewModel.Parent.Connector;
+        if (connector?.CurrentStatus == null
+            || !notificationConfiguration.ShouldNotify(connector.CurrentStatus, connector.Snapshots.Select(snapshot => snapshot.Status)))
+        {
+          return;
+        }
 
         var description = Localizer.ProjectNotification(statusViewModel.Parent.Name);
-        if (this.CheckNotificationShow(statusViewModel, ObservationState.Running, notificationConfiguration))
+        if (statusViewModel.State == ObservationState.Running)
         {
           this.ShowBaloon(Strings.BuildStarted, description, ToolTipIcon.None);
         }
-        else if (this.CheckNotificationShow(statusViewModel, ObservationState.Failure, notificationConfiguration))
+        else if (statusViewModel.State == ObservationState.Failure)
         {
           this.ShowBaloon(Strings.BuildFailed, description, ToolTipIcon.Error);
         }
-        else if (this.CheckNotificationShow(statusViewModel, ObservationState.Success, notificationConfiguration))
+        else if (statusViewModel.State == ObservationState.Success)
         {
           this.ShowBaloon(Strings.BuildSuccessful, description, ToolTipIcon.Info);
         }
-        else if (this.CheckNotificationShow(statusViewModel, ObservationState.Unstable, notificationConfiguration))
+        else if (statusViewModel.State == ObservationState.Unstable)
         {
           this.ShowBaloon(Strings.BuildSuccessfulUnstable, description, ToolTipIcon.Warning);
         }
-        else if (this.CheckNotificationShow(statusViewModel, ObservationState.Unknown, notificationConfiguration))
+        else if (statusViewModel.State == ObservationState.Unknown)
         {
           this.ShowBaloon(Strings.BuildInterrupted, description, ToolTipIcon.Warning);
         }
