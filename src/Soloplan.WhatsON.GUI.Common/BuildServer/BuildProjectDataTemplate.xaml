@@ -14,7 +14,7 @@
   <converters:DebugConverter x:Key="DebugConverter" />
 
   <ContextMenu x:Key="BuildServerProjectContextMenu">
-    <MenuItem Visibility="{Binding CurrentStatus.VolunteerToFix, Converter={StaticResource NullOrDefaultVisibilityConverter}}"
+    <MenuItem ToolTipService.ShowOnDisabled="True" Visibility="{Binding CurrentStatus.VolunteerToFix, Converter={StaticResource NullOrDefaultVisibilityConverter}}"
               IsEnabled="{Binding IsOnlyOneSelected}">
       <MenuItem.HeaderTemplate>
         <DataTemplate>
@@ -27,10 +27,12 @@
       <MenuItem.Style>
         <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
           <Setter Property="Header" Value="{live:Text loc:Strings.ClearVolunteer}" />
+          <Setter Property="ToolTip" Value="{live:Text loc:Strings.ClearVolunteerDescription}" />
           <Setter Property="Command" Value="{Binding CurrentStatus.ClearVolunteer}" />
           <Style.Triggers>
             <DataTrigger Binding="{Binding CurrentStatus.Volunteer}" Value="{x:Null}">
               <Setter Property="Header" Value="{live:Text loc:Strings.VolunteerToFix}" />
+              <Setter Property="ToolTip" Value="{live:Text loc:Strings.VolunteerToFixDescription}" />
               <Setter Property="Command" Value="{Binding CurrentStatus.VolunteerToFix}" />
             </DataTrigger>
           </Style.Triggers>

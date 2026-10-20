@@ -132,14 +132,17 @@ namespace Soloplan.WhatsON.GUI.Tests
                       Assert.That(row.ContextMenu.Items[0], Is.SameAs(volunteerMenu), "The volunteer action goes first.");
                       Assert.That(row.ContextMenu.Items[1], Is.TypeOf<Separator>());
                       Assert.That(volunteerMenu.Visibility, Is.EqualTo(Visibility.Visible), "Missing credentials must not hide the action.");
+                      Assert.That(ToolTipService.GetShowOnDisabled(volunteerMenu), Is.True, "The explanation must be available while disabled.");
                       Assert.That(FindVisualChild<MaterialDesignThemes.Wpf.PackIcon>(volunteerMenu)?.Kind, Is.EqualTo(MaterialDesignThemes.Wpf.PackIconKind.AccountWrench));
                       Assert.That(volunteerMenu.IsEnabled, Is.False, "These projects have no Jenkins credentials.");
                       Assert.That(volunteerMenu.Header, Is.EqualTo(Strings.ClearVolunteer));
+                      Assert.That(volunteerMenu.ToolTip, Is.EqualTo(Strings.ClearVolunteerDescription));
                       Assert.That(volunteerMenu.Command, Is.SameAs(current.ClearVolunteer));
 
                       current.Update(new Soloplan.WhatsON.Jenkins.JenkinsStatus(ObservationState.Failure) { BuildNumber = 110 });
                       window.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
                       Assert.That(volunteerMenu.Header, Is.EqualTo(Strings.VolunteerToFix));
+                      Assert.That(volunteerMenu.ToolTip, Is.EqualTo(Strings.VolunteerToFixDescription));
                       Assert.That(volunteerMenu.Command, Is.SameAs(current.VolunteerToFix));
                       Assert.That(volunteerMenu.IsEnabled, Is.False, "The claim action also stays disabled without credentials.");
 
@@ -151,6 +154,7 @@ namespace Soloplan.WhatsON.GUI.Tests
                       current.Update(connectors[2].CurrentStatus);
                       window.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
                       Assert.That(volunteerMenu.Header, Is.EqualTo(Strings.ClearVolunteer));
+                      Assert.That(volunteerMenu.ToolTip, Is.EqualTo(Strings.ClearVolunteerDescription));
                       Assert.That(volunteerMenu.Command, Is.SameAs(current.ClearVolunteer));
                       Assert.That(volunteerMenu.IsEnabled, Is.True);
                       connectors[2].Configuration.GetConfigurationByKey(Soloplan.WhatsON.Jenkins.JenkinsConnector.UserName).Value = string.Empty;

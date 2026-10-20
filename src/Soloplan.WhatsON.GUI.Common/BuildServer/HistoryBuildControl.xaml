@@ -22,7 +22,7 @@
     <converters:StatusToColorConverter x:Key="StatusToColorConverter" />
     <converters:NullOrDefaultToVisibilityConverter x:Key="HasVolunteerCommand" />
     <ContextMenu x:Key="ContextMenuBuild">
-      <MenuItem Visibility="{Binding VolunteerToFix, Converter={StaticResource HasVolunteerCommand}}">
+      <MenuItem ToolTipService.ShowOnDisabled="True" Visibility="{Binding VolunteerToFix, Converter={StaticResource HasVolunteerCommand}}">
         <MenuItem.HeaderTemplate>
           <DataTemplate>
             <StackPanel Orientation="Horizontal">
@@ -34,10 +34,12 @@
         <MenuItem.Style>
           <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
             <Setter Property="Header" Value="{live:Text loc:Strings.ClearVolunteer}" />
+            <Setter Property="ToolTip" Value="{live:Text loc:Strings.ClearVolunteerDescription}" />
             <Setter Property="Command" Value="{Binding ClearVolunteer}" />
             <Style.Triggers>
               <DataTrigger Binding="{Binding Volunteer}" Value="{x:Null}">
                 <Setter Property="Header" Value="{live:Text loc:Strings.VolunteerToFix}" />
+                <Setter Property="ToolTip" Value="{live:Text loc:Strings.VolunteerToFixDescription}" />
                 <Setter Property="Command" Value="{Binding VolunteerToFix}" />
               </DataTrigger>
             </Style.Triggers>

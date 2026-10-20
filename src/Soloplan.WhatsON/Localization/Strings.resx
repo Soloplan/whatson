@@ -538,4 +538,6 @@ Expected connector type: {3}</value>
   <data name="VolunteerUpdateFailed" xml:space="preserve"><value>Could not update the volunteer. Check your Jenkins credentials and Run/Update permission.</value></data>
   <data name="TokenCannotBeDecrypted" xml:space="preserve"><value>Stored token cannot be read. Enter the API token again.</value></data>
   <data name="TokenCannotBeSaved" xml:space="preserve"><value>The API token could not be encrypted. Check access to your local application data folder.</value></data>
+  <data name="VolunteerToFixDescription" xml:space="preserve"><value>Volunteer for the current failed or unstable build.&#10;Requires a Jenkins user name and API token under Edit.&#10;The account must have permission to edit build descriptions.</value></data>
+  <data name="ClearVolunteerDescription" xml:space="preserve"><value>Remove this build’s volunteer notice, including someone else’s.&#10;Requires a Jenkins user name and API token under Edit.&#10;The account must have permission to edit build descriptions.</value></data>
 </root>
