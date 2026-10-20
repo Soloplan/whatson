@@ -220,6 +220,15 @@ namespace Soloplan.WhatsON.CruiseControl
 
       result.EstimatedDuration = this.estimatedDuration;
 
+      if (result.State is ObservationState.Failure or ObservationState.Unstable)
+      {
+        result.FailureDetails = string.Join(
+          Environment.NewLine,
+          (job.MessageList?.MessagesSafe ?? Array.Empty<Message>())
+            .Where(message => message.Kind is MessageKind.FailingTasks or MessageKind.BuildAbortedBy)
+            .Select(message => message.Text).Where(text => !string.IsNullOrWhiteSpace(text)).Distinct().Take(5));
+      }
+
       return result;
     }
 

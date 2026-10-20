@@ -9,6 +9,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 {
   using System;
   using System.ComponentModel;
+  using System.Globalization;
+  using System.Linq;
   using NLog;
   using Soloplan.WhatsON.Localization;
   using Soloplan.WhatsON.Model;
@@ -38,6 +40,32 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     public string? Details { get; protected set; }
 
+    public string? FailureDetails { get; protected set; }
+
+    public int FailedTestCount { get; protected set; }
+
+    public string? FailureSummary
+    {
+      get
+      {
+        if (this.State != ObservationState.Failure && this.State != ObservationState.Unstable)
+        {
+          return null;
+        }
+
+        var lines = (this.FailureDetails ?? string.Empty).Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+          .Select(line => string.Join(" ", line.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)))
+          .Where(line => line.Length > 0).Distinct().Take(6)
+          .Select(line => line.Length > 160 ? line.Substring(0, 157) + "..." : line).ToList();
+        if (this.FailedTestCount > 0)
+        {
+          lines.Insert(0, string.Format(CultureInfo.CurrentCulture, Strings.FailedTestsFormat, this.FailedTestCount));
+        }
+
+        return lines.Count == 0 ? null : string.Join(Environment.NewLine, lines);
+      }
+    }
+
     public ObservationState State { get; set; }
 
     public virtual DateTime Time { get; protected set; }
@@ -57,6 +85,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     public virtual void Update(Status? newStatus)
     {
       log.Trace("Updating status model {model}", new { this.Name, this.Details });
+      this.FailureDetails = newStatus?.FailureDetails;
+      this.FailedTestCount = newStatus?.FailedTestCount ?? 0;
       if (newStatus == null)
       {
         this.Name = Strings.Loading;

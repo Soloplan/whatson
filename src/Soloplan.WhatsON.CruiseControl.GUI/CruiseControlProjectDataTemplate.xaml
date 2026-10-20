@@ -18,6 +18,8 @@
       <buildServer:CulpritsControl Caption="{live:Text loc:Strings.ChangesByCaption}"
                                    CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
       <TextBlock Text="{Binding ErrorMessage}" Style="{DynamicResource ToolTipMessage}" />
+      <TextBlock Text="{Binding FailureSummary}" TextWrapping="Wrap"
+                 Visibility="{Binding FailureSummary, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
     </StackPanel>
   </ToolTip>
 
@@ -28,6 +30,8 @@
       <buildServer:CulpritsControl Caption="{live:Text loc:Strings.ChangesByCaption}"
                                    CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
       <TextBlock Text="{Binding ErrorMessage}" Style="{DynamicResource ToolTipMessage}" />
+      <TextBlock Text="{Binding FailureSummary}" TextWrapping="Wrap"
+                 Visibility="{Binding FailureSummary, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
     </StackPanel>
   </ToolTip>
 

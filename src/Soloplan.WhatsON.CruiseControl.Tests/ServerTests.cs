@@ -260,6 +260,19 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
       Assert.That(connector.CurrentStatus?.State, Is.EqualTo(ObservationState.Failure));
     }
 
+    [Test]
+    public async Task FailureDetailsIncludeFailingTasksButNotPeopleOrInformationalMessages()
+    {
+      File.WriteAllText(
+        this.statusFile,
+        "<Projects><Project name='Release' activity='Sleeping' lastBuildStatus='Failure' lastBuildLabel='1'><messages>"
+        + "<message kind='FailingTasks' text='Unit tests failed'/><message kind='FailingTasks' text='Unit tests failed'/>"
+        + "<message kind='Breakers' text='Alice'/><message kind='Fixer' text='Bob'/></messages></Project></Projects>");
+      var connector = this.CreateConnector();
+      await connector.QueryStatus(CancellationToken.None);
+      Assert.That(connector.CurrentStatus?.FailureDetails, Is.EqualTo("Unit tests failed"));
+    }
+
     [TestCase("Fixer")]
     [TestCase("BuildStatus")]
     [TestCase("NotDefined")]

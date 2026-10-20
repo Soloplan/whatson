@@ -22,9 +22,17 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
     public event EventHandler<BuildsEventArgs>? BuildsRequest;
 
+    public Func<int, CancellationToken, Task<string?>> FailedTestsRequest { get; set; } = (_, _) => Task.FromResult<string?>(null);
+
+    public Func<int, CancellationToken, Task<string?>> PipelineFailureRequest { get; set; } = (_, _) => Task.FromResult<string?>(null);
+
     public Func<IReadOnlyCollection<JenkinsConnector>, CancellationToken, Task<JenkinsPollingResult>>? PollingQuery { get; set; }
 
     public Func<JenkinsConnector, int, string?, bool, CancellationToken, Task<JenkinsBuild>>? VolunteerQuery { get; set; }
+
+    public Task<string?> GetFailedTests(JenkinsConnector connector, int buildNumber, CancellationToken token) => this.FailedTestsRequest(buildNumber, token);
+
+    public Task<string?> GetPipelineFailure(JenkinsConnector connector, int buildNumber, CancellationToken token) => this.PipelineFailureRequest(buildNumber, token);
 
     public Task<JenkinsBuild> SetVolunteer(JenkinsConnector connector, int buildNumber, string? expectedOwner, bool claim, CancellationToken token) =>
       this.VolunteerQuery?.Invoke(connector, buildNumber, expectedOwner, claim, token) ?? throw new NotSupportedException();

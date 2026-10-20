@@ -18,6 +18,10 @@ namespace Soloplan.WhatsON.Jenkins
   /// </summary>
   public interface IJenkinsApi
   {
+    Task<string?> GetFailedTests(JenkinsConnector connector, int buildNumber, CancellationToken token);
+
+    Task<string?> GetPipelineFailure(JenkinsConnector connector, int buildNumber, CancellationToken token);
+
     Task<JenkinsBuild> SetVolunteer(JenkinsConnector connector, int buildNumber, string? expectedOwner, bool claim, CancellationToken token);
 
     Task<JenkinsPollingResult> GetPollingJobs(IReadOnlyCollection<JenkinsConnector> connectors, CancellationToken token);

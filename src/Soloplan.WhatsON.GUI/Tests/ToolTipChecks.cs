@@ -53,7 +53,7 @@ namespace Soloplan.WhatsON.GUI.Tests
                   new ConfigurationItem(Connector.ProjectName, "release/image"),
                 ]);
               var connector = PluginManager.Instance.GetConnector(configuration) ?? throw new AssertionException("Expected connector plugin was not found.");
-              connector.CurrentStatus = new Status { State = ObservationState.Unknown, BuildNumber = 108, Time = DateTime.UtcNow.AddHours(-1), Duration = TimeSpan.FromMinutes(3) };
+              connector.CurrentStatus = new Status { State = ObservationState.Failure, FailedTestCount = 2, FailureDetails = "Tests.First failed\nTests.Second failed", BuildNumber = 108, Time = DateTime.UtcNow.AddHours(-1), Duration = TimeSpan.FromMinutes(3) };
               var model = plugin.CreateViewModel(connector);
               model.Update(connector);
               model.CurrentStatus?.Culprits.Add(new UserViewModel { FullName = "A contributor with a very long display name that should wrap inside the tooltip instead of overflowing" });
@@ -64,7 +64,7 @@ namespace Soloplan.WhatsON.GUI.Tests
                 {
                   tooltip.DataContext = tooltip.Content is StackPanel panel && panel.GetBindingExpression(FrameworkElement.DataContextProperty) != null
                     ? model : model.CurrentStatus;
-                  CheckPopup(tooltip, target, app);
+                  CheckPopup(tooltip, target, app, "Tests.First failed");
                   var caption = Descendants<TextBlock>(tooltip).FirstOrDefault(text => text.Text == (plugin.ConnectorType == "Jenkins" ? Strings.BuildContributorsCaption : Strings.ChangesByCaption));
                   Assert.That(caption, Is.Not.Null, "Contributor captions follow the interface language in both plugins.");
                 }
@@ -102,7 +102,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       }
     }
 
-    private static void CheckPopup(ToolTip tooltip, UIElement target, App app)
+    private static void CheckPopup(ToolTip tooltip, UIElement target, App app, string? expectedText = null)
     {
       tooltip.PlacementTarget = target;
       try
@@ -116,6 +116,11 @@ namespace Soloplan.WhatsON.GUI.Tests
         Assert.That(tooltip.ActualWidth, Is.InRange(1, 440));
         var text = Descendants<TextBlock>(tooltip).Where(block => block.IsVisible && !string.IsNullOrEmpty(block.Text)).ToList();
         Assert.That(text, Is.Not.Empty);
+        if (expectedText != null)
+        {
+          Assert.That(text.Any(block => block.Text.Contains(expectedText, StringComparison.Ordinal)), Is.True, "Failure summaries are visible in row, build, and history tooltips.");
+        }
+
         Assert.That(text.All(block => block.Foreground == tooltip.Foreground || block.Foreground == app.Resources["SettingsMuted"]), Is.True);
         var lastTextBottom = text.Max(block => block.TranslatePoint(new Point(0, block.ActualHeight), tooltip).Y);
         Assert.That(tooltip.ActualHeight - lastTextBottom, Is.InRange(9, 14), "Tooltip content must not end with blank spacer rows.");

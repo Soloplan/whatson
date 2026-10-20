@@ -1,0 +1,79 @@
+{
+  "build": {
+    "number": 42,
+    "result": "FAILURE",
+    "building": false,
+    "actions": [
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {}
+    ]
+  },
+  "testReport": null,
+  "pipeline": {
+    "id": "42",
+    "status": "FAILED",
+    "stages": [
+      {
+        "id": "1",
+        "name": "Stage 1",
+        "status": "SUCCESS"
+      },
+      {
+        "id": "2",
+        "name": "Stage 2",
+        "status": "SUCCESS"
+      },
+      {
+        "id": "3",
+        "name": "Stage 3",
+        "status": "FAILED",
+        "error": {
+          "message": "script returned exit code 1",
+          "type": "hudson.AbortException"
+        }
+      },
+      {
+        "id": "4",
+        "name": "Stage 4",
+        "status": "FAILED",
+        "error": {
+          "message": "script returned exit code 1",
+          "type": "hudson.AbortException"
+        }
+      },
+      {
+        "id": "5",
+        "name": "Stage 5",
+        "status": "FAILED",
+        "error": {
+          "message": "script returned exit code 1",
+          "type": "hudson.AbortException"
+        }
+      },
+      {
+        "id": "6",
+        "name": "Stage 6",
+        "status": "SUCCESS"
+      }
+    ]
+  },
+  "nodes": {}
+}

@@ -27,6 +27,10 @@ namespace Soloplan.WhatsON.Model
 
     public virtual string? Details { get; set; }
 
+    public virtual string? FailureDetails { get; set; }
+
+    public virtual int FailedTestCount { get; set; }
+
     public virtual TimeSpan Duration { get; set; }
 
     public virtual string? ErrorMessage { get; set; }

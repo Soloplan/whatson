@@ -269,6 +269,11 @@ namespace Soloplan.WhatsON.GUI
         lines.Add($"{Strings.DurationPrefix}{build.Duration:g}");
       }
 
+      if (!string.IsNullOrWhiteSpace(status.FailureSummary))
+      {
+        lines.Add(status.FailureSummary);
+      }
+
       return string.Join(Environment.NewLine, lines);
     }
 

@@ -549,4 +549,7 @@ Erwarteter Verbindungstyp: {3}</value>
   <data name="JenkinsCredentialsTimedOut" xml:space="preserve"><value>Der Verbindungstest hat zu lange gedauert. Prüfen Sie Serveradresse und Netzwerk und versuchen Sie es erneut.</value></data>
   <data name="JenkinsCredentialsInvalidResponse" xml:space="preserve"><value>Der Server hat keine gültige Jenkins-Anmeldeantwort geliefert. Prüfen Sie die Jenkins-Adresse.</value></data>
   <data name="JenkinsCredentialsInvalidSettings" xml:space="preserve"><value>Verwenden Sie eine gültige HTTPS-Jenkins-Serveradresse und einen Benutzernamen ohne Doppelpunkt (:).</value></data>
+  <data name="FailedTestsFormat" xml:space="preserve">
+    <value>Fehlgeschlagene Tests: {0}</value>
+  </data>
 </root>

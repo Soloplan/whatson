@@ -8,6 +8,8 @@
 namespace Soloplan.WhatsON.GUI.Tests
 {
   using System;
+  using System.Collections.Generic;
+  using System.ComponentModel;
   using NUnit.Framework;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Jenkins;
@@ -19,6 +21,54 @@ namespace Soloplan.WhatsON.GUI.Tests
   [SetUICulture("en-US")]
   public class NotificationContentTests
   {
+    [TestCase(ObservationState.Failure, true)]
+    [TestCase(ObservationState.Unstable, true)]
+    [TestCase(ObservationState.Success, false)]
+    [TestCase(ObservationState.Running, false)]
+    [TestCase(ObservationState.Unknown, false)]
+    public void FailureSummaryIsSharedByNotificationsAndTooltipsOnlyForBrokenBuilds(ObservationState state, bool show)
+    {
+      var project = new ConnectorViewModel { Name = "Release" };
+      project.CurrentStatus.Update(new Status(state) { FailedTestCount = 2, FailureDetails = "Compiler error\nTests.First\nTests.Second" });
+      var summary = project.CurrentStatus.FailureSummary;
+      if (show)
+      {
+        Assert.That(summary, Is.EqualTo($"Failed tests: 2{Environment.NewLine}Compiler error{Environment.NewLine}Tests.First{Environment.NewLine}Tests.Second"));
+        Assert.That(TrayHandler.GetNotificationDescription(project.CurrentStatus), Does.EndWith(summary ?? throw new AssertionException("Missing failure summary.")));
+      }
+      else
+      {
+        Assert.That(summary, Is.Null);
+        Assert.That(TrayHandler.GetNotificationDescription(project.CurrentStatus), Does.Not.Contain("Tests"));
+      }
+    }
+
+    [Test]
+    [SetUICulture("de-DE")]
+    public void FailureCountIsLocalizedAndDetailsAreBounded()
+    {
+      var status = new StatusViewModel(new ConnectorViewModel());
+      status.Update(new Status(ObservationState.Failure) { FailedTestCount = 20, FailureDetails = new string('x', 1000) });
+      Assert.That(status.FailureSummary, Does.StartWith("Fehlgeschlagene Tests: 20"));
+      Assert.That(status.FailureSummary, Does.EndWith("..."));
+      Assert.That(status.FailureSummary?.Length, Is.LessThan(200));
+    }
+
+    [Test]
+    public void LateReportsRefreshBindingsAndLoadingClearsOldFailures()
+    {
+      var status = new StatusViewModel(new ConnectorViewModel());
+      var changes = new List<string?>();
+      ((INotifyPropertyChanged)status).PropertyChanged += (_, args) => changes.Add(args.PropertyName);
+      status.Update(new Status(ObservationState.Failure) { FailedTestCount = 1 });
+      changes.Clear();
+      status.Update(new Status(ObservationState.Failure) { FailedTestCount = 1, FailureDetails = "Tests.First" });
+      Assert.That(changes, Does.Contain(nameof(status.FailureSummary)));
+      Assert.That(status.FailureSummary, Does.Contain("Tests.First"));
+      status.Update(null);
+      Assert.That(status.FailureSummary, Is.Null);
+    }
+
     [TestCase(ObservationState.Success)]
     [TestCase(ObservationState.Failure)]
     [TestCase(ObservationState.Unstable)]

@@ -66,6 +66,14 @@ namespace Soloplan.WhatsON.Jenkins
 
     private bool usingBatch;
 
+    private int failedTestsBuildNumber;
+
+    private int failedTestsCount;
+
+    private string? failedTests;
+
+    private string? pipelineFailure;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="JenkinsConnector" /> class.
     /// </summary>
@@ -232,6 +240,11 @@ namespace Soloplan.WhatsON.Jenkins
           foreach (var snapshot in this.Snapshots.Where(snapshot => snapshot.Status.BuildNumber == build.Number))
           {
             snapshot.Status.Details = build.Description;
+            if (this.CurrentStatus?.BuildNumber == build.Number)
+            {
+              snapshot.Status.FailedTestCount = this.CurrentStatus.FailedTestCount;
+              snapshot.Status.FailureDetails = this.CurrentStatus.FailureDetails;
+            }
           }
 
           if (this.Snapshots.All(snapshot => snapshot.Status.BuildNumber != build.Number)
@@ -321,6 +334,29 @@ namespace Soloplan.WhatsON.Jenkins
       }
 
       await this.ClearRecoveredVolunteers(job, cancellationToken);
+      var failedCount = job.LastBuild.Actions?.OfType<JenkinsBuildAction>().Select(action => action.FailCount).DefaultIfEmpty().Max() ?? 0;
+      if (this.failedTestsBuildNumber != job.LastBuild.Number || this.failedTestsCount != failedCount
+          || this.CurrentStatus?.State != GetState(job.LastBuild))
+      {
+        this.failedTests = null;
+        this.pipelineFailure = null;
+        this.failedTestsBuildNumber = job.LastBuild.Number;
+        this.failedTestsCount = failedCount;
+      }
+
+      if (GetState(job.LastBuild) is ObservationState.Failure or ObservationState.Unstable && failedCount > 0 && this.failedTests == null)
+      {
+        this.failedTests = await this.api.GetFailedTests(this, job.LastBuild.Number, cancellationToken);
+      }
+
+      if (GetState(job.LastBuild) is ObservationState.Failure or ObservationState.Unstable
+          && string.IsNullOrWhiteSpace(this.failedTests) && this.pipelineFailure == null
+          && !(job.LastBuild.Actions?.OfType<JenkinsBuildAction>()
+            .Any(action => action.FoundFailureCauses?.OfType<JenkinsFailureCause>().Any(cause => !string.IsNullOrWhiteSpace(cause.Name)) == true) ?? false))
+      {
+        this.pipelineFailure = await this.api.GetPipelineFailure(this, job.LastBuild.Number, cancellationToken);
+      }
+
       return this.CreateStatus(job.LastBuild);
     }
 
@@ -446,6 +482,16 @@ namespace Soloplan.WhatsON.Jenkins
       newStatus.Culprits = latestBuild.Culprits?.OfType<JenkinsUser>().ToList() ?? new List<JenkinsUser>();
       newStatus.Url = JenkinsApi.UrlHelper.BuildUrl(this, newStatus.BuildNumber);
       newStatus.ErrorMessage = latestBuild.Result;
+      if (newStatus.State is ObservationState.Failure or ObservationState.Unstable)
+      {
+        var actions = latestBuild.Actions?.OfType<JenkinsBuildAction>().ToList() ?? new List<JenkinsBuildAction>();
+        newStatus.FailedTestCount = Math.Max(0, actions.Select(action => action.FailCount).DefaultIfEmpty().Max());
+        var causes = actions.SelectMany(action => action.FoundFailureCauses ?? Array.Empty<JenkinsFailureCause>())
+          .OfType<JenkinsFailureCause>().Select(cause => cause.Name).Where(name => !string.IsNullOrWhiteSpace(name)).Distinct().Take(5);
+        var diagnostics = latestBuild.Number == this.failedTestsBuildNumber
+          ? (string.IsNullOrWhiteSpace(this.failedTests) ? this.pipelineFailure : this.failedTests) : null;
+        newStatus.FailureDetails = string.Join(Environment.NewLine, causes.Append(diagnostics).Where(value => !string.IsNullOrWhiteSpace(value)));
+      }
 
       newStatus.CommittedToThisBuild = latestBuild.ChangeSets?.OfType<ChangeSet>().SelectMany(p => p.ChangeSetItems ?? Array.Empty<ChangeSetItem>())
         .OfType<ChangeSetItem>().Select(p => p.Author).OfType<JenkinsUser>().GroupBy(p => p.FullName)

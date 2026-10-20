@@ -180,7 +180,7 @@ namespace Soloplan.WhatsON.Jenkins
 
     internal static Uri PollingRequest(IReadOnlyList<JenkinsConnector> batch, bool compact)
     {
-      var build = compact ? "number,description,building,result,timestamp,duration,estimatedDuration" : JenkinsBuild.RequestProperties;
+      var build = compact ? "number,description,building,result,timestamp,duration,estimatedDuration," + JenkinsBuild.FailureProperties : JenkinsBuild.RequestProperties;
 
       // Jenkins applies XPath after export: stay within one folder and a bounded build history.
       var tree = $"jobs[name,disabled,inQueue,lastStableBuild[number],lastBuild[{build}],builds[{build}]{{0,{Connector.MaxSnapshots + 1}}}]";
@@ -216,13 +216,18 @@ namespace Soloplan.WhatsON.Jenkins
 
       if (!element.HasElements)
       {
+        if (element.Name.LocalName is "action" or "foundFailureCause")
+        {
+          return new JObject();
+        }
+
         return new JValue(element.Value);
       }
 
       var result = new JObject();
       foreach (var group in element.Elements().GroupBy(child => child.Name.LocalName))
       {
-        var arrayName = group.Key switch { "build" => "builds", "culprit" => "culprits", "changeSet" => "changeSets", "item" => "items", _ => null };
+        var arrayName = group.Key switch { "build" => "builds", "culprit" => "culprits", "changeSet" => "changeSets", "item" => "items", "action" => "actions", "foundFailureCause" => "foundFailureCauses", _ => null };
         result[arrayName ?? group.Key] = arrayName == null ? ToJson(group.Single(), depth + 1) : new JArray(group.Select(child => ToJson(child, depth + 1)));
       }
 

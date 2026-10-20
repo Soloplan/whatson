@@ -1,0 +1,58 @@
+{
+  "build": {
+    "number": 42,
+    "result": "FAILURE",
+    "building": false,
+    "actions": [
+      {},
+      {},
+      {},
+      {},
+      {
+        "failCount": 4,
+        "totalCount": 73
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {}
+    ]
+  },
+  "testReport": "<failures><case><className>Example.Tests.Suite1</className><name>Case1</name><status>FAILED</status></case><case><className>Example.Tests.Suite1</className><name>Case2</name><status>FAILED</status></case><case><className>Example.Tests.Suite1</className><name>Case3</name><status>FAILED</status></case><case><className>Example.Tests.Suite1</className><name>Case4</name><status>FAILED</status></case></failures>",
+  "pipeline": {
+    "id": "42",
+    "status": "FAILED",
+    "stages": [
+      {
+        "id": "1",
+        "name": "Stage 1",
+        "status": "SUCCESS"
+      },
+      {
+        "id": "2",
+        "name": "Stage 2",
+        "status": "SUCCESS"
+      },
+      {
+        "id": "3",
+        "name": "Stage 3",
+        "status": "FAILED",
+        "error": {
+          "message": "Pipeline step failed",
+          "type": "hudson.AbortException"
+        }
+      }
+    ]
+  },
+  "nodes": {}
+}
