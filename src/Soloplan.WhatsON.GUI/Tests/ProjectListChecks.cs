@@ -102,6 +102,8 @@ namespace Soloplan.WhatsON.GUI.Tests
               for (var groupIndex = 0; groupIndex < 2; groupIndex++)
               {
                 var group = (TreeViewItem)tree.ItemContainerGenerator.ContainerFromIndex(groupIndex);
+                var groupBorder = (Border)group.Template.FindName("Row", group);
+                Assert.That(((SolidColorBrush)groupBorder.Background).Color, Is.EqualTo(Colors.Transparent), "Idle groups must not have a row box.");
                 for (var index = 0; index < 3; index++)
                 {
                   var item = (TreeViewItem)group.ItemContainerGenerator.ContainerFromIndex(index);
@@ -131,6 +133,7 @@ namespace Soloplan.WhatsON.GUI.Tests
                   }
 
                   var rowBorder = (Border)item.Template.FindName("Row", item);
+                  Assert.That(((SolidColorBrush)rowBorder.Background).Color, Is.EqualTo(Colors.Transparent), "Idle jobs must not have a row box.");
                   for (var x = 1.0; x < rowBorder.ActualWidth - 1; x += 4)
                   {
                     var point = new Point(x, rowBorder.ActualHeight / 2);
