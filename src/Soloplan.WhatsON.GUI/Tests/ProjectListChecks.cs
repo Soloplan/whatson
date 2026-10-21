@@ -91,6 +91,9 @@ namespace Soloplan.WhatsON.GUI.Tests
               window.UpdateLayout();
               window.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
               var viewer = FindVisualChild<ScrollViewer>(tree) ?? throw new AssertionException("Missing scroll viewer.");
+              var root = (FrameworkElement)window.Content;
+              var viewerRight = viewer.TransformToAncestor(root).Transform(new Point(viewer.ActualWidth, 0)).X;
+              Assert.That(root.ActualWidth - viewerRight, Is.EqualTo(8).Within(1), "The build list and settings must use the same scrollbar inset.");
               Assert.That(viewer.ExtentWidth, Is.LessThanOrEqualTo(viewer.ViewportWidth + 1), "Narrow windows must not require horizontal scrolling.");
               for (var groupIndex = 0; groupIndex < 2; groupIndex++)
               {

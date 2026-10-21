@@ -8,8 +8,9 @@
       Initialized="PageInitialized"
       TextElement.Foreground="{DynamicResource MaterialDesignBody}">
   <materialDesign:DialogHost Identifier="ConnectorsConfigPageHost"
+                             Margin="0,0,0,12"
                              Style="{StaticResource MaterialDesignEmbeddedDialogHost}">
-    <Grid Margin="0,0,12,12">
+    <Grid Margin="{StaticResource SettingsPageGutter}">
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto" />

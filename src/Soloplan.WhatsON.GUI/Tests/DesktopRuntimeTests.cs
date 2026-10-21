@@ -178,7 +178,7 @@ namespace Soloplan.WhatsON.GUI.Tests
         navigation.SelectedItem = navigation.Items.OfType<ListBoxItem>().Single(item => (string)item.Tag == ConfigWindow.ServersListItemTag);
         populatedSettings.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
         var serverPage = (ServerConfigPage)((Frame)populatedSettings.FindName("ConfigFrame")).Content;
-        var serverPanel = (DockPanel)serverPage.Content;
+        var serverPanel = (StackPanel)((ScrollViewer)serverPage.Content).Content;
         var serverEditor = (ConnectorConfigPage)serverPanel.Children.OfType<Frame>().Single().Content;
         fields = (StackPanel)serverEditor.FindName("StackPanel");
         var testControl = fields.Children.OfType<Soloplan.WhatsON.Jenkins.GUI.JenkinsCredentialsTestControl>().Single();
@@ -199,17 +199,7 @@ namespace Soloplan.WhatsON.GUI.Tests
           var navigationLabel = ((StackPanel)((ListBoxItem)navigation.SelectedItem).Content).Children.OfType<TextBlock>().Single();
           Assert.That(navigationLabel.Text, Is.EqualTo("Server"));
           Assert.That(navigationLabel.DesiredSize.Width, Is.LessThanOrEqualTo(navigationLabel.ActualWidth));
-          var bitmap = new RenderTargetBitmap(850, 580, 96, 96, PixelFormats.Pbgra32);
-          bitmap.Render(root);
-          var encoder = new PngBitmapEncoder();
-          encoder.Frames.Add(BitmapFrame.Create(bitmap));
-          var preview = Path.Combine(TestContext.CurrentContext.TestDirectory, $"ServerSettings-{theme}.png");
-          using (var stream = File.Create(preview))
-          {
-            encoder.Save(stream);
-          }
-
-          TestContext.AddTestAttachment(preview);
+          SaveSettingsPreview(root, $"ServerSettings-{theme}");
         }
       }
       finally
@@ -407,28 +397,49 @@ namespace Soloplan.WhatsON.GUI.Tests
       Assert.That(closed, Is.True);
     }
 
+    private static void SaveSettingsPreview(FrameworkElement content, string name)
+    {
+      var bitmap = new RenderTargetBitmap((int)Math.Ceiling(content.ActualWidth), (int)Math.Ceiling(content.ActualHeight), 96, 96, PixelFormats.Pbgra32);
+      bitmap.Render(content);
+      var encoder = new PngBitmapEncoder();
+      encoder.Frames.Add(BitmapFrame.Create(bitmap));
+      var preview = Path.Combine(TestContext.CurrentContext.TestDirectory, name + ".png");
+      using (var stream = File.Create(preview))
+      {
+        encoder.Save(stream);
+      }
+
+      TestContext.AddTestAttachment(preview);
+    }
+
     private static void VerifySettingsPageEdges(ConfigWindow settings, ListBox sections, Frame frame)
     {
       var root = (FrameworkElement)settings.Content;
-      foreach (var section in new[] { ConfigWindow.MainListItemTag, ConfigWindow.AboutListItemTag })
+      foreach (var section in new[] { ConfigWindow.MainListItemTag, ConfigWindow.ConnectorsListItemTag, ConfigWindow.AboutListItemTag, ConfigWindow.ServersListItemTag })
       {
         sections.SelectedItem = sections.Items.OfType<ListBoxItem>().Single(item => (string)item.Tag == section);
         settings.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
-        var viewer = (ScrollViewer)((Page)frame.Content).Content;
-        var content = (StackPanel)viewer.Content;
+        var page = (Page)frame.Content;
+        var viewer = page.Content as ScrollViewer;
+        var content = viewer?.Content as FrameworkElement ?? (FrameworkElement)((MaterialDesignThemes.Wpf.DialogHost)page.Content).Content;
         foreach (var height in new[] { 580, 1000, 580 })
         {
           root.Measure(new Size(850, height));
           root.Arrange(new Rect(0, 0, 850, height));
           root.UpdateLayout();
-          var scrollbarVisible = height == 580;
-          Assert.That(viewer.ComputedVerticalScrollBarVisibility, Is.EqualTo(scrollbarVisible ? Visibility.Visible : Visibility.Collapsed));
-          var viewerRight = viewer.TransformToAncestor(root).Transform(new Point(viewer.ActualWidth, 0)).X;
-          Assert.That(root.ActualWidth - viewerRight, Is.EqualTo(9).Within(1), "The scrollbar must stay near the window edge.");
-          if (!scrollbarVisible)
+          if (viewer != null)
           {
-            var contentRight = content.TransformToAncestor(root).Transform(new Point(content.ActualWidth, 0)).X;
-            Assert.That(root.ActualWidth - contentRight, Is.EqualTo(21).Within(1), "Pages without scrollbars must retain their content gutter.");
+            var scrollbarVisible = height == 580 && section != ConfigWindow.ServersListItemTag;
+            Assert.That(viewer.ComputedVerticalScrollBarVisibility, Is.EqualTo(scrollbarVisible ? Visibility.Visible : Visibility.Collapsed));
+            var viewerRight = viewer.TransformToAncestor(root).Transform(new Point(viewer.ActualWidth, 0)).X;
+            Assert.That(root.ActualWidth - viewerRight, Is.EqualTo(9).Within(1), "The scrollbar must stay near the window edge.");
+          }
+
+          var contentRight = content.TransformToAncestor(root).Transform(new Point(content.ActualWidth, 0)).X;
+          Assert.That(root.ActualWidth - contentRight, Is.EqualTo(26).Within(1), "Settings pages must keep the same content gutter with and without a scrollbar.");
+          if (height == 580)
+          {
+            SaveSettingsPreview(root, "SettingsSpacing-" + section);
           }
         }
       }

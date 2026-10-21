@@ -11,6 +11,23 @@
   <SolidColorBrush x:Key="SettingsAccent" Color="#315FC8" />
   <SolidColorBrush x:Key="SettingsSelection" Color="#EAF0FE" />
   <Thickness x:Key="SettingsScrollGap">0,0,12,0</Thickness>
+  <Thickness x:Key="SettingsPageGutter">0,0,17,0</Thickness>
+
+  <Style x:Key="SettingsPageScrollViewer" TargetType="ScrollViewer">
+    <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+    <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
+    <Setter Property="Padding" Value="0,0,0,16" />
+  </Style>
+  <Style x:Key="SettingsPageContent" TargetType="StackPanel">
+    <Setter Property="Margin" Value="{StaticResource SettingsPageGutter}" />
+    <Style.Triggers>
+      <DataTrigger
+        Binding="{Binding ComputedVerticalScrollBarVisibility, RelativeSource={RelativeSource AncestorType=ScrollViewer}}"
+        Value="Visible">
+        <Setter Property="Margin" Value="0" />
+      </DataTrigger>
+    </Style.Triggers>
+  </Style>
 
   <Style x:Key="SettingsScrollContent" TargetType="StackPanel">
     <Setter Property="Margin" Value="0" />

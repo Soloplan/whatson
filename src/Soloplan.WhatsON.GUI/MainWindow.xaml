@@ -76,7 +76,7 @@
     <materialDesign:DialogHost DockPanel.Dock="Bottom" Identifier="MainWindowPageHost">
       <Grid>
         <connectorTreeView:ConnectorsTreeView x:Name="mainTreeView"
-                                              Margin="12,8,12,12"
+                                              Margin="12,8,8,12"
                                               HorizontalAlignment="Stretch" />
         <TextBlock HorizontalAlignment="Center"
                    VerticalAlignment="Center"
