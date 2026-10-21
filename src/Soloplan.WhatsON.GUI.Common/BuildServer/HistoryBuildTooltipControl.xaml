@@ -19,7 +19,7 @@
   <StackPanel>
     <TextBlock Text="{Binding FailureSummary}" TextWrapping="Wrap"
                Visibility="{Binding FailureSummary, Converter={StaticResource HasValue}}" />
-    <TextBlock Text="{Binding Volunteer}" ToolTip="{live:Text loc:Strings.VolunteerToFix}"
+    <TextBlock Text="{Binding VolunteerDisplayName}" ToolTip="{live:Text loc:Strings.VolunteerToFix}"
                FontWeight="SemiBold" Visibility="{Binding Volunteer, Converter={StaticResource HasValue}}" />
     <DockPanel Visibility="{Binding Label, Converter={StaticResource HasValue}}">
       <materialDesign:PackIcon Kind="TagOutline" />

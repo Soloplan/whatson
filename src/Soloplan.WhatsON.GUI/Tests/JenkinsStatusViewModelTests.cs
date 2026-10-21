@@ -23,6 +23,7 @@ namespace Soloplan.WhatsON.GUI.Tests
   {
     [TestCase("alex")]
     [TestCase("someone else")]
+    [TestCase("rHr")]
     public void VolunteerChangesNotifyAndEnableTheAppropriateCommands(string volunteer)
     {
       var configuration = new ConnectorConfiguration("Jenkins", "job", Connector.ServerAddress, "https://builds.example", Connector.ProjectName, "job");
@@ -38,12 +39,15 @@ namespace Soloplan.WhatsON.GUI.Tests
 
       model.Update(new JenkinsStatus(ObservationState.Failure) { BuildNumber = 42, Details = JenkinsVolunteer.SetOwner(null, volunteer) });
       Assert.That(model.Volunteer, Is.EqualTo(volunteer));
+      Assert.That(model.VolunteerDisplayName, Is.EqualTo(volunteer.ToUpperInvariant()));
       Assert.That(changes, Does.Contain(nameof(model.Volunteer)));
+      Assert.That(changes, Does.Contain(nameof(model.VolunteerDisplayName)));
       Assert.That(model.VolunteerToFix.CanExecute(null), Is.False);
       Assert.That(model.ClearVolunteer.CanExecute(null), Is.True);
 
       model.Update(new JenkinsStatus(ObservationState.Success) { BuildNumber = 43 });
       Assert.That(model.Volunteer, Is.Null);
+      Assert.That(model.VolunteerDisplayName, Is.Null);
       Assert.That(model.VolunteerToFix.CanExecute(null), Is.False);
       Assert.That(model.ClearVolunteer.CanExecute(null), Is.False);
     }

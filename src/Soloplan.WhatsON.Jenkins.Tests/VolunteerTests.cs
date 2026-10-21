@@ -52,7 +52,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     {
       var claimed = JenkinsVolunteer.SetOwner(description, "Alex & team");
       Assert.That(JenkinsVolunteer.GetOwner(claimed), Is.EqualTo("Alex & team"));
-      Assert.That(claimed, Does.Contain("Alex &amp; team"));
+      Assert.That(claimed, Does.Contain("ALEX &amp; TEAM"));
       Assert.That(claimed, Is.EqualTo((description ?? string.Empty) + JenkinsVolunteer.SetOwner(null, "Alex & team")));
       Assert.That(JenkinsVolunteer.SetOwner(claimed, null), Is.EqualTo(description ?? string.Empty));
       Assert.That(JenkinsVolunteer.GetOwner(JenkinsVolunteer.SetOwner(claimed, null)), Is.Null);
@@ -74,7 +74,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var marker = JenkinsVolunteer.SetOwner(null, owner);
       Assert.That(marker, Does.StartWith("<!-- whatsON:volunteer:start -->"));
       Assert.That(marker, Does.EndWith("<!-- whatsON:volunteer:end -->"));
-      Assert.That(marker, Does.Contain("<strong>" + System.Net.WebUtility.HtmlEncode(owner) + "</strong>"));
+      Assert.That(marker, Does.Contain("<strong>" + System.Net.WebUtility.HtmlEncode(owner.ToUpperInvariant()) + "</strong>"));
       Assert.That(JenkinsVolunteer.GetOwner(marker), Is.EqualTo(owner));
       Assert.That(JenkinsVolunteer.SetOwner(marker, null), Is.Empty);
     }
@@ -93,7 +93,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     [Test]
     public void ReplacementUsesBoundariesAndPreservesSurroundingText()
     {
-      var marker = JenkinsVolunteer.SetOwner(null, "alex").Replace("Volunteer: <strong>alex</strong>", "<strong>Edited notice</strong>\r\nAnother line");
+      var marker = JenkinsVolunteer.SetOwner(null, "alex").Replace("Volunteer: <strong>ALEX</strong>", "<strong>Edited notice</strong>\r\nAnother line");
       var description = "<p>Before</p>\r\n" + marker + "\r\n<!-- unrelated -->After";
       Assert.That(JenkinsVolunteer.GetOwner(description), Is.EqualTo("alex"));
       Assert.That(JenkinsVolunteer.SetOwner(description, "other"),
@@ -112,7 +112,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     }
 
     [Test]
-    public void BannerEmphasizesTheOwnerWithoutOverridingThemeColors()
+    public void CompactBannerEmphasizesTheUppercaseOwnerWithoutOverridingThemeColors()
     {
       const string owner = "Alex & <team>";
       var marker = JenkinsVolunteer.SetOwner(null, owner);
@@ -120,9 +120,13 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       Assert.That(markup.Elements().Select(element => element.Name.LocalName), Is.EqualTo(new[] { "hr", "div", "hr" }));
       var banner = markup.Elements("div").Single();
       Assert.That(banner.Elements("h3").Single().Value, Is.EqualTo("Fix in progress"));
-      Assert.That(banner.Elements("p").Single().Value, Is.EqualTo("Volunteer: " + owner));
-      Assert.That(banner.Descendants("strong").Single().Value, Is.EqualTo(owner));
-      Assert.That(banner.Attribute("style")?.Value, Does.Contain("border-left: 4px solid #3b82f6"));
+      Assert.That(banner.Elements("p").Single().Value, Is.EqualTo("Volunteer: " + owner.ToUpperInvariant()));
+      Assert.That(banner.Descendants("strong").Single().Value, Is.EqualTo(owner.ToUpperInvariant()));
+      Assert.That(banner.Attribute("style")?.Value, Does.Contain("border-left: 3px solid #3b82f6"));
+      Assert.That(banner.Attribute("style")?.Value, Does.Contain("padding: 6px 10px"));
+      Assert.That(banner.Elements("h3").Single().Attribute("style")?.Value, Does.Contain("font-size: 14px"));
+      Assert.That(banner.Elements("p").Single().Attribute("style")?.Value, Does.Contain("font-size: 12px"));
+      Assert.That(JenkinsVolunteer.GetOwner(marker), Is.EqualTo(owner), "Display casing must not change the account identity.");
       foreach (var style in markup.Descendants().Attributes("style"))
       {
         Assert.That(style.Value, Does.Not.Match(@"(^|;)\s*(color|background(?:-color)?)\s*:"), "The notice must inherit Jenkins theme colors.");

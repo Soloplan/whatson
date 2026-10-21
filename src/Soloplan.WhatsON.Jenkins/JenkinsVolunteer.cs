@@ -53,10 +53,10 @@ namespace Soloplan.WhatsON.Jenkins
 
       var replacement = owner == null ? string.Empty
         : Start + "\n" + OwnerPrefix + Convert.ToBase64String(new UTF8Encoding(false, true).GetBytes(owner))
-          + " -->\n<hr />\n<div style=\"border-left: 4px solid #3b82f6; padding: 20px 24px;\">\n"
-          + "<h3 style=\"font-size: 24px; font-weight: 600; margin: 8px 0 12px;\">Fix in progress</h3>\n"
-          + "<p style=\"margin: 8px 0;\">Volunteer: <strong>" + WebUtility.HtmlEncode(owner) + "</strong></p>\n"
-          + "</div>\n<hr />\n" + End;
+          + " -->\n<hr style=\"margin: 6px 0;\" />\n<div style=\"border-left: 3px solid #3b82f6; padding: 6px 10px;\">\n"
+          + "<h3 style=\"font-size: 14px; font-weight: 600; margin: 0 0 4px;\">Fix in progress</h3>\n"
+          + "<p style=\"font-size: 12px; margin: 0;\">Volunteer: <strong>" + WebUtility.HtmlEncode(owner.ToUpperInvariant()) + "</strong></p>\n"
+          + "</div>\n<hr style=\"margin: 6px 0;\" />\n" + End;
 
       text = Marker.Replace(text, string.Empty);
       text = LegacyMarker.Replace(text, string.Empty);

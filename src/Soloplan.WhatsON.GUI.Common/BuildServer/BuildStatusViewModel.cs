@@ -35,6 +35,8 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
     public string? Volunteer { get; protected set; }
 
+    public string? VolunteerDisplayName => this.Volunteer?.ToUpperInvariant();
+
     public ObservableCollection<UserViewModel> Culprits => this.culprits ?? (this.culprits = new ObservableCollection<UserViewModel>());
 
     public int? BuildNumber { get; protected set; }

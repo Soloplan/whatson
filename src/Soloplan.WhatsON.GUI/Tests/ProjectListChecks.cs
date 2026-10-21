@@ -9,11 +9,13 @@ namespace Soloplan.WhatsON.GUI.Tests
 {
   using System;
   using System.Collections.Generic;
+  using System.IO;
   using System.Linq;
   using System.Reflection;
   using System.Windows;
   using System.Windows.Controls;
   using System.Windows.Media;
+  using System.Windows.Media.Imaging;
   using System.Windows.Threading;
   using NUnit.Framework;
   using Soloplan.WhatsON.Composition;
@@ -171,6 +173,31 @@ namespace Soloplan.WhatsON.GUI.Tests
                   }
 
                   Assert.That(((Border)row.FindName("VolunteerBadge")).Visibility, Is.EqualTo(groupIndex == 0 && index == 2 ? Visibility.Visible : Visibility.Collapsed));
+                  if (groupIndex == 0 && index == 2)
+                  {
+                    var volunteerBadge = (Border)row.FindName("VolunteerBadge");
+                    var volunteerName = (TextBlock)row.FindName("VolunteerName");
+                    var projectName = (TextBlock)row.FindName("ProjectName");
+                    Assert.That(volunteerName.Text, Is.EqualTo("ALEXANDER.LONG.USERNAME"));
+                    Assert.That(volunteerName.Foreground, Is.SameAs(app.Resources["SettingsAccent"]));
+                    var badgeCenter = volunteerBadge.TransformToAncestor(row).Transform(new Point(0, volunteerBadge.ActualHeight / 2)).Y;
+                    var nameCenter = projectName.TransformToAncestor(row).Transform(new Point(0, projectName.ActualHeight / 2)).Y;
+                    Assert.That(badgeCenter, Is.EqualTo(nameCenter).Within(1), "The volunteer belongs on the same line as the project name.");
+                    if (width == 800)
+                    {
+                      var bitmap = new RenderTargetBitmap((int)Math.Ceiling(row.ActualWidth), (int)Math.Ceiling(row.ActualHeight), 96, 96, PixelFormats.Pbgra32);
+                      bitmap.Render(row);
+                      var encoder = new PngBitmapEncoder();
+                      encoder.Frames.Add(BitmapFrame.Create(bitmap));
+                      var preview = Path.Combine(TestContext.CurrentContext.TestDirectory, $"VolunteerRow-{theme}-{density}.png");
+                      using (var stream = File.Create(preview))
+                      {
+                        encoder.Save(stream);
+                      }
+
+                      TestContext.AddTestAttachment(preview);
+                    }
+                  }
                   Assert.That(((TextBlock)row.FindName("ProjectName")).ActualWidth, Is.GreaterThan(35), "Project names take priority over optional metadata.");
                   Assert.That(((FrameworkElement)row.FindName("BuildHistory")).Visibility, Is.EqualTo(width == 800 ? Visibility.Visible : Visibility.Collapsed));
                   Assert.That(((FrameworkElement)row.FindName("BuildTiming")).Visibility, Is.EqualTo(width == 300 ? Visibility.Collapsed : Visibility.Visible));
