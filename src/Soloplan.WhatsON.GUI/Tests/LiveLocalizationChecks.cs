@@ -130,7 +130,7 @@ namespace Soloplan.WhatsON.GUI.Tests
             Assert.That(address.Text, Is.EqualTo("https://typed.example.invalid/"));
             Assert.That(project.GetConfigurationByKey(Connector.NotificationsVisbility).Value, Is.EqualTo(notificationValue));
             Assert.That(source.Language, Is.EqualTo(ApplicationLanguage.English), "Previewing must not save the preference.");
-            Assert.That(icon.Text, Is.EqualTo(german ? "WhatsON - Keine Projekte konfiguriert" : "WhatsON - No projects configured"));
+            Assert.That(icon.Text, Is.EqualTo(german ? "whatsON - Keine Projekte konfiguriert" : "whatsON - No projects configured"));
             Assert.That(menu.Items[1].Text, Is.EqualTo(german ? "Beenden" : "Exit"));
             Assert.That(settings.Language.IetfLanguageTag, Is.EqualTo(CultureInfo.CurrentUICulture.IetfLanguageTag).IgnoreCase);
             Assert.That(tooltip.Language, Is.EqualTo(settings.Language));

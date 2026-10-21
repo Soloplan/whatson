@@ -58,17 +58,17 @@ namespace Soloplan.WhatsON.GUI.Tests
         var neutralIcon = (typeof(TrayHandler).GetField("loadingIcon", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected member was not found.")).GetValue(tray);
         var update = typeof(TrayHandler).GetMethod("UpdateTrayIcon", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected member was not found.");
         Assert.That(icon.Icon, Is.SameAs(neutralIcon), "An empty configuration must not show a green success badge.");
-        Assert.That(icon.Text, Is.EqualTo("WhatsON - No projects configured"));
+        Assert.That(icon.Text, Is.EqualTo("whatsON - No projects configured"));
 
         configuration.ConnectorsConfiguration.Add(new ConnectorConfiguration("Jenkins", "Unloaded project", new List<ConfigurationItem>()));
         update.Invoke(tray, null);
         Assert.That(icon.Icon, Is.SameAs(neutralIcon));
-        Assert.That(icon.Text, Is.EqualTo("WhatsON - Checking build status"));
+        Assert.That(icon.Text, Is.EqualTo("whatsON - Checking build status"));
 
         configuration.ConnectorsConfiguration.Clear();
         update.Invoke(tray, null);
         Assert.That(icon.Icon, Is.SameAs(neutralIcon));
-        Assert.That(icon.Text, Is.EqualTo("WhatsON - No projects configured"));
+        Assert.That(icon.Text, Is.EqualTo("whatsON - No projects configured"));
       }
     }
 
