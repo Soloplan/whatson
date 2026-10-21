@@ -223,12 +223,73 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       Assert.That(this.claimed.Description, Is.EqualTo("Release notes"));
     }
 
-    [Test]
-    public void ANewerRunOnJenkinsPreventsClaimingAStaleUiBuild()
+    [TestCase("SUCCESS", false, false)]
+    [TestCase(null, true, false)]
+    [TestCase("SUCCESS", false, true)]
+    [TestCase(null, true, true)]
+    public async Task ANewerHealthyOrRunningBuildRefreshesWithoutClaiming(string? result, bool building, bool connectorAlreadyUpdated)
     {
       var connector = this.CreateConnector();
-      this.job.LastBuild = new JenkinsBuild { Number = 43, Result = "FAILURE" };
-      Assert.ThrowsAsync<InvalidOperationException>(() => connector.SetVolunteer(42, null, true, CancellationToken.None));
+      this.job.LastBuild = new JenkinsBuild { Number = 43, Result = result, Building = building };
+      if (connectorAlreadyUpdated)
+      {
+        connector.CurrentStatus = new JenkinsStatus(ObservationState.Failure) { BuildNumber = 43 };
+      }
+
+      var updated = await connector.SetVolunteer(42, null, true, CancellationToken.None);
+      Assert.That(updated.BuildNumber, Is.EqualTo(43));
+      Assert.That(connector.CurrentStatus?.BuildNumber, Is.EqualTo(43));
+      Assert.That(connector.CurrentStatus?.Building, Is.EqualTo(building));
+      Assert.That(this.claimed.Description, Is.EqualTo("Release notes"));
+      Assert.That(Directory.Exists(this.directory), Is.False);
+    }
+
+    [TestCase("FAILURE", false)]
+    [TestCase("UNSTABLE", false)]
+    [TestCase("FAILURE", true)]
+    [TestCase("UNSTABLE", true)]
+    public async Task AStaleClaimAutomaticallyTargetsTheNewBrokenBuild(string result, bool connectorAlreadyUpdated)
+    {
+      var connector = this.CreateConnector();
+      var latest = new JenkinsBuild { Number = 43, Result = result, Description = "New build notes" };
+      this.job.LastBuild = latest;
+      if (connectorAlreadyUpdated)
+      {
+        connector.CurrentStatus = new JenkinsStatus(ObservationState.Failure) { BuildNumber = 43 };
+      }
+
+      var writes = 0;
+      this.api.VolunteerQuery = (_, number, expectedOwner, claim, _) =>
+      {
+        Assert.That(number, Is.EqualTo(43));
+        Assert.That(expectedOwner, Is.Null);
+        Assert.That(claim, Is.True);
+        writes++;
+        latest.Description = JenkinsVolunteer.SetOwner(latest.Description, "alex");
+        return Task.FromResult(latest);
+      };
+
+      var updated = await connector.SetVolunteer(42, null, true, CancellationToken.None);
+
+      Assert.That(writes, Is.EqualTo(1));
+      Assert.That(updated.BuildNumber, Is.EqualTo(43));
+      Assert.That(JenkinsVolunteer.GetOwner(connector.CurrentStatus?.Details), Is.EqualTo("alex"));
+      Assert.That(this.claimed.Description, Is.EqualTo("Release notes"));
+      Assert.That(new JenkinsVolunteerStore(this.directory).Read(JenkinsApi.UrlHelper.ProjectUrl(connector, false)).Single().BuildNumber, Is.EqualTo(43));
+    }
+
+    [Test]
+    public async Task ANewerClaimedBuildRefreshesWithoutReplacingItsVolunteer()
+    {
+      var connector = this.CreateConnector();
+      var description = JenkinsVolunteer.SetOwner("New build notes", "sam");
+      this.job.LastBuild = new JenkinsBuild { Number = 43, Result = "FAILURE", Description = description };
+      this.api.VolunteerQuery = (_, _, _, _, _) => throw new AssertionException("An existing volunteer must not be overwritten.");
+
+      var updated = await connector.SetVolunteer(42, null, true, CancellationToken.None);
+
+      Assert.That(updated.BuildNumber, Is.EqualTo(43));
+      Assert.That(connector.CurrentStatus?.Details, Is.EqualTo(description));
       Assert.That(this.claimed.Description, Is.EqualTo("Release notes"));
       Assert.That(Directory.Exists(this.directory), Is.False);
     }

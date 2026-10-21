@@ -78,6 +78,29 @@ namespace Soloplan.WhatsON.GUI.Tests
       Assert.That(history.ClearVolunteer.CanExecute(null), Is.True, "Existing historical markers can still be cleared.");
     }
 
+    internal static void VerifyStaleClaimRefresh()
+    {
+      var configuration = new ConnectorConfiguration("Jenkins", "job", Connector.ServerAddress, "https://builds.example", Connector.ProjectName, "job");
+      configuration.GetConfigurationByKey(JenkinsConnector.UserName).Value = "alex";
+      configuration.GetConfigurationByKey(JenkinsConnector.ApiToken).Value = "encrypted-placeholder";
+      var connector = new JenkinsConnector(configuration, new JenkinsApi())
+      {
+        CurrentStatus = new JenkinsStatus(ObservationState.Failure) { BuildNumber = 42 },
+      };
+      var project = new JenkinsProjectViewModel(connector);
+      project.Update(connector);
+      var previous = new JenkinsStatusViewModel(project);
+      previous.Update(connector.CurrentStatus);
+      Assert.That(previous.VolunteerToFix.CanExecute(null), Is.True);
+
+      connector.CurrentStatus = new JenkinsStatus(ObservationState.Failure) { BuildNumber = 43 };
+      project.Update(connector);
+
+      Assert.That(project.CurrentStatus.BuildNumber, Is.EqualTo(43));
+      Assert.That(project.CurrentStatus.VolunteerToFix?.CanExecute(null), Is.True);
+      Assert.That(previous.VolunteerToFix.CanExecute(null), Is.False);
+    }
+
     [Test]
     public void UnconfiguredViewModelHasAStatusBeforeTheFirstPoll()
     {

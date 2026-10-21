@@ -222,6 +222,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       GroupPersistenceTests.VerifyEmptyGroupHeaders();
       GroupPersistenceTests.VerifyGroupCreation();
       ProjectPollingChecks.Verify();
+      JenkinsStatusViewModelTests.VerifyStaleClaimRefresh();
       ToolTipChecks.Verify(app);
       LiveLocalizationChecks.Verify(app);
       VerifyHandledExceptionsAreNotLoggedAsErrors();

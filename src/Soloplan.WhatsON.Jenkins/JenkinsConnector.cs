@@ -112,16 +112,26 @@ namespace Soloplan.WhatsON.Jenkins
       var jobUrl = JenkinsApi.UrlHelper.ProjectUrl(this, false);
       if (claim)
       {
-        if (!this.HasApiCredentials || this.CurrentStatus is not { Building: false, State: ObservationState.Failure or ObservationState.Unstable } current
-            || current.BuildNumber != buildNumber || this.AuthenticationUser is not string owner)
+        if (!this.HasApiCredentials || this.AuthenticationUser is not string owner)
         {
-          throw new InvalidOperationException("Only the current failed or unstable build can be claimed. Configure Jenkins credentials first.");
+          throw new InvalidOperationException("Configure a Jenkins user name and API token before volunteering.");
         }
 
         var job = await this.api.GetJenkinsJob(this, token);
-        if (job?.LastBuild is not { Building: false, Result: "FAILURE" or "UNSTABLE" } latest || latest.Number != buildNumber)
+        if (this.CurrentStatus is not { Building: false, State: ObservationState.Failure or ObservationState.Unstable } current
+            || current.BuildNumber != buildNumber
+            || job?.LastBuild is not { Building: false, Result: "FAILURE" or "UNSTABLE" } latest || latest.Number != buildNumber)
         {
-          throw new InvalidOperationException("The current Jenkins build has changed. Refresh the project before volunteering.");
+          await this.QueryStatus(token);
+          var refreshed = this.CurrentStatus ?? throw new InvalidOperationException("Could not refresh the Jenkins build.");
+          if (refreshed is not { Building: false, State: ObservationState.Failure or ObservationState.Unstable, BuildNumber: > 0 }
+              || JenkinsVolunteer.GetOwner(refreshed.Details) != null)
+          {
+            return refreshed;
+          }
+
+          buildNumber = refreshed.BuildNumber;
+          expectedOwner = null;
         }
 
         // Persist before the request so a crash or an uncertain network response cannot lose cleanup tracking.
