@@ -34,6 +34,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     private const int QueryTimeout = 10000;
 
+    private const string AssignToTargetGroup = "AssignToTargetGroup";
+
     /// <summary>
     /// Logger instance used by this class.
     /// </summary>
@@ -84,11 +86,13 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <param name="ownerWindow">The owner window.</param>
     /// <param name="config">The configuration.</param>
     /// <param name="wizardDialogSettings">The wizard dialog settings.</param>
-    public WizardController(Window? ownerWindow, ApplicationConfiguration config, WindowSettings? wizardDialogSettings)
+    /// <param name="targetGroupName">The existing group to use by default, or null for normal grouping.</param>
+    public WizardController(Window? ownerWindow, ApplicationConfiguration config, WindowSettings? wizardDialogSettings, string? targetGroupName = null)
     {
       this.ownerWindow = ownerWindow;
       this.config = config;
       this.wizardDialogSettings = wizardDialogSettings ?? new WindowSettings();
+      this.TargetGroupName = targetGroupName;
       this.GroupingSettings = this.InitializeGrouppingSettings();
       this.SelectedGroupingSetting = this.GroupingSettings[0];
     }
@@ -102,6 +106,10 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// Gets the projects tree.
     /// </summary>
     public IReadOnlyList<GrouppingSetting> GroupingSettings { get; }
+
+    public string? TargetGroupName { get; }
+
+    public bool IsAddingToTargetGroup => this.TargetGroupName != null && this.SelectedGroupingSetting.Id == AssignToTargetGroup;
 
     /// <summary>
     /// Gets or sets the selected grouping setting.
@@ -280,6 +288,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       }
 
       this.wizardDialogSettings.Apply(this.wizardWindow);
+      if (this.TargetGroupName != null)
+      {
+        this.SelectedGroupingSetting = this.GroupingSettings[0];
+      }
+
       var wizardShowResult = this.wizardWindow.ShowDialog();
       this.wizardDialogSettings.Parse(this.wizardWindow);
       if (wizardShowResult == true)
@@ -473,6 +486,10 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         configurationViewModel.Connectors.Add(newConnector);
 
         (selectedProject.Plugin ?? throw new InvalidOperationException("The selected project has no plugin.")).Configure(selectedProject, newConnector, this.proposedServerAddress);
+        if (this.IsAddingToTargetGroup)
+        {
+          newConnector.GetConfigurationByKey(Connector.Category).Value = this.TargetGroupName;
+        }
       }
 
       if (configurationViewModel.ConfigurationIsModified)
@@ -627,9 +644,20 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     private List<GrouppingSetting> InitializeGrouppingSettings()
     {
       var grouppingSettings = new List<GrouppingSetting>();
+      if (this.TargetGroupName != null)
+      {
+        grouppingSettings.Add(new GrouppingSetting(
+          () => string.IsNullOrEmpty(this.TargetGroupName) ? Strings.NoAutomaticGrouping : string.Format(Strings.AddJobsToGroupFormat, this.TargetGroupName),
+          AssignToTargetGroup));
+      }
+
       grouppingSettings.Add(new GrouppingSetting(() => Strings.AssignParentAsGroup, WizardWindow.AssignGroupsForAddedProjects));
       grouppingSettings.Add(new GrouppingSetting(() => Strings.AddHierarchyToProjectName, WizardWindow.AddProjectPathToProjectName));
-      grouppingSettings.Add(new GrouppingSetting(() => Strings.NoAutomaticGrouping, WizardWindow.DoNotAssignAnyGroups));
+      if (this.TargetGroupName != string.Empty)
+      {
+        grouppingSettings.Add(new GrouppingSetting(() => Strings.NoAutomaticGrouping, WizardWindow.DoNotAssignAnyGroups));
+      }
+
       return grouppingSettings;
     }
 

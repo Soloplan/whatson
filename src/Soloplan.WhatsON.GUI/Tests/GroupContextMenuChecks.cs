@@ -42,6 +42,11 @@ namespace Soloplan.WhatsON.GUI.Tests
           connectors.Add(connector);
         }
 
+        foreach (var groupName in new[] { "Group 0", "Group 1", "Group 2", "Empty" })
+        {
+          configuration.Groups.Add(groupName);
+        }
+
         var window = new MainWindow(new ObservationScheduler(), configuration, connectors)
         {
           Left = -20000, Top = -20000, Width = 800, Height = 450, ShowActivated = false, IsTreeInitialized = true,
@@ -118,6 +123,11 @@ namespace Soloplan.WhatsON.GUI.Tests
               menu.IsOpen = false;
             }
 
+            if (groupIndex == 1)
+            {
+              ProjectListChecks.VerifyAddJobToGroup(window, row, group, configuration);
+            }
+
             item.IsExpanded = true;
             Flush(window);
             var child = (TreeViewItem)item.ItemContainerGenerator.ContainerFromIndex(0);
@@ -140,6 +150,10 @@ namespace Soloplan.WhatsON.GUI.Tests
             Flush(window);
           }
 
+          var emptyItem = (TreeViewItem)tree.ItemContainerGenerator.ContainerFromIndex(3);
+          var emptyGroup = (ConnectorGroupViewModel)emptyItem.DataContext;
+          Assert.That(emptyGroup.ConnectorViewModels, Is.Empty);
+          ProjectListChecks.VerifyAddJobToGroup(window, (Border)emptyItem.Template.FindName("Row", emptyItem), emptyGroup, configuration);
           Assert.That(invalidCasts, Is.Empty, "Right-clicking a group must not cast it to a job view model.");
         }
         finally

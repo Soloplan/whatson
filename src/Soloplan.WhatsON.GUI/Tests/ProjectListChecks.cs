@@ -14,6 +14,7 @@ namespace Soloplan.WhatsON.GUI.Tests
   using System.Reflection;
   using System.Windows;
   using System.Windows.Controls;
+  using System.Windows.Input;
   using System.Windows.Media;
   using System.Windows.Media.Imaging;
   using System.Windows.Threading;
@@ -22,6 +23,7 @@ namespace Soloplan.WhatsON.GUI.Tests
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
+  using Soloplan.WhatsON.GUI.Configuration.Wizard;
   using Soloplan.WhatsON.Localization;
   using Soloplan.WhatsON.Model;
 
@@ -123,6 +125,11 @@ namespace Soloplan.WhatsON.GUI.Tests
 
                   Assert.That(((BuildNumberControl)row.FindName("BuildNumber")).BuildNumber, Is.EqualTo(model.CurrentStatus?.BuildNumber));
                   Assert.That(row.ContextMenu, Is.Not.Null, "Both plugins must retain project commands.");
+                  if (theme == ApplicationTheme.Dark && density == ViewStyle.Pcked && width == 800 && index == 1)
+                  {
+                    VerifyAddJobToGroup(window, row, model, configuration);
+                  }
+
                   var rowBorder = (Border)item.Template.FindName("Row", item);
                   for (var x = 1.0; x < rowBorder.ActualWidth - 1; x += 4)
                   {
@@ -283,6 +290,74 @@ namespace Soloplan.WhatsON.GUI.Tests
             window.Close();
           }
         }
+      }
+    }
+
+    internal static void VerifyAddJobToGroup(MainWindow window, FrameworkElement row, TreeItemViewModel model, ApplicationConfiguration configuration)
+    {
+      var group = model as ConnectorGroupViewModel;
+      var project = model as ConnectorViewModel ?? group?.ConnectorViewModels.FirstOrDefault(item => item.Connector != null);
+      var expectedGroup = group?.GroupName ?? project?.Connector?.Configuration.GetConfigurationByKey(Connector.Category).Value;
+      var initialCount = configuration.ConnectorsConfiguration.Count;
+      var menu = row.ContextMenu ?? throw new AssertionException("Missing project menu.");
+      menu.PlacementTarget = row;
+      menu.DataContext = model;
+      menu.IsOpen = true;
+      window.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+      var action = menu.Items.OfType<MenuItem>().Single(item => item.Command == ApplicationCommands.New);
+      Assert.That(action.CommandParameter, Is.SameAs(model));
+      Assert.That(action.CommandTarget, Is.SameAs(row));
+      Assert.That(window.ConfigurationModifiedFromTree, Is.False, "The menu fixture must have no pending edits.");
+      Assert.That(ApplicationCommands.New.CanExecute(model, row), Is.True, "The routed add command must accept this menu owner.");
+      CommandManager.InvalidateRequerySuggested();
+      window.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+      Assert.That(action.IsEnabled, Is.True);
+      Assert.That(FindVisualChild<TextBlock>(action)?.Text, Is.EqualTo(Strings.AddJobToGroup));
+      window.ConfigurationModifiedFromTree = true;
+      Assert.That(ApplicationCommands.New.CanExecute(model, row), Is.False, "Pending tree edits must be saved before starting configuration.");
+      window.ConfigurationModifiedFromTree = false;
+      menu.IsOpen = false;
+
+      var firstServer = configuration.ConnectorsConfiguration[0].GetConfigurationByKey(Connector.ServerAddress);
+      var originalServer = firstServer.Value;
+      firstServer.Value = "https://first.example.invalid/";
+      Exception? failure = null;
+      var opened = false;
+      window.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, new Action(() =>
+      {
+        var wizard = window.OwnedWindows.OfType<WizardWindow>().SingleOrDefault();
+        try
+        {
+          Assert.That(wizard, Is.Not.Null);
+          opened = true;
+          var controller = (WizardController)(wizard?.DataContext ?? throw new AssertionException("Missing wizard controller."));
+          Assert.That(controller.ProposedServerAddress, Is.EqualTo(project?.Connector?.Address ?? firstServer.Value), "Use a group member's server, or the normal server choice for an empty group.");
+          Assert.That(controller.TargetGroupName, Is.EqualTo(expectedGroup));
+          Assert.That(controller.SelectedGroupingSetting, Is.SameAs(controller.GroupingSettings[0]));
+          Assert.That(controller.SelectedGroupingSetting.Caption, Does.Contain(controller.TargetGroupName));
+          var savedGrouping = false;
+          wizard?.Parse((_, _) => savedGrouping = true);
+          Assert.That(savedGrouping, Is.False, "The context-specific choice must not overwrite the usual wizard grouping preference.");
+        }
+        catch (Exception exception)
+        {
+          failure = exception;
+        }
+        finally
+        {
+          wizard?.Close();
+        }
+      }));
+      try
+      {
+        ApplicationCommands.New.Execute(model, row);
+        Assert.That(opened, Is.True);
+        Assert.That(failure, Is.Null);
+        Assert.That(configuration.ConnectorsConfiguration.Count, Is.EqualTo(initialCount), "Cancelling must not add jobs.");
+      }
+      finally
+      {
+        firstServer.Value = originalServer;
       }
     }
 

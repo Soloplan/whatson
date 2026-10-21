@@ -54,6 +54,16 @@
             </StackPanel>
           </MenuItem.Header>
         </MenuItem>
+        <MenuItem CommandParameter="{Binding}"
+                  CommandTarget="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                  Command="New">
+          <MenuItem.Header>
+            <StackPanel Orientation="Horizontal">
+              <materialDesign:PackIcon Kind="Plus" />
+              <TextBlock Padding="5,0,0,0" Text="{live:Text loc:Strings.AddJobToGroup}" />
+            </StackPanel>
+          </MenuItem.Header>
+        </MenuItem>
       </ContextMenu>
 
       <HierarchicalDataTemplate DataType="{x:Type local:ConnectorGroupViewModel}"

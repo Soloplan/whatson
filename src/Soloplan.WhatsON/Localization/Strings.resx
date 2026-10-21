@@ -556,4 +556,6 @@ Expected connector type: {3}</value>
   <data name="ServerCredentialsHint" xml:space="preserve"><value>Configure the Jenkins user name and API token in Settings > Servers. All projects on the same server use that account.</value></data>
   <data name="ServerCredentialsDescription" xml:space="preserve"><value>Choose a server to configure credentials for all its projects. Add a project first if its server is missing.</value></data>
   <data name="Servers" xml:space="preserve"><value>Servers</value></data>
+  <data name="AddJobToGroup" xml:space="preserve"><value>Add job to this group…</value></data>
+  <data name="AddJobsToGroupFormat" xml:space="preserve"><value>Add to group “{0}”</value></data>
 </root>

@@ -32,7 +32,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
 
       this.AddressComboBox.Loaded += (s, e) =>
       {
-        if (this.AddressComboBox.Items.Count > 0)
+        if (this.AddressComboBox.Items.Count > 0 && string.IsNullOrWhiteSpace(this.wizardController.ProposedServerAddress))
         {
           this.AddressComboBox.SelectedIndex = 0;
         }

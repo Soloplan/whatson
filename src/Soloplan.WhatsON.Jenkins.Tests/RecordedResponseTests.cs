@@ -48,6 +48,12 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       server.Given(Request.Create().WithPath(jsonPath).UsingGet())
         .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json").WithBody(json));
       StubPolling(server, new[] { xmlConnector }, XDocument.Parse(ReadRecording($"poll-{sample}.xml", server.Urls[0])));
+      var expectedPaths = new List<string> { jsonPath, JenkinsApi.PollingRequest(new[] { xmlConnector }, false).AbsolutePath };
+      var diagnosticsPath = StubUnavailablePipelineDiagnostics(server, jsonConnector, job);
+      if (diagnosticsPath != null)
+      {
+        expectedPaths.AddRange(new[] { diagnosticsPath, diagnosticsPath });
+      }
 
       await jsonConnector.QueryStatus(CancellationToken.None);
       var queried = await xmlConnector.QueryStatusBatch(new[] { xmlConnector }, CancellationToken.None);
@@ -72,6 +78,8 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         Assert.That(actual.EstimatedDuration, Is.EqualTo(expected.EstimatedDuration));
         Assert.That(actual.DisplayName, Is.EqualTo(expected.DisplayName));
         Assert.That(actual.Details, Is.EqualTo(expected.Details));
+        Assert.That(actual.FailedTestCount, Is.EqualTo(expected.FailedTestCount));
+        Assert.That(actual.FailureDetails, Is.EqualTo(expected.FailureDetails));
         Assert.That(actual.Culprits.Select(user => user.FullName), Is.EqualTo(expected.Culprits.Select(user => user.FullName)));
         Assert.That(actual.CommittedToThisBuild.Select(user => user.FullName), Is.EqualTo(expected.CommittedToThisBuild.Select(user => user.FullName)));
         var completed = (job.Builds ?? Array.Empty<JenkinsBuild>()).Where(build => !build.Building)
@@ -82,7 +90,8 @@ namespace Soloplan.WhatsON.Jenkins.Tests
           Is.EqualTo(jsonConnector.Snapshots.Select(snapshot => snapshot.Status.State)));
       }
 
-      Assert.That(server.LogEntries.Count(), Is.EqualTo(2), "Replay must not probe the live server or fetch history separately.");
+      Assert.That(server.LogEntries.Select(entry => $"{entry.RequestMessage?.Method} {entry.RequestMessage?.Path}"), Is.EquivalentTo(expectedPaths.Select(path => "GET " + path)),
+        "Replay must request only the recorded job data and optional failure diagnostics.");
     }
 
     [TestCase(301)]
@@ -140,10 +149,19 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     public async Task RecordedProjectsArePolledTogetherWithinEachFolder()
     {
       using var server = WireMockServer.Start();
+      var expectedPaths = new List<string>();
       var connectors = Enumerable.Range(1, 6).Select(sample =>
       {
-        var job = JsonConvert.DeserializeObject<JenkinsJob>(ReadRecording($"job-{sample}.json", server.Urls[0]));
-        return CreateConnector(server.Urls[0], job?.FullName ?? throw new AssertionException("Missing recorded project path."));
+        var job = JsonConvert.DeserializeObject<JenkinsJob>(ReadRecording($"job-{sample}.json", server.Urls[0]))
+          ?? throw new AssertionException("Missing recorded job.");
+        var connector = CreateConnector(server.Urls[0], job.FullName ?? throw new AssertionException("Missing recorded project path."));
+        var diagnosticsPath = StubUnavailablePipelineDiagnostics(server, connector, job);
+        if (diagnosticsPath != null)
+        {
+          expectedPaths.Add(diagnosticsPath);
+        }
+
+        return connector;
       }).ToArray();
       var groups = connectors.GroupBy(JenkinsApi.UrlHelper.ParentUrl).ToArray();
       foreach (var group in groups)
@@ -155,6 +173,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
             ?? throw new AssertionException("Missing recorded XML job.");
         });
         StubPolling(server, group.ToArray(), new XDocument(new XElement("jobs", jobs)));
+        expectedPaths.Add(JenkinsApi.PollingRequest(group.ToArray(), false).AbsolutePath);
       }
 
       var queried = await connectors[0].QueryStatusBatch(connectors, CancellationToken.None);
@@ -165,7 +184,8 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         ObservationState.Success, ObservationState.Success, ObservationState.Failure,
         ObservationState.Unstable, ObservationState.Running, ObservationState.Unknown,
       }));
-      Assert.That(server.LogEntries.Count(), Is.EqualTo(groups.Length));
+      Assert.That(server.LogEntries.Select(entry => $"{entry.RequestMessage?.Method} {entry.RequestMessage?.Path}"), Is.EquivalentTo(expectedPaths.Select(path => "GET " + path)),
+        "Each folder needs one polling request, plus diagnostics for its broken builds.");
     }
 
     private static JenkinsConnector CreateConnector(string address, string project) => new JenkinsConnector(
@@ -174,6 +194,19 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     private static string ReadRecording(string file, string address) =>
       File.ReadAllText(Path.Combine(TestContext.CurrentContext.TestDirectory, "Recordings", file))
         .Replace("http://build.example.invalid", address.TrimEnd('/'));
+
+    private static string? StubUnavailablePipelineDiagnostics(WireMockServer server, JenkinsConnector connector, JenkinsJob job)
+    {
+      if (job.LastBuild is not { Building: false, Result: "FAILURE" or "UNSTABLE" } build)
+      {
+        return null;
+      }
+
+      // The older recordings contain no Pipeline diagnostics; model an unavailable endpoint explicitly.
+      var path = new Uri(JenkinsApi.UrlHelper.BuildUrl(connector, build.Number, false) + "/wfapi/describe").AbsolutePath;
+      server.Given(Request.Create().WithPath(path).UsingGet()).RespondWith(Response.Create().WithStatusCode(404));
+      return path;
+    }
 
     private static void StubPolling(WireMockServer server, IReadOnlyList<JenkinsConnector> connectors, XDocument response)
     {

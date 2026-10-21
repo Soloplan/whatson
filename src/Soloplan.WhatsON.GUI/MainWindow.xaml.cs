@@ -14,6 +14,7 @@ namespace Soloplan.WhatsON.GUI
   using System.Threading.Tasks;
   using System.Windows;
   using System.Windows.Controls;
+  using System.Windows.Input;
   using System.Windows.Media.Animation;
   using MaterialDesignThemes.Wpf;
   using Soloplan.WhatsON.Configuration;
@@ -25,6 +26,7 @@ namespace Soloplan.WhatsON.GUI
   using Soloplan.WhatsON.GUI.Configuration.Wizard;
   using Soloplan.WhatsON.Localization;
   using Soloplan.WhatsON.Model;
+  using TreeConnectorViewModel = Soloplan.WhatsON.GUI.Common.ConnectorTreeView.ConnectorViewModel;
 
   /// <summary>
   /// Interaction logic for MainWindow.xaml.
@@ -162,7 +164,14 @@ namespace Soloplan.WhatsON.GUI
     /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
     private void NewConnectorClick(object? sender, EventArgs e)
     {
-      var wizardController = new WizardController(this, this.config, this.settings.WizardDialogSettings);
+      var group = sender as ConnectorGroupViewModel;
+      var project = sender as TreeConnectorViewModel ?? group?.ConnectorViewModels.FirstOrDefault(item => item.Connector != null);
+      var targetGroup = group?.GroupName
+        ?? (project == null ? null : project.Connector?.Configuration.GetConfigurationByKey(Connector.Category).Value?.Trim() ?? string.Empty);
+      var wizardController = new WizardController(this, this.config, this.settings.WizardDialogSettings, targetGroup)
+      {
+        ProposedServerAddress = project?.Connector?.Address,
+      };
       var result = false;
       try
       {
@@ -176,6 +185,12 @@ namespace Soloplan.WhatsON.GUI
         }
       }
     }
+
+    private void AddJobToGroupExecuted(object sender, ExecutedRoutedEventArgs e) => this.NewConnectorClick(e.Parameter, e);
+
+    private void AddJobToGroupCanExecute(object sender, CanExecuteRoutedEventArgs e) =>
+      e.CanExecute = !this.ConfigurationModifiedFromTree
+        && (e.Parameter is ConnectorGroupViewModel || e.Parameter is TreeConnectorViewModel { Connector: not null, IsOnlyOneSelected: true });
 
     /// <summary>
     /// Handles the import click.

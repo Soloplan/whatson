@@ -556,4 +556,6 @@ Erwarteter Verbindungstyp: {3}</value>
   <data name="ServerCredentialsHint" xml:space="preserve"><value>Jenkins-Benutzername und API-Token unter Einstellungen > Server konfigurieren. Alle Projekte auf demselben Server verwenden dieses Konto.</value></data>
   <data name="ServerCredentialsDescription" xml:space="preserve"><value>Server auswählen, um die Zugangsdaten für alle seine Projekte zu konfigurieren. Fehlt der Server, zuerst ein Projekt hinzufügen.</value></data>
   <data name="Servers" xml:space="preserve"><value>Server</value></data>
+  <data name="AddJobToGroup" xml:space="preserve"><value>Job zu dieser Gruppe hinzufügen…</value></data>
+  <data name="AddJobsToGroupFormat" xml:space="preserve"><value>Zur Gruppe „{0}“ hinzufügen</value></data>
 </root>

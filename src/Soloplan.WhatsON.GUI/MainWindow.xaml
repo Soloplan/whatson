@@ -20,6 +20,9 @@
         TextElement.FontWeight="Normal"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         mc:Ignorable="d">
+  <Window.CommandBindings>
+    <CommandBinding Command="New" Executed="AddJobToGroupExecuted" CanExecute="AddJobToGroupCanExecute" />
+  </Window.CommandBindings>
   <Window.Resources>
     <ResourceDictionary>
       <Storyboard x:Key="hideStorBoard">

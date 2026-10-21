@@ -10,6 +10,7 @@ namespace Soloplan.WhatsON.GUI.Tests
   using System;
   using System.Collections.Generic;
   using System.ComponentModel;
+  using System.IO;
   using System.Linq;
   using System.Reflection;
   using System.Threading;
@@ -207,6 +208,50 @@ namespace Soloplan.WhatsON.GUI.Tests
       Assert.That(selected[0].FullName, Is.EqualTo("Application/Main"));
       Assert.That(selected[0].Parent?.Name, Is.EqualTo("Application"));
       Assert.That(selected[0].Plugin, Is.SameAs(controller.Projects.PlugIn));
+    }
+
+    [Test]
+    [NonParallelizable]
+    [TestCase("Delivery")]
+    [TestCase("")]
+    public void AddingJobsToAnExistingGroupOverridesTheirServerFolder(string group)
+    {
+      var directory = Path.Combine(TestContext.CurrentContext.WorkDirectory, "group-add-" + Guid.NewGuid().ToString("N"));
+      Directory.CreateDirectory(directory);
+      var serializer = SerializationHelper.Instance;
+      var originalFolder = serializer.ConfigFolder;
+      try
+      {
+        serializer.SetConfigFolder(directory);
+        var configuration = new ApplicationConfiguration();
+        var controller = new WizardController(null, configuration, null, group)
+        {
+          ProposedServerAddress = "https://ci.example.invalid/",
+        };
+        controller.Projects.PlugIn = new JenkinsPlugin();
+        Assert.That(controller.GroupingSettings.Select(setting => setting.Caption).Distinct().Count(), Is.EqualTo(controller.GroupingSettings.Count));
+        var folder = controller.Projects.AddProject(Project("Different server folder"));
+        var job = folder.AddProject(Project("Compile"));
+        job.FullName = "Different server folder/Compile";
+        job.IsChecked = true;
+        var apply = typeof(WizardController).GetMethod("ApplyToConfiguration", BindingFlags.Instance | BindingFlags.NonPublic)
+          ?? throw new AssertionException("Expected wizard apply method.");
+
+        apply.Invoke(controller, null);
+
+        Assert.That(configuration.ConnectorsConfiguration.Single().GetConfigurationByKey(Connector.Category).Value, Is.EqualTo(group));
+        Assert.That(serializer.LoadConfiguration().ConnectorsConfiguration.Single().GetConfigurationByKey(Connector.Category).Value, Is.EqualTo(group));
+      }
+      finally
+      {
+        serializer.SetConfigFolder(originalFolder);
+        foreach (var file in Directory.GetFiles(directory))
+        {
+          File.Delete(file);
+        }
+
+        Directory.Delete(directory);
+      }
     }
 
     [Test]
