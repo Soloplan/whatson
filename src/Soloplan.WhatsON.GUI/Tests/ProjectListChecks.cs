@@ -103,6 +103,13 @@ namespace Soloplan.WhatsON.GUI.Tests
               {
                 var group = (TreeViewItem)tree.ItemContainerGenerator.ContainerFromIndex(groupIndex);
                 var groupBorder = (Border)group.Template.FindName("Row", group);
+                var groupPresenter = (ContentPresenter)group.Template.FindName("PART_Header", group);
+                var groupHeader = (Grid)VisualTreeHelper.GetChild(groupPresenter, 0);
+                var groupBadges = (StackPanel)groupHeader.Children[1];
+                var chevron = FindVisualChild<System.Windows.Shapes.Path>((FrameworkElement)group.Template.FindName("Expander", group)) ?? throw new AssertionException("Missing group chevron.");
+                var chevronLeft = chevron.TransformToAncestor(groupBorder).TransformBounds(new Rect(chevron.RenderSize)).Left;
+                var badgesRight = groupBadges.TransformToAncestor(groupBorder).Transform(new Point(groupBadges.ActualWidth, 0)).X;
+                Assert.That(groupBorder.ActualWidth - badgesRight, Is.EqualTo(chevronLeft).Within(1), "Group badges must match the chevron's visual inset.");
                 Assert.That(((SolidColorBrush)groupBorder.Background).Color, Is.EqualTo(Colors.Transparent), "Idle groups must not have a row box.");
                 for (var index = 0; index < 3; index++)
                 {
@@ -247,6 +254,13 @@ namespace Soloplan.WhatsON.GUI.Tests
                   Assert.That(historyList.Items.Count, Is.EqualTo(5));
                   if (width == 800)
                   {
+                    var statusIcon = (FrameworkElement)row.FindName(disabled ? "DisabledIcon" : "BuildStateIcon");
+                    var iconLeft = statusIcon.TransformToAncestor(rowBorder).TransformBounds(VisualTreeHelper.GetDescendantBounds(statusIcon)).Left;
+                    var lastHistoryItem = historyList.ItemContainerGenerator.ContainerFromIndex(4);
+                    var lastHistoryButton = FindVisualChild<Button>(lastHistoryItem) ?? throw new AssertionException("Missing final history button.");
+                    var lastDot = (System.Windows.Shapes.Ellipse)lastHistoryButton.Content;
+                    var dotRight = lastDot.TransformToAncestor(rowBorder).Transform(new Point(lastDot.ActualWidth, 0)).X;
+                    Assert.That(iconLeft, Is.EqualTo(rowBorder.ActualWidth - dotRight).Within(1), "Job status icons must match the final history dot's visual inset.");
                     var historyControl = FindVisualChild<HistoryBuildControl>(historyList) ?? throw new AssertionException("Missing history control.");
                     var historyMenu = (FindVisualChild<DockPanel>(historyControl) ?? throw new AssertionException("Missing history panel.")).ContextMenu;
                     historyMenu.DataContext = historyControl.DataContext;

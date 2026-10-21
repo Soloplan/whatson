@@ -76,7 +76,7 @@
               <TextBlock Text="{Binding ConnectorViewModels.Count}" Foreground="{DynamicResource SettingsMuted}" FontSize="11" />
             </Border>
           </StackPanel>
-          <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+          <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,6,0">
             <Border Style="{StaticResource GroupStatusBadge}" Visibility="{Binding RunningConnectorColumnVisibility}" ToolTip="{live:Text loc:Strings.Running}">
               <TextBlock Text="{Binding RunningConnectors}" Foreground="{StaticResource Running}" />
             </Border>
