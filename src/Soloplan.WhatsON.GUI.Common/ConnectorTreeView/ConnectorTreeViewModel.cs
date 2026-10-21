@@ -121,14 +121,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       {
         if (dropInfo.TargetItem is ConnectorGroupViewModel)
         {
-          dropInfo.DropTargetAdorner = DropTargetAdorners.Highlight;
+          dropInfo.DropTargetAdorner = typeof(RowDropTargetAdorner);
           dropInfo.Effects = DragDropEffects.Move;
         }
         else if (dropInfo.TargetItem is ConnectorViewModel)
         {
           dropInfo.Effects = DragDropEffects.Move;
           dropInfo.DropTargetAdorner = (dropInfo.InsertPosition & RelativeInsertPosition.TargetItemCenter) != 0
-            ? DropTargetAdorners.Highlight
+            ? typeof(RowDropTargetAdorner)
             : DropTargetAdorners.Insert;
         }
       }
@@ -138,7 +138,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         {
           dropInfo.Effects = DragDropEffects.Move;
           dropInfo.DropTargetAdorner = (dropInfo.InsertPosition & RelativeInsertPosition.TargetItemCenter) != 0
-            ? DropTargetAdorners.Highlight
+            ? typeof(RowDropTargetAdorner)
             : DropTargetAdorners.Insert;
         }
       }

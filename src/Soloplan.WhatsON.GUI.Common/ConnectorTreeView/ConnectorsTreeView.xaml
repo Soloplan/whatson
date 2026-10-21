@@ -101,6 +101,7 @@
             HorizontalContentAlignment="Stretch"
             dd:DragDrop.DropHandler="{Binding}"
             dd:DragDrop.IsDragSource="True"
+            dd:DragDrop.DropTargetAdornerBrush="{DynamicResource SettingsAccent}"
             dd:DragDrop.IsDropTarget="True">
     <TreeView.InputBindings>
       <KeyBinding Key="Delete"

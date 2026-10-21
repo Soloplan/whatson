@@ -102,6 +102,11 @@ namespace Soloplan.WhatsON.GUI.Tests
               for (var groupIndex = 0; groupIndex < 2; groupIndex++)
               {
                 var group = (TreeViewItem)tree.ItemContainerGenerator.ContainerFromIndex(groupIndex);
+                if (width == 800 && groupIndex == 0)
+                {
+                  DropTargetChecks.Verify(window, tree, group, (ConnectorTreeViewModel)control.DataContext, $"{theme}-{density}");
+                }
+
                 var groupBorder = (Border)group.Template.FindName("Row", group);
                 var groupPresenter = (ContentPresenter)group.Template.FindName("PART_Header", group);
                 var groupHeader = (Grid)VisualTreeHelper.GetChild(groupPresenter, 0);
