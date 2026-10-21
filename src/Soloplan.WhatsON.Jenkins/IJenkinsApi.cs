@@ -24,6 +24,8 @@ namespace Soloplan.WhatsON.Jenkins
 
     Task<JenkinsBuild> SetVolunteer(JenkinsConnector connector, int buildNumber, string? expectedOwner, bool claim, CancellationToken token);
 
+    Task<string> SetJobVolunteer(JenkinsConnector connector, int buildNumber, string? expectedOwner, string? owner, CancellationToken token);
+
     Task<JenkinsPollingResult> GetPollingJobs(IReadOnlyCollection<JenkinsConnector> connectors, CancellationToken token);
 
     /// <summary>

@@ -52,7 +52,24 @@ namespace Soloplan.WhatsON.Jenkins.GUI
     public override void Update(Status? newStatus)
     {
       base.Update(newStatus);
-      this.Volunteer = newStatus is JenkinsStatus ? JenkinsVolunteer.GetOwner(newStatus.Details) : null;
+      this.VolunteerAssignments.Clear();
+      var fixes = ReferenceEquals(this, this.Parent.CurrentStatus)
+        ? (newStatus as JenkinsStatus)?.ActiveFixes ?? Array.Empty<JenkinsFix>() : Array.Empty<JenkinsFix>();
+      this.Volunteer = newStatus is JenkinsStatus ? JenkinsVolunteer.GetOwner(newStatus.Details)
+        ?? fixes.FirstOrDefault(fix => fix.BuildNumber == this.BuildNumber)?.Owner : null;
+      this.VolunteerSummary = fixes.Count == 0 ? null
+        : string.Join(", ", fixes.Select(fix => $"{fix.Owner} (#{fix.BuildNumber})"));
+      foreach (var fix in fixes.Where(fix => fix.BuildNumber != this.BuildNumber))
+      {
+        var assignment = new JenkinsStatusViewModel(this.Parent);
+        assignment.Update(new JenkinsStatus(ObservationState.Failure)
+        {
+          BuildNumber = fix.BuildNumber,
+          Details = JenkinsVolunteer.SetOwner(null, fix.Owner),
+        });
+        this.VolunteerAssignments.Add(assignment);
+      }
+
       this.RefreshVolunteerCommands();
       if (!(newStatus is JenkinsStatus jenkinsStatus))
       {
@@ -124,6 +141,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       }
       catch (Exception exception)
       {
+        this.Parent.Update(connector);
         MessageBox.Show(Strings.VolunteerUpdateFailed + Environment.NewLine + exception.Message, Strings.VolunteerToFix, MessageBoxButton.OK, MessageBoxImage.Error);
       }
       finally

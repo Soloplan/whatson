@@ -139,11 +139,6 @@ namespace Soloplan.WhatsON.Jenkins
       }
 
       var build = await this.api.SetVolunteer(this, buildNumber, expectedOwner, claim, token);
-      if (!claim)
-      {
-        this.volunteers.Remove(jobUrl, buildNumber);
-      }
-
       var description = build.Description;
       if (this.CurrentStatus?.BuildNumber == buildNumber)
       {
@@ -155,7 +150,24 @@ namespace Soloplan.WhatsON.Jenkins
         snapshot.Status.Details = description;
       }
 
-      return this.CreateStatus(build);
+      var panel = await this.api.SetJobVolunteer(this, buildNumber, expectedOwner, claim ? this.AuthenticationUser : null, token);
+      if (this.CurrentStatus is JenkinsStatus currentStatus)
+      {
+        currentStatus.ActiveFixes = JenkinsVolunteerPanel.GetFixes(panel);
+      }
+
+      if (!claim)
+      {
+        this.volunteers.Remove(jobUrl, buildNumber);
+      }
+
+      var status = this.CreateStatus(build);
+      if (this.CurrentStatus?.BuildNumber == buildNumber)
+      {
+        status.ActiveFixes = JenkinsVolunteerPanel.GetFixes(panel);
+      }
+
+      return status;
     }
 
     public async Task<IReadOnlyCollection<Connector>> QueryStatusBatch(IReadOnlyCollection<Connector> connectors, CancellationToken token)
@@ -344,6 +356,7 @@ namespace Soloplan.WhatsON.Jenkins
       }
 
       await this.ClearRecoveredVolunteers(job, cancellationToken);
+      await this.SynchronizeVolunteerPanel(job, cancellationToken);
       var failedCount = job.LastBuild.Actions?.OfType<JenkinsBuildAction>().Select(action => action.FailCount).DefaultIfEmpty().Max() ?? 0;
       if (this.failedTestsBuildNumber != job.LastBuild.Number || this.failedTestsCount != failedCount
           || this.CurrentStatus?.State != GetState(job.LastBuild))
@@ -367,7 +380,9 @@ namespace Soloplan.WhatsON.Jenkins
         this.pipelineFailure = await this.api.GetPipelineFailure(this, job.LastBuild.Number, cancellationToken);
       }
 
-      return this.CreateStatus(job.LastBuild);
+      var currentStatus = this.CreateStatus(job.LastBuild);
+      currentStatus.ActiveFixes = JenkinsVolunteerPanel.GetFixes(job.Description);
+      return currentStatus;
     }
 
     protected override async Task<List<Status?>> GetHistory(CancellationToken cancellationToken)
@@ -443,6 +458,8 @@ namespace Soloplan.WhatsON.Jenkins
               build = await this.api.SetVolunteer(this, claim.BuildNumber, claim.Owner, false, token);
             }
 
+            job.Description = await this.api.SetJobVolunteer(this, claim.BuildNumber, claim.Owner, null, token);
+
             foreach (var recent in (job.Builds ?? Array.Empty<JenkinsBuild>()).Where(recent => recent.Number == claim.BuildNumber))
             {
               recent.Description = build.Description;
@@ -475,7 +492,63 @@ namespace Soloplan.WhatsON.Jenkins
       }
     }
 
-    private Status CreateStatus(JenkinsBuild latestBuild)
+    private async Task SynchronizeVolunteerPanel(JenkinsJob job, CancellationToken token)
+    {
+      if (!this.HasApiCredentials)
+      {
+        return;
+      }
+
+      try
+      {
+        var successfulBuild = Math.Max(job.LastStableBuild?.Number ?? 0,
+          job.LastBuild is { Building: false, Result: "SUCCESS" } latest ? latest.Number : 0);
+        foreach (var fix in JenkinsVolunteerPanel.GetFixes(job.Description).Where(fix => fix.BuildNumber < successfulBuild))
+        {
+          job.Description = await this.api.SetJobVolunteer(this, fix.BuildNumber, fix.Owner, null, token);
+        }
+
+        // Resume a panel update after an interrupted request, including claims made by older whatsON versions.
+        var jobUrl = JenkinsApi.UrlHelper.ProjectUrl(this, false);
+        foreach (var claim in this.volunteers.Read(jobUrl).Where(claim => claim.BuildNumber > successfulBuild))
+        {
+          var fix = JenkinsVolunteerPanel.GetFixes(job.Description).FirstOrDefault(fix => fix.BuildNumber == claim.BuildNumber);
+          var build = job.LastBuild?.Number == claim.BuildNumber ? job.LastBuild
+            : (job.Builds ?? Array.Empty<JenkinsBuild>()).FirstOrDefault(build => build.Number == claim.BuildNumber);
+          if (fix != null && (fix.Owner != claim.Owner || build == null))
+          {
+            continue;
+          }
+
+          build ??= await this.api.GetJenkinsBuild(this, claim.BuildNumber, token);
+          if (build == null)
+          {
+            continue;
+          }
+
+          var owner = JenkinsVolunteer.GetValidatedOwner(build.Description);
+          if (owner == claim.Owner && fix == null)
+          {
+            job.Description = await this.api.SetJobVolunteer(this, claim.BuildNumber, null, claim.Owner, token);
+          }
+          else if (owner != claim.Owner && fix != null)
+          {
+            job.Description = await this.api.SetJobVolunteer(this, claim.BuildNumber, claim.Owner, null, token);
+            this.volunteers.Remove(jobUrl, claim.BuildNumber);
+          }
+        }
+      }
+      catch (OperationCanceledException) when (token.IsCancellationRequested)
+      {
+        throw;
+      }
+      catch (Exception exception)
+      {
+        log.Warn(exception, "Could not synchronize the Jenkins volunteer panel; retrying on a later poll.");
+      }
+    }
+
+    private JenkinsStatus CreateStatus(JenkinsBuild latestBuild)
     {
       var newStatus = new JenkinsStatus(GetState(latestBuild))
       {

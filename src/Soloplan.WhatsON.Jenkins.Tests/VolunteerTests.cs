@@ -196,6 +196,112 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       Assert.That(server.LogEntries, Has.Count.EqualTo(3));
     }
 
+    [TestCase(true)]
+    [TestCase(false)]
+    public async Task JobPanelUpdatesAuthenticatePreserveContextAndVerifyTheSavedDescription(bool claim)
+    {
+      using var server = WireMockServer.Start();
+      var api = new JenkinsApi(this.secrets);
+      var connector = this.CreateConnector(server.Urls[0] + "/jenkins", api);
+      var original = JenkinsVolunteerPanel.SetFix("<p>Job documentation</p>", 34, null, "sam");
+      if (!claim)
+      {
+        original = JenkinsVolunteerPanel.SetFix(original, 42, null, "alex");
+      }
+
+      var updated = JenkinsVolunteerPanel.SetFix(original, 42, claim ? null : "alex", claim ? "alex" : null);
+      var path = "/jenkins/job/folder/job/project";
+      var auth = "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes("alex:fake-api-token"));
+      server.Given(Request.Create().WithPath(path + "/api/json").WithHeader("Authorization", auth).UsingGet())
+        .InScenario("panel")
+        .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json")
+          .WithBody(JsonConvert.SerializeObject(new JenkinsJob { Description = original })));
+      server.Given(Request.Create().WithPath(path + "/submitDescription").WithHeader("Authorization", auth).UsingPost())
+        .InScenario("panel").WillSetStateTo("saved")
+        .RespondWith(Response.Create().WithStatusCode(302).WithHeader("Location", "."));
+      server.Given(Request.Create().WithPath(path + "/api/json").WithHeader("Authorization", auth).UsingGet())
+        .InScenario("panel").WhenStateIs("saved")
+        .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json")
+          .WithBody(JsonConvert.SerializeObject(new JenkinsJob { Description = updated })));
+
+      Assert.That(await api.SetJobVolunteer(connector, 42, claim ? null : "alex", claim ? "alex" : null, CancellationToken.None), Is.EqualTo(updated));
+      var post = server.LogEntries.Single(entry => entry.RequestMessage?.Method == "POST");
+      Assert.That(Uri.UnescapeDataString((post.RequestMessage?.Body ?? string.Empty).Replace("+", " ")), Is.EqualTo("description=" + updated));
+      Assert.That(server.LogEntries, Has.Count.EqualTo(3));
+    }
+
+    [Test]
+    public async Task ADeletedBuildDoesNotPreventRemovingItsJobAssignment()
+    {
+      using var server = WireMockServer.Start();
+      var api = new JenkinsApi(this.secrets);
+      var connector = this.CreateConnector(server.Urls[0], api);
+      server.Given(Request.Create().UsingGet()).RespondWith(Response.Create().WithStatusCode(404));
+
+      var cleared = await api.SetVolunteer(connector, 42, "alex", false, CancellationToken.None);
+
+      Assert.That(cleared.Number, Is.EqualTo(42));
+      Assert.That(cleared.Description, Is.Null);
+      Assert.ThrowsAsync<HttpRequestException>(() => api.SetVolunteer(connector, 42, null, true, CancellationToken.None));
+      Assert.That(server.LogEntries.All(entry => entry.RequestMessage?.Method == "GET"), Is.True);
+    }
+
+    [Test]
+    public async Task AnAlreadyRemovedBuildNoticeDoesNotPreventRemovingItsJobAssignment()
+    {
+      using var server = WireMockServer.Start();
+      var api = new JenkinsApi(this.secrets);
+      var connector = this.CreateConnector(server.Urls[0], api);
+      server.Given(Request.Create().UsingGet())
+        .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json")
+          .WithBody("{\"number\":42,\"result\":\"FAILURE\",\"description\":\"Release notes\"}"));
+
+      var cleared = await api.SetVolunteer(connector, 42, "alex", false, CancellationToken.None);
+
+      Assert.That(cleared.Description, Is.EqualTo("Release notes"));
+      Assert.That(server.LogEntries, Has.Count.EqualTo(1));
+    }
+
+    [Test]
+    public void AnUnexpectedJobResponseNeverOverwritesTheDescription()
+    {
+      using var server = WireMockServer.Start();
+      var api = new JenkinsApi(this.secrets);
+      var connector = this.CreateConnector(server.Urls[0], api);
+      server.Given(Request.Create().UsingGet())
+        .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json").WithBody("{}"));
+
+      Assert.ThrowsAsync<InvalidPlugInApiResponseException>(() => api.SetJobVolunteer(connector, 42, null, "alex", CancellationToken.None));
+
+      Assert.That(server.LogEntries, Has.Count.EqualTo(1));
+    }
+
+    [Test]
+    public void JobPanelPermissionFailuresExplainTheRequiredPermission()
+    {
+      using var server = WireMockServer.Start();
+      var api = new JenkinsApi(this.secrets);
+      var connector = this.CreateConnector(server.Urls[0], api);
+      server.Given(Request.Create().UsingGet())
+        .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json").WithBody("{\"description\":\"Notes\"}"));
+      server.Given(Request.Create().UsingPost()).RespondWith(Response.Create().WithStatusCode(403));
+      var error = Assert.ThrowsAsync<HttpRequestException>(() => api.SetJobVolunteer(connector, 42, null, "alex", CancellationToken.None));
+      Assert.That(error?.Message, Does.Contain("Job/Configure"));
+    }
+
+    [Test]
+    public void JobPanelLoginRedirectsAreNotFollowedOrTreatedAsSuccess()
+    {
+      using var server = WireMockServer.Start();
+      var api = new JenkinsApi(this.secrets);
+      var connector = this.CreateConnector(server.Urls[0], api);
+      server.Given(Request.Create().UsingGet())
+        .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json").WithBody("{\"description\":\"Notes\"}"));
+      server.Given(Request.Create().UsingPost()).RespondWith(Response.Create().WithStatusCode(302).WithHeader("Location", "/login"));
+      Assert.ThrowsAsync<InvalidOperationException>(() => api.SetJobVolunteer(connector, 42, null, "alex", CancellationToken.None));
+      Assert.That(server.LogEntries.Any(entry => entry.RequestMessage?.Path == "/login"), Is.False);
+    }
+
     [Test]
     public async Task CredentialTestAuthenticatesWithOneReadOnlyRequestAndPreservesContextPath()
     {
@@ -349,15 +455,17 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var connector = this.CreateConnector(server.Urls[0], api);
       var auth = "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes("alex:fake-api-token"));
       var description = System.Net.WebUtility.HtmlEncode(JenkinsVolunteer.SetOwner(null, "alex"));
+      var panel = System.Net.WebUtility.HtmlEncode(JenkinsVolunteerPanel.SetFix("Job documentation", 41, null, "sam"));
       server.Given(Request.Create().WithPath("/job/folder/api/xml").WithHeader("Authorization", auth).UsingGet())
         .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/xml")
-          .WithBody("<jobs><job><name>project</name><lastStableBuild><number>40</number></lastStableBuild><lastBuild><number>42</number><result>FAILURE</result><description>" + description
+          .WithBody("<jobs><job><name>project</name><description>" + panel + "</description><lastStableBuild><number>40</number></lastStableBuild><lastBuild><number>42</number><result>FAILURE</result><description>" + description
             + "</description></lastBuild><build><number>41</number><result>FAILURE</result><description>" + description + "</description></build></job></jobs>"));
       var polling = await api.GetPollingJobs(new[] { connector }, CancellationToken.None);
       Assert.That(polling.Jobs[connector]?.LastStableBuild?.Number, Is.EqualTo(40));
       var result = await connector.QueryStatusBatch(new[] { connector }, CancellationToken.None);
       Assert.That(result, Does.Contain(connector));
       Assert.That(JenkinsVolunteer.GetOwner(connector.CurrentStatus?.Details), Is.EqualTo("alex"));
+      Assert.That((connector.CurrentStatus as JenkinsStatus)?.ActiveFixes.Single(), Is.EqualTo(new JenkinsFix(41, "sam")));
       Assert.That(JenkinsVolunteer.GetOwner(connector.Snapshots.Single(snapshot => snapshot.Status.BuildNumber == 41).Status.Details), Is.EqualTo("alex"));
     }
 

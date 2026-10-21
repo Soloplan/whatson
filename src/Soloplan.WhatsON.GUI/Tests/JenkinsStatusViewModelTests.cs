@@ -102,6 +102,44 @@ namespace Soloplan.WhatsON.GUI.Tests
     }
 
     [Test]
+    public void ActiveAssignmentsStayVisibleAndCanBeRemovedAfterTheirBuildLeavesHistory()
+    {
+      var configuration = new ConnectorConfiguration("Jenkins", "job", Connector.ServerAddress, "https://builds.example", Connector.ProjectName, "job");
+      configuration.GetConfigurationByKey(JenkinsConnector.UserName).Value = "sam";
+      configuration.GetConfigurationByKey(JenkinsConnector.ApiToken).Value = "encrypted-placeholder";
+      var connector = new JenkinsConnector(configuration, new JenkinsApi());
+      var model = (JenkinsStatusViewModel)new JenkinsProjectViewModel(connector).CurrentStatus;
+      model.Update(new JenkinsStatus(ObservationState.Failure)
+      {
+        BuildNumber = 100,
+        ActiveFixes = new[] { new JenkinsFix(34, "rHr"), new JenkinsFix(37, "alex") },
+      });
+
+      Assert.That(model.Volunteer, Is.Null, "The current run remains available for an additional volunteer.");
+      Assert.That(model.VolunteerDisplayName, Is.EqualTo("RHR (#34), ALEX (#37)"));
+      Assert.That(model.VolunteerToFix.CanExecute(null), Is.True);
+      Assert.That(model.VolunteerAssignments.Count, Is.EqualTo(2));
+      Assert.That(model.VolunteerAssignments[0].BuildNumber, Is.EqualTo(34));
+      Assert.That(model.VolunteerAssignments[0].ClearVolunteer?.CanExecute(null), Is.True);
+      Assert.That(model.VolunteerAssignments[1].BuildNumber, Is.EqualTo(37));
+      Assert.That(model.VolunteerAssignments[1].ClearVolunteer?.CanExecute(null), Is.True);
+
+      var history = new JenkinsStatusViewModel(model.Parent);
+      history.Update(new JenkinsStatus(ObservationState.Failure)
+      {
+        BuildNumber = 34,
+        Details = JenkinsVolunteer.SetOwner(null, "rHr"),
+        ActiveFixes = new[] { new JenkinsFix(34, "rHr"), new JenkinsFix(37, "alex") },
+      });
+      Assert.That(history.VolunteerDisplayName, Is.EqualTo("RHR"), "History keeps the notice belonging to its own build.");
+      Assert.That(history.VolunteerAssignments, Is.Empty);
+
+      model.Update(new JenkinsStatus(ObservationState.Success) { BuildNumber = 101 });
+      Assert.That(model.VolunteerDisplayName, Is.Null);
+      Assert.That(model.VolunteerAssignments, Is.Empty);
+    }
+
+    [Test]
     public void UnconfiguredViewModelHasAStatusBeforeTheFirstPoll()
     {
       var model = new ConnectorViewModel();

@@ -135,7 +135,9 @@ namespace Soloplan.WhatsON.GUI.Tests
                       var volunteerMenu = row.ContextMenu.Items.OfType<MenuItem>()
                         .Single(item => item.Command == current.VolunteerToFix || item.Command == current.ClearVolunteer);
                       Assert.That(row.ContextMenu.Items[0], Is.SameAs(volunteerMenu), "The volunteer action goes first.");
-                      Assert.That(row.ContextMenu.Items[1], Is.TypeOf<Separator>());
+                      Assert.That(row.ContextMenu.Items[1], Is.TypeOf<MenuItem>());
+                      Assert.That(((MenuItem)row.ContextMenu.Items[1]).Visibility, Is.EqualTo(Visibility.Collapsed));
+                      Assert.That(row.ContextMenu.Items[2], Is.TypeOf<Separator>());
                       Assert.That(volunteerMenu.Visibility, Is.EqualTo(Visibility.Visible), "Missing credentials must not hide the action.");
                       Assert.That(ToolTipService.GetShowOnDisabled(volunteerMenu), Is.True, "The explanation must be available while disabled.");
                       Assert.That(FindVisualChild<MaterialDesignThemes.Wpf.PackIcon>(volunteerMenu)?.Kind, Is.EqualTo(MaterialDesignThemes.Wpf.PackIconKind.AccountWrench));
@@ -162,6 +164,22 @@ namespace Soloplan.WhatsON.GUI.Tests
                       Assert.That(volunteerMenu.ToolTip, Is.EqualTo(Strings.ClearVolunteerDescription));
                       Assert.That(volunteerMenu.Command, Is.SameAs(current.ClearVolunteer));
                       Assert.That(volunteerMenu.IsEnabled, Is.True);
+                      current.Update(new Soloplan.WhatsON.Jenkins.JenkinsStatus(ObservationState.Failure)
+                      {
+                        BuildNumber = 110,
+                        ActiveFixes = new[] { new Soloplan.WhatsON.Jenkins.JenkinsFix(34, "rHr") },
+                      });
+                      window.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+                      var assignmentsMenu = (MenuItem)row.ContextMenu.Items[1];
+                      Assert.That(assignmentsMenu.Visibility, Is.EqualTo(Visibility.Visible));
+                      Assert.That(((Border)row.FindName("VolunteerBadge")).Visibility, Is.EqualTo(Visibility.Visible));
+                      assignmentsMenu.IsSubmenuOpen = true;
+                      window.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+                      var assignmentMenu = (MenuItem)assignmentsMenu.ItemContainerGenerator.ContainerFromIndex(0);
+                      Assert.That(assignmentMenu.Header, Is.EqualTo("RHR (#34)"));
+                      Assert.That(assignmentMenu.Command, Is.SameAs(current.VolunteerAssignments[0].ClearVolunteer));
+                      Assert.That(assignmentMenu.IsEnabled, Is.True);
+                      assignmentsMenu.IsSubmenuOpen = false;
                       connectors[2].Configuration.GetConfigurationByKey(Soloplan.WhatsON.Jenkins.JenkinsConnector.UserName).Value = string.Empty;
                       connectors[2].Configuration.GetConfigurationByKey(Soloplan.WhatsON.Jenkins.JenkinsConnector.ApiToken).Value = string.Empty;
                       current.Update(connectors[2].CurrentStatus);

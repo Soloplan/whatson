@@ -312,6 +312,97 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     }
 
     [Test]
+    public async Task ActiveVolunteersRemainVisibleToOtherClientsAcrossLaterBuilds()
+    {
+      this.job.Description = "Original job documentation";
+      var creator = this.CreateConnector();
+      await creator.SetVolunteer(42, null, true, CancellationToken.None);
+      this.job.LastBuild = new JenkinsBuild { Number = 100, Result = "FAILURE" };
+      var second = this.CreateConnector(Path.Combine(this.directory, "second"), "sam");
+      await second.QueryStatus(CancellationToken.None);
+      var status = second.CurrentStatus as JenkinsStatus;
+      Assert.That(status?.ActiveFixes.Single(), Is.EqualTo(new JenkinsFix(42, "alex")));
+      Assert.That(status?.BuildNumber, Is.EqualTo(100));
+
+      this.api.VolunteerQuery = (_, number, _, claim, _) =>
+      {
+        Assert.That(number, Is.EqualTo(100));
+        var build = this.job.LastBuild ?? throw new AssertionException("Missing build.");
+        build.Description = JenkinsVolunteer.SetOwner(build.Description, claim ? "sam" : null);
+        return Task.FromResult(build);
+      };
+      await second.SetVolunteer(100, null, true, CancellationToken.None);
+      Assert.That(JenkinsVolunteerPanel.GetFixes(this.job.Description), Is.EqualTo(new[] { new JenkinsFix(42, "alex"), new JenkinsFix(100, "sam") }));
+
+      var third = this.CreateConnector(Path.Combine(this.directory, "third"));
+      await third.QueryStatus(CancellationToken.None);
+      Assert.That((third.CurrentStatus as JenkinsStatus)?.ActiveFixes.Count, Is.EqualTo(2));
+      Assert.That(this.job.Description, Does.EndWith("Original job documentation"));
+    }
+
+    [Test]
+    public async Task AnotherClientCanRemoveAnOlderAssignmentWithoutChangingTheCurrentBuild()
+    {
+      await this.CreateConnector().SetVolunteer(42, null, true, CancellationToken.None);
+      this.job.LastBuild = new JenkinsBuild { Number = 100, Result = "FAILURE" };
+      var other = this.CreateConnector(Path.Combine(this.directory, "other"), "sam");
+      await other.QueryStatus(CancellationToken.None);
+
+      await other.SetVolunteer(42, "alex", false, CancellationToken.None);
+
+      Assert.That(other.CurrentStatus?.BuildNumber, Is.EqualTo(100));
+      Assert.That((other.CurrentStatus as JenkinsStatus)?.ActiveFixes, Is.Empty);
+      Assert.That(this.claimed.Description, Is.EqualTo("Release notes"));
+      Assert.That(this.job.Description, Is.Empty);
+    }
+
+    [Test]
+    public async Task AFailedPanelUpdateIsRetriedOnTheNextPoll()
+    {
+      var connector = this.CreateConnector();
+      this.api.JobVolunteerQuery = (_, _, _, _, _) => throw new IOException("Temporary panel failure");
+      Assert.ThrowsAsync<IOException>(() => connector.SetVolunteer(42, null, true, CancellationToken.None));
+      Assert.That(JenkinsVolunteer.GetOwner(connector.CurrentStatus?.Details), Is.EqualTo("alex"));
+      this.api.JobVolunteerQuery = null;
+
+      await connector.QueryStatus(CancellationToken.None);
+
+      Assert.That((connector.CurrentStatus as JenkinsStatus)?.ActiveFixes.Single(), Is.EqualTo(new JenkinsFix(42, "alex")));
+      Assert.That(JenkinsVolunteerPanel.GetFixes(this.job.Description).Single(), Is.EqualTo(new JenkinsFix(42, "alex")));
+    }
+
+    [Test]
+    public async Task AFailedPanelRemovalIsRetriedOnTheNextPoll()
+    {
+      var connector = this.CreateConnector();
+      await connector.SetVolunteer(42, null, true, CancellationToken.None);
+      this.api.JobVolunteerQuery = (_, _, _, _, _) => throw new IOException("Temporary panel failure");
+      Assert.ThrowsAsync<IOException>(() => connector.SetVolunteer(42, "alex", false, CancellationToken.None));
+      this.api.JobVolunteerQuery = null;
+
+      await connector.QueryStatus(CancellationToken.None);
+
+      Assert.That((connector.CurrentStatus as JenkinsStatus)?.ActiveFixes, Is.Empty);
+      Assert.That(JenkinsVolunteerPanel.GetFixes(this.job.Description), Is.Empty);
+      Assert.That(new JenkinsVolunteerStore(this.directory).Read(JenkinsApi.UrlHelper.ProjectUrl(connector, false)), Is.Empty);
+    }
+
+    [Test]
+    public async Task AnotherClientRemovesRecoveredAssignmentsEvenWhenTheCreatorIsOffline()
+    {
+      await this.CreateConnector().SetVolunteer(42, null, true, CancellationToken.None);
+      this.job.LastBuild = new JenkinsBuild { Number = 50, Result = "FAILURE" };
+      this.job.LastStableBuild = new JenkinsBuild { Number = 49 };
+      var other = this.CreateConnector(Path.Combine(this.directory, "other"));
+
+      await other.QueryStatus(CancellationToken.None);
+
+      Assert.That(JenkinsVolunteerPanel.GetFixes(this.job.Description), Is.Empty);
+      Assert.That((other.CurrentStatus as JenkinsStatus)?.ActiveFixes, Is.Empty);
+      Assert.That(this.clearAttempts, Is.Zero, "Legacy build notices still use the creator's cleanup tracking.");
+    }
+
+    [Test]
     public void TrackingSeparatesServersJobsAndBuilds()
     {
       var store = new JenkinsVolunteerStore(this.directory);

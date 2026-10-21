@@ -39,6 +39,17 @@
         </Style>
       </MenuItem.Style>
     </MenuItem>
+    <MenuItem Header="{live:Text loc:Strings.ClearVolunteer}" ItemsSource="{Binding CurrentStatus.VolunteerAssignments}"
+              IsEnabled="{Binding IsOnlyOneSelected}"
+              Visibility="{Binding CurrentStatus.VolunteerAssignments.Count, Converter={StaticResource NullOrDefaultVisibilityConverter}}">
+      <MenuItem.ItemContainerStyle>
+        <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+          <Setter Property="Header" Value="{Binding VolunteerAssignmentLabel}" />
+          <Setter Property="ToolTip" Value="{Binding BuildNumber, StringFormat='#{0}'}" />
+          <Setter Property="Command" Value="{Binding ClearVolunteer}" />
+        </Style>
+      </MenuItem.ItemContainerStyle>
+    </MenuItem>
     <Separator Visibility="{Binding CurrentStatus.VolunteerToFix, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
     <!--  CommandParameter must be declared before Command or else value from previous opening of context menu will be passed. WTF?!  -->
     <MenuItem CommandParameter="{Binding CurrentStatus}" Command="{Binding CurrentStatus.CopyBuildLabel}"

@@ -183,7 +183,7 @@ namespace Soloplan.WhatsON.Jenkins
       var build = compact ? "number,description,building,result,timestamp,duration,estimatedDuration," + JenkinsBuild.FailureProperties : JenkinsBuild.RequestProperties;
 
       // Jenkins applies XPath after export: stay within one folder and a bounded build history.
-      var tree = $"jobs[name,disabled,inQueue,lastStableBuild[number],lastBuild[{build}],builds[{build}]{{0,{Connector.MaxSnapshots + 1}}}]";
+      var tree = $"jobs[name,description,disabled,inQueue,lastStableBuild[number],lastBuild[{build}],builds[{build}]{{0,{Connector.MaxSnapshots + 1}}}]";
       var names = batch.Select(UrlHelper.ProjectLeafName).Distinct(StringComparer.Ordinal);
       var xpath = "/*/job[" + string.Join(" or ", names.Select(NamePredicate)) + "]";
       return new Uri(UrlHelper.ParentUrl(batch[0]) + "/api/xml?tree=" + Uri.EscapeDataString(tree)

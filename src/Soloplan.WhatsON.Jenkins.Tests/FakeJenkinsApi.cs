@@ -30,6 +30,20 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
     public Func<JenkinsConnector, int, string?, bool, CancellationToken, Task<JenkinsBuild>>? VolunteerQuery { get; set; }
 
+    public Func<JenkinsConnector, int, string?, string?, CancellationToken, Task<string>>? JobVolunteerQuery { get; set; }
+
+    public async Task<string> SetJobVolunteer(JenkinsConnector connector, int buildNumber, string? expectedOwner, string? owner, CancellationToken token)
+    {
+      if (this.JobVolunteerQuery != null)
+      {
+        return await this.JobVolunteerQuery(connector, buildNumber, expectedOwner, owner, token);
+      }
+
+      var job = await this.GetJenkinsJob(connector, token) ?? throw new InvalidOperationException("Missing job.");
+      job.Description = JenkinsVolunteerPanel.SetFix(job.Description, buildNumber, expectedOwner, owner);
+      return job.Description;
+    }
+
     public Task<string?> GetFailedTests(JenkinsConnector connector, int buildNumber, CancellationToken token) => this.FailedTestsRequest(buildNumber, token);
 
     public Task<string?> GetPipelineFailure(JenkinsConnector connector, int buildNumber, CancellationToken token) => this.PipelineFailureRequest(buildNumber, token);

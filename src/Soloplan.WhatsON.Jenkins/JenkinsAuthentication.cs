@@ -67,6 +67,45 @@ namespace Soloplan.WhatsON.Jenkins
       return name;
     }
 
+    public async Task<string> SetJobVolunteer(JenkinsConnector connector, int buildNumber, string? expectedOwner, string? owner, CancellationToken token)
+    {
+      if (!connector.HasApiCredentials)
+      {
+        throw new InvalidOperationException("Configure a Jenkins user name and API token before updating the volunteer panel.");
+      }
+
+      var url = UrlHelper.ProjectUrl(connector, false).TrimEnd('/');
+      var original = await this.GetJobDescription(connector, url, token);
+      var description = JenkinsVolunteerPanel.SetFix(original, buildNumber, expectedOwner, owner);
+      if (description == (original ?? string.Empty))
+      {
+        return description;
+      }
+
+      using var request = new HttpRequestMessage(HttpMethod.Post, url + "/submitDescription");
+      this.Authenticate(request, connector);
+      request.Content = new FormUrlEncodedContent(new Dictionary<string, string> { ["description"] = description });
+      using var response = await authenticatedClient.SendAsync(request, token);
+      if (response.StatusCode == HttpStatusCode.Forbidden)
+      {
+        throw new HttpRequestException("Updating the Fixes in progress panel requires Jenkins Job/Configure permission.", null, response.StatusCode);
+      }
+
+      if (response.StatusCode != HttpStatusCode.Found)
+      {
+        response.EnsureSuccessStatusCode();
+      }
+
+      // shortcut: Jenkins description updates have no compare-and-swap; simultaneous writers can still conflict.
+      var saved = await this.GetJobDescription(connector, url, token);
+      if (saved != description)
+      {
+        throw new InvalidOperationException("Jenkins did not retain the Fixes in progress panel. Refresh the project and try again.");
+      }
+
+      return description;
+    }
+
     public async Task<JenkinsBuild> SetVolunteer(JenkinsConnector connector, int buildNumber, string? expectedOwner, bool claim, CancellationToken token)
     {
       if (!connector.HasApiCredentials || buildNumber <= 0)
@@ -75,14 +114,24 @@ namespace Soloplan.WhatsON.Jenkins
       }
 
       var url = UrlHelper.BuildRequest(connector, buildNumber);
-      var build = await this.GetJson<JenkinsBuild>(connector, url, token);
+      JenkinsBuild build;
+      try
+      {
+        build = await this.GetJson<JenkinsBuild>(connector, url, token);
+      }
+      catch (HttpRequestException exception) when (!claim && exception.StatusCode == HttpStatusCode.NotFound)
+      {
+        // A retained job assignment can outlive its build after Jenkins discards old runs.
+        return new JenkinsBuild { Number = buildNumber };
+      }
+
       if (build.Number != buildNumber)
       {
         throw new InvalidPlugInApiResponseException("Jenkins returned a different build.");
       }
 
       var owner = JenkinsVolunteer.GetValidatedOwner(build.Description);
-      if (!string.Equals(owner, expectedOwner, StringComparison.Ordinal) || (claim && owner != null))
+      if ((owner != null || claim) && (!string.Equals(owner, expectedOwner, StringComparison.Ordinal) || (claim && owner != null)))
       {
         throw new InvalidOperationException("The volunteer has changed. Refresh the build before trying again.");
       }
@@ -115,6 +164,18 @@ namespace Soloplan.WhatsON.Jenkins
       }
 
       return saved;
+    }
+
+    private async Task<string?> GetJobDescription(JenkinsConnector connector, string url, CancellationToken token)
+    {
+      var job = await this.GetJson<JObject>(connector, url + "/api/json?tree=description", token);
+      if (!job.TryGetValue("description", StringComparison.OrdinalIgnoreCase, out var description)
+          || description.Type is not (JTokenType.Null or JTokenType.String))
+      {
+        throw new InvalidPlugInApiResponseException("Jenkins did not return a job description.");
+      }
+
+      return description.Value<string>();
     }
 
     private async Task<T> GetJson<T>(JenkinsConnector connector, string url, CancellationToken token)

@@ -19,7 +19,7 @@ namespace Soloplan.WhatsON.Jenkins.Model
     /// The request properties for the server query.
     /// </summary>
     public const string RequestProperties =
-      "disabled,displayName,fullDisplayName,lastStableBuild[number],lastBuild[" + JenkinsBuild.RequestProperties + "],name,fullName,url";
+      "disabled,description,displayName,fullDisplayName,lastStableBuild[number],lastBuild[" + JenkinsBuild.RequestProperties + "],name,fullName,url";
 
     public bool Disabled { get; set; }
 
