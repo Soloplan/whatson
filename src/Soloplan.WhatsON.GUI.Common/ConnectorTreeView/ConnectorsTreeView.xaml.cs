@@ -21,6 +21,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
   using System.Windows.Media;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.GUI.Common.VisualConfig;
   using Soloplan.WhatsON.Model;
 
@@ -752,11 +753,16 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     }
 
     /// <summary>
-    /// Keeps group menus on the whole header row, including its padding and expander.
+    /// Keeps context menus on the whole row, including gaps and padding.
     /// </summary>
     private void UpdateRowContextMenu(Border row)
     {
-      row.ContextMenu = row.DataContext is ConnectorGroupViewModel ? (ContextMenu)this.FindResource("BaseTreeMenuImpl") : null;
+      row.ContextMenu = row.DataContext switch
+      {
+        ConnectorGroupViewModel => (ContextMenu)this.FindResource("BaseTreeMenuImpl"),
+        ConnectorViewModel { CurrentStatus: BuildStatusViewModel } => (ContextMenu)this.FindResource("BuildServerProjectContextMenu"),
+        _ => null,
+      };
     }
 
     private void OnRowLoaded(object sender, RoutedEventArgs e) => this.UpdateRowContextMenu((Border)sender);

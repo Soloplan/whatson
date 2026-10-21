@@ -122,7 +122,20 @@ namespace Soloplan.WhatsON.GUI.Tests
             Flush(window);
             var child = (TreeViewItem)item.ItemContainerGenerator.ContainerFromIndex(0);
             var childRow = (Border)child.Template.FindName("Row", child);
-            Assert.That(childRow.ContextMenu, Is.Null, "Group menus must not cover child job rows.");
+            var jobMenu = childRow.ContextMenu ?? throw new AssertionException("Missing full-row job menu.");
+            Assert.That(jobMenu, Is.Not.SameAs(menu), "Group menus must not cover child job rows.");
+            jobMenu.PlacementTarget = childRow;
+            jobMenu.IsOpen = true;
+            Flush(window);
+            try
+            {
+              Assert.That(jobMenu.DataContext, Is.SameAs(child.DataContext), "The row menu must target the clicked job.");
+            }
+            finally
+            {
+              jobMenu.IsOpen = false;
+            }
+
             item.IsExpanded = false;
             Flush(window);
           }

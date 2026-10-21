@@ -123,6 +123,19 @@ namespace Soloplan.WhatsON.GUI.Tests
 
                   Assert.That(((BuildNumberControl)row.FindName("BuildNumber")).BuildNumber, Is.EqualTo(model.CurrentStatus?.BuildNumber));
                   Assert.That(row.ContextMenu, Is.Not.Null, "Both plugins must retain project commands.");
+                  var rowBorder = (Border)item.Template.FindName("Row", item);
+                  for (var x = 1.0; x < rowBorder.ActualWidth - 1; x += 4)
+                  {
+                    var point = new Point(x, rowBorder.ActualHeight / 2);
+                    var hit = rowBorder.InputHitTest(point) as DependencyObject;
+                    while (hit != null && ContextMenuService.GetContextMenu(hit) == null)
+                    {
+                      hit = hit is FrameworkContentElement content ? content.Parent : VisualTreeHelper.GetParent(hit);
+                    }
+
+                    Assert.That(hit, Is.Not.Null, $"The entire job row must offer a context menu, including gaps and padding at {point}.");
+                  }
+
                   if (groupIndex == 0 && index == 2 && width == 800)
                   {
                     row.ContextMenu.PlacementTarget = row;
