@@ -20,6 +20,8 @@ namespace Soloplan.WhatsON.Jenkins
 
     public string? DisplayName { get; set; }
 
+    public int SkippedTestCount { get; set; }
+
     public IReadOnlyList<JenkinsFix> ActiveFixes { get; set; } = System.Array.Empty<JenkinsFix>();
 
     public IList<JenkinsUser> CommittedToThisBuild { get; set; } = new List<JenkinsUser>();

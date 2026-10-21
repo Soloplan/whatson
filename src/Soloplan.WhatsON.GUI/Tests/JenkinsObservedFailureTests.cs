@@ -29,10 +29,10 @@ namespace Soloplan.WhatsON.GUI.Tests
     [TestCase("unstable-build-tests", 4, "Example.Tests.Suite1.Case4")]
     [TestCase("failed-build-tests", 4, "Example.Tests.Suite1.Case4")]
     [TestCase("many-failed-tests", 13, "Example.Tests.Suite1.Case5")]
-    [TestCase("missing-test-report", 1, "UNSTABLE")]
-    [TestCase("stage-error", 0, "Stage 3: script returned exit code 1")]
-    [TestCase("nested-stage-error", 0, "Stage 4: Pipeline interrupted")]
-    [TestCase("unstable-stage", 0, "UNSTABLE")]
+    [TestCase("missing-test-report", 1, null)]
+    [TestCase("stage-error", 0, null)]
+    [TestCase("nested-stage-error", 0, null)]
+    [TestCase("unstable-stage", 0, null)]
     [TestCase("no-stages", 0, null)]
     public async Task AnonymizedObservedResponsesReachNotificationsAndTooltips(string fixtureName, int count, string? expected)
     {
@@ -67,11 +67,14 @@ namespace Soloplan.WhatsON.GUI.Tests
       var status = connector.CurrentStatus ?? throw new AssertionException("Missing build status.");
       Assert.That(status.FailedTestCount, Is.EqualTo(count));
       Assert.That(status.State.ToString(), Is.EqualTo((string?)fixture["build"]?["result"]).IgnoreCase);
-      var model = new JenkinsStatusViewModel(new ConnectorViewModel { Name = "Release" });
+      Assert.That(server.Requests.Any(path => path.Contains("/testReport/", StringComparison.Ordinal) || path.EndsWith("/consoleText", StringComparison.Ordinal)), Is.False);
+      var model = new JenkinsStatusViewModel(new ConnectorViewModel(connector) { Name = "Release" });
       model.Update(status);
+      await model.LoadFailureDetails(CancellationToken.None);
+      await model.LoadFailureDetails(CancellationToken.None);
       if (expected == null)
       {
-        Assert.That(model.FailureSummary, Is.Null, "Missing stages must not invent a failure cause.");
+        Assert.That(model.FailureDetails, Is.Null.Or.Empty, "Stage exit codes must not invent a failure cause.");
       }
       else
       {

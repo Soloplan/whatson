@@ -14,7 +14,7 @@ namespace Soloplan.WhatsON.Jenkins.Model
     public const string RequestProperties =
       "number,displayName,description,building,duration,estimatedDuration,result,timestamp,culprits[fullName,absoluteUrl],changeSets[items[author[fullName,absoluteUrl]]]," + FailureProperties;
 
-    public const string FailureProperties = "actions[failCount,foundFailureCauses[name]{0,5}]";
+    public const string FailureProperties = "actions[failCount,skipCount,foundFailureCauses[name]{0,5}]";
 
     public int Number { get; set; }
 

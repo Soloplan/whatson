@@ -13,7 +13,9 @@ namespace Soloplan.WhatsON.GUI.Tests
   using System.Threading.Tasks;
   using NUnit.Framework;
   using Soloplan.WhatsON.Configuration;
+  using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Jenkins;
+  using Soloplan.WhatsON.Jenkins.GUI;
   using Soloplan.WhatsON.Model;
   using ApiServer = Soloplan.WhatsON.GUI.Tests.ProjectDiscoveryTests.DiscoveryServer;
 
@@ -34,6 +36,58 @@ namespace Soloplan.WhatsON.GUI.Tests
       Assert.That(server.Requests.Single(), Does.StartWith("/job/Release/42/testReport/api/xml?"));
       Assert.That(Uri.UnescapeDataString(server.Requests.Single()), Does.Contain("status='FAILED' or status='REGRESSION'").And.Contain("position()<=5"));
       Assert.That(server.Requests.Single(), Does.Not.Contain("stdout").And.Not.Contain("errorStackTrace"));
+    }
+
+    [Test]
+    public async Task ConsoleCompilerErrorsReachTheExistingFailureSummaryAndNotification()
+    {
+      await using var server = new ApiServer();
+      var diagnostic = @"C:\agent\workspace\ExampleView.cs(42,7): error CS1061: 'ExampleView' does not contain a definition for 'missingMember' and no accessible extension method could be found";
+      server.Respond = path => path.EndsWith("/consoleText", StringComparison.Ordinal)
+        ? ("200 OK", "text/plain", $"Failed in branch Desktop\nINFO: Try to find errors with: (?mi)(ERROR: Error during SonarQube Scanner execution)\nINFO: Try to find errors with: IOException: pattern\n[2025-01-01T12:00:00.000Z] {diagnostic} [Project.csproj::TargetFramework=net472]\n{diagnostic} [Project.csproj::TargetFramework=net8.0-windows]\nERROR: script returned exit code 4")
+        : ("200 OK", "application/xml", "<jobs><job><name>Release</name><lastBuild><number>42</number><result>FAILURE</result></lastBuild></job></jobs>");
+      var connector = CreateConnector(server.Address);
+      await connector.QueryStatusBatch(new[] { connector }, CancellationToken.None);
+      Assert.That(server.Requests, Has.Count.EqualTo(1), "Polling must not fetch the console.");
+      var project = new JenkinsProjectViewModel(connector) { Name = "Release" };
+      project.CurrentStatus.Update(connector.CurrentStatus);
+      await project.CurrentStatus.LoadFailureDetails(CancellationToken.None);
+
+      const string expected = "ExampleView.cs(42,7): CS1061: 'ExampleView' does not contain a definition for 'missingMember'";
+      Assert.That(project.CurrentStatus.FailureSummary, Is.EqualTo(expected));
+      Assert.That(TrayHandler.GetNotificationDescription(project.CurrentStatus), Does.Contain(expected).And.Not.Contain("exit code"));
+      Assert.That(server.Requests, Has.Count.EqualTo(2));
+    }
+
+    [Test]
+    public async Task LateHoverResponseCannotReplaceAnotherRunsDetails()
+    {
+      await using var server = new ApiServer();
+      var received = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+      var gate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+      server.Respond = path =>
+      {
+        if (path.EndsWith("/consoleText", StringComparison.Ordinal))
+        {
+          received.TrySetResult();
+          return ("200 OK", "text/plain", "OldFile.cs(1,1): error CS1002: ; expected");
+        }
+
+        return ("200 OK", "application/xml", "<jobs><job><name>Release</name><lastBuild><number>42</number><result>FAILURE</result></lastBuild></job></jobs>");
+      };
+      var connector = CreateConnector(server.Address);
+      await connector.QueryStatusBatch(new[] { connector }, CancellationToken.None);
+      var project = new JenkinsProjectViewModel(connector);
+      project.CurrentStatus.Update(connector.CurrentStatus);
+      server.ResponseGate = gate.Task;
+      var pending = project.CurrentStatus.LoadFailureDetails(CancellationToken.None);
+      await received.Task.WaitAsync(TimeSpan.FromSeconds(5));
+      Assert.That(project.CurrentStatus.IsLoadingFailureDetails, Is.True);
+      project.CurrentStatus.Update(new JenkinsStatus(ObservationState.Failure) { BuildNumber = 43, FailureDetails = "New build failure" });
+      gate.SetResult();
+      await pending.WaitAsync(TimeSpan.FromSeconds(5));
+      Assert.That(project.CurrentStatus.FailureDetails, Is.EqualTo("New build failure"));
+      Assert.That(project.CurrentStatus.IsLoadingFailureDetails, Is.False);
     }
 
     [TestCase("404 Not Found", "application/json", "{}")]
@@ -89,7 +143,9 @@ namespace Soloplan.WhatsON.GUI.Tests
 
       Assert.That(connector.CurrentStatus?.State, Is.EqualTo(ObservationState.Unstable));
       Assert.That(connector.CurrentStatus?.FailedTestCount, Is.EqualTo(1));
-      Assert.That(connector.CurrentStatus?.FailureDetails, Does.Contain("Compiler error").And.Contain("Dependency unavailable").And.Contain("Tests.Broken"));
+      Assert.That(server.Requests, Has.Count.EqualTo(1), "Polling must not fetch the test report.");
+      var details = await connector.LoadFailureDetails(connector.CurrentStatus ?? throw new AssertionException("Missing status."), CancellationToken.None);
+      Assert.That(details, Does.Contain("Compiler error").And.Contain("Dependency unavailable").And.Contain("Tests.Broken"));
       Assert.That(connector.Snapshots.Single().Status.FailureDetails, Is.EqualTo(connector.CurrentStatus?.FailureDetails));
     }
 

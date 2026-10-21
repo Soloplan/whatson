@@ -10,8 +10,10 @@ namespace Soloplan.WhatsON.GUI.Tests
   using System;
   using System.Collections.Generic;
   using System.ComponentModel;
+  using System.Linq;
   using NUnit.Framework;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
+  using Soloplan.WhatsON.GUI.Common.BuildServer;
   using Soloplan.WhatsON.Jenkins;
   using Soloplan.WhatsON.Jenkins.GUI;
   using Soloplan.WhatsON.Localization;
@@ -21,6 +23,16 @@ namespace Soloplan.WhatsON.GUI.Tests
   [SetUICulture("en-US")]
   public class NotificationContentTests
   {
+    [TestCase(1144, "19 min 04 s")]
+    [TestCase(3660, "1 h 01 min")]
+    [TestCase(176400, "49 h 00 min")]
+    public void CompactDurationIncludesUnitsAndDoesNotWrapAtOneDay(int seconds, string expected)
+    {
+      var status = new BuildStatusViewModel(new ConnectorViewModel());
+      status.Update(new Status(ObservationState.Success) { Duration = TimeSpan.FromSeconds(seconds) });
+      Assert.That(status.TooltipDuration, Is.EqualTo(expected));
+    }
+
     [TestCase(ObservationState.Failure, true)]
     [TestCase(ObservationState.Unstable, true)]
     [TestCase(ObservationState.Success, false)]
@@ -64,9 +76,56 @@ namespace Soloplan.WhatsON.GUI.Tests
       changes.Clear();
       status.Update(new Status(ObservationState.Failure) { FailedTestCount = 1, FailureDetails = "Tests.First" });
       Assert.That(changes, Does.Contain(nameof(status.FailureSummary)));
+      Assert.That(changes, Does.Contain(nameof(status.FailurePreviewGroups)));
+      Assert.That(changes, Does.Contain(nameof(status.HasFailurePreview)));
       Assert.That(status.FailureSummary, Does.Contain("Tests.First"));
       status.Update(null);
       Assert.That(status.FailureSummary, Is.Null);
+      Assert.That(status.HasFailurePreview, Is.False);
+    }
+
+    [Test]
+    public void CompactPreviewGroupsTwoTestsAndKeepsWarningsAtTheBottom()
+    {
+      var status = new JenkinsStatusViewModel(new ConnectorViewModel());
+      status.Update(new JenkinsStatus(ObservationState.Unstable)
+      {
+        FailedTestCount = 4,
+        SkippedTestCount = 1,
+        FailureDetails = "Example.Product.Tests.LayoutTests.FirstAsync\nExample.Product.Tests.LayoutTests.SecondAsync\nExample.Product.Tests.OtherTests.ThirdAsync\nExample.Product.Tests.OtherTests.FourthAsync\nSKIPPED: Example.Product.Tests.OtherTests.FifthAsync",
+      });
+
+      Assert.That(status.FailurePreviewGroups.Select(group => group.Key), Is.EqualTo(new[] { "LayoutTests" }));
+      Assert.That(status.FailurePreviewGroups.Single(), Is.EqualTo(new[] { "FirstAsync", "SecondAsync" }));
+      Assert.That(status.FailurePreviewHeading, Is.EqualTo("4 failed tests"));
+      Assert.That(status.MoreFailuresPreview, Is.EqualTo("2 more failures in the test report"));
+      Assert.That(status.WarningPreview, Is.EqualTo(Strings.SkippedTestsNotice));
+      Assert.That(status.FailureSummary, Does.Contain("Example.Product.Tests.OtherTests.FourthAsync"), "Notifications retain their original details.");
+    }
+
+    [Test]
+    public void CompilerPreviewKeepsSourceAndDiagnosticCode()
+    {
+      var status = new StatusViewModel(new ConnectorViewModel());
+      status.Update(new Status(ObservationState.Failure)
+      {
+        FailureDetails = "ExampleView.cs(42,7): CS1061: Missing member missingMember\nWARNING: Some tests were not run",
+      });
+
+      Assert.That(status.FailurePreviewGroups.Single().Key, Is.EqualTo("ExampleView.cs(42,7) · CS1061"));
+      Assert.That(status.FailurePreviewGroups.Single().Single(), Is.EqualTo("Missing member missingMember"));
+      Assert.That(status.WarningPreview, Does.StartWith("WARNING:"));
+      Assert.That(status.MoreFailuresPreview, Is.Null);
+    }
+
+    [Test]
+    public void LongTestNamesWrapBetweenPhrasesWithoutChangingNotificationText()
+    {
+      const string method = "ReadTestStructureReturnsSampleStructureOfAllTestDataItemsAsync";
+      var status = new StatusViewModel(new ConnectorViewModel());
+      status.Update(new Status(ObservationState.Unstable) { FailureDetails = "Tests.LayoutTests." + method });
+      Assert.That(status.FailurePreviewGroups.Single().Single(), Is.EqualTo("ReadTestStructure\u200BReturnsSampleStructure\u200BOfAllTestDataItemsAsync"));
+      Assert.That(status.FailureSummary, Does.EndWith(method));
     }
 
     [TestCase(ObservationState.Success)]

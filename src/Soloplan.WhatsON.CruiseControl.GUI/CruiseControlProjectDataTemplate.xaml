@@ -14,24 +14,24 @@
   <ToolTip x:Key="CruiseControlBuildInfoToolTip"
            Visibility="{Binding Path=. , Converter={StaticResource MainStatusToVisibilityConverter}}">
     <StackPanel>
+      <buildServer:HistoryBuildTooltipControl />
       <local:CCProgressBarTooltipControl DataContext="{Binding}" />
-      <buildServer:CulpritsControl Caption="{live:Text loc:Strings.ChangesByCaption}"
+      <buildServer:CulpritsControl Caption="{live:Text loc:Strings.ContributorsCaption}"
                                    CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
       <TextBlock Text="{Binding ErrorMessage}" Style="{DynamicResource ToolTipMessage}" />
-      <TextBlock Text="{Binding FailureSummary}" TextWrapping="Wrap"
-                 Visibility="{Binding FailureSummary, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
+      <buildServer:FailureDetailsControl />
     </StackPanel>
   </ToolTip>
 
   <ToolTip x:Key="RowToolTip"
            Visibility="{Binding CurrentStatus , Converter={StaticResource MainStatusToVisibilityConverter}}">
     <StackPanel DataContext="{Binding CurrentStatus}">
+      <buildServer:HistoryBuildTooltipControl />
       <local:CCProgressBarTooltipControl DataContext="{Binding}" />
-      <buildServer:CulpritsControl Caption="{live:Text loc:Strings.ChangesByCaption}"
+      <buildServer:CulpritsControl Caption="{live:Text loc:Strings.ContributorsCaption}"
                                    CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
       <TextBlock Text="{Binding ErrorMessage}" Style="{DynamicResource ToolTipMessage}" />
-      <TextBlock Text="{Binding FailureSummary}" TextWrapping="Wrap"
-                 Visibility="{Binding FailureSummary, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
+      <buildServer:FailureDetailsControl />
     </StackPanel>
   </ToolTip>
 

@@ -63,6 +63,9 @@ namespace Soloplan.WhatsON.GUI
       resources["SettingsMuted"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(isDark ? "#B4C1D2" : "#5C6B7E"));
       resources["SettingsAccent"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(isDark ? "#A3C1FF" : "#315FC8"));
       resources["SettingsSelection"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(isDark ? "#233A61" : "#EAF0FE"));
+      resources["TooltipFailureSurface"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(isDark ? "#322633" : "#FFF5F5"));
+      resources["TooltipError"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(isDark ? "#FF959F" : "#B2263D"));
+      resources["TooltipWarning"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(isDark ? "#EBC36C" : "#8B6109"));
     }
 
     internal static bool IsDarkMode(ApplicationTheme mode, bool systemIsDark) => mode == ApplicationTheme.Dark || (mode == ApplicationTheme.System && systemIsDark);

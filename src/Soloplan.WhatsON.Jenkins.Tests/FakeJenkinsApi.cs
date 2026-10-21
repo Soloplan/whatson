@@ -24,6 +24,8 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
     public Func<int, CancellationToken, Task<string?>> FailedTestsRequest { get; set; } = (_, _) => Task.FromResult<string?>(null);
 
+    public Func<int, CancellationToken, Task<string?>> ConsoleErrorsRequest { get; set; } = (_, _) => Task.FromResult<string?>(string.Empty);
+
     public Func<int, CancellationToken, Task<string?>> PipelineFailureRequest { get; set; } = (_, _) => Task.FromResult<string?>(null);
 
     public Func<IReadOnlyCollection<JenkinsConnector>, CancellationToken, Task<JenkinsPollingResult>>? PollingQuery { get; set; }
@@ -45,6 +47,8 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     }
 
     public Task<string?> GetFailedTests(JenkinsConnector connector, int buildNumber, CancellationToken token) => this.FailedTestsRequest(buildNumber, token);
+
+    public Task<string?> GetConsoleErrors(JenkinsConnector connector, int buildNumber, CancellationToken token) => this.ConsoleErrorsRequest(buildNumber, token);
 
     public Task<string?> GetPipelineFailure(JenkinsConnector connector, int buildNumber, CancellationToken token) => this.PipelineFailureRequest(buildNumber, token);
 

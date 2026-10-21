@@ -558,4 +558,12 @@ Expected connector type: {3}</value>
   <data name="Servers" xml:space="preserve"><value>Servers</value></data>
   <data name="AddJobToGroup" xml:space="preserve"><value>Add job to this group…</value></data>
   <data name="AddJobsToGroupFormat" xml:space="preserve"><value>Add to group “{0}”</value></data>
+  <data name="BuildErrorsCaption" xml:space="preserve"><value>Errors</value></data>
+  <data name="MoreBuildFailuresFormat" xml:space="preserve"><value>{0} more in the build report</value></data>
+  <data name="SkippedTestsNotice" xml:space="preserve"><value>Skipped tests in the test report</value></data>
+  <data name="CommittersCaption" xml:space="preserve"><value>committers</value></data>
+  <data name="ContributorsCaption" xml:space="preserve"><value>contributors</value></data>
+  <data name="TooltipFinishedFormat" xml:space="preserve"><value>Finished {0}</value></data>
+  <data name="TooltipFailedTestsFormat" xml:space="preserve"><value>{0} failed tests</value></data>
+  <data name="MoreTestFailuresFormat" xml:space="preserve"><value>{0} more failures in the test report</value></data>
 </root>

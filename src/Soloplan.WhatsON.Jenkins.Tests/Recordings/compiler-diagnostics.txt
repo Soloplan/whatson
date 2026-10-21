@@ -1,0 +1,51 @@
+# Synthetic compiler diagnostics; all paths, identifiers, timestamps and counts are fictional.
+
+[2025-01-01T12:00:00.000Z] C:\agent\workspace\Example\Tests\SampleTests.cs(10,5): warning CS1574: XML comment has cref attribute 'RunExample' that could not be resolved [C:\agent\workspace\Example\Tests\Example.Tests.csproj::TargetFramework=net10.0-windows]
+
+
+[2025-01-01T12:00:00.000Z] C:\agent\workspace\Example\Tests\SampleTests.cs(11,5): warning CS1574: XML comment has cref attribute 'RunExample' that could not be resolved [C:\agent\workspace\Example\Tests\Example.Tests.csproj::TargetFramework=net10.0-windows]
+
+
+[2025-01-01T12:00:00.000Z] C:\agent\workspace\Example\Tests\SampleTests.cs(12,5): warning CS1574: XML comment has cref attribute 'RunExample' that could not be resolved [C:\agent\workspace\Example\Tests\Example.Tests.csproj::TargetFramework=net10.0-windows]
+
+
+[2025-01-01T12:00:00.000Z] C:\agent\workspace\Example\Tests\SampleTests.cs(13,5): warning CS1574: XML comment has cref attribute 'RunExample' that could not be resolved [C:\agent\workspace\Example\Tests\Example.Tests.csproj::TargetFramework=net10.0-windows]
+
+
+[2025-01-01T12:00:00.000Z] C:\agent\workspace\Example\Tests\SampleTests.cs(14,5): warning CS1574: XML comment has cref attribute 'RunExample' that could not be resolved [C:\agent\workspace\Example\Tests\Example.Tests.csproj::TargetFramework=net10.0-windows]
+
+
+[2025-01-01T12:00:00.000Z] C:\agent\workspace\Example\Tests\SampleTests.cs(15,5): warning CS1574: XML comment has cref attribute 'RunExample' that could not be resolved [C:\agent\workspace\Example\Tests\Example.Tests.csproj::TargetFramework=net10.0-windows]
+
+
+[2025-01-01T12:00:00.000Z] C:\agent\workspace\Example\Tests\SampleTests.cs(16,5): warning CS1574: XML comment has cref attribute 'RunExample' that could not be resolved [C:\agent\workspace\Example\Tests\Example.Tests.csproj::TargetFramework=net10.0-windows]
+
+
+[2025-01-01T12:00:00.000Z] C:\agent\workspace\Example\Tests\SampleTests.cs(17,5): warning CS1574: XML comment has cref attribute 'RunExample' that could not be resolved [C:\agent\workspace\Example\Tests\Example.Tests.csproj::TargetFramework=net10.0-windows]
+
+
+[2025-01-01T12:00:00.000Z] C:\agent\workspace\Example\Tests\SampleTests.cs(18,5): warning CS1574: XML comment has cref attribute 'RunExample' that could not be resolved [C:\agent\workspace\Example\Tests\Example.Tests.csproj::TargetFramework=net10.0-windows]
+
+
+[2025-01-01T12:00:00.000Z] C:\agent\workspace\Example\Tests\SampleTests.cs(19,5): warning CS1574: XML comment has cref attribute 'RunExample' that could not be resolved [C:\agent\workspace\Example\Tests\Example.Tests.csproj::TargetFramework=net10.0-windows]
+
+
+[2025-01-01T12:00:00.000Z] C:\agent\workspace\Example\Tests\SampleTests.cs(20,5): warning CS1574: XML comment has cref attribute 'RunExample' that could not be resolved [C:\agent\workspace\Example\Tests\Example.Tests.csproj::TargetFramework=net10.0-windows]
+
+
+[2025-01-01T12:00:00.000Z] C:\agent\workspace\Example\Logging\ExampleLogEntryBuilder.cs(21,5): error CS0111: Type 'ExampleLogEntryBuilder' already defines a member called 'ReadInputHeaders' with the same parameter types [C:\agent\workspace\Example\Example.csproj::TargetFramework=net10.0-windows]
+
+
+[2025-01-01T12:00:00.000Z] C:\agent\workspace\Example\Logging\ExampleLogEntryBuilder.cs(28,5): error CS0111: Type 'ExampleLogEntryBuilder' already defines a member called 'ReadOutputHeaders' with the same parameter types [C:\agent\workspace\Example\Example.csproj::TargetFramework=net10.0-windows]
+
+
+[2025-01-01T12:00:00.000Z] C:\agent\workspace\Example\Logging\ExampleLogEntryBuilder.cs(35,5): error CS0111: Type 'ExampleLogEntryBuilder' already defines a member called 'SetMetadata' with the same parameter types [C:\agent\workspace\Example\Example.csproj::TargetFramework=net10.0-windows]
+
+
+[2025-01-01T12:00:00.000Z] C:\agent\workspace\Example\Logging\ExampleLogEntryBuilder.cs(42,5): error CS0111: Type 'ExampleLogEntryBuilder' already defines a member called 'SetMetadata' with the same parameter types [C:\agent\workspace\Example\Example.csproj::TargetFramework=net10.0-windows]
+
+
+[2025-01-01T12:00:00.000Z]     11 Warning(s)
+
+
+[2025-01-01T12:00:00.000Z]     4 Error(s)

@@ -558,4 +558,12 @@ Erwarteter Verbindungstyp: {3}</value>
   <data name="Servers" xml:space="preserve"><value>Server</value></data>
   <data name="AddJobToGroup" xml:space="preserve"><value>Job zu dieser Gruppe hinzufügen…</value></data>
   <data name="AddJobsToGroupFormat" xml:space="preserve"><value>Zur Gruppe „{0}“ hinzufügen</value></data>
+  <data name="BuildErrorsCaption" xml:space="preserve"><value>Fehler</value></data>
+  <data name="MoreBuildFailuresFormat" xml:space="preserve"><value>{0} weitere im Buildbericht</value></data>
+  <data name="SkippedTestsNotice" xml:space="preserve"><value>Übersprungene Tests im Testbericht</value></data>
+  <data name="CommittersCaption" xml:space="preserve"><value>Committer</value></data>
+  <data name="ContributorsCaption" xml:space="preserve"><value>Beteiligte</value></data>
+  <data name="TooltipFinishedFormat" xml:space="preserve"><value>{0} beendet</value></data>
+  <data name="TooltipFailedTestsFormat" xml:space="preserve"><value>{0} fehlgeschlagene Tests</value></data>
+  <data name="MoreTestFailuresFormat" xml:space="preserve"><value>{0} weitere Fehler im Testbericht</value></data>
 </root>

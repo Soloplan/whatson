@@ -103,7 +103,6 @@ namespace Soloplan.WhatsON.GUI.Tests
           tooltip.PlacementTarget = selector;
           tooltip.IsOpen = true;
           Flush(settings);
-          var finished = Descendants<TextBlock>(history).Single(text => text.Text == "Finished: ");
           var relativeTime = Descendants<TextBlock>(history).Single(text => text.Text.Contains("ago", StringComparison.Ordinal));
           var icon = (typeof(TrayHandler).GetField("icon", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected member was not found.")).GetValue(tray) as System.Windows.Forms.NotifyIcon ?? throw new AssertionException("Expected icon.");
           var menu = (typeof(TrayHandler).GetField("contextMenu", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected member was not found.")).GetValue(tray) as System.Windows.Forms.ContextMenuStrip ?? throw new AssertionException("Expected menu.");
@@ -120,8 +119,9 @@ namespace Soloplan.WhatsON.GUI.Tests
             Assert.That(((Button)wizard.FindName("NextButton")).Content, Is.EqualTo(german ? "Weiter" : "Next"));
             Assert.That(HintAssist.GetHint(jobName), Is.EqualTo(german ? "Projektname" : "Project name"));
             Assert.That(notificationCaption.Content, Is.EqualTo(Strings.UseMainConfiguration));
-            Assert.That(finished.Text, Is.EqualTo(Strings.FinishedPrefix));
+            relativeTime = Descendants<TextBlock>(history).Single(text => text.Text.Contains(german ? "vor" : "ago", StringComparison.Ordinal));
             Assert.That(relativeTime.Text, Does.Contain(german ? "vor" : "ago"));
+            Assert.That(relativeTime.Text, german ? Does.EndWith("beendet") : Does.StartWith("Finished"));
             Assert.That(((GrouppingSetting)selectedGrouping).Caption, Is.EqualTo(Strings.AddHierarchyToProjectName));
             Assert.That(grouping.SelectedItem, Is.SameAs(selectedGrouping));
             Assert.That(((Frame)settings.FindName("ConfigFrame")).Content, Is.SameAs(general));

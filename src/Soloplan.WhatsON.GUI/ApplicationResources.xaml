@@ -36,16 +36,16 @@
     <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />
     <Setter Property="BorderBrush" Value="{DynamicResource SettingsBorder}" />
     <Setter Property="BorderThickness" Value="1" />
-    <Setter Property="Padding" Value="12,10" />
+    <Setter Property="Padding" Value="18,16" />
     <Setter Property="FontFamily" Value="Segoe UI" />
-    <Setter Property="FontSize" Value="12" />
+    <Setter Property="FontSize" Value="13" />
     <Setter Property="FontWeight" Value="Normal" />
     <Setter Property="MaxWidth" Value="440" />
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type ToolTip}">
           <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
-                  BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="7"
+                  BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="10"
                   Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
             <ContentPresenter ContentSource="Content" RecognizesAccessKey="False" />
           </Border>

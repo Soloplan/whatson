@@ -8,6 +8,7 @@
 namespace Soloplan.WhatsON.Jenkins
 {
   using System;
+  using System.Collections.Concurrent;
   using System.Collections.Generic;
   using System.Linq;
   using System.Threading;
@@ -60,19 +61,15 @@ namespace Soloplan.WhatsON.Jenkins
 
     private readonly JenkinsPollingPolicy polling = new JenkinsPollingPolicy();
 
+    private readonly ConcurrentDictionary<(string Project, int Number, ObservationState State, int Failed, int Skipped), string> failureDetails = new ConcurrentDictionary<(string, int, ObservationState, int, int), string>();
+
+    private readonly SemaphoreSlim failureDetailsLock = new SemaphoreSlim(1, 1);
+
     private IList<JenkinsBuild>? recentBuilds;
 
     private JenkinsJob? batchJob;
 
     private bool usingBatch;
-
-    private int failedTestsBuildNumber;
-
-    private int failedTestsCount;
-
-    private string? failedTests;
-
-    private string? pipelineFailure;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="JenkinsConnector" /> class.
@@ -262,10 +259,12 @@ namespace Soloplan.WhatsON.Jenkins
           foreach (var snapshot in this.Snapshots.Where(snapshot => snapshot.Status.BuildNumber == build.Number))
           {
             snapshot.Status.Details = build.Description;
-            if (this.CurrentStatus?.BuildNumber == build.Number)
+            var refreshed = this.CreateStatus(build);
+            snapshot.Status.FailedTestCount = refreshed.FailedTestCount;
+            snapshot.Status.FailureDetails = refreshed.FailureDetails;
+            if (snapshot.Status is JenkinsStatus jenkinsStatus)
             {
-              snapshot.Status.FailedTestCount = this.CurrentStatus.FailedTestCount;
-              snapshot.Status.FailureDetails = this.CurrentStatus.FailureDetails;
+              jenkinsStatus.SkippedTestCount = refreshed.SkippedTestCount;
             }
           }
 
@@ -302,6 +301,52 @@ namespace Soloplan.WhatsON.Jenkins
         }
 
         this.PreviousCheckStatus = this.Snapshots.FirstOrDefault()?.Status as JenkinsStatus;
+      }
+    }
+
+    public async Task<string?> LoadFailureDetails(Status status, CancellationToken token)
+    {
+      if (status.Building || status.BuildNumber <= 0 || status.State is not (ObservationState.Failure or ObservationState.Unstable))
+      {
+        return null;
+      }
+
+      var key = (Project: JenkinsApi.UrlHelper.ProjectUrl(this, false), Number: status.BuildNumber, State: status.State,
+        Failed: status.FailedTestCount, Skipped: (status as JenkinsStatus)?.SkippedTestCount ?? 0);
+      var previousDetails = status.FailureDetails;
+      await this.failureDetailsLock.WaitAsync(token).ConfigureAwait(false);
+      try
+      {
+        if (this.failureDetails.TryGetValue(key, out var cached))
+        {
+          return cached;
+        }
+
+        var tests = key.Failed > 0 || key.Skipped > 0
+          ? await this.api.GetFailedTests(this, key.Number, token).ConfigureAwait(false) : string.Empty;
+        var console = key.Failed > 0 && !string.IsNullOrWhiteSpace(tests)
+          ? string.Empty : await this.api.GetConsoleErrors(this, key.Number, token).ConfigureAwait(false);
+        token.ThrowIfCancellationRequested();
+        if (JenkinsApi.UrlHelper.ProjectUrl(this, false) != key.Project)
+        {
+          return null;
+        }
+
+        var details = string.Join(Environment.NewLine, new[] { console, tests, previousDetails }.Where(value => !string.IsNullOrWhiteSpace(value)));
+        if (tests != null && console != null)
+        {
+          this.failureDetails[key] = details;
+          while (this.failureDetails.Count > MaxSnapshots + 1)
+          {
+            this.failureDetails.TryRemove(this.failureDetails.Keys.OrderBy(item => item.Project == key.Project).ThenBy(item => item.Number).First(), out _);
+          }
+        }
+
+        return details;
+      }
+      finally
+      {
+        this.failureDetailsLock.Release();
       }
     }
 
@@ -357,29 +402,6 @@ namespace Soloplan.WhatsON.Jenkins
 
       await this.ClearRecoveredVolunteers(job, cancellationToken);
       await this.SynchronizeVolunteerPanel(job, cancellationToken);
-      var failedCount = job.LastBuild.Actions?.OfType<JenkinsBuildAction>().Select(action => action.FailCount).DefaultIfEmpty().Max() ?? 0;
-      if (this.failedTestsBuildNumber != job.LastBuild.Number || this.failedTestsCount != failedCount
-          || this.CurrentStatus?.State != GetState(job.LastBuild))
-      {
-        this.failedTests = null;
-        this.pipelineFailure = null;
-        this.failedTestsBuildNumber = job.LastBuild.Number;
-        this.failedTestsCount = failedCount;
-      }
-
-      if (GetState(job.LastBuild) is ObservationState.Failure or ObservationState.Unstable && failedCount > 0 && this.failedTests == null)
-      {
-        this.failedTests = await this.api.GetFailedTests(this, job.LastBuild.Number, cancellationToken);
-      }
-
-      if (GetState(job.LastBuild) is ObservationState.Failure or ObservationState.Unstable
-          && string.IsNullOrWhiteSpace(this.failedTests) && this.pipelineFailure == null
-          && !(job.LastBuild.Actions?.OfType<JenkinsBuildAction>()
-            .Any(action => action.FoundFailureCauses?.OfType<JenkinsFailureCause>().Any(cause => !string.IsNullOrWhiteSpace(cause.Name)) == true) ?? false))
-      {
-        this.pipelineFailure = await this.api.GetPipelineFailure(this, job.LastBuild.Number, cancellationToken);
-      }
-
       var currentStatus = this.CreateStatus(job.LastBuild);
       currentStatus.ActiveFixes = JenkinsVolunteerPanel.GetFixes(job.Description);
       return currentStatus;
@@ -571,9 +593,9 @@ namespace Soloplan.WhatsON.Jenkins
         newStatus.FailedTestCount = Math.Max(0, actions.Select(action => action.FailCount).DefaultIfEmpty().Max());
         var causes = actions.SelectMany(action => action.FoundFailureCauses ?? Array.Empty<JenkinsFailureCause>())
           .OfType<JenkinsFailureCause>().Select(cause => cause.Name).Where(name => !string.IsNullOrWhiteSpace(name)).Distinct().Take(5);
-        var diagnostics = latestBuild.Number == this.failedTestsBuildNumber
-          ? (string.IsNullOrWhiteSpace(this.failedTests) ? this.pipelineFailure : this.failedTests) : null;
-        newStatus.FailureDetails = string.Join(Environment.NewLine, causes.Append(diagnostics).Where(value => !string.IsNullOrWhiteSpace(value)));
+        newStatus.SkippedTestCount = Math.Max(0, actions.Select(action => action.SkipCount).DefaultIfEmpty().Max());
+        newStatus.FailureDetails = this.failureDetails.TryGetValue((JenkinsApi.UrlHelper.ProjectUrl(this, false), newStatus.BuildNumber, newStatus.State, newStatus.FailedTestCount, newStatus.SkippedTestCount), out var details)
+          ? details : string.Join(Environment.NewLine, causes);
       }
 
       newStatus.CommittedToThisBuild = latestBuild.ChangeSets?.OfType<ChangeSet>().SelectMany(p => p.ChangeSetItems ?? Array.Empty<ChangeSetItem>())

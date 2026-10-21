@@ -13,6 +13,8 @@ namespace Soloplan.WhatsON.Jenkins.Model
   {
     public int FailCount { get; set; }
 
+    public int SkipCount { get; set; }
+
     public IList<JenkinsFailureCause>? FoundFailureCauses { get; set; }
   }
 

@@ -9,6 +9,8 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 {
   using System;
   using System.Collections.ObjectModel;
+  using System.Threading;
+  using System.Threading.Tasks;
   using System.Windows.Input;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Model;
@@ -87,6 +89,8 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
     public bool Building { get; protected set; }
 
+    public bool IsLoadingFailureDetails { get; protected set; }
+
     public DateTime FinishTime => this.Time + this.Duration;
 
     public override DateTime Time
@@ -96,6 +100,10 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     }
 
     public TimeSpan Duration { get; protected set; }
+
+    public string TooltipDuration => this.Duration.TotalHours >= 1
+      ? $"{(int)this.Duration.TotalHours} h {this.Duration.Minutes:00} min"
+      : $"{(int)this.Duration.TotalMinutes} min {this.Duration.Seconds:00} s";
 
     public TimeSpan EstimatedDuration { get; protected set; }
 
@@ -122,6 +130,8 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     public bool BuildingNoLongerThenExpected { get; set; }
 
     public bool BuildingLongerThenExpected { get; set; }
+
+    public virtual Task LoadFailureDetails(CancellationToken token) => Task.CompletedTask;
 
     public override void Update(Status? newStatus)
     {

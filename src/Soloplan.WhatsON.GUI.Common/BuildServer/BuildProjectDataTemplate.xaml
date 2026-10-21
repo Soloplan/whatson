@@ -130,8 +130,9 @@
       <buildServer:HistoryBuildControl.ToolTip>
         <StackPanel>
           <buildServer:HistoryBuildTooltipControl DataContext="{Binding}" />
-          <buildServer:CulpritsControl Caption="{live:Text loc:Strings.ChangesByCaption}"
+          <buildServer:CulpritsControl Caption="{live:Text loc:Strings.ContributorsCaption}"
                                        CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
+          <buildServer:FailureDetailsControl />
         </StackPanel>
       </buildServer:HistoryBuildControl.ToolTip>
     </buildServer:HistoryBuildControl>
@@ -141,9 +142,11 @@
     <buildServer:ProjectRowControl ContextMenu="{DynamicResource BuildServerProjectContextMenu}">
       <buildServer:ProjectRowControl.ToolTip>
         <StackPanel DataContext="{Binding CurrentStatus}">
+          <buildServer:HistoryBuildTooltipControl />
           <buildServer:ProgressBarTooltipControl />
-          <buildServer:CulpritsControl Caption="{live:Text loc:Strings.ChangesByCaption}" CulpritsProp="{Binding Culprits}" />
+          <buildServer:CulpritsControl Caption="{live:Text loc:Strings.ContributorsCaption}" CulpritsProp="{Binding Culprits}" />
           <TextBlock Text="{Binding ErrorMessage}" Style="{DynamicResource ToolTipMessage}" />
+          <buildServer:FailureDetailsControl />
         </StackPanel>
       </buildServer:ProjectRowControl.ToolTip>
     </buildServer:ProjectRowControl>

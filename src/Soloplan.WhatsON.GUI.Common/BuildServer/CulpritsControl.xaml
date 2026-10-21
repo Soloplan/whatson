@@ -5,26 +5,20 @@
              xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:common="clr-namespace:Soloplan.WhatsON.GUI.Common"
+             xmlns:converters="clr-namespace:Soloplan.WhatsON.GUI.Common.Converters"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
   <UserControl.Resources>
-    <BooleanToVisibilityConverter x:Key="HasContributors" />
+    <converters:NullOrDefaultToVisibilityConverter x:Key="HasContributors" />
   </UserControl.Resources>
 
-  <StackPanel Margin="0,8,0,0" Visibility="{Binding HasItems, ElementName=Contributors, Converter={StaticResource HasContributors}}">
-    <TextBlock Text="{Binding Caption}" Foreground="{DynamicResource SettingsMuted}" FontSize="11" Margin="0,0,0,3" TextWrapping="Wrap" />
-    <ItemsControl x:Name="Contributors" ItemsSource="{Binding CulpritsProp}">
-      <ItemsControl.ItemTemplate>
-        <DataTemplate>
-          <DockPanel Margin="0,2,0,0">
-            <materialDesign:PackIcon Kind="AccountOutline" Width="14" Height="14" Margin="0,2,6,0"
-                                     DockPanel.Dock="Left" Foreground="{DynamicResource SettingsMuted}" />
-            <TextBlock Text="{Binding FullName}" TextWrapping="Wrap" />
-          </DockPanel>
-        </DataTemplate>
-      </ItemsControl.ItemTemplate>
-    </ItemsControl>
-  </StackPanel>
+  <Border BorderBrush="{DynamicResource SettingsBorder}" BorderThickness="0,1,0,0" Margin="0,14,0,0" Padding="0,12,18,0"
+          Visibility="{Binding CulpritsProp.Count, Converter={StaticResource HasContributors}}">
+    <StackPanel Orientation="Horizontal">
+      <TextBlock Text="{Binding CulpritsProp.Count}" FontWeight="Medium" Margin="0,0,4,0" />
+      <TextBlock Text="{Binding Caption}" Foreground="{DynamicResource SettingsMuted}" />
+    </StackPanel>
+  </Border>
 </UserControl>

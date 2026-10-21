@@ -19,44 +19,45 @@
 <ToolTip x:Key="HistoryBuildControlToolTip">
     <StackPanel>
       <buildServer:HistoryBuildTooltipControl DataContext="{Binding}" />
-      <StackPanel Visibility="{Binding CulpritsAndLastCommittedDifferent, Converter={StaticResource BoolToVisibility}}">
-        <buildServer:CulpritsControl Caption="{live:Text loc:Strings.CommitsByCaption}"
+      <DockPanel>
+        <buildServer:CulpritsControl Caption="{live:Text loc:Strings.CommittersCaption}" Visibility="{Binding DataContext.CulpritsAndLastCommittedDifferent, RelativeSource={RelativeSource AncestorType=DockPanel}, Converter={StaticResource BoolToVisibility}}"
                                      CulpritsProp="{Binding DataContext.CommittedToThisBuild, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
-      </StackPanel>
-      <buildServer:CulpritsControl Caption="{live:Text loc:Strings.BuildContributorsCaption}"
+        <buildServer:CulpritsControl Caption="{live:Text loc:Strings.ContributorsCaption}"
                                    CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
+      </DockPanel>
+      <buildServer:FailureDetailsControl />
     </StackPanel>
   </ToolTip>
 
   <ToolTip x:Key="BuildInformationControlToolTip"
            Visibility="{Binding Path=. , Converter={StaticResource MainStatusToVisibilityConverter}}">
     <StackPanel>
+      <buildServer:HistoryBuildTooltipControl />
       <buildServer:ProgressBarTooltipControl DataContext="{Binding}" />
-      <StackPanel Visibility="{Binding CulpritsAndLastCommittedDifferent, Converter={StaticResource BoolToVisibility}}">
-        <buildServer:CulpritsControl Caption="{live:Text loc:Strings.CommitsByCaption}"
+      <DockPanel>
+        <buildServer:CulpritsControl Caption="{live:Text loc:Strings.CommittersCaption}" Visibility="{Binding DataContext.CulpritsAndLastCommittedDifferent, RelativeSource={RelativeSource AncestorType=DockPanel}, Converter={StaticResource BoolToVisibility}}"
                                      CulpritsProp="{Binding DataContext.CommittedToThisBuild, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
-      </StackPanel>
-      <buildServer:CulpritsControl Caption="{live:Text loc:Strings.BuildContributorsCaption}"
-                                   CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
+        <buildServer:CulpritsControl Caption="{live:Text loc:Strings.ContributorsCaption}"
+                                     CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
+      </DockPanel>
       <TextBlock Text="{Binding ErrorMessage}" Style="{DynamicResource ToolTipMessage}" />
-      <TextBlock Text="{Binding FailureSummary}" TextWrapping="Wrap"
-                 Visibility="{Binding FailureSummary, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
+      <buildServer:FailureDetailsControl />
     </StackPanel>
   </ToolTip>
 
   <ToolTip x:Key="RowTooltip"
            Visibility="{Binding Path=. , Converter={StaticResource MainStatusToVisibilityConverter }}">
     <StackPanel DataContext="{Binding CurrentStatus}">
+      <buildServer:HistoryBuildTooltipControl />
       <buildServer:ProgressBarTooltipControl DataContext="{Binding}" />
-      <StackPanel Visibility="{Binding CulpritsAndLastCommittedDifferent, Converter={StaticResource BoolToVisibility}}">
-        <buildServer:CulpritsControl Caption="{live:Text loc:Strings.CommitsByCaption}"
+      <DockPanel>
+        <buildServer:CulpritsControl Caption="{live:Text loc:Strings.CommittersCaption}" Visibility="{Binding DataContext.CulpritsAndLastCommittedDifferent, RelativeSource={RelativeSource AncestorType=DockPanel}, Converter={StaticResource BoolToVisibility}}"
                                      CulpritsProp="{Binding DataContext.CommittedToThisBuild, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
-      </StackPanel>
-      <buildServer:CulpritsControl Caption="{live:Text loc:Strings.BuildContributorsCaption}"
-                                   CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
+        <buildServer:CulpritsControl Caption="{live:Text loc:Strings.ContributorsCaption}"
+                                     CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
+      </DockPanel>
       <TextBlock Text="{Binding ErrorMessage}" Style="{DynamicResource ToolTipMessage}" />
-      <TextBlock Text="{Binding FailureSummary}" TextWrapping="Wrap"
-                 Visibility="{Binding FailureSummary, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
+      <buildServer:FailureDetailsControl />
     </StackPanel>
   </ToolTip>
 

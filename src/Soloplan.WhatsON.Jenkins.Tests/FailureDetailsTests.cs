@@ -20,62 +20,161 @@ namespace Soloplan.WhatsON.Jenkins.Tests
   [TestFixture]
   public class FailureDetailsTests
   {
-    [TestCase(ObservationState.Failure, 1)]
-    [TestCase(ObservationState.Unstable, 1)]
-    [TestCase(ObservationState.Success, 0)]
-    [TestCase(ObservationState.Running, 0)]
-    [TestCase(ObservationState.Unknown, 0)]
-    public async Task OnlyBrokenBuildsLoadTestsAndSuccessfulReportsAreCached(ObservationState state, int expectedRequests)
+    [TestCase(ObservationState.Failure)]
+    [TestCase(ObservationState.Unstable)]
+    [TestCase(ObservationState.Success)]
+    [TestCase(ObservationState.Running)]
+    [TestCase(ObservationState.Unknown)]
+    public async Task PollingNeverRequestsFailureDiagnostics(ObservationState state)
     {
       var build = ApiHelper.GetBuild(state, 42);
-      build.Actions = new[] { new JenkinsBuildAction { FailCount = 2, FoundFailureCauses = new[] { new JenkinsFailureCause { Name = "Compilation failed" } } } };
+      build.Actions = new[] { new JenkinsBuildAction { FailCount = 2 } };
       var api = new FakeJenkinsApi();
       api.JobRequest += (_, args) => args.Result = new JenkinsJob { LastBuild = build, Builds = Array.Empty<JenkinsBuild>() };
-      var requests = 0;
-      api.FailedTestsRequest = (_, _) =>
-      {
-        requests++;
-        return Task.FromResult<string?>("Tests.First\nTests.Second");
-      };
+      api.FailedTestsRequest = (_, _) => throw new AssertionException("Polling must not load test reports.");
+      api.ConsoleErrorsRequest = (_, _) => throw new AssertionException("Polling must not download logs.");
+      api.PipelineFailureRequest = (_, _) => throw new AssertionException("Polling must not inspect pipeline nodes.");
       var connector = CreateConnector(api);
       await connector.QueryStatus(CancellationToken.None);
       await connector.QueryStatus(CancellationToken.None);
-
-      Assert.That(requests, Is.EqualTo(expectedRequests));
       Assert.That(connector.CurrentStatus?.State, Is.EqualTo(state));
-      Assert.That(connector.CurrentStatus?.FailedTestCount, Is.EqualTo(expectedRequests * 2));
-      if (expectedRequests > 0)
-      {
-        Assert.That(connector.CurrentStatus?.FailureDetails, Does.Contain("Compilation failed").And.Contain("Tests.First"));
-        Assert.That(connector.Snapshots.Single().Status.FailureDetails, Is.EqualTo(connector.CurrentStatus?.FailureDetails));
-      }
-      else
-      {
-        Assert.That(connector.CurrentStatus?.FailureDetails, Is.Null);
-      }
+      Assert.That(connector.CurrentStatus?.FailedTestCount, Is.EqualTo(state is ObservationState.Failure or ObservationState.Unstable ? 2 : 0));
     }
 
     [Test]
-    public async Task UnavailableReportsRetryAndNewBuildsNeverReuseOldTestNames()
+    public async Task HistoricalTestsLoadOnDemandAndNeverDownloadTheConsole()
     {
-      var build = ApiHelper.GetBuild(ObservationState.Unstable, 42);
-      build.Actions = new[] { new JenkinsBuildAction { FailCount = 1 } };
+      var failed = ApiHelper.GetBuild(ObservationState.Unstable, 42);
+      failed.Actions = new[] { new JenkinsBuildAction { FailCount = 6, SkipCount = 2000 } };
       var api = new FakeJenkinsApi();
-      api.JobRequest += (_, args) => args.Result = new JenkinsJob { LastBuild = build, Builds = new[] { build } };
+      api.JobRequest += (_, args) => args.Result = new JenkinsJob { LastBuild = ApiHelper.GetBuild(ObservationState.Running, 43), Builds = new[] { failed } };
       var requests = 0;
-      api.FailedTestsRequest = (number, _) => Task.FromResult<string?>(++requests == 1 ? null : $"Tests.Build{number}");
+      api.FailedTestsRequest = (number, _) => Task.FromResult<string?>($"Tests.Build{number}.Case{++requests}");
+      api.ConsoleErrorsRequest = (_, _) => throw new AssertionException("A failed-test report already explains this build.");
       var connector = CreateConnector(api);
       await connector.QueryStatus(CancellationToken.None);
-      Assert.That(connector.CurrentStatus?.State, Is.EqualTo(ObservationState.Unstable));
-      Assert.That(connector.CurrentStatus?.FailedTestCount, Is.EqualTo(1));
+      var status = connector.Snapshots.Single().Status;
+      Assert.That(requests, Is.Zero);
+      Assert.That(status.FailedTestCount, Is.EqualTo(6));
+      var details = await connector.LoadFailureDetails(status, CancellationToken.None);
+      Assert.That(details, Is.EqualTo("Tests.Build42.Case1"));
+      Assert.That(await connector.LoadFailureDetails(status, CancellationToken.None), Is.EqualTo(details));
+      Assert.That(requests, Is.EqualTo(1));
+      Assert.That(connector.CurrentStatus?.State, Is.EqualTo(ObservationState.Running));
       await connector.QueryStatus(CancellationToken.None);
-      Assert.That(connector.Snapshots.Single().Status.FailureDetails, Does.Contain("Tests.Build42"));
+      Assert.That(connector.Snapshots.Single().Status.FailureDetails, Is.EqualTo(details));
+    }
 
-      build.Number = 43;
-      await connector.QueryStatus(CancellationToken.None);
-      Assert.That(connector.CurrentStatus?.FailureDetails, Does.Contain("Tests.Build43").And.Not.Contain("Tests.Build42"));
-      Assert.That(connector.Snapshots.Single(snapshot => snapshot.Status.BuildNumber == 42).Status.FailureDetails, Does.Contain("Tests.Build42"));
+    [Test]
+    public async Task UnavailableReportsRetryWithoutLosingUsefulConsoleDetails()
+    {
+      var api = new FakeJenkinsApi();
+      var requests = 0;
+      api.FailedTestsRequest = (_, _) => Task.FromResult<string?>(++requests == 1 ? null : "Tests.LateResult");
+      api.ConsoleErrorsRequest = (_, _) => Task.FromResult<string?>("Test host process crashed");
+      var connector = CreateConnector(api);
+      var status = new JenkinsStatus(ObservationState.Unstable) { BuildNumber = 42, FailedTestCount = 1 };
+      Assert.That(await connector.LoadFailureDetails(status, CancellationToken.None), Is.EqualTo("Test host process crashed"));
+      Assert.That(await connector.LoadFailureDetails(status, CancellationToken.None), Is.EqualTo("Tests.LateResult"));
+      Assert.That(await connector.LoadFailureDetails(status, CancellationToken.None), Is.EqualTo("Tests.LateResult"));
+      Assert.That(requests, Is.EqualTo(2));
+    }
+
+    [Test]
+    public async Task ConsoleResultsAreCachedPerRunAndUnavailableRequestsRetry()
+    {
+      var api = new FakeJenkinsApi();
+      var requests = 0;
+      api.ConsoleErrorsRequest = (number, _) => Task.FromResult<string?>(++requests == 1 ? null : $"File{number}.cs: CS1002: ; expected");
+      var connector = CreateConnector(api);
+      var first = new JenkinsStatus(ObservationState.Failure) { BuildNumber = 42 };
+      Assert.That(await connector.LoadFailureDetails(first, CancellationToken.None), Is.Empty);
+      Assert.That(await connector.LoadFailureDetails(first, CancellationToken.None), Does.Contain("File42.cs"));
+      Assert.That(await connector.LoadFailureDetails(first, CancellationToken.None), Does.Contain("File42.cs"));
+      Assert.That(requests, Is.EqualTo(2));
+      var next = new JenkinsStatus(ObservationState.Failure) { BuildNumber = 43 };
+      Assert.That(await connector.LoadFailureDetails(next, CancellationToken.None), Does.Contain("File43.cs").And.Not.Contain("File42.cs"));
+      next.State = ObservationState.Success;
+      Assert.That(await connector.LoadFailureDetails(next, CancellationToken.None), Is.Null);
       Assert.That(requests, Is.EqualTo(3));
+    }
+
+    [Test]
+    public async Task ConcurrentHoversShareOneRequestAndCancellationNeverPoisonsTheCache()
+    {
+      var api = new FakeJenkinsApi();
+      var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+      var finish = new TaskCompletionSource<string?>(TaskCreationOptions.RunContinuationsAsynchronously);
+      var requests = 0;
+      api.ConsoleErrorsRequest = async (_, token) =>
+      {
+        requests++;
+        entered.TrySetResult();
+        return await finish.Task.WaitAsync(token);
+      };
+      var connector = CreateConnector(api);
+      var status = new JenkinsStatus(ObservationState.Failure) { BuildNumber = 42 };
+      using var cancellation = new CancellationTokenSource();
+      var cancelled = connector.LoadFailureDetails(status, cancellation.Token);
+      await entered.Task;
+      cancellation.Cancel();
+      Assert.That(async () => await cancelled, Throws.InstanceOf<OperationCanceledException>());
+      var first = connector.LoadFailureDetails(status, CancellationToken.None);
+      var second = connector.LoadFailureDetails(status, CancellationToken.None);
+      finish.SetResult("File.cs: CS1002: ; expected");
+      Assert.That(await first, Is.EqualTo(await second));
+      Assert.That(requests, Is.EqualTo(2));
+    }
+
+    [Test]
+    public async Task CacheIsBoundedAndLateCountsInvalidateOnlyTheirRun()
+    {
+      var api = new FakeJenkinsApi();
+      var requests = 0;
+      api.ConsoleErrorsRequest = (_, _) => Task.FromResult<string?>($"ERROR: problem {++requests}");
+      api.FailedTestsRequest = (_, _) => Task.FromResult<string?>("Tests.NewFailure");
+      var connector = CreateConnector(api);
+      for (var number = 1; number <= Connector.MaxSnapshots + 3; number++)
+      {
+        await connector.LoadFailureDetails(new JenkinsStatus(ObservationState.Failure) { BuildNumber = number }, CancellationToken.None);
+      }
+
+      var first = new JenkinsStatus(ObservationState.Failure) { BuildNumber = 1 };
+      await connector.LoadFailureDetails(first, CancellationToken.None);
+      Assert.That(requests, Is.EqualTo(Connector.MaxSnapshots + 4));
+      first.FailedTestCount = 1;
+      Assert.That(await connector.LoadFailureDetails(first, CancellationToken.None), Is.EqualTo("Tests.NewFailure"));
+    }
+
+    [Test]
+    public async Task EmptyCompletedLogsAreCachedButChangingTheProjectInvalidatesTheResult()
+    {
+      var requests = 0;
+      var api = new FakeJenkinsApi();
+      api.ConsoleErrorsRequest = (_, _) =>
+      {
+        requests++;
+        return Task.FromResult<string?>(string.Empty);
+      };
+      var connector = CreateConnector(api);
+      var status = new JenkinsStatus(ObservationState.Failure) { BuildNumber = 42 };
+      Assert.That(await connector.LoadFailureDetails(status, CancellationToken.None), Is.Empty);
+      Assert.That(await connector.LoadFailureDetails(status, CancellationToken.None), Is.Empty);
+      Assert.That(requests, Is.EqualTo(1));
+      connector.Configuration.GetConfigurationByKey(Connector.ProjectName).Value = "OtherProject";
+      await connector.LoadFailureDetails(status, CancellationToken.None);
+      Assert.That(requests, Is.EqualTo(2));
+    }
+
+    [Test]
+    public async Task SkippedTestsCannotHideCompilationFailures()
+    {
+      var api = new FakeJenkinsApi();
+      api.FailedTestsRequest = (_, _) => Task.FromResult<string?>("SKIPPED: Tests.NeedsEnvironment");
+      api.ConsoleErrorsRequest = (_, _) => Task.FromResult<string?>("File.cs: CS0111: duplicate member");
+      var connector = CreateConnector(api);
+      var status = new JenkinsStatus(ObservationState.Failure) { BuildNumber = 42, SkippedTestCount = 1 };
+      Assert.That(await connector.LoadFailureDetails(status, CancellationToken.None), Does.StartWith("File.cs: CS0111:").And.Contain("SKIPPED:"));
     }
 
     [Test]
@@ -86,63 +185,10 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         ?? throw new AssertionException("Missing job.");
       var api = new FakeJenkinsApi();
       api.JobRequest += (_, args) => args.Result = job;
-      api.FailedTestsRequest = (_, _) => throw new AssertionException("No failed-test count means no report request.");
       var connector = CreateConnector(api);
       await connector.QueryStatus(CancellationToken.None);
-
       Assert.That(connector.CurrentStatus?.FailureDetails, Is.EqualTo("Compiler error"));
       Assert.That(connector.CurrentStatus?.FailedTestCount, Is.Zero);
-    }
-
-    [Test]
-    public async Task PipelineFallbackDoesNotPreventLateTestReportsAndRecoveryClearsDetails()
-    {
-      var build = ApiHelper.GetBuild(ObservationState.Unstable, 42);
-      build.Actions = new[] { new JenkinsBuildAction { FailCount = 1 } };
-      var api = new FakeJenkinsApi();
-      api.JobRequest += (_, args) => args.Result = new JenkinsJob { LastBuild = build, Builds = new[] { build } };
-      var testRequests = 0;
-      var pipelineRequests = 0;
-      api.FailedTestsRequest = (_, _) => Task.FromResult<string?>(++testRequests == 1 ? null : "Tests.LateResult");
-      api.PipelineFailureRequest = (_, _) =>
-      {
-        pipelineRequests++;
-        return Task.FromResult<string?>("Test stage: UNSTABLE");
-      };
-      var connector = CreateConnector(api);
-      await connector.QueryStatus(CancellationToken.None);
-      Assert.That(connector.CurrentStatus?.FailureDetails, Is.EqualTo("Test stage: UNSTABLE"));
-      await connector.QueryStatus(CancellationToken.None);
-      Assert.That(connector.CurrentStatus?.FailureDetails, Is.EqualTo("Tests.LateResult"));
-      Assert.That(connector.Snapshots.Single().Status.FailureDetails, Is.EqualTo("Tests.LateResult"));
-      build = ApiHelper.GetBuild(ObservationState.Success, 43);
-      await connector.QueryStatus(CancellationToken.None);
-      Assert.That(connector.CurrentStatus?.FailureDetails, Is.Null);
-      Assert.That(pipelineRequests, Is.EqualTo(1));
-      Assert.That(testRequests, Is.EqualTo(2));
-    }
-
-    [Test]
-    public async Task PipelineFailuresWithoutTestActionsAreCachedPerBuild()
-    {
-      var build = ApiHelper.GetBuild(ObservationState.Failure, 42);
-      var api = new FakeJenkinsApi();
-      api.JobRequest += (_, args) => args.Result = new JenkinsJob { LastBuild = build, Builds = new[] { build } };
-      var requests = 0;
-      api.PipelineFailureRequest = (number, _) =>
-      {
-        requests++;
-        return Task.FromResult<string?>($"Stage {number}: script returned exit code 1");
-      };
-      var connector = CreateConnector(api);
-      await connector.QueryStatus(CancellationToken.None);
-      await connector.QueryStatus(CancellationToken.None);
-      Assert.That(requests, Is.EqualTo(1));
-      Assert.That(connector.CurrentStatus?.FailureDetails, Does.Contain("Stage 42"));
-      build = ApiHelper.GetBuild(ObservationState.Failure, 43);
-      await connector.QueryStatus(CancellationToken.None);
-      Assert.That(requests, Is.EqualTo(2));
-      Assert.That(connector.CurrentStatus?.FailureDetails, Does.Contain("Stage 43").And.Not.Contain("Stage 42"));
     }
 
     private static JenkinsConnector CreateConnector(IJenkinsApi api) => new JenkinsConnector(

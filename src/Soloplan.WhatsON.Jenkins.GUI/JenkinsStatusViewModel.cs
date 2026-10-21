@@ -26,6 +26,8 @@ namespace Soloplan.WhatsON.Jenkins.GUI
     private readonly CustomCommand clearVolunteer = new CustomCommand();
     private ObservableCollection<UserViewModel>? committedToThisBuild;
     private bool changingVolunteer;
+    private Status? buildStatus;
+    private int failureRequests;
 
     public JenkinsStatusViewModel(ConnectorViewModel model)
       : base(model)
@@ -51,6 +53,8 @@ namespace Soloplan.WhatsON.Jenkins.GUI
 
     public override void Update(Status? newStatus)
     {
+      this.buildStatus = newStatus;
+      this.SkippedTestCount = (newStatus as JenkinsStatus)?.SkippedTestCount ?? 0;
       base.Update(newStatus);
       this.VolunteerAssignments.Clear();
       var fixes = ReferenceEquals(this, this.Parent.CurrentStatus)
@@ -111,6 +115,37 @@ namespace Soloplan.WhatsON.Jenkins.GUI
                                                  this.CommittedToThisBuild.All(committer => committer.FullName != culprit.FullName));
 
       this.UpdateCalculatedFields();
+    }
+
+    public override async Task LoadFailureDetails(CancellationToken token)
+    {
+      if (this.buildStatus is not Status status || this.Building || this.State is not (ObservationState.Failure or ObservationState.Unstable)
+          || this.Parent.Connector is not JenkinsConnector connector)
+      {
+        return;
+      }
+
+      var number = this.BuildNumber;
+      var project = JenkinsApi.UrlHelper.ProjectUrl(connector, false);
+      var failed = status.FailedTestCount;
+      var skipped = (status as JenkinsStatus)?.SkippedTestCount ?? 0;
+      this.failureRequests++;
+      this.IsLoadingFailureDetails = true;
+      try
+      {
+        var details = await connector.LoadFailureDetails(status, token);
+        token.ThrowIfCancellationRequested();
+        if (this.BuildNumber == number && this.State == status.State && ReferenceEquals(this.Parent.Connector, connector)
+            && JenkinsApi.UrlHelper.ProjectUrl(connector, false) == project && this.FailedTestCount == failed
+            && ((this.buildStatus as JenkinsStatus)?.SkippedTestCount ?? 0) == skipped)
+        {
+          this.FailureDetails = details;
+        }
+      }
+      finally
+      {
+        this.IsLoadingFailureDetails = --this.failureRequests > 0;
+      }
     }
 
     private bool CanChangeVolunteer() => !this.changingVolunteer && this.BuildNumber > 0

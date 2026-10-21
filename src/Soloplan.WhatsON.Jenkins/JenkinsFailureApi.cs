@@ -27,8 +27,8 @@ namespace Soloplan.WhatsON.Jenkins
       {
         // Filter on the server so successful tests cannot crowd failures out of the response limit.
         var url = UrlHelper.BuildUrl(connector, buildNumber, false) + "/testReport/api/xml?tree=suites[cases[className,name,status]]&xpath="
-          + Uri.EscapeDataString("(//case[status='FAILED' or status='REGRESSION'])[position()<=5]") + "&wrapper=failures";
-        var body = await this.ReadFailureResponse(connector, url, "application/xml", token);
+          + Uri.EscapeDataString("(//case[status='FAILED' or status='REGRESSION'])[position()<=5] | (//case[status='SKIPPED'])[position()<=2]") + "&wrapper=failures";
+        var body = await this.ReadFailureResponse(connector, url, "application/xml", token).ConfigureAwait(false);
         if (body == null)
         {
           return null;
@@ -42,9 +42,11 @@ namespace Soloplan.WhatsON.Jenkins
         });
         var report = XDocument.Load(reader);
         var names = (report.Root?.Name == "failures" ? report.Root.Elements("case") : Enumerable.Empty<XElement>())
-          .Where(test => (string?)test.Element("status") is "FAILED" or "REGRESSION")
-          .Select(test => string.Join(".", new[] { (string?)test.Element("className"), (string?)test.Element("name") }.Where(value => !string.IsNullOrWhiteSpace(value))))
-          .Where(name => !string.IsNullOrWhiteSpace(name)).Distinct().Take(5);
+          .Where(test => (string?)test.Element("status") is "FAILED" or "REGRESSION" or "SKIPPED")
+          .OrderBy(test => (string?)test.Element("status") == "SKIPPED")
+          .Select(test => new { Name = string.Join(".", new[] { (string?)test.Element("className"), (string?)test.Element("name") }.Where(value => !string.IsNullOrWhiteSpace(value))), Skipped = (string?)test.Element("status") == "SKIPPED" })
+          .Where(test => !string.IsNullOrWhiteSpace(test.Name))
+          .Select(test => test.Skipped ? $"SKIPPED: {test.Name}" : test.Name).Distinct().Take(5);
         var summary = string.Join(Environment.NewLine, names);
         return string.IsNullOrEmpty(summary) ? null : summary;
       }
@@ -55,6 +57,36 @@ namespace Soloplan.WhatsON.Jenkins
       catch (Exception)
       {
         // Optional diagnostics must not hide the build status when a report is unavailable.
+        return null;
+      }
+    }
+
+    public async Task<string?> GetConsoleErrors(JenkinsConnector connector, int buildNumber, CancellationToken token)
+    {
+      try
+      {
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(token);
+        timeout.CancelAfter(TimeSpan.FromSeconds(30));
+        using var request = new HttpRequestMessage(HttpMethod.Get, UrlHelper.BuildUrl(connector, buildNumber, false) + "/consoleText");
+        this.Authenticate(request, connector);
+        request.Headers.Accept.ParseAdd("text/plain");
+        var client = request.Headers.Authorization == null ? pollingClient : authenticatedClient;
+        using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, timeout.Token).ConfigureAwait(false);
+        if (!response.IsSuccessStatusCode || !string.Equals(response.Content.Headers.ContentType?.MediaType, "text/plain", StringComparison.OrdinalIgnoreCase))
+        {
+          return null;
+        }
+
+        await using var stream = await response.Content.ReadAsStreamAsync(timeout.Token).ConfigureAwait(false);
+        using var reader = new StreamReader(stream);
+        return await JenkinsConsoleErrors.Read(reader, timeout.Token).ConfigureAwait(false);
+      }
+      catch (OperationCanceledException) when (token.IsCancellationRequested)
+      {
+        throw;
+      }
+      catch (Exception)
+      {
         return null;
       }
     }
@@ -121,14 +153,14 @@ namespace Soloplan.WhatsON.Jenkins
       this.Authenticate(request, connector);
       request.Headers.Accept.ParseAdd(mediaType);
       var client = request.Headers.Authorization == null ? pollingClient : authenticatedClient;
-      using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, timeout.Token);
+      using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, timeout.Token).ConfigureAwait(false);
       if (!response.IsSuccessStatusCode || !string.Equals(response.Content.Headers.ContentType?.MediaType, mediaType, StringComparison.OrdinalIgnoreCase))
       {
         return null;
       }
 
-      await response.Content.LoadIntoBufferAsync(MaximumResponseBytes, timeout.Token);
-      return await response.Content.ReadAsStringAsync(timeout.Token);
+      await response.Content.LoadIntoBufferAsync(MaximumResponseBytes, timeout.Token).ConfigureAwait(false);
+      return await response.Content.ReadAsStringAsync(timeout.Token).ConfigureAwait(false);
     }
   }
 }
