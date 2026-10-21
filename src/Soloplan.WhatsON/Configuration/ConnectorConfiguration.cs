@@ -95,6 +95,12 @@ namespace Soloplan.WhatsON.Configuration
     public IList<ConfigurationItem> ConfigurationItems { get; set; } = new List<ConfigurationItem>();
 
     /// <summary>
+    /// Gets or sets the server settings shared with other projects at runtime.
+    /// </summary>
+    [JsonIgnore]
+    public ConnectorConfiguration? ServerConfiguration { get; set; }
+
+    /// <summary>
     /// Gets or sets the configuration identifier.
     /// </summary>
     public Guid Identifier { get; set; }
@@ -145,6 +151,13 @@ namespace Soloplan.WhatsON.Configuration
     /// <returns>The configuration item.</returns>
     public ConfigurationItem GetConfigurationByKey(string key)
     {
+      var sharedItem = key == Model.Connector.ServerAddress ? null
+        : this.ServerConfiguration?.ConfigurationItems.FirstOrDefault(item => item.Key == key);
+      if (sharedItem != null)
+      {
+        return sharedItem;
+      }
+
       var configItem = this.ConfigurationItems.FirstOrDefault(x => x.Key == key);
       if (configItem == null)
       {

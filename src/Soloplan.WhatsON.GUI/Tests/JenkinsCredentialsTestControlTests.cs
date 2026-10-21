@@ -41,6 +41,8 @@ namespace Soloplan.WhatsON.GUI.Tests
         return Task.FromResult("alex");
       });
       Assert.That(control.TestButton.IsEnabled, Is.False);
+      Assert.That(control.TestButton.HorizontalAlignment, Is.EqualTo(HorizontalAlignment.Right));
+      Assert.That(control.Children[1].Visibility, Is.EqualTo(Visibility.Collapsed));
       Assert.That(ToolTipService.GetShowOnDisabled(control.TestButton), Is.True);
       Assert.That(control.TestButton.ToolTip, Is.EqualTo(Strings.JenkinsCredentialsRequired));
       control.TestAsync().GetAwaiter().GetResult();
@@ -53,11 +55,13 @@ namespace Soloplan.WhatsON.GUI.Tests
       control.TestAsync().GetAwaiter().GetResult();
       Assert.That(calls, Is.EqualTo(1));
       Assert.That(control.ResultText, Is.EqualTo(string.Format(Strings.JenkinsCredentialsValid, "alex")));
+      Assert.That(control.Children[1].Visibility, Is.EqualTo(Visibility.Visible));
       Assert.That(source.GetConfigurationByKey(JenkinsConnector.ApiToken).Value, Is.Null.Or.Empty, "Testing must not save the edited settings.");
 
       settings.GetConfigurationByKey(JenkinsConnector.ApiToken).Value = string.Empty;
       Assert.That(control.TestButton.IsEnabled, Is.False);
       Assert.That(control.ResultText, Is.Empty, "A previous success must disappear when credentials change.");
+      Assert.That(control.Children[1].Visibility, Is.EqualTo(Visibility.Collapsed));
     }
 
     [Test]

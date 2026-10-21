@@ -19,6 +19,8 @@ namespace Soloplan.WhatsON.GUI.Tests
   using System.Windows.Controls.Primitives;
   using System.Windows.Documents;
   using System.Windows.Markup;
+  using System.Windows.Media;
+  using System.Windows.Media.Imaging;
   using System.Windows.Threading;
   using NLog;
   using NLog.Config;
@@ -99,7 +101,7 @@ namespace Soloplan.WhatsON.GUI.Tests
         foreach (var mode in new[] { ApplicationTheme.Light, ApplicationTheme.Dark })
         {
           app.ApplyTheme(mode);
-          foreach (var section in new[] { 0, 1, 2 })
+          foreach (var section in new[] { 0, 1, 2, 3 })
           {
             sections.SelectedIndex = section;
             settings.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
@@ -170,12 +172,49 @@ namespace Soloplan.WhatsON.GUI.Tests
         Assert.That(((Frame)page.FindName("uxConnectorFrame")).Content, Is.InstanceOf<ConnectorConfigPage>());
         var connectorEditor = (ConnectorConfigPage)((Frame)page.FindName("uxConnectorFrame")).Content;
         var fields = (StackPanel)connectorEditor.FindName("StackPanel");
+        Assert.That(fields.Children.OfType<Soloplan.WhatsON.Jenkins.GUI.JenkinsCredentialsTestControl>(), Is.Empty);
+        Assert.That(fields.Children.OfType<PasswordBox>(), Is.Empty, "Credentials belong to the server rather than individual projects.");
+        var navigation = (ListBox)populatedSettings.FindName("ConfigTopicsListBox");
+        navigation.SelectedItem = navigation.Items.OfType<ListBoxItem>().Single(item => (string)item.Tag == ConfigWindow.ServersListItemTag);
+        populatedSettings.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+        var serverPage = (ServerConfigPage)((Frame)populatedSettings.FindName("ConfigFrame")).Content;
+        var serverPanel = (DockPanel)serverPage.Content;
+        var serverEditor = (ConnectorConfigPage)serverPanel.Children.OfType<Frame>().Single().Content;
+        fields = (StackPanel)serverEditor.FindName("StackPanel");
         var testControl = fields.Children.OfType<Soloplan.WhatsON.Jenkins.GUI.JenkinsCredentialsTestControl>().Single();
         Assert.That(fields.Children[fields.Children.IndexOf(testControl) - 1], Is.TypeOf<PasswordBox>(), "The test belongs directly below the API token.");
         Assert.That(testControl.TestButton.IsEnabled, Is.False);
+        Localizer.ApplyLanguage(ApplicationLanguage.German);
+        foreach (var theme in new[] { ApplicationTheme.Light, ApplicationTheme.Dark })
+        {
+          app.ApplyTheme(theme);
+          populatedSettings.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+          var root = (FrameworkElement)populatedSettings.Content;
+          root.Measure(new Size(850, 580));
+          root.Arrange(new Rect(0, 0, 850, 580));
+          root.UpdateLayout();
+          var serverPicker = (ComboBox)serverPanel.Children.OfType<Border>().Single().Child;
+          Assert.That(serverPicker.Foreground, Is.EqualTo(app.FindResource("MaterialDesignBody")));
+          Assert.That(serverPanel.Children.OfType<TextBlock>().Last().Foreground, Is.EqualTo(app.FindResource("SettingsMuted")));
+          var navigationLabel = ((StackPanel)((ListBoxItem)navigation.SelectedItem).Content).Children.OfType<TextBlock>().Single();
+          Assert.That(navigationLabel.Text, Is.EqualTo("Server"));
+          Assert.That(navigationLabel.DesiredSize.Width, Is.LessThanOrEqualTo(navigationLabel.ActualWidth));
+          var bitmap = new RenderTargetBitmap(850, 580, 96, 96, PixelFormats.Pbgra32);
+          bitmap.Render(root);
+          var encoder = new PngBitmapEncoder();
+          encoder.Frames.Add(BitmapFrame.Create(bitmap));
+          var preview = Path.Combine(TestContext.CurrentContext.TestDirectory, $"ServerSettings-{theme}.png");
+          using (var stream = File.Create(preview))
+          {
+            encoder.Save(stream);
+          }
+
+          TestContext.AddTestAttachment(preview);
+        }
       }
       finally
       {
+        Localizer.ApplyLanguage(projectSettings.Language);
         populatedSettings.Close();
       }
 
@@ -371,9 +410,9 @@ namespace Soloplan.WhatsON.GUI.Tests
     private static void VerifySettingsPageEdges(ConfigWindow settings, ListBox sections, Frame frame)
     {
       var root = (FrameworkElement)settings.Content;
-      foreach (var section in new[] { 0, 2 })
+      foreach (var section in new[] { ConfigWindow.MainListItemTag, ConfigWindow.AboutListItemTag })
       {
-        sections.SelectedIndex = section;
+        sections.SelectedItem = sections.Items.OfType<ListBoxItem>().Single(item => (string)item.Tag == section);
         settings.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
         var viewer = (ScrollViewer)((Page)frame.Content).Content;
         var content = (StackPanel)viewer.Content;
@@ -480,7 +519,7 @@ namespace Soloplan.WhatsON.GUI.Tests
             Assert.That(settings.Title, Is.EqualTo("Einstellungen"));
             var sections = (ListBox)settings.FindName("ConfigTopicsListBox");
             var frame = (Frame)settings.FindName("ConfigFrame");
-            foreach (var section in new[] { 0, 1, 2 })
+            foreach (var section in new[] { 0, 1, 2, 3 })
             {
               sections.SelectedIndex = section;
               settings.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);

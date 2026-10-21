@@ -538,8 +538,8 @@ Erwarteter Verbindungstyp: {3}</value>
   <data name="VolunteerUpdateFailed" xml:space="preserve"><value>Die Übernahme konnte nicht geändert werden. Prüfen Sie Ihre Jenkins-Zugangsdaten und die Berechtigung Run/Update.</value></data>
   <data name="TokenCannotBeDecrypted" xml:space="preserve"><value>Gespeichertes Token kann nicht gelesen werden. Geben Sie das API-Token erneut ein.</value></data>
   <data name="TokenCannotBeSaved" xml:space="preserve"><value>Das API-Token konnte nicht verschlüsselt werden. Prüfen Sie den Zugriff auf Ihren lokalen Anwendungsdatenordner.</value></data>
-  <data name="VolunteerToFixDescription" xml:space="preserve"><value>Die Behebung des aktuellen fehlgeschlagenen oder instabilen Builds übernehmen.&#10;Benötigt Jenkins-Benutzername und API-Token unter „Bearbeiten“.&#10;Das Konto muss Build-Beschreibungen bearbeiten dürfen.</value></data>
-  <data name="ClearVolunteerDescription" xml:space="preserve"><value>Die Übernahme für diesen Build aufheben, auch die einer anderen Person.&#10;Benötigt Jenkins-Benutzername und API-Token unter „Bearbeiten“.&#10;Das Konto muss Build-Beschreibungen bearbeiten dürfen.</value></data>
+  <data name="VolunteerToFixDescription" xml:space="preserve"><value>Die Behebung des aktuellen fehlgeschlagenen oder instabilen Builds übernehmen.&#10;Benötigt Jenkins-Benutzername und API-Token unter Einstellungen > Server.&#10;Das Konto muss Build-Beschreibungen bearbeiten dürfen.</value></data>
+  <data name="ClearVolunteerDescription" xml:space="preserve"><value>Die Übernahme für diesen Build aufheben, auch die einer anderen Person.&#10;Benötigt Jenkins-Benutzername und API-Token unter Einstellungen > Server.&#10;Das Konto muss Build-Beschreibungen bearbeiten dürfen.</value></data>
   <data name="TestApiCredentials" xml:space="preserve"><value>Zugangsdaten testen</value></data>
   <data name="JenkinsCredentialsRequired" xml:space="preserve"><value>Geben Sie Jenkins-Adresse, Benutzername und API-Token ein, um die Anmeldung zu testen.</value></data>
   <data name="JenkinsCredentialsTesting" xml:space="preserve"><value>Wird getestet…</value></data>
@@ -552,4 +552,8 @@ Erwarteter Verbindungstyp: {3}</value>
   <data name="FailedTestsFormat" xml:space="preserve">
     <value>Fehlgeschlagene Tests: {0}</value>
   </data>
+  <data name="ServerCredentials" xml:space="preserve"><value>Server-Zugangsdaten</value></data>
+  <data name="ServerCredentialsHint" xml:space="preserve"><value>Jenkins-Benutzername und API-Token unter Einstellungen > Server konfigurieren. Alle Projekte auf demselben Server verwenden dieses Konto.</value></data>
+  <data name="ServerCredentialsDescription" xml:space="preserve"><value>Server auswählen, um die Zugangsdaten für alle seine Projekte zu konfigurieren. Fehlt der Server, zuerst ein Projekt hinzufügen.</value></data>
+  <data name="Servers" xml:space="preserve"><value>Server</value></data>
 </root>

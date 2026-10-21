@@ -139,6 +139,7 @@ namespace Soloplan.WhatsON
       log.Debug("Loading configuration form file {file}", this.ConfigFile);
       var result = Load<ApplicationConfiguration>(this.ConfigFile);
       this.HandleConfigurationErrors(result);
+      result.InitializeServerConfigurations();
       return result;
     }
 

@@ -252,6 +252,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
 
       log.Debug("Initializing {name}", nameof(ConnectorTreeViewModel));
+      configuration.InitializeServerConfigurations();
       var grouping = configuration.ConnectorsConfiguration.ToLookup(config => config.GetConfigurationByKey(Connector.Category).Value?.Trim() ?? string.Empty);
       var groupNames = configuration.GetGroupNames().ToList();
       int index = 0;

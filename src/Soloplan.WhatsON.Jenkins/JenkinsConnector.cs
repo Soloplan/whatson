@@ -25,8 +25,8 @@ namespace Soloplan.WhatsON.Jenkins
     typeof(bool),
     Priority = 400)] // defines use of Display URL API Plugin https://wiki.jenkins.io/display/JENKINS/Display+URL+API+Plugin
   [NotificationConfigurationItem(NotificationsVisbility, typeof(ConnectorNotificationConfiguration), Priority = 1600000000)]
-  [ConfigurationItem(UserName, typeof(string), Priority = 410)]
-  [ConfigurationItem(ApiToken, typeof(SecretProtector), Priority = 420)]
+  [ConfigurationItem(UserName, typeof(string), Priority = 410, IsServerSetting = true)]
+  [ConfigurationItem(ApiToken, typeof(SecretProtector), Priority = 420, IsServerSetting = true)]
   public class JenkinsConnector : Connector, IBatchedConnector
   {
     public const string ConnectorName = "Jenkins";
@@ -99,9 +99,9 @@ namespace Soloplan.WhatsON.Jenkins
 
     public Uri? BatchAddress => Uri.TryCreate(this.Address?.TrimEnd('/') + "/", UriKind.Absolute, out var address) ? address : null;
 
-    public string? AuthenticationUser => this.Configuration.ConfigurationItems.FirstOrDefault(item => item.Key == UserName)?.Value?.Trim();
+    public string? AuthenticationUser => (this.Configuration.ServerConfiguration ?? this.Configuration).ConfigurationItems.FirstOrDefault(item => item.Key == UserName)?.Value?.Trim();
 
-    public string? EncryptedApiToken => this.Configuration.ConfigurationItems.FirstOrDefault(item => item.Key == ApiToken)?.Value;
+    public string? EncryptedApiToken => (this.Configuration.ServerConfiguration ?? this.Configuration).ConfigurationItems.FirstOrDefault(item => item.Key == ApiToken)?.Value;
 
     public bool HasApiCredentials => !string.IsNullOrWhiteSpace(this.AuthenticationUser) && !string.IsNullOrEmpty(this.EncryptedApiToken);
 

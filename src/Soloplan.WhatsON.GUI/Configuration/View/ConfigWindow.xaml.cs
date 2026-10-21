@@ -32,6 +32,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     public const string ConnectorsListItemTag = "Connectors";
 
+    public const string ServersListItemTag = "Servers";
+
     /// <summary>
     /// The settings About item tag.
     /// </summary>
@@ -250,6 +252,9 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
         case AboutListItemTag:
           this.aboutPage = this.aboutPage ?? new AboutPage(this.ConfigurationViewModel);
           this.ConfigFrame.Content = this.aboutPage;
+          return;
+        case ServersListItemTag:
+          this.ConfigFrame.Content = new ServerConfigPage(this.ConfigurationViewModel);
           return;
       }
     }

@@ -29,7 +29,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
   {
     private readonly IConfigurationItem[] settings;
     private readonly Func<JenkinsConnector, CancellationToken, Task<string>> test;
-    private readonly TextBlock result = new TextBlock { TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 8, 0, 0) };
+    private readonly TextBlock result = new TextBlock { TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 8, 0, 0), Visibility = Visibility.Collapsed };
     private CancellationTokenSource? pending;
 
     public JenkinsCredentialsTestControl(IConfigurationItemProvider configuration)
@@ -42,8 +42,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       this.test = test;
       this.settings = new[] { Connector.ServerAddress, JenkinsConnector.UserName, JenkinsConnector.ApiToken }
         .Select(configuration.GetConfigurationByKey).ToArray();
-      this.Margin = new Thickness(0, 0, 0, 16);
-      this.TestButton = new Button { HorizontalAlignment = HorizontalAlignment.Left, MinWidth = 110 };
+      this.TestButton = new Button { HorizontalAlignment = HorizontalAlignment.Right, MinWidth = 110 };
       this.TestButton.SetBinding(ToolTipProperty, TextExtension.CreateBinding(() => Strings.JenkinsCredentialsRequired));
       ToolTipService.SetShowOnDisabled(this.TestButton, true);
       AutomationProperties.SetLiveSetting(this.result, AutomationLiveSetting.Polite);
@@ -132,7 +131,11 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       this.SetResult(() => string.Empty);
     }
 
-    private void SetResult(Func<string> message) => this.result.SetBinding(TextBlock.TextProperty, TextExtension.CreateBinding(message));
+    private void SetResult(Func<string> message)
+    {
+      this.result.SetBinding(TextBlock.TextProperty, TextExtension.CreateBinding(message));
+      this.result.Visibility = string.IsNullOrEmpty(this.result.Text) ? Visibility.Collapsed : Visibility.Visible;
+    }
 
     private void RefreshButton()
     {

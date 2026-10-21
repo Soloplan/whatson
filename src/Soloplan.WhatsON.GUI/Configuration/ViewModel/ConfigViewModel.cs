@@ -58,6 +58,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// </summary>
     public ConnectorViewModelCollection Connectors { get; private set; } = new ConnectorViewModelCollection();
 
+    public ConnectorViewModelCollection Servers { get; } = new ConnectorViewModelCollection();
+
     /// <summary>
     /// Gets the groups retained independently of the projects being edited.
     /// </summary>
@@ -232,6 +234,19 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
       try
       {
         this.Configuration = configurationSource;
+        configurationSource.InitializeServerConfigurations();
+        var serverSource = new ApplicationConfiguration();
+        foreach (var server in configurationSource.ServerConfigurations)
+        {
+          serverSource.ConnectorsConfiguration.Add(new ConnectorConfiguration(
+            server.Type,
+            server.Name,
+            server.ConfigurationItems.Select(item => new ConfigurationItem(item.Key, item.Value)).ToList()) { Identifier = server.Identifier });
+        }
+
+        this.Servers.CollectionItemPropertyChanged -= this.ConnectorsCollectionItemPropertyChanged;
+        this.Servers.Load(serverSource);
+        this.Servers.CollectionItemPropertyChanged += this.ConnectorsCollectionItemPropertyChanged;
         this.Groups = configurationSource.GetGroupNames().ToList();
         if (this.Connectors == null)
         {
@@ -351,6 +366,38 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     }
 
     /// <summary>
+    /// Adds server editors for newly added projects, preserving unsaved credentials.
+    /// </summary>
+    public void RefreshServers()
+    {
+      var working = new ApplicationConfiguration();
+      foreach (var server in this.Servers)
+      {
+        working.ServerConfigurations.Add(CreateServerConfiguration(server));
+      }
+
+      foreach (var project in this.Connectors.Where(item => item.SourceConnectorPlugin != null))
+      {
+        var snapshot = project.CreateNewConnectorConfiguration();
+        snapshot.ServerConfiguration = project.SourceConnectorConfiguration?.ServerConfiguration;
+        working.ConnectorsConfiguration.Add(snapshot);
+      }
+
+      working.InitializeServerConfigurations();
+      foreach (var server in working.ServerConfigurations.Where(item => this.Servers.All(existing => existing.Identifier != item.Identifier)))
+      {
+        var model = new ConnectorViewModel();
+        model.Load(server);
+        this.Servers.Add(model);
+      }
+    }
+
+    private static ConnectorConfiguration CreateServerConfiguration(ConnectorViewModel server) => new ConnectorConfiguration(
+      server.SourceConnectorConfiguration?.Type ?? throw new InvalidOperationException("No server configuration is loaded."),
+      server.Name,
+      server.ConfigurationItems.Select(item => item.CreateNewConfigurationItem()).ToList()) { Identifier = server.Identifier };
+
+    /// <summary>
     /// Called when significant property of the view model was changed.
     /// </summary>
     private void MarkModified()
@@ -367,6 +414,14 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <param name="configuration">The configuration.</param>
     private void ApplyMainSettingsToConfiguration(ApplicationConfiguration configuration)
     {
+      this.RefreshServers();
+      configuration.ServerConfigurations.Clear();
+      foreach (var server in this.Servers)
+      {
+        configuration.ServerConfigurations.Add(CreateServerConfiguration(server));
+      }
+
+      configuration.InitializeServerConfigurations();
       configuration.Groups.Clear();
       foreach (var group in this.Groups)
       {
