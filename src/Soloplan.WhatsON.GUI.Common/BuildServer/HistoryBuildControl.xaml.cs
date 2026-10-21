@@ -17,6 +17,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     public HistoryBuildControl()
     {
       this.InitializeComponent();
+      BuildToolTip.Attach(this);
     }
   }
 }

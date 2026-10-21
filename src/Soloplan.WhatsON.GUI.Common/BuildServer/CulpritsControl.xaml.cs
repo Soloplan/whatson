@@ -22,7 +22,8 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     public static readonly DependencyProperty CulpritsPropProperty = DependencyProperty.Register(
       nameof(CulpritsProp),
       typeof(IList),
-      typeof(CulpritsControl));
+      typeof(CulpritsControl),
+      new PropertyMetadata(null, (control, _) => ((CulpritsControl)control).PeopleExpander?.SetCurrentValue(Expander.IsExpandedProperty, false)));
 
     /// <summary>
     /// Dependency property for <see cref="CulpritsProp" />.
@@ -33,6 +34,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     {
       this.InitializeComponent();
       this.DataContext = this;
+      this.Unloaded += (_, _) => this.PeopleExpander.IsExpanded = false;
     }
 
     public IList CulpritsProp

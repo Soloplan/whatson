@@ -12,8 +12,14 @@ namespace Soloplan.WhatsON.GUI.Tests
   using System.Globalization;
   using System.IO;
   using System.Linq;
+  using System.Reflection;
   using System.Windows;
+  using System.Windows.Automation;
+  using System.Windows.Automation.Peers;
+  using System.Windows.Automation.Provider;
   using System.Windows.Controls;
+  using System.Windows.Controls.Primitives;
+  using System.Windows.Input;
   using System.Windows.Markup;
   using System.Windows.Media;
   using System.Windows.Media.Imaging;
@@ -44,6 +50,7 @@ namespace Soloplan.WhatsON.GUI.Tests
           foreach (var theme in new[] { ApplicationTheme.Light, ApplicationTheme.Dark })
           {
             app.ApplyTheme(theme);
+            VerifyBuildTooltipLifetime(target);
             CheckPopup(new ToolTip { Content = "release/image" }, target, app);
             CheckPopup((ToolTip)new BuildNumberControl().ToolTip, target, app);
             foreach (var plugin in PluginManager.Instance.GetPresentationPlugins())
@@ -138,6 +145,10 @@ namespace Soloplan.WhatsON.GUI.Tests
     private static void CheckPopup(ToolTip tooltip, UIElement target, App app, string? expectedText = null)
     {
       tooltip.PlacementTarget = target;
+      if (expectedText != null)
+      {
+        tooltip.StaysOpen = false;
+      }
       try
       {
         tooltip.IsOpen = true;
@@ -177,26 +188,139 @@ namespace Soloplan.WhatsON.GUI.Tests
         Assert.That(tooltip.ActualHeight - lastTextBottom, Is.InRange(15, 21), "Tooltip content must not end with blank spacer rows.");
         if (expectedText != null && CultureInfo.CurrentUICulture.Name == "de-DE" && text.Any(block => block.Text == Strings.CommittersCaption))
         {
-          var bitmap = new RenderTargetBitmap((int)Math.Ceiling(tooltip.ActualWidth), (int)Math.Ceiling(tooltip.ActualHeight), 96, 96, PixelFormats.Pbgra32);
-          bitmap.Render(tooltip);
-          var encoder = new PngBitmapEncoder();
-          encoder.Frames.Add(BitmapFrame.Create(bitmap));
-          var folder = Path.Combine(AppContext.BaseDirectory, "TestResults");
-          Directory.CreateDirectory(folder);
-          var suffix = ((SolidColorBrush)tooltip.Background).Color.R < 100 ? "dark" : "light";
-          using var stream = File.Create(Path.Combine(folder, "compact-tooltip-" + suffix + ".png"));
-          encoder.Save(stream);
+          SavePreview(tooltip, "compact-tooltip-");
         }
 
         var dark = ((SolidColorBrush)tooltip.Background).Color.R < 100;
         app.ApplyTheme(dark ? ApplicationTheme.Light : ApplicationTheme.Dark);
         Assert.That(tooltip.Background, Is.SameAs(app.Resources["SettingsSurface"]), "Open tooltips follow theme changes.");
         app.ApplyTheme(dark ? ApplicationTheme.Dark : ApplicationTheme.Light);
+        if (expectedText != null)
+        {
+          VerifyPeopleExpansion(tooltip);
+        }
       }
       finally
       {
         tooltip.IsOpen = false;
       }
+    }
+
+    private static void VerifyPeopleExpansion(ToolTip tooltip)
+    {
+      var collapsedHeight = tooltip.ActualHeight;
+      var expanders = Descendants<Expander>(tooltip).Where(expander => expander.IsVisible).ToList();
+      Assert.That(expanders, Is.Not.Empty);
+      foreach (var expander in expanders)
+      {
+        Assert.That(expander.IsExpanded, Is.False, "Every build opens with compact contributor counts.");
+        var toggle = Descendants<ToggleButton>(expander).Single();
+        Assert.That(tooltip.InputHitTest(toggle.TranslatePoint(new Point(toggle.ActualWidth / 2, toggle.ActualHeight / 2), tooltip)), Is.Not.Null);
+        var peer = UIElementAutomationPeer.CreatePeerForElement(expander) ?? throw new AssertionException("The contributor group must be accessible.");
+        Assert.That(peer.GetName(), Is.Not.Empty);
+        var provider = peer.GetPattern(PatternInterface.ExpandCollapse) as IExpandCollapseProvider ?? throw new AssertionException("Expected an expandable contributor group.");
+        provider.Expand();
+        tooltip.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+        tooltip.UpdateLayout();
+        Assert.That(toggle.IsChecked, Is.True);
+        var togglePeer = UIElementAutomationPeer.CreatePeerForElement(toggle) ?? throw new AssertionException("Expected an accessible header.");
+        var toggleProvider = togglePeer.GetPattern(PatternInterface.Toggle) as IToggleProvider ?? throw new AssertionException("Expected a toggleable header.");
+        toggleProvider.Toggle();
+        Assert.That(expander.IsExpanded, Is.False);
+        toggleProvider.Toggle();
+        Assert.That(expander.IsExpanded, Is.True);
+        var names = (ScrollViewer)expander.Content;
+        Assert.That(names.IsVisible, Is.True);
+        Assert.That(names.ActualHeight, Is.InRange(1, 160));
+        Assert.That(Descendants<TextBlock>(names).Any(text => text.IsVisible && text.Text.Contains(' ')), Is.True);
+        Assert.That(tooltip.ActualWidth, Is.LessThanOrEqualTo(440));
+        Assert.That(tooltip.ActualHeight, Is.LessThan(650), "Large contributor groups scroll within the compact tooltip.");
+      }
+
+      if (CultureInfo.CurrentUICulture.Name == "de-DE" && expanders.Count > 1)
+      {
+        SavePreview(tooltip, "compact-tooltip-expanded-");
+      }
+
+      foreach (var expander in expanders)
+      {
+        expander.IsExpanded = false;
+      }
+
+      tooltip.UpdateLayout();
+      Assert.That(tooltip.ActualHeight, Is.LessThanOrEqualTo(collapsedHeight + 1));
+      expanders[0].IsExpanded = true;
+      tooltip.IsOpen = false;
+      tooltip.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+      tooltip.IsOpen = true;
+      tooltip.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+      Assert.That(expanders[0].IsExpanded, Is.False, "Closing the tooltip resets the expanded names.");
+    }
+
+    private static void VerifyBuildTooltipLifetime(Button target)
+    {
+      var previousContent = target.Content;
+      foreach (var owner in new FrameworkElement[] { new HistoryBuildControl(), new ProjectRowControl() })
+      {
+        var tooltip = new ToolTip { Content = "Build contributors" };
+        owner.ToolTip = owner is HistoryBuildControl ? new StackPanel { Children = { new TextBlock { Text = "Build contributors" } } } : tooltip;
+        owner.DataContext = new ConnectorViewModel { Name = "Project" }.CurrentStatus;
+        target.Content = owner;
+        target.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+        var args = RaiseTooltipOpening(owner);
+        tooltip = owner.ToolTip as ToolTip ?? throw new AssertionException("Expected a reusable tooltip wrapper.");
+        Assert.That(args.Handled, Is.True, "Build tooltips own their lifetime so clicks do not dismiss contributor lists.");
+        Assert.That(tooltip.IsOpen, Is.True);
+        Assert.That(tooltip.StaysOpen, Is.False, "The native popup must accept mouse input and close on outside clicks.");
+        Assert.That(tooltip.DataContext, Is.SameAs(owner.DataContext));
+        var source = PresentationSource.FromVisual(tooltip) ?? throw new AssertionException("Expected a visible popup.");
+        tooltip.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, source, Environment.TickCount, Key.Escape) { RoutedEvent = Keyboard.PreviewKeyDownEvent });
+        owner.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+        Assert.That(tooltip.IsOpen, Is.False, "Escape dismisses an interactive build tooltip.");
+        args.Handled = false;
+        owner.RaiseEvent(args);
+        owner.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+        Assert.That(tooltip.IsOpen, Is.True);
+        owner.RaiseEvent(new RoutedEventArgs(FrameworkElement.UnloadedEvent));
+        owner.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+        Assert.That(tooltip.IsOpen, Is.False, "Removing a build closes its tooltip.");
+      }
+
+      var shared = new ToolTip { Content = "Shared build details" };
+      var first = new HistoryBuildControl { ToolTip = shared };
+      var second = new ProjectRowControl { ToolTip = shared };
+      target.Content = new StackPanel { Children = { first, second } };
+      target.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+      RaiseTooltipOpening(first);
+      RaiseTooltipOpening(second);
+      Assert.That(shared.PlacementTarget, Is.SameAs(second));
+      first.RaiseEvent(new RoutedEventArgs(FrameworkElement.UnloadedEvent));
+      Assert.That(shared.IsOpen, Is.True, "The previous build must not close a reused tooltip.");
+      second.RaiseEvent(new RoutedEventArgs(FrameworkElement.UnloadedEvent));
+      Assert.That(shared.IsOpen, Is.False);
+      target.Content = previousContent;
+    }
+
+    private static ToolTipEventArgs RaiseTooltipOpening(FrameworkElement owner)
+    {
+      var args = Activator.CreateInstance(typeof(ToolTipEventArgs), BindingFlags.Instance | BindingFlags.NonPublic, null, new object[] { true }, CultureInfo.InvariantCulture)
+        as ToolTipEventArgs ?? throw new AssertionException("Expected the framework tooltip-opening event.");
+      owner.RaiseEvent(args);
+      owner.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+      return args;
+    }
+
+    private static void SavePreview(ToolTip tooltip, string prefix)
+    {
+      var bitmap = new RenderTargetBitmap((int)Math.Ceiling(tooltip.ActualWidth), (int)Math.Ceiling(tooltip.ActualHeight), 96, 96, PixelFormats.Pbgra32);
+      bitmap.Render(tooltip);
+      var encoder = new PngBitmapEncoder();
+      encoder.Frames.Add(BitmapFrame.Create(bitmap));
+      var folder = Path.Combine(AppContext.BaseDirectory, "TestResults");
+      Directory.CreateDirectory(folder);
+      var suffix = ((SolidColorBrush)tooltip.Background).Color.R < 100 ? "dark" : "light";
+      using var stream = File.Create(Path.Combine(folder, prefix + suffix + ".png"));
+      encoder.Save(stream);
     }
 
     private static IEnumerable<T> Descendants<T>(DependencyObject parent)

@@ -16,9 +16,61 @@
 
   <Border BorderBrush="{DynamicResource SettingsBorder}" BorderThickness="0,1,0,0" Margin="0,14,0,0" Padding="0,12,18,0"
           Visibility="{Binding CulpritsProp.Count, Converter={StaticResource HasContributors}}">
-    <StackPanel Orientation="Horizontal">
-      <TextBlock Text="{Binding CulpritsProp.Count}" FontWeight="Medium" Margin="0,0,4,0" />
-      <TextBlock Text="{Binding Caption}" Foreground="{DynamicResource SettingsMuted}" />
-    </StackPanel>
+    <Expander x:Name="PeopleExpander" HorizontalAlignment="Left" MaxWidth="180" Foreground="{DynamicResource MaterialDesignBody}">
+      <AutomationProperties.Name>
+        <MultiBinding StringFormat="{}{0} {1}"><Binding Path="CulpritsProp.Count" /><Binding Path="Caption" /></MultiBinding>
+      </AutomationProperties.Name>
+      <Expander.Template>
+        <ControlTemplate TargetType="Expander">
+          <StackPanel>
+            <ToggleButton IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                          Content="{TemplateBinding Header}" HorizontalAlignment="Left" Cursor="Hand"
+                          Style="{x:Null}" Foreground="{TemplateBinding Foreground}" FontSize="{TemplateBinding FontSize}"
+                          AutomationProperties.Name="{Binding Path=(AutomationProperties.Name), RelativeSource={RelativeSource TemplatedParent}}">
+              <ToggleButton.Template>
+                <ControlTemplate TargetType="ToggleButton">
+                  <Border x:Name="HeaderSurface" Background="Transparent" CornerRadius="3">
+                    <ContentPresenter />
+                  </Border>
+                  <ControlTemplate.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="HeaderSurface" Property="Background" Value="{DynamicResource SettingsSelection}" /></Trigger>
+                    <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="HeaderSurface" Property="Background" Value="{DynamicResource SettingsSelection}" /></Trigger>
+                  </ControlTemplate.Triggers>
+                </ControlTemplate>
+              </ToggleButton.Template>
+            </ToggleButton>
+            <ContentPresenter x:Name="Names" ContentSource="Content" Visibility="Collapsed" Margin="0,8,0,0" />
+          </StackPanel>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsExpanded" Value="True"><Setter TargetName="Names" Property="Visibility" Value="Visible" /></Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Expander.Template>
+      <Expander.Header>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="{Binding CulpritsProp.Count}" FontWeight="Medium" Margin="0,0,4,0" />
+          <TextBlock Text="{Binding Caption}" Foreground="{DynamicResource SettingsMuted}" />
+          <materialDesign:PackIcon Width="12" Height="12" Margin="4,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource SettingsMuted}">
+            <materialDesign:PackIcon.Style>
+              <Style TargetType="materialDesign:PackIcon">
+                <Setter Property="Kind" Value="ChevronDown" />
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding IsExpanded, ElementName=PeopleExpander}" Value="True"><Setter Property="Kind" Value="ChevronUp" /></DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </materialDesign:PackIcon.Style>
+          </materialDesign:PackIcon>
+        </StackPanel>
+      </Expander.Header>
+      <ScrollViewer MaxHeight="160" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <ItemsControl ItemsSource="{Binding CulpritsProp}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding FullName}" FontSize="12" Margin="0,3,0,0" TextWrapping="Wrap" />
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+    </Expander>
   </Border>
 </UserControl>
