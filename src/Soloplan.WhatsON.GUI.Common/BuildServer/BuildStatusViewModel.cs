@@ -131,9 +131,9 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
     public bool BuildingLongerThenExpected { get; set; }
 
-    public virtual Task LoadFailureDetails(CancellationToken token) => Task.CompletedTask;
+    public virtual Task LoadFailureDetailsAsync(CancellationToken token) => Task.CompletedTask;
 
-    public virtual Task LoadExpandedFailureDetails(CancellationToken token) => this.LoadFailureDetails(token);
+    public virtual Task LoadExpandedFailureDetailsAsync(CancellationToken token) => this.LoadFailureDetailsAsync(token);
 
     public override void Update(Status? newStatus)
     {

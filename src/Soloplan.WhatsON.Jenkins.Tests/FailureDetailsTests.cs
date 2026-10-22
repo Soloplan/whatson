@@ -35,8 +35,8 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       api.ConsoleErrorsRequest = (_, _) => throw new AssertionException("Polling must not download logs.");
       api.PipelineFailureRequest = (_, _) => throw new AssertionException("Polling must not inspect pipeline nodes.");
       var connector = CreateConnector(api);
-      await connector.QueryStatus(CancellationToken.None);
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
       Assert.That(connector.CurrentStatus?.State, Is.EqualTo(state));
       Assert.That(connector.CurrentStatus?.FailedTestCount, Is.EqualTo(state is ObservationState.Failure or ObservationState.Unstable ? 2 : 0));
     }
@@ -52,16 +52,16 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       api.FailedTestsRequest = (number, _) => Task.FromResult<string?>($"Tests.Build{number}.Case{++requests}");
       api.ConsoleErrorsRequest = (_, _) => throw new AssertionException("A failed-test report already explains this build.");
       var connector = CreateConnector(api);
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
       var status = connector.Snapshots.Single().Status;
       Assert.That(requests, Is.Zero);
       Assert.That(status.FailedTestCount, Is.EqualTo(6));
-      var details = await connector.LoadFailureDetails(status, CancellationToken.None);
+      var details = await connector.LoadFailureDetailsAsync(status, CancellationToken.None);
       Assert.That(details, Is.EqualTo("Tests.Build42.Case1"));
-      Assert.That(await connector.LoadFailureDetails(status, CancellationToken.None), Is.EqualTo(details));
+      Assert.That(await connector.LoadFailureDetailsAsync(status, CancellationToken.None), Is.EqualTo(details));
       Assert.That(requests, Is.EqualTo(1));
       Assert.That(connector.CurrentStatus?.State, Is.EqualTo(ObservationState.Running));
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
       Assert.That(connector.Snapshots.Single().Status.FailureDetails, Is.EqualTo(details));
     }
 
@@ -74,9 +74,9 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       api.ConsoleErrorsRequest = (_, _) => Task.FromResult<string?>("Test host process crashed");
       var connector = CreateConnector(api);
       var status = new JenkinsStatus(ObservationState.Unstable) { BuildNumber = 42, FailedTestCount = 1 };
-      Assert.That(await connector.LoadFailureDetails(status, CancellationToken.None), Is.EqualTo("Test host process crashed"));
-      Assert.That(await connector.LoadFailureDetails(status, CancellationToken.None), Is.EqualTo("Tests.LateResult"));
-      Assert.That(await connector.LoadFailureDetails(status, CancellationToken.None), Is.EqualTo("Tests.LateResult"));
+      Assert.That(await connector.LoadFailureDetailsAsync(status, CancellationToken.None), Is.EqualTo("Test host process crashed"));
+      Assert.That(await connector.LoadFailureDetailsAsync(status, CancellationToken.None), Is.EqualTo("Tests.LateResult"));
+      Assert.That(await connector.LoadFailureDetailsAsync(status, CancellationToken.None), Is.EqualTo("Tests.LateResult"));
       Assert.That(requests, Is.EqualTo(2));
     }
 
@@ -88,14 +88,14 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       api.ConsoleErrorsRequest = (number, _) => Task.FromResult<string?>(++requests == 1 ? null : $"File{number}.cs: CS1002: ; expected");
       var connector = CreateConnector(api);
       var first = new JenkinsStatus(ObservationState.Failure) { BuildNumber = 42 };
-      Assert.That(await connector.LoadFailureDetails(first, CancellationToken.None), Is.Empty);
-      Assert.That(await connector.LoadFailureDetails(first, CancellationToken.None), Does.Contain("File42.cs"));
-      Assert.That(await connector.LoadFailureDetails(first, CancellationToken.None), Does.Contain("File42.cs"));
+      Assert.That(await connector.LoadFailureDetailsAsync(first, CancellationToken.None), Is.Empty);
+      Assert.That(await connector.LoadFailureDetailsAsync(first, CancellationToken.None), Does.Contain("File42.cs"));
+      Assert.That(await connector.LoadFailureDetailsAsync(first, CancellationToken.None), Does.Contain("File42.cs"));
       Assert.That(requests, Is.EqualTo(2));
       var next = new JenkinsStatus(ObservationState.Failure) { BuildNumber = 43 };
-      Assert.That(await connector.LoadFailureDetails(next, CancellationToken.None), Does.Contain("File43.cs").And.Not.Contain("File42.cs"));
+      Assert.That(await connector.LoadFailureDetailsAsync(next, CancellationToken.None), Does.Contain("File43.cs").And.Not.Contain("File42.cs"));
       next.State = ObservationState.Success;
-      Assert.That(await connector.LoadFailureDetails(next, CancellationToken.None), Is.Null);
+      Assert.That(await connector.LoadFailureDetailsAsync(next, CancellationToken.None), Is.Null);
       Assert.That(requests, Is.EqualTo(3));
     }
 
@@ -107,10 +107,10 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       api.FailedTestsRequest = (_, _) => Task.FromResult<string?>(++requests == 1 ? "Tests.Preview" : "Tests.Preview\nTests.Additional");
       var connector = CreateConnector(api);
       var status = new JenkinsStatus(ObservationState.Unstable) { BuildNumber = 42, FailedTestCount = 8 };
-      Assert.That(await connector.LoadFailureDetails(status, CancellationToken.None), Is.EqualTo("Tests.Preview"));
-      Assert.That(await connector.LoadFailureDetails(status, CancellationToken.None, true), Does.Contain("Tests.Additional"));
-      Assert.That(await connector.LoadFailureDetails(status, CancellationToken.None), Is.EqualTo("Tests.Preview"));
-      Assert.That(await connector.LoadFailureDetails(status, CancellationToken.None, true), Does.Contain("Tests.Additional"));
+      Assert.That(await connector.LoadFailureDetailsAsync(status, CancellationToken.None), Is.EqualTo("Tests.Preview"));
+      Assert.That(await connector.LoadFailureDetailsAsync(status, CancellationToken.None, true), Does.Contain("Tests.Additional"));
+      Assert.That(await connector.LoadFailureDetailsAsync(status, CancellationToken.None), Is.EqualTo("Tests.Preview"));
+      Assert.That(await connector.LoadFailureDetailsAsync(status, CancellationToken.None, true), Does.Contain("Tests.Additional"));
       Assert.That(requests, Is.EqualTo(2));
     }
 
@@ -130,12 +130,12 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var connector = CreateConnector(api);
       var status = new JenkinsStatus(ObservationState.Failure) { BuildNumber = 42 };
       using var cancellation = new CancellationTokenSource();
-      var cancelled = connector.LoadFailureDetails(status, cancellation.Token);
+      var cancelled = connector.LoadFailureDetailsAsync(status, cancellation.Token);
       await entered.Task;
       cancellation.Cancel();
       Assert.That(async () => await cancelled, Throws.InstanceOf<OperationCanceledException>());
-      var first = connector.LoadFailureDetails(status, CancellationToken.None);
-      var second = connector.LoadFailureDetails(status, CancellationToken.None);
+      var first = connector.LoadFailureDetailsAsync(status, CancellationToken.None);
+      var second = connector.LoadFailureDetailsAsync(status, CancellationToken.None);
       finish.SetResult("File.cs: CS1002: ; expected");
       Assert.That(await first, Is.EqualTo(await second));
       Assert.That(requests, Is.EqualTo(2));
@@ -151,14 +151,14 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var connector = CreateConnector(api);
       for (var number = 1; number <= Connector.MaxSnapshots + 3; number++)
       {
-        await connector.LoadFailureDetails(new JenkinsStatus(ObservationState.Failure) { BuildNumber = number }, CancellationToken.None);
+        await connector.LoadFailureDetailsAsync(new JenkinsStatus(ObservationState.Failure) { BuildNumber = number }, CancellationToken.None);
       }
 
       var first = new JenkinsStatus(ObservationState.Failure) { BuildNumber = 1 };
-      await connector.LoadFailureDetails(first, CancellationToken.None);
+      await connector.LoadFailureDetailsAsync(first, CancellationToken.None);
       Assert.That(requests, Is.EqualTo(Connector.MaxSnapshots + 4));
       first.FailedTestCount = 1;
-      Assert.That(await connector.LoadFailureDetails(first, CancellationToken.None), Is.EqualTo("Tests.NewFailure"));
+      Assert.That(await connector.LoadFailureDetailsAsync(first, CancellationToken.None), Is.EqualTo("Tests.NewFailure"));
     }
 
     [Test]
@@ -173,11 +173,11 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       };
       var connector = CreateConnector(api);
       var status = new JenkinsStatus(ObservationState.Failure) { BuildNumber = 42 };
-      Assert.That(await connector.LoadFailureDetails(status, CancellationToken.None), Is.Empty);
-      Assert.That(await connector.LoadFailureDetails(status, CancellationToken.None), Is.Empty);
+      Assert.That(await connector.LoadFailureDetailsAsync(status, CancellationToken.None), Is.Empty);
+      Assert.That(await connector.LoadFailureDetailsAsync(status, CancellationToken.None), Is.Empty);
       Assert.That(requests, Is.EqualTo(1));
       connector.Configuration.GetConfigurationByKey(Connector.ProjectName).Value = "OtherProject";
-      await connector.LoadFailureDetails(status, CancellationToken.None);
+      await connector.LoadFailureDetailsAsync(status, CancellationToken.None);
       Assert.That(requests, Is.EqualTo(2));
     }
 
@@ -189,7 +189,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       api.ConsoleErrorsRequest = (_, _) => Task.FromResult<string?>("File.cs: CS0111: duplicate member");
       var connector = CreateConnector(api);
       var status = new JenkinsStatus(ObservationState.Failure) { BuildNumber = 42, SkippedTestCount = 1 };
-      Assert.That(await connector.LoadFailureDetails(status, CancellationToken.None), Does.StartWith("File.cs: CS0111:").And.Contain("SKIPPED:"));
+      Assert.That(await connector.LoadFailureDetailsAsync(status, CancellationToken.None), Does.StartWith("File.cs: CS0111:").And.Contain("SKIPPED:"));
     }
 
     [Test]
@@ -201,7 +201,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var api = new FakeJenkinsApi();
       api.JobRequest += (_, args) => args.Result = job;
       var connector = CreateConnector(api);
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
       Assert.That(connector.CurrentStatus?.FailureDetails, Is.EqualTo("Compiler error"));
       Assert.That(connector.CurrentStatus?.FailedTestCount, Is.Zero);
     }

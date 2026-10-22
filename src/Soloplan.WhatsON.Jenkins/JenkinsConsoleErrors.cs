@@ -40,7 +40,7 @@ namespace Soloplan.WhatsON.Jenkins
 
     private static readonly Regex detailHeader = new Regex(@"^(?:Error Message|Error|Exception|Caused by)\s*:\s*$", RegexOptions.IgnoreCase | RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
 
-    public static async Task<string> Read(TextReader reader, CancellationToken token, bool expanded = false)
+    public static async Task<string> ReadAsync(TextReader reader, CancellationToken token, bool expanded = false)
     {
       var errors = new List<(int Priority, string Text)>();
       var line = new StringBuilder();

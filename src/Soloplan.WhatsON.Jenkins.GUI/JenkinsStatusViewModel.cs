@@ -38,8 +38,8 @@ namespace Soloplan.WhatsON.Jenkins.GUI
         || (this.State != ObservationState.Failure && this.State != ObservationState.Unstable)
         || (this.Parent.CurrentStatus.State != ObservationState.Failure && this.Parent.CurrentStatus.State != ObservationState.Unstable);
       this.clearVolunteer.CanExecuteExternal += (_, e) => e.Cancel = !this.CanChangeVolunteer() || this.Volunteer == null;
-      this.volunteerToFix.OnExecute += async (_, _) => await this.ChangeVolunteer(true);
-      this.clearVolunteer.OnExecute += async (_, _) => await this.ChangeVolunteer(false);
+      this.volunteerToFix.OnExecute += async (_, _) => await this.ChangeVolunteerAsync(true);
+      this.clearVolunteer.OnExecute += async (_, _) => await this.ChangeVolunteerAsync(false);
     }
 
     public override ICommand VolunteerToFix => this.volunteerToFix;
@@ -117,11 +117,11 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       this.UpdateCalculatedFields();
     }
 
-    public override Task LoadFailureDetails(CancellationToken token) => this.LoadFailureDetails(token, false);
+    public override Task LoadFailureDetailsAsync(CancellationToken token) => this.LoadFailureDetailsAsync(token, false);
 
-    public override Task LoadExpandedFailureDetails(CancellationToken token) => this.LoadFailureDetails(token, true);
+    public override Task LoadExpandedFailureDetailsAsync(CancellationToken token) => this.LoadFailureDetailsAsync(token, true);
 
-    private async Task LoadFailureDetails(CancellationToken token, bool expanded)
+    private async Task LoadFailureDetailsAsync(CancellationToken token, bool expanded)
     {
       if (this.buildStatus is not Status status || this.Building || this.State is not (ObservationState.Failure or ObservationState.Unstable)
           || this.Parent.Connector is not JenkinsConnector connector)
@@ -137,7 +137,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       this.IsLoadingFailureDetails = true;
       try
       {
-        var details = await connector.LoadFailureDetails(status, token, expanded);
+        var details = await connector.LoadFailureDetailsAsync(status, token, expanded);
         token.ThrowIfCancellationRequested();
         if (this.BuildNumber == number && this.State == status.State && ReferenceEquals(this.Parent.Connector, connector)
             && JenkinsApi.UrlHelper.ProjectUrl(connector, false) == project && this.FailedTestCount == failed
@@ -168,7 +168,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       this.clearVolunteer.CanExecute(null);
     }
 
-    private async Task ChangeVolunteer(bool claim)
+    private async Task ChangeVolunteerAsync(bool claim)
     {
       if (!(claim ? this.volunteerToFix : this.clearVolunteer).CanExecute(null)
           || this.Parent.Connector is not JenkinsConnector connector || this.BuildNumber is not int buildNumber)
@@ -181,7 +181,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       try
       {
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(60));
-        var status = await connector.SetVolunteer(buildNumber, this.Volunteer, claim, timeout.Token);
+        var status = await connector.SetVolunteerAsync(buildNumber, this.Volunteer, claim, timeout.Token);
         this.Update(status);
         this.Parent.Update(connector);
       }

@@ -19,9 +19,9 @@
       <DockPanel Margin="0,0,0,16">
         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top"
                     Visibility="{Binding SingleConnectorMode, Converter={StaticResource InvertBoolToVis}}">
-          <Button x:Name="AddButton" Content="{live:Text loc:Strings.AddManually}" Click="AddConnectorClick"
+          <Button x:Name="AddButton" Content="{live:Text loc:Strings.AddManually}" Click="AddConnectorClickAsync"
                   Style="{StaticResource SettingsSecondaryButton}" Margin="0,0,10,0" />
-          <Button x:Name="WizardButton" Content="{live:Text loc:Strings.AddProject}" Click="NewInWizardClick"
+          <Button x:Name="WizardButton" Content="{live:Text loc:Strings.AddProject}" Click="NewInWizardClickAsync"
                   Style="{StaticResource SettingsPrimaryButton}" />
         </StackPanel>
         <StackPanel>
@@ -55,11 +55,11 @@
                       IsSynchronizedWithCurrentItem="True" SelectionChanged="ConnectorsSelectionChanged"
                       AutomationProperties.Name="{live:Text loc:Strings.SelectedProject}" />
             <WrapPanel Margin="0,16,0,0">
-              <Button x:Name="RenameButtton" Content="{live:Text loc:Strings.Rename}" Click="RenameConnectorClick"
+              <Button x:Name="RenameButtton" Content="{live:Text loc:Strings.Rename}" Click="RenameConnectorClickAsync"
                       Margin="0,0,8,0"
                       Style="{StaticResource SettingsSecondaryButton}"
                       IsEnabled="{Binding CurrentConnectorIsNull, Converter={StaticResource InvertBoolConverter}}" />
-              <Button x:Name="DeleteButton" Content="{live:Text loc:Strings.Remove}" Click="DeleteConnectorClick"
+              <Button x:Name="DeleteButton" Content="{live:Text loc:Strings.Remove}" Click="DeleteConnectorClickAsync"
                       Style="{StaticResource SettingsSecondaryButton}"
                       IsEnabled="{Binding CurrentConnectorIsNull, Converter={StaticResource InvertBoolConverter}}" />
             </WrapPanel>

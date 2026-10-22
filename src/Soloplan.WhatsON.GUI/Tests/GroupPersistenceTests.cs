@@ -47,7 +47,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       reopened.WriteToConfiguration(restored);
       reopened.Update(RoundTrip(restored));
       Assert.That(reopened.ConnectorGroups.Select(group => group.GroupName), Is.EqualTo(new[] { "Next release", "Delivery" }));
-      reopened.DeleteGroup(null, new DeleteTreeItemEventArgs(reopened.ConnectorGroups[0]));
+      reopened.DeleteGroupAsync(null, new DeleteTreeItemEventArgs(reopened.ConnectorGroups[0]));
       reopened.WriteToConfiguration(restored);
       reopened.Update(RoundTrip(restored));
       Assert.That(reopened.ConnectorGroups.Select(group => group.GroupName), Is.EqualTo(new[] { "Delivery" }));
@@ -73,7 +73,7 @@ namespace Soloplan.WhatsON.GUI.Tests
         tree.UpdateSelectedConnectors(new Collection<TreeConnectorViewModel>(delivery.ConnectorViewModels.ToList()));
       }
 
-      tree.DeleteGroup(null, new DeleteTreeItemEventArgs(delivery.ConnectorViewModels.First()));
+      tree.DeleteGroupAsync(null, new DeleteTreeItemEventArgs(delivery.ConnectorViewModels.First()));
       tree.WriteToConfiguration(configuration);
       tree.Update(RoundTrip(configuration));
 
@@ -89,7 +89,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       configuration.ConnectorsConfiguration.Add(CreateProject("Main", string.Empty));
       using var tree = new ConnectorTreeViewModel();
       tree.Update(configuration);
-      tree.DeleteGroup(null, new DeleteTreeItemEventArgs(tree.ConnectorGroups.Single().ConnectorViewModels.Single()));
+      tree.DeleteGroupAsync(null, new DeleteTreeItemEventArgs(tree.ConnectorGroups.Single().ConnectorViewModels.Single()));
       tree.WriteToConfiguration(configuration);
 
       Assert.That(tree.ConnectorGroups, Is.Empty);

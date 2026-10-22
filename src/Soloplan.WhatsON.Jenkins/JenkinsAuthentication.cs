@@ -42,7 +42,7 @@ namespace Soloplan.WhatsON.Jenkins
       this.secrets = secrets;
     }
 
-    public async Task<string> TestAuthentication(JenkinsConnector connector, CancellationToken token)
+    public async Task<string> TestAuthenticationAsync(JenkinsConnector connector, CancellationToken token)
     {
       if (!connector.HasApiCredentials || connector.BatchAddress is not Uri address
         || (address.Scheme != Uri.UriSchemeHttps && address.Scheme != Uri.UriSchemeHttp)
@@ -51,7 +51,7 @@ namespace Soloplan.WhatsON.Jenkins
         throw new InvalidOperationException("Configure a Jenkins address, user name and API token.");
       }
 
-      var identity = await this.GetJson<JObject>(connector, new Uri(address, "whoAmI/api/json").AbsoluteUri, token);
+      var identity = await this.GetJsonAsync<JObject>(connector, new Uri(address, "whoAmI/api/json").AbsoluteUri, token);
       if (identity["authenticated"]?.Type != JTokenType.Boolean || identity["anonymous"]?.Type != JTokenType.Boolean
         || identity["name"]?.Type != JTokenType.String)
       {
@@ -67,7 +67,7 @@ namespace Soloplan.WhatsON.Jenkins
       return name;
     }
 
-    public async Task<string> SetJobVolunteer(JenkinsConnector connector, int buildNumber, string? expectedOwner, string? owner, CancellationToken token)
+    public async Task<string> SetJobVolunteerAsync(JenkinsConnector connector, int buildNumber, string? expectedOwner, string? owner, CancellationToken token)
     {
       if (!connector.HasApiCredentials)
       {
@@ -75,7 +75,7 @@ namespace Soloplan.WhatsON.Jenkins
       }
 
       var url = UrlHelper.ProjectUrl(connector, false).TrimEnd('/');
-      var original = await this.GetJobDescription(connector, url, token);
+      var original = await this.GetJobDescriptionAsync(connector, url, token);
       var description = JenkinsVolunteerPanel.SetFix(original, buildNumber, expectedOwner, owner);
       if (description == (original ?? string.Empty))
       {
@@ -97,7 +97,7 @@ namespace Soloplan.WhatsON.Jenkins
       }
 
       // shortcut: Jenkins description updates have no compare-and-swap; simultaneous writers can still conflict.
-      var saved = await this.GetJobDescription(connector, url, token);
+      var saved = await this.GetJobDescriptionAsync(connector, url, token);
       if (saved != description)
       {
         throw new InvalidOperationException("Jenkins did not retain the Fixes in progress panel. Refresh the project and try again.");
@@ -106,7 +106,7 @@ namespace Soloplan.WhatsON.Jenkins
       return description;
     }
 
-    public async Task<JenkinsBuild> SetVolunteer(JenkinsConnector connector, int buildNumber, string? expectedOwner, bool claim, CancellationToken token)
+    public async Task<JenkinsBuild> SetVolunteerAsync(JenkinsConnector connector, int buildNumber, string? expectedOwner, bool claim, CancellationToken token)
     {
       if (!connector.HasApiCredentials || buildNumber <= 0)
       {
@@ -117,7 +117,7 @@ namespace Soloplan.WhatsON.Jenkins
       JenkinsBuild build;
       try
       {
-        build = await this.GetJson<JenkinsBuild>(connector, url, token);
+        build = await this.GetJsonAsync<JenkinsBuild>(connector, url, token);
       }
       catch (HttpRequestException exception) when (!claim && exception.StatusCode == HttpStatusCode.NotFound)
       {
@@ -157,7 +157,7 @@ namespace Soloplan.WhatsON.Jenkins
       }
 
       // shortcut: Jenkins has no conditional description update; simultaneous writers can still overwrite each other.
-      var saved = await this.GetJson<JenkinsBuild>(connector, url, token);
+      var saved = await this.GetJsonAsync<JenkinsBuild>(connector, url, token);
       if (saved.Number != buildNumber || saved.Description != description)
       {
         throw new InvalidOperationException("Jenkins did not retain the volunteer change. Refresh the build and try again.");
@@ -166,9 +166,9 @@ namespace Soloplan.WhatsON.Jenkins
       return saved;
     }
 
-    private async Task<string?> GetJobDescription(JenkinsConnector connector, string url, CancellationToken token)
+    private async Task<string?> GetJobDescriptionAsync(JenkinsConnector connector, string url, CancellationToken token)
     {
-      var job = await this.GetJson<JObject>(connector, url + "/api/json?tree=description", token);
+      var job = await this.GetJsonAsync<JObject>(connector, url + "/api/json?tree=description", token);
       if (!job.TryGetValue("description", StringComparison.OrdinalIgnoreCase, out var description)
           || description.Type is not (JTokenType.Null or JTokenType.String))
       {
@@ -178,12 +178,12 @@ namespace Soloplan.WhatsON.Jenkins
       return description.Value<string>();
     }
 
-    private async Task<T> GetJson<T>(JenkinsConnector connector, string url, CancellationToken token)
+    private async Task<T> GetJsonAsync<T>(JenkinsConnector connector, string url, CancellationToken token)
       where T : class
     {
       if (string.IsNullOrEmpty(connector.EncryptedApiToken) && string.IsNullOrWhiteSpace(connector.AuthenticationUser))
       {
-        return await SerializationHelper.Instance.GetJsonModel<T>(url, token);
+        return await SerializationHelper.Instance.GetJsonModelAsync<T>(url, token);
       }
 
       using var request = new HttpRequestMessage(HttpMethod.Get, url);

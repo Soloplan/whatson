@@ -80,7 +80,7 @@ namespace Soloplan.WhatsON
         ?? throw new JsonSerializationException("The file contains a null model.");
     }
 
-    public async Task<TModel> GetJsonModel<TModel>(
+    public async Task<TModel> GetJsonModelAsync<TModel>(
       string requestUrl,
       CancellationToken token = default(CancellationToken),
       Action<WebRequest>? requestCallback = null)

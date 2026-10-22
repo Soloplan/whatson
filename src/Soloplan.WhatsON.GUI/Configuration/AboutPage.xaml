@@ -66,9 +66,9 @@
                    AutomationProperties.Name="{live:Text loc:Strings.ConfigurationFileLocation}"
                    ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
           <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
-            <Button Content="{live:Text loc:Strings.ImportSettings}" Click="ImportButtonClick"
+            <Button Content="{live:Text loc:Strings.ImportSettings}" Click="ImportButtonClickAsync"
                     Style="{StaticResource SettingsSecondaryButton}" Margin="0,0,10,0" />
-            <Button Content="{live:Text loc:Strings.ExportSettings}" Click="ExportButtonClick"
+            <Button Content="{live:Text loc:Strings.ExportSettings}" Click="ExportButtonClickAsync"
                     Style="{StaticResource SettingsSecondaryButton}" />
           </StackPanel>
         </StackPanel>

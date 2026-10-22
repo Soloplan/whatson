@@ -101,7 +101,7 @@ namespace Soloplan.WhatsON.GUI.Tests
         removed.CurrentStatus = new Status { ErrorMessage = "Private build history" };
         CompleteAfterUiChange(
           () => pending(scheduler, removed),
-          () => model.DeleteGroup(null, new DeleteTreeItemEventArgs(removedGroup)));
+          () => model.DeleteGroupAsync(null, new DeleteTreeItemEventArgs(removedGroup)));
         pending(scheduler, removed);
         Assert.That(removedRow.CurrentStatus.ErrorMessage, Is.EqualTo("Initial"));
         Assert.That(model.ConnectorGroups, Has.Count.EqualTo(1), "A late result must not restore a deleted group.");
@@ -111,7 +111,7 @@ namespace Soloplan.WhatsON.GUI.Tests
         pending(scheduler, remaining);
         Assert.That(remainingRow.CurrentStatus.ErrorMessage, Is.EqualTo("Updated"), "Other projects must keep receiving updates.");
 
-        model.DeleteGroup(null, new DeleteTreeItemEventArgs(remainingRow));
+        model.DeleteGroupAsync(null, new DeleteTreeItemEventArgs(remainingRow));
         pending(scheduler, remaining);
         Assert.That(model.ConnectorGroups.SelectMany(group => group.ConnectorViewModels), Is.Empty);
         Assert.That(target.Logs, Has.None.Contains("Warn"));

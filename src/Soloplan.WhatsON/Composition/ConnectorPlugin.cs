@@ -68,7 +68,7 @@ namespace Soloplan.WhatsON.Composition
     /// </summary>
     /// <param name="address">The address.</param>
     /// <returns>The projects from a recognized server, or null when its discovery endpoint is missing or belongs to another build system.</returns>
-    public abstract Task<IList<Project>?> GetProjects(string address);
+    public abstract Task<IList<Project>?> GetProjectsAsync(string address);
 
     public virtual void OnStartup(string[] args)
     {

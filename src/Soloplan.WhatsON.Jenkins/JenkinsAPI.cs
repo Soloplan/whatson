@@ -17,12 +17,12 @@ namespace Soloplan.WhatsON.Jenkins
 
   public partial class JenkinsApi : IJenkinsApi
   {
-    public async Task<JenkinsJob?> GetJenkinsJob(JenkinsConnector connector, CancellationToken token)
+    public async Task<JenkinsJob?> GetJenkinsJobAsync(JenkinsConnector connector, CancellationToken token)
     {
       var jobRequest = UrlHelper.JobRequest(connector, connector.Snapshots.Count == 0);
       try
       {
-        return await this.GetJson<JenkinsJob>(connector, jobRequest, token);
+        return await this.GetJsonAsync<JenkinsJob>(connector, jobRequest, token);
       }
       catch (OperationCanceledException) when (token.IsCancellationRequested)
       {
@@ -34,12 +34,12 @@ namespace Soloplan.WhatsON.Jenkins
       }
     }
 
-    public async Task<JenkinsJobs> GetJenkinsJobs(string address, CancellationToken token)
+    public async Task<JenkinsJobs> GetJenkinsJobsAsync(string address, CancellationToken token)
     {
       var jobsRequest = UrlHelper.JobsRequest(address);
       try
       {
-        return await SerializationHelper.Instance.GetJsonModel<JenkinsJobs>(jobsRequest, token);
+        return await SerializationHelper.Instance.GetJsonModelAsync<JenkinsJobs>(jobsRequest, token);
       }
       catch (Exception ex)
       {
@@ -47,12 +47,12 @@ namespace Soloplan.WhatsON.Jenkins
       }
     }
 
-    public async Task<JenkinsBuild?> GetJenkinsBuild(JenkinsConnector connector, int buildNumber, CancellationToken token)
+    public async Task<JenkinsBuild?> GetJenkinsBuildAsync(JenkinsConnector connector, int buildNumber, CancellationToken token)
     {
       var buildRequest = UrlHelper.BuildRequest(connector, buildNumber);
       try
       {
-        return await this.GetJson<JenkinsBuild>(connector, buildRequest, token);
+        return await this.GetJsonAsync<JenkinsBuild>(connector, buildRequest, token);
       }
       catch (Exception)
       {
@@ -60,7 +60,7 @@ namespace Soloplan.WhatsON.Jenkins
       }
     }
 
-    public async Task<IList<JenkinsBuild>> GetBuilds(
+    public async Task<IList<JenkinsBuild>> GetBuildsAsync(
       JenkinsConnector connector,
       CancellationToken token,
       int from = 0,
@@ -70,7 +70,7 @@ namespace Soloplan.WhatsON.Jenkins
       JenkinsBuilds? builds = null;
       try
       {
-        builds = await this.GetJson<JenkinsBuilds>(connector, buildsRequest, token);
+        builds = await this.GetJsonAsync<JenkinsBuilds>(connector, buildsRequest, token);
       }
       catch (OperationCanceledException) when (token.IsCancellationRequested)
       {

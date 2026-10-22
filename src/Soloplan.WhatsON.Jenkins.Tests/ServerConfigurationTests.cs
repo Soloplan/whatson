@@ -95,7 +95,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       application.InitializeServerConfigurations();
       var api = new JenkinsApi();
       var connectors = application.ConnectorsConfiguration.Select(project => new JenkinsConnector(project, api)).ToArray();
-      var result = await api.GetPollingJobs(connectors, CancellationToken.None);
+      var result = await api.GetPollingJobsAsync(connectors, CancellationToken.None);
 
       Assert.That(result.Jobs.Keys, Is.EquivalentTo(connectors));
       Assert.That(result.Failed, Is.Empty);

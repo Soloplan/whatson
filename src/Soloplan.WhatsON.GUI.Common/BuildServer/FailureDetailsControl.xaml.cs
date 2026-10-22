@@ -20,7 +20,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     public FailureDetailsControl()
     {
       this.InitializeComponent();
-      this.Loaded += async (_, _) => await this.LoadDetails();
+      this.Loaded += async (_, _) => await this.LoadDetailsAsync();
       this.Unloaded += (_, _) =>
       {
         this.loading?.Cancel();
@@ -29,13 +29,13 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
       this.DataContextChanged += async (_, _) =>
       {
         this.FailuresExpander.IsExpanded = false;
-        await this.LoadDetails();
+        await this.LoadDetailsAsync();
       };
-      this.FailuresExpander.Expanded += async (_, _) => await this.LoadDetails();
+      this.FailuresExpander.Expanded += async (_, _) => await this.LoadDetailsAsync();
       this.FailuresExpander.Collapsed += (_, _) => this.loading?.Cancel();
     }
 
-    private async Task LoadDetails()
+    private async Task LoadDetailsAsync()
     {
       this.loading?.Cancel();
       if (!this.IsLoaded || this.DataContext is not BuildStatusViewModel status)
@@ -49,11 +49,11 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
       {
         if (this.FailuresExpander.IsExpanded)
         {
-          await status.LoadExpandedFailureDetails(request.Token);
+          await status.LoadExpandedFailureDetailsAsync(request.Token);
         }
         else
         {
-          await status.LoadFailureDetails(request.Token);
+          await status.LoadFailureDetailsAsync(request.Token);
         }
       }
       catch (OperationCanceledException) when (request.IsCancellationRequested)

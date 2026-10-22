@@ -189,7 +189,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json")
           .WithBody(JsonConvert.SerializeObject(new JenkinsBuild { Number = 42, Result = "FAILURE", Description = updated })));
 
-      var result = await api.SetVolunteer(connector, 42, claim ? null : "alex", claim, CancellationToken.None);
+      var result = await api.SetVolunteerAsync(connector, 42, claim ? null : "alex", claim, CancellationToken.None);
       Assert.That(result.Description, Is.EqualTo(updated));
       var post = server.LogEntries.Single(entry => entry.RequestMessage?.Method == "POST");
       Assert.That(Uri.UnescapeDataString((post.RequestMessage?.Body ?? string.Empty).Replace("+", " ")), Is.EqualTo("description=" + updated));
@@ -224,7 +224,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json")
           .WithBody(JsonConvert.SerializeObject(new JenkinsJob { Description = updated })));
 
-      Assert.That(await api.SetJobVolunteer(connector, 42, claim ? null : "alex", claim ? "alex" : null, CancellationToken.None), Is.EqualTo(updated));
+      Assert.That(await api.SetJobVolunteerAsync(connector, 42, claim ? null : "alex", claim ? "alex" : null, CancellationToken.None), Is.EqualTo(updated));
       var post = server.LogEntries.Single(entry => entry.RequestMessage?.Method == "POST");
       Assert.That(Uri.UnescapeDataString((post.RequestMessage?.Body ?? string.Empty).Replace("+", " ")), Is.EqualTo("description=" + updated));
       Assert.That(server.LogEntries, Has.Count.EqualTo(3));
@@ -238,11 +238,11 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var connector = this.CreateConnector(server.Urls[0], api);
       server.Given(Request.Create().UsingGet()).RespondWith(Response.Create().WithStatusCode(404));
 
-      var cleared = await api.SetVolunteer(connector, 42, "alex", false, CancellationToken.None);
+      var cleared = await api.SetVolunteerAsync(connector, 42, "alex", false, CancellationToken.None);
 
       Assert.That(cleared.Number, Is.EqualTo(42));
       Assert.That(cleared.Description, Is.Null);
-      Assert.ThrowsAsync<HttpRequestException>(() => api.SetVolunteer(connector, 42, null, true, CancellationToken.None));
+      Assert.ThrowsAsync<HttpRequestException>(() => api.SetVolunteerAsync(connector, 42, null, true, CancellationToken.None));
       Assert.That(server.LogEntries.All(entry => entry.RequestMessage?.Method == "GET"), Is.True);
     }
 
@@ -256,7 +256,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json")
           .WithBody("{\"number\":42,\"result\":\"FAILURE\",\"description\":\"Release notes\"}"));
 
-      var cleared = await api.SetVolunteer(connector, 42, "alex", false, CancellationToken.None);
+      var cleared = await api.SetVolunteerAsync(connector, 42, "alex", false, CancellationToken.None);
 
       Assert.That(cleared.Description, Is.EqualTo("Release notes"));
       Assert.That(server.LogEntries, Has.Count.EqualTo(1));
@@ -271,7 +271,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       server.Given(Request.Create().UsingGet())
         .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json").WithBody("{}"));
 
-      Assert.ThrowsAsync<InvalidPlugInApiResponseException>(() => api.SetJobVolunteer(connector, 42, null, "alex", CancellationToken.None));
+      Assert.ThrowsAsync<InvalidPlugInApiResponseException>(() => api.SetJobVolunteerAsync(connector, 42, null, "alex", CancellationToken.None));
 
       Assert.That(server.LogEntries, Has.Count.EqualTo(1));
     }
@@ -285,7 +285,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       server.Given(Request.Create().UsingGet())
         .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json").WithBody("{\"description\":\"Notes\"}"));
       server.Given(Request.Create().UsingPost()).RespondWith(Response.Create().WithStatusCode(403));
-      var error = Assert.ThrowsAsync<HttpRequestException>(() => api.SetJobVolunteer(connector, 42, null, "alex", CancellationToken.None));
+      var error = Assert.ThrowsAsync<HttpRequestException>(() => api.SetJobVolunteerAsync(connector, 42, null, "alex", CancellationToken.None));
       Assert.That(error?.Message, Does.Contain("Job/Configure"));
     }
 
@@ -298,7 +298,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       server.Given(Request.Create().UsingGet())
         .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json").WithBody("{\"description\":\"Notes\"}"));
       server.Given(Request.Create().UsingPost()).RespondWith(Response.Create().WithStatusCode(302).WithHeader("Location", "/login"));
-      Assert.ThrowsAsync<InvalidOperationException>(() => api.SetJobVolunteer(connector, 42, null, "alex", CancellationToken.None));
+      Assert.ThrowsAsync<InvalidOperationException>(() => api.SetJobVolunteerAsync(connector, 42, null, "alex", CancellationToken.None));
       Assert.That(server.LogEntries.Any(entry => entry.RequestMessage?.Path == "/login"), Is.False);
     }
 
@@ -314,7 +314,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json")
           .WithBody("{\"authenticated\":true,\"anonymous\":false,\"name\":\"alex\"}"));
 
-      Assert.That(await api.TestAuthentication(connector, CancellationToken.None), Is.EqualTo("alex"));
+      Assert.That(await api.TestAuthenticationAsync(connector, CancellationToken.None), Is.EqualTo("alex"));
       Assert.That(connector.EncryptedApiToken, Is.EqualTo(ciphertext));
       Assert.That(server.LogEntries, Has.Count.EqualTo(1));
       Assert.That(server.LogEntries.Single().RequestMessage?.Method, Is.EqualTo("GET"));
@@ -330,7 +330,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var connector = this.CreateConnector(server.Urls[0], api);
       server.Given(Request.Create().WithPath("/whoAmI/api/json").UsingGet())
         .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json").WithBody(identity));
-      Assert.ThrowsAsync<HttpRequestException>(() => api.TestAuthentication(connector, CancellationToken.None));
+      Assert.ThrowsAsync<HttpRequestException>(() => api.TestAuthenticationAsync(connector, CancellationToken.None));
     }
 
     [TestCase("application/json", "{}")]
@@ -343,7 +343,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var connector = this.CreateConnector(server.Urls[0], api);
       server.Given(Request.Create().WithPath("/whoAmI/api/json").UsingGet())
         .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", contentType).WithBody(body));
-      Assert.ThrowsAsync<InvalidPlugInApiResponseException>(() => api.TestAuthentication(connector, CancellationToken.None));
+      Assert.ThrowsAsync<InvalidPlugInApiResponseException>(() => api.TestAuthenticationAsync(connector, CancellationToken.None));
     }
 
     [TestCase(401)]
@@ -356,7 +356,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var connector = this.CreateConnector(server.Urls[0], api);
       server.Given(Request.Create().WithPath("/whoAmI/api/json").UsingGet())
         .RespondWith(Response.Create().WithStatusCode(status).WithHeader("Location", server.Urls[0] + "/other"));
-      Assert.ThrowsAsync<HttpRequestException>(() => api.TestAuthentication(connector, CancellationToken.None));
+      Assert.ThrowsAsync<HttpRequestException>(() => api.TestAuthenticationAsync(connector, CancellationToken.None));
       Assert.That(server.LogEntries, Has.Count.EqualTo(1));
     }
 
@@ -369,7 +369,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var api = new JenkinsApi(this.secrets);
       var connector = this.CreateConnector(server.Urls[0], api);
       connector.Configuration.GetConfigurationByKey(missingKey).Value = string.Empty;
-      Assert.ThrowsAsync<InvalidOperationException>(() => api.TestAuthentication(connector, CancellationToken.None));
+      Assert.ThrowsAsync<InvalidOperationException>(() => api.TestAuthenticationAsync(connector, CancellationToken.None));
       Assert.That(server.LogEntries, Is.Empty);
     }
 
@@ -380,7 +380,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     {
       var api = new JenkinsApi(this.secrets);
       var connector = this.CreateConnector(address, api);
-      Assert.ThrowsAsync<InvalidOperationException>(() => api.TestAuthentication(connector, CancellationToken.None));
+      Assert.ThrowsAsync<InvalidOperationException>(() => api.TestAuthenticationAsync(connector, CancellationToken.None));
     }
 
     [Test]
@@ -393,8 +393,8 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json")
           .WithBody(JsonConvert.SerializeObject(new JenkinsBuild { Number = 42, Result = "FAILURE", Description = JenkinsVolunteer.SetOwner(null, "someone else") })));
 
-      Assert.ThrowsAsync<InvalidOperationException>(() => api.SetVolunteer(connector, 42, null, true, CancellationToken.None));
-      Assert.ThrowsAsync<InvalidOperationException>(() => api.SetVolunteer(connector, 42, "alex", false, CancellationToken.None));
+      Assert.ThrowsAsync<InvalidOperationException>(() => api.SetVolunteerAsync(connector, 42, null, true, CancellationToken.None));
+      Assert.ThrowsAsync<InvalidOperationException>(() => api.SetVolunteerAsync(connector, 42, "alex", false, CancellationToken.None));
       Assert.That(server.LogEntries.All(entry => entry.RequestMessage?.Method == "GET"), Is.True);
     }
 
@@ -407,7 +407,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var api = new JenkinsApi(this.secrets);
       var connector = this.CreateConnector(server.Urls[0], api);
       server.Given(Request.Create().UsingGet()).RespondWith(Response.Create().WithStatusCode(statusCode));
-      Assert.ThrowsAsync<HttpRequestException>(() => api.SetVolunteer(connector, 42, null, true, CancellationToken.None));
+      Assert.ThrowsAsync<HttpRequestException>(() => api.SetVolunteerAsync(connector, 42, null, true, CancellationToken.None));
       Assert.That(server.LogEntries, Has.Count.EqualTo(1));
     }
 
@@ -429,8 +429,8 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       server.Given(Request.Create().WithPath("/job/folder/job/project/42/api/json").UsingGet())
         .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json")
           .WithBody(JsonConvert.SerializeObject(new JenkinsBuild { Number = 42, Result = "FAILURE", Description = description })));
-      Assert.ThrowsAsync<InvalidOperationException>(() => api.SetVolunteer(connector, 42, null, true, CancellationToken.None));
-      Assert.ThrowsAsync<InvalidOperationException>(() => api.SetVolunteer(connector, 42, null, false, CancellationToken.None));
+      Assert.ThrowsAsync<InvalidOperationException>(() => api.SetVolunteerAsync(connector, 42, null, true, CancellationToken.None));
+      Assert.ThrowsAsync<InvalidOperationException>(() => api.SetVolunteerAsync(connector, 42, null, false, CancellationToken.None));
       Assert.That(server.LogEntries.All(entry => entry.RequestMessage?.Method == "GET"), Is.True);
     }
 
@@ -460,9 +460,9 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/xml")
           .WithBody("<jobs><job><name>project</name><description>" + panel + "</description><lastStableBuild><number>40</number></lastStableBuild><lastBuild><number>42</number><result>FAILURE</result><description>" + description
             + "</description></lastBuild><build><number>41</number><result>FAILURE</result><description>" + description + "</description></build></job></jobs>"));
-      var polling = await api.GetPollingJobs(new[] { connector }, CancellationToken.None);
+      var polling = await api.GetPollingJobsAsync(new[] { connector }, CancellationToken.None);
       Assert.That(polling.Jobs[connector]?.LastStableBuild?.Number, Is.EqualTo(40));
-      var result = await connector.QueryStatusBatch(new[] { connector }, CancellationToken.None);
+      var result = await connector.QueryStatusBatchAsync(new[] { connector }, CancellationToken.None);
       Assert.That(result, Does.Contain(connector));
       Assert.That(JenkinsVolunteer.GetOwner(connector.CurrentStatus?.Details), Is.EqualTo("alex"));
       Assert.That((connector.CurrentStatus as JenkinsStatus)?.ActiveFixes.Single(), Is.EqualTo(new JenkinsFix(41, "sam")));
@@ -480,7 +480,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json")
           .WithBody("{\"number\":42,\"result\":\"FAILURE\",\"description\":\"Original\"}"));
       server.Given(Request.Create().UsingPost()).RespondWith(Response.Create().WithStatusCode(statusCode));
-      Assert.ThrowsAsync<HttpRequestException>(() => api.SetVolunteer(connector, 42, null, true, CancellationToken.None));
+      Assert.ThrowsAsync<HttpRequestException>(() => api.SetVolunteerAsync(connector, 42, null, true, CancellationToken.None));
       Assert.That(server.LogEntries, Has.Count.EqualTo(2));
     }
 
@@ -495,7 +495,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
           .WithBody("{\"number\":42,\"result\":\"FAILURE\",\"description\":\"Original\"}"));
       server.Given(Request.Create().UsingPost())
         .RespondWith(Response.Create().WithStatusCode(302).WithHeader("Location", "/login"));
-      Assert.ThrowsAsync<InvalidOperationException>(() => api.SetVolunteer(connector, 42, null, true, CancellationToken.None));
+      Assert.ThrowsAsync<InvalidOperationException>(() => api.SetVolunteerAsync(connector, 42, null, true, CancellationToken.None));
       Assert.That(server.LogEntries.Any(entry => entry.RequestMessage?.Path == "/login"), Is.False);
     }
 
@@ -508,7 +508,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var connector = this.CreateConnector(server.Urls[0], api);
       server.Given(Request.Create().UsingGet())
         .RespondWith(Response.Create().WithStatusCode(302).WithHeader("Location", target.Urls[0] + "/login"));
-      Assert.ThrowsAsync<HttpRequestException>(() => api.SetVolunteer(connector, 42, null, true, CancellationToken.None));
+      Assert.ThrowsAsync<HttpRequestException>(() => api.SetVolunteerAsync(connector, 42, null, true, CancellationToken.None));
       Assert.That(target.LogEntries, Is.Empty);
     }
 
@@ -517,7 +517,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     {
       var api = new JenkinsApi(this.secrets);
       var connector = this.CreateConnector("http://builds.example", api);
-      Assert.ThrowsAsync<InvalidOperationException>(() => api.SetVolunteer(connector, 42, null, true, CancellationToken.None));
+      Assert.ThrowsAsync<InvalidOperationException>(() => api.SetVolunteerAsync(connector, 42, null, true, CancellationToken.None));
     }
 
     private JenkinsConnector CreateConnector(string address, JenkinsApi api)

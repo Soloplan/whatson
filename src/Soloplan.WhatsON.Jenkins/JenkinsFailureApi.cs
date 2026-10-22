@@ -21,9 +21,9 @@ namespace Soloplan.WhatsON.Jenkins
 
   public partial class JenkinsApi
   {
-    public Task<string?> GetFailedTests(JenkinsConnector connector, int buildNumber, CancellationToken token) => this.GetFailedTests(connector, buildNumber, token, false);
+    public Task<string?> GetFailedTestsAsync(JenkinsConnector connector, int buildNumber, CancellationToken token) => this.GetFailedTestsAsync(connector, buildNumber, token, false);
 
-    public async Task<string?> GetFailedTests(JenkinsConnector connector, int buildNumber, CancellationToken token, bool expanded)
+    public async Task<string?> GetFailedTestsAsync(JenkinsConnector connector, int buildNumber, CancellationToken token, bool expanded)
     {
       try
       {
@@ -32,7 +32,7 @@ namespace Soloplan.WhatsON.Jenkins
         var xpath = (expanded ? failures : $"({failures})[position()<=5]") + " | (//case[status='SKIPPED'])[position()<=2]";
         var url = UrlHelper.BuildUrl(connector, buildNumber, false) + "/testReport/api/xml?tree=suites[cases[className,name,status]]&xpath="
           + Uri.EscapeDataString(xpath) + "&wrapper=failures";
-        var body = await this.ReadFailureResponse(connector, url, "application/xml", token).ConfigureAwait(false);
+        var body = await this.ReadFailureResponseAsync(connector, url, "application/xml", token).ConfigureAwait(false);
         if (body == null)
         {
           return null;
@@ -69,9 +69,9 @@ namespace Soloplan.WhatsON.Jenkins
       }
     }
 
-    public Task<string?> GetConsoleErrors(JenkinsConnector connector, int buildNumber, CancellationToken token) => this.GetConsoleErrors(connector, buildNumber, token, false);
+    public Task<string?> GetConsoleErrorsAsync(JenkinsConnector connector, int buildNumber, CancellationToken token) => this.GetConsoleErrorsAsync(connector, buildNumber, token, false);
 
-    public async Task<string?> GetConsoleErrors(JenkinsConnector connector, int buildNumber, CancellationToken token, bool expanded)
+    public async Task<string?> GetConsoleErrorsAsync(JenkinsConnector connector, int buildNumber, CancellationToken token, bool expanded)
     {
       try
       {
@@ -89,7 +89,7 @@ namespace Soloplan.WhatsON.Jenkins
 
         await using var stream = await response.Content.ReadAsStreamAsync(timeout.Token).ConfigureAwait(false);
         using var reader = new StreamReader(stream);
-        return await JenkinsConsoleErrors.Read(reader, timeout.Token, expanded).ConfigureAwait(false);
+        return await JenkinsConsoleErrors.ReadAsync(reader, timeout.Token, expanded).ConfigureAwait(false);
       }
       catch (OperationCanceledException) when (token.IsCancellationRequested)
       {
@@ -101,14 +101,14 @@ namespace Soloplan.WhatsON.Jenkins
       }
     }
 
-    public async Task<string?> GetPipelineFailure(JenkinsConnector connector, int buildNumber, CancellationToken token)
+    public async Task<string?> GetPipelineFailureAsync(JenkinsConnector connector, int buildNumber, CancellationToken token)
     {
       try
       {
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(token);
         timeout.CancelAfter(TimeSpan.FromSeconds(5));
         var buildUrl = UrlHelper.BuildUrl(connector, buildNumber, false);
-        var body = await this.ReadFailureResponse(connector, buildUrl + "/wfapi/describe", "application/json", timeout.Token);
+        var body = await this.ReadFailureResponseAsync(connector, buildUrl + "/wfapi/describe", "application/json", timeout.Token);
         if (body == null)
         {
           return null;
@@ -131,7 +131,7 @@ namespace Soloplan.WhatsON.Jenkins
               && uint.TryParse((string?)stage["id"], NumberStyles.None, CultureInfo.InvariantCulture, out var nodeId))
           {
             inspectedNode = true;
-            var nodeBody = await this.ReadFailureResponse(connector, $"{buildUrl}/execution/node/{nodeId}/wfapi/describe", "application/json", timeout.Token);
+            var nodeBody = await this.ReadFailureResponseAsync(connector, $"{buildUrl}/execution/node/{nodeId}/wfapi/describe", "application/json", timeout.Token);
             if (nodeBody != null)
             {
               message = JObject.Parse(nodeBody)["stageFlowNodes"]?.OfType<JObject>()
@@ -155,7 +155,7 @@ namespace Soloplan.WhatsON.Jenkins
       }
     }
 
-    private async Task<string?> ReadFailureResponse(JenkinsConnector connector, string url, string mediaType, CancellationToken token)
+    private async Task<string?> ReadFailureResponseAsync(JenkinsConnector connector, string url, string mediaType, CancellationToken token)
     {
       using var timeout = CancellationTokenSource.CreateLinkedTokenSource(token);
       timeout.CancelAfter(TimeSpan.FromSeconds(5));

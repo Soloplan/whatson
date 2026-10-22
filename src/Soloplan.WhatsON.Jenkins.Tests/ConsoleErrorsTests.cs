@@ -27,7 +27,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     public async Task CompilerErrorsAfterWarningHeavyOutputAreNotLost(int precedingCharacters)
     {
       var log = File.ReadAllText(Path.Combine(TestContext.CurrentContext.TestDirectory, "Recordings", "compiler-diagnostics.txt"));
-      var summary = await JenkinsConsoleErrors.Read(new StringReader(new string(' ', precedingCharacters) + "\n" + log), CancellationToken.None);
+      var summary = await JenkinsConsoleErrors.ReadAsync(new StringReader(new string(' ', precedingCharacters) + "\n" + log), CancellationToken.None);
       Assert.That(summary.Split(Environment.NewLine), Has.Length.EqualTo(4));
       Assert.That(summary, Does.Contain("ExampleLogEntryBuilder.cs(21,5): CS0111:").And.Contain("'ReadInputHeaders'")
         .And.Contain("ExampleLogEntryBuilder.cs(28,5): CS0111:").And.Contain("'ReadOutputHeaders'")
@@ -47,7 +47,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         "Build FAILED.",
       });
 
-      var summary = await JenkinsConsoleErrors.Read(new StringReader(log), CancellationToken.None);
+      var summary = await JenkinsConsoleErrors.ReadAsync(new StringReader(log), CancellationToken.None);
       Assert.That(summary, Is.EqualTo("ExampleView.cs(42,7): CS1061: 'ExampleView' does not contain a definition for 'missingMember'"));
     }
 
@@ -79,7 +79,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     [TestCase("[ERROR] INFO: invalid value", "[ERROR] INFO: invalid value")]
     public async Task FindsActionableErrorsAndIgnoresExitCodeNoise(string log, string expected)
     {
-      Assert.That(await JenkinsConsoleErrors.Read(new StringReader(log), CancellationToken.None), Is.EqualTo(expected));
+      Assert.That(await JenkinsConsoleErrors.ReadAsync(new StringReader(log), CancellationToken.None), Is.EqualTo(expected));
     }
 
     [TestCase("[10:12:34.123] [publisher] [ERROR] Upload refused", "[publisher] [ERROR] Upload refused")]
@@ -110,7 +110,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     [TestCase("2025/01/01 12:00:00 ERROR: Upload failed: permission denied", "ERROR: Upload failed: permission denied")]
     public async Task HeuristicUsesSeverityAndDiagnosticContextAcrossTools(string log, string expected)
     {
-      Assert.That(await JenkinsConsoleErrors.Read(new StringReader(log), CancellationToken.None), Is.EqualTo(expected));
+      Assert.That(await JenkinsConsoleErrors.ReadAsync(new StringReader(log), CancellationToken.None), Is.EqualTo(expected));
     }
 
     [Test]
@@ -118,7 +118,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     {
       var log = string.Join("\n", Enumerable.Range(0, 8).Select(index => $"ERROR: generic problem {index}"))
         + "\nFailed Tests.Calculates [1 ms]\nError Message:\n\nExpected: 42 but was: 0\nStack Trace:\n  at Example.Tests.Calculates()";
-      var summary = await JenkinsConsoleErrors.Read(new StringReader(log), CancellationToken.None);
+      var summary = await JenkinsConsoleErrors.ReadAsync(new StringReader(log), CancellationToken.None);
       Assert.That(summary, Does.StartWith("Failed Tests.Calculates [1 ms]").And.Contain("Error Message: Expected: 42 but was: 0")
         .And.Not.Contain("Stack Trace").And.Not.Contain("at Example.Tests").And.Not.Contain("generic problem 3"));
       Assert.That(summary.Split(Environment.NewLine), Has.Length.EqualTo(5));
@@ -129,7 +129,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     {
       var noise = new string('x', (2 * 1024 * 1024) + 1);
       var messages = string.Join("\n", Enumerable.Range(0, 10).Select(index => $"ERROR: dependency {index}"));
-      var summary = await JenkinsConsoleErrors.Read(new StringReader(noise + "\n" + messages + "\nFile.cs(42,1): error CS1002: ; expected"), CancellationToken.None);
+      var summary = await JenkinsConsoleErrors.ReadAsync(new StringReader(noise + "\n" + messages + "\nFile.cs(42,1): error CS1002: ; expected"), CancellationToken.None);
       Assert.That(summary.Split(Environment.NewLine), Has.Length.EqualTo(5));
       Assert.That(summary, Does.StartWith("File.cs(42,1): CS1002: ; expected").And.Not.Contain("dependency 4").And.Not.Contain("xxx"));
     }
@@ -139,8 +139,8 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     {
       var message = "ERROR: " + new string('x', 300);
       var log = string.Join("\n", Enumerable.Range(0, 8).Select(index => $"ERROR: dependency {index}")) + "\n" + message;
-      var summary = await JenkinsConsoleErrors.Read(new StringReader(log), CancellationToken.None);
-      var expanded = await JenkinsConsoleErrors.Read(new StringReader(log), CancellationToken.None, true);
+      var summary = await JenkinsConsoleErrors.ReadAsync(new StringReader(log), CancellationToken.None);
+      var expanded = await JenkinsConsoleErrors.ReadAsync(new StringReader(log), CancellationToken.None, true);
       Assert.That(summary.Split(Environment.NewLine), Has.Length.EqualTo(5));
       Assert.That(expanded.Split(Environment.NewLine), Has.Length.EqualTo(9));
       Assert.That(expanded, Does.Contain("dependency 7").And.Contain(message));
@@ -157,7 +157,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       server.Given(Request.Create().WithPath("/job/Release/42/consoleText").UsingGet())
         .RespondWith(Response.Create().WithStatusCode(status).WithHeader("Content-Type", mediaType).WithBody(body));
       var connector = new JenkinsConnector(new ConnectorConfiguration("Jenkins", "Release", Connector.ServerAddress, server.Urls[0], Connector.ProjectName, "Release"), new JenkinsApi());
-      Assert.That(await new JenkinsApi().GetConsoleErrors(connector, 42, CancellationToken.None), Is.EqualTo(expected));
+      Assert.That(await new JenkinsApi().GetConsoleErrorsAsync(connector, 42, CancellationToken.None), Is.EqualTo(expected));
       Assert.That(server.LogEntries, Has.Count.EqualTo(1));
     }
 
@@ -170,7 +170,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
           .WithBody("<failures><case><name>Ignored</name><status>SKIPPED</status></case><case><name>Broken</name><status>FAILED</status></case><case><name>Regression</name><status>REGRESSION</status></case><case><name>Passed</name><status>PASSED</status></case></failures>"));
       var api = new JenkinsApi();
       var connector = new JenkinsConnector(new ConnectorConfiguration("Jenkins", "Release", Connector.ServerAddress, server.Urls[0], Connector.ProjectName, "Release"), api);
-      Assert.That(await api.GetFailedTests(connector, 42, CancellationToken.None), Is.EqualTo(string.Join(Environment.NewLine, "Broken", "Regression", "SKIPPED: Ignored")));
+      Assert.That(await api.GetFailedTestsAsync(connector, 42, CancellationToken.None), Is.EqualTo(string.Join(Environment.NewLine, "Broken", "Regression", "SKIPPED: Ignored")));
       Assert.That(Uri.UnescapeDataString(server.LogEntries.Single().RequestMessage?.Url ?? string.Empty), Does.Contain("status='SKIPPED'").And.Contain("position()<=2"));
     }
 
@@ -179,7 +179,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     {
       using var cancellation = new CancellationTokenSource();
       cancellation.Cancel();
-      Assert.That(async () => await JenkinsConsoleErrors.Read(new StringReader("ERROR: ignored"), cancellation.Token), Throws.InstanceOf<OperationCanceledException>());
+      Assert.That(async () => await JenkinsConsoleErrors.ReadAsync(new StringReader("ERROR: ignored"), cancellation.Token), Throws.InstanceOf<OperationCanceledException>());
     }
   }
 }

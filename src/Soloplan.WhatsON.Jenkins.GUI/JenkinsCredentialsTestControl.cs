@@ -33,7 +33,7 @@ namespace Soloplan.WhatsON.Jenkins.GUI
     private CancellationTokenSource? pending;
 
     public JenkinsCredentialsTestControl(IConfigurationItemProvider configuration)
-      : this(configuration, new JenkinsApi().TestAuthentication)
+      : this(configuration, new JenkinsApi().TestAuthenticationAsync)
     {
     }
 

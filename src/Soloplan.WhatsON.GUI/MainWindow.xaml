@@ -44,13 +44,13 @@
   </Window.Resources>
   <DockPanel Background="{DynamicResource SettingsBackground}">
     <local:CustomTitleBar
-      AddConnectorClicked="NewConnectorClick"
-      AddGroupClicked="NewGroupClick"
+      AddConnectorClicked="NewConnectorClickAsync"
+      AddGroupClicked="NewGroupClickAsync"
       ButtonClicked="OpenConfig"
       CustomButtonIcon="SettingsOutline"
       CustomButtonVisible="{Binding ConfigurationModifiedFromTree, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Converter={StaticResource InvertBoolConverter}}"
       DockPanel.Dock="Top"
-      ImportClicked="ImportClick"
+      ImportClicked="ImportClickAsync"
       ShowMinimizeButton="{Binding Path=ShowInTaskbar, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}"
       Window="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" />
 
@@ -64,7 +64,7 @@
                      VerticalAlignment="Center"
                      Text="{live:Text loc:Strings.ConfigurationIsModified}" />
           <DockPanel DockPanel.Dock="Right">
-            <Button Margin="5" Padding="5" Click="SaveClick" Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+            <Button Margin="5" Padding="5" Click="SaveClickAsync" Style="{StaticResource MaterialDesignFlatAccentBgButton}"
                     Content="{live:Text loc:Strings.Save}" />
             <Button Margin="5" Padding="5" Click="ResetClick" Style="{StaticResource MaterialDesignFlatAccentBgButton}"
                     Content="{live:Text loc:Strings.Reset}" />

@@ -330,7 +330,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
-    private async void SnackbarSaveClick(object? sender, RoutedEventArgs e)
+    private async void SnackbarSaveClickAsync(object? sender, RoutedEventArgs e)
     {
       this.IsEnabled = false;
       try

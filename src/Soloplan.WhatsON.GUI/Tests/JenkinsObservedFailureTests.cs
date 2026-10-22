@@ -62,16 +62,16 @@ namespace Soloplan.WhatsON.GUI.Tests
       };
       var connector = new JenkinsConnector(
         new ConnectorConfiguration("Jenkins", "Release", Connector.ServerAddress, server.Address, Connector.ProjectName, "Release"), new JenkinsApi());
-      await connector.QueryStatus(CancellationToken.None);
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
       var status = connector.CurrentStatus ?? throw new AssertionException("Missing build status.");
       Assert.That(status.FailedTestCount, Is.EqualTo(count));
       Assert.That(status.State.ToString(), Is.EqualTo((string?)fixture["build"]?["result"]).IgnoreCase);
       Assert.That(server.Requests.Any(path => path.Contains("/testReport/", StringComparison.Ordinal) || path.EndsWith("/consoleText", StringComparison.Ordinal)), Is.False);
       var model = new JenkinsStatusViewModel(new ConnectorViewModel(connector) { Name = "Release" });
       model.Update(status);
-      await model.LoadFailureDetails(CancellationToken.None);
-      await model.LoadFailureDetails(CancellationToken.None);
+      await model.LoadFailureDetailsAsync(CancellationToken.None);
+      await model.LoadFailureDetailsAsync(CancellationToken.None);
       if (expected == null)
       {
         Assert.That(model.FailureDetails, Is.Null.Or.Empty, "Stage exit codes must not invent a failure cause.");

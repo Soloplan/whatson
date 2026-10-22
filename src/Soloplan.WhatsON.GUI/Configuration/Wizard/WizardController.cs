@@ -278,13 +278,13 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       {
         this.ProposedServerAddress = this.editedConnectorViewModel.GetConfigurationByKey(Connector.ServerAddress)?.Value;
 
-        async void OnActivated(object? sender, EventArgs e)
+        async void OnActivatedAsync(object? sender, EventArgs e)
         {
-          this.wizardWindow.Activated -= OnActivated;
-          await this.GoToProjectSelectionStep();
+          this.wizardWindow.Activated -= OnActivatedAsync;
+          await this.GoToProjectSelectionStepAsync();
         }
 
-        this.wizardWindow.Activated += OnActivated;
+        this.wizardWindow.Activated += OnActivatedAsync;
       }
 
       this.wizardDialogSettings.Apply(this.wizardWindow);
@@ -299,7 +299,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       {
         if (applyConfig)
         {
-          await this.ApplyToConfiguration();
+          await this.ApplyToConfigurationAsync();
         }
 
         return true;
@@ -344,7 +344,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     {
       if (this.WizardFrame.Content is ConnectionWizardPage)
       {
-        await this.GoToProjectSelectionStep();
+        await this.GoToProjectSelectionStepAsync();
         return;
       }
 
@@ -377,10 +377,10 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       }
     }
 
-    internal static async Task<(ConnectorPlugin Plugin, IList<Project> Projects)> DiscoverProjects(
+    internal static async Task<(ConnectorPlugin Plugin, IList<Project> Projects)> DiscoverProjectsAsync(
       IEnumerable<ConnectorPlugin> plugins, string address, TimeSpan timeout)
     {
-      var pending = plugins.Select(plugin => (Plugin: plugin, Task: QueryProjects(plugin, address))).ToList();
+      var pending = plugins.Select(plugin => (Plugin: plugin, Task: QueryProjectsAsync(plugin, address))).ToList();
       var deadline = Task.Delay(timeout);
       while (pending.Count > 0)
       {
@@ -402,11 +402,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       throw new InvalidOperationException(Strings.InvalidServerOrPlugin);
     }
 
-    private static async Task<IList<Project>?> QueryProjects(ConnectorPlugin plugin, string address)
+    private static async Task<IList<Project>?> QueryProjectsAsync(ConnectorPlugin plugin, string address)
     {
       try
       {
-        return await plugin.GetProjects(address);
+        return await plugin.GetProjectsAsync(address);
       }
       catch (Exception exception)
       {
@@ -457,7 +457,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// Applies the results of the wizard to configuration.
     /// </summary>
     /// <exception cref="InvalidOperationException">At least one selected project is required.</exception>
-    private async Task ApplyToConfiguration()
+    private async Task ApplyToConfigurationAsync()
     {
       var selectedProjects = this.GetSelectedProjects();
       if (selectedProjects.Count < 1)
@@ -549,14 +549,14 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// Prepares the projects list.
     /// </summary>
     /// <returns>The task.</returns>
-    private async Task PrepareProjectsList()
+    private async Task PrepareProjectsListAsync()
     {
       IEnumerable<ConnectorPlugin> plugins = this.editedConnectorViewModel != null
         ? new[] { this.editedConnectorViewModel.SourceConnectorPlugin }.OfType<ConnectorPlugin>()
         : this.IsAutoDetectionEnabled ? PluginManager.Instance.ConnectorPlugins : new[] { this.SelectedConnectorType }.OfType<ConnectorPlugin>();
       var address = this.ProposedServerAddress;
       ArgumentException.ThrowIfNullOrWhiteSpace(address);
-      var discovered = await DiscoverProjects(plugins, address.TrimEnd('/') + "/", TimeSpan.FromMilliseconds(QueryTimeout));
+      var discovered = await DiscoverProjectsAsync(plugins, address.TrimEnd('/') + "/", TimeSpan.FromMilliseconds(QueryTimeout));
       this.projects = new ProjectViewModelList { MultiSelectionMode = this.MultiSelectionMode, PlugIn = discovered.Plugin };
       this.ProcessServerSubProjects(discovered.Projects, null);
 
@@ -592,7 +592,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// Goes to project selection step of the wizard.
     /// </summary>
-    private async Task GoToProjectSelectionStep()
+    private async Task GoToProjectSelectionStepAsync()
     {
       var window = this.wizardWindow;
       if (window == null)
@@ -606,7 +606,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       var waitDailogTask = DialogHost.Show(waitControl, "WizardWaitDialogHostId");
       try
       {
-        await this.PrepareProjectsList();
+        await this.PrepareProjectsListAsync();
       }
       catch (Exception e)
       {

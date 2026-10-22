@@ -50,8 +50,8 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       StubPolling(server, new[] { xmlConnector }, XDocument.Parse(ReadRecording($"poll-{sample}.xml", server.Urls[0])));
       var expectedPaths = new List<string> { jsonPath, JenkinsApi.PollingRequest(new[] { xmlConnector }, false).AbsolutePath };
 
-      await jsonConnector.QueryStatus(CancellationToken.None);
-      var queried = await xmlConnector.QueryStatusBatch(new[] { xmlConnector }, CancellationToken.None);
+      await jsonConnector.QueryStatusAsync(CancellationToken.None);
+      var queried = await xmlConnector.QueryStatusBatchAsync(new[] { xmlConnector }, CancellationToken.None);
 
       Assert.That(queried, Is.EquivalentTo(new[] { xmlConnector }));
       Assert.That(xmlConnector.CurrentStatus?.State, Is.EqualTo(expectedState));
@@ -110,8 +110,8 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/xml")
           .WithBody(ReadRecording("poll-1.xml", server.Urls[0])));
 
-      await jsonConnector.QueryStatus(CancellationToken.None);
-      var queried = await xmlConnector.QueryStatusBatch(new[] { xmlConnector }, CancellationToken.None);
+      await jsonConnector.QueryStatusAsync(CancellationToken.None);
+      var queried = await xmlConnector.QueryStatusBatchAsync(new[] { xmlConnector }, CancellationToken.None);
 
       Assert.That(jsonConnector.CurrentStatus?.State, Is.EqualTo(ObservationState.Success));
       Assert.That(queried, Is.EquivalentTo(new[] { xmlConnector }));
@@ -129,7 +129,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json")
           .WithBody(ReadRecording("discovery.json", server.Urls[0])));
 
-      var projects = await new JenkinsPlugin().GetProjects(server.Urls[0]) ?? throw new AssertionException("Discovery failed.");
+      var projects = await new JenkinsPlugin().GetProjectsAsync(server.Urls[0]) ?? throw new AssertionException("Discovery failed.");
       var leaves = Descendants(projects).Where(project => project.Children.Count == 0).ToArray();
       var expectedPaths = Enumerable.Range(1, 6).Select(sample =>
         JsonConvert.DeserializeObject<JenkinsJob>(ReadRecording($"job-{sample}.json", server.Urls[0]))?.FullName);
@@ -166,7 +166,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         expectedPaths.Add(JenkinsApi.PollingRequest(group.ToArray(), false).AbsolutePath);
       }
 
-      var queried = await connectors[0].QueryStatusBatch(connectors, CancellationToken.None);
+      var queried = await connectors[0].QueryStatusBatchAsync(connectors, CancellationToken.None);
 
       Assert.That(queried, Is.EquivalentTo(connectors));
       Assert.That(connectors.Select(connector => connector.CurrentStatus?.State), Is.EqualTo(new ObservationState?[]

@@ -76,7 +76,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
-    private async void ImportButtonClick(object? sender, RoutedEventArgs e)
+    private async void ImportButtonClickAsync(object? sender, RoutedEventArgs e)
     {
       var window = Window.GetWindow(this) ?? throw new InvalidOperationException("The settings page has no window.");
       window.IsEnabled = false;
@@ -107,7 +107,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
-    private async void ExportButtonClick(object? sender, RoutedEventArgs e)
+    private async void ExportButtonClickAsync(object? sender, RoutedEventArgs e)
     {
       var window = Window.GetWindow(this) ?? throw new InvalidOperationException("The settings page has no window.");
       window.IsEnabled = false;

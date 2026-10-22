@@ -30,7 +30,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       var cases = string.Concat(Enumerable.Range(0, 8).Select(index => $"<case><className>Tests</className><name>Case{index}</name><status>FAILED</status></case>"));
       server.Respond = _ => ("200 OK", "application/xml", "<failures><case><name>Passed</name><status>PASSED</status></case><case><name>Skipped</name><status>SKIPPED</status></case><case><className>Tests</className><name>Regression</name><status>REGRESSION</status></case>" + cases + "</failures>");
       var connector = CreateConnector(server.Address);
-      var result = await new JenkinsApi().GetFailedTests(connector, 42, CancellationToken.None, expanded);
+      var result = await new JenkinsApi().GetFailedTestsAsync(connector, 42, CancellationToken.None, expanded);
 
       Assert.That(result?.Split(Environment.NewLine), Has.Length.EqualTo(expanded ? 10 : 5));
       Assert.That(result, Does.StartWith("Tests.Regression").And.Contain("Tests.Case0").And.Not.Contain("Passed"));
@@ -52,18 +52,18 @@ namespace Soloplan.WhatsON.GUI.Tests
           .Select(index => $"<case><className>Tests.LayoutTests</className><name>Case{index}</name><status>FAILED</status></case>")) + "</failures>")
         : ("200 OK", "application/xml", "<jobs><job><name>Release</name><lastBuild><number>42</number><result>UNSTABLE</result><action><failCount>8</failCount></action></lastBuild></job></jobs>");
       var connector = CreateConnector(server.Address);
-      await connector.QueryStatusBatch(new[] { connector }, CancellationToken.None);
+      await connector.QueryStatusBatchAsync(new[] { connector }, CancellationToken.None);
       Assert.That(connector.CurrentStatus?.State, Is.EqualTo(ObservationState.Unstable));
       Assert.That(connector.CurrentStatus?.FailedTestCount, Is.EqualTo(8));
       var project = new JenkinsProjectViewModel(connector);
       project.CurrentStatus.Update(connector.CurrentStatus);
-      await project.CurrentStatus.LoadFailureDetails(CancellationToken.None);
+      await project.CurrentStatus.LoadFailureDetailsAsync(CancellationToken.None);
       var preview = project.CurrentStatus.FailureSummary;
       Assert.That(server.Requests, Has.Count.EqualTo(2));
-      await project.CurrentStatus.LoadExpandedFailureDetails(CancellationToken.None);
+      await project.CurrentStatus.LoadExpandedFailureDetailsAsync(CancellationToken.None);
       Assert.That(project.CurrentStatus.AdditionalFailureGroups.Single(), Is.EqualTo(Enumerable.Range(2, 6).Select(index => $"Case{index}")));
       Assert.That(project.CurrentStatus.FailureSummary, Is.EqualTo(preview));
-      await project.CurrentStatus.LoadExpandedFailureDetails(CancellationToken.None);
+      await project.CurrentStatus.LoadExpandedFailureDetailsAsync(CancellationToken.None);
       Assert.That(server.Requests, Has.Count.EqualTo(3), "Reopening the expanded list reuses the run's cached details.");
     }
 
@@ -76,11 +76,11 @@ namespace Soloplan.WhatsON.GUI.Tests
         ? ("200 OK", "text/plain", $"Failed in branch Desktop\nINFO: Try to find errors with: (?mi)(ERROR: Error during SonarQube Scanner execution)\nINFO: Try to find errors with: IOException: pattern\n[2025-01-01T12:00:00.000Z] {diagnostic} [Project.csproj::TargetFramework=net472]\n{diagnostic} [Project.csproj::TargetFramework=net8.0-windows]\nERROR: script returned exit code 4")
         : ("200 OK", "application/xml", "<jobs><job><name>Release</name><lastBuild><number>42</number><result>FAILURE</result></lastBuild></job></jobs>");
       var connector = CreateConnector(server.Address);
-      await connector.QueryStatusBatch(new[] { connector }, CancellationToken.None);
+      await connector.QueryStatusBatchAsync(new[] { connector }, CancellationToken.None);
       Assert.That(server.Requests, Has.Count.EqualTo(1), "Polling must not fetch the console.");
       var project = new JenkinsProjectViewModel(connector) { Name = "Release" };
       project.CurrentStatus.Update(connector.CurrentStatus);
-      await project.CurrentStatus.LoadFailureDetails(CancellationToken.None);
+      await project.CurrentStatus.LoadFailureDetailsAsync(CancellationToken.None);
 
       const string Expected = "ExampleView.cs(42,7): CS1061: 'ExampleView' does not contain a definition for 'missingMember'";
       Assert.That(project.CurrentStatus.FailureSummary, Is.EqualTo(Expected));
@@ -106,11 +106,11 @@ namespace Soloplan.WhatsON.GUI.Tests
         return ("200 OK", "application/xml", "<jobs><job><name>Release</name><lastBuild><number>42</number><result>FAILURE</result></lastBuild></job></jobs>");
       };
       var connector = CreateConnector(server.Address);
-      await connector.QueryStatusBatch(new[] { connector }, CancellationToken.None);
+      await connector.QueryStatusBatchAsync(new[] { connector }, CancellationToken.None);
       var project = new JenkinsProjectViewModel(connector);
       project.CurrentStatus.Update(connector.CurrentStatus);
       server.ResponseGate = gate.Task;
-      var pending = expanded ? project.CurrentStatus.LoadExpandedFailureDetails(CancellationToken.None) : project.CurrentStatus.LoadFailureDetails(CancellationToken.None);
+      var pending = expanded ? project.CurrentStatus.LoadExpandedFailureDetailsAsync(CancellationToken.None) : project.CurrentStatus.LoadFailureDetailsAsync(CancellationToken.None);
       await received.Task.WaitAsync(TimeSpan.FromSeconds(5));
       Assert.That(project.CurrentStatus.IsLoadingFailureDetails, Is.True);
       project.CurrentStatus.Update(new JenkinsStatus(ObservationState.Failure) { BuildNumber = 43, FailureDetails = "New build failure" });
@@ -133,7 +133,7 @@ namespace Soloplan.WhatsON.GUI.Tests
     {
       await using var server = new ApiServer();
       server.Respond = _ => (status, mediaType, body);
-      Assert.That(await new JenkinsApi().GetFailedTests(CreateConnector(server.Address), 42, CancellationToken.None), Is.Null);
+      Assert.That(await new JenkinsApi().GetFailedTestsAsync(CreateConnector(server.Address), 42, CancellationToken.None), Is.Null);
     }
 
     [Test]
@@ -141,7 +141,7 @@ namespace Soloplan.WhatsON.GUI.Tests
     {
       await using var server = new ApiServer();
       server.Respond = _ => ("200 OK", "application/xml", new string(' ', JenkinsApi.MaximumResponseBytes + 1));
-      Assert.That(await new JenkinsApi().GetFailedTests(CreateConnector(server.Address), 42, CancellationToken.None), Is.Null);
+      Assert.That(await new JenkinsApi().GetFailedTestsAsync(CreateConnector(server.Address), 42, CancellationToken.None), Is.Null);
     }
 
     [Test]
@@ -156,7 +156,7 @@ namespace Soloplan.WhatsON.GUI.Tests
         return ("200 OK", "application/xml", "<failures/>");
       };
       using var cancellation = new CancellationTokenSource();
-      var request = new JenkinsApi().GetFailedTests(CreateConnector(server.Address), 42, cancellation.Token);
+      var request = new JenkinsApi().GetFailedTestsAsync(CreateConnector(server.Address), 42, cancellation.Token);
       await received.Task.WaitAsync(TimeSpan.FromSeconds(5));
       cancellation.Cancel();
       Assert.That(async () => await request.WaitAsync(TimeSpan.FromSeconds(5)), Throws.InstanceOf<OperationCanceledException>());
@@ -170,12 +170,12 @@ namespace Soloplan.WhatsON.GUI.Tests
         ? ("200 OK", "application/xml", "<failures><case><className>Tests</className><name>Broken</name><status>FAILED</status></case></failures>")
         : ("200 OK", "application/xml", "<jobs><job><name>Release</name><lastBuild><number>42</number><result>UNSTABLE</result><action/><action><failCount>1</failCount></action><action><foundFailureCause><name>Compiler error</name></foundFailureCause><foundFailureCause><name>Dependency unavailable</name></foundFailureCause></action></lastBuild></job></jobs>");
       var connector = CreateConnector(server.Address);
-      await connector.QueryStatusBatch(new[] { connector }, CancellationToken.None);
+      await connector.QueryStatusBatchAsync(new[] { connector }, CancellationToken.None);
 
       Assert.That(connector.CurrentStatus?.State, Is.EqualTo(ObservationState.Unstable));
       Assert.That(connector.CurrentStatus?.FailedTestCount, Is.EqualTo(1));
       Assert.That(server.Requests, Has.Count.EqualTo(1), "Polling must not fetch the test report.");
-      var details = await connector.LoadFailureDetails(connector.CurrentStatus ?? throw new AssertionException("Missing status."), CancellationToken.None);
+      var details = await connector.LoadFailureDetailsAsync(connector.CurrentStatus ?? throw new AssertionException("Missing status."), CancellationToken.None);
       Assert.That(details, Does.Contain("Compiler error").And.Contain("Dependency unavailable").And.Contain("Tests.Broken"));
       Assert.That(connector.Snapshots.Single().Status.FailureDetails, Is.EqualTo(connector.CurrentStatus?.FailureDetails));
     }
@@ -188,7 +188,7 @@ namespace Soloplan.WhatsON.GUI.Tests
     {
       await using var server = new ApiServer();
       server.Respond = _ => (status, mediaType, body);
-      Assert.That(await new JenkinsApi().GetPipelineFailure(CreateConnector(server.Address), 42, CancellationToken.None), Is.Null);
+      Assert.That(await new JenkinsApi().GetPipelineFailureAsync(CreateConnector(server.Address), 42, CancellationToken.None), Is.Null);
     }
 
     [Test]
@@ -196,7 +196,7 @@ namespace Soloplan.WhatsON.GUI.Tests
     {
       await using var server = new ApiServer();
       server.Respond = _ => ("200 OK", "application/json", """{"stages":[{"id":"../../other","name":"Compile","status":"FAILED"}]}""");
-      Assert.That(await new JenkinsApi().GetPipelineFailure(CreateConnector(server.Address), 42, CancellationToken.None), Is.EqualTo("Compile: FAILED"));
+      Assert.That(await new JenkinsApi().GetPipelineFailureAsync(CreateConnector(server.Address), 42, CancellationToken.None), Is.EqualTo("Compile: FAILED"));
       Assert.That(server.Requests, Has.Count.EqualTo(1));
     }
 
@@ -208,7 +208,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       server.Respond = path => path.Contains("/execution/node/", StringComparison.Ordinal)
         ? ("404 Not Found", "text/plain", string.Empty)
         : ("200 OK", "application/json", "{\"stages\":[" + stages + "]}");
-      var result = await new JenkinsApi().GetPipelineFailure(CreateConnector(server.Address), 42, CancellationToken.None);
+      var result = await new JenkinsApi().GetPipelineFailureAsync(CreateConnector(server.Address), 42, CancellationToken.None);
       Assert.That(result?.Split(Environment.NewLine), Has.Length.EqualTo(3));
       Assert.That(server.Requests, Has.Count.EqualTo(2));
     }

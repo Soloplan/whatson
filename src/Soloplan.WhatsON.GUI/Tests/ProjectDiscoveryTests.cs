@@ -92,9 +92,9 @@ namespace Soloplan.WhatsON.GUI.Tests
       AppDomain.CurrentDomain.FirstChanceException += observe;
       try
       {
-        var jenkinsQuery = new JenkinsPlugin().GetProjects(server.Address);
-        var cruiseControlQuery = new CruiseControlPlugin().GetProjects(server.Address);
-        var discovered = await WizardController.DiscoverProjects(
+        var jenkinsQuery = new JenkinsPlugin().GetProjectsAsync(server.Address);
+        var cruiseControlQuery = new CruiseControlPlugin().GetProjectsAsync(server.Address);
+        var discovered = await WizardController.DiscoverProjectsAsync(
           [
             new DiscoveryPlugin(() => jenkinsQuery, typeof(JenkinsConnector)),
             new DiscoveryPlugin(() => cruiseControlQuery, typeof(CruiseControlConnector)),
@@ -126,7 +126,7 @@ namespace Soloplan.WhatsON.GUI.Tests
         ? "{\"jobs\":[{\"name\":\"Release\",\"fullName\":\"Folder/Release\",\"url\":\"" + server.Address + "job/Folder/job/Release/\"}]}"
         : "{\"jobs\":[{\"name\":\"Folder\",\"_class\":\"com.cloudbees.hudson.plugins.folder.Folder\",\"url\":\"" + server.Address + "job/Folder/\"}]}");
 
-      var projects = await new JenkinsPlugin().GetProjects(server.Address) ?? throw new AssertionException("Expected discovered projects.");
+      var projects = await new JenkinsPlugin().GetProjectsAsync(server.Address) ?? throw new AssertionException("Expected discovered projects.");
 
       var folder = projects.Single();
       var child = folder.Children.Single();
@@ -151,7 +151,7 @@ namespace Soloplan.WhatsON.GUI.Tests
         ]}
         """);
 
-      var projects = await new JenkinsPlugin().GetProjects(server.Address) ?? throw new AssertionException("Expected discovered projects.");
+      var projects = await new JenkinsPlugin().GetProjectsAsync(server.Address) ?? throw new AssertionException("Expected discovered projects.");
 
       var folder = projects.First();
       var pipeline = folder.Children.Single();
@@ -178,13 +178,13 @@ namespace Soloplan.WhatsON.GUI.Tests
       var connector = new JenkinsConnector(
         new ConnectorConfiguration("Jenkins", "Release", Connector.ServerAddress, server.Address, Connector.ProjectName, "Release"), new JenkinsApi());
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       Assert.That(connector.Snapshots.Select(snapshot => snapshot.Status.BuildNumber), Is.EqualTo([6, 5, 4, 3, 2]));
       Assert.That(server.Requests, Has.Count.EqualTo(1));
       Assert.That(Uri.UnescapeDataString(server.Requests.Single()), Does.Contain("builds[").And.EndWith("{0,6}"));
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       Assert.That(server.Requests, Has.Count.EqualTo(2));
       Assert.That(server.Requests.Select(Uri.UnescapeDataString).Count(path => path.Contains("builds[", StringComparison.Ordinal)), Is.EqualTo(1));
@@ -204,7 +204,7 @@ namespace Soloplan.WhatsON.GUI.Tests
         {"jobs":[{"name":"Release","fullName":"Top/Middle/Deep/Release","url":"{{server.Address}}job/Top/job/Middle/job/Deep/job/Release/"}]}
         """);
 
-      var top = (await new JenkinsPlugin().GetProjects(server.Address) ?? throw new AssertionException("Expected discovered projects.")).Single();
+      var top = (await new JenkinsPlugin().GetProjectsAsync(server.Address) ?? throw new AssertionException("Expected discovered projects.")).Single();
       var middle = top.Children.Single();
       var deep = middle.Children.Single();
       var project = deep.Children.Single();
@@ -233,7 +233,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       var connector = new JenkinsConnector(
         new ConnectorConfiguration("Jenkins", "Release", Connector.ServerAddress, server.Address, Connector.ProjectName, "Release"), api);
       using var cancellation = new CancellationTokenSource();
-      Task request = history ? api.GetBuilds(connector, cancellation.Token) : api.GetJenkinsJob(connector, cancellation.Token);
+      Task request = history ? api.GetBuildsAsync(connector, cancellation.Token) : api.GetJenkinsJobAsync(connector, cancellation.Token);
       await received.Task.WaitAsync(TimeSpan.FromSeconds(5));
 
       cancellation.Cancel();
@@ -256,11 +256,11 @@ namespace Soloplan.WhatsON.GUI.Tests
       };
       var shared = CruiseControlManager.GetServer(server.Address);
       using var cancellation = new CancellationTokenSource();
-      var first = shared.GetProjectStatus(CancellationToken.None, "First", 60);
+      var first = shared.GetProjectStatusAsync(CancellationToken.None, "First", 60);
       try
       {
         await received.Task.WaitAsync(TimeSpan.FromSeconds(5));
-        var second = CruiseControlManager.GetServer(server.Address).GetProjectStatus(cancellation.Token, "Second", 60);
+        var second = CruiseControlManager.GetServer(server.Address).GetProjectStatusAsync(cancellation.Token, "Second", 60);
         Assert.That(second.IsCompleted, Is.False, "A project must await the pending server report rather than read an empty cache.");
         if (cancelWaitingProject)
         {
@@ -271,7 +271,7 @@ namespace Soloplan.WhatsON.GUI.Tests
         release.TrySetResult();
         Assert.That((await first.WaitAsync(TimeSpan.FromSeconds(5)))?.LastBuildLabel, Is.EqualTo("1"));
         var secondStatus = cancelWaitingProject
-          ? await shared.GetProjectStatus(CancellationToken.None, "Second", 60)
+          ? await shared.GetProjectStatusAsync(CancellationToken.None, "Second", 60)
           : await second.WaitAsync(TimeSpan.FromSeconds(5));
         Assert.That(secondStatus?.LastBuildLabel, Is.EqualTo("2"));
         Assert.That(server.Requests, Is.EquivalentTo(["/XmlStatusReport.aspx"]));
@@ -355,7 +355,7 @@ namespace Soloplan.WhatsON.GUI.Tests
     public async Task MissingEndpointsFailPromptlyInsteadOfSelectingAnEmptyServer()
     {
       await using var server = new DiscoveryServer { Respond = path => ("404 Not Found", "text/plain", "Missing") };
-      var query = WizardController.DiscoverProjects(
+      var query = WizardController.DiscoverProjectsAsync(
         [new JenkinsPlugin(), new CruiseControlPlugin()], server.Address, TimeSpan.FromSeconds(10));
 
       Assert.That(await Task.WhenAny(query, Task.Delay(1000)), Is.SameAs(query));
@@ -367,7 +367,7 @@ namespace Soloplan.WhatsON.GUI.Tests
     {
       await using var server = new DiscoveryServer { Respond = path => ("200 OK", "application/json", "{}") };
 
-      Assert.That(await new JenkinsPlugin().GetProjects(server.Address), Is.Null);
+      Assert.That(await new JenkinsPlugin().GetProjectsAsync(server.Address), Is.Null);
     }
 
     [TestCase(true, "401 Unauthorized", HttpStatusCode.Unauthorized)]
@@ -379,7 +379,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       await using var server = new DiscoveryServer { Respond = path => (status, "text/plain", "Unavailable") };
       ConnectorPlugin plugin = jenkins ? new JenkinsPlugin() : new CruiseControlPlugin();
 
-      var exception = Assert.ThrowsAsync<HttpRequestException>(async () => await plugin.GetProjects(server.Address));
+      var exception = Assert.ThrowsAsync<HttpRequestException>(async () => await plugin.GetProjectsAsync(server.Address));
 
       Assert.That(exception?.StatusCode, Is.EqualTo(expected));
     }
@@ -389,15 +389,15 @@ namespace Soloplan.WhatsON.GUI.Tests
     {
       await using var server = new DiscoveryServer { Respond = path => ("200 OK", "text/html", "<html><body>Sign in</body></html>") };
 
-      Assert.That(await new JenkinsPlugin().GetProjects(server.Address), Is.Null);
-      Assert.That(await new CruiseControlPlugin().GetProjects(server.Address), Is.Null);
+      Assert.That(await new JenkinsPlugin().GetProjectsAsync(server.Address), Is.Null);
+      Assert.That(await new CruiseControlPlugin().GetProjectsAsync(server.Address), Is.Null);
     }
 
     [Test]
     public async Task AllUnrecognizedPluginsFailPromptlyEvenWhenTheyShareACompletedTask()
     {
       var plugins = new[] { new DiscoveryPlugin(() => Task.FromResult<IList<Project>?>(null)), new DiscoveryPlugin(() => Task.FromResult<IList<Project>?>(null)) };
-      var query = WizardController.DiscoverProjects(plugins, "https://build.example.invalid/", TimeSpan.FromSeconds(10));
+      var query = WizardController.DiscoverProjectsAsync(plugins, "https://build.example.invalid/", TimeSpan.FromSeconds(10));
 
       Assert.That(await Task.WhenAny(query, Task.Delay(1000)), Is.SameAs(query));
       Assert.ThrowsAsync<InvalidOperationException>(async () => await query);
@@ -410,7 +410,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       var failure = new DiscoveryPlugin(() => throw new HttpRequestException("Not a matching API"));
       var success = new DiscoveryPlugin(() => Task.FromResult<IList<Project>?>(projects));
 
-      var discovered = await WizardController.DiscoverProjects([failure, success], "https://build.example.invalid/", TimeSpan.FromSeconds(1));
+      var discovered = await WizardController.DiscoverProjectsAsync([failure, success], "https://build.example.invalid/", TimeSpan.FromSeconds(1));
 
       Assert.That(discovered.Plugin, Is.SameAs(success));
       Assert.That(discovered.Projects, Is.SameAs(projects));
@@ -420,7 +420,7 @@ namespace Soloplan.WhatsON.GUI.Tests
     public async Task AStalledProbeTimesOutInsteadOfSpinningOrKeepingTheWizardBusyForever()
     {
       var completion = new TaskCompletionSource<IList<Project>?>(TaskCreationOptions.RunContinuationsAsynchronously);
-      var query = WizardController.DiscoverProjects(
+      var query = WizardController.DiscoverProjectsAsync(
         [new DiscoveryPlugin(() => completion.Task)], "https://build.example.invalid/", TimeSpan.FromMilliseconds(30));
       try
       {
@@ -574,7 +574,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       public DiscoveryPlugin(Func<Task<IList<Project>?>> query, Type? connectorType = null)
         : base(connectorType ?? typeof(JenkinsConnector)) => this.query = query;
 
-      public override Task<IList<Project>?> GetProjects(string address) => this.query();
+      public override Task<IList<Project>?> GetProjectsAsync(string address) => this.query();
 
       public override Connector CreateNew(ConnectorConfiguration configuration, bool? checkRedirect = null) => throw new NotSupportedException();
 

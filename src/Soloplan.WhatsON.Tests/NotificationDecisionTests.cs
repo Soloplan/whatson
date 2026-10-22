@@ -108,9 +108,9 @@ namespace Soloplan.WhatsON.Tests
       {
       }
 
-      protected override Task<Status?> GetCurrentStatus(CancellationToken cancellationToken) => Task.FromResult<Status?>(null);
+      protected override Task<Status?> GetCurrentStatusAsync(CancellationToken cancellationToken) => Task.FromResult<Status?>(null);
 
-      protected override Task<List<Status?>> GetHistory(CancellationToken cancellationToken) => Task.FromResult(new List<Status?>());
+      protected override Task<List<Status?>> GetHistoryAsync(CancellationToken cancellationToken) => Task.FromResult(new List<Status?>());
     }
   }
 }

@@ -104,7 +104,7 @@ namespace Soloplan.WhatsON.Jenkins
 
     private JenkinsStatus? PreviousCheckStatus { get; set; }
 
-    public async Task<Status> SetVolunteer(int buildNumber, string? expectedOwner, bool claim, CancellationToken token)
+    public async Task<Status> SetVolunteerAsync(int buildNumber, string? expectedOwner, bool claim, CancellationToken token)
     {
       var jobUrl = JenkinsApi.UrlHelper.ProjectUrl(this, false);
       if (claim)
@@ -114,12 +114,12 @@ namespace Soloplan.WhatsON.Jenkins
           throw new InvalidOperationException("Configure a Jenkins user name and API token before volunteering.");
         }
 
-        var job = await this.api.GetJenkinsJob(this, token);
+        var job = await this.api.GetJenkinsJobAsync(this, token);
         if (this.CurrentStatus is not { Building: false, State: ObservationState.Failure or ObservationState.Unstable } current
             || current.BuildNumber != buildNumber
             || job?.LastBuild is not { Building: false, Result: "FAILURE" or "UNSTABLE" } latest || latest.Number != buildNumber)
         {
-          await this.QueryStatus(token);
+          await this.QueryStatusAsync(token);
           var refreshed = this.CurrentStatus ?? throw new InvalidOperationException("Could not refresh the Jenkins build.");
           if (refreshed is not { Building: false, State: ObservationState.Failure or ObservationState.Unstable, BuildNumber: > 0 }
               || JenkinsVolunteer.GetOwner(refreshed.Details) != null)
@@ -135,7 +135,7 @@ namespace Soloplan.WhatsON.Jenkins
         await this.volunteers.SaveAsync(jobUrl, buildNumber, owner, token).ConfigureAwait(false);
       }
 
-      var build = await this.api.SetVolunteer(this, buildNumber, expectedOwner, claim, token);
+      var build = await this.api.SetVolunteerAsync(this, buildNumber, expectedOwner, claim, token);
       var description = build.Description;
       if (this.CurrentStatus?.BuildNumber == buildNumber)
       {
@@ -147,7 +147,7 @@ namespace Soloplan.WhatsON.Jenkins
         snapshot.Status.Details = description;
       }
 
-      var panel = await this.api.SetJobVolunteer(this, buildNumber, expectedOwner, claim ? this.AuthenticationUser : null, token);
+      var panel = await this.api.SetJobVolunteerAsync(this, buildNumber, expectedOwner, claim ? this.AuthenticationUser : null, token);
       if (this.CurrentStatus is JenkinsStatus currentStatus)
       {
         currentStatus.ActiveFixes = JenkinsVolunteerPanel.GetFixes(panel);
@@ -167,7 +167,7 @@ namespace Soloplan.WhatsON.Jenkins
       return status;
     }
 
-    public async Task<IReadOnlyCollection<Connector>> QueryStatusBatch(IReadOnlyCollection<Connector> connectors, CancellationToken token)
+    public async Task<IReadOnlyCollection<Connector>> QueryStatusBatchAsync(IReadOnlyCollection<Connector> connectors, CancellationToken token)
     {
       var now = this.timeProvider.GetUtcNow();
       var due = connectors.Cast<JenkinsConnector>().Where(connector => connector.polling.NextDue <= now).OrderBy(connector => connector.polling.NextDue).ToList();
@@ -194,7 +194,7 @@ namespace Soloplan.WhatsON.Jenkins
         return Array.Empty<Connector>();
       }
 
-      var response = await this.api.GetPollingJobs(batch, token);
+      var response = await this.api.GetPollingJobsAsync(batch, token);
       var queried = new List<Connector>();
       foreach (var connector in batch)
       {
@@ -212,7 +212,7 @@ namespace Soloplan.WhatsON.Jenkins
         connector.usingBatch = true;
         try
         {
-          await connector.QueryStatus(token);
+          await connector.QueryStatusAsync(token);
           connector.polling.Succeeded(connector.batchJob, this.timeProvider.GetUtcNow());
           queried.Add(connector);
         }
@@ -239,18 +239,18 @@ namespace Soloplan.WhatsON.Jenkins
     /// Checks correctness of self server URL.
     /// </summary>
     /// <returns>true when fine, false when url is broken.</returns>
-    public override async Task<bool> CheckServerUrl() => await this.IsReachableUrl(this.Address);
+    public override async Task<bool> CheckServerUrlAsync() => await this.IsReachableUrlAsync(this.Address);
 
     /// <summary>
     /// Checks correctness of self project URL.
     /// </summary>
     /// <returns>true when fine, false when url is broken.</returns>
-    public override async Task<bool> CheckProjectUrl() => await this.IsReachableUrl(JenkinsApi.UrlHelper.ProjectUrl(this));
+    public override async Task<bool> CheckProjectUrlAsync() => await this.IsReachableUrlAsync(JenkinsApi.UrlHelper.ProjectUrl(this));
 
-    protected override async Task ExecuteQuery(CancellationToken cancellationToken)
+    protected override async Task ExecuteQueryAsync(CancellationToken cancellationToken)
     {
       var previousBuildNumber = this.PreviousCheckStatus?.BuildNumber;
-      await base.ExecuteQuery(cancellationToken);
+      await base.ExecuteQueryAsync(cancellationToken);
 
       if (this.recentBuilds != null)
       {
@@ -288,7 +288,7 @@ namespace Soloplan.WhatsON.Jenkins
 
         log.Error(
           $"It was necessary to reevaluate history of jenkins job {this.Configuration.GetConfigurationByKey(Category)?.Value?.Trim()} / {this.Configuration.Name}, prev build number {previousBuildNumber.Value}, current build number {currentStatus.BuildNumber}");
-        var builds = await this.api.GetBuilds(this, cancellationToken, 0, MaxSnapshots + 1);
+        var builds = await this.api.GetBuildsAsync(this, cancellationToken, 0, MaxSnapshots + 1);
         foreach (var build in builds
           .Where(build => !build.Building && build.Number > previousBuildNumber.Value && build.Number < currentStatus.BuildNumber)
           .OrderByDescending(build => build.Number)
@@ -304,9 +304,9 @@ namespace Soloplan.WhatsON.Jenkins
       }
     }
 
-    public Task<string?> LoadFailureDetails(Status status, CancellationToken token) => this.LoadFailureDetails(status, token, false);
+    public Task<string?> LoadFailureDetailsAsync(Status status, CancellationToken token) => this.LoadFailureDetailsAsync(status, token, false);
 
-    public async Task<string?> LoadFailureDetails(Status status, CancellationToken token, bool expanded)
+    public async Task<string?> LoadFailureDetailsAsync(Status status, CancellationToken token, bool expanded)
     {
       if (status.Building || status.BuildNumber <= 0 || status.State is not (ObservationState.Failure or ObservationState.Unstable))
       {
@@ -325,9 +325,9 @@ namespace Soloplan.WhatsON.Jenkins
         }
 
         var tests = key.Failed > 0 || key.Skipped > 0
-          ? await this.api.GetFailedTests(this, key.Number, token, expanded).ConfigureAwait(false) : string.Empty;
+          ? await this.api.GetFailedTestsAsync(this, key.Number, token, expanded).ConfigureAwait(false) : string.Empty;
         var console = key.Failed > 0 && !string.IsNullOrWhiteSpace(tests)
-          ? string.Empty : await this.api.GetConsoleErrors(this, key.Number, token, expanded).ConfigureAwait(false);
+          ? string.Empty : await this.api.GetConsoleErrorsAsync(this, key.Number, token, expanded).ConfigureAwait(false);
         token.ThrowIfCancellationRequested();
         if (JenkinsApi.UrlHelper.ProjectUrl(this, false) != key.Project)
         {
@@ -352,9 +352,9 @@ namespace Soloplan.WhatsON.Jenkins
       }
     }
 
-    protected override async Task<Status?> GetCurrentStatus(CancellationToken cancellationToken)
+    protected override async Task<Status?> GetCurrentStatusAsync(CancellationToken cancellationToken)
     {
-      var job = this.usingBatch ? this.batchJob : await this.api.GetJenkinsJob(this, cancellationToken);
+      var job = this.usingBatch ? this.batchJob : await this.api.GetJenkinsJobAsync(this, cancellationToken);
       this.recentBuilds = job?.Builds ?? (this.usingBatch ? Array.Empty<JenkinsBuild>() : null);
       if (job == null)
       {
@@ -363,7 +363,7 @@ namespace Soloplan.WhatsON.Jenkins
           return new Status { ErrorMessage = Strings.ProjectNotAvailable, InvalidBuild = true };
         }
 
-        if (!await this.CheckServerUrl())
+        if (!await this.CheckServerUrlAsync())
         {
           var status = new Status();
           status.ErrorMessage = Strings.ServerNotAvailable;
@@ -371,7 +371,7 @@ namespace Soloplan.WhatsON.Jenkins
           return status;
         }
 
-        if (!await this.CheckProjectUrl())
+        if (!await this.CheckProjectUrlAsync())
         {
           var status = new Status();
           status.ErrorMessage = Strings.ProjectNotAvailable;
@@ -402,16 +402,16 @@ namespace Soloplan.WhatsON.Jenkins
         return status;
       }
 
-      await this.ClearRecoveredVolunteers(job, cancellationToken);
-      await this.SynchronizeVolunteerPanel(job, cancellationToken);
+      await this.ClearRecoveredVolunteersAsync(job, cancellationToken);
+      await this.SynchronizeVolunteerPanelAsync(job, cancellationToken);
       var currentStatus = this.CreateStatus(job.LastBuild);
       currentStatus.ActiveFixes = JenkinsVolunteerPanel.GetFixes(job.Description);
       return currentStatus;
     }
 
-    protected override async Task<List<Status?>> GetHistory(CancellationToken cancellationToken)
+    protected override async Task<List<Status?>> GetHistoryAsync(CancellationToken cancellationToken)
     {
-      var builds = this.recentBuilds ?? await this.api.GetBuilds(this, cancellationToken, 1, MaxSnapshots + 1);
+      var builds = this.recentBuilds ?? await this.api.GetBuildsAsync(this, cancellationToken, 1, MaxSnapshots + 1);
       var statuses = builds
         .Where(build => !build.Building && build.Number != this.CurrentStatus?.BuildNumber)
         .OrderByDescending(build => build.Number)
@@ -452,7 +452,7 @@ namespace Soloplan.WhatsON.Jenkins
       return ObservationState.Unknown;
     }
 
-    private async Task ClearRecoveredVolunteers(JenkinsJob job, CancellationToken token)
+    private async Task ClearRecoveredVolunteersAsync(JenkinsJob job, CancellationToken token)
     {
       var successfulBuild = Math.Max(
         job.LastStableBuild?.Number ?? 0,
@@ -470,7 +470,7 @@ namespace Soloplan.WhatsON.Jenkins
           try
           {
             token.ThrowIfCancellationRequested();
-            var build = await this.api.GetJenkinsBuild(this, claim.BuildNumber, token);
+            var build = await this.api.GetJenkinsBuildAsync(this, claim.BuildNumber, token);
             token.ThrowIfCancellationRequested();
             if (build == null || build.Number != claim.BuildNumber)
             {
@@ -479,10 +479,10 @@ namespace Soloplan.WhatsON.Jenkins
 
             if (JenkinsVolunteer.GetValidatedOwner(build.Description) == claim.Owner)
             {
-              build = await this.api.SetVolunteer(this, claim.BuildNumber, claim.Owner, false, token);
+              build = await this.api.SetVolunteerAsync(this, claim.BuildNumber, claim.Owner, false, token);
             }
 
-            job.Description = await this.api.SetJobVolunteer(this, claim.BuildNumber, claim.Owner, null, token);
+            job.Description = await this.api.SetJobVolunteerAsync(this, claim.BuildNumber, claim.Owner, null, token);
 
             foreach (var recent in (job.Builds ?? Array.Empty<JenkinsBuild>()).Where(recent => recent.Number == claim.BuildNumber))
             {
@@ -516,7 +516,7 @@ namespace Soloplan.WhatsON.Jenkins
       }
     }
 
-    private async Task SynchronizeVolunteerPanel(JenkinsJob job, CancellationToken token)
+    private async Task SynchronizeVolunteerPanelAsync(JenkinsJob job, CancellationToken token)
     {
       if (!this.HasApiCredentials)
       {
@@ -529,7 +529,7 @@ namespace Soloplan.WhatsON.Jenkins
           job.LastBuild is { Building: false, Result: "SUCCESS" } latest ? latest.Number : 0);
         foreach (var fix in JenkinsVolunteerPanel.GetFixes(job.Description).Where(fix => fix.BuildNumber < successfulBuild))
         {
-          job.Description = await this.api.SetJobVolunteer(this, fix.BuildNumber, fix.Owner, null, token);
+          job.Description = await this.api.SetJobVolunteerAsync(this, fix.BuildNumber, fix.Owner, null, token);
         }
 
         // Resume a panel update after an interrupted request, including claims made by older whatsON versions.
@@ -544,7 +544,7 @@ namespace Soloplan.WhatsON.Jenkins
             continue;
           }
 
-          build ??= await this.api.GetJenkinsBuild(this, claim.BuildNumber, token);
+          build ??= await this.api.GetJenkinsBuildAsync(this, claim.BuildNumber, token);
           if (build == null)
           {
             continue;
@@ -553,11 +553,11 @@ namespace Soloplan.WhatsON.Jenkins
           var owner = JenkinsVolunteer.GetValidatedOwner(build.Description);
           if (owner == claim.Owner && fix == null)
           {
-            job.Description = await this.api.SetJobVolunteer(this, claim.BuildNumber, null, claim.Owner, token);
+            job.Description = await this.api.SetJobVolunteerAsync(this, claim.BuildNumber, null, claim.Owner, token);
           }
           else if (owner != claim.Owner && fix != null)
           {
-            job.Description = await this.api.SetJobVolunteer(this, claim.BuildNumber, claim.Owner, null, token);
+            job.Description = await this.api.SetJobVolunteerAsync(this, claim.BuildNumber, claim.Owner, null, token);
             this.volunteers.Remove(jobUrl, claim.BuildNumber);
           }
         }

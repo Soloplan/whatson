@@ -77,7 +77,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     public async Task RecoveryClearsTheOriginalBuildAfterRestartEvenOutsideRecentHistory(bool failedAgain)
     {
       var original = this.CreateConnector();
-      await original.SetVolunteer(42, null, true, CancellationToken.None);
+      await original.SetVolunteerAsync(42, null, true, CancellationToken.None);
       var jobUrl = JenkinsApi.UrlHelper.ProjectUrl(original, false);
       var saved = (await new JenkinsVolunteerStore(this.directory).ReadAsync(jobUrl)).Single();
       Assert.That(saved.BuildNumber, Is.EqualTo(42));
@@ -87,7 +87,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       this.job.LastBuild = new JenkinsBuild { Number = 100, Result = failedAgain ? "FAILURE" : "SUCCESS" };
       this.job.LastStableBuild = new JenkinsBuild { Number = failedAgain ? 75 : 100 };
       var restarted = this.CreateConnector();
-      await restarted.QueryStatus(CancellationToken.None);
+      await restarted.QueryStatusAsync(CancellationToken.None);
 
       Assert.That(this.clearAttempts, Is.EqualTo(1));
       Assert.That(this.claimed.Description, Is.EqualTo("Release notes"));
@@ -101,10 +101,10 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     public async Task LaterFailuresAndRunningBuildsDoNotClearTheClaim(string? result, bool building)
     {
       var connector = this.CreateConnector();
-      await connector.SetVolunteer(42, null, true, CancellationToken.None);
+      await connector.SetVolunteerAsync(42, null, true, CancellationToken.None);
       this.job.LastBuild = new JenkinsBuild { Number = 43, Result = result, Building = building };
       this.job.LastStableBuild = new JenkinsBuild { Number = 41 };
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
       Assert.That(this.clearAttempts, Is.Zero);
       Assert.That(JenkinsVolunteer.GetOwner(this.claimed.Description), Is.EqualTo("alex"));
       Assert.That((await new JenkinsVolunteerStore(this.directory).ReadAsync(JenkinsApi.UrlHelper.ProjectUrl(connector, false))).Count(), Is.EqualTo(1));
@@ -115,14 +115,14 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     public async Task OnlyTheClientWithLocalTrackingAutomaticallyClearsTheNotice(string otherUser)
     {
       var creator = this.CreateConnector();
-      await creator.SetVolunteer(42, null, true, CancellationToken.None);
+      await creator.SetVolunteerAsync(42, null, true, CancellationToken.None);
       this.job.LastBuild = new JenkinsBuild { Number = 43, Result = "SUCCESS" };
       var otherClient = this.CreateConnector(Path.Combine(this.directory, "other-client"), otherUser);
-      await otherClient.QueryStatus(CancellationToken.None);
+      await otherClient.QueryStatusAsync(CancellationToken.None);
       Assert.That(this.clearAttempts, Is.Zero, "A matching Jenkins user name alone must not authorize automatic cleanup.");
       Assert.That(JenkinsVolunteer.GetOwner(this.claimed.Description), Is.EqualTo("alex"));
 
-      await this.CreateConnector().QueryStatus(CancellationToken.None);
+      await this.CreateConnector().QueryStatusAsync(CancellationToken.None);
       Assert.That(this.clearAttempts, Is.EqualTo(1), "The original client resumes its own cleanup after restart.");
       Assert.That(this.claimed.Description, Is.EqualTo("Release notes"));
     }
@@ -131,17 +131,17 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     public async Task AnotherConfiguredClientCanClearManuallyAndTheCreatorDropsItsTrackingLater()
     {
       var creator = this.CreateConnector();
-      await creator.SetVolunteer(42, null, true, CancellationToken.None);
+      await creator.SetVolunteerAsync(42, null, true, CancellationToken.None);
       var otherClient = this.CreateConnector(Path.Combine(this.directory, "other-client"), "sam");
-      await otherClient.QueryStatus(CancellationToken.None);
-      await otherClient.SetVolunteer(42, JenkinsVolunteer.GetOwner(otherClient.CurrentStatus?.Details), false, CancellationToken.None);
+      await otherClient.QueryStatusAsync(CancellationToken.None);
+      await otherClient.SetVolunteerAsync(42, JenkinsVolunteer.GetOwner(otherClient.CurrentStatus?.Details), false, CancellationToken.None);
       Assert.That(this.clearAttempts, Is.EqualTo(1));
       Assert.That(this.claimed.Description, Is.EqualTo("Release notes"));
       var jobUrl = JenkinsApi.UrlHelper.ProjectUrl(creator, false);
       Assert.That((await new JenkinsVolunteerStore(this.directory).ReadAsync(jobUrl)).Count(), Is.EqualTo(1));
 
       this.job.LastBuild = new JenkinsBuild { Number = 43, Result = "SUCCESS" };
-      await this.CreateConnector().QueryStatus(CancellationToken.None);
+      await this.CreateConnector().QueryStatusAsync(CancellationToken.None);
       Assert.That(this.clearAttempts, Is.EqualTo(1), "The creator must not write again after another user cleared the notice.");
       Assert.That((await new JenkinsVolunteerStore(this.directory).ReadAsync(jobUrl)), Is.Empty);
     }
@@ -152,7 +152,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     public async Task CleanupKeepsTrackingUntilItCanSucceed(string failure)
     {
       var connector = this.CreateConnector();
-      await connector.SetVolunteer(42, null, true, CancellationToken.None);
+      await connector.SetVolunteerAsync(42, null, true, CancellationToken.None);
       this.job.LastBuild = new JenkinsBuild { Number = 43, Result = "SUCCESS" };
       this.failRead = failure == "read";
       this.failClear = failure == "write";
@@ -161,12 +161,12 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         connector.Configuration.GetConfigurationByKey(JenkinsConnector.ApiToken).Value = string.Empty;
       }
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
       Assert.That(connector.CurrentStatus?.State, Is.EqualTo(ObservationState.Success), "Cleanup errors must not hide build recovery.");
       Assert.That((await new JenkinsVolunteerStore(this.directory).ReadAsync(JenkinsApi.UrlHelper.ProjectUrl(connector, false))).Count(), Is.EqualTo(1));
       this.failRead = false;
       this.failClear = false;
-      await this.CreateConnector().QueryStatus(CancellationToken.None);
+      await this.CreateConnector().QueryStatusAsync(CancellationToken.None);
       Assert.That(this.claimed.Description, Is.EqualTo("Release notes"));
       Assert.That((await new JenkinsVolunteerStore(this.directory).ReadAsync(JenkinsApi.UrlHelper.ProjectUrl(connector, false))), Is.Empty);
     }
@@ -175,11 +175,11 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     public async Task JenkinsLastSuccessfulBuildDoesNotTreatUnstableAsRecovery()
     {
       var connector = this.CreateConnector();
-      await connector.SetVolunteer(42, null, true, CancellationToken.None);
+      await connector.SetVolunteerAsync(42, null, true, CancellationToken.None);
       this.job = JsonConvert.DeserializeObject<JenkinsJob>(
         "{\"builds\":[],\"lastBuild\":{\"number\":44,\"result\":\"FAILURE\"},\"lastSuccessfulBuild\":{\"number\":43},\"lastStableBuild\":{\"number\":41}}")
         ?? throw new AssertionException("Missing job.");
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
       Assert.That(this.clearAttempts, Is.Zero);
       Assert.That(JenkinsVolunteer.GetOwner(this.claimed.Description), Is.EqualTo("alex"));
     }
@@ -189,10 +189,10 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     public async Task CleanupDoesNotRemoveAReplacementVolunteer(string? owner)
     {
       var connector = this.CreateConnector();
-      await connector.SetVolunteer(42, null, true, CancellationToken.None);
+      await connector.SetVolunteerAsync(42, null, true, CancellationToken.None);
       this.claimed.Description = JenkinsVolunteer.SetOwner("Release notes", owner);
       this.job.LastBuild = new JenkinsBuild { Number = 43, Result = "SUCCESS" };
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
       Assert.That(this.clearAttempts, Is.Zero);
       Assert.That(JenkinsVolunteer.GetOwner(this.claimed.Description), Is.EqualTo(owner));
       Assert.That((await new JenkinsVolunteerStore(this.directory).ReadAsync(JenkinsApi.UrlHelper.ProjectUrl(connector, false))), Is.Empty);
@@ -202,8 +202,8 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     public async Task ManualClearAlsoRemovesTracking()
     {
       var connector = this.CreateConnector();
-      await connector.SetVolunteer(42, null, true, CancellationToken.None);
-      await connector.SetVolunteer(42, "alex", false, CancellationToken.None);
+      await connector.SetVolunteerAsync(42, null, true, CancellationToken.None);
+      await connector.SetVolunteerAsync(42, "alex", false, CancellationToken.None);
       Assert.That((await new JenkinsVolunteerStore(this.directory).ReadAsync(JenkinsApi.UrlHelper.ProjectUrl(connector, false))), Is.Empty);
     }
 
@@ -211,15 +211,15 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     public async Task DamagedNoticeKeepsRecoveryTrackingUntilItIsRepaired()
     {
       var connector = this.CreateConnector();
-      await connector.SetVolunteer(42, null, true, CancellationToken.None);
+      await connector.SetVolunteerAsync(42, null, true, CancellationToken.None);
       var original = this.claimed.Description ?? throw new AssertionException("Missing notice.");
       this.claimed.Description = original.Replace("YWxleA==", "/w==");
       this.job.LastBuild = new JenkinsBuild { Number = 43, Result = "SUCCESS" };
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
       Assert.That(this.clearAttempts, Is.Zero);
       Assert.That((await new JenkinsVolunteerStore(this.directory).ReadAsync(JenkinsApi.UrlHelper.ProjectUrl(connector, false))).Count(), Is.EqualTo(1));
       this.claimed.Description = original;
-      await this.CreateConnector().QueryStatus(CancellationToken.None);
+      await this.CreateConnector().QueryStatusAsync(CancellationToken.None);
       Assert.That(this.claimed.Description, Is.EqualTo("Release notes"));
     }
 
@@ -236,7 +236,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         connector.CurrentStatus = new JenkinsStatus(ObservationState.Failure) { BuildNumber = 43 };
       }
 
-      var updated = await connector.SetVolunteer(42, null, true, CancellationToken.None);
+      var updated = await connector.SetVolunteerAsync(42, null, true, CancellationToken.None);
       Assert.That(updated.BuildNumber, Is.EqualTo(43));
       Assert.That(connector.CurrentStatus?.BuildNumber, Is.EqualTo(43));
       Assert.That(connector.CurrentStatus?.Building, Is.EqualTo(building));
@@ -269,7 +269,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         return Task.FromResult(latest);
       };
 
-      var updated = await connector.SetVolunteer(42, null, true, CancellationToken.None);
+      var updated = await connector.SetVolunteerAsync(42, null, true, CancellationToken.None);
 
       Assert.That(writes, Is.EqualTo(1));
       Assert.That(updated.BuildNumber, Is.EqualTo(43));
@@ -286,7 +286,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       this.job.LastBuild = new JenkinsBuild { Number = 43, Result = "FAILURE", Description = description };
       this.api.VolunteerQuery = (_, _, _, _, _) => throw new AssertionException("An existing volunteer must not be overwritten.");
 
-      var updated = await connector.SetVolunteer(42, null, true, CancellationToken.None);
+      var updated = await connector.SetVolunteerAsync(42, null, true, CancellationToken.None);
 
       Assert.That(updated.BuildNumber, Is.EqualTo(43));
       Assert.That(connector.CurrentStatus?.Details, Is.EqualTo(description));
@@ -304,10 +304,10 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         await update(project, number, owner, claim, token);
         throw new IOException("The server accepted the change but the connection failed.");
       };
-      Assert.ThrowsAsync<IOException>(() => connector.SetVolunteer(42, null, true, CancellationToken.None));
+      Assert.ThrowsAsync<IOException>(() => connector.SetVolunteerAsync(42, null, true, CancellationToken.None));
       this.api.VolunteerQuery = update;
       this.job.LastBuild = new JenkinsBuild { Number = 43, Result = "SUCCESS" };
-      await this.CreateConnector().QueryStatus(CancellationToken.None);
+      await this.CreateConnector().QueryStatusAsync(CancellationToken.None);
       Assert.That(this.claimed.Description, Is.EqualTo("Release notes"));
     }
 
@@ -316,10 +316,10 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     {
       this.job.Description = "Original job documentation";
       var creator = this.CreateConnector();
-      await creator.SetVolunteer(42, null, true, CancellationToken.None);
+      await creator.SetVolunteerAsync(42, null, true, CancellationToken.None);
       this.job.LastBuild = new JenkinsBuild { Number = 100, Result = "FAILURE" };
       var second = this.CreateConnector(Path.Combine(this.directory, "second"), "sam");
-      await second.QueryStatus(CancellationToken.None);
+      await second.QueryStatusAsync(CancellationToken.None);
       var status = second.CurrentStatus as JenkinsStatus;
       Assert.That(status?.ActiveFixes.Single(), Is.EqualTo(new JenkinsFix(42, "alex")));
       Assert.That(status?.BuildNumber, Is.EqualTo(100));
@@ -331,11 +331,11 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         build.Description = JenkinsVolunteer.SetOwner(build.Description, claim ? "sam" : null);
         return Task.FromResult(build);
       };
-      await second.SetVolunteer(100, null, true, CancellationToken.None);
+      await second.SetVolunteerAsync(100, null, true, CancellationToken.None);
       Assert.That(JenkinsVolunteerPanel.GetFixes(this.job.Description), Is.EqualTo(new[] { new JenkinsFix(42, "alex"), new JenkinsFix(100, "sam") }));
 
       var third = this.CreateConnector(Path.Combine(this.directory, "third"));
-      await third.QueryStatus(CancellationToken.None);
+      await third.QueryStatusAsync(CancellationToken.None);
       Assert.That((third.CurrentStatus as JenkinsStatus)?.ActiveFixes.Count, Is.EqualTo(2));
       Assert.That(this.job.Description, Does.EndWith("Original job documentation"));
     }
@@ -343,12 +343,12 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     [Test]
     public async Task AnotherClientCanRemoveAnOlderAssignmentWithoutChangingTheCurrentBuild()
     {
-      await this.CreateConnector().SetVolunteer(42, null, true, CancellationToken.None);
+      await this.CreateConnector().SetVolunteerAsync(42, null, true, CancellationToken.None);
       this.job.LastBuild = new JenkinsBuild { Number = 100, Result = "FAILURE" };
       var other = this.CreateConnector(Path.Combine(this.directory, "other"), "sam");
-      await other.QueryStatus(CancellationToken.None);
+      await other.QueryStatusAsync(CancellationToken.None);
 
-      await other.SetVolunteer(42, "alex", false, CancellationToken.None);
+      await other.SetVolunteerAsync(42, "alex", false, CancellationToken.None);
 
       Assert.That(other.CurrentStatus?.BuildNumber, Is.EqualTo(100));
       Assert.That((other.CurrentStatus as JenkinsStatus)?.ActiveFixes, Is.Empty);
@@ -361,11 +361,11 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     {
       var connector = this.CreateConnector();
       this.api.JobVolunteerQuery = (_, _, _, _, _) => throw new IOException("Temporary panel failure");
-      Assert.ThrowsAsync<IOException>(() => connector.SetVolunteer(42, null, true, CancellationToken.None));
+      Assert.ThrowsAsync<IOException>(() => connector.SetVolunteerAsync(42, null, true, CancellationToken.None));
       Assert.That(JenkinsVolunteer.GetOwner(connector.CurrentStatus?.Details), Is.EqualTo("alex"));
       this.api.JobVolunteerQuery = null;
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       Assert.That((connector.CurrentStatus as JenkinsStatus)?.ActiveFixes.Single(), Is.EqualTo(new JenkinsFix(42, "alex")));
       Assert.That(JenkinsVolunteerPanel.GetFixes(this.job.Description).Single(), Is.EqualTo(new JenkinsFix(42, "alex")));
@@ -375,12 +375,12 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     public async Task AFailedPanelRemovalIsRetriedOnTheNextPoll()
     {
       var connector = this.CreateConnector();
-      await connector.SetVolunteer(42, null, true, CancellationToken.None);
+      await connector.SetVolunteerAsync(42, null, true, CancellationToken.None);
       this.api.JobVolunteerQuery = (_, _, _, _, _) => throw new IOException("Temporary panel failure");
-      Assert.ThrowsAsync<IOException>(() => connector.SetVolunteer(42, "alex", false, CancellationToken.None));
+      Assert.ThrowsAsync<IOException>(() => connector.SetVolunteerAsync(42, "alex", false, CancellationToken.None));
       this.api.JobVolunteerQuery = null;
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       Assert.That((connector.CurrentStatus as JenkinsStatus)?.ActiveFixes, Is.Empty);
       Assert.That(JenkinsVolunteerPanel.GetFixes(this.job.Description), Is.Empty);
@@ -390,12 +390,12 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     [Test]
     public async Task AnotherClientRemovesRecoveredAssignmentsEvenWhenTheCreatorIsOffline()
     {
-      await this.CreateConnector().SetVolunteer(42, null, true, CancellationToken.None);
+      await this.CreateConnector().SetVolunteerAsync(42, null, true, CancellationToken.None);
       this.job.LastBuild = new JenkinsBuild { Number = 50, Result = "FAILURE" };
       this.job.LastStableBuild = new JenkinsBuild { Number = 49 };
       var other = this.CreateConnector(Path.Combine(this.directory, "other"));
 
-      await other.QueryStatus(CancellationToken.None);
+      await other.QueryStatusAsync(CancellationToken.None);
 
       Assert.That(JenkinsVolunteerPanel.GetFixes(this.job.Description), Is.Empty);
       Assert.That((other.CurrentStatus as JenkinsStatus)?.ActiveFixes, Is.Empty);

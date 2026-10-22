@@ -42,7 +42,7 @@ namespace Soloplan.WhatsON.CruiseControl
 
     public string ReportUrl => UrlHelper.GetXmlReportUrl(this.baseUrl);
 
-    public async Task<CruiseControlJob?> GetProjectStatus(CancellationToken cancellationToken, string? projectName, int interval)
+    public async Task<CruiseControlJob?> GetProjectStatusAsync(CancellationToken cancellationToken, string? projectName, int interval)
     {
       await this.reportLock.WaitAsync(cancellationToken);
       try
@@ -75,7 +75,7 @@ namespace Soloplan.WhatsON.CruiseControl
       }
     }
 
-    public async Task<List<CruiseControlBuild>> GetBuilds(string? projectName, int limit = Connector.MaxSnapshots, CancellationToken cancellationToken = default)
+    public async Task<List<CruiseControlBuild>> GetBuildsAsync(string? projectName, int limit = Connector.MaxSnapshots, CancellationToken cancellationToken = default)
     {
       var history = new List<CruiseControlBuild>();
 
@@ -117,7 +117,7 @@ namespace Soloplan.WhatsON.CruiseControl
     /// Gets all projects from the CC server.
     /// </summary>
     /// <returns>The list of all projects.</returns>
-    public async Task<CruiseControlJobs> GetAllProjects()
+    public async Task<CruiseControlJobs> GetAllProjectsAsync()
     {
       try
       {

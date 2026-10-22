@@ -73,7 +73,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var subj = new JenkinsConnector(new ConnectorConfiguration("Jenkins", "name", "Address", "MyAddress", "ProjectName", "MyProject"), api);
       for (var poll = 0; poll < 3; poll++)
       {
-        await subj.QueryStatus(CancellationToken.None);
+        await subj.QueryStatusAsync(CancellationToken.None);
       }
 
       var jenkinsStatuses = subj.Snapshots.Select(snap => snap.Status).OfType<JenkinsStatus>().ToList();

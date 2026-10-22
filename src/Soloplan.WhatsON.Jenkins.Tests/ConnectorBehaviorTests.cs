@@ -41,13 +41,13 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var api = new FakeJenkinsApi();
       api.JobRequest += (sender, args) => args.Result = job;
       var connector = new JenkinsConnector(Configuration(), api);
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
       var snapshot = connector.Snapshots.Single();
 
       foreach (var disabled in new[] { true, false })
       {
         job.Disabled = disabled;
-        await connector.QueryStatus(CancellationToken.None);
+        await connector.QueryStatusAsync(CancellationToken.None);
 
         Assert.That(connector.IsDisabled, Is.EqualTo(disabled));
         Assert.That(connector.CurrentStatus?.State, Is.EqualTo(expected));
@@ -68,7 +68,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       };
       var connector = new JenkinsConnector(Configuration(), api);
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       Assert.That(connector.IsDisabled, Is.True);
       Assert.That(connector.CurrentStatus?.Building, Is.True);
@@ -89,7 +89,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       api.JobRequest += (sender, args) => args.Result = new JenkinsJob { LastBuild = new JenkinsBuild { Number = 1, Result = result } };
       var connector = new JenkinsConnector(Configuration(), api);
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       Assert.That(connector.CurrentStatus?.State, Is.EqualTo(expected));
       Assert.That(connector.Snapshots.Single().Status.State, Is.EqualTo(expected));
@@ -103,7 +103,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         args.Result = new JenkinsJob { LastBuild = new JenkinsBuild { Number = 1, Building = true, Result = "SUCCESS" } };
       var connector = new JenkinsConnector(Configuration(), api);
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       Assert.That(connector.CurrentStatus?.State, Is.EqualTo(ObservationState.Running));
       Assert.That(connector.Snapshots, Is.Empty);
@@ -128,7 +128,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       };
       var connector = new JenkinsConnector(Configuration(), api);
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       Assert.Multiple(() =>
       {
@@ -157,7 +157,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       api.JobRequest += (sender, args) => args.Result = new JenkinsJob { LastBuild = build };
       var connector = new JenkinsConnector(Configuration(), api);
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       var status = connector.CurrentStatus as JenkinsStatus ?? throw new AssertionException("Expected a JenkinsStatus.");
       Assert.That(status.CommittedToThisBuild.Select(author => author.FullName), Is.EquivalentTo(["Alice", "Bob"]));
@@ -173,7 +173,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       api.JobRequest += (sender, args) => args.Result = new JenkinsJob { Disabled = disabled };
       var connector = new JenkinsConnector(Configuration(), api);
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       Assert.That(connector.CurrentStatus?.InvalidBuild, Is.True);
       Assert.That(connector.CurrentStatus?.ErrorMessage, Is.EqualTo("No builds yet"));
@@ -190,7 +190,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       api.JobRequest += (sender, args) => args.Result = null;
       var connector = new ReachabilityConnector(api, serverAvailable, projectAvailable);
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       Assert.That(connector.CurrentStatus?.InvalidBuild, Is.True);
       Assert.That(connector.CurrentStatus?.ErrorMessage, Is.EqualTo(expectedMessage));
@@ -213,8 +213,8 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       };
       var connector = new JenkinsConnector(Configuration(), api);
 
-      await connector.QueryStatus(CancellationToken.None);
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       Assert.That(connector.Snapshots.Select(s => s.Status.BuildNumber), Is.EqualTo([6, 5, 4, 3, 2]));
       Assert.That(historyRequests, Is.EqualTo(1));
@@ -240,10 +240,10 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         }
       };
       var connector = new JenkinsConnector(Configuration(), api);
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       latestNumber = 13;
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       int[] expectedBuildNumbers = middleBuildDeleted ? [12, 10, 9, 8, 7] : [12, 11, 10, 9, 8];
 
@@ -278,11 +278,11 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         }
       };
       var connector = new JenkinsConnector(Configuration(), api);
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       latestNumber = 1000;
-      await connector.QueryStatus(CancellationToken.None);
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       var newestCompleted = latestState == ObservationState.Running ? 999 : 1000;
       Assert.That(connector.Snapshots.Select(snapshot => snapshot.Status.BuildNumber), Is.EqualTo(Enumerable.Range(newestCompleted - 4, 5).Reverse()));
@@ -305,7 +305,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       };
       var connector = new JenkinsConnector(Configuration(), api);
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       Assert.That(connector.Snapshots.Select(snapshot => snapshot.Status.BuildNumber), Is.EqualTo([5, 4, 3]));
     }
@@ -324,7 +324,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       {
         cancellation.Cancel();
 
-        Assert.That(async () => await connector.QueryStatus(cancellation.Token), Throws.InstanceOf<OperationCanceledException>());
+        Assert.That(async () => await connector.QueryStatusAsync(cancellation.Token), Throws.InstanceOf<OperationCanceledException>());
       }
 
       Assert.That(connector.CurrentStatus, Is.Null);
@@ -347,14 +347,14 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         args.Result.Disabled = true;
       };
       var connector = new JenkinsConnector(Configuration(), api);
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
       shouldFail = true;
 
-      Assert.That(async () => await connector.QueryStatus(CancellationToken.None), Throws.TypeOf<WebException>());
+      Assert.That(async () => await connector.QueryStatusAsync(CancellationToken.None), Throws.TypeOf<WebException>());
       Assert.That(connector.IsDisabled, Is.True, "A failed poll must preserve the last known job availability.");
       Assert.That(connector.Snapshots.Single().Status.State, Is.EqualTo(ObservationState.Success));
       shouldFail = false;
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
       Assert.That(connector.Snapshots, Has.Count.EqualTo(1));
       Assert.That(connector.CurrentStatus?.State, Is.EqualTo(ObservationState.Success));
     }
@@ -374,9 +374,9 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         this.projectAvailable = projectAvailable;
       }
 
-      public override Task<bool> CheckServerUrl() => Task.FromResult(this.serverAvailable);
+      public override Task<bool> CheckServerUrlAsync() => Task.FromResult(this.serverAvailable);
 
-      public override Task<bool> CheckProjectUrl() => Task.FromResult(this.projectAvailable);
+      public override Task<bool> CheckProjectUrlAsync() => Task.FromResult(this.projectAvailable);
     }
   }
 }

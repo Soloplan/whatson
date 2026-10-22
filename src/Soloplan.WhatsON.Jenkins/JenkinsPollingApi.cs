@@ -41,7 +41,7 @@ namespace Soloplan.WhatsON.Jenkins
 
     private readonly ConcurrentDictionary<string, DateTimeOffset> compactUntil = new ConcurrentDictionary<string, DateTimeOffset>();
 
-    public async Task<JenkinsPollingResult> GetPollingJobs(IReadOnlyCollection<JenkinsConnector> connectors, CancellationToken token)
+    public async Task<JenkinsPollingResult> GetPollingJobsAsync(IReadOnlyCollection<JenkinsConnector> connectors, CancellationToken token)
     {
       var result = new JenkinsPollingResult();
       var requests = 0;
@@ -73,12 +73,12 @@ namespace Soloplan.WhatsON.Jenkins
         }
 
         var compact = this.compactUntil.TryGetValue(UrlHelper.ParentUrl(batch[0]), out var until) && until > DateTimeOffset.UtcNow;
-        await Load(batch, compact);
+        await LoadAsync(batch, compact);
       }
 
       return result;
 
-      async Task Load(IReadOnlyList<JenkinsConnector> batch, bool compact)
+      async Task LoadAsync(IReadOnlyList<JenkinsConnector> batch, bool compact)
       {
         token.ThrowIfCancellationRequested();
         if (requests >= MaximumRequestsPerPoll)
@@ -100,7 +100,7 @@ namespace Soloplan.WhatsON.Jenkins
           }
 
           requests++;
-          var jobs = await this.DownloadPollingJobs(uri, batch[0], token);
+          var jobs = await this.DownloadPollingJobsAsync(uri, batch[0], token);
           foreach (var connector in batch)
           {
             jobs.TryGetValue(UrlHelper.ProjectLeafName(connector), out var job);
@@ -122,13 +122,13 @@ namespace Soloplan.WhatsON.Jenkins
           if (!compact)
           {
             this.compactUntil[UrlHelper.ParentUrl(batch[0])] = DateTimeOffset.UtcNow.AddMinutes(5);
-            await Load(batch, true);
+            await LoadAsync(batch, true);
           }
           else if (batch.Count > 1)
           {
             var middle = batch.Count / 2;
-            await Load([.. batch.Take(middle)], compact);
-            await Load([.. batch.Skip(middle)], compact);
+            await LoadAsync([.. batch.Take(middle)], compact);
+            await LoadAsync([.. batch.Skip(middle)], compact);
           }
           else
           {
@@ -234,7 +234,7 @@ namespace Soloplan.WhatsON.Jenkins
       return result;
     }
 
-    private async Task<IDictionary<string, JenkinsJob>> DownloadPollingJobs(Uri uri, JenkinsConnector connector, CancellationToken token)
+    private async Task<IDictionary<string, JenkinsJob>> DownloadPollingJobsAsync(Uri uri, JenkinsConnector connector, CancellationToken token)
     {
       using var timeout = CancellationTokenSource.CreateLinkedTokenSource(token);
       timeout.CancelAfter(TimeSpan.FromSeconds(30));

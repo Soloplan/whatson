@@ -100,7 +100,7 @@ namespace Soloplan.WhatsON
             : observation))
         {
           var connectors = group.ToArray();
-          _ = Task.Run(() => this.StartObserveGroup(connectors, this.cancellationTokenSource.Token));
+          _ = Task.Run(() => this.StartObserveGroupAsync(connectors, this.cancellationTokenSource.Token));
         }
 
         log.Debug("Observation started.");
@@ -136,7 +136,7 @@ namespace Soloplan.WhatsON
     /// look idea description.
     /// </remarks>
     /// <returns>Not used.</returns>
-    private async Task StartObserveGroup(IReadOnlyList<ObservationConnector> connectors, CancellationToken token)
+    private async Task StartObserveGroupAsync(IReadOnlyList<ObservationConnector> connectors, CancellationToken token)
     {
       var connector = connectors[0];
       var batchConnectors = connectors.Select(item => item.Connector).ToArray();
@@ -153,11 +153,11 @@ namespace Soloplan.WhatsON
             {
               if (connector.Connector is IBatchedConnector batch)
               {
-                queried = await batch.QueryStatusBatch(batchConnectors, token);
+                queried = await batch.QueryStatusBatchAsync(batchConnectors, token);
               }
               else
               {
-                await connector.Connector.QueryStatus(token);
+                await connector.Connector.QueryStatusAsync(token);
                 queried = batchConnectors;
               }
             }

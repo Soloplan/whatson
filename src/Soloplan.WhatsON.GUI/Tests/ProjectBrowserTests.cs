@@ -235,7 +235,7 @@ namespace Soloplan.WhatsON.GUI.Tests
         var job = folder.AddProject(Project("Compile"));
         job.FullName = "Different server folder/Compile";
         job.IsChecked = true;
-        var apply = typeof(WizardController).GetMethod("ApplyToConfiguration", BindingFlags.Instance | BindingFlags.NonPublic)
+        var apply = typeof(WizardController).GetMethod("ApplyToConfigurationAsync", BindingFlags.Instance | BindingFlags.NonPublic)
           ?? throw new AssertionException("Expected wizard apply method.");
 
         await (Task)(apply.Invoke(controller, null) ?? throw new AssertionException("Expected an asynchronous wizard apply operation."));

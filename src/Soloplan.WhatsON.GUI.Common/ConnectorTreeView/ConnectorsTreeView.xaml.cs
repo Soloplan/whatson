@@ -205,7 +205,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         }
 
         var args = new DeleteTreeItemEventArgs(this.selectedConnectors[0]);
-        this.model.DeleteGroup(s, args);
+        this.model.DeleteGroupAsync(s, args);
       };
 
       return command;

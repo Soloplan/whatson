@@ -99,7 +99,7 @@
                   </Style>
                 </Button.Style>
               </Button>
-              <Button x:Name="SaveButton" Content="{live:Text loc:Strings.SaveChanges}" Click="SnackbarSaveClick"
+              <Button x:Name="SaveButton" Content="{live:Text loc:Strings.SaveChanges}" Click="SnackbarSaveClickAsync"
                       Style="{StaticResource SettingsPrimaryButton}" />
             </StackPanel>
             <TextBlock Text="{live:Text loc:Strings.UnsavedChanges}" VerticalAlignment="Center"

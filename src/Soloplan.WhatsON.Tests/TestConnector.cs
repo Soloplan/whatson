@@ -27,9 +27,9 @@ namespace Soloplan.WhatsON.Tests
 
     public int HistoryRequests { get; private set; }
 
-    protected override Task<Status?> GetCurrentStatus(CancellationToken cancellationToken) => this.Query(cancellationToken);
+    protected override Task<Status?> GetCurrentStatusAsync(CancellationToken cancellationToken) => this.Query(cancellationToken);
 
-    protected override Task<List<Status?>> GetHistory(CancellationToken cancellationToken)
+    protected override Task<List<Status?>> GetHistoryAsync(CancellationToken cancellationToken)
     {
       this.HistoryRequests++;
       return Task.FromResult(this.History);

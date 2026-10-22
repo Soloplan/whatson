@@ -18,7 +18,7 @@
           <ComboBox x:Name="AddressComboBox" MinHeight="40" IsEditable="True"
                     ItemsSource="{Binding AvailableServers, Mode=OneWay}"
                     Text="{Binding ProposedServerAddress}"
-                    KeyUp="ConnectionAdressKeyUp" AutomationProperties.Name="{live:Text loc:Strings.ServerOrProjectURL}" />
+                    KeyUp="ConnectionAdressKeyUpAsync" AutomationProperties.Name="{live:Text loc:Strings.ServerOrProjectURL}" />
           <TextBlock Text="{live:Text loc:Strings.ServerAddressHelp}"
                      Style="{StaticResource SettingsDescription}" Margin="0,8,0,20" />
           <CheckBox x:Name="AutoDetectionCheckbox" Content="{live:Text loc:Strings.DetectBuildSystemAutomatically}"

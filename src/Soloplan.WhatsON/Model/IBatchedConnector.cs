@@ -19,6 +19,6 @@ namespace Soloplan.WhatsON.Model
   {
     Uri? BatchAddress { get; }
 
-    Task<IReadOnlyCollection<Connector>> QueryStatusBatch(IReadOnlyCollection<Connector> connectors, CancellationToken token);
+    Task<IReadOnlyCollection<Connector>> QueryStatusBatchAsync(IReadOnlyCollection<Connector> connectors, CancellationToken token);
   }
 }

@@ -92,10 +92,10 @@ namespace Soloplan.WhatsON.Jenkins
     /// <returns>
     /// The projects list from the server.
     /// </returns>
-    public override async Task<IList<Project>?> GetProjects(string address)
+    public override async Task<IList<Project>?> GetProjectsAsync(string address)
     {
       var serverProjects = new List<Project>();
-      return await this.GetProjectsLists(address, serverProjects) ? serverProjects : null;
+      return await this.GetProjectsListsAsync(address, serverProjects) ? serverProjects : null;
     }
 
     /// <summary>
@@ -132,7 +132,7 @@ namespace Soloplan.WhatsON.Jenkins
     /// <param name="address">The server address.</param>
     /// <param name="projects">The list of projects to update.</param>
     /// <returns>A task representing the job.</returns>
-    private async Task<bool> GetProjectsLists(string address, IList<Project> projects)
+    private async Task<bool> GetProjectsListsAsync(string address, IList<Project> projects)
     {
       using var response = await discoveryClient.GetAsync(JenkinsApi.UrlHelper.JobsRequest(address));
       if (response.StatusCode == HttpStatusCode.NotFound)
@@ -152,10 +152,10 @@ namespace Soloplan.WhatsON.Jenkins
         return false;
       }
 
-      return await this.AddProjects(jenkinsJobs.Jobs, projects);
+      return await this.AddProjectsAsync(jenkinsJobs.Jobs, projects);
     }
 
-    private async Task<bool> AddProjects(IList<JenkinsJob> jobs, IList<Project> projects)
+    private async Task<bool> AddProjectsAsync(IList<JenkinsJob> jobs, IList<Project> projects)
     {
       foreach (var jenkinsJob in jobs)
       {
@@ -174,8 +174,8 @@ namespace Soloplan.WhatsON.Jenkins
               StringComparison.InvariantCultureIgnoreCase))
         {
           var loaded = jenkinsJob.Jobs != null
-            ? await this.AddProjects(jenkinsJob.Jobs, newServerProject.Children)
-            : await this.GetProjectsLists(jenkinsJob.Url, newServerProject.Children);
+            ? await this.AddProjectsAsync(jenkinsJob.Jobs, newServerProject.Children)
+            : await this.GetProjectsListsAsync(jenkinsJob.Url, newServerProject.Children);
           if (!loaded)
           {
             return false;

@@ -408,7 +408,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       return true;
     }
 
-    public async void DeleteGroup(object? sender, DeleteTreeItemEventArgs e)
+    public async void DeleteGroupAsync(object? sender, DeleteTreeItemEventArgs e)
     {
       if (e.DeleteItem is ConnectorViewModel clickedConnector)
       {
@@ -422,7 +422,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         }
 
         this.DeleteItem?.Invoke(sender, e);
-        var canceled = await e.CheckCanceled();
+        var canceled = await e.CheckCanceledAsync();
         if (!canceled)
         {
           if (this.selectedConnectors.Count == 0)
@@ -440,7 +440,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.DeleteItem?.Invoke(sender, e);
       if (e.DeleteItem is ConnectorGroupViewModel group)
       {
-        var canceled = await e.CheckCanceled();
+        var canceled = await e.CheckCanceledAsync();
         if (!canceled && this.ConnectorGroups.Remove(group))
         {
           this.OnConfigurationChanged(this, EventArgs.Empty);
@@ -653,7 +653,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       var model = new ConnectorGroupViewModel { GroupName = groupName, };
 
       model.EditItem += (s, e) => this.EditItem?.Invoke(s, e);
-      model.DeleteItem += this.DeleteGroup;
+      model.DeleteItem += this.DeleteGroupAsync;
       model.ExportItem += this.ExportHandler;
       model.ConfigurationChanged += (s, e) => this.OnConfigurationChanged(this, EventArgs.Empty);
       return model;

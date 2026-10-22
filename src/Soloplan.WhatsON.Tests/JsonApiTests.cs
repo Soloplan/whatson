@@ -58,7 +58,7 @@ namespace Soloplan.WhatsON.Tests
     {
       var address = this.StartServer("{\"build\":42}", "application/json; charset=utf-8");
 
-      var result = await new SerializationHelper().GetJsonModel<Dictionary<string, int>>(
+      var result = await new SerializationHelper().GetJsonModelAsync<Dictionary<string, int>>(
         address,
         requestCallback: request => request.Headers["X-Test-Api"] = "synthetic-test-value");
       var headers = await this.receivedRequest.Task;
@@ -75,7 +75,7 @@ namespace Soloplan.WhatsON.Tests
       var address = this.StartServer("{\"build\":42}", contentType);
 
       Assert.That(
-        async () => await new SerializationHelper().GetJsonModel<Dictionary<string, int>>(address),
+        async () => await new SerializationHelper().GetJsonModelAsync<Dictionary<string, int>>(address),
         Throws.TypeOf<InvalidPlugInApiResponseException>());
     }
 
@@ -89,7 +89,7 @@ namespace Soloplan.WhatsON.Tests
 
       var exception =
         Assert.ThrowsAsync<InvalidPlugInApiResponseException>(async () =>
-          await new SerializationHelper().GetJsonModel<Dictionary<string, int>>(address));
+          await new SerializationHelper().GetJsonModelAsync<Dictionary<string, int>>(address));
 
       Assert.That(exception?.InnerException, Is.InstanceOf<Newtonsoft.Json.JsonException>());
     }
@@ -100,7 +100,7 @@ namespace Soloplan.WhatsON.Tests
     {
       var address = this.StartServer("{\"build\":42}", status: status);
 
-      var exception = Assert.ThrowsAsync<WebException>(async () => await new SerializationHelper().GetJsonModel<Dictionary<string, int>>(address));
+      var exception = Assert.ThrowsAsync<WebException>(async () => await new SerializationHelper().GetJsonModelAsync<Dictionary<string, int>>(address));
 
       Assert.That(exception?.Status, Is.EqualTo(WebExceptionStatus.ProtocolError));
       exception?.Response?.Dispose();
@@ -112,7 +112,7 @@ namespace Soloplan.WhatsON.Tests
       var address = this.StartServer("{\"build\":42}", status: "201 Created");
 
       Assert.That(
-        async () => await new SerializationHelper().GetJsonModel<Dictionary<string, int>>(address),
+        async () => await new SerializationHelper().GetJsonModelAsync<Dictionary<string, int>>(address),
         Throws.TypeOf<InvalidPlugInApiResponseException>());
     }
 
@@ -122,7 +122,7 @@ namespace Soloplan.WhatsON.Tests
       var address = this.StartServer("{\"build\":42}", holdResponse: true);
       using (var cancellation = new CancellationTokenSource())
       {
-        var query = new SerializationHelper().GetJsonModel<Dictionary<string, int>>(address, cancellation.Token);
+        var query = new SerializationHelper().GetJsonModelAsync<Dictionary<string, int>>(address, cancellation.Token);
         Assert.That(
           await Task.WhenAny(this.receivedRequest.Task, Task.Delay(5000)),
           Is.SameAs(this.receivedRequest.Task),

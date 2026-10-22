@@ -160,7 +160,7 @@ namespace Soloplan.WhatsON.GUI
 
           this.mainWindow.Closing += this.MainWindowClosing;
           this.mainWindow.Closed += this.MainWindowClosed;
-          this.mainWindow.ConfigurationApplied += this.MainWindowConfigurationApplied;
+          this.mainWindow.ConfigurationApplied += this.MainWindowConfigurationAppliedAsync;
         }
 
         return this.mainWindow;
@@ -460,7 +460,7 @@ namespace Soloplan.WhatsON.GUI
       }
     }
 
-    private async void MainWindowConfigurationApplied(object? sender, ValueEventArgs<ApplicationConfiguration> e)
+    private async void MainWindowConfigurationAppliedAsync(object? sender, ValueEventArgs<ApplicationConfiguration> e)
     {
       this.configurationApplication?.Cancel();
       using var application = new CancellationTokenSource();

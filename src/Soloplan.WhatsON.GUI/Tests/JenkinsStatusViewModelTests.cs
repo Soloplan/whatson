@@ -168,7 +168,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       Assert.That(viewModel.Culprits, Has.Count.EqualTo(1));
       Assert.That(viewModel.CommittedToThisBuild, Has.Count.EqualTo(1));
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
       var status = connector.CurrentStatus as JenkinsStatus ?? throw new AssertionException("Expected a Jenkins build status.");
       viewModel.Update(status);
 

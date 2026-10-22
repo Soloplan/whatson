@@ -237,7 +237,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.canceledCalculationFunctions.Add(cancel);
     }
 
-    public async Task<bool> CheckCanceled()
+    public async Task<bool> CheckCanceledAsync()
     {
       this.used = true;
       foreach (var task in this.canceledCalculationFunctions)

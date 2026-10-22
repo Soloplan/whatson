@@ -78,11 +78,11 @@ namespace Soloplan.WhatsON.GUI.Tests
 
       public bool Expanded { get; private set; }
 
-      public override Task LoadFailureDetails(CancellationToken token) => this.LoadDetails(token, false);
+      public override Task LoadFailureDetailsAsync(CancellationToken token) => this.LoadDetailsAsync(token, false);
 
-      public override Task LoadExpandedFailureDetails(CancellationToken token) => this.LoadDetails(token, true);
+      public override Task LoadExpandedFailureDetailsAsync(CancellationToken token) => this.LoadDetailsAsync(token, true);
 
-      private async Task LoadDetails(CancellationToken token, bool expanded)
+      private async Task LoadDetailsAsync(CancellationToken token, bool expanded)
       {
         this.Requests++;
         this.Expanded = expanded;

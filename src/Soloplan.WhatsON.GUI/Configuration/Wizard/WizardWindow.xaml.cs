@@ -106,7 +106,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
-    private async void NextClick(object? sender, RoutedEventArgs e) => await this.wizardController.GoToNextPageAsync();
+    private async void NextClickAsync(object? sender, RoutedEventArgs e) => await this.wizardController.GoToNextPageAsync();
 
     /// <summary>
     /// Previous page click.
