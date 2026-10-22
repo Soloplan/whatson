@@ -86,11 +86,11 @@ namespace Soloplan.WhatsON
       Action<WebRequest>? requestCallback = null)
       where TModel : class
     {
-      const string JSON_CONTENT_TYPE = "application/json";
+      const string JsonContentType = "application/json";
       WebRequest.DefaultWebProxy = null;
       var request = (HttpWebRequest)WebRequest.Create(requestUrl);
-      request.Accept = JSON_CONTENT_TYPE;
-      request.ContentType = JSON_CONTENT_TYPE;
+      request.Accept = JsonContentType;
+      request.ContentType = JsonContentType;
 
       requestCallback?.Invoke(request);
 
@@ -106,7 +106,7 @@ namespace Soloplan.WhatsON
               $"Error while accessing the API via \"{requestUrl}\": The server returned the error code: {response.StatusCode}: {response.StatusDescription}. ");
           }
 
-          if (!response.ContentType.Contains(JSON_CONTENT_TYPE))
+          if (!response.ContentType.Contains(JsonContentType))
           {
             throw new InvalidPlugInApiResponseException(
               $"The API didn't return JSON content from the requested url \"{requestUrl}\". Content type was \"{response.ContentType}\".");

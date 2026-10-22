@@ -239,13 +239,13 @@ namespace Soloplan.WhatsON.Jenkins
     /// Checks correctness of self server URL.
     /// </summary>
     /// <returns>true when fine, false when url is broken.</returns>
-    public override async Task<bool> CheckServerURL() => await this.IsReachableUrl(this.Address);
+    public override async Task<bool> CheckServerUrl() => await this.IsReachableUrl(this.Address);
 
     /// <summary>
     /// Checks correctness of self project URL.
     /// </summary>
     /// <returns>true when fine, false when url is broken.</returns>
-    public override async Task<bool> CheckProjectURL() => await this.IsReachableUrl(JenkinsApi.UrlHelper.ProjectUrl(this));
+    public override async Task<bool> CheckProjectUrl() => await this.IsReachableUrl(JenkinsApi.UrlHelper.ProjectUrl(this));
 
     protected override async Task ExecuteQuery(CancellationToken cancellationToken)
     {
@@ -363,7 +363,7 @@ namespace Soloplan.WhatsON.Jenkins
           return new Status { ErrorMessage = Strings.ProjectNotAvailable, InvalidBuild = true };
         }
 
-        if (!await this.CheckServerURL())
+        if (!await this.CheckServerUrl())
         {
           var status = new Status();
           status.ErrorMessage = Strings.ServerNotAvailable;
@@ -371,7 +371,7 @@ namespace Soloplan.WhatsON.Jenkins
           return status;
         }
 
-        if (!await this.CheckProjectURL())
+        if (!await this.CheckProjectUrl())
         {
           var status = new Status();
           status.ErrorMessage = Strings.ProjectNotAvailable;

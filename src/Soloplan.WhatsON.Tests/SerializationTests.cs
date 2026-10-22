@@ -222,9 +222,9 @@ namespace Soloplan.WhatsON.Tests
     [Test]
     public void LegacyCruiseControlAddressMigrationRetainsTheProjectUrlAndIsIdempotent()
     {
-      const string projectAddress = "https://builds.example/ccnet/server/local/project/Release/ViewProjectReport.aspx";
+      const string ProjectAddress = "https://builds.example/ccnet/server/local/project/Release/ViewProjectReport.aspx";
       var configuration = new ApplicationConfiguration();
-      configuration.ConnectorsConfiguration.Add(new ConnectorConfiguration("CruiseControl", "Release", Connector.ServerAddress, projectAddress));
+      configuration.ConnectorsConfiguration.Add(new ConnectorConfiguration("CruiseControl", "Release", Connector.ServerAddress, ProjectAddress));
       this.serializer.SaveConfiguration(configuration);
 
       var migrated = this.serializer.LoadConfiguration();
@@ -234,7 +234,7 @@ namespace Soloplan.WhatsON.Tests
       Assert.Multiple(() =>
       {
         Assert.That(reloaded.GetConfigurationByKey(Connector.ServerAddress).Value, Is.EqualTo("https://builds.example/ccnet/"));
-        Assert.That(reloaded.GetConfigurationByKey(Connector.DirectAddress).Value, Is.EqualTo(projectAddress));
+        Assert.That(reloaded.GetConfigurationByKey(Connector.DirectAddress).Value, Is.EqualTo(ProjectAddress));
         Assert.That(reloaded.ConfigurationItems.Count(c => c.Key == Connector.DirectAddress), Is.EqualTo(1));
       });
     }

@@ -125,13 +125,13 @@ namespace Soloplan.WhatsON.Model
     /// Checks correctness of self project URL.
     /// </summary>
     /// <returns>true when fine, false when url is broken.</returns>
-    public virtual Task<bool> CheckProjectURL() => Task.FromResult(false);
+    public virtual Task<bool> CheckProjectUrl() => Task.FromResult(false);
 
     /// <summary>
     /// Checks correctness of self server URL.
     /// </summary>
     /// <returns>true when fine, false when url is broken.</returns>
-    public virtual Task<bool> CheckServerURL() => Task.FromResult(false);
+    public virtual Task<bool> CheckServerUrl() => Task.FromResult(false);
 
     public virtual async Task<bool> IsReachableUrl(string? urlInput)
     {

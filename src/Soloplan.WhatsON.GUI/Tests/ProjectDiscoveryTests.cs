@@ -49,12 +49,12 @@ namespace Soloplan.WhatsON.GUI.Tests
     [TestCase(true, true)]
     public async Task TestServerPreservesChunkedAndCompressedResponses(bool chunked, bool gzip)
     {
-      const string body = "Synthetic response with Unicode: Grüße";
+      const string Body = "Synthetic response with Unicode: Grüße";
       await using var server = new DiscoveryServer
       {
         Chunked = chunked,
         Gzip = gzip,
-        Respond = _ => ("200 OK", "text/plain; charset=utf-8", body),
+        Respond = _ => ("200 OK", "text/plain; charset=utf-8", body: Body),
       };
       using var client = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip });
       using var response = await client.GetAsync(server.Address, HttpCompletionOption.ResponseHeadersRead);
@@ -64,7 +64,7 @@ namespace Soloplan.WhatsON.GUI.Tests
         Assert.That(response.Content.Headers.ContentLength, Is.Null);
       }
 
-      Assert.That(await response.Content.ReadAsStringAsync(), Is.EqualTo(body));
+      Assert.That(await response.Content.ReadAsStringAsync(), Is.EqualTo(Body));
     }
 
     [TestCase(true, false)]

@@ -99,7 +99,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       {
         LogManager.Configuration = logging;
         removed.CurrentStatus = new Status { ErrorMessage = "Private build history" };
-        CompleteAfterUIChange(
+        CompleteAfterUiChange(
           () => pending(scheduler, removed),
           () => model.DeleteGroup(null, new DeleteTreeItemEventArgs(removedGroup)));
         pending(scheduler, removed);
@@ -177,7 +177,7 @@ namespace Soloplan.WhatsON.GUI.Tests
         var currentModel = (ConnectorTreeViewModel)view.DataContext;
         var currentRow = currentModel.ConnectorGroups.First().ConnectorViewModels.Single();
         var pending = GetPendingResult(scheduler);
-        CompleteAfterUIChange(() => pending(scheduler, connector), () => window.Close());
+        CompleteAfterUiChange(() => pending(scheduler, connector), () => window.Close());
         Assert.That(GetSubscribers(scheduler), Is.Null, "Closing the window must release its scheduler subscription.");
         Assert.That(currentRow.CurrentStatus.ErrorMessage, Is.EqualTo("Initial"), "Already queued results must not update a closed view.");
         view.Dispose();
@@ -189,7 +189,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       }
     }
 
-    private static void CompleteAfterUIChange(Action result, Action change)
+    private static void CompleteAfterUiChange(Action result, Action change)
     {
       var dispatcher = Application.Current.Dispatcher;
       using var queued = new ManualResetEventSlim();

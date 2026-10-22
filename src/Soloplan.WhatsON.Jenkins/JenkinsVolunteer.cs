@@ -19,12 +19,12 @@ namespace Soloplan.WhatsON.Jenkins
     private const string End = "<!-- whatsON:volunteer:end -->";
     private const string OwnerPrefix = "<!-- whatsON:volunteer:owner ";
 
-    private static readonly Regex Marker = new Regex(
+    private static readonly Regex marker = new Regex(
       Regex.Escape(Start) + @"\s*<!-- whatsON:volunteer:owner ([A-Za-z0-9+/]+={0,2}) -->[\s\S]*?" + Regex.Escape(End),
       RegexOptions.CultureInvariant | RegexOptions.NonBacktracking,
       TimeSpan.FromSeconds(1));
 
-    private static readonly Regex LegacyMarker = new Regex(
+    private static readonly Regex legacyMarker = new Regex(
       @"^\[whatsON\] Being fixed by ([^\r\n]+?) \[/whatsON\](?:\r?\n|$)",
       RegexOptions.Multiline | RegexOptions.CultureInvariant | RegexOptions.NonBacktracking,
       TimeSpan.FromSeconds(1));
@@ -58,16 +58,16 @@ namespace Soloplan.WhatsON.Jenkins
           + "<p style=\"font-size: 12px; margin: 0;\">Volunteer: <strong>" + WebUtility.HtmlEncode(owner.ToUpperInvariant()) + "</strong></p>\n"
           + "</div>\n<hr style=\"margin: 6px 0;\" />\n" + End;
 
-      text = Marker.Replace(text, string.Empty);
-      text = LegacyMarker.Replace(text, string.Empty);
+      text = marker.Replace(text, string.Empty);
+      text = legacyMarker.Replace(text, string.Empty);
       return text + replacement;
     }
 
     internal static string? GetValidatedOwner(string? description)
     {
       var text = description ?? string.Empty;
-      var markers = Marker.Matches(text);
-      var legacyMarkers = LegacyMarker.Matches(text);
+      var markers = marker.Matches(text);
+      var legacyMarkers = legacyMarker.Matches(text);
       if (markers.Count + legacyMarkers.Count > 1
           || text.Split(Start, StringSplitOptions.None).Length - 1 != markers.Count
           || text.Split(End, StringSplitOptions.None).Length - 1 != markers.Count

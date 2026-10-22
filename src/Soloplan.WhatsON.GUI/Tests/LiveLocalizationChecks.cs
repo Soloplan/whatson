@@ -34,20 +34,20 @@ namespace Soloplan.WhatsON.GUI.Tests
     internal static void Verify(App app)
     {
       var previousCulture = CultureInfo.CurrentCulture;
-      var previousUICulture = CultureInfo.CurrentUICulture;
+      var previousUiCulture = CultureInfo.CurrentUICulture;
       var previousDefaultCulture = CultureInfo.DefaultThreadCurrentCulture;
-      var previousDefaultUICulture = CultureInfo.DefaultThreadCurrentUICulture;
+      var previousDefaultUiCulture = CultureInfo.DefaultThreadCurrentUICulture;
       try
       {
         VerifyLanguageChanges(app);
       }
       finally
       {
-        Localizer.ApplyLanguage(previousUICulture.TwoLetterISOLanguageName == "de" ? ApplicationLanguage.German : ApplicationLanguage.English);
+        Localizer.ApplyLanguage(previousUiCulture.TwoLetterISOLanguageName == "de" ? ApplicationLanguage.German : ApplicationLanguage.English);
         CultureInfo.DefaultThreadCurrentCulture = previousDefaultCulture;
-        CultureInfo.DefaultThreadCurrentUICulture = previousDefaultUICulture;
+        CultureInfo.DefaultThreadCurrentUICulture = previousDefaultUiCulture;
         CultureInfo.CurrentCulture = previousCulture;
-        CultureInfo.CurrentUICulture = previousUICulture;
+        CultureInfo.CurrentUICulture = previousUiCulture;
       }
     }
 

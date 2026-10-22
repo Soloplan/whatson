@@ -82,9 +82,9 @@ namespace Soloplan.WhatsON.GUI.Tests
       project.CurrentStatus.Update(connector.CurrentStatus);
       await project.CurrentStatus.LoadFailureDetails(CancellationToken.None);
 
-      const string expected = "ExampleView.cs(42,7): CS1061: 'ExampleView' does not contain a definition for 'missingMember'";
-      Assert.That(project.CurrentStatus.FailureSummary, Is.EqualTo(expected));
-      Assert.That(TrayHandler.GetNotificationDescription(project.CurrentStatus), Does.Contain(expected).And.Not.Contain("exit code"));
+      const string Expected = "ExampleView.cs(42,7): CS1061: 'ExampleView' does not contain a definition for 'missingMember'";
+      Assert.That(project.CurrentStatus.FailureSummary, Is.EqualTo(Expected));
+      Assert.That(TrayHandler.GetNotificationDescription(project.CurrentStatus), Does.Contain(Expected).And.Not.Contain("exit code"));
       Assert.That(server.Requests, Has.Count.EqualTo(2));
     }
 

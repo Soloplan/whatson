@@ -374,9 +374,9 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         this.projectAvailable = projectAvailable;
       }
 
-      public override Task<bool> CheckServerURL() => Task.FromResult(this.serverAvailable);
+      public override Task<bool> CheckServerUrl() => Task.FromResult(this.serverAvailable);
 
-      public override Task<bool> CheckProjectURL() => Task.FromResult(this.projectAvailable);
+      public override Task<bool> CheckProjectUrl() => Task.FromResult(this.projectAvailable);
     }
   }
 }

@@ -123,11 +123,11 @@ namespace Soloplan.WhatsON.GUI.Tests
     [Test]
     public void LongTestNamesWrapBetweenPhrasesWithoutChangingNotificationText()
     {
-      const string method = "ReadTestStructureReturnsSampleStructureOfAllTestDataItemsAsync";
+      const string Method = "ReadTestStructureReturnsSampleStructureOfAllTestDataItemsAsync";
       var status = new StatusViewModel(new ConnectorViewModel());
-      status.Update(new Status(ObservationState.Unstable) { FailureDetails = "Tests.LayoutTests." + method });
+      status.Update(new Status(ObservationState.Unstable) { FailureDetails = "Tests.LayoutTests." + Method });
       Assert.That(status.FailurePreviewGroups.Single().Single(), Is.EqualTo("ReadTestStructure\u200BReturnsSampleStructure\u200BOfAllTestDataItemsAsync"));
-      Assert.That(status.FailureSummary, Does.EndWith(method));
+      Assert.That(status.FailureSummary, Does.EndWith(Method));
     }
 
     [TestCase(ObservationState.Success)]
@@ -136,12 +136,12 @@ namespace Soloplan.WhatsON.GUI.Tests
     [TestCase(ObservationState.Running)]
     public void FullBuildLabelAndProjectAreIncluded(ObservationState state)
     {
-      const string displayName = "Release candidate for the desktop application with all connector plugins and packaging checks #42";
+      const string DisplayName = "Release candidate for the desktop application with all connector plugins and packaging checks #42";
       var project = new ConnectorViewModel { Name = "Products / Desktop / Release" };
       var status = new JenkinsStatusViewModel(project);
-      status.Update(new JenkinsStatus(state) { BuildNumber = 42, DisplayName = displayName, Time = DateTime.UtcNow });
+      status.Update(new JenkinsStatus(state) { BuildNumber = 42, DisplayName = DisplayName, Time = DateTime.UtcNow });
 
-      Assert.That(TrayHandler.GetNotificationDescription(status), Is.EqualTo($"{Localizer.ProjectNotification(project.Name)}{Environment.NewLine}{displayName}"));
+      Assert.That(TrayHandler.GetNotificationDescription(status), Is.EqualTo($"{Localizer.ProjectNotification(project.Name)}{Environment.NewLine}{DisplayName}"));
     }
 
     [TestCase(null, "#42")]

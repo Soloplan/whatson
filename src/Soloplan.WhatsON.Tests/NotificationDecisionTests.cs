@@ -19,7 +19,7 @@ namespace Soloplan.WhatsON.Tests
   [TestFixture]
   public class NotificationDecisionTests
   {
-    private static readonly ObservationState[] States = Enum.GetValues<ObservationState>();
+    private static readonly ObservationState[] states = Enum.GetValues<ObservationState>();
 
     [TestCaseSource(nameof(Transitions))]
     public void EveryTransitionRespectsEnabledStatesAndTheMostRecentRelevantBuild(
@@ -28,7 +28,7 @@ namespace Soloplan.WhatsON.Tests
       var settings = Settings(mask, onlyChanges);
       var current = new Status(currentState) { BuildNumber = 3 };
       var previous = new Status(previousState) { BuildNumber = 2 };
-      foreach (var olderState in States)
+      foreach (var olderState in states)
       {
         var older = new Status(olderState) { BuildNumber = 1 };
         var enabled = Enabled(currentState, mask);
@@ -73,11 +73,11 @@ namespace Soloplan.WhatsON.Tests
 
     private static IEnumerable<TestCaseData> Transitions()
     {
-      foreach (var current in States)
+      foreach (var current in states)
       {
-        foreach (var previous in States)
+        foreach (var previous in states)
         {
-          for (var mask = 0; mask < 1 << States.Length; mask++)
+          for (var mask = 0; mask < 1 << states.Length; mask++)
           {
             foreach (var onlyChanges in new[] { false, true })
             {
@@ -88,12 +88,12 @@ namespace Soloplan.WhatsON.Tests
       }
     }
 
-    private static bool Enabled(ObservationState state, int mask) => (mask & (1 << Array.IndexOf(States, state))) != 0;
+    private static bool Enabled(ObservationState state, int mask) => (mask & (1 << Array.IndexOf(states, state))) != 0;
 
     private static NotificationConfiguration Settings(int mask, bool onlyChanges)
     {
       var settings = new NotificationConfiguration { OnlyIfChanged = onlyChanges };
-      foreach (var state in States)
+      foreach (var state in states)
       {
         settings.AssignFromObeservationStateActivity(state, Enabled(state, mask));
       }

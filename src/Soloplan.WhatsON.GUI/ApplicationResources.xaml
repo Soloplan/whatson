@@ -63,5 +63,5 @@
   <BooleanToVisibilityConverter x:Key="BoolToVis" />
   <converters:InvertBooleanToVisibilityConverter x:Key="InvertBoolToVis" />
   <converters:InvertBooleanConverter x:Key="InvertBoolConverter" />
-  <converters:RGBToRGBAConverter x:Key="RGBAToRGBConverter" />
+  <converters:RgbToRgbaConverter x:Key="RGBAToRGBConverter" />
 </ResourceDictionary>

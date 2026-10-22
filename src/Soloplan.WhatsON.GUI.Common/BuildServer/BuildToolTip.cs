@@ -16,8 +16,8 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
   internal static class BuildToolTip
   {
-    private static readonly DependencyProperty CloseSessionProperty = DependencyProperty.RegisterAttached(
-      "CloseSession", typeof(Action), typeof(BuildToolTip));
+    private static readonly DependencyProperty closeSessionProperty = DependencyProperty.RegisterAttached(
+      "closeSession", typeof(Action), typeof(BuildToolTip));
 
     public static void Attach(FrameworkElement owner)
     {
@@ -36,7 +36,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
           owner.SetCurrentValue(FrameworkElement.ToolTipProperty, tooltip);
         }
 
-        (tooltip.GetValue(CloseSessionProperty) as Action)?.Invoke();
+        (tooltip.GetValue(closeSessionProperty) as Action)?.Invoke();
         if (tooltip.IsOpen)
         {
           tooltip.IsOpen = false;
@@ -73,9 +73,9 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
             window.Deactivated -= Close;
           }
 
-          if (Equals(tooltip.GetValue(CloseSessionProperty), (Action)Cleanup))
+          if (Equals(tooltip.GetValue(closeSessionProperty), (Action)Cleanup))
           {
-            tooltip.ClearValue(CloseSessionProperty);
+            tooltip.ClearValue(closeSessionProperty);
           }
         }
 
@@ -104,7 +104,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
           window.Deactivated += Close;
         }
 
-        tooltip.SetValue(CloseSessionProperty, (Action)Cleanup);
+        tooltip.SetValue(closeSessionProperty, (Action)Cleanup);
         tooltip.IsOpen = true;
         timer.Start();
       };

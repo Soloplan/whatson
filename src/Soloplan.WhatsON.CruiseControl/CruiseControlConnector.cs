@@ -44,13 +44,13 @@ namespace Soloplan.WhatsON.CruiseControl
     /// Checks correctness of self server URL.
     /// </summary>
     /// <returns>true when fine, false when url is broken.</returns>
-    public override async Task<bool> CheckServerURL() => await this.IsReachableUrl(this.Address);
+    public override async Task<bool> CheckServerUrl() => await this.IsReachableUrl(this.Address);
 
     /// <summary>
     /// Checks correctness of self project URL.
     /// </summary>
     /// <returns>true when fine, false when url is broken.</returns>
-    public override async Task<bool> CheckProjectURL() => await this.IsReachableUrl(this.directAddress);
+    public override async Task<bool> CheckProjectUrl() => await this.IsReachableUrl(this.directAddress);
 
     protected override async Task<Status?> GetCurrentStatus(CancellationToken cancellationToken)
     {
@@ -58,7 +58,7 @@ namespace Soloplan.WhatsON.CruiseControl
       var projectData = await server.GetProjectStatus(cancellationToken, this.Project, 5);
       if (projectData == null)
       {
-        if (!await this.CheckServerURL())
+        if (!await this.CheckServerUrl())
         {
           var status = new Status();
           status.ErrorMessage = Strings.ServerNotAvailable;
@@ -66,7 +66,7 @@ namespace Soloplan.WhatsON.CruiseControl
           return status;
         }
 
-        if (!await this.CheckProjectURL())
+        if (!await this.CheckProjectUrl())
         {
           var status = new Status();
           status.ErrorMessage = Strings.ProjectNotAvailable;

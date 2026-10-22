@@ -104,29 +104,29 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     [Test]
     public void LegacyMarkersCanStillBeReadClearedAndReplaced()
     {
-      const string description = "Before\r\n[whatsON] Being fixed by Alex &amp; team [/whatsON]\r\nAfter";
-      Assert.That(JenkinsVolunteer.GetOwner(description), Is.EqualTo("Alex & team"));
-      Assert.That(JenkinsVolunteer.SetOwner(description, null), Is.EqualTo("Before\r\nAfter"));
-      Assert.That(JenkinsVolunteer.SetOwner(description, "other"), Is.EqualTo("Before\r\nAfter" + JenkinsVolunteer.SetOwner(null, "other")));
-      Assert.Throws<InvalidOperationException>(() => JenkinsVolunteer.SetOwner(description + JenkinsVolunteer.SetOwner(null, "other"), null));
+      const string Description = "Before\r\n[whatsON] Being fixed by Alex &amp; team [/whatsON]\r\nAfter";
+      Assert.That(JenkinsVolunteer.GetOwner(Description), Is.EqualTo("Alex & team"));
+      Assert.That(JenkinsVolunteer.SetOwner(Description, null), Is.EqualTo("Before\r\nAfter"));
+      Assert.That(JenkinsVolunteer.SetOwner(Description, "other"), Is.EqualTo("Before\r\nAfter" + JenkinsVolunteer.SetOwner(null, "other")));
+      Assert.Throws<InvalidOperationException>(() => JenkinsVolunteer.SetOwner(Description + JenkinsVolunteer.SetOwner(null, "other"), null));
     }
 
     [Test]
     public void CompactBannerEmphasizesTheUppercaseOwnerWithoutOverridingThemeColors()
     {
-      const string owner = "Alex & <team>";
-      var marker = JenkinsVolunteer.SetOwner(null, owner);
+      const string Owner = "Alex & <team>";
+      var marker = JenkinsVolunteer.SetOwner(null, Owner);
       var markup = XElement.Parse("<description>" + marker + "</description>");
       Assert.That(markup.Elements().Select(element => element.Name.LocalName), Is.EqualTo(new[] { "hr", "div", "hr" }));
       var banner = markup.Elements("div").Single();
       Assert.That(banner.Elements("h3").Single().Value, Is.EqualTo("Fix in progress"));
-      Assert.That(banner.Elements("p").Single().Value, Is.EqualTo("Volunteer: " + owner.ToUpperInvariant()));
-      Assert.That(banner.Descendants("strong").Single().Value, Is.EqualTo(owner.ToUpperInvariant()));
+      Assert.That(banner.Elements("p").Single().Value, Is.EqualTo("Volunteer: " + Owner.ToUpperInvariant()));
+      Assert.That(banner.Descendants("strong").Single().Value, Is.EqualTo(Owner.ToUpperInvariant()));
       Assert.That(banner.Attribute("style")?.Value, Does.Contain("border-left: 3px solid #3b82f6"));
       Assert.That(banner.Attribute("style")?.Value, Does.Contain("padding: 6px 10px"));
       Assert.That(banner.Elements("h3").Single().Attribute("style")?.Value, Does.Contain("font-size: 14px"));
       Assert.That(banner.Elements("p").Single().Attribute("style")?.Value, Does.Contain("font-size: 12px"));
-      Assert.That(JenkinsVolunteer.GetOwner(marker), Is.EqualTo(owner), "Display casing must not change the account identity.");
+      Assert.That(JenkinsVolunteer.GetOwner(marker), Is.EqualTo(Owner), "Display casing must not change the account identity.");
       foreach (var style in markup.Descendants().Attributes("style"))
       {
         Assert.That(style.Value, Does.Not.Match(@"(^|;)\s*(color|background(?:-color)?)\s*:"), "The notice must inherit Jenkins theme colors.");
@@ -138,8 +138,8 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     [Test]
     public void PreviousCommentNoticesCanStillBeReadClearedAndReplaced()
     {
-      const string marker = "<!-- whatsON:volunteer:start -->\n<!-- whatsON:volunteer:owner YWxleA== -->\n<br />\nBeing fixed by alex\n<!-- whatsON:volunteer:end -->";
-      var description = "<p>Before</p>" + marker + "<hr />After";
+      const string Marker = "<!-- whatsON:volunteer:start -->\n<!-- whatsON:volunteer:owner YWxleA== -->\n<br />\nBeing fixed by alex\n<!-- whatsON:volunteer:end -->";
+      var description = "<p>Before</p>" + Marker + "<hr />After";
       Assert.That(JenkinsVolunteer.GetOwner(description), Is.EqualTo("alex"));
       Assert.That(JenkinsVolunteer.SetOwner(description, null), Is.EqualTo("<p>Before</p><hr />After"));
       Assert.That(JenkinsVolunteer.SetOwner(description, "other"), Is.EqualTo("<p>Before</p><hr />After" + JenkinsVolunteer.SetOwner(null, "other")));

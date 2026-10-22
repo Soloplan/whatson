@@ -18,27 +18,27 @@ namespace Soloplan.WhatsON.Jenkins
 
   internal static class JenkinsConsoleErrors
   {
-    private static readonly Regex Diagnostic = new Regex(@"(?:^|[/\\])(?<file>[^/\\:]+(?::\d+(?::\d+)?)?)\s*:\s*(?<severity>(?:fatal\s+)?error|warning|note)(?:\s+(?<code>[A-Z]+\d+))?\s*:\s*(?<message>.+?)(?:\s+\[[^\]]+\])?$", RegexOptions.IgnoreCase | RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
+    private static readonly Regex diagnostic = new Regex(@"(?:^|[/\\])(?<file>[^/\\:]+(?::\d+(?::\d+)?)?)\s*:\s*(?<severity>(?:fatal\s+)?error|warning|note)(?:\s+(?<code>[A-Z]+\d+))?\s*:\s*(?<message>.+?)(?:\s+\[[^\]]+\])?$", RegexOptions.IgnoreCase | RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
 
-    private static readonly Regex Timestamp = new Regex(@"^\s*(?:\[(?:\d{4}[-/]\d{2}[-/]\d{2}[T ][^\]]+|\d{2}:\d{2}:\d{2}[^\]]*)\]|\d{4}[-/]\d{2}[-/]\d{2}[T ][\d:.Z+-]+)\s*", RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
+    private static readonly Regex timestamp = new Regex(@"^\s*(?:\[(?:\d{4}[-/]\d{2}[-/]\d{2}[T ][^\]]+|\d{2}:\d{2}:\d{2}[^\]]*)\]|\d{4}[-/]\d{2}[-/]\d{2}[T ][\d:.Z+-]+)\s*", RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
 
-    private static readonly Regex LogLevel = new Regex(@"^(?:[\w.$/-]+\s+(?:[-:]\s*)?)?(?<level>INFO|DEBUG|TRACE|WARN(?:ING)?|FINE(?:R|ST)?|NOTE|NOTICE|VERBOSE|ERROR|FATAL|SEVERE|ERR!?)(?:\[[A-Z]+\d+\])?(?:\s*:\s*|\s+|$)", RegexOptions.IgnoreCase | RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
+    private static readonly Regex logLevel = new Regex(@"^(?:[\w.$/-]+\s+(?:[-:]\s*)?)?(?<level>INFO|DEBUG|TRACE|WARN(?:ING)?|FINE(?:R|ST)?|NOTE|NOTICE|VERBOSE|ERROR|FATAL|SEVERE|ERR!?)(?:\[[A-Z]+\d+\])?(?:\s*:\s*|\s+|$)", RegexOptions.IgnoreCase | RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
 
-    private static readonly Regex Noise = new Regex(@"^(?:Failed in branch\b|Stage\b.*\bskipped\b|Skipping stage\b|Build FAILED\.?$|Finished:\s*(?:FAILURE|UNSTABLE)\b|\d+ (?:Error|Warning)\(s\)|(?:\+\s*)?(?:echo|printf)\s)|\berror MSB(?:3073|6006)\b", RegexOptions.IgnoreCase | RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
+    private static readonly Regex noise = new Regex(@"^(?:Failed in branch\b|Stage\b.*\bskipped\b|Skipping stage\b|Build FAILED\.?$|Finished:\s*(?:FAILURE|UNSTABLE)\b|\d+ (?:Error|Warning)\(s\)|(?:\+\s*)?(?:echo|printf)\s)|\berror MSB(?:3073|6006)\b", RegexOptions.IgnoreCase | RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
 
-    private static readonly Regex SearchPattern = new Regex(@"^(?:(?:try(?:ing)? to find|looking for|search(?:ing)? for) errors?\b|(?:pattern|regex|regexp)\s*[:=])", RegexOptions.IgnoreCase | RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
+    private static readonly Regex searchPattern = new Regex(@"^(?:(?:try(?:ing)? to find|looking for|search(?:ing)? for) errors?\b|(?:pattern|regex|regexp)\s*[:=])", RegexOptions.IgnoreCase | RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
 
-    private static readonly Regex ExitCode = new Regex(@"^(?:(?:ERROR|FATAL|[\w.]+Exception)\s*:\s*)?(?:script returned exit code\b|(?:process|command|\S+\.exe) exited with (?:error )?code\b)", RegexOptions.IgnoreCase | RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
+    private static readonly Regex exitCode = new Regex(@"^(?:(?:ERROR|FATAL|[\w.]+Exception)\s*:\s*)?(?:script returned exit code\b|(?:process|command|\S+\.exe) exited with (?:error )?code\b)", RegexOptions.IgnoreCase | RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
 
-    private static readonly Regex ExceptionDetail = new Regex(@"\b(?:[\w$]+\.)*(?:[\w$]*Exception|[\w$]+Error)\s*:\s*\S|\bunhandled exception\b", RegexOptions.IgnoreCase | RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
+    private static readonly Regex exceptionDetail = new Regex(@"\b(?:[\w$]+\.)*(?:[\w$]*Exception|[\w$]+Error)\s*:\s*\S|\bunhandled exception\b", RegexOptions.IgnoreCase | RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
 
-    private static readonly Regex Failure = new Regex(@"\b(?:fail(?:ed|ure)?|fatal|aborted|crashed|cannot|unable to|could not|access denied|permission denied|not found|timed out|refused|missing|no tests? (?:is |were |was |are )?(?:available|found|discovered|run|executed))\b", RegexOptions.IgnoreCase | RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
+    private static readonly Regex failure = new Regex(@"\b(?:fail(?:ed|ure)?|fatal|aborted|crashed|cannot|unable to|could not|access denied|permission denied|not found|timed out|refused|missing|no tests? (?:is |were |was |are )?(?:available|found|discovered|run|executed))\b", RegexOptions.IgnoreCase | RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
 
-    private static readonly Regex TestFailure = new Regex(@"^(?:Failed|Skipped|Not run)\s+\S|\[(?:FAIL|SKIP)\]|\btest(?:s|host)?\b|\btest run\b", RegexOptions.IgnoreCase | RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
+    private static readonly Regex testFailure = new Regex(@"^(?:Failed|Skipped|Not run)\s+\S|\[(?:FAIL|SKIP)\]|\btest(?:s|host)?\b|\btest run\b", RegexOptions.IgnoreCase | RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
 
-    private static readonly Regex EmptyFailureCount = new Regex(@"\b(?:failed|failures?|errors?)\s*:\s*0\b", RegexOptions.IgnoreCase | RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
+    private static readonly Regex emptyFailureCount = new Regex(@"\b(?:failed|failures?|errors?)\s*:\s*0\b", RegexOptions.IgnoreCase | RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
 
-    private static readonly Regex DetailHeader = new Regex(@"^(?:Error Message|Error|Exception|Caused by)\s*:\s*$", RegexOptions.IgnoreCase | RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
+    private static readonly Regex detailHeader = new Regex(@"^(?:Error Message|Error|Exception|Caused by)\s*:\s*$", RegexOptions.IgnoreCase | RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
 
     public static async Task<string> Read(TextReader reader, CancellationToken token, bool expanded = false)
     {
@@ -74,7 +74,7 @@ namespace Soloplan.WhatsON.Jenkins
     private static string? AddLine(string line, List<(int Priority, string Text)> errors, string? pendingDetail, bool expanded)
     {
       line = Regex.Replace(line, @"\x1b\[[0-9;]*[A-Za-z]", string.Empty);
-      line = Timestamp.Replace(line, string.Empty).Trim();
+      line = timestamp.Replace(line, string.Empty).Trim();
       if (line.Length == 0)
       {
         return pendingDetail;
@@ -96,7 +96,7 @@ namespace Soloplan.WhatsON.Jenkins
           return null;
         }
 
-        var tagLevel = LogLevel.Match(tag);
+        var tagLevel = logLevel.Match(tag);
         if (tagLevel.Success)
         {
           if (!IsErrorLevel(tagLevel.Groups["level"].Value) && !errorLevel)
@@ -110,7 +110,7 @@ namespace Soloplan.WhatsON.Jenkins
         message = message.Substring(end + 1).TrimStart();
       }
 
-      var level = LogLevel.Match(message);
+      var level = logLevel.Match(message);
       if (level.Success && !errorLevel)
       {
         if (!IsErrorLevel(level.Groups["level"].Value))
@@ -121,12 +121,12 @@ namespace Soloplan.WhatsON.Jenkins
         errorLevel = true;
       }
 
-      if (Noise.IsMatch(message) || ExitCode.IsMatch(message) || !errorLevel && SearchPattern.IsMatch(message))
+      if (noise.IsMatch(message) || exitCode.IsMatch(message) || !errorLevel && searchPattern.IsMatch(message))
       {
         return null;
       }
 
-      var match = Diagnostic.Match(message);
+      var match = diagnostic.Match(message);
       if (match.Success)
       {
         if (!match.Groups["severity"].Value.EndsWith("error", StringComparison.OrdinalIgnoreCase))
@@ -139,7 +139,7 @@ namespace Soloplan.WhatsON.Jenkins
         var code = match.Groups["code"].Success ? match.Groups["code"].Value : "error";
         AddDistinct(errors, $"{file}: {code}: {detail}", 5, expanded);
       }
-      else if (DetailHeader.IsMatch(message))
+      else if (detailHeader.IsMatch(message))
       {
         return message.TrimEnd(':', ' ');
       }
@@ -147,17 +147,17 @@ namespace Soloplan.WhatsON.Jenkins
       {
         AddDistinct(errors, $"{pendingDetail}: {message}", 4, expanded);
       }
-      else if (ExceptionDetail.IsMatch(message))
+      else if (exceptionDetail.IsMatch(message))
       {
         AddDistinct(errors, line, 4, expanded);
       }
-      else if (EmptyFailureCount.IsMatch(message))
+      else if (emptyFailureCount.IsMatch(message))
       {
         return null;
       }
-      else if (Failure.IsMatch(message) || TestFailure.IsMatch(message) && Regex.IsMatch(message, @"\b(?:Skipped|Ignored|Not run|Not executed|Did not run)\b|\[(?:FAIL|SKIP)\]", RegexOptions.IgnoreCase))
+      else if (failure.IsMatch(message) || testFailure.IsMatch(message) && Regex.IsMatch(message, @"\b(?:Skipped|Ignored|Not run|Not executed|Did not run)\b|\[(?:FAIL|SKIP)\]", RegexOptions.IgnoreCase))
       {
-        AddDistinct(errors, line, TestFailure.IsMatch(message) ? 4 : errorLevel ? 3 : 2, expanded);
+        AddDistinct(errors, line, testFailure.IsMatch(message) ? 4 : errorLevel ? 3 : 2, expanded);
       }
       else if (errorLevel)
       {
