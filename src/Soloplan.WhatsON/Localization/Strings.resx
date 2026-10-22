@@ -566,4 +566,8 @@ Expected connector type: {3}</value>
   <data name="TooltipFinishedFormat" xml:space="preserve"><value>Finished {0}</value></data>
   <data name="TooltipFailedTestsFormat" xml:space="preserve"><value>{0} failed tests</value></data>
   <data name="MoreTestFailuresFormat" xml:space="preserve"><value>{0} more failures in the test report</value></data>
+  <data name="RestartToUpdate" xml:space="preserve"><value>Restart to update</value></data>
+  <data name="RestartToUpdateConfirmation" xml:space="preserve"><value>Save any unfinished edits before continuing. Restart whatsON to install the update?</value></data>
+  <data name="UpdateFailed" xml:space="preserve"><value>Update failed</value></data>
+  <data name="UpdateFailedMessage" xml:space="preserve"><value>The update could not be installed. whatsON will remain open. Please try again later.</value></data>
 </root>

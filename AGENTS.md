@@ -62,7 +62,7 @@ dotnet test src/Soloplan.WhatsON.slnx -c Debug --no-build
 
 Use `-c Release` for the configuration used by CI. SDK outputs are per project:
 `bin/<Configuration>/<TargetFramework>/`. The application entry point is
-`src/Soloplan.WhatsON.GUI/bin/Debug/net10.0-windows/Soloplan.WhatsON.GUI.exe`.
+`src/Soloplan.WhatsON.GUI/bin/Debug/net10.0-windows10.0.19041.0/Soloplan.WhatsON.GUI.exe`.
 All four test projects use the .NET test SDK and NUnit adapter; confirm discovery
 and executed test counts. A single test project can be passed to `dotnet test`
 instead of the solution.

@@ -29,7 +29,7 @@ namespace Soloplan.WhatsON.GUI
   /// <summary>
   /// Wrapper for <see cref="NotifyIcon" /> from System.WindowsForms. Handles creation/opening/closing of main window.
   /// </summary>
-  public class TrayHandler : IDisposable
+  public partial class TrayHandler : IDisposable
   {
     /// <summary>
     /// Scheduler instance.
@@ -127,6 +127,9 @@ namespace Soloplan.WhatsON.GUI
       this.icon.DoubleClick += (s, e) => this.ShowOrHideWindow();
       this.icon.BalloonTipClicked += (s, e) => this.BringToFront(true);
       this.icon.Click += (s, e) => this.BringToFront(false);
+      this.restartToUpdateMenu.Click += async (s, e) => await this.RestartToUpdateAsync();
+      this.updateTimer.Tick += async (s, e) => await this.CheckForUpdatesAsync();
+      this.updateTimer.Start();
 
       this.model = new NotificationsModel(this.scheduler);
       this.model.StatusChanged += this.CurrentStatusPropertyChanged;
@@ -172,6 +175,8 @@ namespace Soloplan.WhatsON.GUI
     public void Dispose()
     {
       this.configurationApplication?.Cancel();
+      this.updateTimer.Dispose();
+      this.restartToUpdateMenu.Dispose();
       this.pulseTimer.Dispose();
       this.pulseFrames = null;
       Localizer.LanguageChanged -= this.LanguageChanged;
@@ -424,6 +429,8 @@ namespace Soloplan.WhatsON.GUI
 
       this.contextMenu.Items.Add(openCloseWindow);
       this.contextMenu.Items.Add(closeApplication);
+      this.UpdateRestartMenu();
+      _ = this.CheckForUpdatesAsync();
     }
 
     private void LanguageChanged(object? sender, EventArgs args) => Application.Current.Dispatcher.Invoke(() =>

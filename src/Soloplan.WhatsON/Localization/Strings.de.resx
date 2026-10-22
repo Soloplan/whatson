@@ -566,4 +566,8 @@ Erwarteter Verbindungstyp: {3}</value>
   <data name="TooltipFinishedFormat" xml:space="preserve"><value>{0} beendet</value></data>
   <data name="TooltipFailedTestsFormat" xml:space="preserve"><value>{0} fehlgeschlagene Tests</value></data>
   <data name="MoreTestFailuresFormat" xml:space="preserve"><value>{0} weitere Fehler im Testbericht</value></data>
+  <data name="RestartToUpdate" xml:space="preserve"><value>Zum Aktualisieren neu starten</value></data>
+  <data name="RestartToUpdateConfirmation" xml:space="preserve"><value>Speichern Sie alle unvollständigen Änderungen, bevor Sie fortfahren. whatsON neu starten, um das Update zu installieren?</value></data>
+  <data name="UpdateFailed" xml:space="preserve"><value>Update fehlgeschlagen</value></data>
+  <data name="UpdateFailedMessage" xml:space="preserve"><value>Das Update konnte nicht installiert werden. whatsON bleibt geöffnet. Bitte versuchen Sie es später erneut.</value></data>
 </root>

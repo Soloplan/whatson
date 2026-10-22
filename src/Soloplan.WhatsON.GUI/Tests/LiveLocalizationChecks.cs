@@ -106,6 +106,11 @@ namespace Soloplan.WhatsON.GUI.Tests
           var relativeTime = Descendants<TextBlock>(history).Single(text => text.Text.Contains("ago", StringComparison.Ordinal));
           var icon = (typeof(TrayHandler).GetField("icon", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected member was not found.")).GetValue(tray) as System.Windows.Forms.NotifyIcon ?? throw new AssertionException("Expected icon.");
           var menu = (typeof(TrayHandler).GetField("contextMenu", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected member was not found.")).GetValue(tray) as System.Windows.Forms.ContextMenuStrip ?? throw new AssertionException("Expected menu.");
+          var flags = BindingFlags.Instance | BindingFlags.NonPublic;
+          (typeof(TrayHandler).GetField("nextUpdateCheck", flags) ?? throw new AssertionException("Expected update check field.")).SetValue(tray, DateTime.MaxValue);
+          (typeof(TrayHandler).GetField("updateRestartReadyAt", flags) ?? throw new AssertionException("Expected restart readiness field.")).SetValue(tray, 0L);
+          (typeof(TrayHandler).GetMethod("SetUpdateAvailability", flags) ?? throw new AssertionException("Expected update method.")).Invoke(
+            tray, new object[] { Windows.ApplicationModel.PackageUpdateAvailability.Available, new Uri("https://updates.example.invalid/whatsON.appinstaller") });
 
           foreach (var language in new[] { ApplicationLanguage.German, ApplicationLanguage.English, ApplicationLanguage.German, ApplicationLanguage.System })
           {
@@ -131,7 +136,9 @@ namespace Soloplan.WhatsON.GUI.Tests
             Assert.That(project.GetConfigurationByKey(Connector.NotificationsVisbility).Value, Is.EqualTo(notificationValue));
             Assert.That(source.Language, Is.EqualTo(ApplicationLanguage.English), "Previewing must not save the preference.");
             Assert.That(icon.Text, Is.EqualTo(german ? "whatsON - Keine Projekte konfiguriert" : "whatsON - No projects configured"));
-            Assert.That(menu.Items[1].Text, Is.EqualTo(german ? "Beenden" : "Exit"));
+            Assert.That(menu.Items.Count, Is.EqualTo(3));
+            Assert.That(menu.Items[1].Text, Is.EqualTo(german ? "Zum Aktualisieren neu starten" : "Restart to update"));
+            Assert.That(menu.Items[2].Text, Is.EqualTo(german ? "Beenden" : "Exit"));
             Assert.That(settings.Language.IetfLanguageTag, Is.EqualTo(CultureInfo.CurrentUICulture.IetfLanguageTag).IgnoreCase);
             Assert.That(tooltip.Language, Is.EqualTo(settings.Language));
           }

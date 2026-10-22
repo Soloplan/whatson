@@ -37,7 +37,13 @@ to override it for local packaging.
 | develop (alpha) | `Soloplan.WhatsON.alpha` | `https://github.com/Soloplan/whatson/releases/download/alpha/whatsON.appinstaller` |
 
 These are separate Windows applications and can be installed side by side.
-Each feed checks for updates on application launch. `AppInstallerUri` can
+Each feed checks for updates on application launch. While whatsON is running,
+it also checks its registered HTTPS App Installer feed every 15 minutes.
+When an update is available, the tray menu offers **Restart to update** after
+the application has been running for at least one minute. The action asks for
+confirmation, installs the update, and lets Windows restart whatsON. Save any
+unfinished edits before continuing. Portable installations and packages installed
+without an App Installer feed do not show this action. `AppInstallerUri` can
 override the feed's base URL, and `WhatsONPackageUri` the package's base URL;
 both must be HTTPS URLs ending in `/`.
 
