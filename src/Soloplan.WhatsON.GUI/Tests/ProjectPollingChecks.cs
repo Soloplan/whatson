@@ -30,6 +30,51 @@ namespace Soloplan.WhatsON.GUI.Tests
       VerifyRemovedProjects();
       VerifyModelReinitialization();
       VerifyViewLifetime();
+      VerifyGroupCountsAndMoves();
+    }
+
+    private static void VerifyGroupCountsAndMoves()
+    {
+      var scheduler = new ObservationScheduler();
+      var connector = CreateConnector("Source");
+      var other = CreateConnector("Source");
+      var configuration = new ApplicationConfiguration();
+      configuration.ConnectorsConfiguration.Add(connector.Configuration);
+      configuration.ConnectorsConfiguration.Add(other.Configuration);
+      using var model = new ConnectorTreeViewModel();
+      model.Init(scheduler, configuration, new[] { connector, other });
+      var source = model.ConnectorGroups.Single();
+      var result = GetPendingResult(scheduler);
+      foreach (var state in new[] { ObservationState.Failure, ObservationState.Running, ObservationState.Unstable, ObservationState.Success, ObservationState.Unknown })
+      {
+        connector.CurrentStatus = new Status(state);
+        result(scheduler, connector);
+        result(scheduler, connector);
+        Assert.That(source.FailingConnectors, Is.EqualTo(state == ObservationState.Failure ? 1 : 0));
+        Assert.That(source.RunningConnectors, Is.EqualTo(state == ObservationState.Running ? 1 : 0));
+        Assert.That(source.UnstableConnectors, Is.EqualTo(state == ObservationState.Unstable ? 1 : 0));
+        Assert.That(source.UnknownConnectors, Is.EqualTo(state == ObservationState.Unknown ? 2 : 1));
+      }
+
+      var row = source.ConnectorViewModels.First();
+      var target = model.CreateGroup("Target");
+      source.ConnectorViewModels.Remove(row);
+      target.ConnectorViewModels.Add(row);
+      connector.CurrentStatus = new Status(ObservationState.Failure);
+      result(scheduler, connector);
+      Assert.That(source.UnknownConnectors, Is.EqualTo(1));
+      Assert.That(source.FailingConnectors, Is.Zero);
+      Assert.That(target.FailingConnectors, Is.EqualTo(1));
+      Assert.That(target.UnknownConnectors, Is.Zero);
+
+      target.ConnectorViewModels.Clear();
+      connector.CurrentStatus = new Status(ObservationState.Running);
+      result(scheduler, connector);
+      Assert.That(target.RunningConnectors, Is.Zero);
+      Assert.That(row.CurrentStatus.State, Is.EqualTo(ObservationState.Failure));
+      model.ConnectorGroups.Clear();
+      result(scheduler, other);
+      Assert.That(model.ConnectorGroups, Is.Empty);
     }
 
     private static void VerifyRemovedProjects()
@@ -54,9 +99,9 @@ namespace Soloplan.WhatsON.GUI.Tests
       {
         LogManager.Configuration = logging;
         removed.CurrentStatus = new Status { ErrorMessage = "Private build history" };
-        CompleteAfterUIChange(
+        CompleteAfterUiChange(
           () => pending(scheduler, removed),
-          () => model.DeleteGroup(null, new DeleteTreeItemEventArgs(removedGroup)));
+          () => model.DeleteGroupAsync(null, new DeleteTreeItemEventArgs(removedGroup)));
         pending(scheduler, removed);
         Assert.That(removedRow.CurrentStatus.ErrorMessage, Is.EqualTo("Initial"));
         Assert.That(model.ConnectorGroups, Has.Count.EqualTo(1), "A late result must not restore a deleted group.");
@@ -66,7 +111,7 @@ namespace Soloplan.WhatsON.GUI.Tests
         pending(scheduler, remaining);
         Assert.That(remainingRow.CurrentStatus.ErrorMessage, Is.EqualTo("Updated"), "Other projects must keep receiving updates.");
 
-        model.DeleteGroup(null, new DeleteTreeItemEventArgs(remainingRow));
+        model.DeleteGroupAsync(null, new DeleteTreeItemEventArgs(remainingRow));
         pending(scheduler, remaining);
         Assert.That(model.ConnectorGroups.SelectMany(group => group.ConnectorViewModels), Is.Empty);
         Assert.That(target.Logs, Has.None.Contains("Warn"));
@@ -132,7 +177,7 @@ namespace Soloplan.WhatsON.GUI.Tests
         var currentModel = (ConnectorTreeViewModel)view.DataContext;
         var currentRow = currentModel.ConnectorGroups.First().ConnectorViewModels.Single();
         var pending = GetPendingResult(scheduler);
-        CompleteAfterUIChange(() => pending(scheduler, connector), () => window.Close());
+        CompleteAfterUiChange(() => pending(scheduler, connector), () => window.Close());
         Assert.That(GetSubscribers(scheduler), Is.Null, "Closing the window must release its scheduler subscription.");
         Assert.That(currentRow.CurrentStatus.ErrorMessage, Is.EqualTo("Initial"), "Already queued results must not update a closed view.");
         view.Dispose();
@@ -144,7 +189,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       }
     }
 
-    private static void CompleteAfterUIChange(Action result, Action change)
+    private static void CompleteAfterUiChange(Action result, Action change)
     {
       var dispatcher = Application.Current.Dispatcher;
       using var queued = new ManualResetEventSlim();

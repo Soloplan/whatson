@@ -19,7 +19,7 @@ namespace Soloplan.WhatsON.Jenkins.Model
     /// The request properties for the server query.
     /// </summary>
     public const string RequestProperties =
-      "disabled,displayName,fullDisplayName,lastBuild[number,displayName,description,building,duration,estimatedDuration,result,timestamp,culprits[fullName,absoluteUrl],changeSets[items[author[fullName,absoluteUrl]]]],name,fullName,url";
+      "disabled,description,displayName,fullDisplayName,lastStableBuild[number],lastBuild[" + JenkinsBuild.RequestProperties + "],name,fullName,url";
 
     public bool Disabled { get; set; }
 
@@ -40,6 +40,8 @@ namespace Soloplan.WhatsON.Jenkins.Model
     /// Gets or sets the last build.
     /// </summary>
     public JenkinsBuild? LastBuild { get; set; }
+
+    public JenkinsBuild? LastStableBuild { get; set; }
 
     /// <summary>
     /// Gets or sets the job name.

@@ -48,9 +48,10 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       server.Given(Request.Create().WithPath(jsonPath).UsingGet())
         .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json").WithBody(json));
       StubPolling(server, new[] { xmlConnector }, XDocument.Parse(ReadRecording($"poll-{sample}.xml", server.Urls[0])));
+      var expectedPaths = new List<string> { jsonPath, JenkinsApi.PollingRequest(new[] { xmlConnector }, false).AbsolutePath };
 
-      await jsonConnector.QueryStatus(CancellationToken.None);
-      var queried = await xmlConnector.QueryStatusBatch(new[] { xmlConnector }, CancellationToken.None);
+      await jsonConnector.QueryStatusAsync(CancellationToken.None);
+      var queried = await xmlConnector.QueryStatusBatchAsync(new[] { xmlConnector }, CancellationToken.None);
 
       Assert.That(queried, Is.EquivalentTo(new[] { xmlConnector }));
       Assert.That(xmlConnector.CurrentStatus?.State, Is.EqualTo(expectedState));
@@ -72,6 +73,8 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         Assert.That(actual.EstimatedDuration, Is.EqualTo(expected.EstimatedDuration));
         Assert.That(actual.DisplayName, Is.EqualTo(expected.DisplayName));
         Assert.That(actual.Details, Is.EqualTo(expected.Details));
+        Assert.That(actual.FailedTestCount, Is.EqualTo(expected.FailedTestCount));
+        Assert.That(actual.FailureDetails, Is.EqualTo(expected.FailureDetails));
         Assert.That(actual.Culprits.Select(user => user.FullName), Is.EqualTo(expected.Culprits.Select(user => user.FullName)));
         Assert.That(actual.CommittedToThisBuild.Select(user => user.FullName), Is.EqualTo(expected.CommittedToThisBuild.Select(user => user.FullName)));
         var completed = (job.Builds ?? Array.Empty<JenkinsBuild>()).Where(build => !build.Building)
@@ -82,7 +85,8 @@ namespace Soloplan.WhatsON.Jenkins.Tests
           Is.EqualTo(jsonConnector.Snapshots.Select(snapshot => snapshot.Status.State)));
       }
 
-      Assert.That(server.LogEntries.Count(), Is.EqualTo(2), "Replay must not probe the live server or fetch history separately.");
+      Assert.That(server.LogEntries.Select(entry => $"{entry.RequestMessage?.Method} {entry.RequestMessage?.Path}"), Is.EquivalentTo(expectedPaths.Select(path => "GET " + path)),
+        "Polling must request only the recorded job data.");
     }
 
     [TestCase(301)]
@@ -106,8 +110,8 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/xml")
           .WithBody(ReadRecording("poll-1.xml", server.Urls[0])));
 
-      await jsonConnector.QueryStatus(CancellationToken.None);
-      var queried = await xmlConnector.QueryStatusBatch(new[] { xmlConnector }, CancellationToken.None);
+      await jsonConnector.QueryStatusAsync(CancellationToken.None);
+      var queried = await xmlConnector.QueryStatusBatchAsync(new[] { xmlConnector }, CancellationToken.None);
 
       Assert.That(jsonConnector.CurrentStatus?.State, Is.EqualTo(ObservationState.Success));
       Assert.That(queried, Is.EquivalentTo(new[] { xmlConnector }));
@@ -125,7 +129,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json")
           .WithBody(ReadRecording("discovery.json", server.Urls[0])));
 
-      var projects = await new JenkinsPlugin().GetProjects(server.Urls[0]) ?? throw new AssertionException("Discovery failed.");
+      var projects = await new JenkinsPlugin().GetProjectsAsync(server.Urls[0]) ?? throw new AssertionException("Discovery failed.");
       var leaves = Descendants(projects).Where(project => project.Children.Count == 0).ToArray();
       var expectedPaths = Enumerable.Range(1, 6).Select(sample =>
         JsonConvert.DeserializeObject<JenkinsJob>(ReadRecording($"job-{sample}.json", server.Urls[0]))?.FullName);
@@ -140,10 +144,14 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     public async Task RecordedProjectsArePolledTogetherWithinEachFolder()
     {
       using var server = WireMockServer.Start();
+      var expectedPaths = new List<string>();
       var connectors = Enumerable.Range(1, 6).Select(sample =>
       {
-        var job = JsonConvert.DeserializeObject<JenkinsJob>(ReadRecording($"job-{sample}.json", server.Urls[0]));
-        return CreateConnector(server.Urls[0], job?.FullName ?? throw new AssertionException("Missing recorded project path."));
+        var job = JsonConvert.DeserializeObject<JenkinsJob>(ReadRecording($"job-{sample}.json", server.Urls[0]))
+          ?? throw new AssertionException("Missing recorded job.");
+        var connector = CreateConnector(server.Urls[0], job.FullName ?? throw new AssertionException("Missing recorded project path."));
+
+        return connector;
       }).ToArray();
       var groups = connectors.GroupBy(JenkinsApi.UrlHelper.ParentUrl).ToArray();
       foreach (var group in groups)
@@ -155,9 +163,10 @@ namespace Soloplan.WhatsON.Jenkins.Tests
             ?? throw new AssertionException("Missing recorded XML job.");
         });
         StubPolling(server, group.ToArray(), new XDocument(new XElement("jobs", jobs)));
+        expectedPaths.Add(JenkinsApi.PollingRequest(group.ToArray(), false).AbsolutePath);
       }
 
-      var queried = await connectors[0].QueryStatusBatch(connectors, CancellationToken.None);
+      var queried = await connectors[0].QueryStatusBatchAsync(connectors, CancellationToken.None);
 
       Assert.That(queried, Is.EquivalentTo(connectors));
       Assert.That(connectors.Select(connector => connector.CurrentStatus?.State), Is.EqualTo(new ObservationState?[]
@@ -165,7 +174,8 @@ namespace Soloplan.WhatsON.Jenkins.Tests
         ObservationState.Success, ObservationState.Success, ObservationState.Failure,
         ObservationState.Unstable, ObservationState.Running, ObservationState.Unknown,
       }));
-      Assert.That(server.LogEntries.Count(), Is.EqualTo(groups.Length));
+      Assert.That(server.LogEntries.Select(entry => $"{entry.RequestMessage?.Method} {entry.RequestMessage?.Path}"), Is.EquivalentTo(expectedPaths.Select(path => "GET " + path)),
+        "Each folder needs one polling request; diagnostics wait for a hover.");
     }
 
     private static JenkinsConnector CreateConnector(string address, string project) => new JenkinsConnector(

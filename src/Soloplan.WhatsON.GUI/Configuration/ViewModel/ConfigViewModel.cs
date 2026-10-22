@@ -10,6 +10,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
   using System;
   using System.Collections.Generic;
   using System.Linq;
+  using System.Threading.Tasks;
   using System.Windows.Controls;
   using Microsoft.Win32;
   using NLog;
@@ -57,6 +58,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// Gets the connectors list.
     /// </summary>
     public ConnectorViewModelCollection Connectors { get; private set; } = new ConnectorViewModelCollection();
+
+    public ConnectorViewModelCollection Servers { get; } = new ConnectorViewModelCollection();
 
     /// <summary>
     /// Gets the groups retained independently of the projects being edited.
@@ -232,6 +235,19 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
       try
       {
         this.Configuration = configurationSource;
+        configurationSource.InitializeServerConfigurations();
+        var serverSource = new ApplicationConfiguration();
+        foreach (var server in configurationSource.ServerConfigurations)
+        {
+          serverSource.ConnectorsConfiguration.Add(new ConnectorConfiguration(
+            server.Type,
+            server.Name,
+            server.ConfigurationItems.Select(item => new ConfigurationItem(item.Key, item.Value)).ToList()) { Identifier = server.Identifier });
+        }
+
+        this.Servers.CollectionItemPropertyChanged -= this.ConnectorsCollectionItemPropertyChanged;
+        this.Servers.Load(serverSource);
+        this.Servers.CollectionItemPropertyChanged += this.ConnectorsCollectionItemPropertyChanged;
         this.Groups = configurationSource.GetGroupNames().ToList();
         if (this.Connectors == null)
         {
@@ -274,7 +290,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// Applies to source configuration and saves changes.
     /// </summary>
-    public void ApplyToSourceAndSave()
+    public async Task ApplyToSourceAndSaveAsync()
     {
       if (!this.ConfigurationIsModified)
       {
@@ -286,7 +302,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
       {
         this.Connectors.ApplyToConfiguration(this.Configuration);
         this.ApplyMainSettingsToConfiguration(this.Configuration);
-        SerializationHelper.Instance.SaveConfiguration(this.Configuration);
+        await SerializationHelper.Instance.SaveConfigurationAsync(this.Configuration);
         this.ConfigurationIsModified = false;
       }
       finally
@@ -315,11 +331,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// Exports the configuration to specified file path.
     /// </summary>
     /// <param name="filePath">The file path.</param>
-    public void Export(string filePath)
+    public async Task ExportAsync(string filePath)
     {
       var tempConfig = new ApplicationConfiguration();
       this.ApplyToConfiguration(tempConfig);
-      SerializationHelper.Instance.SaveConfiguration(tempConfig, filePath);
+      await SerializationHelper.Instance.SaveConfigurationAsync(tempConfig, filePath);
     }
 
     /// <summary>
@@ -327,28 +343,59 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// </summary>
     /// <param name="filePath">The file path.</param>
     /// <returns>True if import was successful.</returns>
-    public bool Import(string filePath, out string? errorMessage)
+    public async Task<(bool Success, string? ErrorMessage)> ImportAsync(string filePath)
     {
-      errorMessage = null;
       try
       {
-        var newConfiguration = SerializationHelper.Load<ApplicationConfiguration>(filePath);
+        var newConfiguration = await SerializationHelper.LoadAsync<ApplicationConfiguration>(filePath);
         this.ConfigurationApplying?.Invoke(this, new EventArgs());
         this.Load(newConfiguration);
         this.ConfigurationIsModified = true;
-        this.ApplyToSourceAndSave();
+        await this.ApplyToSourceAndSaveAsync();
         this.ConfigurationIsModified = false;
         this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.Configuration));
-        return true;
+        return (true, null);
       }
       catch (Exception e)
       {
-        errorMessage = Localizer.ImportFailed(filePath, e.Message);
+        var errorMessage = Localizer.ImportFailed(filePath, e.Message);
         log.Error(errorMessage);
         log.Error(e);
-        return false;
+        return (false, errorMessage);
       }
     }
+
+    /// <summary>
+    /// Adds server editors for newly added projects, preserving unsaved credentials.
+    /// </summary>
+    public void RefreshServers()
+    {
+      var working = new ApplicationConfiguration();
+      foreach (var server in this.Servers)
+      {
+        working.ServerConfigurations.Add(CreateServerConfiguration(server));
+      }
+
+      foreach (var project in this.Connectors.Where(item => item.SourceConnectorPlugin != null))
+      {
+        var snapshot = project.CreateNewConnectorConfiguration();
+        snapshot.ServerConfiguration = project.SourceConnectorConfiguration?.ServerConfiguration;
+        working.ConnectorsConfiguration.Add(snapshot);
+      }
+
+      working.InitializeServerConfigurations();
+      foreach (var server in working.ServerConfigurations.Where(item => this.Servers.All(existing => existing.Identifier != item.Identifier)))
+      {
+        var model = new ConnectorViewModel();
+        model.Load(server);
+        this.Servers.Add(model);
+      }
+    }
+
+    private static ConnectorConfiguration CreateServerConfiguration(ConnectorViewModel server) => new ConnectorConfiguration(
+      server.SourceConnectorConfiguration?.Type ?? throw new InvalidOperationException("No server configuration is loaded."),
+      server.Name,
+      server.ConfigurationItems.Select(item => item.CreateNewConfigurationItem()).ToList()) { Identifier = server.Identifier };
 
     /// <summary>
     /// Called when significant property of the view model was changed.
@@ -367,6 +414,14 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <param name="configuration">The configuration.</param>
     private void ApplyMainSettingsToConfiguration(ApplicationConfiguration configuration)
     {
+      this.RefreshServers();
+      configuration.ServerConfigurations.Clear();
+      foreach (var server in this.Servers)
+      {
+        configuration.ServerConfigurations.Add(CreateServerConfiguration(server));
+      }
+
+      configuration.InitializeServerConfigurations();
       configuration.Groups.Clear();
       foreach (var group in this.Groups)
       {

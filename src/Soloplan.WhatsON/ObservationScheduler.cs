@@ -77,7 +77,7 @@ namespace Soloplan.WhatsON
       log.Log(LogLevel.Debug, "Observation connector {@connector} added.", observationConnector);
     }
 
-    public async void Start()
+    public void Start()
     {
       log.Debug("Start of observation requested.");
       if (!this.Running && !this.stopping)
@@ -100,7 +100,7 @@ namespace Soloplan.WhatsON
             : observation))
         {
           var connectors = group.ToArray();
-          Task.Run(() => this.StartObserveGroup(connectors, this.cancellationTokenSource.Token));
+          _ = Task.Run(() => this.StartObserveGroupAsync(connectors, this.cancellationTokenSource.Token));
         }
 
         log.Debug("Observation started.");
@@ -136,16 +136,18 @@ namespace Soloplan.WhatsON
     /// look idea description.
     /// </remarks>
     /// <returns>Not used.</returns>
-    private async Task StartObserveGroup(IReadOnlyList<ObservationConnector> connectors, CancellationToken token)
+    private async Task StartObserveGroupAsync(IReadOnlyList<ObservationConnector> connectors, CancellationToken token)
     {
       var connector = connectors[0];
       var batchConnectors = connectors.Select(item => item.Connector).ToArray();
+      var interval = connector.Interval;
       while (connector.Running)
       {
         try
         {
-          if (connector.LastPoll == default || DateTime.Now - connector.LastPoll > connector.Interval)
+          if (connector.LastPoll == default || DateTime.Now - connector.LastPoll > interval)
           {
+            interval = connector.Interval;
             log.Log(LogLevel.Trace, "Observation of {@connector} started.", connector);
 
             IReadOnlyCollection<Connector> queried;
@@ -153,11 +155,11 @@ namespace Soloplan.WhatsON
             {
               if (connector.Connector is IBatchedConnector batch)
               {
-                queried = await batch.QueryStatusBatch(batchConnectors, token);
+                queried = await batch.QueryStatusBatchAsync(batchConnectors, token);
               }
               else
               {
-                await connector.Connector.QueryStatus(token);
+                await connector.Connector.QueryStatusAsync(token);
                 queried = batchConnectors;
               }
             }
@@ -168,6 +170,13 @@ namespace Soloplan.WhatsON
               {
                 item.LastPoll = DateTime.Now;
               }
+            }
+
+            // Drain deferred first loads promptly, but keep failures on the normal retry schedule.
+            if (connector.Connector is IBatchedConnector && queried.Count > 0
+                && batchConnectors.Any(item => item.CurrentStatus == null) && interval > TimeSpan.FromSeconds(1))
+            {
+              interval = TimeSpan.FromSeconds(1);
             }
 
             foreach (var item in queried)
@@ -181,7 +190,7 @@ namespace Soloplan.WhatsON
             log.Log(LogLevel.Trace, "Observation of {@connector} ended.", connector);
           }
 
-          var remainingOfInterval = connector.Interval - (DateTime.Now - connector.LastPoll);
+          var remainingOfInterval = interval - (DateTime.Now - connector.LastPoll);
           if (remainingOfInterval.TotalMilliseconds > 0 && connector.Running)
           {
             int millisecondsToWait = remainingOfInterval.TotalMilliseconds < int.MaxValue ? (int)remainingOfInterval.TotalMilliseconds : int.MaxValue;

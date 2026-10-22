@@ -31,18 +31,18 @@
     <value>Ein Wert ist erforderlich.</value>
   </data>
   <data xml:space="preserve" name="TrayHandler_UpdateTrayIcon_BuildFailing">
-    <value>WhatsON - Mindestens ein Build ist fehlgeschlagen</value>
+    <value>whatsON - Mindestens ein Build ist fehlgeschlagen</value>
   </data>
   <data xml:space="preserve" name="TrayHandler_UpdateTrayIcon_Unstable">
-    <value>WhatsON - Mindestens ein Build ist instabil</value>
+    <value>whatsON - Mindestens ein Build ist instabil</value>
   </data>
   <data xml:space="preserve" name="TrayHandler_UpdateTrayIcon_Pending">
-    <value>WhatsON - Build-Status wird geprüft</value>
+    <value>whatsON - Build-Status wird geprüft</value>
   </data>
   <data xml:space="preserve" name="TrayHandler_UpdateTrayIcon_NoProjects">
-    <value>WhatsON - Keine Projekte konfiguriert</value>
+    <value>whatsON - Keine Projekte konfiguriert</value>
   </data>
   <data xml:space="preserve" name="TrayHandler_UpdateTrayIcon_Normal">
-    <value>WhatsON - Alle Builds in Ordnung</value>
+    <value>whatsON - Alle Builds in Ordnung</value>
   </data>
 </root>

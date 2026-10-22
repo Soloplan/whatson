@@ -16,6 +16,9 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.CruiseControl.Model;
   using Soloplan.WhatsON.Model;
+  using WireMock.RequestBuilders;
+  using WireMock.ResponseBuilders;
+  using WireMock.Server;
 
   [TestFixture]
   [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
@@ -50,7 +53,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
       Directory.CreateDirectory(projectDirectory);
       File.WriteAllText(Path.Combine(projectDirectory, "ViewAllBuilds.aspx"), "<html><body>No builds available</body></html>");
 
-      Assert.That(await this.server.GetBuilds("Release"), Is.Empty);
+      Assert.That(await this.server.GetBuildsAsync("Release"), Is.Empty);
     }
 
     [Test]
@@ -60,7 +63,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
         this.statusFile,
         "<Projects><Project name='Release &amp; QA' category='Tools' activity='Sleeping' lastBuildStatus='Failure' lastBuildLabel='42' lastBuildTime='2020-10-17T12:00:00' nextBuildTime='2020-10-18T12:00:00' webUrl='https://builds.example/release' serverName='local' description='Compile &amp; test'/></Projects>");
 
-      var projects = await this.server.GetAllProjects();
+      var projects = await this.server.GetAllProjectsAsync();
       var project = (projects.CruiseControlProject ?? throw new AssertionException("Missing projects.")).Single();
 
       Assert.Multiple(() =>
@@ -79,8 +82,8 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
     {
       File.WriteAllText(this.statusFile, "<Projects><Project name='Release'/><Project name='Release-Linux'/></Projects>");
 
-      Assert.That((await this.server.GetProjectStatus(CancellationToken.None, "Release-Linux", int.MaxValue))?.Name, Is.EqualTo("Release-Linux"));
-      Assert.That(await this.server.GetProjectStatus(CancellationToken.None, "Missing", int.MaxValue), Is.Null);
+      Assert.That((await this.server.GetProjectStatusAsync(CancellationToken.None, "Release-Linux", int.MaxValue))?.Name, Is.EqualTo("Release-Linux"));
+      Assert.That(await this.server.GetProjectStatusAsync(CancellationToken.None, "Missing", int.MaxValue), Is.Null);
     }
 
     [Test]
@@ -89,10 +92,10 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
       File.WriteAllText(
         this.statusFile,
         "<Projects><Project name='First' lastBuildLabel='1'/><Project name='Second' lastBuildLabel='2'/></Projects>");
-      await this.server.GetProjectStatus(CancellationToken.None, "First", int.MaxValue);
+      await this.server.GetProjectStatusAsync(CancellationToken.None, "First", int.MaxValue);
       File.WriteAllText(this.statusFile, "<Projects><Project name='Second' lastBuildLabel='99'/></Projects>");
 
-      var second = await this.server.GetProjectStatus(CancellationToken.None, "Second", int.MaxValue);
+      var second = await this.server.GetProjectStatusAsync(CancellationToken.None, "Second", int.MaxValue);
 
       Assert.That(second?.LastBuildLabel, Is.EqualTo("2"));
     }
@@ -113,25 +116,25 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
     public async Task ExpiredPollIntervalRefreshesTheReport()
     {
       File.WriteAllText(this.statusFile, "<Projects><Project name='Release' lastBuildLabel='1'/></Projects>");
-      await this.server.GetProjectStatus(CancellationToken.None, "Release", 0);
+      await this.server.GetProjectStatusAsync(CancellationToken.None, "Release", 0);
       File.WriteAllText(this.statusFile, "<Projects><Project name='Release' lastBuildLabel='2'/></Projects>");
       WaitForClockTick();
 
-      Assert.That((await this.server.GetProjectStatus(CancellationToken.None, "Release", 0))?.LastBuildLabel, Is.EqualTo("2"));
+      Assert.That((await this.server.GetProjectStatusAsync(CancellationToken.None, "Release", 0))?.LastBuildLabel, Is.EqualTo("2"));
     }
 
     [Test]
     public async Task BrokenReportClearsStaleCacheAndARepairedReportCanBeRead()
     {
       File.WriteAllText(this.statusFile, "<Projects><Project name='Release' lastBuildLabel='1'/></Projects>");
-      await this.server.GetProjectStatus(CancellationToken.None, "Release", 0);
+      await this.server.GetProjectStatusAsync(CancellationToken.None, "Release", 0);
       File.WriteAllText(this.statusFile, "<broken");
       WaitForClockTick();
 
-      Assert.That(await this.server.GetProjectStatus(CancellationToken.None, "Release", 0), Is.Null);
+      Assert.That(await this.server.GetProjectStatusAsync(CancellationToken.None, "Release", 0), Is.Null);
       File.WriteAllText(this.statusFile, "<Projects><Project name='Release' lastBuildLabel='2'/></Projects>");
       WaitForClockTick();
-      Assert.That((await this.server.GetProjectStatus(CancellationToken.None, "Release", 0))?.LastBuildLabel, Is.EqualTo("2"));
+      Assert.That((await this.server.GetProjectStatusAsync(CancellationToken.None, "Release", 0))?.LastBuildLabel, Is.EqualTo("2"));
     }
 
     [TestCase("<broken")]
@@ -140,7 +143,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
     {
       File.WriteAllText(this.statusFile, xml);
 
-      Assert.That(async () => await this.server.GetAllProjects(), Throws.TypeOf<InvalidOperationException>());
+      Assert.That(async () => await this.server.GetAllProjectsAsync(), Throws.TypeOf<InvalidOperationException>());
     }
 
     [Test]
@@ -148,7 +151,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
     {
       File.WriteAllText(this.statusFile, "<Projects/>");
 
-      Assert.That(await this.server.GetProjectStatus(CancellationToken.None, "Release", 0), Is.Null);
+      Assert.That(await this.server.GetProjectStatusAsync(CancellationToken.None, "Release", 0), Is.Null);
     }
 
     [Test]
@@ -162,10 +165,54 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
                  + "<tr><td><a href='/project/Release/build/one.xml' class='passed'>10/17/2020 12:01:00 PM (1)</a></td></tr></table>";
       File.WriteAllText(Path.Combine(projectDirectory, "ViewAllBuilds.aspx"), html);
 
-      var history = await this.server.GetBuilds("Release", 2);
+      var history = await this.server.GetBuildsAsync("Release", 2);
 
       Assert.That(history.Select(b => b.BuildNumber), Is.EqualTo([3, 2]));
       Assert.That(history.Select(b => b.Status), Is.EqualTo([CcBuildStatus.Success, CcBuildStatus.Failure]));
+    }
+
+    [TestCase(true)]
+    [TestCase(false)]
+    public async Task ConnectorHistoryYieldsWhileWaitingAndHonorsCancellation(bool cancel)
+    {
+      using var server = WireMockServer.Start();
+      var received = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+      var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+      var body = "<table class='RecentBuildsPanel'><tr><td><a href='/build/2.xml' class='passed'>10/17/2020 12:02:00 PM (2)</a></td></tr></table>";
+      server.Given(Request.Create().WithPath("/project/Release/ViewAllBuilds.aspx").UsingGet())
+        .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "text/html; charset=utf-8").WithBody(async _ =>
+        {
+          received.TrySetResult();
+          await release.Task.ConfigureAwait(false);
+          return body;
+        }));
+      var address = server.Urls[0] + "/";
+      var configuration = new ConnectorConfiguration(
+        "CruiseControl", "Release", Connector.ServerAddress, address, Connector.DirectAddress, address, Connector.ProjectName, "Release");
+      var connector = new ReachabilityConnector(configuration, true, true);
+      using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+      try
+      {
+        var history = connector.LoadHistoryAsync(cancellation.Token);
+        Assert.That(history.IsCompleted, Is.False, "History loading must return control while the server response is pending.");
+        await received.Task.WaitAsync(cancellation.Token);
+
+        if (cancel)
+        {
+          cancellation.Cancel();
+          Assert.CatchAsync<OperationCanceledException>(async () => await history.WaitAsync(TimeSpan.FromSeconds(3)));
+        }
+        else
+        {
+          release.SetResult();
+          var builds = await history.WaitAsync(TimeSpan.FromSeconds(3));
+          Assert.That(builds.Select(build => build?.BuildNumber), Is.EqualTo(new[] { 2 }));
+        }
+      }
+      finally
+      {
+        release.TrySetResult();
+      }
     }
 
     [TestCase("Success", ObservationState.Success)]
@@ -180,7 +227,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
         $"<Projects><Project name='Release' activity='Sleeping' lastBuildStatus='{result}' lastBuildLabel='1'><messages/></Project></Projects>");
       var connector = this.CreateConnector();
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       Assert.That(connector.CurrentStatus?.State, Is.EqualTo(expected));
       Assert.That(connector.Snapshots.Single().Status.State, Is.EqualTo(expected));
@@ -194,7 +241,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
         "<Projects><Project name='Release' activity='Building' lastBuildStatus='Failure' lastBuildLabel='1'><messages/></Project></Projects>");
       var connector = this.CreateConnector();
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       Assert.That(connector.CurrentStatus?.State, Is.EqualTo(ObservationState.Running));
       Assert.That(connector.CurrentStatus?.Building, Is.True);
@@ -210,7 +257,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
         $"<Projects><Project name='Release' activity='{activity}' lastBuildStatus='Failure' lastBuildLabel='1'><messages/></Project></Projects>");
       var connector = this.CreateConnector();
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       var status = connector.CurrentStatus as CruiseControlStatus ?? throw new AssertionException("Expected a CruiseControlStatus.");
       Assert.That(status.State, Is.EqualTo(ObservationState.Failure));
@@ -226,7 +273,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
         "<Projects><Project name='Release' activity='Sleeping' lastBuildStatus='Success' lastBuildLabel='1'/></Projects>");
       var connector = this.CreateConnector();
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       Assert.That(connector.CurrentStatus?.State, Is.EqualTo(ObservationState.Success));
       Assert.That((connector.CurrentStatus as CruiseControlStatus ?? throw new AssertionException("Expected a CruiseControlStatus.")).Culprits, Is.Empty);
@@ -240,7 +287,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
       File.WriteAllText(this.statusFile, report);
       var connector = this.CreateConnector();
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       Assert.That((connector.CurrentStatus as CruiseControlStatus ?? throw new AssertionException("Expected a CruiseControlStatus.")).Culprits.Select(c => c.Name), Is.EquivalentTo(["Alice", "Bob", "Carol"]));
     }
@@ -255,9 +302,22 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
         $"<Projects><Project name='Release' activity='Sleeping' lastBuildStatus='Success' lastBuildLabel='1'><messages><message kind='{kind}' text='Build failed'/></messages></Project></Projects>");
       var connector = this.CreateConnector();
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       Assert.That(connector.CurrentStatus?.State, Is.EqualTo(ObservationState.Failure));
+    }
+
+    [Test]
+    public async Task FailureDetailsIncludeFailingTasksButNotPeopleOrInformationalMessages()
+    {
+      File.WriteAllText(
+        this.statusFile,
+        "<Projects><Project name='Release' activity='Sleeping' lastBuildStatus='Failure' lastBuildLabel='1'><messages>"
+        + "<message kind='FailingTasks' text='Unit tests failed'/><message kind='FailingTasks' text='Unit tests failed'/>"
+        + "<message kind='Breakers' text='Alice'/><message kind='Fixer' text='Bob'/></messages></Project></Projects>");
+      var connector = this.CreateConnector();
+      await connector.QueryStatusAsync(CancellationToken.None);
+      Assert.That(connector.CurrentStatus?.FailureDetails, Is.EqualTo("Unit tests failed"));
     }
 
     [TestCase("Fixer")]
@@ -270,7 +330,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
         $"<Projects><Project name='Release' activity='Sleeping' lastBuildStatus='Unknown' lastBuildLabel='1'><messages><message kind='{kind}' text='Informational message'/></messages></Project></Projects>");
       var connector = this.CreateConnector();
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       Assert.That(connector.CurrentStatus?.State, Is.EqualTo(ObservationState.Unknown));
     }
@@ -281,7 +341,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
       File.WriteAllText(this.statusFile, "<Projects><Project name='Release'/></Projects>");
       var connector = this.CreateConnector();
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       Assert.That(connector.CurrentStatus?.InvalidBuild, Is.True);
       Assert.That(connector.CurrentStatus?.ErrorMessage, Is.EqualTo("No builds yet"));
@@ -296,7 +356,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
       File.WriteAllText(this.statusFile, "<Projects/>");
       var connector = this.CreateConnector(serverAvailable, projectAvailable);
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       Assert.That(connector.CurrentStatus?.InvalidBuild, Is.True);
       Assert.That(connector.CurrentStatus?.ErrorMessage, Is.EqualTo(expected));
@@ -317,7 +377,7 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
       File.WriteAllText(Path.Combine(projectDirectory, "ViewAllBuilds.aspx"), historyHtml);
       var connector = this.CreateConnector();
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       Assert.That(connector.Snapshots.Select(s => s.Status.BuildNumber), Is.EqualTo([3, 2, 1]));
       Assert.That(
@@ -360,9 +420,11 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
         this.projectAvailable = projectAvailable;
       }
 
-      public override Task<bool> CheckServerURL() => Task.FromResult(this.serverAvailable);
+      public override Task<bool> CheckServerUrlAsync() => Task.FromResult(this.serverAvailable);
 
-      public override Task<bool> CheckProjectURL() => Task.FromResult(this.projectAvailable);
+      public Task<System.Collections.Generic.List<Status?>> LoadHistoryAsync(CancellationToken cancellationToken) => this.GetHistoryAsync(cancellationToken);
+
+      public override Task<bool> CheckProjectUrlAsync() => Task.FromResult(this.projectAvailable);
     }
   }
 }

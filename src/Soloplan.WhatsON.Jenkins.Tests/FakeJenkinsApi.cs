@@ -22,12 +22,43 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
     public event EventHandler<BuildsEventArgs>? BuildsRequest;
 
+    public Func<int, CancellationToken, Task<string?>> FailedTestsRequest { get; set; } = (_, _) => Task.FromResult<string?>(null);
+
+    public Func<int, CancellationToken, Task<string?>> ConsoleErrorsRequest { get; set; } = (_, _) => Task.FromResult<string?>(string.Empty);
+
+    public Func<int, CancellationToken, Task<string?>> PipelineFailureRequest { get; set; } = (_, _) => Task.FromResult<string?>(null);
+
     public Func<IReadOnlyCollection<JenkinsConnector>, CancellationToken, Task<JenkinsPollingResult>>? PollingQuery { get; set; }
 
-    public Task<JenkinsPollingResult> GetPollingJobs(IReadOnlyCollection<JenkinsConnector> connectors, CancellationToken token) =>
+    public Func<JenkinsConnector, int, string?, bool, CancellationToken, Task<JenkinsBuild>>? VolunteerQuery { get; set; }
+
+    public Func<JenkinsConnector, int, string?, string?, CancellationToken, Task<string>>? JobVolunteerQuery { get; set; }
+
+    public async Task<string> SetJobVolunteerAsync(JenkinsConnector connector, int buildNumber, string? expectedOwner, string? owner, CancellationToken token)
+    {
+      if (this.JobVolunteerQuery != null)
+      {
+        return await this.JobVolunteerQuery(connector, buildNumber, expectedOwner, owner, token);
+      }
+
+      var job = await this.GetJenkinsJobAsync(connector, token) ?? throw new InvalidOperationException("Missing job.");
+      job.Description = JenkinsVolunteerPanel.SetFix(job.Description, buildNumber, expectedOwner, owner);
+      return job.Description;
+    }
+
+    public Task<string?> GetFailedTestsAsync(JenkinsConnector connector, int buildNumber, CancellationToken token) => this.FailedTestsRequest(buildNumber, token);
+
+    public Task<string?> GetConsoleErrorsAsync(JenkinsConnector connector, int buildNumber, CancellationToken token) => this.ConsoleErrorsRequest(buildNumber, token);
+
+    public Task<string?> GetPipelineFailureAsync(JenkinsConnector connector, int buildNumber, CancellationToken token) => this.PipelineFailureRequest(buildNumber, token);
+
+    public Task<JenkinsBuild> SetVolunteerAsync(JenkinsConnector connector, int buildNumber, string? expectedOwner, bool claim, CancellationToken token) =>
+      this.VolunteerQuery?.Invoke(connector, buildNumber, expectedOwner, claim, token) ?? throw new NotSupportedException();
+
+    public Task<JenkinsPollingResult> GetPollingJobsAsync(IReadOnlyCollection<JenkinsConnector> connectors, CancellationToken token) =>
       this.PollingQuery?.Invoke(connectors, token) ?? throw new InvalidOperationException($"{nameof(this.PollingQuery)} must be set for server batching.");
 
-    public async Task<JenkinsJob?> GetJenkinsJob(JenkinsConnector connector, CancellationToken token)
+    public async Task<JenkinsJob?> GetJenkinsJobAsync(JenkinsConnector connector, CancellationToken token)
     {
       if (this.JobRequest == null)
       {
@@ -44,7 +75,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       return eventArgs.Result;
     }
 
-    public async Task<JenkinsBuild?> GetJenkinsBuild(JenkinsConnector connector, int buildNumber, CancellationToken token)
+    public async Task<JenkinsBuild?> GetJenkinsBuildAsync(JenkinsConnector connector, int buildNumber, CancellationToken token)
     {
       if (this.BuildRequest == null)
       {
@@ -61,7 +92,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       return eventArgs.Result;
     }
 
-    public async Task<IList<JenkinsBuild>> GetBuilds(
+    public async Task<IList<JenkinsBuild>> GetBuildsAsync(
       JenkinsConnector connector,
       CancellationToken token,
       int from = 0,

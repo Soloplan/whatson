@@ -45,7 +45,7 @@ namespace Soloplan.WhatsON.GUI.Tests
     public void ValidationTrayMessagesAndRelativeTimesUseGerman()
     {
       Assert.That(Properties.Resources.ValueIsRequired, Is.EqualTo("Ein Wert ist erforderlich."));
-      Assert.That(Properties.Resources.TrayHandler_UpdateTrayIcon_NoProjects, Is.EqualTo("WhatsON - Keine Projekte konfiguriert"));
+      Assert.That(Properties.Resources.TrayHandler_UpdateTrayIcon_NoProjects, Is.EqualTo("whatsON - Keine Projekte konfiguriert"));
       var converter = new TimeToApproximateTimeConverter();
       Assert.That(converter.Convert(null, typeof(string), null, CultureInfo.CurrentCulture), Is.EqualTo("nie"));
       Assert.That(converter.Convert(DateTime.Now.AddMinutes(-5), typeof(string), null, CultureInfo.CurrentCulture), Is.EqualTo("vor 5 Minuten"));

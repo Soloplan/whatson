@@ -9,8 +9,10 @@ namespace Soloplan.WhatsON.CruiseControl
 {
   using System;
   using System.Collections.Generic;
+  using System.IO;
   using System.Linq;
   using System.Net;
+  using System.Net.Http;
   using System.Threading;
   using System.Threading.Tasks;
   using System.Xml.Serialization;
@@ -22,6 +24,8 @@ namespace Soloplan.WhatsON.CruiseControl
   public class CruiseControlServer
   {
     private static readonly Logger log = LogManager.GetCurrentClassLogger();
+
+    private static readonly HttpClient historyClient = new HttpClient();
 
     private readonly string baseUrl;
 
@@ -38,7 +42,7 @@ namespace Soloplan.WhatsON.CruiseControl
 
     public string ReportUrl => UrlHelper.GetXmlReportUrl(this.baseUrl);
 
-    public async Task<CruiseControlJob?> GetProjectStatus(CancellationToken cancellationToken, string? projectName, int interval)
+    public async Task<CruiseControlJob?> GetProjectStatusAsync(CancellationToken cancellationToken, string? projectName, int interval)
     {
       await this.reportLock.WaitAsync(cancellationToken);
       try
@@ -71,36 +75,39 @@ namespace Soloplan.WhatsON.CruiseControl
       }
     }
 
-    public async Task<List<CruiseControlBuild>> GetBuilds(string? projectName, int limit = Connector.MaxSnapshots)
+    public async Task<List<CruiseControlBuild>> GetBuildsAsync(string? projectName, int limit = Connector.MaxSnapshots, CancellationToken cancellationToken = default)
     {
       var history = new List<CruiseControlBuild>();
 
       ArgumentException.ThrowIfNullOrWhiteSpace(projectName);
+      cancellationToken.ThrowIfCancellationRequested();
       var projectReportUrl = UrlHelper.GetAllBuildsUrl(this.baseUrl, projectName);
-      using (var client = new WebClient())
+      try
       {
-        try
+        var uri = new Uri(projectReportUrl);
+        var html = uri.IsFile
+          ? await File.ReadAllTextAsync(uri.LocalPath, cancellationToken).ConfigureAwait(false)
+          : await historyClient.GetStringAsync(uri, cancellationToken).ConfigureAwait(false);
+        cancellationToken.ThrowIfCancellationRequested();
+        var doc = new HtmlDocument();
+        doc.LoadHtml(html);
+        var recentBuilds = doc.DocumentNode.SelectNodes("//table[@class='RecentBuildsPanel']/tr/td/a[@class]");
+        foreach (var b in (recentBuilds?.Take(limit) ?? Enumerable.Empty<HtmlNode>()))
         {
-          var html = client.DownloadString(projectReportUrl);
-          var doc = new HtmlDocument();
-          doc.LoadHtml(html);
-          var recentBuilds = doc.DocumentNode.SelectNodes("//table[@class='RecentBuildsPanel']/tr/td/a[@class]");
-          foreach (var b in (recentBuilds?.Take(limit) ?? Enumerable.Empty<HtmlNode>()))
+          var authority = uri.GetLeftPart(UriPartial.Authority);
+          var build = CruiseControlBuild.FromHtmlNode(b, authority);
+          if (build == null)
           {
-            var authority = new Uri(projectReportUrl).GetLeftPart(UriPartial.Authority);
-            var build = CruiseControlBuild.FromHtmlNode(b, authority);
-            if (build == null)
-            {
-              continue;
-            }
-
-            history.Add(build);
+            continue;
           }
+
+          history.Add(build);
         }
-        catch (WebException ex)
-        {
-          log.Error(ex);
-        }
+      }
+      catch (Exception ex) when (ex is HttpRequestException or IOException or UnauthorizedAccessException
+        || (ex is OperationCanceledException && !cancellationToken.IsCancellationRequested))
+      {
+        log.Error(ex);
       }
 
       return history;
@@ -110,7 +117,7 @@ namespace Soloplan.WhatsON.CruiseControl
     /// Gets all projects from the CC server.
     /// </summary>
     /// <returns>The list of all projects.</returns>
-    public async Task<CruiseControlJobs> GetAllProjects()
+    public async Task<CruiseControlJobs> GetAllProjectsAsync()
     {
       try
       {
@@ -129,14 +136,17 @@ namespace Soloplan.WhatsON.CruiseControl
       try
       {
         using (cancellationToken.Register(() => request.Abort(), false))
-        using (var response = await request.GetResponseAsync())
+        using (var response = await request.GetResponseAsync().WaitAsync(cancellationToken).ConfigureAwait(false))
         {
           // Get the stream containing content returned by the server
           // Open the stream using a StreamReader for easy access
           using (var dataStream = response.GetResponseStream())
           {
+            using var buffer = new MemoryStream();
+            await dataStream.CopyToAsync(buffer, cancellationToken).ConfigureAwait(false);
+            buffer.Position = 0;
             var xmlSerializer = new XmlSerializer(typeof(TModel));
-            return xmlSerializer.Deserialize(dataStream) as TModel
+            return xmlSerializer.Deserialize(buffer) as TModel
               ?? throw new InvalidPlugInApiResponseException("The XML response contains no model.");
           }
         }

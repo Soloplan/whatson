@@ -158,18 +158,18 @@
     </value>
   </data>
   <data name="TrayHandler_UpdateTrayIcon_BuildFailing" xml:space="preserve">
-      <value>WhatsON - At least one build is failing</value>
+      <value>whatsON - At least one build is failing</value>
   </data>
   <data name="TrayHandler_UpdateTrayIcon_Unstable" xml:space="preserve">
-      <value>WhatsON - At least one build is unstable</value>
+      <value>whatsON - At least one build is unstable</value>
   </data>
   <data name="TrayHandler_UpdateTrayIcon_Pending" xml:space="preserve">
-      <value>WhatsON - Checking build status</value>
+      <value>whatsON - Checking build status</value>
   </data>
   <data name="TrayHandler_UpdateTrayIcon_NoProjects" xml:space="preserve">
-      <value>WhatsON - No projects configured</value>
+      <value>whatsON - No projects configured</value>
   </data>
   <data name="TrayHandler_UpdateTrayIcon_Normal" xml:space="preserve">
-      <value>WhatsON - All builds normal</value>
+      <value>whatsON - All builds normal</value>
   </data>
 </root>

@@ -63,7 +63,7 @@
                 <Button x:Name="BackButton" Content="{live:Text loc:Strings.Back}" Click="PrevClick"
                         IsEnabled="{Binding IsPreviousStepEnabled}"
                         Margin="0,0,10,0" Style="{StaticResource SettingsSecondaryButton}" />
-                <Button x:Name="NextButton" Content="{live:Text loc:Strings.Next}" Click="NextClick"
+                <Button x:Name="NextButton" Content="{live:Text loc:Strings.Next}" Click="NextClickAsync"
                         IsEnabled="{Binding IsNextStepEnabled}"
                         Visibility="{Binding IsNotLastStep, Converter={StaticResource BoolToVis}}"
                         Style="{StaticResource SettingsPrimaryButton}" />

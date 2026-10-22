@@ -8,6 +8,7 @@
 namespace Soloplan.WhatsON.Configuration
 {
   using System;
+  using System.Collections.Generic;
   using Soloplan.WhatsON.Model;
 
   /// <summary>
@@ -45,6 +46,38 @@ namespace Soloplan.WhatsON.Configuration
     /// Gets or sets a value indicating whether unstable notifications are enabled.
     /// </summary>
     public bool UnstableNotificationEnabled { get; set; } = true;
+
+    /// <summary>
+    /// Checks a newly observed build against snapshots ordered newest first.
+    /// </summary>
+    public bool ShouldNotify(Status current, IEnumerable<Status> snapshots)
+    {
+      if (!this.AsObservationStateFlag(current.State))
+      {
+        return false;
+      }
+
+      if (!this.OnlyIfChanged)
+      {
+        return true;
+      }
+
+      foreach (var previous in snapshots)
+      {
+        // Completed builds are already in history; running builds usually are not.
+        if (previous.BuildNumber == current.BuildNumber && previous.Time == current.Time && previous.State == current.State)
+        {
+          continue;
+        }
+
+        if (this.AsObservationStateFlag(previous.State))
+        {
+          return previous.State != current.State;
+        }
+      }
+
+      return true;
+    }
 
     /// <summary>
     /// RTeturns flag of <see cref="ObservationState" /> enabled state in the configuration.

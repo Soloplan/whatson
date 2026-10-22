@@ -4,49 +4,64 @@
              xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
              xmlns:live="clr-namespace:Soloplan.WhatsON.GUI.Common.Localization"
              xmlns:converters="clr-namespace:Soloplan.WhatsON.GUI.Common.Converters"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             Width="402" UseLayoutRounding="True" SnapsToDevicePixels="True">
   <UserControl.Resources>
     <converters:TimeToApproximateTimeConverter x:Key="RelativeTime" />
     <converters:NullOrDefaultToVisibilityConverter x:Key="HasValue" />
-    <Style TargetType="materialDesign:PackIcon">
-      <Setter Property="Width" Value="14" />
-      <Setter Property="Height" Value="14" />
-      <Setter Property="Margin" Value="0,2,7,0" />
-      <Setter Property="Foreground" Value="{DynamicResource SettingsMuted}" />
-      <Setter Property="DockPanel.Dock" Value="Left" />
-    </Style>
+    <converters:InvertBooleanToVisibilityConverter x:Key="Completed" />
   </UserControl.Resources>
   <StackPanel>
-    <DockPanel Visibility="{Binding Label, Converter={StaticResource HasValue}}">
-      <materialDesign:PackIcon Kind="TagOutline" />
-      <TextBlock FontWeight="SemiBold" Text="{Binding Label}" TextWrapping="Wrap" />
-    </DockPanel>
-    <DockPanel Margin="0,4,0,0" Visibility="{Binding Duration, Converter={StaticResource HasValue}}">
-      <materialDesign:PackIcon Kind="TimerOutline" />
-      <TextBlock Text="{live:Text loc:Strings.DurationPrefix}" DockPanel.Dock="Left" />
-      <TextBlock>
-        <TextBlock.Text>
-          <MultiBinding StringFormat="{}{0:00}:{1:00}:{2:00}">
-            <Binding Path="Duration.Hours" /><Binding Path="Duration.Minutes" /><Binding Path="Duration.Seconds" />
-          </MultiBinding>
-        </TextBlock.Text>
+    <DockPanel>
+      <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="12,0,0,0" VerticalAlignment="Center">
+        <StackPanel.Style>
+          <Style TargetType="StackPanel">
+            <Setter Property="Visibility" Value="Collapsed" />
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding Failure}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger>
+              <DataTrigger Binding="{Binding Unstable}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </StackPanel.Style>
+        <materialDesign:PackIcon Kind="AlertCircleOutline" Width="16" Height="16" Margin="0,0,5,0" VerticalAlignment="Center"
+                                 Foreground="{DynamicResource TooltipWarning}" />
+        <TextBlock FontSize="12" Foreground="{DynamicResource TooltipWarning}" VerticalAlignment="Center">
+          <TextBlock.Style>
+            <Style TargetType="TextBlock">
+              <Setter Property="Text" Value="{live:Text loc:Strings.Unstable}" />
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding Failure}" Value="True">
+                  <Setter Property="Text" Value="{live:Text loc:Strings.Failure}" />
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </TextBlock.Style>
+        </TextBlock>
+      </StackPanel>
+      <TextBlock TextWrapping="Wrap" LineHeight="22">
+        <Run Text="{Binding Parent.Name, Mode=OneWay}" FontSize="15" FontWeight="Medium" />
+        <Run Text=" " />
+        <Run Text="{Binding Label, Mode=OneWay}" FontSize="12" Foreground="{DynamicResource SettingsMuted}" />
       </TextBlock>
     </DockPanel>
-    <DockPanel Margin="0,4,0,0" Visibility="{Binding Time, Converter={StaticResource HasValue}}">
-      <materialDesign:PackIcon Kind="CheckCircleOutline" />
-      <TextBlock Text="{live:Text loc:Strings.FinishedPrefix}" DockPanel.Dock="Left" />
-      <TextBlock TextWrapping="Wrap">
+    <TextBlock Text="{Binding Parent.Connector.Project}" FontSize="12" Foreground="{DynamicResource SettingsMuted}"
+               Visibility="{Binding Parent.Connector.Project, Converter={StaticResource HasValue}}" />
+    <TextBlock Text="{Binding VolunteerDisplayName}" ToolTip="{live:Text loc:Strings.VolunteerToFix}"
+               FontWeight="Medium" Visibility="{Binding Volunteer, Converter={StaticResource HasValue}}" Margin="0,8,0,0" />
+    <WrapPanel Margin="0,12,0,0" Visibility="{Binding Building, Converter={StaticResource Completed}}">
+      <StackPanel Orientation="Horizontal" Margin="0,0,16,0" Visibility="{Binding Duration, Converter={StaticResource HasValue}}">
+        <materialDesign:PackIcon Kind="TimerOutline" Width="16" Height="16" Margin="0,0,5,0" VerticalAlignment="Center" Foreground="{DynamicResource SettingsMuted}" />
+        <TextBlock Text="{Binding TooltipDuration}" Foreground="{DynamicResource SettingsMuted}" VerticalAlignment="Center" />
+      </StackPanel>
+      <TextBlock x:Name="FinishedTimeText" TextWrapping="Wrap" Foreground="{DynamicResource SettingsMuted}"
+                 Visibility="{Binding Time, Converter={StaticResource HasValue}}">
         <TextBlock.Text>
-          <MultiBinding Converter="{StaticResource RelativeTime}">
+          <MultiBinding Converter="{StaticResource RelativeTime}" ConverterParameter="Finished">
             <Binding Path="FinishTime" />
             <Binding Path="Culture" Source="{x:Static live:LanguageSource.Instance}" />
           </MultiBinding>
         </TextBlock.Text>
       </TextBlock>
-    </DockPanel>
-    <DockPanel Margin="0,4,0,0" Visibility="{Binding Time, Converter={StaticResource HasValue}}">
-      <materialDesign:PackIcon Kind="CalendarOutline" />
-      <TextBlock Text="{Binding Time}" Foreground="{DynamicResource SettingsMuted}" TextWrapping="Wrap" />
-    </DockPanel>
+    </WrapPanel>
   </StackPanel>
 </UserControl>

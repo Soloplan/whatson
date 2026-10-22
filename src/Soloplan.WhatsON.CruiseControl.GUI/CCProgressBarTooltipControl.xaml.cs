@@ -12,9 +12,9 @@ namespace Soloplan.WhatsON.CruiseControl.GUI
   /// <summary>
   /// Interaction logic for CCProgressBarTooltipControl.xaml.
   /// </summary>
-  public partial class CCProgressBarTooltipControl : UserControl
+  public partial class CcProgressBarTooltipControl : UserControl
   {
-    public CCProgressBarTooltipControl()
+    public CcProgressBarTooltipControl()
     {
       this.InitializeComponent();
     }

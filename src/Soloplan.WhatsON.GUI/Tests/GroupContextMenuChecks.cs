@@ -42,6 +42,11 @@ namespace Soloplan.WhatsON.GUI.Tests
           connectors.Add(connector);
         }
 
+        foreach (var groupName in new[] { "Group 0", "Group 1", "Group 2", "Empty" })
+        {
+          configuration.Groups.Add(groupName);
+        }
+
         var window = new MainWindow(new ObservationScheduler(), configuration, connectors)
         {
           Left = -20000, Top = -20000, Width = 800, Height = 450, ShowActivated = false, IsTreeInitialized = true,
@@ -74,6 +79,16 @@ namespace Soloplan.WhatsON.GUI.Tests
             var row = (Border)item.Template.FindName("Row", item);
             Assert.That(row.ContextMenu, Is.Not.Null, $"Group {groupIndex} must attach a menu when its header is first created.");
             Assert.That(group.ConnectorViewModels.Count, Is.EqualTo(40));
+            var badgeStyle = (Style)control.FindResource("GroupStatusBadge");
+            var badges = FindStatusBadges(row, badgeStyle).ToArray();
+            Assert.That(badges, Has.Length.EqualTo(4));
+            Assert.That(row.IsMouseOver, Is.False, "Badge backgrounds must be visible without hovering the group.");
+            foreach (var badge in badges)
+            {
+              var background = badge.Background as SolidColorBrush ?? throw new AssertionException("Expected a badge background.");
+              Assert.That(background.Color.A, Is.EqualTo(255));
+              Assert.That(background.Color, Is.Not.EqualTo(((SolidColorBrush)app.Resources["SettingsBackground"]).Color), "Badge fills must stand out from the resting row in both themes.");
+            }
             foreach (var point in new[]
             {
               new Point(2, row.ActualHeight / 2),
@@ -118,21 +133,60 @@ namespace Soloplan.WhatsON.GUI.Tests
               menu.IsOpen = false;
             }
 
+            if (groupIndex == 1)
+            {
+              ProjectListChecks.VerifyAddJobToGroup(window, row, group, configuration);
+            }
+
             item.IsExpanded = true;
             Flush(window);
             var child = (TreeViewItem)item.ItemContainerGenerator.ContainerFromIndex(0);
             var childRow = (Border)child.Template.FindName("Row", child);
-            Assert.That(childRow.ContextMenu, Is.Null, "Group menus must not cover child job rows.");
+            var jobMenu = childRow.ContextMenu ?? throw new AssertionException("Missing full-row job menu.");
+            Assert.That(jobMenu, Is.Not.SameAs(menu), "Group menus must not cover child job rows.");
+            jobMenu.PlacementTarget = childRow;
+            jobMenu.IsOpen = true;
+            Flush(window);
+            try
+            {
+              Assert.That(jobMenu.DataContext, Is.SameAs(child.DataContext), "The row menu must target the clicked job.");
+            }
+            finally
+            {
+              jobMenu.IsOpen = false;
+            }
+
             item.IsExpanded = false;
             Flush(window);
           }
 
+          var emptyItem = (TreeViewItem)tree.ItemContainerGenerator.ContainerFromIndex(3);
+          var emptyGroup = (ConnectorGroupViewModel)emptyItem.DataContext;
+          Assert.That(emptyGroup.ConnectorViewModels, Is.Empty);
+          ProjectListChecks.VerifyAddJobToGroup(window, (Border)emptyItem.Template.FindName("Row", emptyItem), emptyGroup, configuration);
           Assert.That(invalidCasts, Is.Empty, "Right-clicking a group must not cast it to a job view model.");
         }
         finally
         {
           AppDomain.CurrentDomain.FirstChanceException -= observe;
           window.Close();
+        }
+      }
+    }
+
+    private static IEnumerable<Border> FindStatusBadges(DependencyObject parent, Style style)
+    {
+      for (var index = 0; index < VisualTreeHelper.GetChildrenCount(parent); index++)
+      {
+        var child = VisualTreeHelper.GetChild(parent, index);
+        if (child is Border badge && badge.Style == style)
+        {
+          yield return badge;
+        }
+
+        foreach (var descendant in FindStatusBadges(child, style))
+        {
+          yield return descendant;
         }
       }
     }

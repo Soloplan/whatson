@@ -34,20 +34,20 @@ namespace Soloplan.WhatsON.GUI.Tests
     internal static void Verify(App app)
     {
       var previousCulture = CultureInfo.CurrentCulture;
-      var previousUICulture = CultureInfo.CurrentUICulture;
+      var previousUiCulture = CultureInfo.CurrentUICulture;
       var previousDefaultCulture = CultureInfo.DefaultThreadCurrentCulture;
-      var previousDefaultUICulture = CultureInfo.DefaultThreadCurrentUICulture;
+      var previousDefaultUiCulture = CultureInfo.DefaultThreadCurrentUICulture;
       try
       {
         VerifyLanguageChanges(app);
       }
       finally
       {
-        Localizer.ApplyLanguage(previousUICulture.TwoLetterISOLanguageName == "de" ? ApplicationLanguage.German : ApplicationLanguage.English);
+        Localizer.ApplyLanguage(previousUiCulture.TwoLetterISOLanguageName == "de" ? ApplicationLanguage.German : ApplicationLanguage.English);
         CultureInfo.DefaultThreadCurrentCulture = previousDefaultCulture;
-        CultureInfo.DefaultThreadCurrentUICulture = previousDefaultUICulture;
+        CultureInfo.DefaultThreadCurrentUICulture = previousDefaultUiCulture;
         CultureInfo.CurrentCulture = previousCulture;
-        CultureInfo.CurrentUICulture = previousUICulture;
+        CultureInfo.CurrentUICulture = previousUiCulture;
       }
     }
 
@@ -103,10 +103,14 @@ namespace Soloplan.WhatsON.GUI.Tests
           tooltip.PlacementTarget = selector;
           tooltip.IsOpen = true;
           Flush(settings);
-          var finished = Descendants<TextBlock>(history).Single(text => text.Text == "Finished: ");
           var relativeTime = Descendants<TextBlock>(history).Single(text => text.Text.Contains("ago", StringComparison.Ordinal));
           var icon = (typeof(TrayHandler).GetField("icon", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected member was not found.")).GetValue(tray) as System.Windows.Forms.NotifyIcon ?? throw new AssertionException("Expected icon.");
           var menu = (typeof(TrayHandler).GetField("contextMenu", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new AssertionException("Expected member was not found.")).GetValue(tray) as System.Windows.Forms.ContextMenuStrip ?? throw new AssertionException("Expected menu.");
+          var flags = BindingFlags.Instance | BindingFlags.NonPublic;
+          (typeof(TrayHandler).GetField("nextUpdateCheck", flags) ?? throw new AssertionException("Expected update check field.")).SetValue(tray, DateTime.MaxValue);
+          (typeof(TrayHandler).GetField("updateRestartReadyAt", flags) ?? throw new AssertionException("Expected restart readiness field.")).SetValue(tray, 0L);
+          (typeof(TrayHandler).GetMethod("SetUpdateAvailability", flags) ?? throw new AssertionException("Expected update method.")).Invoke(
+            tray, new object[] { Windows.ApplicationModel.PackageUpdateAvailability.Available, new Uri("https://updates.example.invalid/whatsON.appinstaller") });
 
           foreach (var language in new[] { ApplicationLanguage.German, ApplicationLanguage.English, ApplicationLanguage.German, ApplicationLanguage.System })
           {
@@ -120,8 +124,9 @@ namespace Soloplan.WhatsON.GUI.Tests
             Assert.That(((Button)wizard.FindName("NextButton")).Content, Is.EqualTo(german ? "Weiter" : "Next"));
             Assert.That(HintAssist.GetHint(jobName), Is.EqualTo(german ? "Projektname" : "Project name"));
             Assert.That(notificationCaption.Content, Is.EqualTo(Strings.UseMainConfiguration));
-            Assert.That(finished.Text, Is.EqualTo(Strings.FinishedPrefix));
+            relativeTime = Descendants<TextBlock>(history).Single(text => text.Text.Contains(german ? "vor" : "ago", StringComparison.Ordinal));
             Assert.That(relativeTime.Text, Does.Contain(german ? "vor" : "ago"));
+            Assert.That(relativeTime.Text, german ? Does.EndWith("beendet") : Does.StartWith("Finished"));
             Assert.That(((GrouppingSetting)selectedGrouping).Caption, Is.EqualTo(Strings.AddHierarchyToProjectName));
             Assert.That(grouping.SelectedItem, Is.SameAs(selectedGrouping));
             Assert.That(((Frame)settings.FindName("ConfigFrame")).Content, Is.SameAs(general));
@@ -130,8 +135,10 @@ namespace Soloplan.WhatsON.GUI.Tests
             Assert.That(address.Text, Is.EqualTo("https://typed.example.invalid/"));
             Assert.That(project.GetConfigurationByKey(Connector.NotificationsVisbility).Value, Is.EqualTo(notificationValue));
             Assert.That(source.Language, Is.EqualTo(ApplicationLanguage.English), "Previewing must not save the preference.");
-            Assert.That(icon.Text, Is.EqualTo(german ? "WhatsON - Keine Projekte konfiguriert" : "WhatsON - No projects configured"));
-            Assert.That(menu.Items[1].Text, Is.EqualTo(german ? "Beenden" : "Exit"));
+            Assert.That(icon.Text, Is.EqualTo(german ? "whatsON - Keine Projekte konfiguriert" : "whatsON - No projects configured"));
+            Assert.That(menu.Items.Count, Is.EqualTo(3));
+            Assert.That(menu.Items[1].Text, Is.EqualTo(german ? "Zum Aktualisieren neu starten" : "Restart to update"));
+            Assert.That(menu.Items[2].Text, Is.EqualTo(german ? "Beenden" : "Exit"));
             Assert.That(settings.Language.IetfLanguageTag, Is.EqualTo(CultureInfo.CurrentUICulture.IetfLanguageTag).IgnoreCase);
             Assert.That(tooltip.Language, Is.EqualTo(settings.Language));
           }

@@ -9,6 +9,9 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 {
   using System;
   using System.Collections.ObjectModel;
+  using System.Threading;
+  using System.Threading.Tasks;
+  using System.Windows.Input;
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Model;
 
@@ -27,6 +30,20 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     public virtual OpenWebPageCommand OpenBuildPage { get; } = new OpenWebPageCommand();
 
     public virtual CopyBuildLabelCommand CopyBuildLabel { get; } = new CopyBuildLabelCommand();
+
+    public virtual ICommand? VolunteerToFix => null;
+
+    public virtual ICommand? ClearVolunteer => null;
+
+    public string? Volunteer { get; protected set; }
+
+    public string? VolunteerSummary { get; protected set; }
+
+    public string? VolunteerDisplayName => (this.VolunteerSummary ?? this.Volunteer)?.ToUpperInvariant();
+
+    public string VolunteerAssignmentLabel => $"{this.VolunteerDisplayName} (#{this.BuildNumber})";
+
+    public ObservableCollection<BuildStatusViewModel> VolunteerAssignments { get; } = new ObservableCollection<BuildStatusViewModel>();
 
     public ObservableCollection<UserViewModel> Culprits => this.culprits ?? (this.culprits = new ObservableCollection<UserViewModel>());
 
@@ -72,6 +89,8 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
     public bool Building { get; protected set; }
 
+    public bool IsLoadingFailureDetails { get; protected set; }
+
     public DateTime FinishTime => this.Time + this.Duration;
 
     public override DateTime Time
@@ -81,6 +100,10 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     }
 
     public TimeSpan Duration { get; protected set; }
+
+    public string TooltipDuration => this.Duration.TotalHours >= 1
+      ? $"{(int)this.Duration.TotalHours} h {this.Duration.Minutes:00} min"
+      : $"{(int)this.Duration.TotalMinutes} min {this.Duration.Seconds:00} s";
 
     public TimeSpan EstimatedDuration { get; protected set; }
 
@@ -108,8 +131,17 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
     public bool BuildingLongerThenExpected { get; set; }
 
+    public virtual Task LoadFailureDetailsAsync(CancellationToken token) => Task.CompletedTask;
+
+    public virtual Task LoadExpandedFailureDetailsAsync(CancellationToken token) => this.LoadFailureDetailsAsync(token);
+
     public override void Update(Status? newStatus)
     {
+      if (this.BuildNumber != newStatus?.BuildNumber || this.Url != newStatus?.Url || this.State != newStatus?.State || this.FailedTestCount != newStatus?.FailedTestCount)
+      {
+        this.ExpandedFailureDetails = null;
+      }
+
       base.Update(newStatus);
       if (newStatus == null)
       {

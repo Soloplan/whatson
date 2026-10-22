@@ -15,6 +15,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     public ProjectRowControl()
     {
       this.InitializeComponent();
+      BuildToolTip.Attach(this);
     }
 
     protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)

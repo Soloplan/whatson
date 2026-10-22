@@ -49,6 +49,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private ObservationScheduler? scheduler;
 
+    private Dictionary<Guid, ConnectorGroupViewModel>? connectorGroupsById;
+
     /// <summary>
     /// Previous value of relative instert position.
     /// </summary>
@@ -121,14 +123,14 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       {
         if (dropInfo.TargetItem is ConnectorGroupViewModel)
         {
-          dropInfo.DropTargetAdorner = DropTargetAdorners.Highlight;
+          dropInfo.DropTargetAdorner = typeof(RowDropTargetAdorner);
           dropInfo.Effects = DragDropEffects.Move;
         }
         else if (dropInfo.TargetItem is ConnectorViewModel)
         {
           dropInfo.Effects = DragDropEffects.Move;
           dropInfo.DropTargetAdorner = (dropInfo.InsertPosition & RelativeInsertPosition.TargetItemCenter) != 0
-            ? DropTargetAdorners.Highlight
+            ? typeof(RowDropTargetAdorner)
             : DropTargetAdorners.Insert;
         }
       }
@@ -138,7 +140,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         {
           dropInfo.Effects = DragDropEffects.Move;
           dropInfo.DropTargetAdorner = (dropInfo.InsertPosition & RelativeInsertPosition.TargetItemCenter) != 0
-            ? DropTargetAdorners.Highlight
+            ? typeof(RowDropTargetAdorner)
             : DropTargetAdorners.Insert;
         }
       }
@@ -252,6 +254,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
 
       log.Debug("Initializing {name}", nameof(ConnectorTreeViewModel));
+      configuration.InitializeServerConfigurations();
       var grouping = configuration.ConnectorsConfiguration.ToLookup(config => config.GetConfigurationByKey(Connector.Category).Value?.Trim() ?? string.Empty);
       var groupNames = configuration.GetGroupNames().ToList();
       int index = 0;
@@ -405,7 +408,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       return true;
     }
 
-    public async void DeleteGroup(object? sender, DeleteTreeItemEventArgs e)
+    public async void DeleteGroupAsync(object? sender, DeleteTreeItemEventArgs e)
     {
       if (e.DeleteItem is ConnectorViewModel clickedConnector)
       {
@@ -419,7 +422,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         }
 
         this.DeleteItem?.Invoke(sender, e);
-        var canceled = await e.CheckCanceled();
+        var canceled = await e.CheckCanceledAsync();
         if (!canceled)
         {
           if (this.selectedConnectors.Count == 0)
@@ -437,7 +440,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       this.DeleteItem?.Invoke(sender, e);
       if (e.DeleteItem is ConnectorGroupViewModel group)
       {
-        var canceled = await e.CheckCanceled();
+        var canceled = await e.CheckCanceledAsync();
         if (!canceled && this.ConnectorGroups.Remove(group))
         {
           this.OnConfigurationChanged(this, EventArgs.Empty);
@@ -608,12 +611,12 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         }
 
         // A request can finish after its project or group has been removed from the view.
-        foreach (var connectorGroupViewModel in this.ConnectorGroups)
+        this.connectorGroupsById ??= this.ConnectorGroups
+          .SelectMany(group => group.ConnectorViewModels.Select(connector => (connector.Identifier, Group: group)))
+          .ToDictionary(item => item.Identifier, item => item.Group);
+        if (this.connectorGroupsById.TryGetValue(e.Configuration.Identifier, out var group))
         {
-          if (connectorGroupViewModel.Update(e))
-          {
-            return;
-          }
+          group.Update(e);
         }
       });
     }
@@ -621,20 +624,36 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private ObservableCollection<ConnectorGroupViewModel> CreateConnectorGroupViewModelCollection()
     {
       var groups = new ObservableCollection<ConnectorGroupViewModel>();
+      var observedGroups = new HashSet<ConnectorGroupViewModel>();
       groups.CollectionChanged += (sender, args) =>
       {
+        this.connectorGroupsById = null;
+        foreach (var removed in observedGroups.Except(groups).ToList())
+        {
+          removed.ConnectorViewModels.CollectionChanged -= this.InvalidateConnectorLookup;
+          observedGroups.Remove(removed);
+        }
+
+        foreach (var added in groups.Except(observedGroups))
+        {
+          added.ConnectorViewModels.CollectionChanged += this.InvalidateConnectorLookup;
+          observedGroups.Add(added);
+        }
+
         this.FirstGroup = groups.FirstOrDefault();
         this.OneGroup = groups.Count == 1;
       };
       return groups;
     }
 
+    private void InvalidateConnectorLookup(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e) => this.connectorGroupsById = null;
+
     private ConnectorGroupViewModel CreateNewGroupModel(string groupName)
     {
       var model = new ConnectorGroupViewModel { GroupName = groupName, };
 
       model.EditItem += (s, e) => this.EditItem?.Invoke(s, e);
-      model.DeleteItem += this.DeleteGroup;
+      model.DeleteItem += this.DeleteGroupAsync;
       model.ExportItem += this.ExportHandler;
       model.ConfigurationChanged += (s, e) => this.OnConfigurationChanged(this, EventArgs.Empty);
       return model;

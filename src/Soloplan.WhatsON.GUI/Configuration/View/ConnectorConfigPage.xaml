@@ -9,7 +9,7 @@
     <Border Style="{StaticResource SettingsCard}" Margin="0">
       <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <StackPanel Style="{StaticResource SettingsScrollContent}">
-          <TextBlock Text="{live:Text loc:Strings.ProjectSettings}" Style="{StaticResource SettingsSectionHeading}" />
+          <TextBlock x:Name="Heading" Text="{live:Text loc:Strings.ProjectSettings}" Style="{StaticResource SettingsSectionHeading}" />
           <StackPanel x:Name="StackPanel" />
         </StackPanel>
       </ScrollViewer>

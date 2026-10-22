@@ -11,6 +11,7 @@ namespace Soloplan.WhatsON.GUI.Tests
   using System.Collections.Generic;
   using System.IO;
   using System.Linq;
+  using System.Threading.Tasks;
   using NUnit.Framework;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.GUI.Configuration;
@@ -39,7 +40,7 @@ namespace Soloplan.WhatsON.GUI.Tests
     }
 
     [Test]
-    public void ImportedProjectsSurviveRestartAlongsideExistingProjectsAndPreferences()
+    public async Task ImportedProjectsSurviveRestartAlongsideExistingProjectsAndPreferences()
     {
       var configuration = ExistingConfiguration();
       var existingProject = configuration.ConnectorsConfiguration.Single();
@@ -54,13 +55,13 @@ namespace Soloplan.WhatsON.GUI.Tests
             new ConfigurationItem(Connector.Category, "Product release"),
           ])).ToList();
       var filePath = Path.Combine(this.directory, "projects.json");
-      SerializationHelper.Instance.Save(importedProjects, filePath, false);
+      await SerializationHelper.Instance.SaveAsync(importedProjects, filePath, false);
 
-      new ProjectsDataInterchange().Import(configuration, filePath);
+      await new ProjectsDataInterchange().ImportAsync(configuration, filePath);
 
       var restartedSerializer = new SerializationHelper();
       restartedSerializer.SetConfigFolder(this.directory);
-      var restored = restartedSerializer.LoadOrCreateConfiguration();
+      var restored = await restartedSerializer.LoadOrCreateConfigurationAsync();
       Assert.That(restored.ConnectorsConfiguration.Select(project => project.Name), Is.EqualTo(["Existing", "release/net", "release/installer", "release/image"]));
       Assert.That(restored.ConnectorsConfiguration.Select(project => project.Identifier), Is.EqualTo(configuration.ConnectorsConfiguration.Select(project => project.Identifier)));
       Assert.That(restored.ConnectorsConfiguration.Select(project => project.Identifier), Is.Unique);
@@ -79,38 +80,38 @@ namespace Soloplan.WhatsON.GUI.Tests
     [TestCase("{broken json")]
     [TestCase("null")]
     [TestCase("[null]")]
-    public void InvalidImportLeavesExistingConfigurationUntouched(string json)
+    public async Task InvalidImportLeavesExistingConfigurationUntouched(string json)
     {
       var configuration = ExistingConfiguration();
-      SerializationHelper.Instance.SaveConfiguration(configuration);
-      var saved = File.ReadAllText(SerializationHelper.Instance.ConfigFile);
+      await SerializationHelper.Instance.SaveConfigurationAsync(configuration);
+      var saved = await File.ReadAllTextAsync(SerializationHelper.Instance.ConfigFile);
       var existingProject = configuration.ConnectorsConfiguration.Single();
       var filePath = Path.Combine(this.directory, "invalid-projects.json");
-      File.WriteAllText(filePath, json);
+      await File.WriteAllTextAsync(filePath, json);
 
-      Assert.That(() => new ProjectsDataInterchange().Import(configuration, filePath), Throws.Exception);
+      await Assert.ThatAsync(() => new ProjectsDataInterchange().ImportAsync(configuration, filePath), Throws.Exception);
 
       Assert.That(configuration.ConnectorsConfiguration, Is.EqualTo([existingProject]));
-      Assert.That(File.ReadAllText(SerializationHelper.Instance.ConfigFile), Is.EqualTo(saved));
+      Assert.That(await File.ReadAllTextAsync(SerializationHelper.Instance.ConfigFile), Is.EqualTo(saved));
     }
 
     [Test]
-    public void SaveFailureDoesNotLeaveAPartiallyImportedConfiguration()
+    public async Task SaveFailureDoesNotLeaveAPartiallyImportedConfiguration()
     {
       var configuration = ExistingConfiguration();
-      SerializationHelper.Instance.SaveConfiguration(configuration);
-      var saved = File.ReadAllText(SerializationHelper.Instance.ConfigFile);
+      await SerializationHelper.Instance.SaveConfigurationAsync(configuration);
+      var saved = await File.ReadAllTextAsync(SerializationHelper.Instance.ConfigFile);
       var existingProject = configuration.ConnectorsConfiguration.Single();
       var filePath = Path.Combine(this.directory, "projects.json");
-      SerializationHelper.Instance.Save(new[] { new ConnectorConfiguration("Jenkins", "Imported") }, filePath, false);
+      await SerializationHelper.Instance.SaveAsync(new[] { new ConnectorConfiguration("Jenkins", "Imported") }, filePath, false);
 
       using (var lockedConfiguration = File.Open(SerializationHelper.Instance.ConfigFile, FileMode.Open, FileAccess.Read, FileShare.Read))
       {
-        Assert.That(() => new ProjectsDataInterchange().Import(configuration, filePath), Throws.InstanceOf<IOException>());
+        await Assert.ThatAsync(() => new ProjectsDataInterchange().ImportAsync(configuration, filePath), Throws.InstanceOf<IOException>().Or.InstanceOf<UnauthorizedAccessException>());
       }
 
       Assert.That(configuration.ConnectorsConfiguration, Is.EqualTo([existingProject]));
-      Assert.That(File.ReadAllText(SerializationHelper.Instance.ConfigFile), Is.EqualTo(saved));
+      Assert.That(await File.ReadAllTextAsync(SerializationHelper.Instance.ConfigFile), Is.EqualTo(saved));
     }
 
     private static ApplicationConfiguration ExistingConfiguration()

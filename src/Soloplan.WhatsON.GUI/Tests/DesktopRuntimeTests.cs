@@ -19,6 +19,8 @@ namespace Soloplan.WhatsON.GUI.Tests
   using System.Windows.Controls.Primitives;
   using System.Windows.Documents;
   using System.Windows.Markup;
+  using System.Windows.Media;
+  using System.Windows.Media.Imaging;
   using System.Windows.Threading;
   using NLog;
   using NLog.Config;
@@ -84,6 +86,22 @@ namespace Soloplan.WhatsON.GUI.Tests
         ((ConnectorsTreeView)window.FindName("mainTreeView")).Init(scheduler, configuration, connectors);
         Assert.That(window.Content, Is.Not.Null);
         Assert.That(window.Style, Is.Not.Null);
+        var banner = (MaterialDesignThemes.Wpf.ColorZone)window.FindName("ConfigurationChangesBanner");
+        window.ConfigurationModifiedFromTree = true;
+        foreach (var mode in new[] { ApplicationTheme.Light, ApplicationTheme.Dark })
+        {
+          app.ApplyTheme(mode);
+          window.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+          Assert.That(((SolidColorBrush)banner.Background).Color, Is.EqualTo(((SolidColorBrush)app.Resources["SettingsSurface"]).Color));
+          Assert.That(((SolidColorBrush)banner.Foreground).Color, Is.EqualTo(((SolidColorBrush)app.Resources["MaterialDesignBody"]).Color));
+          var content = (FrameworkElement)window.Content;
+          content.Measure(new Size(800, 450));
+          content.Arrange(new Rect(0, 0, 800, 450));
+          content.UpdateLayout();
+          SaveSettingsPreview(banner, "configuration-banner-" + mode);
+        }
+
+        window.ConfigurationModifiedFromTree = false;
       }
       finally
       {
@@ -99,7 +117,7 @@ namespace Soloplan.WhatsON.GUI.Tests
         foreach (var mode in new[] { ApplicationTheme.Light, ApplicationTheme.Dark })
         {
           app.ApplyTheme(mode);
-          foreach (var section in new[] { 0, 1, 2 })
+          foreach (var section in new[] { 0, 1, 2, 3 })
           {
             sections.SelectedIndex = section;
             settings.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
@@ -168,9 +186,41 @@ namespace Soloplan.WhatsON.GUI.Tests
         Assert.That(((Border)page.FindName("EmptyProjectsState")).Visibility, Is.EqualTo(Visibility.Collapsed));
         Assert.That(((Button)page.FindName("DeleteButton")).IsEnabled, Is.True);
         Assert.That(((Frame)page.FindName("uxConnectorFrame")).Content, Is.InstanceOf<ConnectorConfigPage>());
+        var connectorEditor = (ConnectorConfigPage)((Frame)page.FindName("uxConnectorFrame")).Content;
+        var fields = (StackPanel)connectorEditor.FindName("StackPanel");
+        Assert.That(fields.Children.OfType<Soloplan.WhatsON.Jenkins.GUI.JenkinsCredentialsTestControl>(), Is.Empty);
+        Assert.That(fields.Children.OfType<PasswordBox>(), Is.Empty, "Credentials belong to the server rather than individual projects.");
+        var navigation = (ListBox)populatedSettings.FindName("ConfigTopicsListBox");
+        navigation.SelectedItem = navigation.Items.OfType<ListBoxItem>().Single(item => (string)item.Tag == ConfigWindow.ServersListItemTag);
+        populatedSettings.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+        var serverPage = (ServerConfigPage)((Frame)populatedSettings.FindName("ConfigFrame")).Content;
+        var serverPanel = (StackPanel)((ScrollViewer)serverPage.Content).Content;
+        var serverEditor = (ConnectorConfigPage)serverPanel.Children.OfType<Frame>().Single().Content;
+        fields = (StackPanel)serverEditor.FindName("StackPanel");
+        var testControl = fields.Children.OfType<Soloplan.WhatsON.Jenkins.GUI.JenkinsCredentialsTestControl>().Single();
+        Assert.That(fields.Children[fields.Children.IndexOf(testControl) - 1], Is.TypeOf<PasswordBox>(), "The test belongs directly below the API token.");
+        Assert.That(testControl.TestButton.IsEnabled, Is.False);
+        Localizer.ApplyLanguage(ApplicationLanguage.German);
+        foreach (var theme in new[] { ApplicationTheme.Light, ApplicationTheme.Dark })
+        {
+          app.ApplyTheme(theme);
+          populatedSettings.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+          var root = (FrameworkElement)populatedSettings.Content;
+          root.Measure(new Size(850, 580));
+          root.Arrange(new Rect(0, 0, 850, 580));
+          root.UpdateLayout();
+          var serverPicker = (ComboBox)serverPanel.Children.OfType<Border>().Single().Child;
+          Assert.That(serverPicker.Foreground, Is.EqualTo(app.FindResource("MaterialDesignBody")));
+          Assert.That(serverPanel.Children.OfType<TextBlock>().Last().Foreground, Is.EqualTo(app.FindResource("SettingsMuted")));
+          var navigationLabel = ((StackPanel)((ListBoxItem)navigation.SelectedItem).Content).Children.OfType<TextBlock>().Single();
+          Assert.That(navigationLabel.Text, Is.EqualTo("Server"));
+          Assert.That(navigationLabel.DesiredSize.Width, Is.LessThanOrEqualTo(navigationLabel.ActualWidth));
+          SaveSettingsPreview(root, $"ServerSettings-{theme}");
+        }
       }
       finally
       {
+        Localizer.ApplyLanguage(projectSettings.Language);
         populatedSettings.Close();
       }
 
@@ -183,11 +233,13 @@ namespace Soloplan.WhatsON.GUI.Tests
       VerifyGermanViews(app);
       VerifyNotificationBindings();
       VerifyTrayNotificationForwarding();
+      VerifyLastNotifiedStatus();
       ProjectListChecks.Verify(app);
       GroupContextMenuChecks.Verify(app);
       GroupPersistenceTests.VerifyEmptyGroupHeaders();
       GroupPersistenceTests.VerifyGroupCreation();
       ProjectPollingChecks.Verify();
+      JenkinsStatusViewModelTests.VerifyStaleClaimRefresh();
       ToolTipChecks.Verify(app);
       LiveLocalizationChecks.Verify(app);
       VerifyHandledExceptionsAreNotLoggedAsErrors();
@@ -279,6 +331,70 @@ namespace Soloplan.WhatsON.GUI.Tests
         "The tray identifies projects using the original event sender.");
     }
 
+    private static void VerifyLastNotifiedStatus()
+    {
+      var configuration = new ApplicationConfiguration { OpenMinimized = true };
+      var settings = configuration.NotificationConfiguration;
+      settings.OnlyIfChanged = true;
+      settings.RunningNotificationEnabled = false;
+      var connectors = new[] { "Jenkins", "CruiseControl" }.Select(type =>
+      {
+        var connectorSettings = new ConnectorConfiguration(type, type,
+          Connector.ServerAddress, "https://build.example.invalid/", Connector.DirectAddress, "https://build.example.invalid/",
+          Connector.ProjectName, "main");
+        configuration.ConnectorsConfiguration.Add(connectorSettings);
+        return PluginManager.Instance.GetConnector(connectorSettings) ?? throw new AssertionException("Expected connector plugin.");
+      }).ToArray();
+      using var tray = new NotificationTestTrayHandler(configuration);
+      var flags = BindingFlags.Instance | BindingFlags.NonPublic;
+      var icon = typeof(TrayHandler).GetField("icon", flags)?.GetValue(tray) as System.Windows.Forms.NotifyIcon
+        ?? throw new AssertionException("Expected tray icon.");
+      icon.Visible = false;
+      var notifications = typeof(TrayHandler).GetField("model", flags)?.GetValue(tray) as NotificationsModel
+        ?? throw new AssertionException("Expected notifications model.");
+      var query = typeof(NotificationsModel).GetMethod("SchedulerStatusQueried", flags)
+        ?? throw new AssertionException("Expected query handler.");
+
+      query.Invoke(notifications, [null, connectors[0]]);
+      Assert.That(tray.NotificationTexts, Is.Empty, "Loading rows must not establish a notification baseline.");
+      Observe(connectors[0], 100, ObservationState.Success, false);
+      connectors[0].AddSnapshot(new Status(ObservationState.Failure) { BuildNumber = 101 });
+      Observe(connectors[0], 102, ObservationState.Failure, true);
+      connectors[0].AddSnapshot(new Status(ObservationState.Success) { BuildNumber = 103 });
+      Observe(connectors[0], 104, ObservationState.Failure, false);
+      Observe(connectors[0], 105, ObservationState.Running, false);
+      Observe(connectors[0], 106, ObservationState.Failure, false);
+      Observe(connectors[0], 107, ObservationState.Success, true);
+      settings.OnlyIfChanged = false;
+      Observe(connectors[1], 1, ObservationState.Failure, false);
+      settings.OnlyIfChanged = true;
+      Observe(connectors[1], 2, ObservationState.Success, true);
+      Observe(connectors[1], 3, ObservationState.Failure, true);
+      Observe(connectors[1], 4, ObservationState.Failure, false);
+      Observe(connectors[0], 108, ObservationState.Failure, true);
+      Observe(connectors[0], 109, ObservationState.Success, true);
+      settings.FailureNotificationEnabled = false;
+      Observe(connectors[0], 110, ObservationState.Failure, false);
+      settings.FailureNotificationEnabled = true;
+      Observe(connectors[0], 111, ObservationState.Failure, true);
+      settings.OnlyIfChanged = false;
+      Observe(connectors[0], 112, ObservationState.Failure, true);
+      settings.OnlyIfChanged = true;
+      Observe(connectors[0], 113, ObservationState.Failure, false);
+
+      void Observe(Connector connector, int number, ObservationState state, bool expected)
+      {
+        tray.NotificationTexts.Clear();
+        connector.CurrentStatus = new Status(state) { BuildNumber = number, Time = DateTime.UtcNow, Name = "Main" };
+        query.Invoke(notifications, [null, connector]);
+        Assert.That(tray.NotificationTexts.Count, Is.EqualTo(expected ? 1 : 0),
+          $"{connector.Configuration.Type} #{number} {state}: compare against the last notification, ignoring fetched history and disabled states.");
+        tray.NotificationTexts.Clear();
+        query.Invoke(notifications, [null, connector]);
+        Assert.That(tray.NotificationTexts, Is.Empty, "An unchanged poll must not notify twice.");
+      }
+    }
+
     private static void VerifyNotificationBindings()
     {
       var item = new Configuration.ViewModel.ConfigurationItemViewModel();
@@ -363,28 +479,49 @@ namespace Soloplan.WhatsON.GUI.Tests
       Assert.That(closed, Is.True);
     }
 
+    private static void SaveSettingsPreview(FrameworkElement content, string name)
+    {
+      var bitmap = new RenderTargetBitmap((int)Math.Ceiling(content.ActualWidth), (int)Math.Ceiling(content.ActualHeight), 96, 96, PixelFormats.Pbgra32);
+      bitmap.Render(content);
+      var encoder = new PngBitmapEncoder();
+      encoder.Frames.Add(BitmapFrame.Create(bitmap));
+      var preview = Path.Combine(TestContext.CurrentContext.TestDirectory, name + ".png");
+      using (var stream = File.Create(preview))
+      {
+        encoder.Save(stream);
+      }
+
+      TestContext.AddTestAttachment(preview);
+    }
+
     private static void VerifySettingsPageEdges(ConfigWindow settings, ListBox sections, Frame frame)
     {
       var root = (FrameworkElement)settings.Content;
-      foreach (var section in new[] { 0, 2 })
+      foreach (var section in new[] { ConfigWindow.MainListItemTag, ConfigWindow.ConnectorsListItemTag, ConfigWindow.AboutListItemTag, ConfigWindow.ServersListItemTag })
       {
-        sections.SelectedIndex = section;
+        sections.SelectedItem = sections.Items.OfType<ListBoxItem>().Single(item => (string)item.Tag == section);
         settings.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
-        var viewer = (ScrollViewer)((Page)frame.Content).Content;
-        var content = (StackPanel)viewer.Content;
+        var page = (Page)frame.Content;
+        var viewer = page.Content as ScrollViewer;
+        var content = viewer?.Content as FrameworkElement ?? (FrameworkElement)((MaterialDesignThemes.Wpf.DialogHost)page.Content).Content;
         foreach (var height in new[] { 580, 1000, 580 })
         {
           root.Measure(new Size(850, height));
           root.Arrange(new Rect(0, 0, 850, height));
           root.UpdateLayout();
-          var scrollbarVisible = height == 580;
-          Assert.That(viewer.ComputedVerticalScrollBarVisibility, Is.EqualTo(scrollbarVisible ? Visibility.Visible : Visibility.Collapsed));
-          var viewerRight = viewer.TransformToAncestor(root).Transform(new Point(viewer.ActualWidth, 0)).X;
-          Assert.That(root.ActualWidth - viewerRight, Is.EqualTo(9).Within(1), "The scrollbar must stay near the window edge.");
-          if (!scrollbarVisible)
+          if (viewer != null)
           {
-            var contentRight = content.TransformToAncestor(root).Transform(new Point(content.ActualWidth, 0)).X;
-            Assert.That(root.ActualWidth - contentRight, Is.EqualTo(21).Within(1), "Pages without scrollbars must retain their content gutter.");
+            var scrollbarVisible = height == 580 && section != ConfigWindow.ServersListItemTag;
+            Assert.That(viewer.ComputedVerticalScrollBarVisibility, Is.EqualTo(scrollbarVisible ? Visibility.Visible : Visibility.Collapsed));
+            var viewerRight = viewer.TransformToAncestor(root).Transform(new Point(viewer.ActualWidth, 0)).X;
+            Assert.That(root.ActualWidth - viewerRight, Is.EqualTo(9).Within(1), "The scrollbar must stay near the window edge.");
+          }
+
+          var contentRight = content.TransformToAncestor(root).Transform(new Point(content.ActualWidth, 0)).X;
+          Assert.That(root.ActualWidth - contentRight, Is.EqualTo(26).Within(1), "Settings pages must keep the same content gutter with and without a scrollbar.");
+          if (height == 580)
+          {
+            SaveSettingsPreview(root, "SettingsSpacing-" + section);
           }
         }
       }
@@ -475,7 +612,7 @@ namespace Soloplan.WhatsON.GUI.Tests
             Assert.That(settings.Title, Is.EqualTo("Einstellungen"));
             var sections = (ListBox)settings.FindName("ConfigTopicsListBox");
             var frame = (Frame)settings.FindName("ConfigFrame");
-            foreach (var section in new[] { 0, 1, 2 })
+            foreach (var section in new[] { 0, 1, 2, 3 })
             {
               sections.SelectedIndex = section;
               settings.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
@@ -530,6 +667,18 @@ namespace Soloplan.WhatsON.GUI.Tests
       {
         CultureInfo.CurrentUICulture = previousCulture;
       }
+    }
+
+    private sealed class NotificationTestTrayHandler : TrayHandler
+    {
+      public NotificationTestTrayHandler(ApplicationConfiguration configuration)
+        : base(new ObservationScheduler(), configuration)
+      {
+      }
+
+      public List<string> NotificationTexts { get; } = new();
+
+      public override void ShowBaloon(string title, string tipText, System.Windows.Forms.ToolTipIcon i) => this.NotificationTexts.Add(tipText);
     }
 
     private sealed class ResourceTestApp : App

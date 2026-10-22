@@ -77,7 +77,13 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// interface is implemented.
     /// </summary>
     /// <param name="setAdditionalSettingValue">The set additional setting value.</param>
-    public void Parse(WindowSettings.SetAdditionalSettingValueDelegate setAdditionalSettingValue) => setAdditionalSettingValue(nameof(LastSelectedWizardProjectGroupingSettingId), this.wizardController.SelectedGroupingSetting.Id);
+    public void Parse(WindowSettings.SetAdditionalSettingValueDelegate setAdditionalSettingValue)
+    {
+      if (!this.wizardController.IsAddingToTargetGroup)
+      {
+        setAdditionalSettingValue(nameof(LastSelectedWizardProjectGroupingSettingId), this.wizardController.SelectedGroupingSetting.Id);
+      }
+    }
 
     /// <summary>
     /// Raises the <see cref="E:ContentRendered" /> event.
@@ -100,7 +106,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
-    private void NextClick(object? sender, RoutedEventArgs e) => this.wizardController.GoToNextPage();
+    private async void NextClickAsync(object? sender, RoutedEventArgs e) => await this.wizardController.GoToNextPageAsync();
 
     /// <summary>
     /// Previous page click.

@@ -18,6 +18,7 @@ Windows notifications when builds need your attention.
 
 - [Features](#features)
 - [Getting started](#getting-started)
+- [Volunteering to fix Jenkins builds](#volunteering-to-fix-jenkins-builds)
 - [Appearance and language](#appearance-and-language)
 - [Building from source](#building-from-source)
 - [Plugins](#plugins)
@@ -49,6 +50,53 @@ Windows notifications when builds need your attention.
 Framework-dependent builds require the
 [.NET 10 Desktop Runtime for Windows](https://dotnet.microsoft.com/en-us/download/dotnet/10.0).
 The self-contained MSIX package includes its runtime.
+
+## Volunteering to fix Jenkins builds
+
+Edit a Jenkins project and enter your **Jenkins user name** and **API token**.
+Use the canonical HTTPS server address. The account needs read access and Jenkins'
+**Run/Update** permission to edit build descriptions. No Jenkins plugin or pipeline
+change is required.
+
+Right-click the current failed or unstable build and select **Volunteer to fix**.
+The action remains visible but disabled when the user name or API token is missing,
+when a newer run has started, or when the current run is not failed or unstable. whatsON
+appends a visible marker at the bottom of that build's description, preserving existing text.
+Replacing an existing notice also moves it to the bottom. An HTML line break inside
+the marker separates the notice from existing text when HTML rendering is enabled.
+The notice is enclosed by `<!-- whatsON:volunteer:start -->` and
+`<!-- whatsON:volunteer:end -->`, with the owner stored separately inside the
+block. Replacing or clearing it preserves text outside those boundaries, even if
+the visible notice has been edited. Duplicate, incomplete, or damaged blocks prevent
+edits and retain automatic-cleanup tracking until corrected.
+Existing `[whatsON]` notices remain readable and can still be cleared.
+Other whatsON clients read the marker on their next poll. **Clear volunteer**
+removes only the marker and remains available for marked history entries.
+Anyone with configured Jenkins credentials and Run/Update permission can clear a
+notice manually, including a notice set by someone else.
+
+whatsON records each claim's server/job URL, build number, and volunteer in
+`%LOCALAPPDATA%\WhatsOn\volunteers`. Once a newer build succeeds, it clears the
+marker from the originally claimed build automatically. Automatic cleanup is
+performed only by the client holding that local record;
+other clients do not automatically clear notices merely because they can see them.
+Tracking survives restarts and does not depend on the build remaining in the recent-history list. Jenkins'
+last stable (fully successful) build also detects recovery while whatsON was closed, even if the
+job has failed again since. Failed cleanup requests are retried on later polls;
+valid credentials with Run/Update permission must still be configured. A marker
+reassigned to another volunteer is left intact. Claims do not carry over to new
+builds, and older markers can also be removed in Jenkins' description editor.
+
+Tokens are stored as AES-256-GCM ciphertext in configuration. A random key is
+created on first use in `%LOCALAPPDATA%\WhatsOn\secrets.key`, separately from
+configuration exports. No key is embedded in the application. Keep this local key
+private: possession of both the key and configuration permits decryption. When
+moving configuration to another installation or after losing the key, enter the
+tokens again. Separate Windows accounts use separate keys.
+
+Jenkins does not offer an atomic conditional update for descriptions. whatsON
+checks the current volunteer before writing and verifies the saved result, but
+simultaneous description edits can still overwrite one another.
 
 ## Appearance and language
 

@@ -70,7 +70,7 @@
     <value>Problem melden</value>
   </data>
   <data xml:space="preserve" name="Authors">
-    <value>Entwickelt von Steffen Wilke, Dominik Gołda, Krzysztof Lorenc und Christian Heidl.</value>
+    <value>Entwickelt von Steffen Wilke, Dominik Gołda, Krzysztof Lorenc, Christian Heidl und GamesAgeddon.</value>
   </data>
   <data xml:space="preserve" name="MadeBySoloplan">
     <value>Entwickelt von Soloplan GmbH</value>
@@ -533,4 +533,41 @@ Erwarteter Verbindungstyp: {3}</value>
   <data name="ProjectServerRoot" xml:space="preserve"><value>Build-Server</value></data>
   <data name="OpenProjectFolder" xml:space="preserve"><value>Ordner öffnen</value></data>
   <data name="FilterProjectFolder" xml:space="preserve"><value>Diesen Ordner filtern</value></data>
+  <data name="VolunteerToFix" xml:space="preserve"><value>Behebung übernehmen</value></data>
+  <data name="ClearVolunteer" xml:space="preserve"><value>Übernahme aufheben</value></data>
+  <data name="VolunteerUpdateFailed" xml:space="preserve"><value>Die Übernahme konnte nicht geändert werden. Prüfen Sie Ihre Jenkins-Zugangsdaten und die Berechtigungen Run/Update und Job/Configure.</value></data>
+  <data name="TokenCannotBeDecrypted" xml:space="preserve"><value>Gespeichertes Token kann nicht gelesen werden. Geben Sie das API-Token erneut ein.</value></data>
+  <data name="TokenCannotBeSaved" xml:space="preserve"><value>Das API-Token konnte nicht verschlüsselt werden. Prüfen Sie den Zugriff auf Ihren lokalen Anwendungsdatenordner.</value></data>
+  <data name="VolunteerToFixDescription" xml:space="preserve"><value>Die Behebung des aktuellen fehlgeschlagenen oder instabilen Builds übernehmen. Die Übernahme bleibt bei weiteren Builds im Bereich „Fixes in progress“ des Jobs sichtbar.&#10;Benötigt Jenkins-Benutzername und API-Token unter Einstellungen > Server.&#10;Benötigt Run/Update für Build-Beschreibungen und Job/Configure für den Job-Bereich.</value></data>
+  <data name="ClearVolunteerDescription" xml:space="preserve"><value>Die ausgewählte Übernahme und ihren Build-Hinweis entfernen, auch die einer anderen Person.&#10;Benötigt Jenkins-Benutzername und API-Token unter Einstellungen > Server.&#10;Benötigt Run/Update für Build-Beschreibungen und Job/Configure für den Job-Bereich.</value></data>
+  <data name="TestApiCredentials" xml:space="preserve"><value>Zugangsdaten testen</value></data>
+  <data name="JenkinsCredentialsRequired" xml:space="preserve"><value>Geben Sie Jenkins-Adresse, Benutzername und API-Token ein, um die Anmeldung zu testen.</value></data>
+  <data name="JenkinsCredentialsTesting" xml:space="preserve"><value>Wird getestet…</value></data>
+  <data name="JenkinsCredentialsValid" xml:space="preserve"><value>Als {0} angemeldet. Die Berechtigung zum Bearbeiten von Build-Beschreibungen wurde nicht geprüft.</value></data>
+  <data name="JenkinsCredentialsRejected" xml:space="preserve"><value>Jenkins hat den Zugriff abgelehnt. Prüfen Sie Benutzername, API-Token und Kontozugriff.</value></data>
+  <data name="JenkinsCredentialsConnectionFailed" xml:space="preserve"><value>Keine Verbindung zu Jenkins möglich. Prüfen Sie Serveradresse, Netzwerk und Zertifikat.</value></data>
+  <data name="JenkinsCredentialsTimedOut" xml:space="preserve"><value>Der Verbindungstest hat zu lange gedauert. Prüfen Sie Serveradresse und Netzwerk und versuchen Sie es erneut.</value></data>
+  <data name="JenkinsCredentialsInvalidResponse" xml:space="preserve"><value>Der Server hat keine gültige Jenkins-Anmeldeantwort geliefert. Prüfen Sie die Jenkins-Adresse.</value></data>
+  <data name="JenkinsCredentialsInvalidSettings" xml:space="preserve"><value>Verwenden Sie eine gültige HTTPS-Jenkins-Serveradresse und einen Benutzernamen ohne Doppelpunkt (:).</value></data>
+  <data name="FailedTestsFormat" xml:space="preserve">
+    <value>Fehlgeschlagene Tests: {0}</value>
+  </data>
+  <data name="ServerCredentials" xml:space="preserve"><value>Server-Zugangsdaten</value></data>
+  <data name="ServerCredentialsHint" xml:space="preserve"><value>Jenkins-Benutzername und API-Token unter Einstellungen > Server konfigurieren. Alle Projekte auf demselben Server verwenden dieses Konto.</value></data>
+  <data name="ServerCredentialsDescription" xml:space="preserve"><value>Server auswählen, um die Zugangsdaten für alle seine Projekte zu konfigurieren. Fehlt der Server, zuerst ein Projekt hinzufügen.</value></data>
+  <data name="Servers" xml:space="preserve"><value>Server</value></data>
+  <data name="AddJobToGroup" xml:space="preserve"><value>Job zu dieser Gruppe hinzufügen…</value></data>
+  <data name="AddJobsToGroupFormat" xml:space="preserve"><value>Zur Gruppe „{0}“ hinzufügen</value></data>
+  <data name="BuildErrorsCaption" xml:space="preserve"><value>Fehler</value></data>
+  <data name="MoreBuildFailuresFormat" xml:space="preserve"><value>{0} weitere im Buildbericht</value></data>
+  <data name="SkippedTestsNotice" xml:space="preserve"><value>Übersprungene Tests im Testbericht</value></data>
+  <data name="CommittersCaption" xml:space="preserve"><value>Committer</value></data>
+  <data name="ContributorsCaption" xml:space="preserve"><value>Beteiligte</value></data>
+  <data name="TooltipFinishedFormat" xml:space="preserve"><value>{0} beendet</value></data>
+  <data name="TooltipFailedTestsFormat" xml:space="preserve"><value>{0} fehlgeschlagene Tests</value></data>
+  <data name="MoreTestFailuresFormat" xml:space="preserve"><value>{0} weitere Fehler im Testbericht</value></data>
+  <data name="RestartToUpdate" xml:space="preserve"><value>Zum Aktualisieren neu starten</value></data>
+  <data name="RestartToUpdateConfirmation" xml:space="preserve"><value>Speichern Sie alle unvollständigen Änderungen, bevor Sie fortfahren. whatsON neu starten, um das Update zu installieren?</value></data>
+  <data name="UpdateFailed" xml:space="preserve"><value>Update fehlgeschlagen</value></data>
+  <data name="UpdateFailedMessage" xml:space="preserve"><value>Das Update konnte nicht installiert werden. whatsON bleibt geöffnet. Bitte versuchen Sie es später erneut.</value></data>
 </root>

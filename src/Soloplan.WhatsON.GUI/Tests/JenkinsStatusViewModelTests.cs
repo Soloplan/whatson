@@ -21,6 +21,124 @@ namespace Soloplan.WhatsON.GUI.Tests
   [TestFixture]
   public class JenkinsStatusViewModelTests
   {
+    [TestCase("alex")]
+    [TestCase("someone else")]
+    [TestCase("rHr")]
+    public void VolunteerChangesNotifyAndEnableTheAppropriateCommands(string volunteer)
+    {
+      var configuration = new ConnectorConfiguration("Jenkins", "job", Connector.ServerAddress, "https://builds.example", Connector.ProjectName, "job");
+      configuration.GetConfigurationByKey(JenkinsConnector.UserName).Value = "alex";
+      configuration.GetConfigurationByKey(JenkinsConnector.ApiToken).Value = "encrypted-placeholder";
+      var connector = new JenkinsConnector(configuration, new JenkinsApi());
+      var model = (JenkinsStatusViewModel)new JenkinsProjectViewModel(connector).CurrentStatus;
+      var changes = new List<string?>();
+      model.PropertyChanged += (_, e) => changes.Add(e.PropertyName);
+      model.Update(new JenkinsStatus(ObservationState.Failure) { BuildNumber = 42 });
+      Assert.That(model.VolunteerToFix.CanExecute(null), Is.True);
+      Assert.That(model.ClearVolunteer.CanExecute(null), Is.False);
+
+      model.Update(new JenkinsStatus(ObservationState.Failure) { BuildNumber = 42, Details = JenkinsVolunteer.SetOwner(null, volunteer) });
+      Assert.That(model.Volunteer, Is.EqualTo(volunteer));
+      Assert.That(model.VolunteerDisplayName, Is.EqualTo(volunteer.ToUpperInvariant()));
+      Assert.That(changes, Does.Contain(nameof(model.Volunteer)));
+      Assert.That(changes, Does.Contain(nameof(model.VolunteerDisplayName)));
+      Assert.That(model.VolunteerToFix.CanExecute(null), Is.False);
+      Assert.That(model.ClearVolunteer.CanExecute(null), Is.True);
+
+      model.Update(new JenkinsStatus(ObservationState.Success) { BuildNumber = 43 });
+      Assert.That(model.Volunteer, Is.Null);
+      Assert.That(model.VolunteerDisplayName, Is.Null);
+      Assert.That(model.VolunteerToFix.CanExecute(null), Is.False);
+      Assert.That(model.ClearVolunteer.CanExecute(null), Is.False);
+    }
+
+    [TestCase(ObservationState.Failure, true)]
+    [TestCase(ObservationState.Unstable, true)]
+    [TestCase(ObservationState.Success, false)]
+    [TestCase(ObservationState.Running, false)]
+    [TestCase(ObservationState.Unknown, false)]
+    public void OnlyTheCurrentBrokenBuildCanBeClaimedAndCredentialsAreRequired(ObservationState state, bool canClaim)
+    {
+      var configuration = new ConnectorConfiguration("Jenkins", "job", Connector.ServerAddress, "https://builds.example", Connector.ProjectName, "job");
+      var connector = new JenkinsConnector(configuration, new JenkinsApi());
+      var project = new JenkinsProjectViewModel(connector);
+      var current = project.CurrentStatus;
+      current.Update(new JenkinsStatus(state) { BuildNumber = 43, Building = state == ObservationState.Running });
+      Assert.That(current.VolunteerToFix, Is.Not.Null, "Keep the action visible without credentials.");
+      Assert.That(current.VolunteerToFix?.CanExecute(null), Is.False);
+      configuration.GetConfigurationByKey(JenkinsConnector.UserName).Value = "alex";
+      Assert.That(current.VolunteerToFix?.CanExecute(null), Is.False);
+      configuration.GetConfigurationByKey(JenkinsConnector.ApiToken).Value = "encrypted-placeholder";
+      Assert.That(current.VolunteerToFix?.CanExecute(null), Is.EqualTo(canClaim));
+
+      var history = new JenkinsStatusViewModel(project);
+      history.Update(new JenkinsStatus(ObservationState.Failure) { BuildNumber = 42 });
+      Assert.That(history.VolunteerToFix.CanExecute(null), Is.False, "A historical failure is not the current run.");
+      history.Update(new JenkinsStatus(ObservationState.Failure) { BuildNumber = 42, Details = JenkinsVolunteer.SetOwner(null, "alex") });
+      Assert.That(history.ClearVolunteer.CanExecute(null), Is.True, "Existing historical markers can still be cleared.");
+    }
+
+    internal static void VerifyStaleClaimRefresh()
+    {
+      var configuration = new ConnectorConfiguration("Jenkins", "job", Connector.ServerAddress, "https://builds.example", Connector.ProjectName, "job");
+      configuration.GetConfigurationByKey(JenkinsConnector.UserName).Value = "alex";
+      configuration.GetConfigurationByKey(JenkinsConnector.ApiToken).Value = "encrypted-placeholder";
+      var connector = new JenkinsConnector(configuration, new JenkinsApi())
+      {
+        CurrentStatus = new JenkinsStatus(ObservationState.Failure) { BuildNumber = 42 },
+      };
+      var project = new JenkinsProjectViewModel(connector);
+      project.Update(connector);
+      var previous = new JenkinsStatusViewModel(project);
+      previous.Update(connector.CurrentStatus);
+      Assert.That(previous.VolunteerToFix.CanExecute(null), Is.True);
+
+      connector.CurrentStatus = new JenkinsStatus(ObservationState.Failure) { BuildNumber = 43 };
+      project.Update(connector);
+
+      Assert.That(project.CurrentStatus.BuildNumber, Is.EqualTo(43));
+      Assert.That(project.CurrentStatus.VolunteerToFix?.CanExecute(null), Is.True);
+      Assert.That(previous.VolunteerToFix.CanExecute(null), Is.False);
+    }
+
+    [Test]
+    public void ActiveAssignmentsStayVisibleAndCanBeRemovedAfterTheirBuildLeavesHistory()
+    {
+      var configuration = new ConnectorConfiguration("Jenkins", "job", Connector.ServerAddress, "https://builds.example", Connector.ProjectName, "job");
+      configuration.GetConfigurationByKey(JenkinsConnector.UserName).Value = "sam";
+      configuration.GetConfigurationByKey(JenkinsConnector.ApiToken).Value = "encrypted-placeholder";
+      var connector = new JenkinsConnector(configuration, new JenkinsApi());
+      var model = (JenkinsStatusViewModel)new JenkinsProjectViewModel(connector).CurrentStatus;
+      model.Update(new JenkinsStatus(ObservationState.Failure)
+      {
+        BuildNumber = 100,
+        ActiveFixes = new[] { new JenkinsFix(34, "rHr"), new JenkinsFix(37, "alex") },
+      });
+
+      Assert.That(model.Volunteer, Is.Null, "The current run remains available for an additional volunteer.");
+      Assert.That(model.VolunteerDisplayName, Is.EqualTo("RHR (#34), ALEX (#37)"));
+      Assert.That(model.VolunteerToFix.CanExecute(null), Is.True);
+      Assert.That(model.VolunteerAssignments.Count, Is.EqualTo(2));
+      Assert.That(model.VolunteerAssignments[0].BuildNumber, Is.EqualTo(34));
+      Assert.That(model.VolunteerAssignments[0].ClearVolunteer?.CanExecute(null), Is.True);
+      Assert.That(model.VolunteerAssignments[1].BuildNumber, Is.EqualTo(37));
+      Assert.That(model.VolunteerAssignments[1].ClearVolunteer?.CanExecute(null), Is.True);
+
+      var history = new JenkinsStatusViewModel(model.Parent);
+      history.Update(new JenkinsStatus(ObservationState.Failure)
+      {
+        BuildNumber = 34,
+        Details = JenkinsVolunteer.SetOwner(null, "rHr"),
+        ActiveFixes = new[] { new JenkinsFix(34, "rHr"), new JenkinsFix(37, "alex") },
+      });
+      Assert.That(history.VolunteerDisplayName, Is.EqualTo("RHR"), "History keeps the notice belonging to its own build.");
+      Assert.That(history.VolunteerAssignments, Is.Empty);
+
+      model.Update(new JenkinsStatus(ObservationState.Success) { BuildNumber = 101 });
+      Assert.That(model.VolunteerDisplayName, Is.Null);
+      Assert.That(model.VolunteerAssignments, Is.Empty);
+    }
+
     [Test]
     public void UnconfiguredViewModelHasAStatusBeforeTheFirstPoll()
     {
@@ -50,7 +168,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       Assert.That(viewModel.Culprits, Has.Count.EqualTo(1));
       Assert.That(viewModel.CommittedToThisBuild, Has.Count.EqualTo(1));
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
       var status = connector.CurrentStatus as JenkinsStatus ?? throw new AssertionException("Expected a Jenkins build status.");
       viewModel.Update(status);
 

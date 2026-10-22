@@ -1,12 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <IsTestProject>true</IsTestProject>
-    <TargetFramework>net10.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="WireMock.Net.Minimal" />
     <ProjectReference Include="..\..\Soloplan.WhatsON.Jenkins\Soloplan.WhatsON.Jenkins.csproj" />
     <ProjectReference Include="..\..\Soloplan.WhatsON\Soloplan.WhatsON.csproj" />
     <ProjectReference Include="..\..\Soloplan.WhatsON.GUI\Soloplan.WhatsON.GUI.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Fixtures\JenkinsFailures\*.json" />
   </ItemGroup>
 </Project>

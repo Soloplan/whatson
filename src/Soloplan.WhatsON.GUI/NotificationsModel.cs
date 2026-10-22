@@ -7,6 +7,7 @@
 
 namespace Soloplan.WhatsON.GUI
 {
+  using System;
   using System.Collections.ObjectModel;
   using System.ComponentModel;
   using System.Linq;
@@ -14,13 +15,16 @@ namespace Soloplan.WhatsON.GUI
   using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Model;
 
-  public class NotificationsModel
+  public class NotificationsModel : IDisposable
   {
+    private readonly ObservationScheduler scheduler;
+
     private object lockObj = new object();
 
     public NotificationsModel(ObservationScheduler scheduler)
     {
       this.Connectors = new ObservableCollection<ConnectorViewModel>();
+      this.scheduler = scheduler;
       scheduler.StatusQueried += this.SchedulerStatusQueried;
     }
 
@@ -28,12 +32,29 @@ namespace Soloplan.WhatsON.GUI
 
     public ObservableCollection<ConnectorViewModel> Connectors { get; }
 
+    public void Dispose()
+    {
+      this.scheduler.StatusQueried -= this.SchedulerStatusQueried;
+      foreach (var connector in this.Connectors)
+      {
+        connector.PropertyChanged -= this.ForwardStatusChanged;
+        connector.CurrentStatus.PropertyChanged -= this.ForwardStatusChanged;
+      }
+    }
+
     private void SchedulerStatusQueried(object? sender, Connector connector)
     {
       var modelToUpdate = this.GetModelToUpdate(connector);
-      modelToUpdate.Update(connector);
+      var previous = (modelToUpdate.CurrentStatus.State, modelToUpdate.CurrentStatus.BuildNumber, modelToUpdate.CurrentStatus.Time);
       modelToUpdate.CurrentStatus.PropertyChanged -= this.ForwardStatusChanged;
+      modelToUpdate.Update(connector);
       modelToUpdate.CurrentStatus.PropertyChanged += this.ForwardStatusChanged;
+      var current = (modelToUpdate.CurrentStatus.State, modelToUpdate.CurrentStatus.BuildNumber, modelToUpdate.CurrentStatus.Time);
+      if (connector.CurrentStatus != null && previous != current)
+      {
+        this.ForwardStatusChanged(modelToUpdate.CurrentStatus, new PropertyChangedEventArgs(nameof(StatusViewModel.State)));
+      }
+
       this.ForwardStatusChanged(modelToUpdate.CurrentStatus, new PropertyChangedEventArgs(nameof(ConnectorViewModel.CurrentStatus)));
     }
 

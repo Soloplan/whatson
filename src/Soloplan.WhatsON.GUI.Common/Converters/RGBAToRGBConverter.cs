@@ -15,7 +15,7 @@ namespace Soloplan.WhatsON.GUI.Common.Converters
   /// <summary>
   /// Converts given value from rgba to rgb.
   /// </summary>
-  public class RGBToRGBAConverter : IValueConverter
+  public class RgbToRgbaConverter : IValueConverter
   {
     /// <summary>
     /// Converts SolidColorBrush from RGBA to RGB, if RGB given it returns RGB. F ex, when given "#FFDDFFDD" returns

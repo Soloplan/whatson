@@ -1,0 +1,29 @@
+{
+  "build": {
+    "number": 42,
+    "result": "FAILURE",
+    "building": false,
+    "actions": [
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {}
+    ]
+  },
+  "testReport": null,
+  "pipeline": {
+    "id": "42",
+    "status": "NOT_EXECUTED",
+    "stages": []
+  },
+  "nodes": {}
+}

@@ -38,7 +38,7 @@ namespace Soloplan.WhatsON.CruiseControl
     /// <returns>
     /// The projects from the server.
     /// </returns>
-    public override async Task<IList<Project>?> GetProjects(string address)
+    public override async Task<IList<Project>?> GetProjectsAsync(string address)
     {
       var result = new List<Project>();
       using var response = await discoveryClient.GetAsync(CruiseControlServer.UrlHelper.GetXmlReportUrl(address));

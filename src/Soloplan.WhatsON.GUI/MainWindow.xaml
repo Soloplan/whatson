@@ -8,7 +8,7 @@
         xmlns:local="clr-namespace:Soloplan.WhatsON.GUI"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        Title="WhatsON"
+        Title="whatsON"
         Width="800"
         Height="450"
         MinWidth="300"
@@ -20,6 +20,9 @@
         TextElement.FontWeight="Normal"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         mc:Ignorable="d">
+  <Window.CommandBindings>
+    <CommandBinding Command="New" Executed="AddJobToGroupExecuted" CanExecute="AddJobToGroupCanExecute" />
+  </Window.CommandBindings>
   <Window.Resources>
     <ResourceDictionary>
       <Storyboard x:Key="hideStorBoard">
@@ -41,13 +44,13 @@
   </Window.Resources>
   <DockPanel Background="{DynamicResource SettingsBackground}">
     <local:CustomTitleBar
-      AddConnectorClicked="NewConnectorClick"
-      AddGroupClicked="NewGroupClick"
+      AddConnectorClicked="NewConnectorClickAsync"
+      AddGroupClicked="NewGroupClickAsync"
       ButtonClicked="OpenConfig"
       CustomButtonIcon="SettingsOutline"
       CustomButtonVisible="{Binding ConfigurationModifiedFromTree, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Converter={StaticResource InvertBoolConverter}}"
       DockPanel.Dock="Top"
-      ImportClicked="ImportClick"
+      ImportClicked="ImportClickAsync"
       ShowMinimizeButton="{Binding Path=ShowInTaskbar, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}"
       Window="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" />
 
@@ -55,15 +58,17 @@
             Padding="8,8,8,8"
             DockPanel.Dock="Bottom"
             Visibility="{Binding ConfigurationModifiedFromTree, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Converter={StaticResource BoolToVis}}">
-      <materialDesign:ColorZone Mode="Inverted">
+      <materialDesign:ColorZone x:Name="ConfigurationChangesBanner" Mode="Standard"
+                                Background="{DynamicResource SettingsSurface}"
+                                Foreground="{DynamicResource MaterialDesignBody}">
         <DockPanel LastChildFill="False">
           <TextBlock Padding="5"
                      VerticalAlignment="Center"
                      Text="{live:Text loc:Strings.ConfigurationIsModified}" />
           <DockPanel DockPanel.Dock="Right">
-            <Button Margin="5" Padding="5" Click="SaveClick" Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+            <Button Margin="5" Padding="5" Click="SaveClickAsync" Style="{StaticResource SettingsPrimaryButton}"
                     Content="{live:Text loc:Strings.Save}" />
-            <Button Margin="5" Padding="5" Click="ResetClick" Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+            <Button Margin="5" Padding="5" Click="ResetClick" Style="{StaticResource SettingsSecondaryButton}"
                     Content="{live:Text loc:Strings.Reset}" />
           </DockPanel>
         </DockPanel>
@@ -76,7 +81,7 @@
     <materialDesign:DialogHost DockPanel.Dock="Bottom" Identifier="MainWindowPageHost">
       <Grid>
         <connectorTreeView:ConnectorsTreeView x:Name="mainTreeView"
-                                              Margin="12,8,12,12"
+                                              Margin="12,8,8,12"
                                               HorizontalAlignment="Stretch" />
         <TextBlock HorizontalAlignment="Center"
                    VerticalAlignment="Center"

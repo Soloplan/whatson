@@ -125,15 +125,15 @@ namespace Soloplan.WhatsON.Model
     /// Checks correctness of self project URL.
     /// </summary>
     /// <returns>true when fine, false when url is broken.</returns>
-    public virtual async Task<bool> CheckProjectURL() => false;
+    public virtual Task<bool> CheckProjectUrlAsync() => Task.FromResult(false);
 
     /// <summary>
     /// Checks correctness of self server URL.
     /// </summary>
     /// <returns>true when fine, false when url is broken.</returns>
-    public virtual async Task<bool> CheckServerURL() => false;
+    public virtual Task<bool> CheckServerUrlAsync() => Task.FromResult(false);
 
-    public virtual async Task<bool> IsReachableUrl(string? urlInput)
+    public virtual async Task<bool> IsReachableUrlAsync(string? urlInput)
     {
       if (!Uri.TryCreate(urlInput, UriKind.Absolute, out var uri))
       {
@@ -160,10 +160,10 @@ namespace Soloplan.WhatsON.Model
       return testStatus;
     }
 
-    public async Task QueryStatus(CancellationToken cancellationToken)
+    public async Task QueryStatusAsync(CancellationToken cancellationToken)
     {
       log.Trace("Querying status for connector {connector}.", new { this.Configuration.Name, this.CurrentStatus });
-      await this.ExecuteQuery(cancellationToken);
+      await this.ExecuteQueryAsync(cancellationToken);
       log.Trace("Status for connector {connector} queried.", new { this.Configuration.Name, this.CurrentStatus });
 
       if (this.CurrentStatus != null && this.ShouldTakeSnapshot(this.CurrentStatus))
@@ -191,14 +191,14 @@ namespace Soloplan.WhatsON.Model
       return sb.ToString();
     }
 
-    protected virtual async Task ExecuteQuery(CancellationToken cancellationToken)
+    protected virtual async Task ExecuteQueryAsync(CancellationToken cancellationToken)
     {
-      this.CurrentStatus = await this.GetCurrentStatus(cancellationToken);
+      this.CurrentStatus = await this.GetCurrentStatusAsync(cancellationToken);
 
       // initialize history
       if (this.Snapshots.Count == 0 && this.CurrentStatus != null && this.CurrentStatus.BuildNumber > 1)
       {
-        foreach (var snapshot in await this.GetHistory(cancellationToken))
+        foreach (var snapshot in await this.GetHistoryAsync(cancellationToken))
         {
           if (snapshot == null)
           {
@@ -216,9 +216,9 @@ namespace Soloplan.WhatsON.Model
       }
     }
 
-    protected abstract Task<Status?> GetCurrentStatus(CancellationToken cancellationToken);
+    protected abstract Task<Status?> GetCurrentStatusAsync(CancellationToken cancellationToken);
 
-    protected abstract Task<List<Status?>> GetHistory(CancellationToken cancellationToken);
+    protected abstract Task<List<Status?>> GetHistoryAsync(CancellationToken cancellationToken);
 
     protected virtual bool ShouldTakeSnapshot(Status? status)
     {

@@ -44,21 +44,21 @@ namespace Soloplan.WhatsON.CruiseControl
     /// Checks correctness of self server URL.
     /// </summary>
     /// <returns>true when fine, false when url is broken.</returns>
-    public override async Task<bool> CheckServerURL() => await this.IsReachableUrl(this.Address);
+    public override async Task<bool> CheckServerUrlAsync() => await this.IsReachableUrlAsync(this.Address);
 
     /// <summary>
     /// Checks correctness of self project URL.
     /// </summary>
     /// <returns>true when fine, false when url is broken.</returns>
-    public override async Task<bool> CheckProjectURL() => await this.IsReachableUrl(this.directAddress);
+    public override async Task<bool> CheckProjectUrlAsync() => await this.IsReachableUrlAsync(this.directAddress);
 
-    protected override async Task<Status?> GetCurrentStatus(CancellationToken cancellationToken)
+    protected override async Task<Status?> GetCurrentStatusAsync(CancellationToken cancellationToken)
     {
       var server = CruiseControlManager.GetServer(this.directAddress);
-      var projectData = await server.GetProjectStatus(cancellationToken, this.Project, 5);
+      var projectData = await server.GetProjectStatusAsync(cancellationToken, this.Project, 5);
       if (projectData == null)
       {
-        if (!await this.CheckServerURL())
+        if (!await this.CheckServerUrlAsync())
         {
           var status = new Status();
           status.ErrorMessage = Strings.ServerNotAvailable;
@@ -66,7 +66,7 @@ namespace Soloplan.WhatsON.CruiseControl
           return status;
         }
 
-        if (!await this.CheckProjectURL())
+        if (!await this.CheckProjectUrlAsync())
         {
           var status = new Status();
           status.ErrorMessage = Strings.ProjectNotAvailable;
@@ -95,12 +95,12 @@ namespace Soloplan.WhatsON.CruiseControl
       return this.CreateStatus(projectData);
     }
 
-    protected override async Task<List<Status?>> GetHistory(CancellationToken cancellationToken)
+    protected override async Task<List<Status?>> GetHistoryAsync(CancellationToken cancellationToken)
     {
       var server = CruiseControlManager.GetServer(this.directAddress);
       var history = new List<Status?>();
 
-      var builds = await server.GetBuilds(this.Project);
+      var builds = await server.GetBuildsAsync(this.Project, cancellationToken: cancellationToken);
 
       foreach (var build in builds)
       {
@@ -219,6 +219,15 @@ namespace Soloplan.WhatsON.CruiseControl
       }
 
       result.EstimatedDuration = this.estimatedDuration;
+
+      if (result.State is ObservationState.Failure or ObservationState.Unstable)
+      {
+        result.FailureDetails = string.Join(
+          Environment.NewLine,
+          (job.MessageList?.MessagesSafe ?? Array.Empty<Message>())
+            .Where(message => message.Kind is MessageKind.FailingTasks or MessageKind.BuildAbortedBy)
+            .Select(message => message.Text).Where(text => !string.IsNullOrWhiteSpace(text)).Distinct());
+      }
 
       return result;
     }

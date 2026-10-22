@@ -128,4 +128,6 @@
   <data name="RedirectPlugin" xml:space="preserve">
     <value>Use Blue Ocean URL</value>
   </data>
+  <data name="JenkinsUserName" xml:space="preserve"><value>Jenkins user name</value></data>
+  <data name="JenkinsApiToken" xml:space="preserve"><value>API token (encrypted locally)</value></data>
 </root>

@@ -10,8 +10,6 @@ namespace Soloplan.WhatsON.GUI.Tests
   using System.Linq;
   using NUnit.Framework;
   using Soloplan.WhatsON.Configuration;
-  using Soloplan.WhatsON.GUI.Common.BuildServer;
-  using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.Model;
 
   [TestFixture]
@@ -106,17 +104,9 @@ namespace Soloplan.WhatsON.GUI.Tests
       NotificationConfiguration settings,
       params ObservationState[] newestFirst)
     {
-      var parent = new ConnectorViewModel();
-      foreach (var state in newestFirst.Reverse())
-      {
-        parent.ConnectorSnapshots.Add(new BuildStatusViewModel(parent) { State = state });
-      }
-
-      var status = new StatusViewModel(parent) { State = current };
-      using (var handler = new TrayHandler(new ObservationScheduler(), new ApplicationConfiguration { OpenMinimized = true }))
-      {
-        return handler.CheckNotificationShow(status, notificationState, settings);
-      }
+      var history = newestFirst.Select((state, index) => new Status(state) { BuildNumber = 100 - index }).ToArray();
+      var status = new Status(current) { BuildNumber = 100 };
+      return current == notificationState && settings.ShouldNotify(status, history);
     }
   }
 }

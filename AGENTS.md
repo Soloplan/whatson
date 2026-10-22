@@ -62,7 +62,7 @@ dotnet test src/Soloplan.WhatsON.slnx -c Debug --no-build
 
 Use `-c Release` for the configuration used by CI. SDK outputs are per project:
 `bin/<Configuration>/<TargetFramework>/`. The application entry point is
-`src/Soloplan.WhatsON.GUI/bin/Debug/net10.0-windows/Soloplan.WhatsON.GUI.exe`.
+`src/Soloplan.WhatsON.GUI/bin/Debug/net10.0-windows10.0.19041.0/Soloplan.WhatsON.GUI.exe`.
 All four test projects use the .NET test SDK and NUnit adapter; confirm discovery
 and executed test counts. A single test project can be passed to `dotnet test`
 instead of the solution.
@@ -86,6 +86,8 @@ dotnet build src/Soloplan.WhatsON/Soloplan.WhatsON.csproj -c Debug
 
 Build affected projects and run relevant tests for code changes. Add a small
 regression test for changed behavior, reusing the existing NUnit/fake patterns.
+Use `WireMock.Net.Minimal` for HTTP test servers; do not use TCP listeners or
+hand-written HTTP responders in unit tests.
 For WPF changes, also check the affected window, bindings, and interaction when
 a desktop session is available. Report missing prerequisites and checks that
 could not run; do not change frameworks or packages just to bypass them.

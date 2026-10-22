@@ -1,0 +1,86 @@
+{
+  "build": {
+    "number": 42,
+    "result": "FAILURE",
+    "building": false,
+    "actions": [
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {}
+    ]
+  },
+  "testReport": null,
+  "pipeline": {
+    "id": "42",
+    "status": "FAILED",
+    "stages": [
+      {
+        "id": "1",
+        "name": "Stage 1",
+        "status": "SUCCESS"
+      },
+      {
+        "id": "2",
+        "name": "Stage 2",
+        "status": "SUCCESS"
+      },
+      {
+        "id": "3",
+        "name": "Stage 3",
+        "status": "SUCCESS"
+      },
+      {
+        "id": "4",
+        "name": "Stage 4",
+        "status": "FAILED"
+      }
+    ]
+  },
+  "nodes": {
+    "4": {
+      "id": "4",
+      "name": "Stage 4",
+      "status": "FAILED",
+      "stageFlowNodes": [
+        {
+          "id": "101",
+          "name": "Step 1",
+          "status": "SUCCESS"
+        },
+        {
+          "id": "102",
+          "name": "Step 2",
+          "status": "SUCCESS"
+        },
+        {
+          "id": "103",
+          "name": "Step 3",
+          "status": "FAILED",
+          "error": {
+            "message": "Pipeline interrupted",
+            "type": "org.jenkinsci.plugins.workflow.steps.FlowInterruptedException"
+          }
+        }
+      ]
+    }
+  }
+}

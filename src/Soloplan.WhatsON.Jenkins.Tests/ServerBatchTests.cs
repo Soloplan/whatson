@@ -41,7 +41,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       };
       var first = CreateConnector(api, "Broken");
       var second = CreateConnector(api, "Working");
-      var queried = await first.QueryStatusBatch([first, second], CancellationToken.None);
+      var queried = await first.QueryStatusBatchAsync([first, second], CancellationToken.None);
 
       Assert.That(queried, Is.EquivalentTo([second]));
       Assert.That(first.CurrentStatus, Is.Null);
@@ -61,7 +61,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       };
       var connectors = Enumerable.Range(0, 100).Select(index => CreateConnector(api, $"Project{index}")).ToArray();
       using var cancellation = new CancellationTokenSource();
-      var query = connectors[0].QueryStatusBatch(connectors, cancellation.Token);
+      var query = connectors[0].QueryStatusBatchAsync(connectors, cancellation.Token);
       await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
       cancellation.Cancel();
 
@@ -96,13 +96,13 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var first = CreateConnector(api, "Failed", clock);
       var second = CreateConnector(api, "Deferred", clock);
       var batch = new Connector[] { first, second };
-      Assert.That(await first.QueryStatusBatch(batch, CancellationToken.None), Is.Empty);
+      Assert.That(await first.QueryStatusBatchAsync(batch, CancellationToken.None), Is.Empty);
       Assert.That(first.CurrentStatus, Is.Null);
       Assert.That(second.CurrentStatus, Is.Null);
 
-      Assert.That(await first.QueryStatusBatch(batch, CancellationToken.None), Is.EquivalentTo([second]));
+      Assert.That(await first.QueryStatusBatchAsync(batch, CancellationToken.None), Is.EquivalentTo([second]));
       clock.Advance(TimeSpan.FromSeconds(10));
-      Assert.That(await first.QueryStatusBatch(batch, CancellationToken.None), Is.EquivalentTo([first]));
+      Assert.That(await first.QueryStatusBatchAsync(batch, CancellationToken.None), Is.EquivalentTo([first]));
     }
 
     [Test]
@@ -127,11 +127,11 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       };
       var project = CreateConnector(api, "Release", clock);
       var batch = new Connector[] { project };
-      await project.QueryStatusBatch(batch, CancellationToken.None);
+      await project.QueryStatusBatchAsync(batch, CancellationToken.None);
       Assert.That(project.Snapshots.Select(snapshot => snapshot.Status.BuildNumber), Is.EqualTo([8, 6, 5, 4, 3]));
       running = false;
       clock.Advance(TimeSpan.FromMinutes(5));
-      await project.QueryStatusBatch(batch, CancellationToken.None);
+      await project.QueryStatusBatchAsync(batch, CancellationToken.None);
 
       Assert.That(project.Snapshots.Select(snapshot => snapshot.Status.BuildNumber), Is.EqualTo([8, 7, 6, 5, 4]));
     }
@@ -201,6 +201,38 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
       Assert.That(policy.Priority, Is.True);
       Assert.That(policy.NextDue, Is.EqualTo(now.AddSeconds(10)));
+    }
+
+    [Test]
+    public async Task PollingRefreshesClearedMarkersEvenWhenBuildNumbersHaveNotChanged()
+    {
+      var description = JenkinsVolunteer.SetOwner("Notes", "alex");
+      var api = new FakeJenkinsApi();
+      api.PollingQuery = (connectors, _) =>
+      {
+        var result = new JenkinsPollingResult();
+        foreach (var connector in connectors)
+        {
+          result.Jobs[connector] = new JenkinsJob
+          {
+            LastBuild = new JenkinsBuild { Number = 42, Result = "FAILURE", Description = description },
+            Builds = new[] { new JenkinsBuild { Number = 41, Result = "FAILURE", Description = description } },
+            DetailsOmitted = true,
+          };
+        }
+
+        return Task.FromResult(result);
+      };
+      var clock = new Clock();
+      var project = CreateConnector(api, "project", clock);
+      await project.QueryStatusBatchAsync(new[] { project }, CancellationToken.None);
+      Assert.That(JenkinsVolunteer.GetOwner(project.CurrentStatus?.Details), Is.EqualTo("alex"));
+      Assert.That(JenkinsVolunteer.GetOwner(project.Snapshots.Single(snapshot => snapshot.Status.BuildNumber == 41).Status.Details), Is.EqualTo("alex"));
+      description = "Notes";
+      clock.Advance(TimeSpan.FromMinutes(6));
+      await project.QueryStatusBatchAsync(new[] { project }, CancellationToken.None);
+      Assert.That(project.CurrentStatus?.Details, Is.EqualTo("Notes"));
+      Assert.That(project.Snapshots.Single(snapshot => snapshot.Status.BuildNumber == 41).Status.Details, Is.EqualTo("Notes"));
     }
 
     private static JenkinsConnector CreateConnector(IJenkinsApi api, string project, Clock? clock = null) => new JenkinsConnector(

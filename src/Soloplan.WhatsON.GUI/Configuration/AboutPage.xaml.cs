@@ -76,20 +76,29 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
-    private void ImportButtonClick(object? sender, RoutedEventArgs e)
+    private async void ImportButtonClickAsync(object? sender, RoutedEventArgs e)
     {
-      using (var openFileDialog = new OpenFileDialog())
+      var window = Window.GetWindow(this) ?? throw new InvalidOperationException("The settings page has no window.");
+      window.IsEnabled = false;
+      try
       {
-        openFileDialog.Filter = this.GetConfigFileFilter();
-        openFileDialog.FileName = !string.IsNullOrWhiteSpace(this.ConfigFile.Text) ? Path.GetFileName(this.ConfigFile.Text) : string.Empty;
-        if (openFileDialog.ShowDialog() == DialogResult.OK)
+        using (var openFileDialog = new OpenFileDialog())
         {
-          var result = this.configurationViewModel.Import(openFileDialog.FileName, out var errorMessage);
-          if (!result)
+          openFileDialog.Filter = this.GetConfigFileFilter();
+          openFileDialog.FileName = !string.IsNullOrWhiteSpace(this.ConfigFile.Text) ? Path.GetFileName(this.ConfigFile.Text) : string.Empty;
+          if (openFileDialog.ShowDialog() == DialogResult.OK)
           {
-            System.Windows.MessageBox.Show(errorMessage, Strings.ImportError, MessageBoxButton.OK, MessageBoxImage.Error);
+            var (result, errorMessage) = await this.configurationViewModel.ImportAsync(openFileDialog.FileName);
+            if (!result)
+            {
+              System.Windows.MessageBox.Show(errorMessage, Strings.ImportError, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
           }
         }
+      }
+      finally
+      {
+        window.IsEnabled = true;
       }
     }
 
@@ -98,16 +107,25 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
-    private void ExportButtonClick(object? sender, RoutedEventArgs e)
+    private async void ExportButtonClickAsync(object? sender, RoutedEventArgs e)
     {
-      using (var saveFileDialog = new SaveFileDialog())
+      var window = Window.GetWindow(this) ?? throw new InvalidOperationException("The settings page has no window.");
+      window.IsEnabled = false;
+      try
       {
-        saveFileDialog.Filter = this.GetConfigFileFilter();
-        saveFileDialog.FileName = !string.IsNullOrWhiteSpace(this.ConfigFile.Text) ? Path.GetFileName(this.ConfigFile.Text) : string.Empty;
-        if (saveFileDialog.ShowDialog() == DialogResult.OK)
+        using (var saveFileDialog = new SaveFileDialog())
         {
-          this.configurationViewModel.Export(saveFileDialog.FileName);
+          saveFileDialog.Filter = this.GetConfigFileFilter();
+          saveFileDialog.FileName = !string.IsNullOrWhiteSpace(this.ConfigFile.Text) ? Path.GetFileName(this.ConfigFile.Text) : string.Empty;
+          if (saveFileDialog.ShowDialog() == DialogResult.OK)
+          {
+            await this.configurationViewModel.ExportAsync(saveFileDialog.FileName);
+          }
         }
+      }
+      finally
+      {
+        window.IsEnabled = true;
       }
     }
 

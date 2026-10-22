@@ -67,6 +67,11 @@ namespace Soloplan.WhatsON.Configuration
     public int Priority { get; set; }
 
     /// <summary>
+    /// Gets or sets a value indicating whether this setting is shared by projects on the same server.
+    /// </summary>
+    public bool IsServerSetting { get; set; }
+
+    /// <summary>
     /// Gets the type.
     /// </summary>
     public Type Type { get; }

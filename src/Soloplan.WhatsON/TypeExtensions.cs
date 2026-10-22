@@ -27,9 +27,9 @@ namespace Soloplan.WhatsON
         yield break;
       }
 
-      foreach (var interface_ in type.GetInterfaces())
+      foreach (var @interface in type.GetInterfaces())
       {
-        yield return interface_;
+        yield return @interface;
       }
 
       var currentBaseType = type.BaseType;

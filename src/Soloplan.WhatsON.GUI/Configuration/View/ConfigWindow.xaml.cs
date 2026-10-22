@@ -32,6 +32,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     public const string ConnectorsListItemTag = "Connectors";
 
+    public const string ServersListItemTag = "Servers";
+
     /// <summary>
     /// The settings About item tag.
     /// </summary>
@@ -251,6 +253,9 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
           this.aboutPage = this.aboutPage ?? new AboutPage(this.ConfigurationViewModel);
           this.ConfigFrame.Content = this.aboutPage;
           return;
+        case ServersListItemTag:
+          this.ConfigFrame.Content = new ServerConfigPage(this.ConfigurationViewModel);
+          return;
       }
     }
 
@@ -282,6 +287,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// <param name="e">The <see cref="System.ComponentModel.CancelEventArgs" /> instance containing the event data.</param>
     private void WindowClosing(object? sender, System.ComponentModel.CancelEventArgs e)
     {
+      if (!this.IsEnabled)
+      {
+        e.Cancel = true;
+        return;
+      }
+
       if (this.Owner != null)
       {
         this.Owner.Closing -= this.OwnerClosing;
@@ -312,18 +323,26 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">Event args.</param>
-    private void OwnerClosing(object? sender, System.ComponentModel.CancelEventArgs e) => e.Cancel = this.ConfigurationViewModel.ConfigurationIsModified;
+    private void OwnerClosing(object? sender, System.ComponentModel.CancelEventArgs e) => e.Cancel = !this.IsEnabled || this.ConfigurationViewModel.ConfigurationIsModified;
 
     /// <summary>
     /// Handles the Save Click on the Snackbar.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
-    private void SnackbarSaveClick(object? sender, RoutedEventArgs e)
+    private async void SnackbarSaveClickAsync(object? sender, RoutedEventArgs e)
     {
-      if (Validation.IsValid(this))
+      this.IsEnabled = false;
+      try
       {
-        this.ConfigurationViewModel.ApplyToSourceAndSave();
+        if (Validation.IsValid(this))
+        {
+          await this.ConfigurationViewModel.ApplyToSourceAndSaveAsync();
+        }
+      }
+      finally
+      {
+        this.IsEnabled = true;
       }
     }
   }

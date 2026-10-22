@@ -26,7 +26,7 @@
     <Border Grid.Row="1" Style="{StaticResource SettingsCard}" Padding="12">
       <Grid>
         <wizard:ProjectsTreeView x:Name="projectsTreeView"
-                                 KeyDown="ProjectsKeyDown">
+                                 KeyDown="ProjectsKeyDownAsync">
           <wizard:ProjectsTreeView.Style>
             <Style TargetType="wizard:ProjectsTreeView"><Style.Triggers>
               <DataTrigger Binding="{Binding DataContext.Projects.Count, RelativeSource={RelativeSource AncestorType=Page}}" Value="0">

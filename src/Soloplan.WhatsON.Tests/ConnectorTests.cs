@@ -23,8 +23,8 @@ namespace Soloplan.WhatsON.Tests
       var status = new Status(ObservationState.Success) { BuildNumber = 1 };
       var connector = new TestConnector { Query = token => Task.FromResult<Status?>(status) };
 
-      await connector.QueryStatus(CancellationToken.None);
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       Assert.That(connector.Snapshots.Select(s => s.Status.BuildNumber), Is.EqualTo([1]));
       Assert.That(connector.CurrentStatus, Is.SameAs(status));
@@ -35,12 +35,12 @@ namespace Soloplan.WhatsON.Tests
     {
       var status = new Status(ObservationState.Running) { BuildNumber = 1 };
       var connector = new TestConnector { Query = token => Task.FromResult<Status?>(status) };
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
       Assert.That(connector.Snapshots, Is.Empty);
 
       status = new Status(ObservationState.Failure) { BuildNumber = 1 };
-      await connector.QueryStatus(CancellationToken.None);
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       Assert.That(connector.Snapshots, Has.Count.EqualTo(1));
       Assert.That(connector.Snapshots.Single().Status.State, Is.EqualTo(ObservationState.Failure));
@@ -54,7 +54,7 @@ namespace Soloplan.WhatsON.Tests
       var status = new Status(state) { BuildNumber = 1, InvalidBuild = true };
       var connector = new TestConnector { Query = token => Task.FromResult<Status?>(status) };
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       Assert.That(connector.CurrentStatus, Is.SameAs(status));
       Assert.That(connector.Snapshots, Is.Empty);
@@ -65,7 +65,7 @@ namespace Soloplan.WhatsON.Tests
     {
       var connector = new TestConnector();
 
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       Assert.That(connector.CurrentStatus, Is.Null);
       Assert.That(connector.Snapshots, Is.Empty);
@@ -81,8 +81,8 @@ namespace Soloplan.WhatsON.Tests
       connector.History.Add(null);
       connector.History.Add(new Status(ObservationState.Success) { BuildNumber = 1, Time = new DateTime(2020, 1, 1) });
 
-      await connector.QueryStatus(CancellationToken.None);
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
 
       Assert.That(connector.Snapshots.Select(s => s.Status.BuildNumber), Is.EqualTo([3, 2, 1]));
       Assert.That(connector.HistoryRequests, Is.EqualTo(1));
@@ -117,10 +117,10 @@ namespace Soloplan.WhatsON.Tests
     {
       var status = new Status(ObservationState.Success) { BuildNumber = 1 };
       var connector = new TestConnector { Query = token => Task.FromResult<Status?>(status) };
-      await connector.QueryStatus(CancellationToken.None);
+      await connector.QueryStatusAsync(CancellationToken.None);
       connector.Query = token => throw new InvalidOperationException("Server response failed");
 
-      Assert.That(async () => await connector.QueryStatus(CancellationToken.None), Throws.TypeOf<InvalidOperationException>());
+      Assert.That(async () => await connector.QueryStatusAsync(CancellationToken.None), Throws.TypeOf<InvalidOperationException>());
       Assert.That(connector.CurrentStatus, Is.SameAs(status));
       Assert.That(connector.Snapshots.Single().Status, Is.SameAs(status));
     }

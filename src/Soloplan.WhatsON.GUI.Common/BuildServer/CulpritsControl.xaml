@@ -5,26 +5,72 @@
              xmlns:local="clr-namespace:Soloplan.WhatsON.GUI.Common.BuildServer"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:common="clr-namespace:Soloplan.WhatsON.GUI.Common"
+             xmlns:converters="clr-namespace:Soloplan.WhatsON.GUI.Common.Converters"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
   <UserControl.Resources>
-    <BooleanToVisibilityConverter x:Key="HasContributors" />
+    <converters:NullOrDefaultToVisibilityConverter x:Key="HasContributors" />
   </UserControl.Resources>
 
-  <StackPanel Margin="0,8,0,0" Visibility="{Binding HasItems, ElementName=Contributors, Converter={StaticResource HasContributors}}">
-    <TextBlock Text="{Binding Caption}" Foreground="{DynamicResource SettingsMuted}" FontSize="11" Margin="0,0,0,3" TextWrapping="Wrap" />
-    <ItemsControl x:Name="Contributors" ItemsSource="{Binding CulpritsProp}">
-      <ItemsControl.ItemTemplate>
-        <DataTemplate>
-          <DockPanel Margin="0,2,0,0">
-            <materialDesign:PackIcon Kind="AccountOutline" Width="14" Height="14" Margin="0,2,6,0"
-                                     DockPanel.Dock="Left" Foreground="{DynamicResource SettingsMuted}" />
-            <TextBlock Text="{Binding FullName}" TextWrapping="Wrap" />
-          </DockPanel>
-        </DataTemplate>
-      </ItemsControl.ItemTemplate>
-    </ItemsControl>
-  </StackPanel>
+  <Border BorderBrush="{DynamicResource SettingsBorder}" BorderThickness="0,1,0,0" Margin="0,14,0,0" Padding="0,12,18,0"
+          Visibility="{Binding CulpritsProp.Count, Converter={StaticResource HasContributors}}">
+    <Expander x:Name="PeopleExpander" HorizontalAlignment="Left" MaxWidth="180" Foreground="{DynamicResource MaterialDesignBody}">
+      <AutomationProperties.Name>
+        <MultiBinding StringFormat="{}{0} {1}"><Binding Path="CulpritsProp.Count" /><Binding Path="Caption" /></MultiBinding>
+      </AutomationProperties.Name>
+      <Expander.Template>
+        <ControlTemplate TargetType="Expander">
+          <StackPanel>
+            <ToggleButton IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                          Content="{TemplateBinding Header}" HorizontalAlignment="Left" Cursor="Hand"
+                          Style="{x:Null}" Foreground="{TemplateBinding Foreground}" FontSize="{TemplateBinding FontSize}"
+                          AutomationProperties.Name="{Binding Path=(AutomationProperties.Name), RelativeSource={RelativeSource TemplatedParent}}">
+              <ToggleButton.Template>
+                <ControlTemplate TargetType="ToggleButton">
+                  <Border x:Name="HeaderSurface" Background="Transparent" CornerRadius="3">
+                    <ContentPresenter />
+                  </Border>
+                  <ControlTemplate.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="HeaderSurface" Property="Background" Value="{DynamicResource SettingsSelection}" /></Trigger>
+                    <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="HeaderSurface" Property="Background" Value="{DynamicResource SettingsSelection}" /></Trigger>
+                  </ControlTemplate.Triggers>
+                </ControlTemplate>
+              </ToggleButton.Template>
+            </ToggleButton>
+            <ContentPresenter x:Name="Names" ContentSource="Content" Visibility="Collapsed" Margin="0,8,0,0" />
+          </StackPanel>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsExpanded" Value="True"><Setter TargetName="Names" Property="Visibility" Value="Visible" /></Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Expander.Template>
+      <Expander.Header>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="{Binding CulpritsProp.Count}" FontWeight="Medium" Margin="0,0,4,0" />
+          <TextBlock Text="{Binding Caption}" Foreground="{DynamicResource SettingsMuted}" />
+          <materialDesign:PackIcon Width="12" Height="12" Margin="4,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource SettingsMuted}">
+            <materialDesign:PackIcon.Style>
+              <Style TargetType="materialDesign:PackIcon">
+                <Setter Property="Kind" Value="ChevronDown" />
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding IsExpanded, ElementName=PeopleExpander}" Value="True"><Setter Property="Kind" Value="ChevronUp" /></DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </materialDesign:PackIcon.Style>
+          </materialDesign:PackIcon>
+        </StackPanel>
+      </Expander.Header>
+      <ScrollViewer MaxHeight="160" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <ItemsControl ItemsSource="{Binding CulpritsProp}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding FullName}" FontSize="12" Margin="0,3,0,0" TextWrapping="Wrap" />
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+    </Expander>
+  </Border>
 </UserControl>

@@ -239,7 +239,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs" /> instance containing the event data.</param>
-    private async void DeleteConnectorClick(object? sender, RoutedEventArgs e)
+    private async void DeleteConnectorClickAsync(object? sender, RoutedEventArgs e)
     {
       var result = await DialogHost.Show(new OkCancelDialog(Strings.DeleteProjectConfirmation), "ConnectorsConfigPageHost");
       if (result is true && this.CurrentConnector != null)
@@ -253,7 +253,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs" /> instance containing the event data.</param>
-    private async void RenameConnectorClick(object? sender, RoutedEventArgs e)
+    private async void RenameConnectorClickAsync(object? sender, RoutedEventArgs e)
     {
       if (this.uxConnectors.SelectedItem == null)
       {
@@ -268,7 +268,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs" /> instance containing the event data.</param>
-    private async void AddConnectorClick(object? sender, RoutedEventArgs e)
+    private async void AddConnectorClickAsync(object? sender, RoutedEventArgs e)
     {
       if (!Validation.IsValid(this))
       {
@@ -294,14 +294,14 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs" /> instance containing the event data.</param>
-    private void NewInWizardClick(object? sender, RoutedEventArgs e)
+    private async void NewInWizardClickAsync(object? sender, RoutedEventArgs e)
     {
       var wizardController = new WizardController(this.ownerWindow, this.config, this.wizardDialogSettings);
       wizardController.MultiSelectionMode = false;
       var result = false;
       try
       {
-        result = wizardController.Start(false);
+        result = await wizardController.StartAsync(false);
       }
       finally
       {

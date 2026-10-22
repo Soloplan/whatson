@@ -37,7 +37,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
       this.ControlToolTip.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
       this.ControlToolTip.PlacementTarget = this;
       this.DataContext = this;
-      this.PreviewMouseDoubleClick += this.OnPreviewMouseDoubleClick;
+      this.PreviewMouseDoubleClick += this.OnPreviewMouseDoubleClickAsync;
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     /// </summary>
     /// <param name="sender">Sender.</param>
     /// <param name="e">Event args.</param>
-    private async void OnPreviewMouseDoubleClick(object? sender, MouseButtonEventArgs e)
+    private async void OnPreviewMouseDoubleClickAsync(object? sender, MouseButtonEventArgs e)
     {
       Clipboard.SetText(this.BuildNumber?.ToString() ?? string.Empty);
       this.ToolTipText.SetBinding(TextBlock.TextProperty, TextExtension.CreateBinding(() => Strings.BuildLabelCopied));

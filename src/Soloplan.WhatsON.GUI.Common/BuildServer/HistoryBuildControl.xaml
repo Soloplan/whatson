@@ -20,7 +20,33 @@
              materialDesign:TransitionAssist.DisableTransitions="True">
   <UserControl.Resources>
     <converters:StatusToColorConverter x:Key="StatusToColorConverter" />
+    <converters:NullOrDefaultToVisibilityConverter x:Key="HasVolunteerCommand" />
     <ContextMenu x:Key="ContextMenuBuild">
+      <MenuItem ToolTipService.ShowOnDisabled="True" Visibility="{Binding VolunteerToFix, Converter={StaticResource HasVolunteerCommand}}">
+        <MenuItem.HeaderTemplate>
+          <DataTemplate>
+            <StackPanel Orientation="Horizontal">
+              <materialDesign:PackIcon Kind="AccountWrench" />
+              <TextBlock Padding="10,0,0,0" Text="{Binding}" />
+            </StackPanel>
+          </DataTemplate>
+        </MenuItem.HeaderTemplate>
+        <MenuItem.Style>
+          <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+            <Setter Property="Header" Value="{live:Text loc:Strings.ClearVolunteer}" />
+            <Setter Property="ToolTip" Value="{live:Text loc:Strings.ClearVolunteerDescription}" />
+            <Setter Property="Command" Value="{Binding ClearVolunteer}" />
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding Volunteer}" Value="{x:Null}">
+                <Setter Property="Header" Value="{live:Text loc:Strings.VolunteerToFix}" />
+                <Setter Property="ToolTip" Value="{live:Text loc:Strings.VolunteerToFixDescription}" />
+                <Setter Property="Command" Value="{Binding VolunteerToFix}" />
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </MenuItem.Style>
+      </MenuItem>
+      <Separator Visibility="{Binding VolunteerToFix, Converter={StaticResource HasVolunteerCommand}}" />
       <MenuItem CommandParameter="{Binding}" Command="{Binding CopyBuildLabel}">
         <MenuItem.Header>
           <StackPanel Orientation="Horizontal">

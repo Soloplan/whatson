@@ -75,6 +75,50 @@ namespace Soloplan.WhatsON.GUI.Tests
     }
 
     [Test]
+    public async Task InitialBatchesResumePromptlyAndReturnToNormalPolling()
+    {
+      await using var server = new ApiServer();
+      var clock = new Clock();
+      server.Respond = path => Reply(path, Enumerable.Range(0, 25).Select(index => Job($"Project{index}", 1)));
+      var connectors = Enumerable.Range(0, 9).SelectMany(folder => Enumerable.Range(0, 25)
+        .Select(index => CreateConnector(server.Address, $"Folder{folder}/Project{index}", clock))).ToArray();
+      var scheduler = new ObservationScheduler();
+      var completed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+      var updates = 0;
+      var firstWaveRequests = 0;
+      scheduler.StatusQueried += (sender, connector) =>
+      {
+        if (++updates == 200)
+        {
+          firstWaveRequests = server.Requests.Count;
+        }
+        else if (updates == connectors.Length)
+        {
+          clock.Advance(TimeSpan.FromMinutes(5));
+          completed.TrySetResult();
+        }
+      };
+      foreach (var connector in connectors)
+      {
+        scheduler.Observe(connector);
+      }
+
+      try
+      {
+        scheduler.Start();
+        await completed.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        Assert.That(firstWaveRequests, Is.EqualTo(JenkinsApi.MaximumRequestsPerPoll));
+        Assert.That(connectors.All(connector => connector.CurrentStatus?.BuildNumber == 1), Is.True);
+        await Task.Delay(TimeSpan.FromMilliseconds(1500));
+        Assert.That(server.Requests, Has.Count.EqualTo(9), "Finishing the first load must restore the normal polling pause.");
+      }
+      finally
+      {
+        scheduler.Stop(true);
+      }
+    }
+
+    [Test]
     public async Task OnlySelectedNamesAreReturnedAndQuotedUnicodeNamesCannotChangeTheFilter()
     {
       await using var server = new ApiServer();
@@ -92,7 +136,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       // The stored slash is an encoded part of a branch name, rather than another folder.
       (jobs[1].Element("name") ?? throw new AssertionException("Missing job name.")).Value = names[1].Replace("/", "%2F");
 
-      await connectors[0].QueryStatusBatch(connectors, CancellationToken.None);
+      await connectors[0].QueryStatusBatchAsync(connectors, CancellationToken.None);
 
       Assert.That(connectors.All(connector => connector.CurrentStatus?.BuildNumber == 6), Is.True);
       Assert.That(returned, Does.Not.Contain("Unrelated"));
@@ -108,7 +152,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       var present = CreateConnector(server.Address, "Present");
       var missing = CreateConnector(server.Address, "Missing");
       var buildless = CreateConnector(server.Address, "No builds");
-      var queried = await present.QueryStatusBatch([present, missing, buildless], CancellationToken.None);
+      var queried = await present.QueryStatusBatchAsync([present, missing, buildless], CancellationToken.None);
 
       Assert.That(queried, Has.Count.EqualTo(3));
       Assert.That(present.CurrentStatus?.BuildNumber, Is.EqualTo(10));
@@ -129,7 +173,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       for (var cycle = 0; cycle < 25 && connectors.Any(connector => connector.CurrentStatus == null); cycle++)
       {
         var previous = server.Requests.Count;
-        var updated = await connectors[0].QueryStatusBatch(connectors, CancellationToken.None);
+        var updated = await connectors[0].QueryStatusBatchAsync(connectors, CancellationToken.None);
         if (updated.Contains(connectors[0]))
         {
           firstUpdates++;
@@ -149,12 +193,12 @@ namespace Soloplan.WhatsON.GUI.Tests
     public async Task OversizedBodiesUseCompactStatusEvenWithoutContentLengthOrAfterDecompression(bool chunked, bool gzip)
     {
       await using var server = new ApiServer { Chunked = chunked, Gzip = gzip };
-      server.Respond = path => Query(path)["tree"].Contains("description", StringComparison.Ordinal)
+      server.Respond = path => Query(path)["tree"].Contains("culprits", StringComparison.Ordinal)
         ? ("200 OK", "application/xml", new string('x', JenkinsApi.MaximumResponseBytes + 1))
         : Reply(path, [Job("Release", 2)]);
       var connector = CreateConnector(server.Address, "Release");
 
-      await connector.QueryStatusBatch([connector], CancellationToken.None);
+      await connector.QueryStatusBatchAsync([connector], CancellationToken.None);
 
       Assert.That(connector.CurrentStatus?.BuildNumber, Is.EqualTo(2));
       Assert.That(server.Requests, Has.Count.EqualTo(2));
@@ -171,7 +215,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       var first = CreateConnector(server.Address, "First");
       var second = CreateConnector(server.Address, "Second");
 
-      await first.QueryStatusBatch([first, second], CancellationToken.None);
+      await first.QueryStatusBatchAsync([first, second], CancellationToken.None);
 
       Assert.That(first.CurrentStatus?.BuildNumber, Is.EqualTo(1));
       Assert.That(second.CurrentStatus?.BuildNumber, Is.EqualTo(2));
@@ -179,7 +223,7 @@ namespace Soloplan.WhatsON.GUI.Tests
     }
 
     [Test]
-    public async Task CompactFallbackPreservesKnownDetailsAndAvoidsRepeatedOversizedDownloads()
+    public async Task CompactFallbackRefreshesDescriptionAndPreservesOtherKnownDetails()
     {
       await using var server = new ApiServer();
       var clock = new Clock();
@@ -190,16 +234,18 @@ namespace Soloplan.WhatsON.GUI.Tests
         new XElement("culprit", new XElement("fullName", "Anna")));
       server.Respond = path => Reply(path, [rich]);
       var connector = CreateConnector(server.Address, "Release", clock);
-      await connector.QueryStatusBatch([connector], CancellationToken.None);
+      await connector.QueryStatusBatchAsync([connector], CancellationToken.None);
       clock.Advance(TimeSpan.FromMinutes(5));
-      server.Respond = path => Query(path)["tree"].Contains("description", StringComparison.Ordinal)
-        ? ("200 OK", "application/xml", new string('x', JenkinsApi.MaximumResponseBytes + 1)) : Reply(path, [Job("Release", 7)]);
+      var compact = Job("Release", 7);
+      (compact.Element("lastBuild") ?? throw new AssertionException("Missing last build.")).Add(new XElement("description", "Updated build details"));
+      server.Respond = path => Query(path)["tree"].Contains("culprits", StringComparison.Ordinal)
+        ? ("200 OK", "application/xml", new string('x', JenkinsApi.MaximumResponseBytes + 1)) : Reply(path, [compact]);
 
-      await connector.QueryStatusBatch([connector], CancellationToken.None);
+      await connector.QueryStatusBatchAsync([connector], CancellationToken.None);
       clock.Advance(TimeSpan.FromMinutes(5));
-      await connector.QueryStatusBatch([connector], CancellationToken.None);
+      await connector.QueryStatusBatchAsync([connector], CancellationToken.None);
 
-      Assert.That(connector.CurrentStatus?.Details, Is.EqualTo("Known build details"));
+      Assert.That(connector.CurrentStatus?.Details, Is.EqualTo("Updated build details"));
       Assert.That((connector.CurrentStatus as JenkinsStatus ?? throw new AssertionException("Expected a JenkinsStatus.")).DisplayName, Is.EqualTo("Release #7"));
       Assert.That((connector.CurrentStatus as JenkinsStatus ?? throw new AssertionException("Expected a JenkinsStatus.")).Culprits.Single().FullName, Is.EqualTo("Anna"));
       Assert.That(server.Requests, Has.Count.EqualTo(4), "The following poll should reuse the compact form instead of downloading oversized details again.");
@@ -215,18 +261,18 @@ namespace Soloplan.WhatsON.GUI.Tests
       var clock = new Clock();
       var connector = CreateConnector(server.Address, "Release", clock);
       server.Respond = path => Reply(path, [Job("Release", 1)]);
-      await connector.QueryStatusBatch([connector], CancellationToken.None);
+      await connector.QueryStatusBatchAsync([connector], CancellationToken.None);
       var previous = connector.CurrentStatus;
       clock.Advance(TimeSpan.FromMinutes(5));
       server.Respond = path => (status, contentType, body);
 
-      Assert.That(await connector.QueryStatusBatch([connector], CancellationToken.None), Is.Empty);
+      Assert.That(await connector.QueryStatusBatchAsync([connector], CancellationToken.None), Is.Empty);
       Assert.That(connector.CurrentStatus, Is.SameAs(previous));
-      Assert.That(await connector.QueryStatusBatch([connector], CancellationToken.None), Is.Empty);
+      Assert.That(await connector.QueryStatusBatchAsync([connector], CancellationToken.None), Is.Empty);
       Assert.That(server.Requests, Has.Count.EqualTo(2));
       clock.Advance(TimeSpan.FromSeconds(10));
       server.Respond = path => Reply(path, [Job("Release", 2)]);
-      await connector.QueryStatusBatch([connector], CancellationToken.None);
+      await connector.QueryStatusBatchAsync([connector], CancellationToken.None);
 
       Assert.That(connector.CurrentStatus?.BuildNumber, Is.EqualTo(2));
       Assert.That(server.Requests, Has.Count.EqualTo(3));
@@ -240,7 +286,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       server.Respond = path => ("200 OK", mediaType, "<jobs><job><name>Release</name><disabled>true</disabled><lastBuild><number>7</number><building>false</building><result>FAILURE</result><timestamp>1000000</timestamp><duration>12345</duration><displayName>#7</displayName><description>Compiler error</description><culprit><fullName>Anna</fullName><absoluteUrl>https://example.invalid/anna</absoluteUrl></culprit><changeSet><item><author><fullName>Ben</fullName></author></item></changeSet></lastBuild></job></jobs>");
       var connector = CreateConnector(server.Address, "Release");
 
-      await connector.QueryStatusBatch([connector], CancellationToken.None);
+      await connector.QueryStatusBatchAsync([connector], CancellationToken.None);
 
       var status = connector.CurrentStatus as JenkinsStatus ?? throw new AssertionException("Expected a JenkinsStatus.");
       Assert.That(connector.IsDisabled, Is.True);
@@ -258,7 +304,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       var invalid = CreateConnector(server.Address, new string('ü', 1000) + "/Release");
       var valid = CreateConnector(server.Address, "Valid");
 
-      var queried = await valid.QueryStatusBatch([invalid, valid], CancellationToken.None);
+      var queried = await valid.QueryStatusBatchAsync([invalid, valid], CancellationToken.None);
 
       Assert.That(queried, Is.EquivalentTo([valid]));
       Assert.That(invalid.CurrentStatus, Is.Null);
@@ -274,7 +320,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       server.Respond = path => Reply(path, [Job(name, 7), Job(name + "unrelated", 99)]);
       var connector = CreateConnector(server.Address, name);
 
-      await connector.QueryStatusBatch([connector], CancellationToken.None);
+      await connector.QueryStatusBatchAsync([connector], CancellationToken.None);
 
       Assert.That(connector.CurrentStatus?.BuildNumber, Is.EqualTo(7));
       Assert.That(Encoding.UTF8.GetByteCount(new Uri(server.Address.TrimEnd('/') + server.Requests.Single()).AbsoluteUri), Is.LessThanOrEqualTo(JenkinsApi.MaximumUrlBytes));
@@ -287,14 +333,14 @@ namespace Soloplan.WhatsON.GUI.Tests
       var clock = new Clock();
       var connectors = Enumerable.Range(0, 100).Select(index => CreateConnector(server.Address, $"Project{index}", clock)).ToArray();
       server.Respond = path => ("413 Content Too Large", "text/plain", "Too large");
-      Assert.That(await connectors[0].QueryStatusBatch(connectors, CancellationToken.None), Is.Empty);
+      Assert.That(await connectors[0].QueryStatusBatchAsync(connectors, CancellationToken.None), Is.Empty);
       Assert.That(server.Requests.Count, Is.LessThanOrEqualTo(JenkinsApi.MaximumRequestsPerPoll));
       Assert.That(connectors.All(connector => connector.CurrentStatus == null), Is.True);
 
       server.Respond = path => Reply(path, Enumerable.Range(0, 100).Select(index => Job($"Project{index}", 1)));
-      await connectors[0].QueryStatusBatch(connectors, CancellationToken.None);
+      await connectors[0].QueryStatusBatchAsync(connectors, CancellationToken.None);
       clock.Advance(TimeSpan.FromSeconds(10));
-      await connectors[0].QueryStatusBatch(connectors, CancellationToken.None);
+      await connectors[0].QueryStatusBatchAsync(connectors, CancellationToken.None);
 
       Assert.That(connectors.All(connector => connector.CurrentStatus?.BuildNumber == 1), Is.True);
     }
@@ -309,7 +355,7 @@ namespace Soloplan.WhatsON.GUI.Tests
         : Reply(path, [Job("Release", path.StartsWith("/job/First/", StringComparison.Ordinal) ? 1 : 2)]);
       var first = CreateConnector(server.Address, "First/Release");
       var second = CreateConnector(server.Address, "Second/job/Release");
-      var queried = await first.QueryStatusBatch([first, second], CancellationToken.None);
+      var queried = await first.QueryStatusBatchAsync([first, second], CancellationToken.None);
 
       Assert.That(queried.Count, Is.EqualTo(firstFails ? 1 : 2));
       Assert.That(first.CurrentStatus?.BuildNumber, Is.EqualTo(firstFails ? (int?)null : 1));
@@ -330,7 +376,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       };
       var connector = CreateConnector(server.Address, "Release");
       using var cancellation = new CancellationTokenSource();
-      var query = connector.QueryStatusBatch([connector], cancellation.Token);
+      var query = connector.QueryStatusBatchAsync([connector], cancellation.Token);
       await received.Task.WaitAsync(TimeSpan.FromSeconds(5));
       cancellation.Cancel();
 

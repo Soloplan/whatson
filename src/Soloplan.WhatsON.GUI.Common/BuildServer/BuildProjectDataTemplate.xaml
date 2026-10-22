@@ -14,6 +14,43 @@
   <converters:DebugConverter x:Key="DebugConverter" />
 
   <ContextMenu x:Key="BuildServerProjectContextMenu">
+    <MenuItem ToolTipService.ShowOnDisabled="True" Visibility="{Binding CurrentStatus.VolunteerToFix, Converter={StaticResource NullOrDefaultVisibilityConverter}}"
+              IsEnabled="{Binding IsOnlyOneSelected}">
+      <MenuItem.HeaderTemplate>
+        <DataTemplate>
+          <StackPanel Orientation="Horizontal">
+            <materialDesign:PackIcon Kind="AccountWrench" />
+            <TextBlock Padding="10,0,0,0" Text="{Binding}" />
+          </StackPanel>
+        </DataTemplate>
+      </MenuItem.HeaderTemplate>
+      <MenuItem.Style>
+        <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+          <Setter Property="Header" Value="{live:Text loc:Strings.ClearVolunteer}" />
+          <Setter Property="ToolTip" Value="{live:Text loc:Strings.ClearVolunteerDescription}" />
+          <Setter Property="Command" Value="{Binding CurrentStatus.ClearVolunteer}" />
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding CurrentStatus.Volunteer}" Value="{x:Null}">
+              <Setter Property="Header" Value="{live:Text loc:Strings.VolunteerToFix}" />
+              <Setter Property="ToolTip" Value="{live:Text loc:Strings.VolunteerToFixDescription}" />
+              <Setter Property="Command" Value="{Binding CurrentStatus.VolunteerToFix}" />
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </MenuItem.Style>
+    </MenuItem>
+    <MenuItem Header="{live:Text loc:Strings.ClearVolunteer}" ItemsSource="{Binding CurrentStatus.VolunteerAssignments}"
+              IsEnabled="{Binding IsOnlyOneSelected}"
+              Visibility="{Binding CurrentStatus.VolunteerAssignments.Count, Converter={StaticResource NullOrDefaultVisibilityConverter}}">
+      <MenuItem.ItemContainerStyle>
+        <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+          <Setter Property="Header" Value="{Binding VolunteerAssignmentLabel}" />
+          <Setter Property="ToolTip" Value="{Binding BuildNumber, StringFormat='#{0}'}" />
+          <Setter Property="Command" Value="{Binding ClearVolunteer}" />
+        </Style>
+      </MenuItem.ItemContainerStyle>
+    </MenuItem>
+    <Separator Visibility="{Binding CurrentStatus.VolunteerToFix, Converter={StaticResource NullOrDefaultVisibilityConverter}}" />
     <!--  CommandParameter must be declared before Command or else value from previous opening of context menu will be passed. WTF?!  -->
     <MenuItem CommandParameter="{Binding CurrentStatus}" Command="{Binding CurrentStatus.CopyBuildLabel}"
               IsEnabled="{Binding IsOnlyOneSelected}">
@@ -21,6 +58,16 @@
         <StackPanel Orientation="Horizontal">
           <materialDesign:PackIcon Kind="TagOutline" />
           <TextBlock Padding="10,0,0,0" Text="{live:Text loc:Strings.CopyLatestBuildLabel}" />
+        </StackPanel>
+      </MenuItem.Header>
+    </MenuItem>
+    <MenuItem CommandParameter="{Binding}"
+              CommandTarget="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+              Command="New" IsEnabled="{Binding IsOnlyOneSelected}">
+      <MenuItem.Header>
+        <StackPanel Orientation="Horizontal">
+          <materialDesign:PackIcon Kind="Plus" />
+          <TextBlock Padding="10,0,0,0" Text="{live:Text loc:Strings.AddJobToGroup}" />
         </StackPanel>
       </MenuItem.Header>
     </MenuItem>
@@ -83,8 +130,9 @@
       <buildServer:HistoryBuildControl.ToolTip>
         <StackPanel>
           <buildServer:HistoryBuildTooltipControl DataContext="{Binding}" />
-          <buildServer:CulpritsControl Caption="{live:Text loc:Strings.ChangesByCaption}"
+          <buildServer:CulpritsControl Caption="{live:Text loc:Strings.ContributorsCaption}"
                                        CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
+          <buildServer:FailureDetailsControl />
         </StackPanel>
       </buildServer:HistoryBuildControl.ToolTip>
     </buildServer:HistoryBuildControl>
@@ -94,9 +142,11 @@
     <buildServer:ProjectRowControl ContextMenu="{DynamicResource BuildServerProjectContextMenu}">
       <buildServer:ProjectRowControl.ToolTip>
         <StackPanel DataContext="{Binding CurrentStatus}">
+          <buildServer:HistoryBuildTooltipControl />
           <buildServer:ProgressBarTooltipControl />
-          <buildServer:CulpritsControl Caption="{live:Text loc:Strings.ChangesByCaption}" CulpritsProp="{Binding Culprits}" />
+          <buildServer:CulpritsControl Caption="{live:Text loc:Strings.ContributorsCaption}" CulpritsProp="{Binding Culprits}" />
           <TextBlock Text="{Binding ErrorMessage}" Style="{DynamicResource ToolTipMessage}" />
+          <buildServer:FailureDetailsControl />
         </StackPanel>
       </buildServer:ProjectRowControl.ToolTip>
     </buildServer:ProjectRowControl>

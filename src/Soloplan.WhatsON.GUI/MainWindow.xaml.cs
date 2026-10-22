@@ -14,6 +14,7 @@ namespace Soloplan.WhatsON.GUI
   using System.Threading.Tasks;
   using System.Windows;
   using System.Windows.Controls;
+  using System.Windows.Input;
   using System.Windows.Media.Animation;
   using MaterialDesignThemes.Wpf;
   using Soloplan.WhatsON.Configuration;
@@ -25,6 +26,7 @@ namespace Soloplan.WhatsON.GUI
   using Soloplan.WhatsON.GUI.Configuration.Wizard;
   using Soloplan.WhatsON.Localization;
   using Soloplan.WhatsON.Model;
+  using TreeConnectorViewModel = Soloplan.WhatsON.GUI.Common.ConnectorTreeView.ConnectorViewModel;
 
   /// <summary>
   /// Interaction logic for MainWindow.xaml.
@@ -66,9 +68,9 @@ namespace Soloplan.WhatsON.GUI
       this.Topmost = this.config.AlwaysOnTop;
       this.DataContext = this;
       this.mainTreeView.ConfigurationChanged += this.MainTreeViewOnConfigurationChanged;
-      this.mainTreeView.EditItem += this.EditTreeItem;
+      this.mainTreeView.EditItem += this.EditTreeItemAsync;
       this.mainTreeView.DeleteItem += this.OnItemDeleted;
-      this.mainTreeView.ExportItem += this.ExportTreeItem;
+      this.mainTreeView.ExportItem += this.ExportTreeItemAsync;
     }
 
     /// <summary>
@@ -136,14 +138,23 @@ namespace Soloplan.WhatsON.GUI
       this.mainTreeView.ApplyTreeListSettings(this.settings.TreeListSettings);
     }
 
+    protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+    {
+      base.OnClosing(e);
+      if (!this.IsEnabled)
+      {
+        e.Cancel = true;
+      }
+    }
+
     /// <summary>Raises the <see cref="E:System.Windows.Window.Closed" /> event. Performs necessry cleanup.</summary>
     /// <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data.</param>
     protected override void OnClosed(EventArgs e)
     {
       this.mainTreeView.ConfigurationChanged -= this.MainTreeViewOnConfigurationChanged;
-      this.mainTreeView.EditItem -= this.EditTreeItem;
+      this.mainTreeView.EditItem -= this.EditTreeItemAsync;
       this.mainTreeView.DeleteItem -= this.OnItemDeleted;
-      this.mainTreeView.ExportItem -= this.ExportTreeItem;
+      this.mainTreeView.ExportItem -= this.ExportTreeItemAsync;
       base.OnClosed(e);
       this.mainTreeView.Dispose();
       this.mainTreeView = null;
@@ -160,34 +171,55 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-    private void NewConnectorClick(object? sender, EventArgs e)
+    private async void NewConnectorClickAsync(object? sender, EventArgs e)
     {
-      var wizardController = new WizardController(this, this.config, this.settings.WizardDialogSettings);
-      var result = false;
+      this.IsEnabled = false;
       try
       {
-        result = wizardController.Start();
-      }
-      finally
-      {
-        if (result)
+        var group = sender as ConnectorGroupViewModel;
+        var project = sender as TreeConnectorViewModel ?? group?.ConnectorViewModels.FirstOrDefault(item => item.Connector != null);
+        var targetGroup = group?.GroupName
+          ?? (project == null ? null : project.Connector?.Configuration.GetConfigurationByKey(Connector.Category).Value?.Trim() ?? string.Empty);
+        var wizardController = new WizardController(this, this.config, this.settings.WizardDialogSettings, targetGroup)
+        {
+          ProposedServerAddress = project?.Connector?.Address,
+        };
+        if (await wizardController.StartAsync())
         {
           this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.config));
         }
       }
+      finally
+      {
+        this.IsEnabled = true;
+      }
     }
+
+    private void AddJobToGroupExecuted(object sender, ExecutedRoutedEventArgs e) => this.NewConnectorClickAsync(e.Parameter, e);
+
+    private void AddJobToGroupCanExecute(object sender, CanExecuteRoutedEventArgs e) =>
+      e.CanExecute = !this.ConfigurationModifiedFromTree
+        && (e.Parameter is ConnectorGroupViewModel || e.Parameter is TreeConnectorViewModel { Connector: not null, IsOnlyOneSelected: true });
 
     /// <summary>
     /// Handles the import click.
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-    private void ImportClick(object? sender, EventArgs e)
+    private async void ImportClickAsync(object? sender, EventArgs e)
     {
-      var interchange = new ProjectsDataInterchange();
-      if (interchange.Import(this.config))
+      this.IsEnabled = false;
+      try
       {
-        this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.config));
+        var interchange = new ProjectsDataInterchange();
+        if (await interchange.ImportAsync(this.config))
+        {
+          this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.config));
+        }
+      }
+      finally
+      {
+        this.IsEnabled = true;
       }
     }
 
@@ -210,13 +242,20 @@ namespace Soloplan.WhatsON.GUI
       this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.config));
     }
 
-    private void SaveClick(object? sender, RoutedEventArgs e)
+    private async void SaveClickAsync(object? sender, RoutedEventArgs e)
     {
-      this.HideChangesPanel();
-
-      this.mainTreeView.WriteToConfiguration(this.config);
-      SerializationHelper.Instance.SaveConfiguration(this.config);
-      this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.config));
+      this.IsEnabled = false;
+      try
+      {
+        this.mainTreeView.WriteToConfiguration(this.config);
+        await SerializationHelper.Instance.SaveConfigurationAsync(this.config);
+        this.HideChangesPanel();
+        this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.config));
+      }
+      finally
+      {
+        this.IsEnabled = true;
+      }
     }
 
     private void HideChangesPanel()
@@ -244,12 +283,12 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">Event args.</param>
-    private async void NewGroupClick(object? sender, EventArgs e)
+    private async void NewGroupClickAsync(object? sender, EventArgs e)
     {
       var model = new GroupViewModel { AlreadyUsedNames = this.mainTreeView.GetGroupNames(), };
 
       var editGroupDialog = new EditGroupNameDialog(model);
-      var result = await this.ShowDialogOnPageHost(editGroupDialog);
+      var result = await this.ShowDialogOnPageHostAsync(editGroupDialog);
       if (result)
       {
         this.mainTreeView.CreateGroup(model.Name);
@@ -292,7 +331,7 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">Event args.</param>
-    private void ExportTreeItem(object? sender, ValueEventArgs<TreeItemViewModel> e)
+    private async void ExportTreeItemAsync(object? sender, ValueEventArgs<TreeItemViewModel> e)
     {
       if (e.Value is ConnectorGroupViewModel groupTreeViewModel)
       {
@@ -306,7 +345,7 @@ namespace Soloplan.WhatsON.GUI
         }
 
         var projectsDataInterchange = new ProjectsDataInterchange();
-        projectsDataInterchange.Export(connectors, groupTreeViewModel.GroupName);
+        await projectsDataInterchange.ExportAsync(connectors, groupTreeViewModel.GroupName);
       }
 
       if (e.Value is Common.ConnectorTreeView.ConnectorViewModel connectorViewModel)
@@ -314,7 +353,7 @@ namespace Soloplan.WhatsON.GUI
         var projectsDataInterchange = new ProjectsDataInterchange();
         if (connectorViewModel.Connector is Connector connector)
         {
-          projectsDataInterchange.Export(connector.Configuration, connectorViewModel.Name);
+          await projectsDataInterchange.ExportAsync(connector.Configuration, connectorViewModel.Name);
         }
       }
     }
@@ -324,7 +363,7 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">Event args.</param>
-    private async void EditTreeItem(object? sender, EditTreeItemViewModelEventArgs e)
+    private async void EditTreeItemAsync(object? sender, EditTreeItemViewModelEventArgs e)
     {
       if (e.Model is ConnectorGroupViewModel groupTreeViewModel)
       {
@@ -334,7 +373,7 @@ namespace Soloplan.WhatsON.GUI
           AlreadyUsedNames = this.mainTreeView.GetGroupNames().Where(grpName => grpName != groupTreeViewModel.GroupName).ToList(),
         };
         var editGroupDialog = new EditGroupNameDialog(model);
-        var result = await this.ShowDialogOnPageHost(editGroupDialog);
+        var result = await this.ShowDialogOnPageHostAsync(editGroupDialog);
         if (result && groupTreeViewModel.GroupName != model.Name)
         {
           groupTreeViewModel.GroupName = model.Name;
@@ -348,7 +387,7 @@ namespace Soloplan.WhatsON.GUI
           var model = new Configuration.ViewModel.ConnectorViewModel { Name = connectorViewModel.Name, };
 
           var editProjectNameDialog = new EditProjectName(model);
-          var result = await this.ShowDialogOnPageHost(editProjectNameDialog);
+          var result = await this.ShowDialogOnPageHostAsync(editProjectNameDialog);
           if (result && connectorViewModel.Name != model.Name)
           {
             var connector = this.config.ConnectorsConfiguration.FirstOrDefault(c => c.Identifier == connectorViewModel.Identifier);
@@ -394,7 +433,7 @@ namespace Soloplan.WhatsON.GUI
       }
 
       var dialog = new OkCancelDialog(message);
-      e.AddAsyncCancelCheckAction(async () => !await this.ShowDialogOnPageHost(dialog));
+      e.AddAsyncCancelCheckAction(async () => !await this.ShowDialogOnPageHostAsync(dialog));
     }
 
     /// <summary>
@@ -402,7 +441,7 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="dialog">Dialog to show.</param>
     /// <returns>True or false depending on what option user selected.</returns>
-    private async Task<bool> ShowDialogOnPageHost(UserControl dialog)
+    private async Task<bool> ShowDialogOnPageHostAsync(UserControl dialog)
     {
       var tmpResult = await DialogHost.Show(dialog, "MainWindowPageHost");
       if (tmpResult is bool result)

@@ -12,7 +12,9 @@ namespace Soloplan.WhatsON.Jenkins.Model
   public class JenkinsBuild
   {
     public const string RequestProperties =
-      "number,displayName,description,building,duration,estimatedDuration,result,timestamp,culprits[fullName,absoluteUrl],changeSets[items[author[fullName,absoluteUrl]]]";
+      "number,displayName,description,building,duration,estimatedDuration,result,timestamp,culprits[fullName,absoluteUrl],changeSets[items[author[fullName,absoluteUrl]]]," + FailureProperties;
+
+    public const string FailureProperties = "actions[failCount,skipCount,foundFailureCauses[name]{0,5}]";
 
     public int Number { get; set; }
 
@@ -33,5 +35,7 @@ namespace Soloplan.WhatsON.Jenkins.Model
     public IList<JenkinsUser>? Culprits { get; set; }
 
     public IList<ChangeSet>? ChangeSets { get; set; }
+
+    public IList<JenkinsBuildAction>? Actions { get; set; }
   }
 }

@@ -34,6 +34,8 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// </summary>
     private const int QueryTimeout = 10000;
 
+    private const string AssignToTargetGroup = "AssignToTargetGroup";
+
     /// <summary>
     /// Logger instance used by this class.
     /// </summary>
@@ -84,11 +86,13 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <param name="ownerWindow">The owner window.</param>
     /// <param name="config">The configuration.</param>
     /// <param name="wizardDialogSettings">The wizard dialog settings.</param>
-    public WizardController(Window? ownerWindow, ApplicationConfiguration config, WindowSettings? wizardDialogSettings)
+    /// <param name="targetGroupName">The existing group to use by default, or null for normal grouping.</param>
+    public WizardController(Window? ownerWindow, ApplicationConfiguration config, WindowSettings? wizardDialogSettings, string? targetGroupName = null)
     {
       this.ownerWindow = ownerWindow;
       this.config = config;
       this.wizardDialogSettings = wizardDialogSettings ?? new WindowSettings();
+      this.TargetGroupName = targetGroupName;
       this.GroupingSettings = this.InitializeGrouppingSettings();
       this.SelectedGroupingSetting = this.GroupingSettings[0];
     }
@@ -102,6 +106,10 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// Gets the projects tree.
     /// </summary>
     public IReadOnlyList<GrouppingSetting> GroupingSettings { get; }
+
+    public string? TargetGroupName { get; }
+
+    public bool IsAddingToTargetGroup => this.TargetGroupName != null && this.SelectedGroupingSetting.Id == AssignToTargetGroup;
 
     /// <summary>
     /// Gets or sets the selected grouping setting.
@@ -242,11 +250,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <returns>
     /// True if the wizard was finished correctly and not canceled in any way.
     /// </returns>
-    public bool Start(ConnectorViewModel connector)
+    public Task<bool> StartAsync(ConnectorViewModel connector)
     {
       this.editedConnectorViewModel = connector;
       this.IsPreviousStepEnabled = false;
-      return this.Start(false);
+      return this.StartAsync(false);
     }
 
     /// <summary>
@@ -257,7 +265,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <returns>
     /// True if the wizard was finished correctly and not canceled in any way.
     /// </returns>
-    public bool Start(bool applyConfig = true)
+    public async Task<bool> StartAsync(bool applyConfig = true)
     {
       this.wizardWindow = new WizardWindow(this);
       this.wizardWindow.Owner = this.ownerWindow;
@@ -270,23 +278,28 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       {
         this.ProposedServerAddress = this.editedConnectorViewModel.GetConfigurationByKey(Connector.ServerAddress)?.Value;
 
-        void OnActivated(object? sender, EventArgs e)
+        async void OnActivatedAsync(object? sender, EventArgs e)
         {
-          this.GoToProjectSelectionStep();
-          this.wizardWindow.Activated -= OnActivated;
+          this.wizardWindow.Activated -= OnActivatedAsync;
+          await this.GoToProjectSelectionStepAsync();
         }
 
-        this.wizardWindow.Activated += OnActivated;
+        this.wizardWindow.Activated += OnActivatedAsync;
       }
 
       this.wizardDialogSettings.Apply(this.wizardWindow);
+      if (this.TargetGroupName != null)
+      {
+        this.SelectedGroupingSetting = this.GroupingSettings[0];
+      }
+
       var wizardShowResult = this.wizardWindow.ShowDialog();
       this.wizardDialogSettings.Parse(this.wizardWindow);
       if (wizardShowResult == true)
       {
         if (applyConfig)
         {
-          this.ApplyToConfiguration();
+          await this.ApplyToConfigurationAsync();
         }
 
         return true;
@@ -327,11 +340,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// Goes to next page of the wizard.
     /// </summary>
-    public void GoToNextPage()
+    public async Task GoToNextPageAsync()
     {
       if (this.WizardFrame.Content is ConnectionWizardPage)
       {
-        this.GoToProjectSelectionStep();
+        await this.GoToProjectSelectionStepAsync();
+        return;
       }
 
       if (this.WizardFrame.Content is ProjectSelectionWizardPage)
@@ -363,10 +377,10 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       }
     }
 
-    internal static async Task<(ConnectorPlugin Plugin, IList<Project> Projects)> DiscoverProjects(
+    internal static async Task<(ConnectorPlugin Plugin, IList<Project> Projects)> DiscoverProjectsAsync(
       IEnumerable<ConnectorPlugin> plugins, string address, TimeSpan timeout)
     {
-      var pending = plugins.Select(plugin => (Plugin: plugin, Task: QueryProjects(plugin, address))).ToList();
+      var pending = plugins.Select(plugin => (Plugin: plugin, Task: QueryProjectsAsync(plugin, address))).ToList();
       var deadline = Task.Delay(timeout);
       while (pending.Count > 0)
       {
@@ -388,11 +402,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       throw new InvalidOperationException(Strings.InvalidServerOrPlugin);
     }
 
-    private static async Task<IList<Project>?> QueryProjects(ConnectorPlugin plugin, string address)
+    private static async Task<IList<Project>?> QueryProjectsAsync(ConnectorPlugin plugin, string address)
     {
       try
       {
-        return await plugin.GetProjects(address);
+        return await plugin.GetProjectsAsync(address);
       }
       catch (Exception exception)
       {
@@ -443,7 +457,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// Applies the results of the wizard to configuration.
     /// </summary>
     /// <exception cref="InvalidOperationException">At least one selected project is required.</exception>
-    private void ApplyToConfiguration()
+    private async Task ApplyToConfigurationAsync()
     {
       var selectedProjects = this.GetSelectedProjects();
       if (selectedProjects.Count < 1)
@@ -473,12 +487,16 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
         configurationViewModel.Connectors.Add(newConnector);
 
         (selectedProject.Plugin ?? throw new InvalidOperationException("The selected project has no plugin.")).Configure(selectedProject, newConnector, this.proposedServerAddress);
+        if (this.IsAddingToTargetGroup)
+        {
+          newConnector.GetConfigurationByKey(Connector.Category).Value = this.TargetGroupName;
+        }
       }
 
       if (configurationViewModel.ConfigurationIsModified)
       {
         configurationViewModel.Connectors.ApplyToConfiguration(this.config);
-        SerializationHelper.Instance.SaveConfiguration(this.config);
+        await SerializationHelper.Instance.SaveConfigurationAsync(this.config);
       }
     }
 
@@ -531,14 +549,14 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// Prepares the projects list.
     /// </summary>
     /// <returns>The task.</returns>
-    private async Task PrepareProjectsList()
+    private async Task PrepareProjectsListAsync()
     {
       IEnumerable<ConnectorPlugin> plugins = this.editedConnectorViewModel != null
         ? new[] { this.editedConnectorViewModel.SourceConnectorPlugin }.OfType<ConnectorPlugin>()
         : this.IsAutoDetectionEnabled ? PluginManager.Instance.ConnectorPlugins : new[] { this.SelectedConnectorType }.OfType<ConnectorPlugin>();
       var address = this.ProposedServerAddress;
       ArgumentException.ThrowIfNullOrWhiteSpace(address);
-      var discovered = await DiscoverProjects(plugins, address.TrimEnd('/') + "/", TimeSpan.FromMilliseconds(QueryTimeout));
+      var discovered = await DiscoverProjectsAsync(plugins, address.TrimEnd('/') + "/", TimeSpan.FromMilliseconds(QueryTimeout));
       this.projects = new ProjectViewModelList { MultiSelectionMode = this.MultiSelectionMode, PlugIn = discovered.Plugin };
       this.ProcessServerSubProjects(discovered.Projects, null);
 
@@ -574,7 +592,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// Goes to project selection step of the wizard.
     /// </summary>
-    private async void GoToProjectSelectionStep()
+    private async Task GoToProjectSelectionStepAsync()
     {
       var window = this.wizardWindow;
       if (window == null)
@@ -588,7 +606,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       var waitDailogTask = DialogHost.Show(waitControl, "WizardWaitDialogHostId");
       try
       {
-        await this.PrepareProjectsList();
+        await this.PrepareProjectsListAsync();
       }
       catch (Exception e)
       {
@@ -627,9 +645,20 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     private List<GrouppingSetting> InitializeGrouppingSettings()
     {
       var grouppingSettings = new List<GrouppingSetting>();
+      if (this.TargetGroupName != null)
+      {
+        grouppingSettings.Add(new GrouppingSetting(
+          () => string.IsNullOrEmpty(this.TargetGroupName) ? Strings.NoAutomaticGrouping : string.Format(Strings.AddJobsToGroupFormat, this.TargetGroupName),
+          AssignToTargetGroup));
+      }
+
       grouppingSettings.Add(new GrouppingSetting(() => Strings.AssignParentAsGroup, WizardWindow.AssignGroupsForAddedProjects));
       grouppingSettings.Add(new GrouppingSetting(() => Strings.AddHierarchyToProjectName, WizardWindow.AddProjectPathToProjectName));
-      grouppingSettings.Add(new GrouppingSetting(() => Strings.NoAutomaticGrouping, WizardWindow.DoNotAssignAnyGroups));
+      if (this.TargetGroupName != string.Empty)
+      {
+        grouppingSettings.Add(new GrouppingSetting(() => Strings.NoAutomaticGrouping, WizardWindow.DoNotAssignAnyGroups));
+      }
+
       return grouppingSettings;
     }
 

@@ -23,12 +23,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       this.projectsTreeView.DataContext = new ProjectBrowserViewModel(wizardController.Projects);
     }
 
-    private void ProjectsKeyDown(object? sender, System.Windows.Input.KeyEventArgs e)
+    private async void ProjectsKeyDownAsync(object? sender, System.Windows.Input.KeyEventArgs e)
     {
       if (e.Key == System.Windows.Input.Key.Enter && e.OriginalSource is ListBoxItem)
       {
-        this.wizardController.GoToNextPage();
         e.Handled = true;
+        await this.wizardController.GoToNextPageAsync();
       }
     }
 

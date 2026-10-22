@@ -104,44 +104,44 @@ namespace Soloplan.WhatsON.Tests
       try
       {
         CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(culture);
-        const string name = "Build {42}";
-        const string path = @"C:\builds\{project}.json";
-        const string error = "Invalid {response}";
+        const string Name = "Build {42}";
+        const string Path = @"C:\builds\{project}.json";
+        const string Error = "Invalid {response}";
         var identifier = Guid.Parse("4c8daa45-2587-4f0b-a7ae-6ca95f1ec862");
         var german = culture == "de-DE";
-        Assert.That(Localizer.NotificationSettings(name), Is.EqualTo(german ? $"Benachrichtigungen ({name})" : $"Notification settings ({name})"));
-        Assert.That(Localizer.ProjectNotification(name), Is.EqualTo(german ? $"Projektname: {name}." : $"Project name: {name}."));
+        Assert.That(Localizer.NotificationSettings(Name), Is.EqualTo(german ? $"Benachrichtigungen ({Name})" : $"Notification settings ({Name})"));
+        Assert.That(Localizer.ProjectNotification(Name), Is.EqualTo(german ? $"Projektname: {Name}." : $"Project name: {Name}."));
         Assert.That(
-          Localizer.DeleteGroup(name),
+          Localizer.DeleteGroup(Name),
           Is.EqualTo(
             german
-              ? $"Möchten Sie die Gruppe „{name}“ und alle zugehörigen Projekte wirklich löschen?"
-              : $"Are you sure you want to delete the group '{name}' and all its items?"));
+              ? $"Möchten Sie die Gruppe „{Name}“ und alle zugehörigen Projekte wirklich löschen?"
+              : $"Are you sure you want to delete the group '{Name}' and all its items?"));
         Assert.That(
-          Localizer.DeleteNamedProject(name),
-          Is.EqualTo(german ? $"Möchten Sie das Projekt „{name}“ wirklich löschen?" : $"Are you sure you want to delete the project '{name}'?"));
+          Localizer.DeleteNamedProject(Name),
+          Is.EqualTo(german ? $"Möchten Sie das Projekt „{Name}“ wirklich löschen?" : $"Are you sure you want to delete the project '{Name}'?"));
         Assert.That(
-          Localizer.ProjectError(error).Replace("\r\n", "\n"),
+          Localizer.ProjectError(Error).Replace("\r\n", "\n"),
           Is.EqualTo(
-            german ? $"Beim Laden der Projekte ist ein Fehler aufgetreten.\nDetails: {error}" : $"There was a project error,\ndetails: {error}"));
+            german ? $"Beim Laden der Projekte ist ein Fehler aufgetreten.\nDetails: {Error}" : $"There was a project error,\ndetails: {Error}"));
         Assert.That(
-          Localizer.ImportFailed(path, error),
-          Is.EqualTo(
-            german
-              ? $"Die Konfiguration konnte nicht aus der JSON-Datei importiert werden. Dateipfad: {path}; Fehler: {error}"
-              : $"Import of the configuration from JSON file was not successful; file path: {path}; exception: {error}"));
-        Assert.That(
-          Localizer.ProjectImportFailed(path, error),
+          Localizer.ImportFailed(Path, Error),
           Is.EqualTo(
             german
-              ? $"Die Projekte konnten nicht aus der JSON-Datei importiert werden. Dateipfad: {path}; Fehler: {error}"
-              : $"Import of the projects configuration from JSON file was not successful; file path: {path}; exception: {error}"));
+              ? $"Die Konfiguration konnte nicht aus der JSON-Datei importiert werden. Dateipfad: {Path}; Fehler: {Error}"
+              : $"Import of the configuration from JSON file was not successful; file path: {Path}; exception: {Error}"));
         Assert.That(
-          Localizer.MissingConnectorData(identifier, name, error, "Jenkins").Replace("\r\n", "\n"),
+          Localizer.ProjectImportFailed(Path, Error),
           Is.EqualTo(
             german
-              ? $"Kennung: {identifier}\nName: {name}\nBeschreibung: {error}\nErwarteter Verbindungstyp: Jenkins"
-              : $"Identifier: {identifier}\nName: {name}\nDescription: {error}\nExpected connector type: Jenkins"));
+              ? $"Die Projekte konnten nicht aus der JSON-Datei importiert werden. Dateipfad: {Path}; Fehler: {Error}"
+              : $"Import of the projects configuration from JSON file was not successful; file path: {Path}; exception: {Error}"));
+        Assert.That(
+          Localizer.MissingConnectorData(identifier, Name, Error, "Jenkins").Replace("\r\n", "\n"),
+          Is.EqualTo(
+            german
+              ? $"Kennung: {identifier}\nName: {Name}\nBeschreibung: {Error}\nErwarteter Verbindungstyp: Jenkins"
+              : $"Identifier: {identifier}\nName: {Name}\nDescription: {Error}\nExpected connector type: Jenkins"));
       }
       finally
       {
@@ -169,9 +169,9 @@ namespace Soloplan.WhatsON.Tests
     public void ChangingLanguageUpdatesFormattingAndBackgroundThreadsAndCanReturnToSystem()
     {
       var currentCulture = CultureInfo.CurrentCulture;
-      var currentUICulture = CultureInfo.CurrentUICulture;
+      var currentUiCulture = CultureInfo.CurrentUICulture;
       var defaultCulture = CultureInfo.DefaultThreadCurrentCulture;
-      var defaultUICulture = CultureInfo.DefaultThreadCurrentUICulture;
+      var defaultUiCulture = CultureInfo.DefaultThreadCurrentUICulture;
       try
       {
         Localizer.ApplyLanguage(ApplicationLanguage.System);
@@ -189,9 +189,9 @@ namespace Soloplan.WhatsON.Tests
       finally
       {
         CultureInfo.DefaultThreadCurrentCulture = defaultCulture;
-        CultureInfo.DefaultThreadCurrentUICulture = defaultUICulture;
+        CultureInfo.DefaultThreadCurrentUICulture = defaultUiCulture;
         CultureInfo.CurrentCulture = currentCulture;
-        CultureInfo.CurrentUICulture = currentUICulture;
+        CultureInfo.CurrentUICulture = currentUiCulture;
       }
     }
   }

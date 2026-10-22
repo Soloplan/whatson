@@ -51,10 +51,10 @@ namespace Soloplan.WhatsON.Tests
 
       this.scheduler.Start();
       this.scheduler.Start();
-      await Await(started.Task);
+      await AwaitAsync(started.Task);
       release.SetResult(new Status(ObservationState.Running));
 
-      Assert.That(await Await(published.Task), Is.SameAs(connector));
+      Assert.That(await AwaitAsync(published.Task), Is.SameAs(connector));
       Assert.That(queries, Is.EqualTo(1));
     }
 
@@ -83,10 +83,10 @@ namespace Soloplan.WhatsON.Tests
       this.scheduler.StatusQueried += (sender, value) => Interlocked.Increment(ref notifications);
       this.scheduler.Observe(connector);
       this.scheduler.Start();
-      var queryToken = await Await(started.Task);
+      var queryToken = await AwaitAsync(started.Task);
 
       this.scheduler.Stop(true);
-      await Await(finished.Task);
+      await AwaitAsync(finished.Task);
 
       Assert.That(queryToken.IsCancellationRequested, Is.True);
       Assert.That(this.scheduler.Running, Is.False);
@@ -111,11 +111,11 @@ namespace Soloplan.WhatsON.Tests
       };
       this.scheduler.Observe(connector);
       this.scheduler.Start();
-      var queryToken = await Await(started.Task);
+      var queryToken = await AwaitAsync(started.Task);
 
       this.scheduler.Stop(false);
       release.SetResult(new Status(ObservationState.Running));
-      await Await(finished.Task);
+      await AwaitAsync(finished.Task);
 
       Assert.That(queryToken.IsCancellationRequested, Is.False);
       Assert.That(this.scheduler.Running, Is.False);
@@ -136,7 +136,7 @@ namespace Soloplan.WhatsON.Tests
       };
       this.scheduler.Observe(connector);
       this.scheduler.Start();
-      await Await(started.Task);
+      await AwaitAsync(started.Task);
 
       Assert.That(() => this.scheduler.UnobserveAll(), Throws.TypeOf<InvalidOperationException>());
     }
@@ -161,7 +161,7 @@ namespace Soloplan.WhatsON.Tests
       };
       this.scheduler.Observe(oldConnector);
       this.scheduler.Start();
-      await Await(completed.Task);
+      await AwaitAsync(completed.Task);
       this.scheduler.UnobserveAll();
       completed = new TaskCompletionSource<Connector>(TaskCreationOptions.RunContinuationsAsynchronously);
       var replacement = new TestConnector();
@@ -169,7 +169,7 @@ namespace Soloplan.WhatsON.Tests
 
       this.scheduler.Start();
 
-      Assert.That(await Await(completed.Task), Is.SameAs(replacement));
+      Assert.That(await AwaitAsync(completed.Task), Is.SameAs(replacement));
       Assert.That(oldQueries, Is.EqualTo(1));
     }
 
@@ -199,7 +199,7 @@ namespace Soloplan.WhatsON.Tests
 
       this.scheduler.Start();
 
-      Assert.That(await Await(published.Task), Is.SameAs(connector));
+      Assert.That(await AwaitAsync(published.Task), Is.SameAs(connector));
       Assert.That(attempts, Is.EqualTo(2));
     }
 
@@ -223,12 +223,12 @@ namespace Soloplan.WhatsON.Tests
       this.scheduler.Observe(second, 3600);
 
       this.scheduler.Start();
-      await Await(completed.Task);
+      await AwaitAsync(completed.Task);
 
       Assert.That(observed.Keys, Is.EquivalentTo([first, second]));
     }
 
-    private static async Task<T> Await<T>(Task<T> task)
+    private static async Task<T> AwaitAsync<T>(Task<T> task)
     {
       Assert.That(
         await Task.WhenAny(task, Task.Delay(TimeSpan.FromSeconds(5))),

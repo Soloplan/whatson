@@ -11,6 +11,7 @@ namespace Soloplan.WhatsON.Composition
   using System.Collections.Generic;
   using System.Globalization;
   using System.Reflection;
+  using System.Threading;
   using System.Threading.Tasks;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.Localization;
@@ -56,12 +57,18 @@ namespace Soloplan.WhatsON.Composition
 
     public abstract Connector CreateNew(ConnectorConfiguration configuration, bool? checkRedirect = null);
 
+    public virtual Task<Connector> CreateNewAsync(ConnectorConfiguration configuration, bool? checkRedirect = null, CancellationToken cancellationToken = default)
+    {
+      cancellationToken.ThrowIfCancellationRequested();
+      return Task.FromResult(this.CreateNew(configuration, checkRedirect));
+    }
+
     /// <summary>
     ///   Gets the projects.
     /// </summary>
     /// <param name="address">The address.</param>
     /// <returns>The projects from a recognized server, or null when its discovery endpoint is missing or belongs to another build system.</returns>
-    public abstract Task<IList<Project>?> GetProjects(string address);
+    public abstract Task<IList<Project>?> GetProjectsAsync(string address);
 
     public virtual void OnStartup(string[] args)
     {

@@ -64,6 +64,13 @@
                   <TextBlock Text="{live:Text loc:Strings.Projects}" VerticalAlignment="Center" />
                 </StackPanel>
               </ListBoxItem>
+              <ListBoxItem Tag="{x:Static view:ConfigWindow.ServersListItemTag}"
+                           AutomationProperties.Name="{live:Text loc:Strings.Servers}">
+                <StackPanel Orientation="Horizontal">
+                  <materialDesign:PackIcon Kind="Key" Width="20" Height="20" Margin="0,0,12,0" />
+                  <TextBlock Text="{live:Text loc:Strings.Servers}" VerticalAlignment="Center" />
+                </StackPanel>
+              </ListBoxItem>
               <ListBoxItem Tag="{x:Static view:ConfigWindow.AboutListItemTag}"
                            AutomationProperties.Name="{live:Text loc:Strings.About}">
                 <StackPanel Orientation="Horizontal">
@@ -92,7 +99,7 @@
                   </Style>
                 </Button.Style>
               </Button>
-              <Button x:Name="SaveButton" Content="{live:Text loc:Strings.SaveChanges}" Click="SnackbarSaveClick"
+              <Button x:Name="SaveButton" Content="{live:Text loc:Strings.SaveChanges}" Click="SnackbarSaveClickAsync"
                       Style="{StaticResource SettingsPrimaryButton}" />
             </StackPanel>
             <TextBlock Text="{live:Text loc:Strings.UnsavedChanges}" VerticalAlignment="Center"

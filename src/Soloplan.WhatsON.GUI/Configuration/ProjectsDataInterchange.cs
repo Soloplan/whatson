@@ -11,6 +11,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
   using System.Collections.Generic;
   using System.IO;
   using System.Linq;
+  using System.Threading.Tasks;
   using System.Windows;
   using System.Windows.Forms;
   using NLog;
@@ -31,18 +32,18 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// Exports the specified connector configuration.
     /// </summary>
     /// <param name="connectorConfiguration">The connector configuration.</param>
-    public void Export(ConnectorConfiguration connectorConfiguration, string exportName)
+    public async Task ExportAsync(ConnectorConfiguration connectorConfiguration, string exportName)
     {
       var itemsList = new List<ConnectorConfiguration>();
       itemsList.Add(connectorConfiguration);
-      this.Export(itemsList, exportName);
+      await this.ExportAsync(itemsList, exportName);
     }
 
     /// <summary>
     /// Exports the specified connectors configuration.
     /// </summary>
     /// <param name="connectorsConfiguration">The connectors configuration.</param>
-    public void Export(IList<ConnectorConfiguration> connectorsConfiguration, string exportName)
+    public async Task ExportAsync(IList<ConnectorConfiguration> connectorsConfiguration, string exportName)
     {
       var filePath = this.GetExportFilePath(exportName);
       if (string.IsNullOrWhiteSpace(filePath))
@@ -50,7 +51,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
         return;
       }
 
-      SerializationHelper.Instance.Save(connectorsConfiguration, filePath, false);
+      await SerializationHelper.Instance.SaveAsync(connectorsConfiguration, filePath, false);
     }
 
     /// <summary>
@@ -58,7 +59,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
     /// </summary>
     /// <param name="appConfiguration">The application configuration.</param>
     /// <returns>True if import was successfull.</returns>
-    public bool Import(ApplicationConfiguration appConfiguration)
+    public async Task<bool> ImportAsync(ApplicationConfiguration appConfiguration)
     {
       var filePath = this.GetImportFilePath();
       if (filePath == null)
@@ -68,7 +69,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
 
       try
       {
-        this.Import(appConfiguration, filePath);
+        await this.ImportAsync(appConfiguration, filePath);
       }
       catch (Exception e)
       {
@@ -82,9 +83,9 @@ namespace Soloplan.WhatsON.GUI.Configuration
       return true;
     }
 
-    internal void Import(ApplicationConfiguration appConfiguration, string filePath)
+    internal async Task ImportAsync(ApplicationConfiguration appConfiguration, string filePath)
     {
-      var importedProjectsConfig = SerializationHelper.Load<IList<ConnectorConfiguration>>(filePath);
+      var importedProjectsConfig = await SerializationHelper.LoadAsync<IList<ConnectorConfiguration>>(filePath);
       if (importedProjectsConfig == null || importedProjectsConfig.Any(project => project == null))
       {
         throw new InvalidDataException();
@@ -98,7 +99,7 @@ namespace Soloplan.WhatsON.GUI.Configuration
           appConfiguration.ConnectorsConfiguration.Add(project);
         }
 
-        SerializationHelper.Instance.SaveConfiguration(appConfiguration);
+        await SerializationHelper.Instance.SaveConfigurationAsync(appConfiguration);
       }
       catch
       {

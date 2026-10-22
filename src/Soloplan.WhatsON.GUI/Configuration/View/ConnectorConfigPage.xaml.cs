@@ -10,8 +10,10 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
   using System.Linq;
   using System.Windows.Controls;
   using MaterialDesignThemes.Wpf;
+  using Soloplan.WhatsON.Composition;
+  using Soloplan.WhatsON.GUI.Common.ConnectorTreeView;
   using Soloplan.WhatsON.GUI.Common.Localization;
-  using Soloplan.WhatsON.GUI.Configuration.ViewModel;
+  using ConnectorViewModel = Soloplan.WhatsON.GUI.Configuration.ViewModel.ConnectorViewModel;
 
   /// <summary>
   /// Interaction logic for ConnectorConfigPage.xaml.
@@ -22,18 +24,20 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// Initializes a new instance of the <see cref="ConnectorConfigPage" /> class.
     /// </summary>
     /// <param name="connector">The connector.</param>
-    public ConnectorConfigPage(ConnectorViewModel? connector)
+    public ConnectorConfigPage(ConnectorViewModel? connector, bool serverSettings = false)
     {
       this.DataContext = connector;
       this.InitializeComponent();
-      this.CreateConfigurationControls(connector);
+      this.Heading.SetBinding(TextBlock.TextProperty, TextExtension.CreateBinding(() => serverSettings
+        ? Soloplan.WhatsON.Localization.Strings.ServerCredentials : Soloplan.WhatsON.Localization.Strings.ProjectSettings));
+      this.CreateConfigurationControls(connector, serverSettings);
     }
 
     /// <summary>
     /// Dynamically creates the configuration controls.
     /// </summary>
     /// <param name="connector">The connector view model.</param>
-    private void CreateConfigurationControls(ConnectorViewModel? connector)
+    private void CreateConfigurationControls(ConnectorViewModel? connector, bool serverSettings)
     {
       if (connector == null)
       {
@@ -41,7 +45,14 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
         return;
       }
 
-      var connectorConfigAttributes = connector.GetConnectorConfigAttributes().OrderBy(s => s.Priority).ToList();
+      var connectorConfigAttributes = connector.GetConnectorConfigAttributes()
+        .Where(attribute => attribute.IsServerSetting == serverSettings).OrderBy(s => s.Priority).ToList();
+      if (!serverSettings && connector.GetConnectorConfigAttributes().Any(attribute => attribute.IsServerSetting))
+      {
+        var hint = new TextBlock { TextWrapping = System.Windows.TextWrapping.Wrap, Margin = new System.Windows.Thickness(0, 0, 0, 16) };
+        hint.SetBinding(TextBlock.TextProperty, TextExtension.CreateBinding(() => Soloplan.WhatsON.Localization.Strings.ServerCredentialsHint));
+        this.StackPanel.Children.Add(hint);
+      }
 
       // move 0 priority connectors to the end of the list
       var zeroPriorityConnectors = connectorConfigAttributes.Where(s => s.Priority == 0).ToList();
@@ -78,6 +89,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
         }
 
         this.StackPanel.Children.Add(editor);
+        var action = PluginManager.Instance.GetPresentationPlugin(connector.SourceConnectorPlugin?.Name ?? string.Empty)
+          ?.CreateConfigurationAction(configAttribute.Key, connector);
+        if (action != null)
+        {
+          this.StackPanel.Children.Add(action);
+        }
       }
     }
   }

@@ -1,0 +1,76 @@
+{
+  "build": {
+    "number": 42,
+    "result": "UNSTABLE",
+    "building": false,
+    "actions": [
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "failCount": 4,
+        "totalCount": 3267
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {}
+    ]
+  },
+  "testReport": "<failures><case><className>Example.Tests.Suite1</className><name>Case1</name><status>FAILED</status></case><case><className>Example.Tests.Suite1</className><name>Case2</name><status>FAILED</status></case><case><className>Example.Tests.Suite1</className><name>Case3</name><status>FAILED</status></case><case><className>Example.Tests.Suite1</className><name>Case4</name><status>FAILED</status></case></failures>",
+  "pipeline": {
+    "id": "42",
+    "status": "UNSTABLE",
+    "stages": [
+      {
+        "id": "1",
+        "name": "Stage 1",
+        "status": "SUCCESS"
+      },
+      {
+        "id": "2",
+        "name": "Stage 2",
+        "status": "SUCCESS"
+      },
+      {
+        "id": "3",
+        "name": "Stage 3",
+        "status": "SUCCESS"
+      },
+      {
+        "id": "4",
+        "name": "Stage 4",
+        "status": "SUCCESS"
+      },
+      {
+        "id": "5",
+        "name": "Stage 5",
+        "status": "SUCCESS"
+      },
+      {
+        "id": "6",
+        "name": "Stage 6",
+        "status": "UNSTABLE"
+      },
+      {
+        "id": "7",
+        "name": "Stage 7",
+        "status": "SUCCESS"
+      }
+    ]
+  },
+  "nodes": {}
+}
