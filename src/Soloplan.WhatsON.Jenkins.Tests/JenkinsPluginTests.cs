@@ -8,12 +8,11 @@
 namespace Soloplan.WhatsON.Jenkins.Tests
 {
   using System.Collections.Generic;
-  using System.Net;
-  using System.Net.Sockets;
   using Newtonsoft.Json;
   using NUnit.Framework;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.Model;
+  using WireMock.Server;
 
   [TestFixture]
   public class JenkinsPluginTests
@@ -22,38 +21,30 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     [TestCase("False")]
     public void ImportedProjectsKeepTheirRedirectChoiceWithoutProbingTheServer(string redirect)
     {
-      var server = new TcpListener(IPAddress.Loopback, 0);
-      server.Start();
-      try
+      using var server = WireMockServer.Start();
+      var address = server.Urls[0] + "/";
+      var plugin = new JenkinsPlugin();
+      foreach (var name in new[] { "release/net", "release/installer", "release/image" })
       {
-        var address = $"http://127.0.0.1:{((IPEndPoint)server.LocalEndpoint).Port}/";
-        var plugin = new JenkinsPlugin();
-        foreach (var name in new[] { "release/net", "release/installer", "release/image" })
-        {
-          var configuration = new ConnectorConfiguration(
-            "Jenkins",
-            name,
-            [
-              new ConfigurationItem(Connector.ProjectName, $"product-releases/{name}"),
-              new ConfigurationItem(Connector.ServerAddress, address),
-              new ConfigurationItem(JenkinsConnector.RedirectPlugin, redirect),
-              new ConfigurationItem(Connector.Category, "Product release"),
-            ]);
-          var saved = JsonConvert.SerializeObject(configuration);
-          var imported = JsonConvert.DeserializeObject<ConnectorConfiguration>(saved) ?? throw new AssertionException("Deserialization returned null.");
+        var configuration = new ConnectorConfiguration(
+          "Jenkins",
+          name,
+          [
+            new ConfigurationItem(Connector.ProjectName, $"product-releases/{name}"),
+            new ConfigurationItem(Connector.ServerAddress, address),
+            new ConfigurationItem(JenkinsConnector.RedirectPlugin, redirect),
+            new ConfigurationItem(Connector.Category, "Product release"),
+          ]);
+        var saved = JsonConvert.SerializeObject(configuration);
+        var imported = JsonConvert.DeserializeObject<ConnectorConfiguration>(saved) ?? throw new AssertionException("Deserialization returned null.");
 
-          var connector = plugin.CreateNew(imported, true);
+        var connector = plugin.CreateNew(imported, true);
 
-          Assert.That(connector, Is.InstanceOf<JenkinsConnector>());
-          Assert.That(connector.Configuration, Is.SameAs(imported));
-          Assert.That(connector.Project, Is.EqualTo($"product-releases/{name}"));
-          Assert.That(JsonConvert.SerializeObject(imported), Is.EqualTo(saved), "Import must preserve the saved settings.");
-          Assert.That(server.Pending(), Is.False, "A saved redirect choice must not trigger network detection.");
-        }
-      }
-      finally
-      {
-        server.Stop();
+        Assert.That(connector, Is.InstanceOf<JenkinsConnector>());
+        Assert.That(connector.Configuration, Is.SameAs(imported));
+        Assert.That(connector.Project, Is.EqualTo($"product-releases/{name}"));
+        Assert.That(JsonConvert.SerializeObject(imported), Is.EqualTo(saved), "Import must preserve the saved settings.");
+        Assert.That(server.LogEntries, Is.Empty, "A saved redirect choice must not trigger network detection.");
       }
     }
   }

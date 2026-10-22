@@ -3,6 +3,7 @@
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="WireMock.Net.Minimal" />
     <ProjectReference Include="..\Soloplan.WhatsON\Soloplan.WhatsON.csproj" />
   </ItemGroup>
 </Project>

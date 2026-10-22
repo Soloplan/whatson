@@ -86,6 +86,8 @@ dotnet build src/Soloplan.WhatsON/Soloplan.WhatsON.csproj -c Debug
 
 Build affected projects and run relevant tests for code changes. Add a small
 regression test for changed behavior, reusing the existing NUnit/fake patterns.
+Use `WireMock.Net.Minimal` for HTTP test servers; do not use TCP listeners or
+hand-written HTTP responders in unit tests.
 For WPF changes, also check the affected window, bindings, and interaction when
 a desktop session is available. Report missing prerequisites and checks that
 could not run; do not change frameworks or packages just to bypass them.

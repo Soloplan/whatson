@@ -9,21 +9,21 @@ namespace Soloplan.WhatsON.Tests
 {
   using System;
   using System.Collections.Generic;
-  using System.IO;
+  using System.Globalization;
+  using System.Linq;
   using System.Net;
-  using System.Net.Sockets;
-  using System.Text;
   using System.Threading;
   using System.Threading.Tasks;
   using NUnit.Framework;
+  using WireMock.RequestBuilders;
+  using WireMock.ResponseBuilders;
+  using WireMock.Server;
 
   [TestFixture]
   [NonParallelizable]
   public class JsonApiTests
   {
-    private TcpListener? listener;
-
-    private Task? responseTask;
+    private WireMockServer? server;
 
     private TaskCompletionSource<string> receivedRequest = new TaskCompletionSource<string>();
 
@@ -31,30 +31,21 @@ namespace Soloplan.WhatsON.Tests
 
     private IWebProxy? originalProxy;
 
-    private bool disposing;
-
     [SetUp]
     public void SetUp()
     {
       this.originalProxy = WebRequest.DefaultWebProxy;
       this.receivedRequest = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
       this.sendResponse = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-      this.disposing = false;
     }
 
     [TearDown]
-    public async Task TearDown()
+    public void TearDown()
     {
       try
       {
-        this.disposing = true;
         this.sendResponse.TrySetResult(true);
-        this.listener?.Stop();
-        if (this.responseTask != null)
-        {
-          Assert.That(await Task.WhenAny(this.responseTask, Task.Delay(5000)), Is.SameAs(this.responseTask), "Local HTTP responder did not stop.");
-          await this.responseTask;
-        }
+        this.server?.Dispose();
       }
       finally
       {
@@ -147,44 +138,22 @@ namespace Soloplan.WhatsON.Tests
 
     private string StartServer(string body, string contentType = "application/json", string status = "200 OK", bool holdResponse = false)
     {
-      this.listener = new TcpListener(IPAddress.Loopback, 0);
-      this.listener.Start();
+      this.server = WireMockServer.Start();
       if (!holdResponse)
       {
         this.sendResponse.SetResult(true);
       }
 
-      this.responseTask = Task.Run(async () =>
+      this.server.Given(Request.Create().WithPath("/api/json").UsingGet()).RespondWith(Response.Create().WithCallback(async request =>
       {
-        try
-        {
-          using (var client = await this.listener.AcceptTcpClientAsync())
-          using (var stream = client.GetStream())
-          using (var reader = new StreamReader(stream, Encoding.ASCII, false, 1024, true))
-          {
-            var headers = new StringBuilder();
-            string? line;
-            while (!string.IsNullOrEmpty(line = await reader.ReadLineAsync()))
-            {
-              headers.AppendLine(line);
-            }
+        this.receivedRequest.TrySetResult(string.Join(Environment.NewLine,
+          request.Headers?.Select(header => $"{header.Key}: {string.Join(", ", header.Value)}") ?? Array.Empty<string>()));
+        await this.sendResponse.Task.ConfigureAwait(false);
+        return Response.Create().WithStatusCode(int.Parse(status.AsSpan(0, 3), CultureInfo.InvariantCulture))
+          .WithHeader("Content-Type", contentType).WithBody(body).ResponseMessage;
+      }));
 
-            this.receivedRequest.TrySetResult(headers.ToString());
-            await this.sendResponse.Task;
-            var bytes = Encoding.UTF8.GetBytes(body);
-            var headerBytes = Encoding.ASCII.GetBytes(
-              $"HTTP/1.1 {status}\r\nContent-Type: {contentType}\r\nContent-Length: {bytes.Length}\r\nConnection: close\r\n\r\n");
-            await stream.WriteAsync(headerBytes, 0, headerBytes.Length);
-            await stream.WriteAsync(bytes, 0, bytes.Length);
-          }
-        }
-        catch (Exception ex) when (this.disposing && (ex is IOException || ex is SocketException || ex is ObjectDisposedException))
-        {
-          // Stopping the listener or an aborted client can close the responder during cleanup.
-        }
-      });
-
-      return $"http://127.0.0.1:{((IPEndPoint)this.listener.LocalEndpoint).Port}/api/json";
+      return this.server.Urls[0] + "/api/json";
     }
   }
 }

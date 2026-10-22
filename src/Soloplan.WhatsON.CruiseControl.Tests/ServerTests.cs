@@ -10,15 +10,15 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
   using System;
   using System.IO;
   using System.Linq;
-  using System.Net;
-  using System.Net.Sockets;
-  using System.Text;
   using System.Threading;
   using System.Threading.Tasks;
   using NUnit.Framework;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.CruiseControl.Model;
   using Soloplan.WhatsON.Model;
+  using WireMock.RequestBuilders;
+  using WireMock.ResponseBuilders;
+  using WireMock.Server;
 
   [TestFixture]
   [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
@@ -175,35 +175,43 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
     [TestCase(false)]
     public async Task ConnectorHistoryYieldsWhileWaitingAndHonorsCancellation(bool cancel)
     {
-      using var listener = new TcpListener(IPAddress.Loopback, 0);
-      listener.Start();
-      var address = $"http://127.0.0.1:{((IPEndPoint)listener.LocalEndpoint).Port}/";
+      using var server = WireMockServer.Start();
+      var received = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+      var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+      var body = "<table class='RecentBuildsPanel'><tr><td><a href='/build/2.xml' class='passed'>10/17/2020 12:02:00 PM (2)</a></td></tr></table>";
+      server.Given(Request.Create().WithPath("/project/Release/ViewAllBuilds.aspx").UsingGet())
+        .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "text/html; charset=utf-8").WithBody(async _ =>
+        {
+          received.TrySetResult();
+          await release.Task.ConfigureAwait(false);
+          return body;
+        }));
+      var address = server.Urls[0] + "/";
       var configuration = new ConnectorConfiguration(
         "CruiseControl", "Release", Connector.ServerAddress, address, Connector.DirectAddress, address, Connector.ProjectName, "Release");
       var connector = new ReachabilityConnector(configuration, true, true);
       using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-      var history = connector.LoadHistory(cancellation.Token);
-      Assert.That(history.IsCompleted, Is.False, "History loading must return control while the server response is pending.");
-      using var connection = await listener.AcceptTcpClientAsync(cancellation.Token);
-      using var stream = connection.GetStream();
-      using var reader = new StreamReader(stream, Encoding.ASCII, false, 1024, true);
-      Assert.That(await reader.ReadLineAsync(cancellation.Token), Does.StartWith("GET /project/Release/ViewAllBuilds.aspx "));
-      while (!string.IsNullOrEmpty(await reader.ReadLineAsync(cancellation.Token)))
+      try
       {
-      }
+        var history = connector.LoadHistory(cancellation.Token);
+        Assert.That(history.IsCompleted, Is.False, "History loading must return control while the server response is pending.");
+        await received.Task.WaitAsync(cancellation.Token);
 
-      if (cancel)
-      {
-        cancellation.Cancel();
-        Assert.CatchAsync<OperationCanceledException>(async () => await history.WaitAsync(TimeSpan.FromSeconds(3)));
+        if (cancel)
+        {
+          cancellation.Cancel();
+          Assert.CatchAsync<OperationCanceledException>(async () => await history.WaitAsync(TimeSpan.FromSeconds(3)));
+        }
+        else
+        {
+          release.SetResult();
+          var builds = await history.WaitAsync(TimeSpan.FromSeconds(3));
+          Assert.That(builds.Select(build => build?.BuildNumber), Is.EqualTo(new[] { 2 }));
+        }
       }
-      else
+      finally
       {
-        var body = "<table class='RecentBuildsPanel'><tr><td><a href='/build/2.xml' class='passed'>10/17/2020 12:02:00 PM (2)</a></td></tr></table>";
-        var response = Encoding.UTF8.GetBytes($"HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nContent-Length: {Encoding.UTF8.GetByteCount(body)}\r\nConnection: close\r\n\r\n{body}");
-        await stream.WriteAsync(response, cancellation.Token);
-        var builds = await history.WaitAsync(TimeSpan.FromSeconds(3));
-        Assert.That(builds.Select(build => build?.BuildNumber), Is.EqualTo(new[] { 2 }));
+        release.TrySetResult();
       }
     }
 

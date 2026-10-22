@@ -15,7 +15,6 @@ namespace Soloplan.WhatsON.GUI.Tests
   using System.Linq;
   using System.Net;
   using System.Net.Http;
-  using System.Net.Sockets;
   using System.Reflection;
   using System.Runtime.ExceptionServices;
   using System.Text;
@@ -24,6 +23,7 @@ namespace Soloplan.WhatsON.GUI.Tests
   using System.Windows;
   using System.Windows.Controls;
   using System.Windows.Threading;
+  using Microsoft.AspNetCore.Builder;
   using Newtonsoft.Json;
   using NUnit.Framework;
   using Soloplan.WhatsON.Composition;
@@ -34,11 +34,39 @@ namespace Soloplan.WhatsON.GUI.Tests
   using Soloplan.WhatsON.Jenkins;
   using Soloplan.WhatsON.Jenkins.Model;
   using Soloplan.WhatsON.Model;
+  using WireMock.RequestBuilders;
+  using WireMock.ResponseBuilders;
+  using WireMock.Server;
+  using WireMock.Settings;
+  using WireMock.Types;
 
   [TestFixture]
   [NonParallelizable]
   public class ProjectDiscoveryTests
   {
+    [TestCase(false, false)]
+    [TestCase(true, false)]
+    [TestCase(true, true)]
+    public async Task TestServerPreservesChunkedAndCompressedResponses(bool chunked, bool gzip)
+    {
+      const string body = "Synthetic response with Unicode: Grüße";
+      await using var server = new DiscoveryServer
+      {
+        Chunked = chunked,
+        Gzip = gzip,
+        Respond = _ => ("200 OK", "text/plain; charset=utf-8", body),
+      };
+      using var client = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip });
+      using var response = await client.GetAsync(server.Address, HttpCompletionOption.ResponseHeadersRead);
+      Assert.That(response.Headers.TransferEncodingChunked == true, Is.EqualTo(chunked));
+      if (chunked)
+      {
+        Assert.That(response.Content.Headers.ContentLength, Is.Null);
+      }
+
+      Assert.That(await response.Content.ReadAsStringAsync(), Is.EqualTo(body));
+    }
+
     [TestCase(true, false)]
     [TestCase(false, false)]
     [TestCase(true, true)]
@@ -450,15 +478,67 @@ namespace Soloplan.WhatsON.GUI.Tests
 
     internal sealed class DiscoveryServer : IAsyncDisposable
     {
-      private readonly TcpListener listener = new TcpListener(IPAddress.Loopback, 0);
+      private readonly WireMockServer server;
       private readonly CancellationTokenSource stopping = new CancellationTokenSource();
-      private readonly Task requests;
 
       public DiscoveryServer()
       {
-        this.listener.Start();
-        this.Address = $"http://127.0.0.1:{((IPEndPoint)this.listener.LocalEndpoint).Port}/";
-        this.requests = this.Serve();
+        this.server = WireMockServer.Start(new WireMockServerSettings
+        {
+          QueryParameterMultipleValueSupport = QueryParameterMultipleValueSupport.None,
+          PreWireMockMiddlewareInit = app => ((IApplicationBuilder)app).Use(async (context, next) =>
+          {
+            if (this.Chunked)
+            {
+              await next().ConfigureAwait(false);
+              return;
+            }
+
+            // WireMock streams by default; buffer this case to exercise Content-Length handling.
+            var original = context.Response.Body;
+            await using var buffered = new MemoryStream();
+            context.Response.Body = buffered;
+            try
+            {
+              await next().ConfigureAwait(false);
+              context.Response.ContentLength = buffered.Length;
+              buffered.Position = 0;
+              await buffered.CopyToAsync(original, context.RequestAborted).ConfigureAwait(false);
+            }
+            finally
+            {
+              context.Response.Body = original;
+            }
+          }),
+        });
+        this.server.Given(Request.Create().WithPath("/*").UsingGet()).RespondWith(Response.Create().WithCallback(async request =>
+        {
+          var path = new Uri(request.Url).PathAndQuery;
+          this.Requests.Add(path);
+          var reply = this.Respond(path);
+          await this.ResponseGate.WaitAsync(this.stopping.Token).ConfigureAwait(false);
+          var body = Encoding.UTF8.GetBytes(reply.Body);
+          if (this.Gzip)
+          {
+            using var compressed = new MemoryStream();
+            using (var gzip = new GZipStream(compressed, CompressionLevel.Fastest, true))
+            {
+              gzip.Write(body);
+            }
+
+            body = compressed.ToArray();
+          }
+
+          var response = Response.Create().WithStatusCode(int.Parse(reply.Status.AsSpan(0, 3), System.Globalization.CultureInfo.InvariantCulture))
+            .WithHeader("Content-Type", reply.ContentType).WithBody(body);
+          if (this.Gzip)
+          {
+            response.WithHeader("Content-Encoding", "gzip");
+          }
+
+          return response.ResponseMessage;
+        }));
+        this.Address = this.server.Urls[0] + "/";
       }
 
       public string Address { get; }
@@ -473,78 +553,12 @@ namespace Soloplan.WhatsON.GUI.Tests
 
       public bool Gzip { get; set; }
 
-      public async ValueTask DisposeAsync()
+      public ValueTask DisposeAsync()
       {
         this.stopping.Cancel();
-        this.listener.Stop();
-        await this.requests.ConfigureAwait(false);
+        this.server.Dispose();
         this.stopping.Dispose();
-      }
-
-      private async Task Serve()
-      {
-        try
-        {
-          while (!this.stopping.IsCancellationRequested)
-          {
-            using var client = await this.listener.AcceptTcpClientAsync(this.stopping.Token).ConfigureAwait(false);
-            using var stream = client.GetStream();
-            using var reader = new StreamReader(stream, Encoding.ASCII, false, 1024, true);
-            var request = await reader.ReadLineAsync(this.stopping.Token).ConfigureAwait(false);
-            while (!string.IsNullOrEmpty(await reader.ReadLineAsync(this.stopping.Token).ConfigureAwait(false)))
-            {
-            }
-
-            if (string.IsNullOrEmpty(request))
-            {
-              continue;
-            }
-
-            var path = request.Split(' ')[1];
-            this.Requests.Add(path);
-            var response = this.Respond(path);
-            await this.ResponseGate.WaitAsync(this.stopping.Token).ConfigureAwait(false);
-            var body = Encoding.UTF8.GetBytes(response.Body);
-            if (this.Gzip)
-            {
-              using var compressed = new MemoryStream();
-              using (var gzip = new GZipStream(compressed, CompressionLevel.Fastest, true))
-              {
-                gzip.Write(body);
-              }
-
-              body = compressed.ToArray();
-            }
-
-            var length = this.Chunked ? "Transfer-Encoding: chunked" : $"Content-Length: {body.Length}";
-            var encoding = this.Gzip ? "Content-Encoding: gzip\r\n" : string.Empty;
-            var headers = Encoding.ASCII.GetBytes($"HTTP/1.1 {response.Status}\r\nContent-Type: {response.ContentType}\r\n{length}\r\n{encoding}Connection: close\r\n\r\n");
-            try
-            {
-              await stream.WriteAsync(headers, this.stopping.Token).ConfigureAwait(false);
-              if (this.Chunked)
-              {
-                await stream.WriteAsync(Encoding.ASCII.GetBytes(body.Length.ToString("X", System.Globalization.CultureInfo.InvariantCulture) + "\r\n"), this.stopping.Token).ConfigureAwait(false);
-              }
-
-              await stream.WriteAsync(body, this.stopping.Token).ConfigureAwait(false);
-              if (this.Chunked)
-              {
-                await stream.WriteAsync(Encoding.ASCII.GetBytes("\r\n0\r\n\r\n"), this.stopping.Token).ConfigureAwait(false);
-              }
-            }
-            catch (IOException)
-            {
-              // Size-limited clients may close the connection before the entire test response is written.
-            }
-          }
-        }
-        catch (OperationCanceledException) when (this.stopping.IsCancellationRequested)
-        {
-        }
-        catch (SocketException) when (this.stopping.IsCancellationRequested)
-        {
-        }
+        return ValueTask.CompletedTask;
       }
     }
 
