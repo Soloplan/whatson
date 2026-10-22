@@ -75,6 +75,50 @@ namespace Soloplan.WhatsON.GUI.Tests
     }
 
     [Test]
+    public async Task InitialBatchesResumePromptlyAndReturnToNormalPolling()
+    {
+      await using var server = new ApiServer();
+      var clock = new Clock();
+      server.Respond = path => Reply(path, Enumerable.Range(0, 25).Select(index => Job($"Project{index}", 1)));
+      var connectors = Enumerable.Range(0, 9).SelectMany(folder => Enumerable.Range(0, 25)
+        .Select(index => CreateConnector(server.Address, $"Folder{folder}/Project{index}", clock))).ToArray();
+      var scheduler = new ObservationScheduler();
+      var completed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+      var updates = 0;
+      var firstWaveRequests = 0;
+      scheduler.StatusQueried += (sender, connector) =>
+      {
+        if (++updates == 200)
+        {
+          firstWaveRequests = server.Requests.Count;
+        }
+        else if (updates == connectors.Length)
+        {
+          clock.Advance(TimeSpan.FromMinutes(5));
+          completed.TrySetResult();
+        }
+      };
+      foreach (var connector in connectors)
+      {
+        scheduler.Observe(connector);
+      }
+
+      try
+      {
+        scheduler.Start();
+        await completed.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        Assert.That(firstWaveRequests, Is.EqualTo(JenkinsApi.MaximumRequestsPerPoll));
+        Assert.That(connectors.All(connector => connector.CurrentStatus?.BuildNumber == 1), Is.True);
+        await Task.Delay(TimeSpan.FromMilliseconds(1500));
+        Assert.That(server.Requests, Has.Count.EqualTo(9), "Finishing the first load must restore the normal polling pause.");
+      }
+      finally
+      {
+        scheduler.Stop(true);
+      }
+    }
+
+    [Test]
     public async Task OnlySelectedNamesAreReturnedAndQuotedUnicodeNamesCannotChangeTheFilter()
     {
       await using var server = new ApiServer();

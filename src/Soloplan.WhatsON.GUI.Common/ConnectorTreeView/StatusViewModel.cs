@@ -106,6 +106,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     public virtual DateTime Time { get; protected set; }
 
+    public bool IsLoading { get; private set; } = true;
+
     public bool Failure { get; set; }
 
     public bool Unknown { get; set; }
@@ -121,6 +123,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     public virtual void Update(Status? newStatus)
     {
       log.Trace("Updating status model {model}", new { this.Name, this.Details });
+      this.IsLoading = newStatus == null;
       this.FailureDetails = newStatus?.FailureDetails;
       this.FailedTestCount = newStatus?.FailedTestCount ?? 0;
       if (newStatus == null)

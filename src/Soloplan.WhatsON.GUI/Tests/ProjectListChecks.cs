@@ -131,6 +131,21 @@ namespace Soloplan.WhatsON.GUI.Tests
                   Assert.That(((TextBlock)badge.Child).Text, Is.EqualTo(Strings.JobDisabled));
                   Assert.That(badge.ToolTip, Is.EqualTo(Strings.JobDisabledDescription));
                   Assert.That(row.IsEnabled, Is.True, "Disabled jobs retain their project and history actions.");
+                  var loading = (Border)row.FindName("LoadingBadge");
+                  Assert.That(loading.Visibility, Is.EqualTo(Visibility.Collapsed));
+                  if (width == 800 && index == 2)
+                  {
+                    model.CurrentStatus.Update(null);
+                    window.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+                    Assert.That(loading.Visibility, Is.EqualTo(Visibility.Visible));
+                    Assert.That(((TextBlock)loading.Child).Text, Is.EqualTo(Strings.Loading));
+                    Assert.That(loading.Background, Is.SameAs(app.Resources["SettingsBackground"]));
+                    Assert.That(((TextBlock)loading.Child).Foreground, Is.SameAs(app.Resources["SettingsMuted"]));
+                    model.CurrentStatus.Update(connectors[(groupIndex * 3) + index].CurrentStatus);
+                    window.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+                    Assert.That(loading.Visibility, Is.EqualTo(Visibility.Collapsed));
+                  }
+
                   if (disabled)
                   {
                     Assert.That(((TextBlock)row.FindName("ProjectName")).Foreground, Is.SameAs(app.Resources["SettingsMuted"]));

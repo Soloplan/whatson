@@ -94,6 +94,11 @@
       <local:BuildNumberControl x:Name="BuildNumber" BuildNumber="{Binding DataContext.CurrentStatus.BuildNumber, RelativeSource={RelativeSource AncestorType=local:ProjectRowControl}}"
                                 Foreground="{DynamicResource SettingsMuted}" />
     </Border>
+    <Border Grid.Column="2" x:Name="LoadingBadge" Background="{DynamicResource SettingsBackground}"
+            CornerRadius="5" Padding="6,3" Margin="0,0,12,0" VerticalAlignment="Center"
+            Visibility="{Binding CurrentStatus.IsLoading, Converter={StaticResource BoolToVisibility}}">
+      <TextBlock Text="{live:Text loc:Strings.Loading}" Style="{StaticResource Metadata}" />
+    </Border>
     <Border Grid.Column="2" x:Name="DisabledBadge" Background="{DynamicResource SettingsBackground}"
             BorderBrush="{DynamicResource SettingsBorder}" BorderThickness="1" CornerRadius="5" Padding="6,2"
             Margin="0,0,12,0" VerticalAlignment="Center"

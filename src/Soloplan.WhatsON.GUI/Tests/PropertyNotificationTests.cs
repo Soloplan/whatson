@@ -44,6 +44,29 @@ namespace Soloplan.WhatsON.GUI.Tests
     }
 
     [Test]
+    public void FirstStatusReplacesLoadingAndNotifiesBothPresentationPlugins()
+    {
+      foreach (var model in new BuildStatusViewModel[]
+      {
+        new JenkinsStatusViewModel(new ConnectorViewModel()),
+        new CruiseControlStatusViewModel(new ConnectorViewModel()),
+      })
+      {
+        var changes = Observe(model);
+        Assert.That(model.IsLoading, Is.True);
+        model.Update(null);
+        Assert.That(model.IsLoading, Is.True);
+        Assert.That(changes, Does.Not.Contain(nameof(model.IsLoading)));
+
+        var status = new Status { State = ObservationState.Unknown };
+        model.Update(status);
+        model.Update(status);
+        Assert.That(model.IsLoading, Is.False, "An unknown or buildless response is still a completed first load.");
+        Assert.That(changes.Count(name => name == nameof(model.IsLoading)), Is.EqualTo(1));
+      }
+    }
+
+    [Test]
     public void BuildNumberAndDisplayNameRefreshTheCalculatedLabel()
     {
       var model = new BuildStatusProbe();

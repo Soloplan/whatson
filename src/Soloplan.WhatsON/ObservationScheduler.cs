@@ -140,12 +140,14 @@ namespace Soloplan.WhatsON
     {
       var connector = connectors[0];
       var batchConnectors = connectors.Select(item => item.Connector).ToArray();
+      var interval = connector.Interval;
       while (connector.Running)
       {
         try
         {
-          if (connector.LastPoll == default || DateTime.Now - connector.LastPoll > connector.Interval)
+          if (connector.LastPoll == default || DateTime.Now - connector.LastPoll > interval)
           {
+            interval = connector.Interval;
             log.Log(LogLevel.Trace, "Observation of {@connector} started.", connector);
 
             IReadOnlyCollection<Connector> queried;
@@ -170,6 +172,13 @@ namespace Soloplan.WhatsON
               }
             }
 
+            // Drain deferred first loads promptly, but keep failures on the normal retry schedule.
+            if (connector.Connector is IBatchedConnector && queried.Count > 0
+                && batchConnectors.Any(item => item.CurrentStatus == null) && interval > TimeSpan.FromSeconds(1))
+            {
+              interval = TimeSpan.FromSeconds(1);
+            }
+
             foreach (var item in queried)
             {
               if (connector.Running)
@@ -181,7 +190,7 @@ namespace Soloplan.WhatsON
             log.Log(LogLevel.Trace, "Observation of {@connector} ended.", connector);
           }
 
-          var remainingOfInterval = connector.Interval - (DateTime.Now - connector.LastPoll);
+          var remainingOfInterval = interval - (DateTime.Now - connector.LastPoll);
           if (remainingOfInterval.TotalMilliseconds > 0 && connector.Running)
           {
             int millisecondsToWait = remainingOfInterval.TotalMilliseconds < int.MaxValue ? (int)remainingOfInterval.TotalMilliseconds : int.MaxValue;
