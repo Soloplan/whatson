@@ -49,6 +49,8 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private ObservationScheduler? scheduler;
 
+    private Dictionary<Guid, ConnectorGroupViewModel>? connectorGroupsById;
+
     /// <summary>
     /// Previous value of relative instert position.
     /// </summary>
@@ -609,12 +611,12 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         }
 
         // A request can finish after its project or group has been removed from the view.
-        foreach (var connectorGroupViewModel in this.ConnectorGroups)
+        this.connectorGroupsById ??= this.ConnectorGroups
+          .SelectMany(group => group.ConnectorViewModels.Select(connector => (connector.Identifier, Group: group)))
+          .ToDictionary(item => item.Identifier, item => item.Group);
+        if (this.connectorGroupsById.TryGetValue(e.Configuration.Identifier, out var group))
         {
-          if (connectorGroupViewModel.Update(e))
-          {
-            return;
-          }
+          group.Update(e);
         }
       });
     }
@@ -622,13 +624,29 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private ObservableCollection<ConnectorGroupViewModel> CreateConnectorGroupViewModelCollection()
     {
       var groups = new ObservableCollection<ConnectorGroupViewModel>();
+      var observedGroups = new HashSet<ConnectorGroupViewModel>();
       groups.CollectionChanged += (sender, args) =>
       {
+        this.connectorGroupsById = null;
+        foreach (var removed in observedGroups.Except(groups).ToList())
+        {
+          removed.ConnectorViewModels.CollectionChanged -= this.InvalidateConnectorLookup;
+          observedGroups.Remove(removed);
+        }
+
+        foreach (var added in groups.Except(observedGroups))
+        {
+          added.ConnectorViewModels.CollectionChanged += this.InvalidateConnectorLookup;
+          observedGroups.Add(added);
+        }
+
         this.FirstGroup = groups.FirstOrDefault();
         this.OneGroup = groups.Count == 1;
       };
       return groups;
     }
+
+    private void InvalidateConnectorLookup(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e) => this.connectorGroupsById = null;
 
     private ConnectorGroupViewModel CreateNewGroupModel(string groupName)
     {

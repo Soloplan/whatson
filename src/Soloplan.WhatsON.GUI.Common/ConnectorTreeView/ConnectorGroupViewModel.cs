@@ -31,9 +31,12 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private ObservableCollection<ConnectorViewModel>? statusViewModels;
 
+    private Dictionary<Guid, ConnectorViewModel> connectorsById = new Dictionary<Guid, ConnectorViewModel>();
+
     public ConnectorGroupViewModel()
     {
       this.IsNodeExpanded = true;
+      this.ConnectorViewModels.CollectionChanged += this.ConnectorViewModelsCollectionChanged;
     }
 
     public ObservableCollection<ConnectorViewModel> ConnectorViewModels =>
@@ -109,11 +112,15 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     /// <returns>True if something was changed; false otherwise.</returns>
     public bool Update(Connector changedConnector)
     {
-      var changedViewModel = this.ConnectorViewModels.FirstOrDefault(connector => connector.Identifier == changedConnector.Configuration.Identifier);
-      if (changedViewModel != null)
+      if (this.connectorsById.TryGetValue(changedConnector.Configuration.Identifier, out var changedViewModel))
       {
+        var previousState = changedViewModel.CurrentStatus.State;
         changedViewModel.Update(changedConnector);
-        this.UpdateConnectorWithGivenStatusCount();
+        var state = changedViewModel.CurrentStatus.State;
+        this.FailingConnectors += (state == ObservationState.Failure ? 1 : 0) - (previousState == ObservationState.Failure ? 1 : 0);
+        this.RunningConnectors += (state == ObservationState.Running ? 1 : 0) - (previousState == ObservationState.Running ? 1 : 0);
+        this.UnstableConnectors += (state == ObservationState.Unstable ? 1 : 0) - (previousState == ObservationState.Unstable ? 1 : 0);
+        this.UnknownConnectors += (state == ObservationState.Unknown ? 1 : 0) - (previousState == ObservationState.Unknown ? 1 : 0);
         return true;
       }
 
@@ -181,6 +188,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
       }
 
       this.ConnectorViewModels.CollectionChanged += this.ConnectorViewModelsCollectionChanged;
+      this.UpdateConnectorWithGivenStatusCount();
     }
 
     public override void OnDoubleClick(object? sender, MouseButtonEventArgs e)
@@ -227,6 +235,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private void UpdateConnectorWithGivenStatusCount()
     {
+      this.connectorsById = this.ConnectorViewModels.ToDictionary(connector => connector.Identifier);
       this.FailingConnectors = this.ConnectorViewModels.Count(stat => stat.CurrentStatus.State == ObservationState.Failure);
       this.RunningConnectors = this.ConnectorViewModels.Count(stat => stat.CurrentStatus.State == ObservationState.Running);
       this.UnstableConnectors = this.ConnectorViewModels.Count(stat => stat.CurrentStatus.State == ObservationState.Unstable);
