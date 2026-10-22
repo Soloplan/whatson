@@ -13,6 +13,8 @@ namespace Soloplan.WhatsON.Composition
   using System.Linq;
   using System.Reflection;
   using System.Runtime.CompilerServices;
+  using System.Threading;
+  using System.Threading.Tasks;
   using NLog;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.Model;
@@ -142,6 +144,46 @@ namespace Soloplan.WhatsON.Composition
       }
 
       return this.CreateNewConnector(connectorConfiguration, checkRedirect);
+    }
+
+    public async Task<Connector?> GetConnectorAsync(ConnectorConfiguration connectorConfiguration, bool? checkRedirect = null, CancellationToken cancellationToken = default)
+    {
+      cancellationToken.ThrowIfCancellationRequested();
+      var connector = this.connectors.FirstOrDefault(item => item.Configuration.Identifier == connectorConfiguration.Identifier);
+      if (connector != null)
+      {
+        return connector;
+      }
+
+      var plugin = this.GetPlugin(connectorConfiguration);
+      if (plugin == null)
+      {
+        log.Error("Couldn't find plugin for a type: {pluginType}", connectorConfiguration.Type);
+        return null;
+      }
+
+      try
+      {
+        connector = await plugin.CreateNewAsync(connectorConfiguration, checkRedirect, cancellationToken);
+        cancellationToken.ThrowIfCancellationRequested();
+        var existing = this.connectors.FirstOrDefault(item => item.Configuration.Identifier == connectorConfiguration.Identifier);
+        if (existing != null)
+        {
+          return existing;
+        }
+
+        this.connectors.Add(connector);
+        return connector;
+      }
+      catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+      {
+        throw;
+      }
+      catch (Exception exception)
+      {
+        log.Error(exception);
+        return null;
+      }
     }
 
     /// <summary>

@@ -13,6 +13,7 @@ namespace Soloplan.WhatsON.GUI
   using System.IO;
   using System.Linq;
   using System.Runtime.InteropServices;
+  using System.Threading;
   using System.Windows.Forms;
   using Soloplan.WhatsON.Composition;
   using Soloplan.WhatsON.Configuration;
@@ -23,6 +24,7 @@ namespace Soloplan.WhatsON.GUI
   using Soloplan.WhatsON.Localization;
   using Soloplan.WhatsON.Model;
   using Application = System.Windows.Application;
+  using Timer = System.Windows.Forms.Timer;
 
   /// <summary>
   /// Wrapper for <see cref="NotifyIcon" /> from System.WindowsForms. Handles creation/opening/closing of main window.
@@ -80,6 +82,8 @@ namespace Soloplan.WhatsON.GUI
     private MainWindow? mainWindow;
 
     private NotificationsModel model;
+
+    private CancellationTokenSource? configurationApplication;
 
     /// <summary>
     /// The last time the window was focused by clicking on tray icon.
@@ -165,6 +169,7 @@ namespace Soloplan.WhatsON.GUI
 
     public void Dispose()
     {
+      this.configurationApplication?.Cancel();
       this.pulseTimer.Dispose();
       this.pulseFrames = null;
       Localizer.LanguageChanged -= this.LanguageChanged;
@@ -455,29 +460,52 @@ namespace Soloplan.WhatsON.GUI
       }
     }
 
-    private void MainWindowConfigurationApplied(object? sender, ValueEventArgs<ApplicationConfiguration> e)
+    private async void MainWindowConfigurationApplied(object? sender, ValueEventArgs<ApplicationConfiguration> e)
     {
-      this.configuration = e.Value;
-      if (this.scheduler.Running)
+      this.configurationApplication?.Cancel();
+      using var application = new CancellationTokenSource();
+      this.configurationApplication = application;
+      try
       {
+        var configuration = e.Value;
+        var connectors = new System.Collections.Generic.List<Connector?>();
+        foreach (var connectorConfiguration in configuration.ConnectorsConfiguration.ToArray())
+        {
+          connectors.Add(await PluginManager.Instance.GetConnectorAsync(connectorConfiguration, true, application.Token));
+        }
+
+        application.Token.ThrowIfCancellationRequested();
+        this.configuration = configuration;
         this.scheduler.Stop(false);
-      }
+        this.scheduler.UnobserveAll();
+        foreach (var connector in connectors)
+        {
+          this.scheduler.Observe(connector);
+        }
 
-      this.scheduler.UnobserveAll();
-      foreach (var connectorConfiguration in this.configuration.ConnectorsConfiguration)
+        this.mainWindow?.ApplyConfiguration(this.configuration);
+        this.model.StatusChanged -= this.CurrentStatusPropertyChanged;
+        this.model.Dispose();
+        this.model = new NotificationsModel(this.scheduler);
+        this.model.StatusChanged += this.CurrentStatusPropertyChanged;
+        this.UpdateTrayIcon();
+
+        this.scheduler.Start();
+      }
+      catch (OperationCanceledException) when (application.IsCancellationRequested)
       {
-        var connector = PluginManager.Instance.GetConnector(connectorConfiguration, true);
-        this.scheduler.Observe(connector);
       }
-
-      this.mainWindow?.ApplyConfiguration(this.configuration);
-      this.model.StatusChanged -= this.CurrentStatusPropertyChanged;
-      this.model.Dispose();
-      this.model = new NotificationsModel(this.scheduler);
-      this.model.StatusChanged += this.CurrentStatusPropertyChanged;
-      this.UpdateTrayIcon();
-
-      this.scheduler.Start();
+      catch (Exception exception)
+      {
+        NLog.LogManager.GetCurrentClassLogger().Error(exception, "Could not apply the monitoring configuration.");
+      }
+      finally
+      {
+        if (ReferenceEquals(this.configurationApplication, application))
+        {
+          this.configurationApplication = null;
+        }
+      }
     }
 
     /// <summary>

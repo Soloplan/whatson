@@ -271,7 +271,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       {
         var configuration = new ConnectorConfiguration("Jenkins", "Release", Connector.ServerAddress, server.Address, Connector.ProjectName, "Release");
 
-        var connector = new JenkinsPlugin().CreateNew(configuration, true);
+        var connector = await new JenkinsPlugin().CreateNewAsync(configuration, true);
 
         Assert.That(connector, Is.Not.Null);
         Assert.That(bool.TryParse(configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin).Value, out var redirect) && redirect, Is.False);
@@ -281,6 +281,45 @@ namespace Soloplan.WhatsON.GUI.Tests
       finally
       {
         AppDomain.CurrentDomain.FirstChanceException -= observe;
+      }
+    }
+
+    [TestCase(true)]
+    [TestCase(false)]
+    public async Task RedirectDetectionYieldsWhileTheServerIsSlow(bool cancel)
+    {
+      var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+      await using var server = new DiscoveryServer
+      {
+        Respond = _ => ("200 OK", "text/html", "Blue Ocean"),
+        ResponseGate = release.Task,
+      };
+      using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+      var configuration = new ConnectorConfiguration("Jenkins", "Release", Connector.ServerAddress, server.Address, Connector.ProjectName, "Release");
+      var creation = PluginManager.Instance.GetConnectorAsync(configuration, true, cancellation.Token);
+      try
+      {
+        Assert.That(creation.IsCompleted, Is.False, "Creating a connector must return control before the detection response arrives.");
+        Assert.That(SpinWait.SpinUntil(() => !server.Requests.IsEmpty, TimeSpan.FromSeconds(3)), Is.True);
+        if (cancel)
+        {
+          cancellation.Cancel();
+          Assert.CatchAsync<OperationCanceledException>(async () => await creation.WaitAsync(TimeSpan.FromSeconds(3)));
+          Assert.That(configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin).Value, Is.Null.Or.Empty);
+        }
+        else
+        {
+          release.SetResult();
+          var connector = await creation.WaitAsync(TimeSpan.FromSeconds(3));
+          Assert.That(connector, Is.InstanceOf<JenkinsConnector>());
+          Assert.That(configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin).Value, Is.EqualTo("True"));
+          Assert.That(await PluginManager.Instance.GetConnectorAsync(configuration, true), Is.SameAs(connector));
+          Assert.That(server.Requests, Has.Count.EqualTo(1));
+        }
+      }
+      finally
+      {
+        release.TrySetResult();
       }
     }
 

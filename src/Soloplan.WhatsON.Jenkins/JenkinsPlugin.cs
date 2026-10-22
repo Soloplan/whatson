@@ -8,10 +8,12 @@
 namespace Soloplan.WhatsON.Jenkins
 {
   using System;
+  using System.Collections.Concurrent;
   using System.Collections.Generic;
   using System.Net;
   using System.Net.Http;
   using System.Net.Mime;
+  using System.Threading;
   using System.Threading.Tasks;
   using Newtonsoft.Json;
   using NLog;
@@ -29,7 +31,7 @@ namespace Soloplan.WhatsON.Jenkins
 
     private static readonly HttpClient discoveryClient = new HttpClient();
 
-    private static Dictionary<string, bool> blueOceanCache = new Dictionary<string, bool>();
+    private static readonly ConcurrentDictionary<string, bool> blueOceanCache = new ConcurrentDictionary<string, bool>();
 
     public JenkinsPlugin()
       : base(typeof(JenkinsConnector))
@@ -37,7 +39,11 @@ namespace Soloplan.WhatsON.Jenkins
     }
 
     public override Connector CreateNew(ConnectorConfiguration configuration, bool? checkRedirect = null)
+      => this.CreateNewAsync(configuration, checkRedirect).GetAwaiter().GetResult();
+
+    public override async Task<Connector> CreateNewAsync(ConnectorConfiguration configuration, bool? checkRedirect = null, CancellationToken cancellationToken = default)
     {
+      cancellationToken.ThrowIfCancellationRequested();
       log.Debug("Creating new JenkinsProject based on configuration {configuration}", new { configuration.Name, configuration.Identifier });
       var jenkinsProject = new JenkinsConnector(configuration, new JenkinsApi());
 
@@ -48,38 +54,34 @@ namespace Soloplan.WhatsON.Jenkins
 
       var address = jenkinsProject.Address;
       ArgumentException.ThrowIfNullOrWhiteSpace(address);
-      if (blueOceanCache.ContainsKey(address))
+      if (blueOceanCache.TryGetValue(address, out var cached))
       {
-        jenkinsProject.Configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin).Value = blueOceanCache[address].ToString();
-        configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin).Value = blueOceanCache[address].ToString();
+        configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin).Value = cached.ToString();
         return jenkinsProject;
       }
 
-      var task = Task.Run(async () =>
+      var result = false;
+      using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+      timeout.CancelAfter(TimeSpan.FromSeconds(10));
+      try
       {
-        try
-        {
-          using var response = await discoveryClient.GetAsync(JenkinsApi.UrlHelper.ProjectUrl(jenkinsProject) + JenkinsApi.UrlHelper.RedirectPluginUrlSuffix);
-          return response.IsSuccessStatusCode;
-        }
-        catch (Exception exception)
-        {
-          log.Debug(exception, "Could not detect the optional Blue Ocean redirect.");
-          return false;
-        }
-      });
-      var result = task.GetAwaiter().GetResult();
-      if (result)
-      {
-        jenkinsProject.Configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin).Value = "True";
-        configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin).Value = "True";
-        blueOceanCache.Add(address, true);
+        using var response = await discoveryClient.GetAsync(
+          JenkinsApi.UrlHelper.ProjectUrl(jenkinsProject) + JenkinsApi.UrlHelper.RedirectPluginUrlSuffix,
+          timeout.Token).ConfigureAwait(false);
+        result = response.IsSuccessStatusCode;
       }
-      else
+      catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
       {
-        blueOceanCache.Add(address, false);
+        throw;
+      }
+      catch (Exception exception)
+      {
+        log.Debug(exception, "Could not detect the optional Blue Ocean redirect.");
       }
 
+      cancellationToken.ThrowIfCancellationRequested();
+      configuration.GetConfigurationByKey(JenkinsConnector.RedirectPlugin).Value = result.ToString();
+      blueOceanCache[address] = result;
       return jenkinsProject;
     }
 

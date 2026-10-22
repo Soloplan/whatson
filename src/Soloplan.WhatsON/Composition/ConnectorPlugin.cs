@@ -11,6 +11,7 @@ namespace Soloplan.WhatsON.Composition
   using System.Collections.Generic;
   using System.Globalization;
   using System.Reflection;
+  using System.Threading;
   using System.Threading.Tasks;
   using Soloplan.WhatsON.Configuration;
   using Soloplan.WhatsON.Localization;
@@ -55,6 +56,12 @@ namespace Soloplan.WhatsON.Composition
     public abstract void Configure(Project project, IConfigurationItemProvider configurationItemsSupport, string? serverAddress = null);
 
     public abstract Connector CreateNew(ConnectorConfiguration configuration, bool? checkRedirect = null);
+
+    public virtual Task<Connector> CreateNewAsync(ConnectorConfiguration configuration, bool? checkRedirect = null, CancellationToken cancellationToken = default)
+    {
+      cancellationToken.ThrowIfCancellationRequested();
+      return Task.FromResult(this.CreateNew(configuration, checkRedirect));
+    }
 
     /// <summary>
     ///   Gets the projects.
