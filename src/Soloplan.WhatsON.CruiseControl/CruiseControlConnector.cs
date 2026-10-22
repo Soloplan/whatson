@@ -100,7 +100,7 @@ namespace Soloplan.WhatsON.CruiseControl
       var server = CruiseControlManager.GetServer(this.directAddress);
       var history = new List<Status?>();
 
-      var builds = await server.GetBuilds(this.Project);
+      var builds = await server.GetBuilds(this.Project, cancellationToken: cancellationToken);
 
       foreach (var build in builds)
       {

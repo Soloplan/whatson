@@ -9,8 +9,10 @@ namespace Soloplan.WhatsON.CruiseControl
 {
   using System;
   using System.Collections.Generic;
+  using System.IO;
   using System.Linq;
   using System.Net;
+  using System.Net.Http;
   using System.Threading;
   using System.Threading.Tasks;
   using System.Xml.Serialization;
@@ -22,6 +24,8 @@ namespace Soloplan.WhatsON.CruiseControl
   public class CruiseControlServer
   {
     private static readonly Logger log = LogManager.GetCurrentClassLogger();
+
+    private static readonly HttpClient historyClient = new HttpClient();
 
     private readonly string baseUrl;
 
@@ -71,36 +75,39 @@ namespace Soloplan.WhatsON.CruiseControl
       }
     }
 
-    public async Task<List<CruiseControlBuild>> GetBuilds(string? projectName, int limit = Connector.MaxSnapshots)
+    public async Task<List<CruiseControlBuild>> GetBuilds(string? projectName, int limit = Connector.MaxSnapshots, CancellationToken cancellationToken = default)
     {
       var history = new List<CruiseControlBuild>();
 
       ArgumentException.ThrowIfNullOrWhiteSpace(projectName);
+      cancellationToken.ThrowIfCancellationRequested();
       var projectReportUrl = UrlHelper.GetAllBuildsUrl(this.baseUrl, projectName);
-      using (var client = new WebClient())
+      try
       {
-        try
+        var uri = new Uri(projectReportUrl);
+        var html = uri.IsFile
+          ? await File.ReadAllTextAsync(uri.LocalPath, cancellationToken).ConfigureAwait(false)
+          : await historyClient.GetStringAsync(uri, cancellationToken).ConfigureAwait(false);
+        cancellationToken.ThrowIfCancellationRequested();
+        var doc = new HtmlDocument();
+        doc.LoadHtml(html);
+        var recentBuilds = doc.DocumentNode.SelectNodes("//table[@class='RecentBuildsPanel']/tr/td/a[@class]");
+        foreach (var b in (recentBuilds?.Take(limit) ?? Enumerable.Empty<HtmlNode>()))
         {
-          var html = client.DownloadString(projectReportUrl);
-          var doc = new HtmlDocument();
-          doc.LoadHtml(html);
-          var recentBuilds = doc.DocumentNode.SelectNodes("//table[@class='RecentBuildsPanel']/tr/td/a[@class]");
-          foreach (var b in (recentBuilds?.Take(limit) ?? Enumerable.Empty<HtmlNode>()))
+          var authority = uri.GetLeftPart(UriPartial.Authority);
+          var build = CruiseControlBuild.FromHtmlNode(b, authority);
+          if (build == null)
           {
-            var authority = new Uri(projectReportUrl).GetLeftPart(UriPartial.Authority);
-            var build = CruiseControlBuild.FromHtmlNode(b, authority);
-            if (build == null)
-            {
-              continue;
-            }
-
-            history.Add(build);
+            continue;
           }
+
+          history.Add(build);
         }
-        catch (WebException ex)
-        {
-          log.Error(ex);
-        }
+      }
+      catch (Exception ex) when (ex is HttpRequestException or IOException or UnauthorizedAccessException
+        || (ex is OperationCanceledException && !cancellationToken.IsCancellationRequested))
+      {
+        log.Error(ex);
       }
 
       return history;

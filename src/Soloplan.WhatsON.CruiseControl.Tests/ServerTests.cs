@@ -10,6 +10,9 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
   using System;
   using System.IO;
   using System.Linq;
+  using System.Net;
+  using System.Net.Sockets;
+  using System.Text;
   using System.Threading;
   using System.Threading.Tasks;
   using NUnit.Framework;
@@ -166,6 +169,42 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
 
       Assert.That(history.Select(b => b.BuildNumber), Is.EqualTo([3, 2]));
       Assert.That(history.Select(b => b.Status), Is.EqualTo([CcBuildStatus.Success, CcBuildStatus.Failure]));
+    }
+
+    [TestCase(true)]
+    [TestCase(false)]
+    public async Task ConnectorHistoryYieldsWhileWaitingAndHonorsCancellation(bool cancel)
+    {
+      using var listener = new TcpListener(IPAddress.Loopback, 0);
+      listener.Start();
+      var address = $"http://127.0.0.1:{((IPEndPoint)listener.LocalEndpoint).Port}/";
+      var configuration = new ConnectorConfiguration(
+        "CruiseControl", "Release", Connector.ServerAddress, address, Connector.DirectAddress, address, Connector.ProjectName, "Release");
+      var connector = new ReachabilityConnector(configuration, true, true);
+      using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+      var history = connector.LoadHistory(cancellation.Token);
+      Assert.That(history.IsCompleted, Is.False, "History loading must return control while the server response is pending.");
+      using var connection = await listener.AcceptTcpClientAsync(cancellation.Token);
+      using var stream = connection.GetStream();
+      using var reader = new StreamReader(stream, Encoding.ASCII, false, 1024, true);
+      Assert.That(await reader.ReadLineAsync(cancellation.Token), Does.StartWith("GET /project/Release/ViewAllBuilds.aspx "));
+      while (!string.IsNullOrEmpty(await reader.ReadLineAsync(cancellation.Token)))
+      {
+      }
+
+      if (cancel)
+      {
+        cancellation.Cancel();
+        Assert.CatchAsync<OperationCanceledException>(async () => await history.WaitAsync(TimeSpan.FromSeconds(3)));
+      }
+      else
+      {
+        var body = "<table class='RecentBuildsPanel'><tr><td><a href='/build/2.xml' class='passed'>10/17/2020 12:02:00 PM (2)</a></td></tr></table>";
+        var response = Encoding.UTF8.GetBytes($"HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nContent-Length: {Encoding.UTF8.GetByteCount(body)}\r\nConnection: close\r\n\r\n{body}");
+        await stream.WriteAsync(response, cancellation.Token);
+        var builds = await history.WaitAsync(TimeSpan.FromSeconds(3));
+        Assert.That(builds.Select(build => build?.BuildNumber), Is.EqualTo(new[] { 2 }));
+      }
     }
 
     [TestCase("Success", ObservationState.Success)]
@@ -374,6 +413,8 @@ namespace Soloplan.WhatsON.CruiseControl.Tests
       }
 
       public override Task<bool> CheckServerURL() => Task.FromResult(this.serverAvailable);
+
+      public Task<System.Collections.Generic.List<Status?>> LoadHistory(CancellationToken cancellationToken) => this.GetHistory(cancellationToken);
 
       public override Task<bool> CheckProjectURL() => Task.FromResult(this.projectAvailable);
     }
