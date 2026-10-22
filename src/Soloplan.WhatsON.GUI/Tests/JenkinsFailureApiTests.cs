@@ -22,20 +22,49 @@ namespace Soloplan.WhatsON.GUI.Tests
   [TestFixture]
   public class JenkinsFailureApiTests
   {
-    [Test]
-    public async Task ReportsFindFailedAndRegressedTestsAndLimitNames()
+    [TestCase(false)]
+    [TestCase(true)]
+    public async Task ReportsLimitThePreviewButIncludeEveryFailedTestWhenExpanded(bool expanded)
     {
       await using var server = new ApiServer();
       var cases = string.Concat(Enumerable.Range(0, 8).Select(index => $"<case><className>Tests</className><name>Case{index}</name><status>FAILED</status></case>"));
       server.Respond = _ => ("200 OK", "application/xml", "<failures><case><name>Passed</name><status>PASSED</status></case><case><name>Skipped</name><status>SKIPPED</status></case><case><className>Tests</className><name>Regression</name><status>REGRESSION</status></case>" + cases + "</failures>");
       var connector = CreateConnector(server.Address);
-      var result = await new JenkinsApi().GetFailedTests(connector, 42, CancellationToken.None);
+      var result = await new JenkinsApi().GetFailedTests(connector, 42, CancellationToken.None, expanded);
 
-      Assert.That(result?.Split(Environment.NewLine), Has.Length.EqualTo(5));
-      Assert.That(result, Does.StartWith("Tests.Regression").And.Contain("Tests.Case0").And.Not.Contain("Passed").And.Not.Contain("Skipped").And.Not.Contain("Case7"));
+      Assert.That(result?.Split(Environment.NewLine), Has.Length.EqualTo(expanded ? 10 : 5));
+      Assert.That(result, Does.StartWith("Tests.Regression").And.Contain("Tests.Case0").And.Not.Contain("Passed"));
+      Assert.That(result?.Contains("Case7"), Is.EqualTo(expanded));
+      Assert.That(result?.Contains("Skipped"), Is.EqualTo(expanded));
       Assert.That(server.Requests.Single(), Does.StartWith("/job/Release/42/testReport/api/xml?"));
-      Assert.That(Uri.UnescapeDataString(server.Requests.Single()), Does.Contain("status='FAILED' or status='REGRESSION'").And.Contain("position()<=5"));
+      var request = Uri.UnescapeDataString(server.Requests.Single());
+      Assert.That(request, Does.Contain("status='FAILED' or status='REGRESSION'"));
+      Assert.That(request.Contains("position()<=5"), Is.EqualTo(!expanded));
       Assert.That(server.Requests.Single(), Does.Not.Contain("stdout").And.Not.Contain("errorStackTrace"));
+    }
+
+    [Test]
+    public async Task ExpandingTheRunLoadsAllRemainingTestsWithoutChangingThePreview()
+    {
+      await using var server = new ApiServer();
+      server.Respond = path => path.Contains("/testReport/", StringComparison.Ordinal)
+        ? ("200 OK", "application/xml", "<failures>" + string.Concat(Enumerable.Range(0, Uri.UnescapeDataString(path).Contains("position()<=5", StringComparison.Ordinal) ? 5 : 8)
+          .Select(index => $"<case><className>Tests.LayoutTests</className><name>Case{index}</name><status>FAILED</status></case>")) + "</failures>")
+        : ("200 OK", "application/xml", "<jobs><job><name>Release</name><lastBuild><number>42</number><result>UNSTABLE</result><action><failCount>8</failCount></action></lastBuild></job></jobs>");
+      var connector = CreateConnector(server.Address);
+      await connector.QueryStatusBatch(new[] { connector }, CancellationToken.None);
+      Assert.That(connector.CurrentStatus?.State, Is.EqualTo(ObservationState.Unstable));
+      Assert.That(connector.CurrentStatus?.FailedTestCount, Is.EqualTo(8));
+      var project = new JenkinsProjectViewModel(connector);
+      project.CurrentStatus.Update(connector.CurrentStatus);
+      await project.CurrentStatus.LoadFailureDetails(CancellationToken.None);
+      var preview = project.CurrentStatus.FailureSummary;
+      Assert.That(server.Requests, Has.Count.EqualTo(2));
+      await project.CurrentStatus.LoadExpandedFailureDetails(CancellationToken.None);
+      Assert.That(project.CurrentStatus.AdditionalFailureGroups.Single(), Is.EqualTo(Enumerable.Range(2, 6).Select(index => $"Case{index}")));
+      Assert.That(project.CurrentStatus.FailureSummary, Is.EqualTo(preview));
+      await project.CurrentStatus.LoadExpandedFailureDetails(CancellationToken.None);
+      Assert.That(server.Requests, Has.Count.EqualTo(3), "Reopening the expanded list reuses the run's cached details.");
     }
 
     [Test]
@@ -59,8 +88,9 @@ namespace Soloplan.WhatsON.GUI.Tests
       Assert.That(server.Requests, Has.Count.EqualTo(2));
     }
 
-    [Test]
-    public async Task LateHoverResponseCannotReplaceAnotherRunsDetails()
+    [TestCase(false)]
+    [TestCase(true)]
+    public async Task LateHoverResponseCannotReplaceAnotherRunsDetails(bool expanded)
     {
       await using var server = new ApiServer();
       var received = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -80,13 +110,14 @@ namespace Soloplan.WhatsON.GUI.Tests
       var project = new JenkinsProjectViewModel(connector);
       project.CurrentStatus.Update(connector.CurrentStatus);
       server.ResponseGate = gate.Task;
-      var pending = project.CurrentStatus.LoadFailureDetails(CancellationToken.None);
+      var pending = expanded ? project.CurrentStatus.LoadExpandedFailureDetails(CancellationToken.None) : project.CurrentStatus.LoadFailureDetails(CancellationToken.None);
       await received.Task.WaitAsync(TimeSpan.FromSeconds(5));
       Assert.That(project.CurrentStatus.IsLoadingFailureDetails, Is.True);
       project.CurrentStatus.Update(new JenkinsStatus(ObservationState.Failure) { BuildNumber = 43, FailureDetails = "New build failure" });
       gate.SetResult();
       await pending.WaitAsync(TimeSpan.FromSeconds(5));
       Assert.That(project.CurrentStatus.FailureDetails, Is.EqualTo("New build failure"));
+      Assert.That(project.CurrentStatus.ExpandedFailureDetails, Is.Null);
       Assert.That(project.CurrentStatus.IsLoadingFailureDetails, Is.False);
     }
 

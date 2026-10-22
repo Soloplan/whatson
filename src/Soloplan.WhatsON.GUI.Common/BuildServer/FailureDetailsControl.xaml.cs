@@ -20,8 +20,18 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     {
       this.InitializeComponent();
       this.Loaded += (_, _) => this.LoadDetails();
-      this.Unloaded += (_, _) => this.loading?.Cancel();
-      this.DataContextChanged += (_, _) => this.LoadDetails();
+      this.Unloaded += (_, _) =>
+      {
+        this.loading?.Cancel();
+        this.FailuresExpander.IsExpanded = false;
+      };
+      this.DataContextChanged += (_, _) =>
+      {
+        this.FailuresExpander.IsExpanded = false;
+        this.LoadDetails();
+      };
+      this.FailuresExpander.Expanded += (_, _) => this.LoadDetails();
+      this.FailuresExpander.Collapsed += (_, _) => this.loading?.Cancel();
     }
 
     private async void LoadDetails()
@@ -36,7 +46,14 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
       this.loading = request;
       try
       {
-        await status.LoadFailureDetails(request.Token);
+        if (this.FailuresExpander.IsExpanded)
+        {
+          await status.LoadExpandedFailureDetails(request.Token);
+        }
+        else
+        {
+          await status.LoadFailureDetails(request.Token);
+        }
       }
       catch (OperationCanceledException) when (request.IsCancellationRequested)
       {

@@ -133,8 +133,15 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 
     public virtual Task LoadFailureDetails(CancellationToken token) => Task.CompletedTask;
 
+    public virtual Task LoadExpandedFailureDetails(CancellationToken token) => this.LoadFailureDetails(token);
+
     public override void Update(Status? newStatus)
     {
+      if (this.BuildNumber != newStatus?.BuildNumber || this.Url != newStatus?.Url || this.State != newStatus?.State || this.FailedTestCount != newStatus?.FailedTestCount)
+      {
+        this.ExpandedFailureDetails = null;
+      }
+
       base.Update(newStatus);
       if (newStatus == null)
       {

@@ -1,4 +1,4 @@
-<UserControl x:Class="Soloplan.WhatsON.GUI.Common.BuildServer.FailureDetailsControl"
+﻿<UserControl x:Class="Soloplan.WhatsON.GUI.Common.BuildServer.FailureDetailsControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
@@ -40,8 +40,72 @@
             </DataTemplate>
           </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <TextBlock Text="{Binding MoreFailuresPreview}" Margin="0,11,0,0" FontSize="12" Foreground="{DynamicResource SettingsMuted}"
-                   Visibility="{Binding MoreFailuresPreview, Converter={StaticResource HasValue}}" />
+        <Expander x:Name="FailuresExpander" Margin="0,11,0,0" FontSize="12" Foreground="{DynamicResource SettingsMuted}"
+                  AutomationProperties.Name="{Binding MoreFailuresPreview}"
+                  Visibility="{Binding MoreFailuresPreview, Converter={StaticResource HasValue}}">
+          <Expander.Template>
+            <ControlTemplate TargetType="Expander">
+              <StackPanel>
+                <ToggleButton IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                              Content="{TemplateBinding Header}" HorizontalAlignment="Left" Cursor="Hand"
+                              Style="{x:Null}" Foreground="{TemplateBinding Foreground}"
+                              AutomationProperties.Name="{Binding Path=(AutomationProperties.Name), RelativeSource={RelativeSource TemplatedParent}}">
+                  <ToggleButton.Template>
+                    <ControlTemplate TargetType="ToggleButton">
+                      <Border x:Name="HeaderSurface" Background="Transparent" CornerRadius="3"><ContentPresenter /></Border>
+                      <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="HeaderSurface" Property="Background" Value="{DynamicResource SettingsSelection}" /></Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="HeaderSurface" Property="Background" Value="{DynamicResource SettingsSelection}" /></Trigger>
+                      </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                  </ToggleButton.Template>
+                </ToggleButton>
+                <ContentPresenter x:Name="AdditionalFailures" ContentSource="Content" Visibility="Collapsed" Margin="0,8,0,0" />
+              </StackPanel>
+              <ControlTemplate.Triggers>
+                <Trigger Property="IsExpanded" Value="True"><Setter TargetName="AdditionalFailures" Property="Visibility" Value="Visible" /></Trigger>
+              </ControlTemplate.Triggers>
+            </ControlTemplate>
+          </Expander.Template>
+          <Expander.Header>
+            <StackPanel Orientation="Horizontal">
+              <TextBlock Text="{Binding MoreFailuresPreview}" />
+              <materialDesign:PackIcon Width="12" Height="12" Margin="4,0,0,0" VerticalAlignment="Center">
+                <materialDesign:PackIcon.Style>
+                  <Style TargetType="materialDesign:PackIcon">
+                    <Setter Property="Kind" Value="ChevronDown" />
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding IsExpanded, ElementName=FailuresExpander}" Value="True"><Setter Property="Kind" Value="ChevronUp" /></DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </materialDesign:PackIcon.Style>
+              </materialDesign:PackIcon>
+            </StackPanel>
+          </Expander.Header>
+          <ScrollViewer MaxHeight="180" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+              <ItemsControl ItemsSource="{Binding AdditionalFailureGroups}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <StackPanel Margin="0,4,0,8">
+                      <TextBlock Text="{Binding Key}" FontWeight="Medium" TextWrapping="Wrap"
+                                 Visibility="{Binding Key, Converter={StaticResource HasValue}}" />
+                      <ItemsControl ItemsSource="{Binding}">
+                        <ItemsControl.ItemTemplate>
+                          <DataTemplate>
+                            <TextBlock Text="{Binding}" FontFamily="Cascadia Code, Consolas" FontSize="12" Margin="0,3,0,0"
+                                       TextWrapping="Wrap" LineHeight="18" />
+                          </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                      </ItemsControl>
+                    </StackPanel>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <TextBlock Margin="0,4,0,0"><Hyperlink Command="{Binding OpenBuildPage}"><Run Text="{live:Text loc:Strings.OpenBuildWebsite}" /></Hyperlink></TextBlock>
+            </StackPanel>
+          </ScrollViewer>
+        </Expander>
         <Border BorderBrush="{DynamicResource SettingsBorder}" BorderThickness="0,1,0,0" Margin="0,12,0,0" Padding="0,10,0,0"
                 Visibility="{Binding WarningPreview, Converter={StaticResource HasValue}}">
           <DockPanel>

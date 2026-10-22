@@ -117,7 +117,11 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       this.UpdateCalculatedFields();
     }
 
-    public override async Task LoadFailureDetails(CancellationToken token)
+    public override Task LoadFailureDetails(CancellationToken token) => this.LoadFailureDetails(token, false);
+
+    public override Task LoadExpandedFailureDetails(CancellationToken token) => this.LoadFailureDetails(token, true);
+
+    private async Task LoadFailureDetails(CancellationToken token, bool expanded)
     {
       if (this.buildStatus is not Status status || this.Building || this.State is not (ObservationState.Failure or ObservationState.Unstable)
           || this.Parent.Connector is not JenkinsConnector connector)
@@ -133,13 +137,20 @@ namespace Soloplan.WhatsON.Jenkins.GUI
       this.IsLoadingFailureDetails = true;
       try
       {
-        var details = await connector.LoadFailureDetails(status, token);
+        var details = await connector.LoadFailureDetails(status, token, expanded);
         token.ThrowIfCancellationRequested();
         if (this.BuildNumber == number && this.State == status.State && ReferenceEquals(this.Parent.Connector, connector)
             && JenkinsApi.UrlHelper.ProjectUrl(connector, false) == project && this.FailedTestCount == failed
             && ((this.buildStatus as JenkinsStatus)?.SkippedTestCount ?? 0) == skipped)
         {
-          this.FailureDetails = details;
+          if (expanded)
+          {
+            this.ExpandedFailureDetails = details;
+          }
+          else
+          {
+            this.FailureDetails = details;
+          }
         }
       }
       finally

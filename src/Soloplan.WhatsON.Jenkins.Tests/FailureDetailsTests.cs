@@ -100,6 +100,21 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     }
 
     [Test]
+    public async Task ExpandedDetailsHaveTheirOwnCacheWithoutReplacingThePreview()
+    {
+      var api = new FakeJenkinsApi();
+      var requests = 0;
+      api.FailedTestsRequest = (_, _) => Task.FromResult<string?>(++requests == 1 ? "Tests.Preview" : "Tests.Preview\nTests.Additional");
+      var connector = CreateConnector(api);
+      var status = new JenkinsStatus(ObservationState.Unstable) { BuildNumber = 42, FailedTestCount = 8 };
+      Assert.That(await connector.LoadFailureDetails(status, CancellationToken.None), Is.EqualTo("Tests.Preview"));
+      Assert.That(await connector.LoadFailureDetails(status, CancellationToken.None, true), Does.Contain("Tests.Additional"));
+      Assert.That(await connector.LoadFailureDetails(status, CancellationToken.None), Is.EqualTo("Tests.Preview"));
+      Assert.That(await connector.LoadFailureDetails(status, CancellationToken.None, true), Does.Contain("Tests.Additional"));
+      Assert.That(requests, Is.EqualTo(2));
+    }
+
+    [Test]
     public async Task ConcurrentHoversShareOneRequestAndCancellationNeverPoisonsTheCache()
     {
       var api = new FakeJenkinsApi();

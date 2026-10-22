@@ -134,6 +134,18 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       Assert.That(summary, Does.StartWith("File.cs(42,1): CS1002: ; expected").And.Not.Contain("dependency 4").And.Not.Contain("xxx"));
     }
 
+    [Test]
+    public async Task ExpandedConsoleDetailsIncludeRemainingErrorsAndFullMessages()
+    {
+      var message = "ERROR: " + new string('x', 300);
+      var log = string.Join("\n", Enumerable.Range(0, 8).Select(index => $"ERROR: dependency {index}")) + "\n" + message;
+      var summary = await JenkinsConsoleErrors.Read(new StringReader(log), CancellationToken.None);
+      var expanded = await JenkinsConsoleErrors.Read(new StringReader(log), CancellationToken.None, true);
+      Assert.That(summary.Split(Environment.NewLine), Has.Length.EqualTo(5));
+      Assert.That(expanded.Split(Environment.NewLine), Has.Length.EqualTo(9));
+      Assert.That(expanded, Does.Contain("dependency 7").And.Contain(message));
+    }
+
     [TestCase(200, "text/plain", "ERROR: missing dependency", "ERROR: missing dependency")]
     [TestCase(200, "text/plain", "Build succeeded", "")]
     [TestCase(200, "text/html", "ERROR: sign in", null)]

@@ -226,7 +226,7 @@ namespace Soloplan.WhatsON.CruiseControl
           Environment.NewLine,
           (job.MessageList?.MessagesSafe ?? Array.Empty<Message>())
             .Where(message => message.Kind is MessageKind.FailingTasks or MessageKind.BuildAbortedBy)
-            .Select(message => message.Text).Where(text => !string.IsNullOrWhiteSpace(text)).Distinct().Take(5));
+            .Select(message => message.Text).Where(text => !string.IsNullOrWhiteSpace(text)).Distinct());
       }
 
       return result;

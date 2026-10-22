@@ -21,13 +21,17 @@ namespace Soloplan.WhatsON.Jenkins
 
   public partial class JenkinsApi
   {
-    public async Task<string?> GetFailedTests(JenkinsConnector connector, int buildNumber, CancellationToken token)
+    public Task<string?> GetFailedTests(JenkinsConnector connector, int buildNumber, CancellationToken token) => this.GetFailedTests(connector, buildNumber, token, false);
+
+    public async Task<string?> GetFailedTests(JenkinsConnector connector, int buildNumber, CancellationToken token, bool expanded)
     {
       try
       {
         // Filter on the server so successful tests cannot crowd failures out of the response limit.
+        var failures = "//case[status='FAILED' or status='REGRESSION']";
+        var xpath = (expanded ? failures : $"({failures})[position()<=5]") + " | (//case[status='SKIPPED'])[position()<=2]";
         var url = UrlHelper.BuildUrl(connector, buildNumber, false) + "/testReport/api/xml?tree=suites[cases[className,name,status]]&xpath="
-          + Uri.EscapeDataString("(//case[status='FAILED' or status='REGRESSION'])[position()<=5] | (//case[status='SKIPPED'])[position()<=2]") + "&wrapper=failures";
+          + Uri.EscapeDataString(xpath) + "&wrapper=failures";
         var body = await this.ReadFailureResponse(connector, url, "application/xml", token).ConfigureAwait(false);
         if (body == null)
         {
@@ -46,7 +50,11 @@ namespace Soloplan.WhatsON.Jenkins
           .OrderBy(test => (string?)test.Element("status") == "SKIPPED")
           .Select(test => new { Name = string.Join(".", new[] { (string?)test.Element("className"), (string?)test.Element("name") }.Where(value => !string.IsNullOrWhiteSpace(value))), Skipped = (string?)test.Element("status") == "SKIPPED" })
           .Where(test => !string.IsNullOrWhiteSpace(test.Name))
-          .Select(test => test.Skipped ? $"SKIPPED: {test.Name}" : test.Name).Distinct().Take(5);
+          .Select(test => test.Skipped ? $"SKIPPED: {test.Name}" : test.Name).Distinct();
+        if (!expanded)
+        {
+          names = names.Take(5);
+        }
         var summary = string.Join(Environment.NewLine, names);
         return string.IsNullOrEmpty(summary) ? null : summary;
       }
@@ -61,7 +69,9 @@ namespace Soloplan.WhatsON.Jenkins
       }
     }
 
-    public async Task<string?> GetConsoleErrors(JenkinsConnector connector, int buildNumber, CancellationToken token)
+    public Task<string?> GetConsoleErrors(JenkinsConnector connector, int buildNumber, CancellationToken token) => this.GetConsoleErrors(connector, buildNumber, token, false);
+
+    public async Task<string?> GetConsoleErrors(JenkinsConnector connector, int buildNumber, CancellationToken token, bool expanded)
     {
       try
       {
@@ -79,7 +89,7 @@ namespace Soloplan.WhatsON.Jenkins
 
         await using var stream = await response.Content.ReadAsStreamAsync(timeout.Token).ConfigureAwait(false);
         using var reader = new StreamReader(stream);
-        return await JenkinsConsoleErrors.Read(reader, timeout.Token).ConfigureAwait(false);
+        return await JenkinsConsoleErrors.Read(reader, timeout.Token, expanded).ConfigureAwait(false);
       }
       catch (OperationCanceledException) when (token.IsCancellationRequested)
       {

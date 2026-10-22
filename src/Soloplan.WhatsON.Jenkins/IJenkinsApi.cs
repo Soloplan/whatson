@@ -20,7 +20,11 @@ namespace Soloplan.WhatsON.Jenkins
   {
     Task<string?> GetFailedTests(JenkinsConnector connector, int buildNumber, CancellationToken token);
 
+    Task<string?> GetFailedTests(JenkinsConnector connector, int buildNumber, CancellationToken token, bool expanded) => this.GetFailedTests(connector, buildNumber, token);
+
     Task<string?> GetConsoleErrors(JenkinsConnector connector, int buildNumber, CancellationToken token);
+
+    Task<string?> GetConsoleErrors(JenkinsConnector connector, int buildNumber, CancellationToken token, bool expanded) => this.GetConsoleErrors(connector, buildNumber, token);
 
     Task<string?> GetPipelineFailure(JenkinsConnector connector, int buildNumber, CancellationToken token);
 

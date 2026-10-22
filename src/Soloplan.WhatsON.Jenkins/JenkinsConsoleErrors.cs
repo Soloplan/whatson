@@ -40,7 +40,7 @@ namespace Soloplan.WhatsON.Jenkins
 
     private static readonly Regex DetailHeader = new Regex(@"^(?:Error Message|Error|Exception|Caused by)\s*:\s*$", RegexOptions.IgnoreCase | RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
 
-    public static async Task<string> Read(TextReader reader, CancellationToken token)
+    public static async Task<string> Read(TextReader reader, CancellationToken token, bool expanded = false)
     {
       var errors = new List<(int Priority, string Text)>();
       var line = new StringBuilder();
@@ -56,7 +56,7 @@ namespace Soloplan.WhatsON.Jenkins
         {
           if (buffer[index] == '\n')
           {
-            pendingDetail = AddLine(line.ToString(), errors, pendingDetail);
+            pendingDetail = AddLine(line.ToString(), errors, pendingDetail, expanded);
             line.Clear();
           }
           else if (line.Length < 8192)
@@ -66,12 +66,12 @@ namespace Soloplan.WhatsON.Jenkins
         }
       }
 
-      AddLine(line.ToString(), errors, pendingDetail);
+      AddLine(line.ToString(), errors, pendingDetail, expanded);
 
       return string.Join(Environment.NewLine, errors.Select(error => error.Text));
     }
 
-    private static string? AddLine(string line, List<(int Priority, string Text)> errors, string? pendingDetail)
+    private static string? AddLine(string line, List<(int Priority, string Text)> errors, string? pendingDetail, bool expanded)
     {
       line = Regex.Replace(line, @"\x1b\[[0-9;]*[A-Za-z]", string.Empty);
       line = Timestamp.Replace(line, string.Empty).Trim();
@@ -137,7 +137,7 @@ namespace Soloplan.WhatsON.Jenkins
         var detail = match.Groups["message"].Value.Split(" and no accessible extension method", StringSplitOptions.None)[0];
         var file = match.Groups["file"].Value.Trim();
         var code = match.Groups["code"].Success ? match.Groups["code"].Value : "error";
-        AddDistinct(errors, $"{file}: {code}: {detail}", 5);
+        AddDistinct(errors, $"{file}: {code}: {detail}", 5, expanded);
       }
       else if (DetailHeader.IsMatch(message))
       {
@@ -145,11 +145,11 @@ namespace Soloplan.WhatsON.Jenkins
       }
       else if (pendingDetail != null)
       {
-        AddDistinct(errors, $"{pendingDetail}: {message}", 4);
+        AddDistinct(errors, $"{pendingDetail}: {message}", 4, expanded);
       }
       else if (ExceptionDetail.IsMatch(message))
       {
-        AddDistinct(errors, line, 4);
+        AddDistinct(errors, line, 4, expanded);
       }
       else if (EmptyFailureCount.IsMatch(message))
       {
@@ -157,11 +157,11 @@ namespace Soloplan.WhatsON.Jenkins
       }
       else if (Failure.IsMatch(message) || TestFailure.IsMatch(message) && Regex.IsMatch(message, @"\b(?:Skipped|Ignored|Not run|Not executed|Did not run)\b|\[(?:FAIL|SKIP)\]", RegexOptions.IgnoreCase))
       {
-        AddDistinct(errors, line, TestFailure.IsMatch(message) ? 4 : errorLevel ? 3 : 2);
+        AddDistinct(errors, line, TestFailure.IsMatch(message) ? 4 : errorLevel ? 3 : 2, expanded);
       }
       else if (errorLevel)
       {
-        AddDistinct(errors, line, 3);
+        AddDistinct(errors, line, 3, expanded);
       }
 
       return null;
@@ -171,10 +171,10 @@ namespace Soloplan.WhatsON.Jenkins
       || level.Equals("FATAL", StringComparison.OrdinalIgnoreCase) || level.Equals("SEVERE", StringComparison.OrdinalIgnoreCase)
       || level.TrimEnd('!').Equals("ERR", StringComparison.OrdinalIgnoreCase);
 
-    private static void AddDistinct(List<(int Priority, string Text)> errors, string line, int priority)
+    private static void AddDistinct(List<(int Priority, string Text)> errors, string line, int priority, bool expanded)
     {
       line = Regex.Replace(line, @"\s+", " ").Trim();
-      if (line.Length > 160)
+      if (!expanded && line.Length > 160)
       {
         line = line.Substring(0, 157) + "...";
       }
@@ -186,9 +186,11 @@ namespace Soloplan.WhatsON.Jenkins
 
       var position = errors.FindIndex(error => error.Priority < priority);
       errors.Insert(position < 0 ? errors.Count : position, (priority, line));
-      if (errors.Count > 5)
+      // shortcut: retain 1000 expanded errors; larger logs remain available on the build page.
+      var limit = expanded ? 1000 : 5;
+      if (errors.Count > limit)
       {
-        errors.RemoveAt(5);
+        errors.RemoveAt(limit);
       }
     }
   }

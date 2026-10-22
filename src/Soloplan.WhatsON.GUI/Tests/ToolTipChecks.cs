@@ -197,6 +197,7 @@ namespace Soloplan.WhatsON.GUI.Tests
         app.ApplyTheme(dark ? ApplicationTheme.Dark : ApplicationTheme.Light);
         if (expectedText != null)
         {
+          VerifyFailureExpansion(tooltip);
           VerifyPeopleExpansion(tooltip);
         }
       }
@@ -209,7 +210,7 @@ namespace Soloplan.WhatsON.GUI.Tests
     private static void VerifyPeopleExpansion(ToolTip tooltip)
     {
       var collapsedHeight = tooltip.ActualHeight;
-      var expanders = Descendants<Expander>(tooltip).Where(expander => expander.IsVisible).ToList();
+      var expanders = Descendants<Expander>(tooltip).Where(expander => expander.IsVisible && expander.Name == "PeopleExpander").ToList();
       Assert.That(expanders, Is.Not.Empty);
       foreach (var expander in expanders)
       {
@@ -255,6 +256,33 @@ namespace Soloplan.WhatsON.GUI.Tests
       tooltip.IsOpen = true;
       tooltip.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
       Assert.That(expanders[0].IsExpanded, Is.False, "Closing the tooltip resets the expanded names.");
+    }
+
+    private static void VerifyFailureExpansion(ToolTip tooltip)
+    {
+      var expander = Descendants<Expander>(tooltip).Single(item => item.Name == "FailuresExpander");
+      Assert.That(expander.IsExpanded, Is.False);
+      Assert.That(Descendants<TextBlock>(tooltip).Any(text => text.IsVisible && text.Text == "ThirdAsync"), Is.False);
+      var peer = UIElementAutomationPeer.CreatePeerForElement(expander) ?? throw new AssertionException("Expected an accessible failure list.");
+      Assert.That(peer.GetName(), Is.Not.Empty);
+      var provider = peer.GetPattern(PatternInterface.ExpandCollapse) as IExpandCollapseProvider ?? throw new AssertionException("Expected an expandable failure list.");
+      provider.Expand();
+      tooltip.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+      tooltip.UpdateLayout();
+      var list = (ScrollViewer)expander.Content;
+      Assert.That(list.IsVisible, Is.True);
+      Assert.That(list.ActualHeight, Is.InRange(1, 180));
+      Assert.That(Descendants<TextBlock>(list).Any(text => text.IsVisible && text.Text == "ThirdAsync"), Is.True);
+      Assert.That(Descendants<TextBlock>(list).Any(text => text.IsVisible && text.Text == "FourthAsync"), Is.True);
+      Assert.That(tooltip.ActualWidth, Is.LessThanOrEqualTo(440));
+      if (CultureInfo.CurrentUICulture.Name == "de-DE")
+      {
+        SavePreview(tooltip, "tooltip-expanded-failures-");
+      }
+
+      provider.Collapse();
+      tooltip.UpdateLayout();
+      Assert.That(expander.IsExpanded, Is.False);
     }
 
     private static void VerifyBuildTooltipLifetime(Button target)

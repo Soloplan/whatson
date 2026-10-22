@@ -99,6 +99,8 @@ namespace Soloplan.WhatsON.GUI.Tests
       Assert.That(status.FailurePreviewGroups.Single(), Is.EqualTo(new[] { "FirstAsync", "SecondAsync" }));
       Assert.That(status.FailurePreviewHeading, Is.EqualTo("4 failed tests"));
       Assert.That(status.MoreFailuresPreview, Is.EqualTo("2 more failures in the test report"));
+      Assert.That(status.AdditionalFailureGroups.Single().Key, Is.EqualTo("OtherTests"));
+      Assert.That(status.AdditionalFailureGroups.Single(), Is.EqualTo(new[] { "ThirdAsync", "FourthAsync" }));
       Assert.That(status.WarningPreview, Is.EqualTo(Strings.SkippedTestsNotice));
       Assert.That(status.FailureSummary, Does.Contain("Example.Product.Tests.OtherTests.FourthAsync"), "Notifications retain their original details.");
     }

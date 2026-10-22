@@ -61,7 +61,7 @@ namespace Soloplan.WhatsON.Jenkins
 
     private readonly JenkinsPollingPolicy polling = new JenkinsPollingPolicy();
 
-    private readonly ConcurrentDictionary<(string Project, int Number, ObservationState State, int Failed, int Skipped), string> failureDetails = new ConcurrentDictionary<(string, int, ObservationState, int, int), string>();
+    private readonly ConcurrentDictionary<(string Project, int Number, ObservationState State, int Failed, int Skipped, bool Expanded), string> failureDetails = new ConcurrentDictionary<(string, int, ObservationState, int, int, bool), string>();
 
     private readonly SemaphoreSlim failureDetailsLock = new SemaphoreSlim(1, 1);
 
@@ -304,7 +304,9 @@ namespace Soloplan.WhatsON.Jenkins
       }
     }
 
-    public async Task<string?> LoadFailureDetails(Status status, CancellationToken token)
+    public Task<string?> LoadFailureDetails(Status status, CancellationToken token) => this.LoadFailureDetails(status, token, false);
+
+    public async Task<string?> LoadFailureDetails(Status status, CancellationToken token, bool expanded)
     {
       if (status.Building || status.BuildNumber <= 0 || status.State is not (ObservationState.Failure or ObservationState.Unstable))
       {
@@ -312,7 +314,7 @@ namespace Soloplan.WhatsON.Jenkins
       }
 
       var key = (Project: JenkinsApi.UrlHelper.ProjectUrl(this, false), Number: status.BuildNumber, State: status.State,
-        Failed: status.FailedTestCount, Skipped: (status as JenkinsStatus)?.SkippedTestCount ?? 0);
+        Failed: status.FailedTestCount, Skipped: (status as JenkinsStatus)?.SkippedTestCount ?? 0, Expanded: expanded);
       var previousDetails = status.FailureDetails;
       await this.failureDetailsLock.WaitAsync(token).ConfigureAwait(false);
       try
@@ -323,9 +325,9 @@ namespace Soloplan.WhatsON.Jenkins
         }
 
         var tests = key.Failed > 0 || key.Skipped > 0
-          ? await this.api.GetFailedTests(this, key.Number, token).ConfigureAwait(false) : string.Empty;
+          ? await this.api.GetFailedTests(this, key.Number, token, expanded).ConfigureAwait(false) : string.Empty;
         var console = key.Failed > 0 && !string.IsNullOrWhiteSpace(tests)
-          ? string.Empty : await this.api.GetConsoleErrors(this, key.Number, token).ConfigureAwait(false);
+          ? string.Empty : await this.api.GetConsoleErrors(this, key.Number, token, expanded).ConfigureAwait(false);
         token.ThrowIfCancellationRequested();
         if (JenkinsApi.UrlHelper.ProjectUrl(this, false) != key.Project)
         {
@@ -592,9 +594,9 @@ namespace Soloplan.WhatsON.Jenkins
         var actions = latestBuild.Actions?.OfType<JenkinsBuildAction>().ToList() ?? new List<JenkinsBuildAction>();
         newStatus.FailedTestCount = Math.Max(0, actions.Select(action => action.FailCount).DefaultIfEmpty().Max());
         var causes = actions.SelectMany(action => action.FoundFailureCauses ?? Array.Empty<JenkinsFailureCause>())
-          .OfType<JenkinsFailureCause>().Select(cause => cause.Name).Where(name => !string.IsNullOrWhiteSpace(name)).Distinct().Take(5);
+          .OfType<JenkinsFailureCause>().Select(cause => cause.Name).Where(name => !string.IsNullOrWhiteSpace(name)).Distinct();
         newStatus.SkippedTestCount = Math.Max(0, actions.Select(action => action.SkipCount).DefaultIfEmpty().Max());
-        newStatus.FailureDetails = this.failureDetails.TryGetValue((JenkinsApi.UrlHelper.ProjectUrl(this, false), newStatus.BuildNumber, newStatus.State, newStatus.FailedTestCount, newStatus.SkippedTestCount), out var details)
+        newStatus.FailureDetails = this.failureDetails.TryGetValue((JenkinsApi.UrlHelper.ProjectUrl(this, false), newStatus.BuildNumber, newStatus.State, newStatus.FailedTestCount, newStatus.SkippedTestCount, false), out var details)
           ? details : string.Join(Environment.NewLine, causes);
       }
 

@@ -44,6 +44,12 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     public string? FailureDetails { get; protected set; }
 
+    public string? ExpandedFailureDetails { get; protected set; }
+
+    public IReadOnlyList<IGrouping<string, string>> AdditionalFailureGroups => this.State is ObservationState.Failure or ObservationState.Unstable
+      ? PreviewFailures(this.ExpandedFailureDetails ?? this.FailureDetails, false).Skip(2).GroupBy(item => item.Key, item => item.Value).ToList()
+      : new List<IGrouping<string, string>>();
+
     public int FailedTestCount { get; protected set; }
 
     public int SkippedTestCount { get; protected set; }
@@ -166,7 +172,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
     private static bool IsWarning(string line) => line.StartsWith("SKIPPED:", StringComparison.OrdinalIgnoreCase)
       || line.StartsWith("WARNING:", StringComparison.OrdinalIgnoreCase) || line.StartsWith("WARN:", StringComparison.OrdinalIgnoreCase);
 
-    private static IEnumerable<KeyValuePair<string, string>> PreviewFailures(string? details)
+    private static IEnumerable<KeyValuePair<string, string>> PreviewFailures(string? details, bool truncate = true)
     {
       foreach (var line in FailureLines(details).Where(line => !IsWarning(line)))
       {
@@ -177,7 +183,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
         var message = test.Success
           ? Regex.Replace(test.Groups["method"].Value, @"(?<=[a-z])(?=(?:Returns|Of|For|With|When|Should|And|From|To)[A-Z])", "\u200B")
           : diagnostic.Success ? diagnostic.Groups["message"].Value : line;
-        yield return new KeyValuePair<string, string>(source, message.Length > 120 ? message.Substring(0, 117) + "..." : message);
+        yield return new KeyValuePair<string, string>(source, truncate && message.Length > 120 ? message.Substring(0, 117) + "..." : message);
       }
     }
   }

@@ -37,10 +37,20 @@ namespace Soloplan.WhatsON.GUI.Tests
         Drain();
         Assert.That(first.Requests, Is.EqualTo(1));
         Assert.That(first.Token.IsCancellationRequested, Is.False);
+        Assert.That(first.Expanded, Is.False);
+        var previewToken = first.Token;
+        var expander = (Expander)content.FindName("FailuresExpander");
+        expander.IsExpanded = true;
+        Drain();
+        Assert.That(first.Requests, Is.EqualTo(2));
+        Assert.That(first.Expanded, Is.True);
+        Assert.That(previewToken.IsCancellationRequested, Is.True);
         content.DataContext = second;
         Drain();
         Assert.That(first.Token.IsCancellationRequested, Is.True);
         Assert.That(second.Requests, Is.EqualTo(1));
+        Assert.That(second.Expanded, Is.False);
+        Assert.That(expander.IsExpanded, Is.False);
         tooltip.IsOpen = false;
         Drain();
         Assert.That(second.Token.IsCancellationRequested, Is.True);
@@ -66,9 +76,16 @@ namespace Soloplan.WhatsON.GUI.Tests
 
       public CancellationToken Token { get; private set; }
 
-      public override async Task LoadFailureDetails(CancellationToken token)
+      public bool Expanded { get; private set; }
+
+      public override Task LoadFailureDetails(CancellationToken token) => this.LoadDetails(token, false);
+
+      public override Task LoadExpandedFailureDetails(CancellationToken token) => this.LoadDetails(token, true);
+
+      private async Task LoadDetails(CancellationToken token, bool expanded)
       {
         this.Requests++;
+        this.Expanded = expanded;
         this.Token = token;
         await Task.Delay(Timeout.Infinite, token);
       }
