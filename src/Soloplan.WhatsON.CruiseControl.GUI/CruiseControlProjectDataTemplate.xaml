@@ -15,7 +15,7 @@
            Visibility="{Binding Path=. , Converter={StaticResource MainStatusToVisibilityConverter}}">
     <StackPanel>
       <buildServer:HistoryBuildTooltipControl />
-      <local:CCProgressBarTooltipControl DataContext="{Binding}" />
+      <local:CcProgressBarTooltipControl DataContext="{Binding}" />
       <buildServer:CulpritsControl Caption="{live:Text loc:Strings.ContributorsCaption}"
                                    CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
       <TextBlock Text="{Binding ErrorMessage}" Style="{DynamicResource ToolTipMessage}" />
@@ -27,7 +27,7 @@
            Visibility="{Binding CurrentStatus , Converter={StaticResource MainStatusToVisibilityConverter}}">
     <StackPanel DataContext="{Binding CurrentStatus}">
       <buildServer:HistoryBuildTooltipControl />
-      <local:CCProgressBarTooltipControl DataContext="{Binding}" />
+      <local:CcProgressBarTooltipControl DataContext="{Binding}" />
       <buildServer:CulpritsControl Caption="{live:Text loc:Strings.ContributorsCaption}"
                                    CulpritsProp="{Binding DataContext.Culprits, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
       <TextBlock Text="{Binding ErrorMessage}" Style="{DynamicResource ToolTipMessage}" />

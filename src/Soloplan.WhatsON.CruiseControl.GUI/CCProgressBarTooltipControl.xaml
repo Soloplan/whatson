@@ -1,4 +1,4 @@
-<UserControl x:Class="Soloplan.WhatsON.CruiseControl.GUI.CCProgressBarTooltipControl"
+<UserControl x:Class="Soloplan.WhatsON.CruiseControl.GUI.CcProgressBarTooltipControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="clr-namespace:Soloplan.WhatsON.Localization;assembly=Soloplan.WhatsON"
