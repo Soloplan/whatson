@@ -233,6 +233,7 @@ namespace Soloplan.WhatsON.GUI.Tests
       VerifyGermanViews(app);
       VerifyNotificationBindings();
       VerifyTrayNotificationForwarding();
+      VerifyLastNotifiedStatus();
       ProjectListChecks.Verify(app);
       GroupContextMenuChecks.Verify(app);
       GroupPersistenceTests.VerifyEmptyGroupHeaders();
@@ -328,6 +329,70 @@ namespace Soloplan.WhatsON.GUI.Tests
         changes[0].Sender,
         Is.SameAs(notifications.Connectors.Single().CurrentStatus),
         "The tray identifies projects using the original event sender.");
+    }
+
+    private static void VerifyLastNotifiedStatus()
+    {
+      var configuration = new ApplicationConfiguration { OpenMinimized = true };
+      var settings = configuration.NotificationConfiguration;
+      settings.OnlyIfChanged = true;
+      settings.RunningNotificationEnabled = false;
+      var connectors = new[] { "Jenkins", "CruiseControl" }.Select(type =>
+      {
+        var connectorSettings = new ConnectorConfiguration(type, type,
+          Connector.ServerAddress, "https://build.example.invalid/", Connector.DirectAddress, "https://build.example.invalid/",
+          Connector.ProjectName, "main");
+        configuration.ConnectorsConfiguration.Add(connectorSettings);
+        return PluginManager.Instance.GetConnector(connectorSettings) ?? throw new AssertionException("Expected connector plugin.");
+      }).ToArray();
+      using var tray = new NotificationTestTrayHandler(configuration);
+      var flags = BindingFlags.Instance | BindingFlags.NonPublic;
+      var icon = typeof(TrayHandler).GetField("icon", flags)?.GetValue(tray) as System.Windows.Forms.NotifyIcon
+        ?? throw new AssertionException("Expected tray icon.");
+      icon.Visible = false;
+      var notifications = typeof(TrayHandler).GetField("model", flags)?.GetValue(tray) as NotificationsModel
+        ?? throw new AssertionException("Expected notifications model.");
+      var query = typeof(NotificationsModel).GetMethod("SchedulerStatusQueried", flags)
+        ?? throw new AssertionException("Expected query handler.");
+
+      query.Invoke(notifications, [null, connectors[0]]);
+      Assert.That(tray.NotificationTexts, Is.Empty, "Loading rows must not establish a notification baseline.");
+      Observe(connectors[0], 100, ObservationState.Success, false);
+      connectors[0].AddSnapshot(new Status(ObservationState.Failure) { BuildNumber = 101 });
+      Observe(connectors[0], 102, ObservationState.Failure, true);
+      connectors[0].AddSnapshot(new Status(ObservationState.Success) { BuildNumber = 103 });
+      Observe(connectors[0], 104, ObservationState.Failure, false);
+      Observe(connectors[0], 105, ObservationState.Running, false);
+      Observe(connectors[0], 106, ObservationState.Failure, false);
+      Observe(connectors[0], 107, ObservationState.Success, true);
+      settings.OnlyIfChanged = false;
+      Observe(connectors[1], 1, ObservationState.Failure, false);
+      settings.OnlyIfChanged = true;
+      Observe(connectors[1], 2, ObservationState.Success, true);
+      Observe(connectors[1], 3, ObservationState.Failure, true);
+      Observe(connectors[1], 4, ObservationState.Failure, false);
+      Observe(connectors[0], 108, ObservationState.Failure, true);
+      Observe(connectors[0], 109, ObservationState.Success, true);
+      settings.FailureNotificationEnabled = false;
+      Observe(connectors[0], 110, ObservationState.Failure, false);
+      settings.FailureNotificationEnabled = true;
+      Observe(connectors[0], 111, ObservationState.Failure, true);
+      settings.OnlyIfChanged = false;
+      Observe(connectors[0], 112, ObservationState.Failure, true);
+      settings.OnlyIfChanged = true;
+      Observe(connectors[0], 113, ObservationState.Failure, false);
+
+      void Observe(Connector connector, int number, ObservationState state, bool expected)
+      {
+        tray.NotificationTexts.Clear();
+        connector.CurrentStatus = new Status(state) { BuildNumber = number, Time = DateTime.UtcNow, Name = "Main" };
+        query.Invoke(notifications, [null, connector]);
+        Assert.That(tray.NotificationTexts.Count, Is.EqualTo(expected ? 1 : 0),
+          $"{connector.Configuration.Type} #{number} {state}: compare against the last notification, ignoring fetched history and disabled states.");
+        tray.NotificationTexts.Clear();
+        query.Invoke(notifications, [null, connector]);
+        Assert.That(tray.NotificationTexts, Is.Empty, "An unchanged poll must not notify twice.");
+      }
     }
 
     private static void VerifyNotificationBindings()
@@ -602,6 +667,18 @@ namespace Soloplan.WhatsON.GUI.Tests
       {
         CultureInfo.CurrentUICulture = previousCulture;
       }
+    }
+
+    private sealed class NotificationTestTrayHandler : TrayHandler
+    {
+      public NotificationTestTrayHandler(ApplicationConfiguration configuration)
+        : base(new ObservationScheduler(), configuration)
+      {
+      }
+
+      public List<string> NotificationTexts { get; } = new();
+
+      public override void ShowBaloon(string title, string tipText, System.Windows.Forms.ToolTipIcon i) => this.NotificationTexts.Add(tipText);
     }
 
     private sealed class ResourceTestApp : App

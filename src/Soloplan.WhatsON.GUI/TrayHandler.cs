@@ -63,6 +63,8 @@ namespace Soloplan.WhatsON.GUI
 
     private readonly System.Collections.Generic.Dictionary<ObservationState, Icon[]> runningIcons = new();
 
+    private readonly System.Collections.Generic.Dictionary<Guid, ObservationState> lastNotifiedStates = new();
+
     private readonly Timer pulseTimer = new Timer { Interval = 150 };
 
     private Icon[]? pulseFrames;
@@ -201,7 +203,7 @@ namespace Soloplan.WhatsON.GUI
     /// <param name="title">Title of balloon.</param>
     /// <param name="tipText">Text of the balloon.</param>
     /// <param name="i">Icon.</param>
-    public void ShowBaloon(string title, string tipText, ToolTipIcon i)
+    public virtual void ShowBaloon(string title, string tipText, ToolTipIcon i)
     {
       if (!Application.Current.Dispatcher.CheckAccess())
       {
@@ -527,11 +529,6 @@ namespace Soloplan.WhatsON.GUI
       {
         this.UpdateTrayIcon();
 
-        if (e.PropertyName != nameof(StatusViewModel.State))
-        {
-          return;
-        }
-
         var connectorConfiguration =
           this.configuration.ConnectorsConfiguration.FirstOrDefault(s => s.Identifier == statusViewModel.Parent.Identifier);
         if (connectorConfiguration == null)
@@ -541,8 +538,21 @@ namespace Soloplan.WhatsON.GUI
 
         var notificationConfiguration = this.configuration.GetNotificationConfiguration(connectorConfiguration);
         var connector = statusViewModel.Parent.Connector;
-        if (connector?.CurrentStatus == null
-            || !notificationConfiguration.ShouldNotify(connector.CurrentStatus, connector.Snapshots.Select(snapshot => snapshot.Status)))
+        if (connector?.CurrentStatus == null)
+        {
+          return;
+        }
+
+        // The first loaded status establishes a silent baseline for this job.
+        if (this.lastNotifiedStates.TryAdd(connectorConfiguration.Identifier, statusViewModel.State)
+            || e.PropertyName != nameof(StatusViewModel.State))
+        {
+          return;
+        }
+
+        if (!notificationConfiguration.AsObservationStateFlag(statusViewModel.State)
+            || (notificationConfiguration.OnlyIfChanged
+                && this.lastNotifiedStates[connectorConfiguration.Identifier] == statusViewModel.State))
         {
           return;
         }
@@ -568,6 +578,8 @@ namespace Soloplan.WhatsON.GUI
         {
           this.ShowBaloon(Strings.BuildInterrupted, description, ToolTipIcon.Warning);
         }
+
+        this.lastNotifiedStates[connectorConfiguration.Identifier] = statusViewModel.State;
       }
     }
 
