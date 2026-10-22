@@ -86,6 +86,22 @@ namespace Soloplan.WhatsON.GUI.Tests
         ((ConnectorsTreeView)window.FindName("mainTreeView")).Init(scheduler, configuration, connectors);
         Assert.That(window.Content, Is.Not.Null);
         Assert.That(window.Style, Is.Not.Null);
+        var banner = (MaterialDesignThemes.Wpf.ColorZone)window.FindName("ConfigurationChangesBanner");
+        window.ConfigurationModifiedFromTree = true;
+        foreach (var mode in new[] { ApplicationTheme.Light, ApplicationTheme.Dark })
+        {
+          app.ApplyTheme(mode);
+          window.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+          Assert.That(((SolidColorBrush)banner.Background).Color, Is.EqualTo(((SolidColorBrush)app.Resources["SettingsSurface"]).Color));
+          Assert.That(((SolidColorBrush)banner.Foreground).Color, Is.EqualTo(((SolidColorBrush)app.Resources["MaterialDesignBody"]).Color));
+          var content = (FrameworkElement)window.Content;
+          content.Measure(new Size(800, 450));
+          content.Arrange(new Rect(0, 0, 800, 450));
+          content.UpdateLayout();
+          SaveSettingsPreview(banner, "configuration-banner-" + mode);
+        }
+
+        window.ConfigurationModifiedFromTree = false;
       }
       finally
       {
