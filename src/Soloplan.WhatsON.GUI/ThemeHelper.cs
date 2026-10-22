@@ -63,6 +63,13 @@ namespace Soloplan.WhatsON.GUI
       resources["SettingsMuted"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(isDark ? "#B4C1D2" : "#5C6B7E"));
       resources["SettingsAccent"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(isDark ? "#A3C1FF" : "#315FC8"));
       resources["SettingsSelection"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(isDark ? "#233A61" : "#EAF0FE"));
+      resources["GroupBadgeBackground"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(isDark ? "#344359" : "#DDE5EF"));
+      resources["GroupRunningBadgeBackground"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(isDark ? "#204754" : "#D5EDF1"));
+      resources["GroupRunningBadgeForeground"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(isDark ? "#69DCE9" : "#007887"));
+      resources["GroupUnstableBadgeBackground"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(isDark ? "#51432A" : "#FFEDC4"));
+      resources["GroupUnstableBadgeForeground"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(isDark ? "#FFD16A" : "#825300"));
+      resources["GroupFailureBadgeBackground"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(isDark ? "#4C2C3B" : "#FCE0E6"));
+      resources["GroupFailureBadgeForeground"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(isDark ? "#FF9BAD" : "#A7273E"));
       resources["TooltipFailureSurface"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(isDark ? "#322633" : "#FFF5F5"));
       resources["TooltipError"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(isDark ? "#FF959F" : "#B2263D"));
       resources["TooltipWarning"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(isDark ? "#EBC36C" : "#8B6109"));

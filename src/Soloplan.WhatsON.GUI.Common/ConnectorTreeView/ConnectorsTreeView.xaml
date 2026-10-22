@@ -21,7 +21,9 @@
       </ResourceDictionary.MergedDictionaries>
 
       <Style x:Key="GroupStatusBadge" TargetType="Border">
-        <Setter Property="Background" Value="{DynamicResource SettingsBackground}" />
+        <Setter Property="Background" Value="{DynamicResource GroupBadgeBackground}" />
+        <Setter Property="MinWidth" Value="27" />
+        <Setter Property="MinHeight" Value="22" />
         <Setter Property="CornerRadius" Value="5" />
         <Setter Property="Padding" Value="6,2" />
         <Setter Property="Margin" Value="4,0,0,0" />
@@ -72,22 +74,22 @@
           <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
           <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
             <TextBlock Text="{Binding GroupName}" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" />
-            <Border Background="{DynamicResource SettingsBackground}" CornerRadius="5" Padding="6,1" Margin="8,0,0,0">
+            <Border Background="{DynamicResource GroupBadgeBackground}" CornerRadius="5" Padding="6,1" Margin="8,0,0,0">
               <TextBlock Text="{Binding ConnectorViewModels.Count}" Foreground="{DynamicResource SettingsMuted}" FontSize="11" />
             </Border>
           </StackPanel>
           <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,6,0">
-            <Border Style="{StaticResource GroupStatusBadge}" Visibility="{Binding RunningConnectorColumnVisibility}" ToolTip="{live:Text loc:Strings.Running}">
-              <TextBlock Text="{Binding RunningConnectors}" Foreground="{StaticResource Running}" />
+            <Border Style="{StaticResource GroupStatusBadge}" Background="{DynamicResource GroupRunningBadgeBackground}" Visibility="{Binding RunningConnectorColumnVisibility}" ToolTip="{live:Text loc:Strings.Running}">
+              <TextBlock Text="{Binding RunningConnectors}" Foreground="{DynamicResource GroupRunningBadgeForeground}" TextAlignment="Center" />
             </Border>
-            <Border Style="{StaticResource GroupStatusBadge}" Visibility="{Binding UnstableConnectorColumnVisibility}" ToolTip="{live:Text loc:Strings.Unstable}">
-              <TextBlock Text="{Binding UnstableConnectors}" Foreground="{StaticResource Unstable}" />
+            <Border Style="{StaticResource GroupStatusBadge}" Background="{DynamicResource GroupUnstableBadgeBackground}" Visibility="{Binding UnstableConnectorColumnVisibility}" ToolTip="{live:Text loc:Strings.Unstable}">
+              <TextBlock Text="{Binding UnstableConnectors}" Foreground="{DynamicResource GroupUnstableBadgeForeground}" TextAlignment="Center" />
             </Border>
-            <Border Style="{StaticResource GroupStatusBadge}" Visibility="{Binding FailureConnectorColumnVisibility}" ToolTip="{live:Text loc:Strings.Failure}">
-              <TextBlock Text="{Binding FailingConnectors}" Foreground="{StaticResource Failure}" />
+            <Border Style="{StaticResource GroupStatusBadge}" Background="{DynamicResource GroupFailureBadgeBackground}" Visibility="{Binding FailureConnectorColumnVisibility}" ToolTip="{live:Text loc:Strings.Failure}">
+              <TextBlock Text="{Binding FailingConnectors}" Foreground="{DynamicResource GroupFailureBadgeForeground}" TextAlignment="Center" />
             </Border>
             <Border Style="{StaticResource GroupStatusBadge}" Visibility="{Binding UnknownConnectorColumnVisibility}" ToolTip="{live:Text loc:Strings.Unknown}">
-              <TextBlock Text="{Binding UnknownConnectors}" Foreground="{StaticResource Unknown}" />
+              <TextBlock Text="{Binding UnknownConnectors}" Foreground="{DynamicResource SettingsMuted}" TextAlignment="Center" />
             </Border>
           </StackPanel>
         </Grid>

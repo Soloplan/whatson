@@ -10,6 +10,13 @@
   <SolidColorBrush x:Key="SettingsMuted" Color="#5C6B7E" />
   <SolidColorBrush x:Key="SettingsAccent" Color="#315FC8" />
   <SolidColorBrush x:Key="SettingsSelection" Color="#EAF0FE" />
+  <SolidColorBrush x:Key="GroupBadgeBackground" Color="#DDE5EF" />
+  <SolidColorBrush x:Key="GroupRunningBadgeBackground" Color="#D5EDF1" />
+  <SolidColorBrush x:Key="GroupRunningBadgeForeground" Color="#007887" />
+  <SolidColorBrush x:Key="GroupUnstableBadgeBackground" Color="#FFEDC4" />
+  <SolidColorBrush x:Key="GroupUnstableBadgeForeground" Color="#825300" />
+  <SolidColorBrush x:Key="GroupFailureBadgeBackground" Color="#FCE0E6" />
+  <SolidColorBrush x:Key="GroupFailureBadgeForeground" Color="#A7273E" />
   <Thickness x:Key="SettingsScrollGap">0,0,12,0</Thickness>
   <Thickness x:Key="SettingsPageGutter">0,0,17,0</Thickness>
 

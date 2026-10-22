@@ -79,6 +79,16 @@ namespace Soloplan.WhatsON.GUI.Tests
             var row = (Border)item.Template.FindName("Row", item);
             Assert.That(row.ContextMenu, Is.Not.Null, $"Group {groupIndex} must attach a menu when its header is first created.");
             Assert.That(group.ConnectorViewModels.Count, Is.EqualTo(40));
+            var badgeStyle = (Style)control.FindResource("GroupStatusBadge");
+            var badges = FindStatusBadges(row, badgeStyle).ToArray();
+            Assert.That(badges, Has.Length.EqualTo(4));
+            Assert.That(row.IsMouseOver, Is.False, "Badge backgrounds must be visible without hovering the group.");
+            foreach (var badge in badges)
+            {
+              var background = badge.Background as SolidColorBrush ?? throw new AssertionException("Expected a badge background.");
+              Assert.That(background.Color.A, Is.EqualTo(255));
+              Assert.That(background.Color, Is.Not.EqualTo(((SolidColorBrush)app.Resources["SettingsBackground"]).Color), "Badge fills must stand out from the resting row in both themes.");
+            }
             foreach (var point in new[]
             {
               new Point(2, row.ActualHeight / 2),
@@ -160,6 +170,23 @@ namespace Soloplan.WhatsON.GUI.Tests
         {
           AppDomain.CurrentDomain.FirstChanceException -= observe;
           window.Close();
+        }
+      }
+    }
+
+    private static IEnumerable<Border> FindStatusBadges(DependencyObject parent, Style style)
+    {
+      for (var index = 0; index < VisualTreeHelper.GetChildrenCount(parent); index++)
+      {
+        var child = VisualTreeHelper.GetChild(parent, index);
+        if (child is Border badge && badge.Style == style)
+        {
+          yield return badge;
+        }
+
+        foreach (var descendant in FindStatusBadges(child, style))
+        {
+          yield return descendant;
         }
       }
     }
