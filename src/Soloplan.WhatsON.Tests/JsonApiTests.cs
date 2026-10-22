@@ -122,7 +122,7 @@ namespace Soloplan.WhatsON.Tests
       var address = this.StartServer("{\"build\":42}", holdResponse: true);
       using (var cancellation = new CancellationTokenSource())
       {
-        var query = Task.Run(() => new SerializationHelper().GetJsonModel<Dictionary<string, int>>(address, cancellation.Token));
+        var query = new SerializationHelper().GetJsonModel<Dictionary<string, int>>(address, cancellation.Token);
         Assert.That(
           await Task.WhenAny(this.receivedRequest.Task, Task.Delay(5000)),
           Is.SameAs(this.receivedRequest.Task),

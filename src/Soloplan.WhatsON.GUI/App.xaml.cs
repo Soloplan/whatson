@@ -67,7 +67,7 @@ namespace Soloplan.WhatsON.GUI
       this.themeHelper.ApplyLightDarkMode(this.IsDarkThemeEnabled);
     }
 
-    protected override void OnStartup(StartupEventArgs e)
+    protected override async void OnStartup(StartupEventArgs e)
     {
       var configDirArg = e.Args.FirstOrDefault(a => a.ToLower().StartsWith(ConfigDirArgName.ToLower()));
       if (configDirArg != null)
@@ -82,7 +82,7 @@ namespace Soloplan.WhatsON.GUI
       logConfiguration.Initialize();
       ExceptionHandlingInitialization.Initialize();
 
-      this.config = SerializationHelper.Instance.LoadOrCreateConfiguration();
+      this.config = await SerializationHelper.Instance.LoadOrCreateConfigurationAsync();
       Localizer.ApplyLanguage(this.config.Language);
       FrameworkElement.LanguageProperty.OverrideMetadata(
         typeof(FrameworkElement),

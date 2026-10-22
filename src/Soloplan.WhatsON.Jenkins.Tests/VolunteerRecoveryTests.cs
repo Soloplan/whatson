@@ -79,7 +79,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var original = this.CreateConnector();
       await original.SetVolunteer(42, null, true, CancellationToken.None);
       var jobUrl = JenkinsApi.UrlHelper.ProjectUrl(original, false);
-      var saved = new JenkinsVolunteerStore(this.directory).Read(jobUrl).Single();
+      var saved = (await new JenkinsVolunteerStore(this.directory).ReadAsync(jobUrl)).Single();
       Assert.That(saved.BuildNumber, Is.EqualTo(42));
       Assert.That(saved.Owner, Is.EqualTo("alex"));
       Assert.That(saved.JobUrl, Is.EqualTo(jobUrl));
@@ -91,7 +91,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
       Assert.That(this.clearAttempts, Is.EqualTo(1));
       Assert.That(this.claimed.Description, Is.EqualTo("Release notes"));
-      Assert.That(new JenkinsVolunteerStore(this.directory).Read(jobUrl), Is.Empty);
+      Assert.That((await new JenkinsVolunteerStore(this.directory).ReadAsync(jobUrl)), Is.Empty);
       Assert.That(restarted.CurrentStatus?.BuildNumber, Is.EqualTo(100));
     }
 
@@ -107,7 +107,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       await connector.QueryStatus(CancellationToken.None);
       Assert.That(this.clearAttempts, Is.Zero);
       Assert.That(JenkinsVolunteer.GetOwner(this.claimed.Description), Is.EqualTo("alex"));
-      Assert.That(new JenkinsVolunteerStore(this.directory).Read(JenkinsApi.UrlHelper.ProjectUrl(connector, false)).Count(), Is.EqualTo(1));
+      Assert.That((await new JenkinsVolunteerStore(this.directory).ReadAsync(JenkinsApi.UrlHelper.ProjectUrl(connector, false))).Count(), Is.EqualTo(1));
     }
 
     [TestCase("alex")]
@@ -138,12 +138,12 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       Assert.That(this.clearAttempts, Is.EqualTo(1));
       Assert.That(this.claimed.Description, Is.EqualTo("Release notes"));
       var jobUrl = JenkinsApi.UrlHelper.ProjectUrl(creator, false);
-      Assert.That(new JenkinsVolunteerStore(this.directory).Read(jobUrl).Count(), Is.EqualTo(1));
+      Assert.That((await new JenkinsVolunteerStore(this.directory).ReadAsync(jobUrl)).Count(), Is.EqualTo(1));
 
       this.job.LastBuild = new JenkinsBuild { Number = 43, Result = "SUCCESS" };
       await this.CreateConnector().QueryStatus(CancellationToken.None);
       Assert.That(this.clearAttempts, Is.EqualTo(1), "The creator must not write again after another user cleared the notice.");
-      Assert.That(new JenkinsVolunteerStore(this.directory).Read(jobUrl), Is.Empty);
+      Assert.That((await new JenkinsVolunteerStore(this.directory).ReadAsync(jobUrl)), Is.Empty);
     }
 
     [TestCase("read")]
@@ -163,12 +163,12 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
       await connector.QueryStatus(CancellationToken.None);
       Assert.That(connector.CurrentStatus?.State, Is.EqualTo(ObservationState.Success), "Cleanup errors must not hide build recovery.");
-      Assert.That(new JenkinsVolunteerStore(this.directory).Read(JenkinsApi.UrlHelper.ProjectUrl(connector, false)).Count(), Is.EqualTo(1));
+      Assert.That((await new JenkinsVolunteerStore(this.directory).ReadAsync(JenkinsApi.UrlHelper.ProjectUrl(connector, false))).Count(), Is.EqualTo(1));
       this.failRead = false;
       this.failClear = false;
       await this.CreateConnector().QueryStatus(CancellationToken.None);
       Assert.That(this.claimed.Description, Is.EqualTo("Release notes"));
-      Assert.That(new JenkinsVolunteerStore(this.directory).Read(JenkinsApi.UrlHelper.ProjectUrl(connector, false)), Is.Empty);
+      Assert.That((await new JenkinsVolunteerStore(this.directory).ReadAsync(JenkinsApi.UrlHelper.ProjectUrl(connector, false))), Is.Empty);
     }
 
     [Test]
@@ -195,7 +195,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       await connector.QueryStatus(CancellationToken.None);
       Assert.That(this.clearAttempts, Is.Zero);
       Assert.That(JenkinsVolunteer.GetOwner(this.claimed.Description), Is.EqualTo(owner));
-      Assert.That(new JenkinsVolunteerStore(this.directory).Read(JenkinsApi.UrlHelper.ProjectUrl(connector, false)), Is.Empty);
+      Assert.That((await new JenkinsVolunteerStore(this.directory).ReadAsync(JenkinsApi.UrlHelper.ProjectUrl(connector, false))), Is.Empty);
     }
 
     [Test]
@@ -204,7 +204,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       var connector = this.CreateConnector();
       await connector.SetVolunteer(42, null, true, CancellationToken.None);
       await connector.SetVolunteer(42, "alex", false, CancellationToken.None);
-      Assert.That(new JenkinsVolunteerStore(this.directory).Read(JenkinsApi.UrlHelper.ProjectUrl(connector, false)), Is.Empty);
+      Assert.That((await new JenkinsVolunteerStore(this.directory).ReadAsync(JenkinsApi.UrlHelper.ProjectUrl(connector, false))), Is.Empty);
     }
 
     [Test]
@@ -217,7 +217,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       this.job.LastBuild = new JenkinsBuild { Number = 43, Result = "SUCCESS" };
       await connector.QueryStatus(CancellationToken.None);
       Assert.That(this.clearAttempts, Is.Zero);
-      Assert.That(new JenkinsVolunteerStore(this.directory).Read(JenkinsApi.UrlHelper.ProjectUrl(connector, false)).Count(), Is.EqualTo(1));
+      Assert.That((await new JenkinsVolunteerStore(this.directory).ReadAsync(JenkinsApi.UrlHelper.ProjectUrl(connector, false))).Count(), Is.EqualTo(1));
       this.claimed.Description = original;
       await this.CreateConnector().QueryStatus(CancellationToken.None);
       Assert.That(this.claimed.Description, Is.EqualTo("Release notes"));
@@ -275,7 +275,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
       Assert.That(updated.BuildNumber, Is.EqualTo(43));
       Assert.That(JenkinsVolunteer.GetOwner(connector.CurrentStatus?.Details), Is.EqualTo("alex"));
       Assert.That(this.claimed.Description, Is.EqualTo("Release notes"));
-      Assert.That(new JenkinsVolunteerStore(this.directory).Read(JenkinsApi.UrlHelper.ProjectUrl(connector, false)).Single().BuildNumber, Is.EqualTo(43));
+      Assert.That((await new JenkinsVolunteerStore(this.directory).ReadAsync(JenkinsApi.UrlHelper.ProjectUrl(connector, false))).Single().BuildNumber, Is.EqualTo(43));
     }
 
     [Test]
@@ -384,7 +384,7 @@ namespace Soloplan.WhatsON.Jenkins.Tests
 
       Assert.That((connector.CurrentStatus as JenkinsStatus)?.ActiveFixes, Is.Empty);
       Assert.That(JenkinsVolunteerPanel.GetFixes(this.job.Description), Is.Empty);
-      Assert.That(new JenkinsVolunteerStore(this.directory).Read(JenkinsApi.UrlHelper.ProjectUrl(connector, false)), Is.Empty);
+      Assert.That((await new JenkinsVolunteerStore(this.directory).ReadAsync(JenkinsApi.UrlHelper.ProjectUrl(connector, false))), Is.Empty);
     }
 
     [Test]
@@ -403,18 +403,18 @@ namespace Soloplan.WhatsON.Jenkins.Tests
     }
 
     [Test]
-    public void TrackingSeparatesServersJobsAndBuilds()
+    public async Task TrackingSeparatesServersJobsAndBuilds()
     {
       var store = new JenkinsVolunteerStore(this.directory);
-      store.Save("https://one.example/job/a", 42, "alex");
-      store.Save("https://one.example/job/a", 43, "alex");
-      store.Save("https://two.example/job/a", 42, "other");
-      store.Save("https://one.example/job/b", 42, "other");
+      await store.SaveAsync("https://one.example/job/a", 42, "alex");
+      await store.SaveAsync("https://one.example/job/a", 43, "alex");
+      await store.SaveAsync("https://two.example/job/a", 42, "other");
+      await store.SaveAsync("https://one.example/job/b", 42, "other");
       var restarted = new JenkinsVolunteerStore(this.directory);
-      Assert.That(restarted.Read("https://one.example/job/a").Select(claim => claim.BuildNumber), Is.EquivalentTo(new[] { 42, 43 }));
+      Assert.That((await restarted.ReadAsync("https://one.example/job/a")).Select(claim => claim.BuildNumber), Is.EquivalentTo(new[] { 42, 43 }));
       restarted.Remove("https://one.example/job/a", 42);
-      Assert.That(restarted.Read("https://two.example/job/a").Single().Owner, Is.EqualTo("other"));
-      Assert.That(restarted.Read("https://one.example/job/b").Single().Owner, Is.EqualTo("other"));
+      Assert.That((await restarted.ReadAsync("https://two.example/job/a")).Single().Owner, Is.EqualTo("other"));
+      Assert.That((await restarted.ReadAsync("https://one.example/job/b")).Single().Owner, Is.EqualTo("other"));
     }
 
     private JenkinsConnector CreateConnector(string? trackingDirectory = null, string userName = "alex")

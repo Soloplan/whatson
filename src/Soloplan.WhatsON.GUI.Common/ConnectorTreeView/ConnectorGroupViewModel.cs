@@ -278,7 +278,7 @@ namespace Soloplan.WhatsON.GUI.Common.ConnectorTreeView
 
     private void OnSubItemEdit(object? sender, EditTreeItemViewModelEventArgs e) => this.OnEditItem(sender, e);
 
-    private async void DeleteConnector(object? sender, DeleteTreeItemEventArgs e)
+    private void DeleteConnector(object? sender, DeleteTreeItemEventArgs e)
     {
       if (e.DeleteItem is ConnectorViewModel model)
       {

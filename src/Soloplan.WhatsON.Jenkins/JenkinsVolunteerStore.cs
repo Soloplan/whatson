@@ -13,6 +13,8 @@ namespace Soloplan.WhatsON.Jenkins
   using System.IO;
   using System.Security.Cryptography;
   using System.Text;
+  using System.Threading;
+  using System.Threading.Tasks;
   using Newtonsoft.Json;
 
   internal sealed class JenkinsVolunteerStore
@@ -27,34 +29,40 @@ namespace Soloplan.WhatsON.Jenkins
     internal static JenkinsVolunteerStore Instance { get; } = new JenkinsVolunteerStore(
       Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WhatsOn", "volunteers"));
 
-    internal IEnumerable<Claim> Read(string jobUrl)
+    internal async Task<IReadOnlyList<Claim>> ReadAsync(string jobUrl, CancellationToken cancellationToken = default)
     {
+      cancellationToken.ThrowIfCancellationRequested();
+      var claims = new List<Claim>();
       if (!Directory.Exists(this.directory))
       {
-        yield break;
+        return claims;
       }
 
       foreach (var file in Directory.EnumerateFiles(this.directory, JobKey(jobUrl) + "-*.json"))
       {
-        var claim = JsonConvert.DeserializeObject<Claim>(File.ReadAllText(file));
+        var claim = JsonConvert.DeserializeObject<Claim>(await File.ReadAllTextAsync(file, cancellationToken).ConfigureAwait(false));
         if (claim == null || claim.JobUrl != jobUrl || claim.BuildNumber <= 0 || string.IsNullOrWhiteSpace(claim.Owner)
             || this.FileName(jobUrl, claim.BuildNumber) != file)
         {
           throw new InvalidDataException("Invalid saved Jenkins volunteer.");
         }
 
-        yield return claim;
+        claims.Add(claim);
       }
+
+      return claims;
     }
 
-    internal void Save(string jobUrl, int buildNumber, string owner)
+    internal async Task SaveAsync(string jobUrl, int buildNumber, string owner, CancellationToken cancellationToken = default)
     {
+      cancellationToken.ThrowIfCancellationRequested();
       Directory.CreateDirectory(this.directory);
       var file = this.FileName(jobUrl, buildNumber);
       var temporary = file + "." + Guid.NewGuid().ToString("N") + ".tmp";
       try
       {
-        File.WriteAllText(temporary, JsonConvert.SerializeObject(new Claim(jobUrl, buildNumber, owner)));
+        await File.WriteAllTextAsync(temporary, JsonConvert.SerializeObject(new Claim(jobUrl, buildNumber, owner)), cancellationToken).ConfigureAwait(false);
+        cancellationToken.ThrowIfCancellationRequested();
         File.Move(temporary, file, true);
       }
       finally

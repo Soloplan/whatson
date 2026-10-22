@@ -136,14 +136,17 @@ namespace Soloplan.WhatsON.CruiseControl
       try
       {
         using (cancellationToken.Register(() => request.Abort(), false))
-        using (var response = await request.GetResponseAsync())
+        using (var response = await request.GetResponseAsync().WaitAsync(cancellationToken).ConfigureAwait(false))
         {
           // Get the stream containing content returned by the server
           // Open the stream using a StreamReader for easy access
           using (var dataStream = response.GetResponseStream())
           {
+            using var buffer = new MemoryStream();
+            await dataStream.CopyToAsync(buffer, cancellationToken).ConfigureAwait(false);
+            buffer.Position = 0;
             var xmlSerializer = new XmlSerializer(typeof(TModel));
-            return xmlSerializer.Deserialize(dataStream) as TModel
+            return xmlSerializer.Deserialize(buffer) as TModel
               ?? throw new InvalidPlugInApiResponseException("The XML response contains no model.");
           }
         }

@@ -250,11 +250,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <returns>
     /// True if the wizard was finished correctly and not canceled in any way.
     /// </returns>
-    public bool Start(ConnectorViewModel connector)
+    public Task<bool> StartAsync(ConnectorViewModel connector)
     {
       this.editedConnectorViewModel = connector;
       this.IsPreviousStepEnabled = false;
-      return this.Start(false);
+      return this.StartAsync(false);
     }
 
     /// <summary>
@@ -265,7 +265,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <returns>
     /// True if the wizard was finished correctly and not canceled in any way.
     /// </returns>
-    public bool Start(bool applyConfig = true)
+    public async Task<bool> StartAsync(bool applyConfig = true)
     {
       this.wizardWindow = new WizardWindow(this);
       this.wizardWindow.Owner = this.ownerWindow;
@@ -278,10 +278,10 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       {
         this.ProposedServerAddress = this.editedConnectorViewModel.GetConfigurationByKey(Connector.ServerAddress)?.Value;
 
-        void OnActivated(object? sender, EventArgs e)
+        async void OnActivated(object? sender, EventArgs e)
         {
-          this.GoToProjectSelectionStep();
           this.wizardWindow.Activated -= OnActivated;
+          await this.GoToProjectSelectionStep();
         }
 
         this.wizardWindow.Activated += OnActivated;
@@ -299,7 +299,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       {
         if (applyConfig)
         {
-          this.ApplyToConfiguration();
+          await this.ApplyToConfiguration();
         }
 
         return true;
@@ -340,11 +340,12 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// Goes to next page of the wizard.
     /// </summary>
-    public void GoToNextPage()
+    public async Task GoToNextPageAsync()
     {
       if (this.WizardFrame.Content is ConnectionWizardPage)
       {
-        this.GoToProjectSelectionStep();
+        await this.GoToProjectSelectionStep();
+        return;
       }
 
       if (this.WizardFrame.Content is ProjectSelectionWizardPage)
@@ -456,7 +457,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// Applies the results of the wizard to configuration.
     /// </summary>
     /// <exception cref="InvalidOperationException">At least one selected project is required.</exception>
-    private void ApplyToConfiguration()
+    private async Task ApplyToConfiguration()
     {
       var selectedProjects = this.GetSelectedProjects();
       if (selectedProjects.Count < 1)
@@ -495,7 +496,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
       if (configurationViewModel.ConfigurationIsModified)
       {
         configurationViewModel.Connectors.ApplyToConfiguration(this.config);
-        SerializationHelper.Instance.SaveConfiguration(this.config);
+        await SerializationHelper.Instance.SaveConfigurationAsync(this.config);
       }
     }
 
@@ -591,7 +592,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.Wizard
     /// <summary>
     /// Goes to project selection step of the wizard.
     /// </summary>
-    private async void GoToProjectSelectionStep()
+    private async Task GoToProjectSelectionStep()
     {
       var window = this.wizardWindow;
       if (window == null)

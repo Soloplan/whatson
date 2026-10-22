@@ -29,7 +29,7 @@ namespace Soloplan.WhatsON.GUI.Tests
   public class JenkinsCredentialsTestControlTests
   {
     [Test]
-    public void MissingSettingsDisableTestingAndEditsEnableItWithoutSaving()
+    public async Task MissingSettingsDisableTestingAndEditsEnableItWithoutSaving()
     {
       var source = new ConnectorConfiguration(JenkinsConnector.ConnectorName);
       var settings = new ConnectorViewModel();
@@ -45,14 +45,14 @@ namespace Soloplan.WhatsON.GUI.Tests
       Assert.That(control.Children[1].Visibility, Is.EqualTo(Visibility.Collapsed));
       Assert.That(ToolTipService.GetShowOnDisabled(control.TestButton), Is.True);
       Assert.That(control.TestButton.ToolTip, Is.EqualTo(Strings.JenkinsCredentialsRequired));
-      control.TestAsync().GetAwaiter().GetResult();
+      await control.TestAsync();
       Assert.That(calls, Is.Zero);
 
       settings.GetConfigurationByKey(Connector.ServerAddress).Value = "https://ci.example.invalid/jenkins";
       settings.GetConfigurationByKey(JenkinsConnector.UserName).Value = "alex";
       settings.GetConfigurationByKey(JenkinsConnector.ApiToken).Value = "encrypted-placeholder";
       Assert.That(control.TestButton.IsEnabled, Is.True);
-      control.TestAsync().GetAwaiter().GetResult();
+      await control.TestAsync();
       Assert.That(calls, Is.EqualTo(1));
       Assert.That(control.ResultText, Is.EqualTo(string.Format(Strings.JenkinsCredentialsValid, "alex")));
       Assert.That(control.Children[1].Visibility, Is.EqualTo(Visibility.Visible));
@@ -65,7 +65,7 @@ namespace Soloplan.WhatsON.GUI.Tests
     }
 
     [Test]
-    public void TestUsesSnapshotAndSuppressesResultsAfterSettingsChange()
+    public async Task TestUsesSnapshotAndSuppressesResultsAfterSettingsChange()
     {
       var settings = CreateSettings();
       JenkinsCredentialsTestControl? control = null;
@@ -79,13 +79,13 @@ namespace Soloplan.WhatsON.GUI.Tests
         Assert.That(connector.AuthenticationUser, Is.EqualTo("alex"), "The in-flight request must use an immutable snapshot.");
         return Task.FromResult("alex");
       });
-      control.TestAsync().GetAwaiter().GetResult();
+      await control.TestAsync();
       Assert.That(control.ResultText, Is.Empty);
       Assert.That(control.TestButton.IsEnabled, Is.True);
     }
 
     [Test]
-    public void LeavingSettingsCancelsTheTestAndSuppressesItsResult()
+    public async Task LeavingSettingsCancelsTheTestAndSuppressesItsResult()
     {
       JenkinsCredentialsTestControl? control = null;
       control = new JenkinsCredentialsTestControl(CreateSettings(), (_, token) =>
@@ -94,12 +94,12 @@ namespace Soloplan.WhatsON.GUI.Tests
         Assert.That(token.IsCancellationRequested, Is.True);
         return Task.FromResult("alex");
       });
-      control.TestAsync().GetAwaiter().GetResult();
+      await control.TestAsync();
       Assert.That(control.ResultText, Is.Empty);
     }
 
     [Test]
-    public void PendingTestPreventsDuplicateRequestsAndAllowsRetryAfterCompletion()
+    public async Task PendingTestPreventsDuplicateRequestsAndAllowsRetryAfterCompletion()
     {
       var previousContext = SynchronizationContext.Current;
       SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext());
@@ -114,10 +114,10 @@ namespace Soloplan.WhatsON.GUI.Tests
         });
         var pending = control.TestAsync();
         Assert.That(control.TestButton.IsEnabled, Is.False);
-        control.TestAsync().GetAwaiter().GetResult();
+        await control.TestAsync();
         Assert.That(calls, Is.EqualTo(1));
         response.SetResult("alex");
-        Dispatcher.CurrentDispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+        await pending;
         Assert.That(pending.IsCompletedSuccessfully, Is.True);
         Assert.That(control.TestButton.IsEnabled, Is.True);
         Assert.That(control.ResultText, Is.EqualTo(string.Format(Strings.JenkinsCredentialsValid, "alex")));
@@ -131,11 +131,11 @@ namespace Soloplan.WhatsON.GUI.Tests
     [TestCase(HttpStatusCode.Unauthorized)]
     [TestCase(HttpStatusCode.Forbidden)]
     [TestCase(HttpStatusCode.BadGateway)]
-    public void FailuresAreReadableAndNeverExposeExceptionDetails(HttpStatusCode status)
+    public async Task FailuresAreReadableAndNeverExposeExceptionDetails(HttpStatusCode status)
     {
       var control = new JenkinsCredentialsTestControl(CreateSettings(), (_, _) =>
         Task.FromException<string>(new HttpRequestException("secret-token-do-not-display", null, status)));
-      control.TestAsync().GetAwaiter().GetResult();
+      await control.TestAsync();
       Assert.That(control.TestButton.IsEnabled, Is.True);
       Assert.That(control.ResultText, Is.EqualTo(status is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden
         ? Strings.JenkinsCredentialsRejected : Strings.JenkinsCredentialsConnectionFailed));
@@ -143,11 +143,11 @@ namespace Soloplan.WhatsON.GUI.Tests
     }
 
     [Test]
-    public void TimeoutsAllowRetry()
+    public async Task TimeoutsAllowRetry()
     {
       var control = new JenkinsCredentialsTestControl(CreateSettings(), (_, _) =>
         Task.FromException<string>(new TaskCanceledException()));
-      control.TestAsync().GetAwaiter().GetResult();
+      await control.TestAsync();
       Assert.That(control.ResultText, Is.EqualTo(Strings.JenkinsCredentialsTimedOut));
       Assert.That(control.TestButton.IsEnabled, Is.True);
     }

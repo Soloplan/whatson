@@ -10,6 +10,8 @@ namespace Soloplan.WhatsON.Tests
   using System;
   using System.IO;
   using System.Linq;
+  using System.Threading;
+  using System.Threading.Tasks;
   using Newtonsoft.Json;
   using Newtonsoft.Json.Linq;
   using NUnit.Framework;
@@ -33,7 +35,35 @@ namespace Soloplan.WhatsON.Tests
     public void TearDown() => Directory.Delete(this.directory, true);
 
     [Test]
-    public void SaveAndLoadPreserveProjectsIdentitiesAndNotificationPreferences()
+    public async Task CancelledSavePreservesExistingFileAndRemovesTemporaryFiles()
+    {
+      var file = Path.Combine(this.directory, "existing.json");
+      await this.serializer.SaveAsync("original", file);
+      using var cancellation = new CancellationTokenSource();
+      cancellation.Cancel();
+
+      await Assert.ThatAsync(() => this.serializer.SaveAsync("replacement", file, cancellationToken: cancellation.Token), Throws.InstanceOf<OperationCanceledException>());
+
+      Assert.That(await SerializationHelper.LoadAsync<string>(file), Is.EqualTo("original"));
+      Assert.That(Directory.GetFiles(this.directory, "*.tmp"), Is.Empty);
+    }
+
+    [Test]
+    public async Task FailedReplacementPreservesExistingFileAndRemovesTemporaryFiles()
+    {
+      var file = Path.Combine(this.directory, "existing.json");
+      await this.serializer.SaveAsync("original", file);
+      using (var locked = File.Open(file, FileMode.Open, FileAccess.Read, FileShare.Read))
+      {
+        await Assert.ThatAsync(() => this.serializer.SaveAsync("replacement", file), Throws.InstanceOf<IOException>().Or.InstanceOf<UnauthorizedAccessException>());
+      }
+
+      Assert.That(await SerializationHelper.LoadAsync<string>(file), Is.EqualTo("original"));
+      Assert.That(Directory.GetFiles(this.directory, "*.tmp"), Is.Empty);
+    }
+
+    [Test]
+    public async Task SaveAndLoadPreserveProjectsIdentitiesAndNotificationPreferences()
     {
       var configuration = new ApplicationConfiguration { ThemeMode = ApplicationTheme.Dark, AlwaysOnTop = true, OpenMinimized = true };
       configuration.NotificationConfiguration.OnlyIfChanged = true;
@@ -50,8 +80,8 @@ namespace Soloplan.WhatsON.Tests
       configuration.ConnectorsConfiguration.Add(connector);
       configuration.ConnectorsConfiguration.Add(new ConnectorConfiguration("Jenkins", "Other project"));
 
-      this.serializer.SaveConfiguration(configuration);
-      var restored = this.serializer.LoadConfiguration();
+      await this.serializer.SaveConfigurationAsync(configuration);
+      var restored = await this.serializer.LoadConfigurationAsync();
 
       Assert.Multiple(() =>
       {

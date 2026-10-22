@@ -72,6 +72,14 @@ namespace Soloplan.WhatsON
         ?? throw new JsonSerializationException("The file contains a null model.");
     }
 
+    public static async Task<T> LoadAsync<T>(string file, CancellationToken cancellationToken = default)
+    {
+      var json = await File.ReadAllTextAsync(file, cancellationToken).ConfigureAwait(false);
+      var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
+      return JsonConvert.DeserializeObject<T>(json, settings)
+        ?? throw new JsonSerializationException("The file contains a null model.");
+    }
+
     public async Task<TModel> GetJsonModel<TModel>(
       string requestUrl,
       CancellationToken token = default(CancellationToken),
@@ -143,6 +151,22 @@ namespace Soloplan.WhatsON
       return result;
     }
 
+    public async Task<ApplicationConfiguration> LoadConfigurationAsync(CancellationToken cancellationToken = default)
+    {
+      var result = await LoadAsync<ApplicationConfiguration>(this.ConfigFile, cancellationToken).ConfigureAwait(false);
+      this.HandleConfigurationErrors(result);
+      result.InitializeServerConfigurations();
+      return result;
+    }
+
+    public Task<ApplicationConfiguration> LoadOrCreateConfigurationAsync(CancellationToken cancellationToken = default)
+    {
+      cancellationToken.ThrowIfCancellationRequested();
+      return File.Exists(this.ConfigFile)
+        ? this.LoadConfigurationAsync(cancellationToken)
+        : Task.FromResult(new ApplicationConfiguration());
+    }
+
     /// <summary>
     /// Loads the or creates the configuration.
     /// </summary>
@@ -168,6 +192,30 @@ namespace Soloplan.WhatsON
     public void Save<T>(T configuration, string file, bool serializeIdentifier = true)
     {
       log.Debug("Saving configuration {configuration} to file {file}.", configuration, file);
+      var json = Serialize(configuration, serializeIdentifier);
+      File.WriteAllText(file, json);
+      log.Debug("Configuration saved.");
+    }
+
+    public async Task SaveAsync<T>(T configuration, string file, bool serializeIdentifier = true, CancellationToken cancellationToken = default)
+    {
+      cancellationToken.ThrowIfCancellationRequested();
+      var json = Serialize(configuration, serializeIdentifier);
+      var temporary = file + "." + Guid.NewGuid().ToString("N") + ".tmp";
+      try
+      {
+        await File.WriteAllTextAsync(temporary, json, cancellationToken).ConfigureAwait(false);
+        cancellationToken.ThrowIfCancellationRequested();
+        File.Move(temporary, file, true);
+      }
+      finally
+      {
+        File.Delete(temporary);
+      }
+    }
+
+    private static string Serialize<T>(T configuration, bool serializeIdentifier)
+    {
       var settings = new JsonSerializerSettings
       {
         TypeNameHandling = TypeNameHandling.Auto, NullValueHandling = NullValueHandling.Ignore, Formatting = Formatting.Indented,
@@ -177,9 +225,7 @@ namespace Soloplan.WhatsON
         settings.ContractResolver = new WhatsOnContractResolver(nameof(ConnectorConfiguration.Identifier));
       }
 
-      var json = JsonConvert.SerializeObject(configuration, settings);
-      File.WriteAllText(file, json);
-      log.Debug("Configuration saved.");
+      return JsonConvert.SerializeObject(configuration, settings);
     }
 
     /// <summary>
@@ -202,6 +248,19 @@ namespace Soloplan.WhatsON
       }
 
       this.Save(configuration, configFilePath ?? this.ConfigFile);
+    }
+
+    public Task SaveConfigurationAsync(ApplicationConfiguration configuration, string? configFilePath = null, CancellationToken cancellationToken = default)
+    {
+      cancellationToken.ThrowIfCancellationRequested();
+      if (configFilePath == null)
+      {
+        var directory = Path.GetDirectoryName(this.ConfigFile)
+          ?? throw new InvalidOperationException("Couldn't get the directory for configuration file.");
+        Directory.CreateDirectory(directory);
+      }
+
+      return this.SaveAsync(configuration, configFilePath ?? this.ConfigFile, cancellationToken: cancellationToken);
     }
 
     /// <summary>

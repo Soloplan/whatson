@@ -10,6 +10,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
   using System;
   using System.Collections.Generic;
   using System.Linq;
+  using System.Threading.Tasks;
   using System.Windows.Controls;
   using Microsoft.Win32;
   using NLog;
@@ -289,7 +290,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// <summary>
     /// Applies to source configuration and saves changes.
     /// </summary>
-    public void ApplyToSourceAndSave()
+    public async Task ApplyToSourceAndSaveAsync()
     {
       if (!this.ConfigurationIsModified)
       {
@@ -301,7 +302,7 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
       {
         this.Connectors.ApplyToConfiguration(this.Configuration);
         this.ApplyMainSettingsToConfiguration(this.Configuration);
-        SerializationHelper.Instance.SaveConfiguration(this.Configuration);
+        await SerializationHelper.Instance.SaveConfigurationAsync(this.Configuration);
         this.ConfigurationIsModified = false;
       }
       finally
@@ -330,11 +331,11 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// Exports the configuration to specified file path.
     /// </summary>
     /// <param name="filePath">The file path.</param>
-    public void Export(string filePath)
+    public async Task ExportAsync(string filePath)
     {
       var tempConfig = new ApplicationConfiguration();
       this.ApplyToConfiguration(tempConfig);
-      SerializationHelper.Instance.SaveConfiguration(tempConfig, filePath);
+      await SerializationHelper.Instance.SaveConfigurationAsync(tempConfig, filePath);
     }
 
     /// <summary>
@@ -342,26 +343,25 @@ namespace Soloplan.WhatsON.GUI.Configuration.ViewModel
     /// </summary>
     /// <param name="filePath">The file path.</param>
     /// <returns>True if import was successful.</returns>
-    public bool Import(string filePath, out string? errorMessage)
+    public async Task<(bool Success, string? ErrorMessage)> ImportAsync(string filePath)
     {
-      errorMessage = null;
       try
       {
-        var newConfiguration = SerializationHelper.Load<ApplicationConfiguration>(filePath);
+        var newConfiguration = await SerializationHelper.LoadAsync<ApplicationConfiguration>(filePath);
         this.ConfigurationApplying?.Invoke(this, new EventArgs());
         this.Load(newConfiguration);
         this.ConfigurationIsModified = true;
-        this.ApplyToSourceAndSave();
+        await this.ApplyToSourceAndSaveAsync();
         this.ConfigurationIsModified = false;
         this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.Configuration));
-        return true;
+        return (true, null);
       }
       catch (Exception e)
       {
-        errorMessage = Localizer.ImportFailed(filePath, e.Message);
+        var errorMessage = Localizer.ImportFailed(filePath, e.Message);
         log.Error(errorMessage);
         log.Error(e);
-        return false;
+        return (false, errorMessage);
       }
     }
 

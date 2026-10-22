@@ -294,14 +294,14 @@ namespace Soloplan.WhatsON.GUI.Configuration.View
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs" /> instance containing the event data.</param>
-    private void NewInWizardClick(object? sender, RoutedEventArgs e)
+    private async void NewInWizardClick(object? sender, RoutedEventArgs e)
     {
       var wizardController = new WizardController(this.ownerWindow, this.config, this.wizardDialogSettings);
       wizardController.MultiSelectionMode = false;
       var result = false;
       try
       {
-        result = wizardController.Start(false);
+        result = await wizardController.StartAsync(false);
       }
       finally
       {

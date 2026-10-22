@@ -77,7 +77,7 @@ namespace Soloplan.WhatsON
       log.Log(LogLevel.Debug, "Observation connector {@connector} added.", observationConnector);
     }
 
-    public async void Start()
+    public void Start()
     {
       log.Debug("Start of observation requested.");
       if (!this.Running && !this.stopping)
@@ -100,7 +100,7 @@ namespace Soloplan.WhatsON
             : observation))
         {
           var connectors = group.ToArray();
-          Task.Run(() => this.StartObserveGroup(connectors, this.cancellationTokenSource.Token));
+          _ = Task.Run(() => this.StartObserveGroup(connectors, this.cancellationTokenSource.Token));
         }
 
         log.Debug("Observation started.");

@@ -132,7 +132,7 @@ namespace Soloplan.WhatsON.Jenkins
         }
 
         // Persist before the request so a crash or an uncertain network response cannot lose cleanup tracking.
-        this.volunteers.Save(jobUrl, buildNumber, owner);
+        await this.volunteers.SaveAsync(jobUrl, buildNumber, owner, token).ConfigureAwait(false);
       }
 
       var build = await this.api.SetVolunteer(this, buildNumber, expectedOwner, claim, token);
@@ -465,7 +465,7 @@ namespace Soloplan.WhatsON.Jenkins
       try
       {
         var jobUrl = JenkinsApi.UrlHelper.ProjectUrl(this, false);
-        foreach (var claim in this.volunteers.Read(jobUrl).Where(claim => claim.BuildNumber < successfulBuild).ToList())
+        foreach (var claim in (await this.volunteers.ReadAsync(jobUrl, token).ConfigureAwait(false)).Where(claim => claim.BuildNumber < successfulBuild).ToList())
         {
           try
           {
@@ -534,7 +534,7 @@ namespace Soloplan.WhatsON.Jenkins
 
         // Resume a panel update after an interrupted request, including claims made by older whatsON versions.
         var jobUrl = JenkinsApi.UrlHelper.ProjectUrl(this, false);
-        foreach (var claim in this.volunteers.Read(jobUrl).Where(claim => claim.BuildNumber > successfulBuild))
+        foreach (var claim in (await this.volunteers.ReadAsync(jobUrl, token).ConfigureAwait(false)).Where(claim => claim.BuildNumber > successfulBuild))
         {
           var fix = JenkinsVolunteerPanel.GetFixes(job.Description).FirstOrDefault(fix => fix.BuildNumber == claim.BuildNumber);
           var build = job.LastBuild?.Number == claim.BuildNumber ? job.LastBuild

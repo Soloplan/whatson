@@ -138,6 +138,15 @@ namespace Soloplan.WhatsON.GUI
       this.mainTreeView.ApplyTreeListSettings(this.settings.TreeListSettings);
     }
 
+    protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+    {
+      base.OnClosing(e);
+      if (!this.IsEnabled)
+      {
+        e.Cancel = true;
+      }
+    }
+
     /// <summary>Raises the <see cref="E:System.Windows.Window.Closed" /> event. Performs necessry cleanup.</summary>
     /// <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data.</param>
     protected override void OnClosed(EventArgs e)
@@ -162,27 +171,27 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-    private void NewConnectorClick(object? sender, EventArgs e)
+    private async void NewConnectorClick(object? sender, EventArgs e)
     {
-      var group = sender as ConnectorGroupViewModel;
-      var project = sender as TreeConnectorViewModel ?? group?.ConnectorViewModels.FirstOrDefault(item => item.Connector != null);
-      var targetGroup = group?.GroupName
-        ?? (project == null ? null : project.Connector?.Configuration.GetConfigurationByKey(Connector.Category).Value?.Trim() ?? string.Empty);
-      var wizardController = new WizardController(this, this.config, this.settings.WizardDialogSettings, targetGroup)
-      {
-        ProposedServerAddress = project?.Connector?.Address,
-      };
-      var result = false;
+      this.IsEnabled = false;
       try
       {
-        result = wizardController.Start();
-      }
-      finally
-      {
-        if (result)
+        var group = sender as ConnectorGroupViewModel;
+        var project = sender as TreeConnectorViewModel ?? group?.ConnectorViewModels.FirstOrDefault(item => item.Connector != null);
+        var targetGroup = group?.GroupName
+          ?? (project == null ? null : project.Connector?.Configuration.GetConfigurationByKey(Connector.Category).Value?.Trim() ?? string.Empty);
+        var wizardController = new WizardController(this, this.config, this.settings.WizardDialogSettings, targetGroup)
+        {
+          ProposedServerAddress = project?.Connector?.Address,
+        };
+        if (await wizardController.StartAsync())
         {
           this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.config));
         }
+      }
+      finally
+      {
+        this.IsEnabled = true;
       }
     }
 
@@ -197,12 +206,20 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-    private void ImportClick(object? sender, EventArgs e)
+    private async void ImportClick(object? sender, EventArgs e)
     {
-      var interchange = new ProjectsDataInterchange();
-      if (interchange.Import(this.config))
+      this.IsEnabled = false;
+      try
       {
-        this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.config));
+        var interchange = new ProjectsDataInterchange();
+        if (await interchange.ImportAsync(this.config))
+        {
+          this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.config));
+        }
+      }
+      finally
+      {
+        this.IsEnabled = true;
       }
     }
 
@@ -225,13 +242,20 @@ namespace Soloplan.WhatsON.GUI
       this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.config));
     }
 
-    private void SaveClick(object? sender, RoutedEventArgs e)
+    private async void SaveClick(object? sender, RoutedEventArgs e)
     {
-      this.HideChangesPanel();
-
-      this.mainTreeView.WriteToConfiguration(this.config);
-      SerializationHelper.Instance.SaveConfiguration(this.config);
-      this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.config));
+      this.IsEnabled = false;
+      try
+      {
+        this.mainTreeView.WriteToConfiguration(this.config);
+        await SerializationHelper.Instance.SaveConfigurationAsync(this.config);
+        this.HideChangesPanel();
+        this.ConfigurationApplied?.Invoke(this, new ValueEventArgs<ApplicationConfiguration>(this.config));
+      }
+      finally
+      {
+        this.IsEnabled = true;
+      }
     }
 
     private void HideChangesPanel()
@@ -307,7 +331,7 @@ namespace Soloplan.WhatsON.GUI
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">Event args.</param>
-    private void ExportTreeItem(object? sender, ValueEventArgs<TreeItemViewModel> e)
+    private async void ExportTreeItem(object? sender, ValueEventArgs<TreeItemViewModel> e)
     {
       if (e.Value is ConnectorGroupViewModel groupTreeViewModel)
       {
@@ -321,7 +345,7 @@ namespace Soloplan.WhatsON.GUI
         }
 
         var projectsDataInterchange = new ProjectsDataInterchange();
-        projectsDataInterchange.Export(connectors, groupTreeViewModel.GroupName);
+        await projectsDataInterchange.ExportAsync(connectors, groupTreeViewModel.GroupName);
       }
 
       if (e.Value is Common.ConnectorTreeView.ConnectorViewModel connectorViewModel)
@@ -329,7 +353,7 @@ namespace Soloplan.WhatsON.GUI
         var projectsDataInterchange = new ProjectsDataInterchange();
         if (connectorViewModel.Connector is Connector connector)
         {
-          projectsDataInterchange.Export(connector.Configuration, connectorViewModel.Name);
+          await projectsDataInterchange.ExportAsync(connector.Configuration, connectorViewModel.Name);
         }
       }
     }

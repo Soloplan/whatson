@@ -9,6 +9,7 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
 {
   using System;
   using System.Threading;
+  using System.Threading.Tasks;
   using System.Windows.Controls;
   using NLog;
 
@@ -19,22 +20,22 @@ namespace Soloplan.WhatsON.GUI.Common.BuildServer
     public FailureDetailsControl()
     {
       this.InitializeComponent();
-      this.Loaded += (_, _) => this.LoadDetails();
+      this.Loaded += async (_, _) => await this.LoadDetails();
       this.Unloaded += (_, _) =>
       {
         this.loading?.Cancel();
         this.FailuresExpander.IsExpanded = false;
       };
-      this.DataContextChanged += (_, _) =>
+      this.DataContextChanged += async (_, _) =>
       {
         this.FailuresExpander.IsExpanded = false;
-        this.LoadDetails();
+        await this.LoadDetails();
       };
-      this.FailuresExpander.Expanded += (_, _) => this.LoadDetails();
+      this.FailuresExpander.Expanded += async (_, _) => await this.LoadDetails();
       this.FailuresExpander.Collapsed += (_, _) => this.loading?.Cancel();
     }
 
-    private async void LoadDetails()
+    private async Task LoadDetails()
     {
       this.loading?.Cancel();
       if (!this.IsLoaded || this.DataContext is not BuildStatusViewModel status)

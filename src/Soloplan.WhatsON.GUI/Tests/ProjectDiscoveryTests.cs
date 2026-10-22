@@ -471,12 +471,12 @@ namespace Soloplan.WhatsON.GUI.Tests
       {
         timer.Stop();
         window.Close();
-        server.DisposeAsync().AsTask().GetAwaiter().GetResult();
+        server.Dispose();
         SynchronizationContext.SetSynchronizationContext(previousContext);
       }
     }
 
-    internal sealed class DiscoveryServer : IAsyncDisposable
+    internal sealed class DiscoveryServer : IDisposable, IAsyncDisposable
     {
       private readonly WireMockServer server;
       private readonly CancellationTokenSource stopping = new CancellationTokenSource();
@@ -553,11 +553,16 @@ namespace Soloplan.WhatsON.GUI.Tests
 
       public bool Gzip { get; set; }
 
-      public ValueTask DisposeAsync()
+      public void Dispose()
       {
         this.stopping.Cancel();
         this.server.Dispose();
         this.stopping.Dispose();
+      }
+
+      public ValueTask DisposeAsync()
+      {
+        this.Dispose();
         return ValueTask.CompletedTask;
       }
     }

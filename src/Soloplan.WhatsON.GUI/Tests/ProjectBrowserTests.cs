@@ -13,6 +13,7 @@ namespace Soloplan.WhatsON.GUI.Tests
   using System.IO;
   using System.Linq;
   using System.Reflection;
+  using System.Threading.Tasks;
   using System.Threading;
   using NUnit.Framework;
   using Soloplan.WhatsON.Configuration;
@@ -214,7 +215,7 @@ namespace Soloplan.WhatsON.GUI.Tests
     [NonParallelizable]
     [TestCase("Delivery")]
     [TestCase("")]
-    public void AddingJobsToAnExistingGroupOverridesTheirServerFolder(string group)
+    public async Task AddingJobsToAnExistingGroupOverridesTheirServerFolder(string group)
     {
       var directory = Path.Combine(TestContext.CurrentContext.WorkDirectory, "group-add-" + Guid.NewGuid().ToString("N"));
       Directory.CreateDirectory(directory);
@@ -237,10 +238,10 @@ namespace Soloplan.WhatsON.GUI.Tests
         var apply = typeof(WizardController).GetMethod("ApplyToConfiguration", BindingFlags.Instance | BindingFlags.NonPublic)
           ?? throw new AssertionException("Expected wizard apply method.");
 
-        apply.Invoke(controller, null);
+        await (Task)(apply.Invoke(controller, null) ?? throw new AssertionException("Expected an asynchronous wizard apply operation."));
 
         Assert.That(configuration.ConnectorsConfiguration.Single().GetConfigurationByKey(Connector.Category).Value, Is.EqualTo(group));
-        Assert.That(serializer.LoadConfiguration().ConnectorsConfiguration.Single().GetConfigurationByKey(Connector.Category).Value, Is.EqualTo(group));
+        Assert.That((await serializer.LoadConfigurationAsync()).ConnectorsConfiguration.Single().GetConfigurationByKey(Connector.Category).Value, Is.EqualTo(group));
       }
       finally
       {
