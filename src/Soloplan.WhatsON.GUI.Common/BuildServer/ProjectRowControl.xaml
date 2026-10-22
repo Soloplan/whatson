@@ -126,18 +126,48 @@
           </Style>
         </TextBlock.Style>
       </TextBlock>
-      <StackPanel VerticalAlignment="Center"
-                  Visibility="{Binding CurrentStatus.Building, Converter={StaticResource BoolToVisibility}}">
-        <DockPanel>
-          <TextBlock Text="{live:Text loc:Strings.Running}" Style="{StaticResource Metadata}" />
-          <TextBlock Text="{Binding CurrentStatus.Progress, StringFormat={}{0}%}" Style="{StaticResource Metadata}"
-                     HorizontalAlignment="Right" />
-        </DockPanel>
-        <ProgressBar x:Name="BuildProgress" Height="3" Margin="0,4,0,0" Minimum="0" Maximum="100" Value="{Binding CurrentStatus.Progress, Mode=OneWay}"
+      <Grid x:Name="RunningProgressPill" Height="24" VerticalAlignment="Center"
+            Visibility="{Binding CurrentStatus.Building, Converter={StaticResource BoolToVisibility}}">
+        <ProgressBar x:Name="BuildProgress" Height="24" Minimum="0" Maximum="100" Value="{Binding CurrentStatus.Progress, Mode=OneWay}"
                      IsIndeterminate="{Binding CurrentStatus.BuildingLongerThenExpected}"
-                     Foreground="{StaticResource Running}" Background="{DynamicResource SettingsBorder}"
-                     AutomationProperties.Name="{live:Text loc:Strings.Running}" />
-      </StackPanel>
+                     Foreground="{DynamicResource GroupRunningBadgeBackground}" Background="{DynamicResource SettingsBorder}"
+                     AutomationProperties.Name="{live:Text loc:Strings.Running}">
+          <ProgressBar.Template>
+            <ControlTemplate TargetType="ProgressBar">
+              <Grid>
+                <Border x:Name="PART_Track" Background="{TemplateBinding Background}" CornerRadius="6" />
+                <Border x:Name="PART_Indicator" Background="{TemplateBinding Foreground}" CornerRadius="6"
+                        HorizontalAlignment="Left" ClipToBounds="True">
+                  <Border x:Name="PART_GlowRect" Width="24" HorizontalAlignment="Left" Opacity="0.2"
+                          Background="{DynamicResource GroupRunningBadgeForeground}"
+                          Visibility="{Binding IsIndeterminate, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibility}}" />
+                </Border>
+              </Grid>
+            </ControlTemplate>
+          </ProgressBar.Template>
+        </ProgressBar>
+        <Grid Margin="8,0" IsHitTestVisible="False">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+          </Grid.ColumnDefinitions>
+          <TextBlock x:Name="RunningLabel" Text="{live:Text loc:Strings.Running}" Style="{StaticResource Metadata}" HorizontalAlignment="Left"
+                     Foreground="{DynamicResource GroupRunningBadgeForeground}" />
+          <TextBlock x:Name="ProgressPercentage" Grid.Column="1" HorizontalAlignment="Right"
+                     Foreground="{DynamicResource MaterialDesignBody}" FontWeight="SemiBold">
+            <TextBlock.Style>
+              <Style TargetType="TextBlock" BasedOn="{StaticResource Metadata}">
+                <Setter Property="Text" Value="{Binding CurrentStatus.Progress, StringFormat={}{0} %}" />
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding CurrentStatus.BuildingLongerThenExpected}" Value="True">
+                    <Setter Property="Text" Value="&#x2026;" />
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </TextBlock.Style>
+          </TextBlock>
+        </Grid>
+      </Grid>
     </Grid>
     <local:HistoryBuildList Grid.Column="4" x:Name="BuildHistory" DataContext="{Binding ConnectorSnapshots}" VerticalAlignment="Center" />
   </Grid>

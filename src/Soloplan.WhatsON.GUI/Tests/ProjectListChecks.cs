@@ -269,7 +269,70 @@ namespace Soloplan.WhatsON.GUI.Tests
                   Assert.That(((TextBlock)row.FindName("ProjectName")).ActualWidth, Is.GreaterThan(35), "Project names take priority over optional metadata.");
                   Assert.That(((FrameworkElement)row.FindName("BuildHistory")).Visibility, Is.EqualTo(width == 800 ? Visibility.Visible : Visibility.Collapsed));
                   Assert.That(((FrameworkElement)row.FindName("BuildTiming")).Visibility, Is.EqualTo(width == 300 ? Visibility.Collapsed : Visibility.Visible));
-                  Assert.That(((ProgressBar)row.FindName("BuildProgress")).Value, Is.EqualTo(model.CurrentStatus?.Progress));
+                  var progress = (ProgressBar)row.FindName("BuildProgress");
+                  Assert.That(progress.Value, Is.EqualTo(model.CurrentStatus?.Progress));
+                  if (width == 800 && index == 1)
+                  {
+                    var statusModel = model.CurrentStatus ?? throw new AssertionException("Expected current build model.");
+                    Status running = groupIndex == 0
+                      ? new Soloplan.WhatsON.Jenkins.JenkinsStatus(ObservationState.Running)
+                      : new Soloplan.WhatsON.CruiseControl.CruiseControlStatus { State = ObservationState.Running, NextBuildTime = DateTime.Now.AddSeconds(-73) };
+                    running.Building = true;
+                    running.BuildNumber = connectors[(groupIndex * 3) + index].CurrentStatus?.BuildNumber ?? 0;
+                    running.Time = DateTime.UtcNow.AddSeconds(-73);
+                    running.Duration = TimeSpan.FromSeconds(73);
+                    running.EstimatedDuration = TimeSpan.FromSeconds(100);
+                    statusModel.Update(running);
+                    window.UpdateLayout();
+                    window.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+                    var pill = (Grid)row.FindName("RunningProgressPill");
+                    var percentage = (TextBlock)row.FindName("ProgressPercentage");
+                    var label = (TextBlock)row.FindName("RunningLabel");
+                    var track = (Border)progress.Template.FindName("PART_Track", progress);
+                    var indicator = (Border)progress.Template.FindName("PART_Indicator", progress);
+                    Assert.That(pill.Visibility, Is.EqualTo(Visibility.Visible));
+                    Assert.That(progress.Value, Is.InRange(73, 75));
+                    Assert.That(progress.ActualHeight, Is.EqualTo(24).Within(1), "The theme must not collapse the pill into a thin progress line.");
+                    Assert.That(percentage.Text, Is.EqualTo($"{statusModel.Progress} %"));
+                    Assert.That(indicator.ActualWidth, Is.EqualTo(track.ActualWidth * progress.Value / 100).Within(1));
+                    Assert.That(indicator.CornerRadius, Is.EqualTo(new CornerRadius(6)));
+                    Assert.That(indicator.Background, Is.SameAs(app.Resources["GroupRunningBadgeBackground"]));
+                    Assert.That(track.Background, Is.SameAs(app.Resources["SettingsBorder"]));
+                    Assert.That(label.Text, Is.EqualTo(Strings.Running));
+                    Assert.That(label.Foreground, Is.SameAs(app.Resources["GroupRunningBadgeForeground"]));
+                    Assert.That(percentage.Foreground, Is.SameAs(app.Resources["MaterialDesignBody"]));
+                    Assert.That(label.TransformToAncestor(pill).Transform(new Point(label.ActualWidth, 0)).X,
+                      Is.LessThan(percentage.TransformToAncestor(pill).Transform(new Point(0, 0)).X), "The running label and percentage must fit on one line.");
+                    var bitmap = new RenderTargetBitmap((int)Math.Ceiling(window.ActualWidth), (int)Math.Ceiling(window.ActualHeight), 96, 96, PixelFormats.Pbgra32);
+                    bitmap.Render(window);
+                    var encoder = new PngBitmapEncoder();
+                    encoder.Frames.Add(BitmapFrame.Create(bitmap));
+                    var preview = Path.Combine(TestContext.CurrentContext.TestDirectory, $"ProgressPill-{theme}-{density}-{groupIndex}.png");
+                    using (var stream = File.Create(preview))
+                    {
+                      encoder.Save(stream);
+                    }
+
+                    TestContext.AddTestAttachment(preview);
+                    running.EstimatedDuration = TimeSpan.FromSeconds(50);
+                    statusModel.Update(running);
+                    window.UpdateLayout();
+                    Assert.That(progress.IsIndeterminate, Is.True, "Overrunning builds must keep their activity indicator.");
+                    Assert.That(percentage.Text, Is.EqualTo("\u2026"), "An exceeded estimate must not show a misleading zero percent.");
+                    var glow = (Border)progress.Template.FindName("PART_GlowRect", progress);
+                    Assert.That(glow.Visibility, Is.EqualTo(Visibility.Visible));
+                    if (SystemParameters.ClientAreaAnimation)
+                    {
+                      Assert.That(glow.HasAnimatedProperties, Is.True);
+                    }
+
+                    running.State = ObservationState.Success;
+                    running.Building = false;
+                    statusModel.Update(running);
+                    statusModel.Update(connectors[(groupIndex * 3) + index].CurrentStatus);
+                    window.UpdateLayout();
+                    Assert.That(pill.Visibility, Is.EqualTo(statusModel.Building ? Visibility.Visible : Visibility.Collapsed));
+                  }
                   var historyList = FindVisualChild<ItemsControl>((HistoryBuildList)row.FindName("BuildHistory")) ?? throw new AssertionException("Missing history list.");
                   Assert.That(historyList.Items.Count, Is.EqualTo(5));
                   if (width == 800)
